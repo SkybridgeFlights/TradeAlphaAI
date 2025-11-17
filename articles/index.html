@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-i18n="articles.title">مقالات TradeAlpha AI — أفضل مقالات التداول</title>
+  <meta name="description" content="مستودع المقالات المتميزة عن التداول: استراتيجيات، إدارة مخاطرة، واستخدام إشارات TradeAlpha AI بفعالية." />
+  <link rel="canonical" href="https://www.tradealphaai.com/articles/index.html" />
+  <meta property="og:image" content="/Image/og-image.svg" />
+  <link rel="stylesheet" href="/styles.css">
+  <script>document.documentElement.lang='ar';</script>
+</head>
+<body>
+  <div class="wrap">
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <h1 data-i18n="articles.heading">مقالات مميّزة في التداول</h1>
+        <p class="muted" data-i18n="articles.subtitle">مختار من مقالاتنا المتعمقة لمساعدتك على التداول بذكاء ورفاهية.</p>
+      </div>
+      <div style="display:flex;gap:10px;position:relative">
+        <a href="/Index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap" data-i18n="nav.home">Home</a>
+        <button id="langSwitch3" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
+        <div id="langMenu3" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:50px;right:0;min-width:140px">
+          <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
+          <button role="menuitem" data-lang="en" class="lang-item">English</button>
+          <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="articles-list">
+        <article>
+          <h2><a href="/articles/best-forex-strategy.html" data-i18n="articles.link1">أفضل استراتيجية تداول الفوركس: دليل عملي</a></h2>
+          <p class="muted" data-i18n="articles.desc1">دليل متكامل لتطبيق استراتيجية قوية ومُثبتة بأساليب إدارة مخاطرة فعّالة.</p>
+        </article>
+
+        <article>
+          <h2><a href="/articles/capital-management.html" data-i18n="articles.link2">إدارة رأس المال: أساس النجاح في التداول</a></h2>
+          <p class="muted" data-i18n="articles.desc2">تعلم كيف تحمي رأس المال وتبني استمرارية في الربحية.</p>
+        </article>
+
+        <article>
+          <h2><a href="/articles/use-signals.html" data-i18n="articles.link3">كيفية استخدام إشارات TradeAlpha AI بفعالية</a></h2>
+          <p class="muted" data-i18n="articles.desc3">إرشادات عملية لتحويل الإشارات إلى نتائج مفيدة على حسابك.</p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="y3"></span> TradeAlpha AI</p>
+    </footer>
+  </div>
+  <script src="/script.js" defer></script>
+  <script>document.getElementById('y3').textContent=new Date().getFullYear();</script>
+  <script>
+    (function(){
+      const langSwitch = document.getElementById('langSwitch3');
+      const langMenu = document.getElementById('langMenu3');
+      if(!langSwitch || !langMenu) return;
+      const openMenu = ()=>{ langMenu.setAttribute('aria-hidden','false'); langMenu.classList.add('open'); langSwitch.setAttribute('aria-expanded','true'); };
+      const closeMenu = ()=>{ langMenu.setAttribute('aria-hidden','true'); langMenu.classList.remove('open'); langSwitch.setAttribute('aria-expanded','false'); };
+      langSwitch.addEventListener('click', (e)=>{ e.stopPropagation(); const hidden = langMenu.getAttribute('aria-hidden') === 'true'; if(hidden) openMenu(); else closeMenu(); });
+      langMenu.querySelectorAll('[data-lang]').forEach(btn=>{ btn.addEventListener('click', (e)=>{ const lang = btn.getAttribute('data-lang'); if(window.setLang) window.setLang(lang); closeMenu(); }); });
+      document.addEventListener('click', (e)=>{ if(!langMenu.contains(e.target) && e.target !== langSwitch) closeMenu(); });
+    })();
+  </script>
+</body>
+</html>

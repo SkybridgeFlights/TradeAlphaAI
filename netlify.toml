@@ -1,0 +1,43 @@
+[build]
+  command = "echo 'Deploy ready'"
+  publish = "."
+
+[[redirects]]
+  from = "/Index.html"
+  to = "/index.html"
+  status = 301
+
+[[redirects]]
+  from = "/tadawul.html"
+  to = "/tadawul.html"
+  status = 200
+
+[[redirects]]
+  from = "/articles/index.html"
+  to = "/articles/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/articles/*"
+  to = "/articles/:splat"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/Image/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"

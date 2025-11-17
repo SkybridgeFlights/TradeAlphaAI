@@ -3,11 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TradeAlpha AI — Landing</title>
-  <meta name="description" content="TradeAlpha AI — Adaptive intelligent trading." />
-  <link rel="stylesheet" href="styles.css">
+  <title>تداول — Trade | TradeAlpha AI — Landing</title>
+  <meta name="description" content="TradeAlpha AI — نظام تداول ذكي. تداول (Trade) وميزات متقدمة لTraders — تعلم آلي، إشارات فورية، وأدوات إدارة مخاطرة." />
+  <meta name="keywords" content="تداول, Trade, TradeAlpha, تداول Trade, كلمة, كبمة, تداول آلي, تداول ذكي" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.tradealphaai.com/" />
+  <meta property="og:site_name" content="TradeAlpha AI" />
+  <meta property="og:title" content="تداول — Trade | TradeAlpha AI" />
+  <meta property="og:description" content="نظام تداول ذكي، إشارات فورية، وأدوات إدارة مخاطرة — TradeAlpha AI." />
+  <meta property="og:image" content="/Image/Layer%201.png" />
+  <meta property="og:image:alt" content="TradeAlpha AI — تداول" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- phone contact removed; contact via email only -->
+  <link rel="preload" href="styles.css" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css"></noscript>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TradeAlpha AI",
+    "url": "https://www.tradealphaai.com/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.tradealphaai.com/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "keywords": "تداول, Trade, تداول Trade, تداول آلي, TradeAlpha"
+  }
+  </script>
 </head>
 <body>
+  <!-- Development warning (multilingual, dismissible) - now modal overlay -->
+  <div id="devOverlay" class="dev-overlay" role="presentation" style="display:flex">
+    <div id="devWarning" class="dev-warning" role="dialog" aria-live="polite" aria-modal="true" aria-labelledby="devTitle">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <span class="dev-icon" aria-hidden="true">⚠️</span>
+        <div class="dev-messages" style="line-height:1.4">
+          <p id="devMsgAr" style="margin:0;font-weight:700">الموقع لا زال قيد التطوير — قد تواجه بعض الميزات قيد التحسين.</p>
+          <p id="devMsgEn" style="margin:6px 0 0 0;color:rgba(0,0,0,0.8)">Site is under development — some features may be incomplete.</p>
+          <p id="devMsgDe" style="margin:6px 0 0 0;color:rgba(0,0,0,0.8)">Die Website befindet sich in Entwicklung — einige Funktionen sind möglicherweise unvollständig.</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="#" class="dev-learn" data-i18n="site.devLearn">Learn more</a>
+        <button class="dev-close" id="devClose" aria-label="Dismiss development notice">×</button>
+      </div>
+    </div>
+  </div>
   <!-- CTA Banner: sticky, dismissible -->
   <div class="cta-banner" id="ctaBanner" role="region" aria-label="Call to action">
     <div class="cta-inner wrap">
@@ -26,20 +70,30 @@
       <div class="brand">
         <div class="logo">
           <!-- Try to load the provided logo (Layer 1.png). If it loads, hide the fallback letter. -->
-          <img src="./Image/Layer%201.png" alt="TradeAlpha logo" class="site-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'" />
+          <img src="./Image/Layer%201.png" alt="TradeAlpha logo — تداول Trade" class="site-logo" loading="lazy" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'" />
           <span class="logo-fallback">A</span>
         </div>
         <div>
           <h1 class="muted">TradeAlpha AI</h1>
-          <p class="muted" style="font-size:12px">🤖 شريكك الذكي في التداول</p>
+          <p class="muted" data-i18n="brand.tagline" style="font-size:12px">🤖 شريكك الذكي في التداول</p>
         </div>
       </div>
 
       <div style="display:flex;align-items:center;gap:12px">
         <nav aria-label="main navigation">
-          <!-- reserved for future links -->
+          <a href="/articles/index.html" style="margin-right:12px" data-i18n="nav.articles">مقالات</a>
+          <a href="/tadawul.html" style="margin-right:12px" data-i18n="nav.trading">تداول</a>
         </nav>
-        <button id="langSwitch" class="lang-switch" aria-label="Switch language"><span class="pill">EN ↔ AR</span></button>
+        <div class="lang-wrap" style="position:relative">
+          <button id="langSwitch" class="lang-switch" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false" aria-controls="langMenu"><span class="pill">English</span></button>
+
+          <!-- Language menu: user can pick any language -->
+          <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true">
+            <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
+            <button role="menuitem" data-lang="en" class="lang-item">English</button>
+            <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -58,7 +112,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 1 image (from Image/ folder) -->
-          <img src="./Image/1.png" alt="TradeAlpha intro" class="full-image" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="./Image/1.webp" alt="TradeAlpha intro — تداول" class="full-image" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -75,7 +129,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 2 image -->
-          <img src="./Image/2.png" alt="Why we build it" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="./Image/2.webp" alt="Why we build it — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -96,7 +150,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 3 image -->
-          <img src="./Image/3.png" alt="Behind the code" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="./Image/3.webp" alt="Behind the code — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -113,7 +167,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 4 image -->
-          <img src="./Image/4.png" alt="Profit Factor snapshot" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="./Image/4.webp" alt="Profit Factor snapshot — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -130,7 +184,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 5 image -->
-          <img src="./Image/5.png" alt="The vision" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="./Image/5.webp" alt="The vision — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -249,6 +303,15 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- Google Analytics 4 (GA4) - Set GA4_ID in environment variable -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXX');
+  </script>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
