@@ -9,10 +9,27 @@
   <link rel="canonical" href="https://www.tradealphaai.com/tadawul.html" />
   <meta property="og:title" content="تداول — Trade | TradeAlpha AI" />
   <meta property="og:description" content="ابدأ تداولك مع نظام ذكي يوفر إشارات فورية، إعدادات مخاطرة، ودعم متعدد الأصول." />
-  <meta property="og:image" content="/Image/Layer%201.png" />
+  <meta property="og:image" content="Image/Layer%201.png" />
   <meta property="og:image:alt" content="TradeAlpha AI — تداول" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="stylesheet" href="/styles.css">
+  <script>
+    if(!window.__ta_local_fixer_installed){
+      window.__ta_local_fixer_installed = true;
+      (function(){
+        try{
+          if(location.protocol === 'file:'){
+            var l = document.querySelector('link[rel="stylesheet"][href^="/"]');
+            if(l && l.getAttribute('href')) l.setAttribute('href', l.getAttribute('href').replace(/^\//,''));
+            document.addEventListener('DOMContentLoaded', function(){
+              document.querySelectorAll('[src^="/"]').forEach(function(el){ if(el.getAttribute('src')) el.setAttribute('src', el.getAttribute('src').replace(/^\//,'')); });
+              document.querySelectorAll('[href^="/"]').forEach(function(el){ var h = el.getAttribute('href'); if(h === '/') el.setAttribute('href','Index.html'); else if(h) el.setAttribute('href', h.replace(/^\//,'')); });
+            });
+          }
+        }catch(e){}
+      })();
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
@@ -71,9 +88,9 @@
         <p class="muted" data-i18n="tadawul.subtitle">ابدأ تداولك بثقة مع TradeAlpha AI — إشارات آنية، إدارة مخاطرة ذكية، ودليل عملي لتحويل الإشارات إلى أرباح.</p>
       </div>
       <div style="display:flex;gap:10px;position:relative">
-        <a href="/Index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;transition:all .18s;white-space:nowrap" data-i18n="nav.home">Home</a>
-        <button id="langSwitch2" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
-        <div id="langMenu2" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:50px;right:0;min-width:140px">
+          <a href="Index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;transition:all .18s;white-space:nowrap" data-i18n="nav.home">Home</a>
+        <button id="langSwitch" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
+        <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:50px;right:0;min-width:140px">
           <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
           <button role="menuitem" data-lang="en" class="lang-item">English</button>
           <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
@@ -120,7 +137,7 @@
           </p>
 
           <div style="margin:20px 0">
-            <a href="/Index.html#section-subscribe" class="btn-cta" data-i18n="tadawul.cta.subscribe">اشترك الآن — تجربة 7 أيام</a>
+              <a href="Index.html#section-subscribe" class="btn-cta" data-i18n="tadawul.cta.subscribe">اشترك الآن — تجربة 7 أيام</a>
             <a href="#" id="openGmailCompose" class="btn-secondary" style="margin-left:8px" data-i18n="tadawul.cta.contact">تواصل معنا</a>
           </div>
         </section>
@@ -132,47 +149,11 @@
     </footer>
   </div>
 
-  <script src="/script.js" defer></script>
-  <script>document.getElementById('y2').textContent=new Date().getFullYear();</script>
+  <script src="script.js" defer></script>
+  <script>/* year hydration handled centrally in script.js */</script>
   <script>
-    // Language switching for tadawul page
-    (function(){
-      const langSwitch = document.getElementById('langSwitch2');
-      const langMenu = document.getElementById('langMenu2');
-      if(!langSwitch || !langMenu) return;
-      
-      const openMenu = ()=>{
-        langMenu.setAttribute('aria-hidden','false');
-        langMenu.classList.add('open');
-        langSwitch.setAttribute('aria-expanded','true');
-        const first = langMenu.querySelector('[data-lang]');
-        if(first) first.focus();
-      };
-      const closeMenu = ()=>{
-        langMenu.setAttribute('aria-hidden','true');
-        langMenu.classList.remove('open');
-        langSwitch.setAttribute('aria-expanded','false');
-      };
-      
-      langSwitch.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        const hidden = langMenu.getAttribute('aria-hidden') === 'true';
-        if(hidden) openMenu(); else closeMenu();
-      });
-      
-      langMenu.querySelectorAll('[data-lang]').forEach(btn=>{
-        btn.addEventListener('click', (e)=>{
-          const lang = btn.getAttribute('data-lang');
-          if(window.setLang) window.setLang(lang);
-          closeMenu();
-        });
-      });
-      
-      document.addEventListener('click', (e)=>{ 
-        if(!langMenu.contains(e.target) && e.target !== langSwitch) closeMenu();
-      });
-    })();
-    
+    // Language menu is handled globally in `script.js`; page-specific menu code removed to avoid duplication.
+  
     // Open Gmail compose with language support
     (function(){
       const btn = document.getElementById('openGmailCompose');

@@ -1,24 +1,49 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title id="pageTitle">كيفية استخدام إشارات TradeAlpha AI بفعالية</title>
-  <meta name="description" id="pageDesc" content="خطوات عملية لتحويل إشارات TradeAlpha AI إلى نتائج على حسابك: التقييم، التنفيذ، ومتابعة الأداء." />
-  <link rel="canonical" href="https://www.tradealphaai.com/articles/use-signals.html" />
-  <meta property="og:image" content="/Image/og-image.svg" />
-  <link rel="stylesheet" href="/styles.css">
-  <script type="application/ld+json" id="schemaMarkup">
-  {"@context":"https://schema.org","@type":"Article","headline":"كيفية استخدام إشارات TradeAlpha AI بفعالية","author":{"@type":"Organization","name":"TradeAlpha AI"},"url":"https://www.tradealphaai.com/articles/use-signals.html"}
-  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Use Signals | TradeAlphaAI</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .lang-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 32px 0 24px 0;
+    }
+    .lang-btn {
+      background: linear-gradient(90deg, #22d3c3, #4dd0e1);
+      color: #021018;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background .18s, color .18s, transform .18s, box-shadow .18s;
+      box-shadow: 0 4px 16px rgba(34,211,195,0.13);
+    }
+    .lang-btn.active {
+      background: #0d1a2a;
+      color: #22d3c3;
+      border: 2px solid #22d3c3;
+      box-shadow: 0 2px 8px rgba(34,211,195,0.10);
+    }
+    .lang-btn:focus {
+      outline: 2px solid #22d3c3;
+    }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+  </style>
 </head>
 <body>
   <div class="wrap">
     <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <a href="/Index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap;align-self:flex-start" data-i18n="nav.home" data-ar="الرئيسية" data-en="Home" data-de="Startseite">الرئيسية</a>
+      <a href="index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap;align-self:flex-start" data-i18n="nav.home">Home</a>
       <div style="position:relative;display:inline-block">
-        <button id="langSwitchUS" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
-        <div id="langMenuUS" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);right:0;min-width:140px">
+        <button id="langSwitch" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill" id="currentLang">العربية</span></button>
+        <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);right:0;min-width:140px">
           <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
           <button role="menuitem" data-lang="en" class="lang-item">English</button>
           <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
@@ -27,145 +52,169 @@
     </header>
     <article>
       <header>
-        <h1 data-i18n="signals.title" data-ar="كيفية استخدام إشارات TradeAlpha AI بفعالية" data-en="How to Use TradeAlpha AI Signals Effectively" data-de="So nutzen Sie TradeAlpha AI-Signale effektiv">كيفية استخدام إشارات TradeAlpha AI بفعالية</h1>
-        <p class="muted" data-i18n="signals.subtitle" data-ar="من الإشارة إلى القرار: خطوات عملية لتحويل التنبيهات إلى نتائج مأمونة." data-en="From signal to decision: practical steps to transform alerts into safe results." data-de="Von Signal zu Entscheidung: praktische Schritte, um Warnungen in sichere Ergebnisse umzuwandeln.">من الإشارة إلى القرار: خطوات عملية لتحويل التنبيهات إلى نتائج مأمونة.</p>
+        <h1 class="header-title" id="header-title-ar" style="display:block" data-i18n="signals.title">إشارات التداول: بوابتك للنجاح الذكي</h1>
+        <h1 class="header-title" id="header-title-en" style="display:none" data-i18n="signals.title">Trading Signals: Your Gateway to Smart Success</h1>
+        <h1 class="header-title" id="header-title-de" style="display:none" data-i18n="signals.title">Trading-Signale: Dein Schlüssel zum smarten Erfolg</h1>
+        <p class="muted header-subtitle" id="header-subtitle-ar" style="display:block" data-i18n="signals.subtitle">استخدم إشاراتنا كخطوتك الأولى نحو استراتيجية متكاملة ونتائج مستدامة.</p>
+        <p class="muted header-subtitle" id="header-subtitle-en" style="display:none" data-i18n="signals.subtitle">Use our signals as your first step toward a complete strategy and sustainable results.</p>
+        <p class="muted header-subtitle" id="header-subtitle-de" style="display:none" data-i18n="signals.subtitle">Nutze unsere Signale als deinen ersten Schritt zu einer ganzheitlichen Strategie und nachhaltigen Ergebnissen.</p>
       </header>
-
-      <section>
-        <p data-i18n="signals.intro" data-ar="الإشارات هي بداية الرحلة، لكنها ليست بديلة عن خطة واضحة. استخدم إشاراتنا كعامل مساعد: قيّمها، اختبرها، ثم قرّر ما إذا كنت ستنفذ يدوياً أو عبر آلية تنفيذ." data-en="Signals are just the beginning of the journey, but they are not a substitute for a clear plan. Use our signals as a helper tool: evaluate them, test them, then decide whether to execute manually or through automated execution." data-de="Signale sind erst der Anfang der Reise, aber kein Ersatz für einen klaren Plan. Nutzen Sie unsere Signale als Hilfsmittel: bewerten Sie sie, testen Sie sie, entscheiden Sie dann, ob Sie manuell oder automatisiert ausführen.">
-          الإشارات هي بداية الرحلة، لكنها ليست بديلة عن خطة واضحة. استخدم إشاراتنا كعامل مساعد: قيّمها، اختبرها، ثم قرّر ما إذا كنت ستنفذ يدوياً أو عبر آلية تنفيذ.
-        </p>
-
-        <h2 data-i18n="signals.steps.title" data-ar="خطوات مُقترحة" data-en="Suggested Steps" data-de="Empfohlene Schritte">خطوات مُقترحة</h2>
-        <p data-i18n="signals.steps.text" data-ar="1. تصفية الإشارات: حدِّد معايير توافق (مثل الاتجاه العام، مستوى السيولة، أو وقت حدث اقتصادي مهم). 2. حساب حجم مركز مناسب لكل إشارة عبر نسبة مخاطرة محددة أو ATR-based sizing. 3. سجل كل إشارة وتابع الأداء شهرياً لتحسين قواعد التصفية." data-en="1. Filter signals: define confluence criteria (e.g., overall trend, liquidity level, or important economic event timing). 2. Calculate appropriate position size for each signal via defined risk ratio or ATR-based sizing. 3. Record each signal and track performance monthly to improve filter rules." data-de="1. Filtern Sie Signale: Definieren Sie Konflux-Kriterien (z. B. Gesamttrend, Liquiditätsniveau oder wichtiges Wirtschaftsereignis-Timing). 2. Berechnen Sie die angemessene Positionsgröße für jedes Signal über ein definiertes Risiko-Verhältnis oder ATR-basierte Dimensionierung. 3. Zeichnen Sie jedes Signal auf und überwachen Sie die Leistung monatlich, um die Filterregeln zu verbessern.">
-          1. تصفية الإشارات: حدِّد معايير توافق (مثل الاتجاه العام، مستوى السيولة، أو وقت حدث اقتصادي مهم).  
-          2. حساب حجم مركز مناسب لكل إشارة عبر نسبة مخاطرة محددة أو ATR-based sizing.  
-          3. سجل كل إشارة وتابع الأداء شهرياً لتحسين قواعد التصفية.
-        </p>
-
-        <h2 data-i18n="signals.automation.title" data-ar="أتمتة مُحكمة" data-en="Controlled Automation" data-de="Gesteuerte Automatisierung">أتمتة مُحكمة</h2>
-        <p data-i18n="signals.automation.text" data-ar="عند الانتقال للأتمتة، ضع قواعد صارمة لإيقاف الأتمتة مؤقتاً في حالات drawdown أو تغير في ظروف السوق. الأتمتة يجب أن تقلل الأخطاء البشرية، لا تضاعفها." data-en="When moving to automation, set strict rules to pause automation during drawdown or market condition changes. Automation should reduce human errors, not multiply them." data-de="Beim Übergang zur Automatisierung müssen Sie strenge Regeln festlegen, um die Automatisierung bei Drawdown oder Marktänderungen zu unterbrechen. Automatisierung sollte menschliche Fehler reduzieren, nicht vervielfachen.">
-          عند الانتقال للأتمتة، ضع قواعد صارمة لإيقاف الأتمتة مؤقتاً في حالات drawdown أو تغير في ظروف السوق. الأتمتة يجب أن تقلل الأخطاء البشرية، لا تضاعفها.
-        </p>
-
-        <h2 data-i18n="signals.conclusion.title" data-ar="خلاصة" data-en="Summary" data-de="Zusammenfassung">خلاصة</h2>
-        <p data-i18n="signals.conclusion.text" data-ar="الإشارات القوية تحتاج إلى سياق: خطة، إدارة مخاطرة، ومراقبة. عند تطبيق هذه العناصر معًا، تزيد فرص الإشارة في أن تتحول إلى استراتيجية مربحة ومستدامة." data-en="Strong signals need context: a plan, risk management, and monitoring. When you apply these elements together, signal chances increase to transform into a profitable and sustainable strategy." data-de="Starke Signale brauchen Kontext: einen Plan, Risikomanagement und Überwachung. Wenn Sie diese Elemente zusammen anwenden, erhöhen sich die Chancen des Signals, sich in eine profitable und nachhaltige Strategie zu verwandeln.">
-          الإشارات القوية تحتاج إلى سياق: خطة، إدارة مخاطرة، ومراقبة. عند تطبيق هذه العناصر معًا، تزيد فرص الإشارة في أن تتحول إلى استراتيجية مربحة ومستدامة.
-        </p>
-
-        <div style="margin:20px 0">
-          <a href="/Index.html#section-subscribe" class="btn-cta" data-i18n="articles.cta.test" data-ar="اختبر إشاراتنا الآن" data-en="Test Our Signals Now" data-de="Testen Sie unsere Signale jetzt">اختبر إشاراتنا الآن</a>
+      <section class="lang-section active" id="lang-ar" dir="rtl">
+        <h2 style="font-size:22px;color:#22d3c3;margin-bottom:10px;text-align:center">رحلتك نحو النجاح تبدأ من هنا!</h2>
+        <p class="muted" style="margin-bottom:24px;text-align:center;font-size:17px">إشاراتنا ليست مجرد توصيات، بل هي بوابتك لفهم الأسواق بعمق واتخاذ قرارات ذكية. استثمر بثقة مع أدواتنا المتقدمة، وحقق أهدافك المالية بخطوات مدروسة.</p>
+        <div class="card" style="background:rgba(34,211,195,0.10);padding:24px 18px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">خطوات احترافية للنجاح:</h3>
+          <ol style="margin:0 0 0 18px;padding:0 0 0 18px;direction:rtl;text-align:right">
+            <li>حدد معايير التصفية الذكية (الاتجاه العام، السيولة، توقيت الأخبار الاقتصادية).</li>
+            <li>احسب حجم الصفقة المثالي بناءً على إدارة المخاطر أو مؤشر ATR.</li>
+            <li>سجل كل إشارة وراقب الأداء شهريًا لتطوير استراتيجيتك باستمرار.</li>
+          </ol>
+        </div>
+        <div class="card" style="background:rgba(34,211,195,0.06);padding:20px 16px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">أتمتة ذكية وآمنة</h3>
+          <p class="muted">ضع قواعد صارمة لإيقاف الأتمتة عند حدوث تراجع أو تغيرات مفاجئة في السوق. هدفنا تقليل الأخطاء البشرية وتعزيز فرص النجاح.</p>
+        </div>
+        <div class="card" style="background:rgba(34,211,195,0.14);padding:20px 16px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">خلاصة ملهمة</h3>
+          <p class="muted">الإشارات القوية تحتاج لخطة واضحة، إدارة مخاطر فعالة، ومتابعة دقيقة. اجمع هذه العناصر لتصنع استراتيجية رابحة ومستدامة.</p>
+        </div>
+        <div style="margin:32px 0;text-align:center">
+          <a href="../Index.html#section-subscribe" class="btn-cta">ابدأ تجربتك الآن</a>
+        </div>
+      </section>
+      <section class="lang-section" id="lang-en" dir="ltr">
+        <h2 style="font-size:22px;color:#22d3c3;margin-bottom:10px;text-align:center">Your Journey to Success Starts Here!</h2>
+        <p class="muted" style="margin-bottom:24px;text-align:center;font-size:17px">Our signals are more than just recommendations—they are your gateway to mastering the markets and making smart decisions. Invest with confidence using our advanced tools and achieve your financial goals step by step.</p>
+        <div class="card" style="background:rgba(34,211,195,0.10);padding:24px 18px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">Pro Steps for Success:</h3>
+          <ol style="margin:0 0 0 18px;padding:0 0 0 18px">
+            <li>Define smart filtering criteria (overall trend, liquidity, timing of economic news).</li>
+            <li>Calculate the ideal position size based on risk management or ATR indicator.</li>
+            <li>Log every signal and review performance monthly to continuously refine your strategy.</li>
+          </ol>
+        </div>
+        <div class="card" style="background:rgba(34,211,195,0.06);padding:20px 16px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">Smart & Safe Automation</h3>
+          <p class="muted">Set strict rules to pause automation during drawdowns or sudden market changes. Our goal is to minimize human error and maximize your success rate.</p>
+        </div>
+        <div class="card" style="background:rgba(34,211,195,0.14);padding:20px 16px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">Inspiring Summary</h3>
+          <p class="muted">Strong signals require a clear plan, effective risk management, and diligent monitoring. Combine these elements to build a winning, sustainable strategy.</p>
+        </div>
+        <div style="margin:32px 0;text-align:center">
+          <a href="../Index.html#section-subscribe" class="btn-cta">Start Your Trial Now</a>
+        </div>
+      </section>
+      <section class="lang-section" id="lang-de" dir="ltr">
+        <h2 style="font-size:22px;color:#22d3c3;margin-bottom:10px;text-align:center">Dein Weg zum Erfolg beginnt hier!</h2>
+        <p class="muted" style="margin-bottom:24px;text-align:center;font-size:17px">Unsere Signale sind mehr als nur Empfehlungen – sie sind dein Schlüssel, um die Märkte zu verstehen und kluge Entscheidungen zu treffen. Investiere mit Vertrauen dank unserer fortschrittlichen Tools und erreiche deine finanziellen Ziele Schritt für Schritt.</p>
+        <div class="card" style="background:rgba(34,211,195,0.10);padding:24px 18px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">Profi-Schritte zum Erfolg:</h3>
+          <ol style="margin:0 0 0 18px;padding:0 0 0 18px">
+            <li>Definiere smarte Filterkriterien (Gesamttrend, Liquidität, Zeitpunkt wichtiger Wirtschaftsnachrichten).</li>
+            <li>Berechne die ideale Positionsgröße basierend auf Risikomanagement oder ATR-Indikator.</li>
+            <li>Protokolliere jedes Signal und überprüfe die Performance monatlich, um deine Strategie stetig zu verbessern.</li>
+          </ol>
+        </div>
+        <div class="card" style="background:rgba(34,211,195,0.06);padding:20px 16px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">Smarte & sichere Automatisierung</h3>
+          <p class="muted">Setze klare Regeln, um die Automatisierung bei Drawdowns oder plötzlichen Marktveränderungen zu pausieren. Unser Ziel: menschliche Fehler minimieren und deine Erfolgsquote maximieren.</p>
+        </div>
+        <div class="card" style="background:rgba(34,211,195,0.14);padding:20px 16px;margin-bottom:24px;border-radius:14px">
+          <h3 style="color:#22d3c3;margin-bottom:8px">Inspirierende Zusammenfassung</h3>
+          <p class="muted">Starke Signale brauchen einen klaren Plan, effektives Risikomanagement und sorgfältiges Monitoring. Kombiniere diese Elemente für eine nachhaltige und erfolgreiche Strategie.</p>
+        </div>
+        <div style="margin:32px 0;text-align:center">
+          <a href="../Index.html#section-subscribe" class="btn-cta">Starte jetzt deinen Test</a>
         </div>
       </section>
     </article>
   </div>
-  <script src="/script.js" defer></script>
   <script>
-    // Language switching system for this page
-    function switchLanguage(lang) {
-      const elements = document.querySelectorAll('[data-ar][data-en][data-de]');
-      elements.forEach(el => {
-        let text = el.getAttribute(`data-${lang}`);
-        if (text) {
-          el.textContent = text;
-          el.setAttribute('data-current-lang', lang);
-        }
+    const langSwitchBtn = document.getElementById('langSwitch');
+    const langMenu = document.getElementById('langMenu');
+    const langItems = langMenu.querySelectorAll('.lang-item');
+    const sections = document.querySelectorAll('.lang-section');
+    const currentLang = document.getElementById('currentLang');
+    let open = false;
+
+    function setLang(lang) {
+      sections.forEach(sec => {
+        sec.classList.remove('active');
+        if (sec.id === 'lang-' + lang) sec.classList.add('active');
       });
-      
-      // Update HTML dir attribute
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang;
-      
-      // Update button text
-      const button = document.querySelector('.lang-switch .pill');
-      const langNames = { ar: 'العربية', en: 'English', de: 'Deutsch' };
-      if (button) button.textContent = langNames[lang];
-      
-      // Update page metadata
-      updatePageMetadata(lang);
-    }
-    
-    function updatePageMetadata(lang) {
-      const pageTranslations = {
-        ar: {
-          title: 'كيفية استخدام إشارات TradeAlpha AI بفعالية — TradeAlpha AI',
-          desc: 'خطوات عملية لتحويل إشارات TradeAlpha AI إلى نتائج على حسابك: التقييم، التنفيذ، ومتابعة الأداء.',
-          headline: 'كيفية استخدام إشارات TradeAlpha AI بفعالية'
-        },
-        en: {
-          title: 'How to Use TradeAlpha AI Signals Effectively — TradeAlpha AI',
-          desc: 'Practical steps to transform TradeAlpha AI signals into results on your account: evaluation, execution, and performance monitoring.',
-          headline: 'How to Use TradeAlpha AI Signals Effectively'
-        },
-        de: {
-          title: 'So nutzen Sie TradeAlpha AI-Signale effektiv — TradeAlpha AI',
-          desc: 'Praktische Schritte zur Umwandlung von TradeAlpha AI-Signalen in Ergebnisse auf Ihrem Konto: Bewertung, Ausführung und Leistungsüberwachung.',
-          headline: 'So nutzen Sie TradeAlpha AI-Signale effektiv'
-        }
-      };
-      
-      const meta = pageTranslations[lang] || pageTranslations.en;
-      
-      const titleEl = document.getElementById('pageTitle');
-      const descEl = document.getElementById('pageDesc');
-      const schemaEl = document.getElementById('schemaMarkup');
-      
-      if(titleEl) {
-        titleEl.textContent = meta.title;
-        document.title = meta.title;
-      }
-      if(descEl) descEl.setAttribute('content', meta.desc);
-      
-      if(schemaEl) {
-        try {
-          const schema = JSON.parse(schemaEl.textContent);
-          schema.headline = meta.headline;
-          schemaEl.textContent = JSON.stringify(schema);
-        } catch(e) {}
+      // Header title/subtitle switching
+      ['ar','en','de'].forEach(l => {
+        document.getElementById('header-title-' + l).style.display = (l === lang) ? 'block' : 'none';
+        document.getElementById('header-subtitle-' + l).style.display = (l === lang) ? 'block' : 'none';
+      });
+      if(lang === 'ar') {
+        document.documentElement.setAttribute('dir', 'rtl');
+        currentLang.textContent = 'العربية';
+      } else if(lang === 'en') {
+        document.documentElement.setAttribute('dir', 'ltr');
+        currentLang.textContent = 'English';
+      } else if(lang === 'de') {
+        document.documentElement.setAttribute('dir', 'ltr');
+        currentLang.textContent = 'Deutsch';
       }
     }
-    
-    // Initialize language menu
-    document.addEventListener('DOMContentLoaded', () => {
-      const langSwitch = document.getElementById('langSwitchUS');
-      const langMenu = document.getElementById('langMenuUS');
-      if(!langSwitch || !langMenu) return;
-      
-      const openMenu = ()=>{ 
-        langMenu.setAttribute('aria-hidden','false'); 
-        langMenu.classList.add('open'); 
-        langSwitch.setAttribute('aria-expanded','true');
-      };
-      
-      const closeMenu = ()=>{ 
-        langMenu.setAttribute('aria-hidden','true'); 
-        langMenu.classList.remove('open'); 
-        langSwitch.setAttribute('aria-expanded','false'); 
-      };
-      
-      langSwitch.addEventListener('click', (e)=>{ 
-        e.stopPropagation(); 
-        const hidden = langMenu.getAttribute('aria-hidden') === 'true'; 
-        if(hidden) openMenu(); 
-        else closeMenu(); 
+
+    langSwitchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      open = !open;
+      langMenu.setAttribute('aria-hidden', !open);
+      langMenu.classList.toggle('open', open);
+      langSwitchBtn.setAttribute('aria-expanded', open);
+    });
+
+    langItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const lang = item.getAttribute('data-lang');
+        setLang(lang);
+        open = false;
+        langMenu.setAttribute('aria-hidden', 'true');
+        langMenu.classList.remove('open');
+        langSwitchBtn.setAttribute('aria-expanded', 'false');
       });
-      
-      langMenu.querySelectorAll('[data-lang]').forEach(btn=>{ 
-        btn.addEventListener('click', (e)=>{ 
-          const lang = btn.getAttribute('data-lang'); 
-          switchLanguage(lang);
-          closeMenu(); 
-          localStorage.setItem('selected-lang', lang);
-        }); 
+    });
+
+    document.addEventListener('click', (e) => {
+      if (open && !langMenu.contains(e.target) && e.target !== langSwitchBtn) {
+        open = false;
+        langMenu.setAttribute('aria-hidden', 'true');
+        langMenu.classList.remove('open');
+        langSwitchBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Optional: keyboard navigation
+    langSwitchBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open = true;
+        langMenu.setAttribute('aria-hidden', 'false');
+        langMenu.classList.add('open');
+        langSwitchBtn.setAttribute('aria-expanded', 'true');
+        langItems[0].focus();
+      }
+    });
+    langItems.forEach((item, idx) => {
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (idx < langItems.length - 1) langItems[idx + 1].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (idx > 0) langItems[idx - 1].focus();
+        } else if (e.key === 'Escape') {
+          langSwitchBtn.focus();
+          open = false;
+          langMenu.setAttribute('aria-hidden', 'true');
+          langMenu.classList.remove('open');
+          langSwitchBtn.setAttribute('aria-expanded', 'false');
+        }
       });
-      
-      document.addEventListener('click', (e)=>{ 
-        if(!langMenu.contains(e.target) && e.target !== langSwitch) closeMenu(); 
-      });
-      
-      // Load saved language preference
-      const savedLang = localStorage.getItem('selected-lang') || 'ar';
-      switchLanguage(savedLang);
     });
   </script>
 </body>

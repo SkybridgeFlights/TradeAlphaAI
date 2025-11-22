@@ -11,11 +11,40 @@
   <meta property="og:site_name" content="TradeAlpha AI" />
   <meta property="og:title" content="تداول — Trade | TradeAlpha AI" />
   <meta property="og:description" content="نظام تداول ذكي، إشارات فورية، وأدوات إدارة مخاطرة — TradeAlpha AI." />
-  <meta property="og:image" content="/Image/Layer%201.png" />
+  <meta property="og:image" content="Image/Layer%201.png" />
   <meta property="og:image:alt" content="TradeAlpha AI — تداول" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <!-- phone contact removed; contact via email only -->
+  <script>
+    // Idempotent local-file fixer: mark installed to avoid duplicate runs
+    if(!window.__ta_local_fixer_installed){
+      window.__ta_local_fixer_installed = true;
+      (function(){
+        try{
+          if(location.protocol === 'file:'){
+            // Adjust preload stylesheet href (use getAttribute/setAttribute to avoid resolving to absolute file: URL)
+            var l = document.querySelector('link[rel="preload"][href^="/"]');
+            if(l && l.getAttribute('href')) l.setAttribute('href', l.getAttribute('href').replace(/^\//,''));
+            // Adjust noscript inner link if present
+            var nos = document.querySelector('noscript');
+            if(nos && nos.innerHTML) nos.innerHTML = nos.innerHTML.replace(/href="\//g,'href="');
+            // For other resources that appear later (scripts, images, anchors) fix after DOM ready
+            document.addEventListener('DOMContentLoaded', function(){
+              document.querySelectorAll('[src^="/"]').forEach(function(el){
+                if(el.getAttribute('src')) el.setAttribute('src', el.getAttribute('src').replace(/^\//,''));
+              });
+              document.querySelectorAll('[href^="/"]').forEach(function(el){
+                var h = el.getAttribute('href');
+                if(h === '/') el.setAttribute('href', 'Index.html');
+                else if(h) el.setAttribute('href', h.replace(/^\//,''));
+              });
+            });
+          }
+        }catch(e){ /* ignore */ }
+      })();
+    }
+  </script>
   <link rel="preload" href="styles.css" as="style" onload="this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="styles.css"></noscript>
 
@@ -70,7 +99,7 @@
       <div class="brand">
         <div class="logo">
           <!-- Try to load the provided logo (Layer 1.png). If it loads, hide the fallback letter. -->
-          <img src="./Image/Layer%201.png" alt="TradeAlpha logo — تداول Trade" class="site-logo" loading="lazy" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'" />
+          <img src="Image/Layer%201.png" alt="TradeAlpha logo — تداول Trade" class="site-logo" loading="lazy" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'" />
           <span class="logo-fallback">A</span>
         </div>
         <div>
@@ -81,8 +110,8 @@
 
       <div style="display:flex;align-items:center;gap:12px">
         <nav aria-label="main navigation">
-          <a href="/articles/index.html" style="margin-right:12px" data-i18n="nav.articles">مقالات</a>
-          <a href="/tadawul.html" style="margin-right:12px" data-i18n="nav.trading">تداول</a>
+          <a href="articles/index.html" style="margin-right:12px" data-i18n="nav.articles">مقالات</a>
+          <a href="tadawul.html" style="margin-right:12px" data-i18n="nav.trading">تداول</a>
         </nav>
         <div class="lang-wrap" style="position:relative">
           <button id="langSwitch" class="lang-switch" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false" aria-controls="langMenu"><span class="pill">English</span></button>
@@ -112,7 +141,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 1 image (from Image/ folder) -->
-          <img src="./Image/1.webp" alt="TradeAlpha intro — تداول" class="full-image" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="Image/1.webp" alt="TradeAlpha intro — تداول" class="full-image" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -129,7 +158,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 2 image -->
-          <img src="./Image/2.webp" alt="Why we build it — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="Image/2.webp" alt="Why we build it — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -150,7 +179,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 3 image -->
-          <img src="./Image/3.webp" alt="Behind the code — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="Image/3.webp" alt="Behind the code — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -167,7 +196,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 4 image -->
-          <img src="./Image/4.webp" alt="Profit Factor snapshot — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="Image/4.webp" alt="Profit Factor snapshot — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -184,7 +213,7 @@
 
         <div class="illustration" aria-hidden="true">
           <!-- Section 5 image -->
-          <img src="./Image/5.webp" alt="The vision — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
+          <img src="Image/5.webp" alt="The vision — تداول" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block"/>
         </div>
       </div>
     </section>
@@ -272,7 +301,7 @@
           </div>
         </div>
         <div class="illustration" aria-hidden="true">
-          <img src="./Image/Layer%201.png" alt="TradeAlpha subscription" style="width:100px;height:100px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 4px 18px #22d3c3a0);"/>
+          <img src="Image/Layer%201.png" alt="TradeAlpha subscription" style="width:100px;height:100px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 4px 18px #22d3c3a0);"/>
         </div>
       </div>
     </section>

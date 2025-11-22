@@ -1,10 +1,16 @@
-// Year: set into both #year (old) and #y (new) if present
+// Year: set into common year containers (ids like `y`, `year`, `y2`, `y3`), and elements with class `year` or `data-year`
 (function setYear(){
   const y = new Date().getFullYear();
-  const el1 = document.getElementById('year');
-  const el2 = document.getElementById('y');
-  if(el1) el1.textContent = y;
-  if(el2) el2.textContent = y;
+  try{
+    // Set by id when id is exactly 'year' or 'y' or matches /^y\d*$/ (y, y2, y3...)
+    document.querySelectorAll('[id]').forEach(el=>{
+      const id = el.id || '';
+      if(/^(year|y|y\d*)$/.test(id)) el.textContent = y;
+    });
+
+    // Also set any element with class 'year' or data-year attribute
+    document.querySelectorAll('.year,[data-year]').forEach(el=>{ el.textContent = y; });
+  }catch(_){ /* ignore errors during initial hydration */ }
 })();
 
 // Configuration from environment
@@ -662,6 +668,12 @@ function applyLanguage(lang){
   // Smooth fade when switching (light UX)
   document.body.style.opacity = '0.98';
   setTimeout(()=>{document.body.style.opacity='1'},150);
+
+  // Notify any per-page listeners that the language changed (useful for meta/title updates)
+  try{
+    const evt = new CustomEvent('ta:language-changed', { detail: { lang } });
+    window.dispatchEvent(evt);
+  }catch(e){ /* ignore if CustomEvent not supported */ }
 }
 
 // Persist preference in localStorage

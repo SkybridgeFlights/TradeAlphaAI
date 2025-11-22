@@ -6,8 +6,8 @@
   <title id="pageTitle">أفضل استراتيجية تداول الفوركس — TradeAlpha AI</title>
   <meta name="description" id="pageDesc" content="دليل عملي لواحدة من أفضل استراتيجيات تداول الفوركس مع خطوات تنفيذية وإدارة مخاطرة واضحة لتعزيز استمرارية الربحية." />
   <link rel="canonical" href="https://www.tradealphaai.com/articles/best-forex-strategy.html" />
-  <meta property="og:image" content="/Image/og-image.svg" />
-  <link rel="stylesheet" href="/styles.css">
+  <meta property="og:image" content="../Image/og-image.svg" />
+  <link rel="stylesheet" href="../styles.css">
   <script type="application/ld+json" id="schemaMarkup">
   {
     "@context": "https://schema.org",
@@ -17,14 +17,43 @@
     "url":"https://www.tradealphaai.com/articles/best-forex-strategy.html"
   }
   </script>
+  <script>
+  // Lightweight idempotent local-file fixer: rewrites leading-slash URLs when opened via file://
+  if(!window.__ta_local_fixer_installed){
+    window.__ta_local_fixer_installed = true;
+    (function(){
+      if(window.location.protocol !== 'file:') return;
+      try{
+        // Rewrite attributes that start with '/'
+        document.querySelectorAll('[href^="/"], [src^="/"], [srcset^="/"]').forEach(function(el){
+          ['href','src','srcset'].forEach(function(a){
+            var v = el.getAttribute(a);
+            if(!v) return;
+            if(a === 'srcset'){
+              var parts = v.split(',').map(function(p){ var seg = p.trim().split(' '); var url = seg[0]; if(url.startsWith('/')) url = '.'+url; return url + (seg[1]? ' '+seg[1] : ''); });
+              el.setAttribute('srcset', parts.join(', '));
+            } else {
+              if(v.startsWith('/')) el.setAttribute(a, '.'+v);
+            }
+          });
+        });
+        // Inline style backgrounds like url(/Image/...) -> url(./Image/...)
+        document.querySelectorAll('[style]').forEach(function(el){
+          var s = el.getAttribute('style');
+          if(s && s.indexOf('url(/') !== -1) el.setAttribute('style', s.replace(/url\(\/(.*?)\)/g, 'url(./$1)'));
+        });
+      }catch(e){ console.warn('local fixer failed', e); }
+    })();
+  }
+  </script>
 </head>
 <body>
   <div class="wrap">
     <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <a href="/Index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap;align-self:flex-start" data-i18n="nav.home">Home</a>
+      <a href="index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap;align-self:flex-start" data-i18n="nav.home">Home</a>
       <div style="position:relative;display:inline-block">
-        <button id="langSwitch4" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
-        <div id="langMenu4" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);right:0;min-width:140px">
+        <button id="langSwitch" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
+        <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);right:0;min-width:140px">
           <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
           <button role="menuitem" data-lang="en" class="lang-item">English</button>
           <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
@@ -70,14 +99,15 @@
         </p>
 
         <div style="margin:20px 0">
-          <a href="/Index.html#section-subscribe" class="btn-cta" data-i18n="articles.cta.try">جرّب إشاراتنا — تجربة 7 أيام</a>
+          <a href="Index.html#section-subscribe" class="btn-cta" data-i18n="articles.cta.try">جرّب إشاراتنا — تجربة 7 أيام</a>
         </div>
       </section>
     </article>
   </div>
-  <script src="/script.js" defer></script>
+  <script src="../script.js" defer></script>
   <script>
-    // Page-specific translations for title, description, and schema
+  (function(){
+    // Page-specific metadata translations
     const pageTranslations = {
       ar: {
         title: 'أفضل استراتيجية تداول الفوركس — TradeAlpha AI',
@@ -96,81 +126,23 @@
       }
     };
 
-    // Update page title and metadata when language changes
-    const originalSetLang = window.setLang;
-    window.setLang = function(lang) {
-      originalSetLang(lang);
-      
-      // Update page title
+    function updateMeta(lang){
+      const pageMeta = pageTranslations[lang] || pageTranslations.en;
       const titleEl = document.getElementById('pageTitle');
       const descEl = document.getElementById('pageDesc');
       const schemaEl = document.getElementById('schemaMarkup');
-      
-      const pageMeta = pageTranslations[lang] || pageTranslations.en;
-      
       if(titleEl) titleEl.textContent = pageMeta.title;
       if(descEl) descEl.setAttribute('content', pageMeta.desc);
-      
-      // Update JSON-LD schema
-      if(schemaEl) {
-        const schema = JSON.parse(schemaEl.textContent);
-        schema.headline = pageMeta.headline;
-        schemaEl.textContent = JSON.stringify(schema, null, 2);
-      }
-    };
+      if(schemaEl){ try{ const s = JSON.parse(schemaEl.textContent); s.headline = pageMeta.headline; schemaEl.textContent = JSON.stringify(s, null, 2); }catch(e){} }
+    }
+
+    // Initial populate
+    updateMeta(document.documentElement.lang || 'ar');
+
+    // Respond to centralized language changes
+    window.addEventListener('ta:language-changed', (e)=>{ try{ updateMeta(e.detail.lang); }catch(_){ updateMeta('en'); } });
+  })();
   </script>
-  <script>
-    (function(){
-      const langSwitch = document.getElementById('langSwitch4');
-      const langMenu = document.getElementById('langMenu4');
-      if(!langSwitch || !langMenu) return;
-      
-      const openMenu = ()=>{ 
-        langMenu.setAttribute('aria-hidden','false'); 
-        langMenu.classList.add('open'); 
-        langSwitch.setAttribute('aria-expanded','true');
-        
-        // Position the menu correctly relative to button
-        try {
-          const btnRect = langSwitch.getBoundingClientRect();
-          const menuWidth = langMenu.offsetWidth || 160;
-          const isRTL = document.documentElement.dir === 'rtl';
-          
-          if(isRTL) {
-            langMenu.style.right = '0';
-            langMenu.style.left = 'auto';
-          } else {
-            langMenu.style.right = '0';
-            langMenu.style.left = 'auto';
-          }
-        } catch(e) {}
-      };
-      
-      const closeMenu = ()=>{ 
-        langMenu.setAttribute('aria-hidden','true'); 
-        langMenu.classList.remove('open'); 
-        langSwitch.setAttribute('aria-expanded','false'); 
-      };
-      
-      langSwitch.addEventListener('click', (e)=>{ 
-        e.stopPropagation(); 
-        const hidden = langMenu.getAttribute('aria-hidden') === 'true'; 
-        if(hidden) openMenu(); 
-        else closeMenu(); 
-      });
-      
-      langMenu.querySelectorAll('[data-lang]').forEach(btn=>{ 
-        btn.addEventListener('click', (e)=>{ 
-          const lang = btn.getAttribute('data-lang'); 
-          if(window.setLang) window.setLang(lang); 
-          closeMenu(); 
-        }); 
-      });
-      
-      document.addEventListener('click', (e)=>{ 
-        if(!langMenu.contains(e.target) && e.target !== langSwitch) closeMenu(); 
-      });
-    })();
-  </script>
+  <script>/* per-page menu wiring removed; language menu is handled centrally in script.js */</script>
 </body>
 </html>
