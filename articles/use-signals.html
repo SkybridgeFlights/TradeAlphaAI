@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +40,7 @@
 <body>
   <div class="wrap">
     <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <a href="index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap;align-self:flex-start" data-i18n="nav.home">Home</a>
+      <a href="index.html" id="homeLink" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap;align-self:flex-start" data-i18n="nav.home">الرئيسية</a>
       <div style="position:relative;display:inline-block">
         <button id="langSwitch" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill" id="currentLang">العربية</span></button>
         <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);right:0;min-width:140px">
@@ -79,7 +79,7 @@
           <p class="muted">الإشارات القوية تحتاج لخطة واضحة، إدارة مخاطر فعالة، ومتابعة دقيقة. اجمع هذه العناصر لتصنع استراتيجية رابحة ومستدامة.</p>
         </div>
         <div style="margin:32px 0;text-align:center">
-          <a href="../Index.html#section-subscribe" class="btn-cta">ابدأ تجربتك الآن</a>
+          <a href="../index.html#section-subscribe" class="btn-cta">ابدأ تجربتك الآن</a>
         </div>
       </section>
       <section class="lang-section" id="lang-en" dir="ltr">
@@ -102,7 +102,7 @@
           <p class="muted">Strong signals require a clear plan, effective risk management, and diligent monitoring. Combine these elements to build a winning, sustainable strategy.</p>
         </div>
         <div style="margin:32px 0;text-align:center">
-          <a href="../Index.html#section-subscribe" class="btn-cta">Start Your Trial Now</a>
+          <a href="../index.html#section-subscribe" class="btn-cta">Start Your Trial Now</a>
         </div>
       </section>
       <section class="lang-section" id="lang-de" dir="ltr">
@@ -125,7 +125,7 @@
           <p class="muted">Starke Signale brauchen einen klaren Plan, effektives Risikomanagement und sorgfältiges Monitoring. Kombiniere diese Elemente für eine nachhaltige und erfolgreiche Strategie.</p>
         </div>
         <div style="margin:32px 0;text-align:center">
-          <a href="../Index.html#section-subscribe" class="btn-cta">Starte jetzt deinen Test</a>
+          <a href="../index.html#section-subscribe" class="btn-cta">Starte jetzt deinen Test</a>
         </div>
       </section>
     </article>
@@ -148,15 +148,22 @@
         document.getElementById('header-title-' + l).style.display = (l === lang) ? 'block' : 'none';
         document.getElementById('header-subtitle-' + l).style.display = (l === lang) ? 'block' : 'none';
       });
+      const homeLink = document.getElementById('homeLink');
       if(lang === 'ar') {
         document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.setAttribute('lang', 'ar');
         currentLang.textContent = 'العربية';
+        homeLink.textContent = 'الرئيسية';
       } else if(lang === 'en') {
         document.documentElement.setAttribute('dir', 'ltr');
+        document.documentElement.setAttribute('lang', 'en');
         currentLang.textContent = 'English';
+        homeLink.textContent = 'Home';
       } else if(lang === 'de') {
         document.documentElement.setAttribute('dir', 'ltr');
+        document.documentElement.setAttribute('lang', 'de');
         currentLang.textContent = 'Deutsch';
+        homeLink.textContent = 'Startseite';
       }
     }
 

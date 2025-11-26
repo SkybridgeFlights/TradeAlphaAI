@@ -36,7 +36,7 @@
               });
               document.querySelectorAll('[href^="/"]').forEach(function(el){
                 var h = el.getAttribute('href');
-                if(h === '/') el.setAttribute('href', 'Index.html');
+                if(h === '/') el.setAttribute('href', 'index.html');
                 else if(h) el.setAttribute('href', h.replace(/^\//,''));
               });
             });
@@ -47,6 +47,22 @@
   </script>
   <link rel="preload" href="styles.css" as="style" onload="this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="styles.css"></noscript>
+
+  <style>
+    /* Responsive header: allow wrapping and give nav a sensible gap on small screens */
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    header .header-right{display:flex;align-items:center;gap:12px;order:2}
+    /* Brand appears first; keep inner order reversed so text is left and logo right */
+    .brand{display:flex;align-items:center;gap:12px;flex-direction:row-reverse;order:1}
+    nav{display:flex;gap:12px;align-items:center}
+    nav a{padding:6px 8px;border-radius:8px}
+    @media (max-width:600px){
+      header{align-items:flex-start}
+      header .brand{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+      header .header-right{width:100%;justify-content:space-between}
+      nav{order:2}
+    }
+  </style>
 
   <script type="application/ld+json">
   {
@@ -108,10 +124,10 @@
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:12px">
+      <div class="header-right" style="display:flex;align-items:center;gap:12px">
         <nav aria-label="main navigation">
-          <a href="articles/index.html" style="margin-right:12px" data-i18n="nav.articles">مقالات</a>
-          <a href="tadawul.html" style="margin-right:12px" data-i18n="nav.trading">تداول</a>
+          <a href="articles/index.html" data-i18n="nav.articles">مقالات</a>
+          <a href="tadawul.html" data-i18n="nav.trading">تداول</a>
         </nav>
         <div class="lang-wrap" style="position:relative">
           <button id="langSwitch" class="lang-switch" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false" aria-controls="langMenu"><span class="pill">English</span></button>

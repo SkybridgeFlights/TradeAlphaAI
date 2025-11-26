@@ -17,7 +17,7 @@
             if(l && l.getAttribute('href')) l.setAttribute('href', l.getAttribute('href').replace(/^\//,''));
             document.addEventListener('DOMContentLoaded', function(){
               document.querySelectorAll('[src^="/"]').forEach(function(el){ if(el.getAttribute('src')) el.setAttribute('src', el.getAttribute('src').replace(/^\//,'')); });
-              document.querySelectorAll('[href^="/"]').forEach(function(el){ var h = el.getAttribute('href'); if(h === '/') el.setAttribute('href','Index.html'); else if(h) el.setAttribute('href', h.replace(/^\//,'')); });
+              document.querySelectorAll('[href^="/"]').forEach(function(el){ var h = el.getAttribute('href'); if(h === '/') el.setAttribute('href','index.html'); else if(h) el.setAttribute('href', h.replace(/^\//,'')); });
             });
           }
         }catch(e){}
@@ -35,7 +35,7 @@
         <p class="muted" data-i18n="articles.subtitle">مختار من مقالاتنا المتعمقة لمساعدتك على التداول بذكاء ورفاهية.</p>
       </div>
       <div style="display:flex;gap:10px;position:relative">
-        <a href="../Index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap" data-i18n="nav.home">Home</a>
+        <a href="../index.html" style="font-size:14px;color:#22d3c3;text-decoration:none;border:1px solid rgba(34,211,195,0.3);padding:8px 12px;border-radius:8px;white-space:nowrap" data-i18n="nav.home">Home</a>
         <button id="langSwitch" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
           <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);right:0;min-width:140px">
           <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
