@@ -73,6 +73,61 @@ h3{font-size:clamp(18px, 2.4vw, 24px);line-height:1.18;letter-spacing:-.02em}
 .results-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
 .results-card{padding:18px;border-radius:18px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.025)}
 .result-key{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--landing-faint);font-size:12px;margin-top:10px}
+.real-performance-panel{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at top left, rgba(127,231,255,0.1), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(70,221,208,0.08), transparent 30%),
+    linear-gradient(180deg, rgba(11,27,40,0.94), rgba(8,20,31,0.88));
+}
+.real-performance-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg, rgba(127,231,255,0.04), transparent 18%, transparent 82%, rgba(70,221,208,0.04));
+}
+.real-performance-layout{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+.real-performance-metrics{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:14px;
+}
+.real-performance-card{
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.03);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.real-performance-card .metric-value{
+  font-size:clamp(30px, 5vw, 44px);
+  margin:12px 0 6px;
+}
+.real-performance-note{
+  color:var(--landing-muted);
+  font-size:15px;
+}
+.real-performance-chart{
+  padding:18px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.025);
+}
+.real-performance-chart .chart-placeholder{
+  min-height:300px;
+}
+.real-performance-caption{
+  margin-top:14px;
+  color:var(--landing-muted);
+  font-size:14px;
+}
 .dashboard-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap}
 .dashboard-title{margin-top:12px}
 .status-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(113,240,166,0.08);color:var(--landing-success);font-size:12px;font-weight:800;border:1px solid rgba(113,240,166,0.16)}
@@ -112,4 +167,5 @@ h3{font-size:clamp(18px, 2.4vw, 24px);line-height:1.18;letter-spacing:-.02em}
   .trust-grid,.steps-grid,.resources-grid{grid-template-columns:repeat(3, minmax(0,1fr))}
   .plans-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
   .results-shell{grid-template-columns:minmax(0, 1.05fr) minmax(360px, .95fr)}
+  .real-performance-layout{grid-template-columns:minmax(0, 1fr) minmax(360px, .95fr)}
 }
