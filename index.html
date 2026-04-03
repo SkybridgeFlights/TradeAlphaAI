@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TradeAlpha AI | إشارات تداول مبنية على أداء فعلي</title>
+  <meta name="description" content="تابع الأداء المباشر، افهم كيف يعمل النظام، واختر الخطة الأنسب لك مع TradeAlpha AI عبر تجربة عربية واضحة ومقنعة." />
+  <link rel="canonical" href="https://www.tradealphaai.com/" />
+  <meta property="og:image" content="../Image/og-image.svg" />
+  <style>
+    :root {
+      --ta-accent: #22d3c3;
+      --ta-accent-soft: rgba(34, 211, 195, 0.12);
+      --ta-bg: rgba(11, 23, 34, 0.72);
+      --ta-bg-strong: rgba(8, 18, 28, 0.82);
+      --ta-border: rgba(34, 211, 195, 0.16);
+      --ta-border-strong: rgba(34, 211, 195, 0.32);
+      --ta-text: rgba(255, 255, 255, 0.96);
+      --ta-text-soft: rgba(255, 255, 255, 0.76);
+      --ta-text-faint: rgba(255, 255, 255, 0.62);
+      --ta-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+      --ta-radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ta-text);
+      background: radial-gradient(circle at top, rgba(34, 211, 195, 0.08), transparent 32%);
+      line-height: 1.75;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .muted {
+      color: var(--ta-text-soft);
+    }
+
+    .hero-panel,
+    .section-panel,
+    .trust-card,
+    .metric-card,
+    .step-card,
+    .pricing-card,
+    .article-card {
+      background: linear-gradient(180deg, rgba(11, 23, 34, 0.8), rgba(11, 23, 34, 0.7));
+      border: 1px solid var(--ta-border);
+      border-radius: var(--ta-radius);
+      box-shadow: var(--ta-shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-panel,
+    .section-panel {
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      margin-bottom: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--ta-accent-soft);
+      color: var(--ta-accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+    }
+
+    .section-heading {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 4.6vw, 38px);
+      font-weight: 800;
+      max-width: 13ch;
+    }
+
+    .hero-copy .section-heading {
+      max-width: 14ch;
+    }
+
+    .section-subtitle,
+    .hero-lead {
+      margin: 0;
+      font-size: 15px;
+      color: var(--ta-text-soft);
+    }
+
+    .section-subtitle {
+      max-width: 68ch;
+    }
+
+    .stack-12 > * + * {
+      margin-top: 12px;
+    }
+
+    .stack-16 > * + * {
+      margin-top: 16px;
+    }
+
+    .stack-20 > * + * {
+      margin-top: 20px;
+    }
+
+    .hero-grid,
+    .results-grid,
+    .results-meta,
+    .stats-grid,
+    .trust-grid,
+    .steps-grid,
+    .pricing-grid,
+    .articles-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-grid,
+    .results-grid,
+    .results-meta,
+    .stats-grid,
+    .trust-grid,
+    .steps-grid,
+    .pricing-grid,
+    .articles-list {
+      grid-template-columns: 1fr;
+    }
+
+    .metric-card,
+    .results-card,
+    .results-placeholder,
+    .trust-card,
+    .step-card,
+    .pricing-card,
+    .article-card {
+      padding: 18px;
+    }
+
+    .metric-card strong,
+    .results-value,
+    .pricing-price {
+      display: block;
+      margin-top: 10px;
+      color: #fff;
+      font-size: clamp(26px, 5vw, 34px);
+      line-height: 1.1;
+      font-weight: 800;
+    }
+
+    .metric-label,
+    .results-label,
+    .plan-kicker,
+    .micro-label {
+      color: var(--ta-accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .metric-card p,
+    .results-card p,
+    .trust-card p,
+    .step-card p,
+    .article-card p {
+      margin: 10px 0 0;
+      color: var(--ta-text-soft);
+      font-size: 14px;
+    }
+
+    .hero-actions,
+    .plan-actions,
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cta-btn,
+    .plan-btn,
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .cta-btn:hover,
+    .plan-btn:hover,
+    .nav-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .cta-btn.primary,
+    .plan-btn.primary {
+      background: var(--ta-accent);
+      color: #05232a;
+      box-shadow: 0 14px 28px rgba(34, 211, 195, 0.22);
+    }
+
+    .cta-btn.secondary,
+    .plan-btn.secondary,
+    .nav-link {
+      border: 1px solid rgba(34, 211, 195, 0.35);
+      color: var(--ta-accent);
+      background: transparent;
+    }
+
+    .support-note {
+      margin: 8px 0 0;
+      font-size: 13px;
+      color: var(--ta-text-faint);
+    }
+
+    .hero-panel .support-note {
+      max-width: 54ch;
+    }
+
+    .hero-highlights {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .results-shell {
+      display: grid;
+      gap: 14px;
+    }
+
+    .results-grid,
+    .results-meta {
+      grid-template-columns: 1fr;
+    }
+
+    .results-card,
+    .results-placeholder {
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(11, 23, 34, 0.78), rgba(11, 23, 34, 0.68));
+      border: 1px solid rgba(34, 211, 195, 0.16);
+      border-radius: 16px;
+    }
+
+    .results-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .results-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(34, 211, 195, 0.8), transparent);
+      opacity: 0.7;
+    }
+
+    .results-label {
+      display: block;
+    }
+
+    .results-value {
+      font-size: clamp(24px, 4.5vw, 32px);
+      font-weight: 800;
+    }
+
+    .results-key {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--ta-text-faint);
+      font-size: 12px;
+    }
+
+    .results-placeholder {
+      min-height: 100%;
+    }
+
+    .results-placeholder .chart-placeholder {
+      min-height: 250px;
+      margin-top: 14px;
+    }
+
+    .results-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(34, 211, 195, 0.1);
+      color: var(--ta-accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hero-highlight {
+      padding: 14px 16px;
+      border: 1px solid rgba(34, 211, 195, 0.14);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .hero-highlight strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .hero-highlight span {
+      color: var(--ta-text-soft);
+      font-size: 13px;
+    }
+
+    .chart-placeholder {
+      position: relative;
+      overflow: hidden;
+      margin-top: 16px;
+      min-height: 220px;
+      padding: 18px;
+      border: 1px dashed rgba(34, 211, 195, 0.3);
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(34, 211, 195, 0.06), rgba(34, 211, 195, 0.01)),
+        repeating-linear-gradient(to right, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 56px),
+        repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 44px);
+    }
+
+    .chart-placeholder::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(34, 211, 195, 0.04), transparent);
+      pointer-events: none;
+    }
+
+    .chart-placeholder::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, #22d3c3 8%, #9af4ea 48%, #22d3c3 100%);
+      border-radius: 999px;
+      transform: skewY(-8deg) translateY(-72px);
+      box-shadow: 0 0 20px rgba(34, 211, 195, 0.35);
+    }
+
+    .chart-placeholder span {
+      position: absolute;
+      left: 18px;
+      bottom: 12px;
+      font-size: 12px;
+      color: var(--ta-text-faint);
+    }
+
+    .pricing-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--ta-border-strong);
+      background: linear-gradient(180deg, rgba(12, 28, 38, 0.88), rgba(11, 23, 34, 0.78));
+    }
+
+    .pricing-badge {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(34, 211, 195, 0.16);
+      color: var(--ta-accent);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .plan-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .plan-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .plan-term {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--ta-text-faint);
+    }
+
+    .plan-summary {
+      margin: 0;
+      font-size: 14px;
+      color: var(--ta-text-soft);
+    }
+
+    .plan-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .plan-list li {
+      position: relative;
+      padding-right: 18px;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 14px;
+    }
+
+    .plan-list li::before {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 11px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ta-accent);
+      box-shadow: 0 0 0 4px rgba(34, 211, 195, 0.12);
+    }
+
+    .plan-footnote {
+      margin-top: auto;
+      padding-top: 4px;
+      font-size: 13px;
+      color: var(--ta-text-faint);
+    }
+
+    .article-card a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .article-card h2 {
+      font-size: 22px;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .header-copy p {
+      margin: 8px 0 0;
+      max-width: 62ch;
+      font-size: 15px;
+    }
+
+    .section-intro {
+      margin-bottom: 18px;
+    }
+
+    .pricing-intro {
+      max-width: 62ch;
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--ta-text-faint);
+      font-size: 13px;
+    }
+
+    @media (min-width: 700px) {
+      .wrap {
+        padding: 22px;
+      }
+
+      .hero-grid {
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.85fr);
+        align-items: center;
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stats-grid,
+      .results-meta,
+      .trust-grid,
+      .steps-grid,
+      .pricing-grid,
+      .articles-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-highlights {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 980px) {
+      .wrap {
+        padding: 26px;
+      }
+
+      header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .hero-panel,
+      .section-panel {
+        padding: 28px;
+        margin-bottom: 22px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .results-shell {
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+        align-items: stretch;
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .trust-grid,
+      .steps-grid,
+      .pricing-grid,
+      .articles-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+  </style>
+  <script>
+    if(!window.__ta_local_fixer_installed){
+      window.__ta_local_fixer_installed = true;
+      (function(){
+        try{
+          if(location.protocol === 'file:'){
+            var l = document.querySelector('link[rel="stylesheet"][href^="/"]');
+            if(l && l.getAttribute('href')) l.setAttribute('href', l.getAttribute('href').replace(/^\//,''));
+            document.addEventListener('DOMContentLoaded', function(){
+              document.querySelectorAll('[src^="/"]').forEach(function(el){ if(el.getAttribute('src')) el.setAttribute('src', el.getAttribute('src').replace(/^\//,'')); });
+              document.querySelectorAll('[href^="/"]').forEach(function(el){ var h = el.getAttribute('href'); if(h === '/') el.setAttribute('href','index.html'); else if(h) el.setAttribute('href', h.replace(/^\//,'')); });
+            });
+          }
+        }catch(e){}
+      })();
+    }
+  </script>
+  <link rel="stylesheet" href="../styles.css">
+  <script>document.documentElement.lang='ar';</script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="header-copy">
+        <h1>TradeAlpha AI</h1>
+        <p class="muted">إشارات تداول مبنية على أداء فعلي، مع عرض واضح للنتائج وثقة أكبر قبل الاشتراك.</p>
+      </div>
+      <div class="nav-actions" style="position:relative">
+        <a href="#results" class="nav-link">النتائج</a>
+        <a href="#pricing" class="nav-link">الأسعار</a>
+        <a href="#live-performance" class="nav-link">الأداء المباشر</a>
+        <button id="langSwitch" class="lang-switch" style="margin:0" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false"><span class="pill">English</span></button>
+        <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true" style="position:absolute;top:calc(100% + 8px);left:0;min-width:140px">
+          <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
+          <button role="menuitem" data-lang="en" class="lang-item">English</button>
+          <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-panel">
+        <div class="hero-grid">
+          <div class="hero-copy stack-20">
+            <div class="stack-12">
+              <span class="eyebrow">نتائج قابلة للقياس</span>
+              <h2 class="section-heading">اتخذ قرار الاشتراك على أساس أداء واضح لا على وعود عامة</h2>
+              <p class="hero-lead">TradeAlpha AI يمنحك إشارات تداول مدعومة بمتابعة مستمرة ونتائج معروضة بوضوح، حتى ترى الصورة قبل أن تبدأ.</p>
+            </div>
+
+            <div class="hero-actions">
+              <a href="#pricing" class="cta-btn primary">ابدأ بالخطة الأنسب لك</a>
+              <a href="#live-performance" class="cta-btn secondary">راجع الأداء المباشر أولاً</a>
+            </div>
+
+            <p class="support-note">شفافية في الأرقام، شرح مبسط، وخطط واضحة تساعدك على اتخاذ القرار بثقة أعلى.</p>
+
+            <div class="hero-highlights">
+              <div class="hero-highlight">
+                <strong>أرقام واضحة قبل الاشتراك</strong>
+                <span>اطلع على مؤشرات الأداء الأساسية قبل اختيار الخطة.</span>
+              </div>
+              <div class="hero-highlight">
+                <strong>رسالة تسويقية أكثر إقناعاً</strong>
+                <span>التركيز الآن على القيمة الفعلية لا على الشكل فقط.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="trust-card stack-16">
+            <div class="stack-12">
+              <span class="micro-label">لماذا يختارنا المتداولون؟</span>
+              <h3>ثقة تُبنى على الشفافية والمتابعة</h3>
+              <p class="muted">بدلاً من الاكتفاء برسالة عامة، أصبح العرض يبرز ما يبحث عنه المشترك الجاد: نتائج مفهومة، متابعة مستمرة، وتسعير واضح.</p>
+            </div>
+
+            <div class="stats-grid">
+              <div class="metric-card">
+                <div class="metric-label">شفافية النتائج</div>
+                <strong>100%</strong>
+                <p>مؤشرات رئيسية معروضة بوضوح للمراجعة السريعة.</p>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">متابعة الأداء</div>
+                <strong>24/7</strong>
+                <p>مراقبة مستمرة لضمان وضوح الصورة بمرور الوقت.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="section-panel">
+        <div class="section-intro stack-12">
+          <span class="eyebrow">Results</span>
+          <h2 class="section-heading">النتائج</h2>
+          <p class="section-subtitle">هذا القسم مهيأ ليتم ربطه لاحقاً بلوحة بيانات مباشرة. حالياً يعرض بنية ثابتة وواضحة يمكن استبدالها بسهولة ببيانات حية دون تغيير التصميم.</p>
+        </div>
+
+        <div class="results-shell">
+          <div class="results-grid">
+            <div class="results-card stack-12" data-metric-key="net_profit">
+              <span class="results-label">صافي الربح</span>
+              <strong class="results-value">$12,480</strong>
+              <span class="results-key">Metric Key: net_profit</span>
+              <p>مخصص لعرض إجمالي الربح الصافي من لوحة النتائج المباشرة لاحقاً.</p>
+            </div>
+
+            <div class="results-card stack-12" data-metric-key="roi">
+              <span class="results-label">العائد على رأس المال</span>
+              <strong class="results-value">+24.6%</strong>
+              <span class="results-key">Metric Key: roi</span>
+              <p>يمكن استبداله مباشرة بنسبة العائد الفعلية عند ربط المصدر الحي.</p>
+            </div>
+
+            <div class="results-card stack-12" data-metric-key="best_month">
+              <span class="results-label">أفضل شهر</span>
+              <strong class="results-value">+8.2%</strong>
+              <span class="results-key">Metric Key: best_month</span>
+              <p>يوضح أفضل فترة أداء ويُستخدم لاحقاً للمقارنة بين الأشهر.</p>
+            </div>
+
+            <div class="results-card stack-12" data-metric-key="last_update">
+              <span class="results-label">آخر تحديث</span>
+              <strong class="results-value">03 Apr 2026</strong>
+              <span class="results-key">Metric Key: last_update</span>
+              <p>حقل زمني جاهز ليعرض وقت آخر مزامنة من الداشبورد المباشر.</p>
+            </div>
+          </div>
+
+          <div class="results-meta">
+            <div class="results-placeholder stack-16">
+              <div class="stack-12">
+                <span class="results-status">Ready for Live Dashboard</span>
+                <h3>منطقة جاهزة للتغذية الحية</h3>
+                <p class="muted">يمكن لاحقاً ربط هذا الجزء بواجهة API أو لوحة تحكم لعرض منحنى الأداء، تحديثات آخر المزامنة، وأي مؤشرات إضافية بدون تعديل البنية الأساسية للصفحة.</p>
+              </div>
+
+              <div class="chart-placeholder" aria-label="Results dashboard placeholder">
+                <span>مساحة مخصصة لمخطط النتائج أو لقطة من الداشبورد لاحقاً</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="live-performance" class="section-panel">
+        <div class="section-intro stack-12">
+          <span class="eyebrow">Live Performance</span>
+          <h2 class="section-heading">الأداء المباشر</h2>
+          <p class="section-subtitle">هذا القسم يقدّم الأرقام التي تهم المتداول قبل الاشتراك، في عرض سريع وواضح يختصر وقت التقييم ويزيد الثقة.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="metric-card">
+            <div class="metric-label">Profit Factor</div>
+            <strong>1.84</strong>
+            <p>يعكس جودة التوازن بين الأرباح والخسائر.</p>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Win Rate</div>
+            <strong>68%</strong>
+            <p>نسبة نجاح واضحة تعطي انطباعاً سريعاً عن الكفاءة.</p>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Drawdown</div>
+            <strong>9.7%</strong>
+            <p>مؤشر مهم لفهم مستوى التراجع وإدارة المخاطر.</p>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Trades</div>
+            <strong>326</strong>
+            <p>حجم تداول كافٍ لإعطاء صورة أكثر واقعية عن الأداء.</p>
+          </div>
+        </div>
+
+        <div class="chart-placeholder" aria-label="Equity curve placeholder">
+          <span>مكان مخصص لمنحنى رأس المال - واجهة فقط حالياً</span>
+        </div>
+      </section>
+
+      <section class="section-panel">
+        <div class="section-intro stack-12">
+          <span class="eyebrow">Trust</span>
+          <h2 class="section-heading">الثقة والشفافية</h2>
+          <p class="section-subtitle">النتائج المعروضة هنا مبنية على بيانات تداول حقيقية، مع متابعة مستمرة للأداء وحرص واضح على تقديم صورة قابلة للفهم والتقييم.</p>
+        </div>
+
+        <div class="trust-grid">
+          <div class="trust-card stack-12">
+            <h3>نتائج تستند إلى بيانات فعلية</h3>
+            <p>الأرقام المعروضة ليست وعوداً تسويقية، بل مؤشرات ناتجة عن تداول فعلي تساعد الزائر على تقييم الخدمة بواقعية أكبر.</p>
+          </div>
+          <div class="trust-card stack-12">
+            <h3>شفافية تدعم قرار الاشتراك</h3>
+            <p>عندما تكون مؤشرات مثل نسبة النجاح والتراجع وعدد الصفقات واضحة، يصبح اتخاذ القرار أسرع وأكثر اطمئناناً.</p>
+          </div>
+          <div class="trust-card stack-12">
+            <h3>مراقبة مستمرة للأداء</h3>
+            <p>تتم متابعة النتائج بشكل دائم للحفاظ على وضوح الصورة وتحسين جودة العرض للمشترك الحالي والمحتمل.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-panel">
+        <div class="section-intro stack-12">
+          <span class="eyebrow">How It Works</span>
+          <h2 class="section-heading">كيف يعمل النظام؟</h2>
+          <p class="section-subtitle">الفكرة بسيطة: النظام يراقب السوق، يلتقط الفرص المناسبة، ثم يرسل لك إشارة واضحة يسهل التعامل معها دون تعقيد تقني.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card stack-12">
+            <h3>1. يراقب السوق باستمرار</h3>
+            <p>يتابع النظام حركة السوق بشكل متواصل بحثاً عن فرص تستحق الانتباه.</p>
+          </div>
+          <div class="step-card stack-12">
+            <h3>2. يختار الفرص المناسبة</h3>
+            <p>عند ظهور فرصة قوية، يتم تحويلها إلى إشارة واضحة وسهلة القراءة.</p>
+          </div>
+          <div class="step-card stack-12">
+            <h3>3. يرسل لك الإشارة بسرعة</h3>
+            <p>تصلك الإشارة بصياغة مباشرة تساعدك على التحرك بثقة وفي الوقت المناسب.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" class="section-panel">
+        <div class="section-intro stack-12 pricing-intro">
+          <span class="eyebrow">Pricing</span>
+          <h2 class="section-heading">خطط الاشتراك</h2>
+          <p class="section-subtitle">تم ترتيب الخطط لتكون أكثر وضوحاً من حيث المدة والقيمة والفائدة، مع إبراز الخيار الأنسب لمعظم المشتركين.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="plan-header">
+              <div>
+                <div class="plan-kicker">Weekly</div>
+                <h3 class="plan-name">الخطة الأسبوعية</h3>
+                <span class="plan-term">للتجربة السريعة واختبار الأسلوب</span>
+              </div>
+            </div>
+            <span class="pricing-price">$29</span>
+            <p class="plan-summary">مناسبة لمن يريد تجربة الخدمة لفترة قصيرة والتأكد من ملاءمتها قبل الالتزام لفترة أطول.</p>
+            <ul class="plan-list">
+              <li>دخول سريع إلى الإشارات المباشرة</li>
+              <li>مرونة كاملة بدون التزام طويل</li>
+              <li>أفضل خيار لاختبار التجربة عملياً</li>
+            </ul>
+            <div class="plan-actions">
+              <a href="#final-cta" class="plan-btn secondary">جرّب أسبوعاً وقيّم الأداء</a>
+            </div>
+            <p class="plan-footnote">إذا كنت تريد أن ترى الخدمة بنفسك أولاً، فهذه هي نقطة البداية المناسبة.</p>
+          </div>
+
+          <div class="pricing-card featured">
+            <span class="pricing-badge">الأكثر اختياراً</span>
+            <div class="plan-header">
+              <div>
+                <div class="plan-kicker">Monthly</div>
+                <h3 class="plan-name">الخطة الشهرية</h3>
+                <span class="plan-term">أفضل توازن بين السعر والنتيجة</span>
+              </div>
+            </div>
+            <span class="pricing-price">$79</span>
+            <p class="plan-summary">الخيار الأنسب لمعظم المشتركين لأنه يمنح وقتاً كافياً لمتابعة الأداء الحقيقي مقابل قيمة أفضل من الاشتراك القصير.</p>
+            <ul class="plan-list">
+              <li>قيمة أعلى من الاشتراك الأسبوعي</li>
+              <li>وقت كافٍ لقياس الاستمرارية بوضوح</li>
+              <li>الأنسب لمن يريد قراراً مبنياً على تجربة فعلية</li>
+            </ul>
+            <div class="plan-actions">
+              <a href="#final-cta" class="plan-btn primary">ابدأ شهراً كاملاً بثقة</a>
+            </div>
+            <p class="plan-footnote">الخيار الموصى به لمن يبحث عن أفضل مزيج بين الوضوح، القيمة، والمرونة.</p>
+          </div>
+
+          <div class="pricing-card">
+            <div class="plan-header">
+              <div>
+                <div class="plan-kicker">Yearly</div>
+                <h3 class="plan-name">الخطة السنوية</h3>
+                <span class="plan-term">أعلى قيمة للمشترك طويل المدى</span>
+              </div>
+            </div>
+            <span class="pricing-price">$699</span>
+            <p class="plan-summary">مناسبة للمشترك الجاد الذي يريد أقل تكلفة على المدى الطويل والاستفادة الكاملة من المتابعة والتحسين المستمر.</p>
+            <ul class="plan-list">
+              <li>أفضل توفير على مدار العام</li>
+              <li>استفادة كاملة من المتابعة المستمرة</li>
+              <li>مثالية لمن يركز على الاستمرارية والثبات</li>
+            </ul>
+            <div class="plan-actions">
+              <a href="#final-cta" class="plan-btn secondary">وفّر أكثر مع الخطة السنوية</a>
+            </div>
+            <p class="plan-footnote">إذا كان هدفك بناء التزام طويل المدى بتكلفة أقل، فهذه الخطة هي الأكثر جدوى.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="final-cta" class="section-panel">
+        <div class="section-intro stack-12">
+          <span class="eyebrow">Next Step</span>
+          <h2 class="section-heading">جاهز للبدء بإشارات تعتمد على نتائج حقيقية؟</h2>
+          <p class="section-subtitle">اختر الخطة التي تناسبك، راجع الأداء المباشر، ثم ابدأ بثقة أكبر عبر تجربة أوضح وأكثر إقناعاً.</p>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#pricing" class="cta-btn primary">اختر خطتك وابدأ الآن</a>
+          <a href="#live-performance" class="cta-btn secondary">راجع الأداء قبل الاشتراك</a>
+        </div>
+
+        <p class="support-note">أرقام واضحة، تسعير مفهوم، ورسالة مباشرة تقرّب الزائر من اتخاذ القرار.</p>
+      </section>
+
+      <section class="articles-list">
+        <article class="article-card stack-12">
+          <h2><a href="best-forex-strategy.html">أفضل استراتيجية تداول الفوركس: دليل عملي</a></h2>
+          <p>دليل عملي لتطبيق استراتيجية أقوى مع فهم أوضح لإدارة المخاطر والانضباط في التنفيذ.</p>
+        </article>
+
+        <article class="article-card stack-12">
+          <h2><a href="capital-management.html">إدارة رأس المال: أساس النجاح في التداول</a></h2>
+          <p>تعلّم كيف تحمي رأس المال وتبني استمرارية في الأداء بدلاً من الاعتماد على القرارات العشوائية.</p>
+        </article>
+
+        <article class="article-card stack-12">
+          <h2><a href="use-signals.html">كيفية استخدام إشارات TradeAlpha AI بفعالية</a></h2>
+          <p>إرشادات واضحة تساعدك على تحويل الإشارات إلى قرارات أفضل داخل حسابك.</p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="y3"></span> TradeAlpha AI</p>
+    </footer>
+  </div>
+  <script src="../script.js" defer></script>
+  <script>/* year hydration removed (handled centrally) */</script>
+</body>
+</html>
