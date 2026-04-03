@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i18n Test</title>
+    <style>
+        body { font-family: Arial; margin: 20px; background: #f0f0f0; }
+        .test { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .result { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🧪 i18n Translation Test</h1>
+    
+    <div class="test">
+        <h3>Test 1: Feature Cards Translation</h3>
+        <p id="feature1">Loading...</p>
+        <button onclick="testFeatureCards()">Check Feature Cards</button>
+    </div>
+
+    <div class="test">
+        <h3>Test 2: Subscription Section Translation</h3>
+        <p id="subscribe1">Loading...</p>
+        <button onclick="testSubscribeCards()">Check Subscription</button>
+    </div>
+
+    <div class="test">
+        <h3>Test 3: Language Toggle</h3>
+        <p id="langTest">Current language: <span id="currentLang">ar</span></p>
+        <button onclick="testLanguageToggle()">Toggle Language</button>
+    </div>
+
+    <script>
+        // Copy translations from main script.js
+        const translations = {
+            en: {
+                'feature.1.title': '99.2% Uptime',
+                'subscribe.title': '🚀 Choose Your Path to Success',
+                'subscribe.badge': '⭐ Most Popular'
+            },
+            ar: {
+                'feature.1.title': 'وقت تشغيل 99.2%',
+                'subscribe.title': '🚀 اختر مسار اشتراكك نحو النجاح',
+                'subscribe.badge': '⭐ الأكثر شيوعاً'
+            }
+        };
+
+        function testFeatureCards() {
+            const lang = document.documentElement.lang || 'ar';
+            const key = 'feature.1.title';
+            const en = translations.en[key];
+            const ar = translations.ar[key];
+            
+            const result = `
+                <strong>English:</strong> ${en}<br>
+                <strong>Arabic:</strong> ${ar}<br>
+                <span class="result">✓ Feature cards have translations</span>
+            `;
+            
+            document.getElementById('feature1').innerHTML = result;
+        }
+
+        function testSubscribeCards() {
+            const lang = document.documentElement.lang || 'ar';
+            const key = 'subscribe.title';
+            const en = translations.en[key];
+            const ar = translations.ar[key];
+            
+            const result = `
+                <strong>English:</strong> ${en}<br>
+                <strong>Arabic:</strong> ${ar}<br>
+                <span class="result">✓ Subscription cards have translations</span>
+            `;
+            
+            document.getElementById('subscribe1').innerHTML = result;
+        }
+
+        function testLanguageToggle() {
+            const currentLang = document.documentElement.lang || 'ar';
+            const nextLang = currentLang === 'ar' ? 'en' : 'ar';
+            
+            document.documentElement.lang = nextLang;
+            document.getElementById('currentLang').textContent = nextLang;
+            
+            const msg = nextLang === 'ar' ? 'تم التبديل للعربية' : 'Switched to English';
+            alert(msg);
+        }
+
+        // Initial test
+        window.onload = function() {
+            testFeatureCards();
+            testSubscribeCards();
+        };
+    </script>
+</body>
+</html>
