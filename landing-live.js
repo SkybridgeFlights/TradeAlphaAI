@@ -1,7 +1,20 @@
 (function () {
   const SOURCE = "https://api.tradealphaai.com/api/performance";
-  const LIVE_STATE = "Live tracking";
-  const LIVE_METRIC = "Live on Myfxbook";
+  const liveCopy = {
+    ar: {
+      metric: "مباشر على Myfxbook",
+      updated: "تتبع مباشر"
+    },
+    en: {
+      metric: "Live on Myfxbook",
+      updated: "Live tracking"
+    },
+    de: {
+      metric: "Live auf Myfxbook",
+      updated: "Live-Tracking"
+    }
+  };
+  let lastPayload = null;
 
   function byId(id) {
     return document.getElementById(id);
@@ -23,10 +36,16 @@
     return Number.isFinite(num) ? num : null;
   }
 
+  function currentLiveCopy() {
+    const lang = document.documentElement.lang === "ar" ? "ar" : document.documentElement.lang === "de" ? "de" : "en";
+    return liveCopy[lang] || liveCopy.en;
+  }
+
   function formatMetric(value, options) {
+    const labels = currentLiveCopy();
     const num = normalizeNumber(value);
     if (num === null || num === 0) {
-      return LIVE_METRIC;
+      return labels.metric;
     }
 
     if (options && options.percent) {
@@ -38,21 +57,24 @@
   }
 
   function formatUpdated(value) {
+    const labels = currentLiveCopy();
     if (!value || value === "0") {
-      return LIVE_STATE;
+      return labels.updated;
     }
 
     return String(value);
   }
 
   function applyLiveState() {
-    setText("perf-gain", LIVE_METRIC);
-    setText("perf-drawdown", LIVE_METRIC);
-    setText("perf-trades", LIVE_METRIC);
-    setText("perf-updated", LIVE_STATE);
+    const labels = currentLiveCopy();
+    setText("perf-gain", labels.metric);
+    setText("perf-drawdown", labels.metric);
+    setText("perf-trades", labels.metric);
+    setText("perf-updated", labels.updated);
   }
 
   function renderPerformance(data) {
+    lastPayload = data || {};
     const gain = data && data.gain;
     const drawdown = data && data.drawdown;
     const trades = data && data.trades;
@@ -87,6 +109,7 @@
       const data = await response.json();
       renderPerformance(data || {});
     } catch (error) {
+      lastPayload = null;
       applyLiveState();
     }
   }
@@ -94,5 +117,23 @@
   document.addEventListener("DOMContentLoaded", function () {
     applyLiveState();
     loadPerformance();
+  });
+
+  window.addEventListener("storage", function (event) {
+    if (event.key === "ta_lang") {
+      if (lastPayload) {
+        renderPerformance(lastPayload);
+      } else {
+        applyLiveState();
+      }
+    }
+  });
+
+  window.addEventListener("ta:languagechange", function () {
+    if (lastPayload) {
+      renderPerformance(lastPayload);
+    } else {
+      applyLiveState();
+    }
   });
 })();
