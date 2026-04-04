@@ -1,7 +1,7 @@
 (function(){
   const SALES = {
     email: 'TradeAlphaai6@gmail.com',
-    telegram: 'TradeAlphaAI',
+    telegram: 'TradeAlphaSupport_bot',
     whatsappNumber: ''
   };
 
@@ -25,24 +25,13 @@
     return messages[lang] ? lang : 'en';
   }
 
-  function buildWhatsAppLink(text){
-    const encoded = encodeURIComponent(text);
-    if(SALES.whatsappNumber){
-      return 'https://wa.me/' + SALES.whatsappNumber + '?text=' + encoded;
-    }
-    return 'https://wa.me/?text=' + encoded;
-  }
-
-  function buildPlanLink(plan){
-    const lang = getLang();
-    const messageMap = messages[lang] || messages.en;
-    return buildWhatsAppLink(messageMap[plan] || messageMap.monthly);
+  function buildPlanLink(){
+    return 'https://t.me/TradeAlphaSupport_bot';
   }
 
   function applyPlanLinks(){
     document.querySelectorAll('.manual-plan-link').forEach(function(link){
-      const plan = link.getAttribute('data-plan') || 'monthly';
-      link.setAttribute('href', buildPlanLink(plan));
+      link.setAttribute('href', buildPlanLink());
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer');
     });
