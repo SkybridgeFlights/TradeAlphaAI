@@ -475,6 +475,15 @@ html[dir="rtl"] .footer-modern .footer-inner{justify-content:flex-end}
 /* small footer */
 footer{max-width:var(--max-width);margin:36px auto 80px;padding:0 20px;color:var(--muted);font-size:13px}
 
+/* Landing-page stability overrides */
+body{overflow-x:hidden}
+.wrap{width:100%;max-width:var(--max-width);margin-inline:auto}
+.cta-banner{left:auto;right:auto;inset-inline:0}
+.lang-menu{left:auto;right:auto;inset-inline-start:0;max-width:min(320px, calc(100% - 12px))}
+html[dir="rtl"] .lang-menu{left:auto;right:auto;inset-inline-end:0}
+html[dir="rtl"] nav a,
+html[dir="rtl"] nav{margin-left:0;margin-right:0}
+
 /* micro interactions */
 .lang-switch{transition:transform .25s ease, background .25s ease}
 .lang-switch:active{transform:scale(.98)}

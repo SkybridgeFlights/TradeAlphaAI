@@ -26,6 +26,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -37,6 +38,7 @@ body {
   font-family: "Inter", "Space Grotesk", "Cairo", "IBM Plex Sans Arabic", "Segoe UI", sans-serif;
   line-height: 1.6;
   letter-spacing: -0.01em;
+  overflow-x: hidden;
 }
 
 h1,
@@ -64,6 +66,12 @@ h3,
 
 a {
   color: inherit;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max-width, 1200px);
+  margin-inline: auto;
 }
 
 .site-shell {
@@ -1335,5 +1343,92 @@ h3 {
 
   .about-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* RTL and overflow stability */
+.topbar .wrap,
+.site-shell .wrap {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.topbar-inner,
+.top-actions,
+.nav-group,
+.hero-panel,
+.hero-grid,
+.hero-copy,
+.system-status-panel,
+.proof-layout,
+.performance-summary-card,
+.footer-panel {
+  min-width: 0;
+}
+
+.topbar-inner,
+.hero-panel,
+.hero-grid,
+.proof-layout,
+.footer-panel {
+  width: 100%;
+}
+
+.topbar .nav-link {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.lang-menu {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  max-width: calc(100% - 12px);
+}
+
+html[dir="rtl"] .topbar .brand {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .topbar .topbar-inner,
+html[dir="rtl"] .topbar .top-actions,
+html[dir="rtl"] .topbar .nav-group,
+html[dir="rtl"] .topbar .nav-link {
+  margin: 0;
+}
+
+html[dir="rtl"] .topbar .lang-menu {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
+@media (max-width: 699px) {
+  .topbar-inner {
+    justify-content: center;
+  }
+
+  .top-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-group {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .top-controls {
+    margin-inline: auto;
+  }
+
+  .hero-panel,
+  .section-panel,
+  .perf-panel {
+    overflow: hidden;
   }
 }
