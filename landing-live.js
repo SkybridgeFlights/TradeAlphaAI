@@ -1,5 +1,5 @@
 (function () {
-  const SOURCE = "runtime/performance.json";
+  const SOURCE = "https://api.tradealphaai.com/api/performance";
   const LIVE_STATE = "Live tracking";
   const LIVE_METRIC = "Live on Myfxbook";
 
