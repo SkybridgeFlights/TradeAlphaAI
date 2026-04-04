@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="landing.css" />
 </head>
@@ -27,7 +27,7 @@
 
       <div class="top-actions">
         <a href="#results" class="nav-link" data-copy="nav.results">النتائج</a>
-        <a href="#performance" class="nav-link" data-copy="nav.performance">الأداء</a>
+        <a href="#performance-anchor" class="nav-link" data-copy="nav.performance">الأداء</a>
         <a href="#pricing" class="nav-link" data-copy="nav.pricing">الأسعار</a>
         <button id="langSwitch" class="lang-switch" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false">
           <span class="pill">العربية</span>
@@ -47,89 +47,110 @@
         <div class="hero-panel">
           <div class="hero-grid">
             <div class="hero-copy">
-              <span class="eyebrow" data-copy="hero.eyebrow">Performance-Led AI Trading</span>
-              <h1 data-copy="hero.title">واجهة بيع احترافية لمنتج تداول ذكي تبدو موثوقة من أول نظرة</h1>
-              <p class="hero-lead" data-copy="hero.lead">TradeAlpha AI يجمع بين عرض نتائج واضح، تجربة استخدام عالية المستوى، ورسالة تسويقية مقنعة تساعد المتداول الجاد على اتخاذ القرار بسرعة وثقة.</p>
+              <div class="live-ticker" aria-label="Strategy status">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span class="ticker-label" data-copy="hero.eyebrow">Systematic FX Intelligence</span>
+                <span class="sep" aria-hidden="true">/</span>
+                <span class="ticker-stat">STRONG_TREND</span>
+                <span class="sep" aria-hidden="true">/</span>
+                <span class="ticker-stat">99.95%</span>
+              </div>
+              <h1 data-copy="hero.title">منصة تداول كمية بواجهة تنفيذ احترافية</h1>
+              <p class="hero-lead" data-copy="hero.lead">TradeAlpha AI يعرض إشاراته كما يجب أن تُعرض المنتجات المالية الجادة: حالة سوق واضحة، ثقة تشغيلية مرتفعة، وإثبات أداء يمكن التحقق منه.</p>
 
               <div class="hero-actions">
-                <a href="#pricing" class="cta-btn primary" data-copy="hero.ctaPrimary">ابدأ بالخطة المناسبة لك</a>
-                <a href="#results" class="cta-btn secondary" data-copy="hero.ctaSecondary">استعرض النتائج أولاً</a>
+                <a href="#pricing" class="cta-btn primary" data-copy="hero.ctaPrimary">ابدأ الوصول الآن</a>
+                <a href="#results" class="cta-btn secondary" data-copy="hero.ctaSecondary">راجع الأداء المباشر</a>
               </div>
 
-              <p class="faint" data-copy="hero.support">واجهة نظيفة، تسعير واضح، ومؤشرات أداء قابلة للمتابعة في صفحة واحدة جاهزة للإطلاق.</p>
+              <p class="faint hero-support" data-copy="hero.support">إشارات منظمة، إثبات Myfxbook مباشر، ومسار اشتراك واضح للمتداول الجاد.</p>
 
               <div class="hero-proof">
                 <div class="proof-item">
-                  <strong data-copy="hero.proof1.value">Live Ready</strong>
-                  <span class="muted" data-copy="hero.proof1.label">جاهز للربط مستقبلاً بمصدر أداء مباشر</span>
+                  <strong data-copy="hero.proof1.value">Regime</strong>
+                  <span class="muted" data-copy="hero.proof1.label">STRONG_TREND</span>
                 </div>
                 <div class="proof-item">
-                  <strong data-copy="hero.proof2.value">24/7</strong>
-                  <span class="muted" data-copy="hero.proof2.label">مراقبة مستمرة وتجربة جاهزة للربط الحي</span>
+                  <strong data-copy="hero.proof2.value">Confidence</strong>
+                  <span class="muted" data-copy="hero.proof2.label">99.95%</span>
                 </div>
               </div>
             </div>
 
-            <aside class="mini-panel">
-              <span class="card-kicker" data-copy="hero.side.kicker">Why It Converts</span>
-              <h3 data-copy="hero.side.title">تجربة بيع أنظف وأكثر إقناعاً</h3>
-              <p class="muted" data-copy="hero.side.body">الصفحة توازن بين المظهر الاحترافي وثقة الأداء: نتائج واضحة، شرح بسيط، وقسم تسعير مباشر يناسب منتج AI تداول مدفوع.</p>
+            <aside class="system-status-panel">
+              <div class="ssp-header">
+                <span class="ssp-title" data-copy="hero.side.kicker">Strategy State</span>
+                <span class="ssp-live">
+                  <span class="live-dot" aria-hidden="true"></span>
+                  <span data-copy="hero.side.title">Verified Feed</span>
+                </span>
+              </div>
+              <p class="muted" data-copy="hero.side.body">بنية الواجهة الآن تركز على ثلاث نقاط فقط: حالة الاستراتيجية، ثقة الإشارة، وربط مباشر بمصدر أداء عام.</p>
 
-              <div class="metrics-grid metrics-grid-2">
-                <div class="metric-card">
-                  <span class="metric-kicker" data-copy="hero.side.card1.kicker">Trust</span>
-                  <span class="metric-value" data-copy="hero.side.card1.value">100%</span>
-                  <p class="metric-note" data-copy="hero.side.card1.note">عرض مبني على الشفافية والنتائج القابلة للتقييم.</p>
+              <div class="ssp-rows">
+                <div class="ssp-row">
+                  <span class="ssp-key" data-copy="hero.side.card1.kicker">Regime</span>
+                  <span class="ssp-val gold" data-copy="hero.side.card1.value">STRONG_TREND</span>
                 </div>
-                <div class="metric-card">
-                  <span class="metric-kicker" data-copy="hero.side.card2.kicker">Ready</span>
-                  <span class="metric-value" data-copy="hero.side.card2.value">Live</span>
-                  <p class="metric-note" data-copy="hero.side.card2.note">البنية مهيأة لربط الداشبورد والبيانات لاحقاً.</p>
+                <div class="ssp-row">
+                  <span class="ssp-key" data-copy="hero.side.card1.note">Confidence</span>
+                  <span class="ssp-val green">99.95%</span>
                 </div>
+                <div class="ssp-row">
+                  <span class="ssp-key" data-copy="hero.side.card2.kicker">Proof Source</span>
+                  <span class="ssp-val text" data-copy="hero.side.card2.value">Myfxbook</span>
+                </div>
+                <div class="ssp-row">
+                  <span class="ssp-key" data-copy="hero.side.card2.note">Account</span>
+                  <span class="ssp-val muted">MT5 260608704</span>
+                </div>
+              </div>
+
+              <div class="ssp-account">
+                <span class="ssp-account-label" data-copy="performance.loading">Portfolio Link</span>
+                <span class="ssp-account-id">myfxbook.com/portfolio/mt5-260608704</span>
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      <section class="section" id="real-performance">
-        <div class="section-panel real-performance-panel">
-          <div class="section-head">
-            <span class="eyebrow">Real Performance</span>
-            <h2>الأداء الحقيقي للنظام</h2>
-            <p class="real-performance-note">هذه المنطقة مهيأة لعرض نتائج التداول الحقيقية فور توفر مصدر بيانات عام وآمن للواجهة العامة.</p>
+      <section class="section" id="results">
+        <div id="performance-anchor"></div>
+        <div class="perf-panel">
+          <div class="section-head proof-head">
+            <span class="eyebrow" data-copy="performance.eyebrow">Live Performance</span>
+            <h2 data-copy="performance.title">أداء مباشر يمكن التحقق منه</h2>
+            <p data-copy="performance.lead">بدلاً من بطاقات تسويقية ثابتة، هذا القسم يربط مباشرة بصفحة Myfxbook الخاصة بالحساب ويضع مصدر الإثبات في واجهة الصفحة نفسها.</p>
           </div>
 
-          <div class="real-performance-layout">
-            <div class="real-performance-metrics">
-              <div class="real-performance-card">
-                <span class="metric-kicker">Profit Factor</span>
-                <span class="metric-value">--</span>
-                <p class="metric-note">سيظهر هذا المؤشر تلقائياً عندما يوفر المصدر العام قيمة Profit Factor.</p>
-              </div>
-              <div class="real-performance-card">
-                <span class="metric-kicker">Win Rate</span>
-                <span class="metric-value">--</span>
-                <p class="metric-note">تظهر هنا نسبة النجاح الفعلية للصفقات بعد مزامنة البيانات.</p>
-              </div>
-              <div class="real-performance-card">
-                <span class="metric-kicker">Max Drawdown</span>
-                <span class="metric-value">--</span>
-                <p class="metric-note">سيتم عرض أكبر تراجع فعلي هنا بمجرد توفر بيانات الأداء.</p>
-              </div>
-              <div class="real-performance-card">
-                <span class="metric-kicker">Total Trades</span>
-                <span class="metric-value">--</span>
-                <p class="metric-note">يعرض العدد الحقيقي للصفقات المنفذة بعد الربط مع مصدر الأداء.</p>
-              </div>
+          <div class="perf-stats">
+            <div class="perf-stat">
+              <span class="perf-stat-label" data-copy="results.card1.kicker">Gain</span>
+              <span class="perf-stat-value up" data-copy="results.card1.value">Live</span>
+              <span class="perf-stat-sub" data-copy="results.card1.note">المصدر المباشر داخل لوحة Myfxbook أدناه.</span>
             </div>
+            <div class="perf-stat">
+              <span class="perf-stat-label" data-copy="results.card2.kicker">Drawdown</span>
+              <span class="perf-stat-value down" data-copy="results.card2.value">Live</span>
+              <span class="perf-stat-sub" data-copy="results.card2.note">يتم التحقق منه من نفس صفحة الحساب العامة.</span>
+            </div>
+            <div class="perf-stat">
+              <span class="perf-stat-label" data-copy="results.card3.kicker">Trades</span>
+              <span class="perf-stat-value gold" data-copy="results.card3.value">Live</span>
+              <span class="perf-stat-sub" data-copy="results.card3.note">عدد الصفقات يظهر من نفس المصدر بدون إعادة صياغة تسويقية.</span>
+            </div>
+          </div>
 
-            <div class="real-performance-chart">
-              <span class="status-badge">Equity Curve</span>
-              <div class="chart-placeholder" aria-label="Equity curve chart placeholder">
-                <span class="chart-caption">واجهة مخصصة لمنحنى الأداء التراكمي</span>
-              </div>
-              <p class="real-performance-caption">منطقة جاهزة لعرض منحنى رأس المال أو الربط لاحقاً ببيانات الأداء المباشر.</p>
+          <div class="myfxbook-wrap">
+            <iframe
+              src="https://www.myfxbook.com/portfolio/mt5-260608704"
+              title="TradeAlpha AI Myfxbook portfolio"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <div class="myfxbook-footer">
+              <span data-copy="results.lead">رابط الحساب العام مستخدم هنا كمصدر الإثبات الأساسي للأداء.</span>
+              <a href="https://www.myfxbook.com/portfolio/mt5-260608704" target="_blank" rel="noopener noreferrer" data-copy="results.side.title">Open portfolio on Myfxbook</a>
             </div>
           </div>
         </div>
@@ -158,101 +179,6 @@
               <span class="card-kicker" data-copy="trust.card3.kicker">Clarity</span>
               <h3 data-copy="trust.card3.title">شفافية تدعم قرار الاشتراك</h3>
               <p data-copy="trust.card3.body">كل قسم هنا يوضح القيمة بسرعة: لماذا تثق، كيف يعمل النظام، وماذا تحصل عند الاشتراك.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="results">
-        <div class="section-panel">
-          <div class="section-head">
-            <span class="eyebrow" data-copy="results.eyebrow">Results</span>
-            <h2 data-copy="results.title">قسم نتائج جاهز للربط الحي لاحقاً</h2>
-            <p data-copy="results.lead">هذا القسم مبني ليبقى ثابتاً الآن، لكن يمكن توصيله لاحقاً بلوحة بيانات مباشرة أو API دون إعادة تصميم الواجهة أو إعادة ترتيب المحتوى.</p>
-          </div>
-
-          <div class="results-shell">
-            <div class="results-grid">
-              <div class="results-card" data-metric-key="net_profit">
-                <span class="metric-kicker" data-copy="results.card1.kicker">Net Profit</span>
-                <span class="result-value" data-copy="results.card1.value">--</span>
-                <p class="muted" data-copy="results.card1.note">حقل جاهز لعرض صافي الربح الحقيقي بمجرد ربط مصدر البيانات.</p>
-                <span class="result-key">metric_key: net_profit</span>
-              </div>
-              <div class="results-card" data-metric-key="roi">
-                <span class="metric-kicker" data-copy="results.card2.kicker">ROI</span>
-                <span class="result-value" data-copy="results.card2.value">--</span>
-                <p class="muted" data-copy="results.card2.note">يتم ملؤه لاحقاً بنسبة العائد الفعلية من المصدر المباشر.</p>
-                <span class="result-key">metric_key: roi</span>
-              </div>
-              <div class="results-card" data-metric-key="best_month">
-                <span class="metric-kicker" data-copy="results.card3.kicker">Best Month</span>
-                <span class="result-value" data-copy="results.card3.value">--</span>
-                <p class="muted" data-copy="results.card3.note">مخصص لعرض أفضل شهر أداء عندما تصبح البيانات الحية متاحة.</p>
-                <span class="result-key">metric_key: best_month</span>
-              </div>
-              <div class="results-card" data-metric-key="last_update">
-                <span class="metric-kicker" data-copy="results.card4.kicker">Last Update</span>
-                <span class="result-value" data-copy="results.card4.value">--</span>
-                <p class="muted" data-copy="results.card4.note">حقل زمني جاهز لآخر مزامنة بمجرد تفعيل المصدر الفعلي.</p>
-                <span class="result-key">metric_key: last_update</span>
-              </div>
-            </div>
-
-            <div class="results-dashboard">
-              <div class="dashboard-top">
-                <div>
-                  <span class="status-badge" data-copy="results.status">Ready for Live Dashboard</span>
-                  <h3 class="dashboard-title" data-copy="results.side.title">منطقة جاهزة للمخططات والتغذية الحية</h3>
-                </div>
-              </div>
-              <p class="muted" data-copy="results.side.body">يمكن لاحقاً توصيل هذا الجزء بمنحنى الأداء، تحديثات المزامنة، وأي مؤشرات إضافية دون تغيير بنية الصفحة الحالية.</p>
-              <div class="chart-placeholder" aria-label="Results dashboard placeholder">
-                <span class="chart-caption" data-copy="results.side.caption">مساحة لمخطط الأداء أو لقطة الداشبورد لاحقاً</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="performance">
-        <div class="section-panel">
-          <div class="section-head">
-            <span class="eyebrow" data-copy="performance.eyebrow">Live Performance</span>
-            <h2 data-copy="performance.title">عرض مباشر لأهم مؤشرات الأداء</h2>
-            <p data-copy="performance.lead">هذا القسم جاهز للربط لاحقاً بمصدر أداء عام، ويعرض حالياً واجهة احترافية ثابتة توضّح شكل مؤشرات الأداء قبل تفعيل التكامل.</p>
-          </div>
-
-          <div class="performance-status-bar">
-            <span id="performance-status" class="status-badge status-empty" data-copy="performance.loading">جاهز للربط لاحقاً</span>
-            <span id="performance-updated" class="performance-updated faint" data-copy="performance.waiting">سيظهر هنا آخر تحديث فور تفعيل مصدر الأداء العام</span>
-          </div>
-
-          <div id="performance-empty" class="performance-empty">
-            <h3 data-copy="performance.emptyTitle">سيتم تفعيل الأداء المباشر قريباً</h3>
-            <p class="muted" data-copy="performance.emptyBody">تم تجهيز هذا القسم ليُعرض منه الأداء الحقيقي بشكل مباشر عند نشر مصدر البيانات العام، من دون أي تغيير على تصميم الصفحة.</p>
-          </div>
-
-          <div class="metrics-grid metrics-grid-4">
-            <div class="metric-card performance-metric-card" data-performance-card="profit_factor">
-              <span class="metric-kicker">Profit Factor</span>
-              <span id="metric-profit-factor" class="metric-value metric-loading">--</span>
-              <p class="metric-note" data-copy="performance.card1.note">مؤشر يوضح التوازن بين الأرباح والخسائر بمجرد وصول البيانات الحية.</p>
-            </div>
-            <div class="metric-card performance-metric-card" data-performance-card="win_rate">
-              <span class="metric-kicker">Win Rate</span>
-              <span id="metric-win-rate" class="metric-value metric-loading">--</span>
-              <p class="metric-note" data-copy="performance.card2.note">تعكس نسبة النجاح الفعلية للصفقات المنفذة عند توفر البيانات.</p>
-            </div>
-            <div class="metric-card performance-metric-card" data-performance-card="max_drawdown">
-              <span class="metric-kicker">Max Drawdown</span>
-              <span id="metric-max-drawdown" class="metric-value metric-loading">--</span>
-              <p class="metric-note" data-copy="performance.card3.note">يوضح أكبر تراجع مسجل ويعزز شفافية إدارة المخاطر عندما تصل البيانات الفعلية.</p>
-            </div>
-            <div class="metric-card performance-metric-card" data-performance-card="total_trades">
-              <span class="metric-kicker">Total Trades</span>
-              <span id="metric-total-trades" class="metric-value metric-loading">--</span>
-              <p class="metric-note" data-copy="performance.card4.note">يعرض عدد الصفقات المنفذة فعلياً بمجرد أن يرسله الخادم.</p>
             </div>
           </div>
         </div>
