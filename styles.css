@@ -484,6 +484,24 @@ html[dir="rtl"] .lang-menu{left:auto;right:auto;inset-inline-end:0}
 html[dir="rtl"] nav a,
 html[dir="rtl"] nav{margin-left:0;margin-right:0}
 
+/* Landing pages should size to content, not inherit generic page spacing */
+body[data-page]{
+  height:auto;
+  min-height:0;
+  padding-bottom:0;
+}
+
+body[data-page] .wrap{
+  margin-top:0;
+  margin-bottom:0;
+}
+
+body[data-page] footer{
+  margin-top:0;
+  margin-bottom:0;
+  padding-bottom:0;
+}
+
 /* micro interactions */
 .lang-switch{transition:transform .25s ease, background .25s ease}
 .lang-switch:active{transform:scale(.98)}
