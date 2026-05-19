@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <title>AI Stock Analysis | TradeAlphaAI</title>
+  <meta name="description" content="Educational AI stock analysis with TradeAlpha Score, technical overview, fundamentals, sentiment, and risk context." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="theme-color" content="#040506" />
+  <link rel="canonical" href="https://www.tradealphaai.com/stock.html" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="TradeAlpha AI" />
+  <meta property="og:title" content="AI Stock Analysis | TradeAlphaAI" />
+  <meta property="og:description" content="Educational AI stock analysis with TradeAlpha Score, technical overview, fundamentals, sentiment, and risk context." />
+  <meta property="og:url" content="https://www.tradealphaai.com/stock.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI Stock Analysis | TradeAlphaAI" />
+  <meta name="twitter:description" content="Educational AI stock analysis with TradeAlpha Score, technical overview, fundamentals, sentiment, and risk context." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="landing.css" />
+  <link rel="stylesheet" href="css/market/market-portal.css" />
+</head>
+<body class="market-page" data-page="market-stock-detail">
+  <div class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy">
+          <strong>TradeAlpha AI</strong>
+          <span>AI Market Portal</span>
+        </span>
+      </a>
+      <div class="top-actions">
+        <nav class="nav-group" aria-label="Primary">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="stocks.html" class="nav-link">AI Stock Analyzer</a>
+          <a href="etfs.html" class="nav-link">ETF Analyzer</a>
+          <a href="ai-stock-screener.html" class="nav-link">Market Screener</a>
+          <a href="methodology.html" class="nav-link">Methodology</a>
+          <a href="stock.html?symbol=AAPL" class="nav-link">AAPL Analysis</a>
+        </nav>
+        <div class="top-controls">
+          <button id="langSwitch" class="lang-switch" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false">
+            <span class="pill">English</span>
+          </button>
+          <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true">
+            <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
+            <button role="menuitem" data-lang="en" class="lang-item">English</button>
+            <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="market-shell" data-stock-detail-shell>
+    <div class="wrap">
+      <section class="market-section">
+        <div class="market-panel detail-header">
+          <div class="detail-title">
+            <span class="eyebrow">AI Stock Analysis</span>
+            <h1><span data-asset-symbol>NVDA</span> Stock Analysis</h1>
+            <p class="market-lead" data-asset-name>NVIDIA Corporation</p>
+            <div class="detail-meta">
+              <span data-asset-exchange>NASDAQ / Technology</span>
+              <span class="risk-badge" data-score-label>Watchlist Candidate</span>
+            </div>
+            <div class="price-line">
+              <strong data-asset-price>$0.00</strong>
+              <span class="setup-badge" data-asset-change>+0.00%</span>
+            </div>
+          </div>
+          <aside class="market-card score-card">
+            <div class="score-gauge" data-score-gauge>
+              <strong data-score-value>0</strong>
+            </div>
+            <h2>TradeAlpha Score</h2>
+            <p data-score-disclaimer>This analysis is for educational and informational purposes only and does not constitute financial advice.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div data-data-status></div>
+      </section>
+
+      <section class="market-section">
+        <div class="trust-strip" data-trust-strip></div>
+      </section>
+
+      <section class="market-section">
+        <div class="detail-grid">
+          <article class="market-panel">
+            <span class="eyebrow">Score Breakdown</span>
+            <h2>Transparent setup scoring</h2>
+            <div data-score-breakdown></div>
+          </article>
+          <article class="market-panel">
+            <span class="eyebrow">Company Snapshot</span>
+            <h2>Market profile</h2>
+            <div class="metric-grid">
+              <div class="metric-card"><span>Market Cap</span><strong data-asset-market-cap>--</strong></div>
+              <div class="metric-card"><span>Sector</span><strong data-asset-sector>--</strong></div>
+              <div class="metric-card"><span>Industry</span><strong data-asset-industry>--</strong></div>
+              <div class="metric-card"><span>Data Mode</span><strong>Mock</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Technical + Fundamental Metrics</span>
+          <h2>Indicator cards</h2>
+          <div class="metric-grid" data-metric-cards>
+            <div class="metric-card skeleton"></div>
+            <div class="metric-card skeleton"></div>
+            <div class="metric-card skeleton"></div>
+            <div class="metric-card skeleton"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="content-columns">
+          <article class="market-panel">
+            <span class="eyebrow">Technical Outlook</span>
+            <h2>Trend and momentum context</h2>
+            <ul class="insight-list" data-technical-insights></ul>
+          </article>
+          <article class="market-panel">
+            <span class="eyebrow">Fundamental Overview</span>
+            <h2>Growth, valuation, profitability</h2>
+            <ul class="insight-list" data-fundamental-insights></ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel" data-content-depth></div>
+      </section>
+
+      <section class="market-section">
+        <div class="content-columns">
+          <article class="market-panel">
+            <span class="eyebrow">News / Sentiment Summary</span>
+            <h2>Rule-based sentiment screen</h2>
+            <p class="market-copy" data-sentiment-summary></p>
+          </article>
+          <article class="market-panel">
+            <span class="eyebrow">AI Analysis Summary</span>
+            <h2>Educational explanation</h2>
+            <p class="market-copy" data-ai-summary></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="content-columns">
+          <article class="market-panel">
+            <span class="eyebrow">Risk Overview</span>
+            <h2>Risk factors</h2>
+            <ul class="risk-list" data-risk-list></ul>
+          </article>
+          <article class="market-panel">
+            <span class="eyebrow">Related Stocks</span>
+            <h2>Continue screening</h2>
+            <div class="related-grid" data-related-stocks></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel stock-faq">
+          <span class="eyebrow">FAQ</span>
+          <h2>Stock analyzer FAQ</h2>
+          <div data-stock-faq></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">TradeAlphaAI Ecosystem</span>
+          <h2>Use stock screening as research, then review the full TradeAlphaAI system</h2>
+          <p class="market-copy">The portal is a free educational research surface. TradeAlphaAI subscription flows, watchlists, alerts, and premium signal features remain frontend placeholders until backend systems are added.</p>
+          <div class="cta-actions">
+            <a class="market-btn primary" href="index.html#systems">Explore TradeAlphaAI System</a>
+            <a class="market-btn" href="https://t.me/TradeAlphaAI" target="_blank" rel="noopener noreferrer">Join AI Market Alerts</a>
+            <a class="market-btn" href="stocks.html">Analyze Another Stock</a>
+            <a class="market-btn" href="ai-stock-screener.html">Open Market Screener</a>
+            <a class="market-btn" href="methodology.html">How Scores Work</a>
+          </div>
+          <p class="disclaimer-note">This analysis is for educational and informational purposes only and does not constitute financial advice.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="script.js" defer></script>
+  <script type="module">
+    import { initStockDetailPage } from "./js/market/ui-renderer.js";
+    initStockDetailPage();
+  </script>
+</body>
+</html>

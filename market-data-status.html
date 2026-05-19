@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Market Data Status | TradeAlphaAI Provider Diagnostics</title>
+  <meta name="description" content="Review TradeAlphaAI market data status, provider mode, serverless endpoint availability, mock fallback behavior, and data transparency notes." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/market-data-status.html" />
+  <meta property="og:title" content="Market Data Status | TradeAlphaAI" />
+  <meta property="og:description" content="Provider diagnostics and data transparency for the TradeAlphaAI market portal." />
+  <meta property="og:url" content="https://www.tradealphaai.com/market-data-status.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="landing.css" />
+  <link rel="stylesheet" href="css/market/market-portal.css" />
+</head>
+<body class="market-page">
+  <main class="market-shell">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Market Data Status</span></nav>
+      <section class="market-hero">
+        <div class="market-hero-panel">
+          <span class="eyebrow">Provider Diagnostics</span>
+          <h1>Market Data Status</h1>
+          <p class="market-lead">Review whether the portal is using live Finnhub data, mock educational data, stale cached data, provider fallback, or unavailable data states.</p>
+          <div class="market-actions">
+            <a class="market-btn primary" href="methodology.html">Methodology</a>
+            <a class="market-btn" href="stocks.html">Stock Analyzer</a>
+            <a class="market-btn" href="etfs.html">ETF Analyzer</a>
+            <button class="market-btn" type="button" data-refresh-diagnostics>Refresh Diagnostics</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="diagnostics-grid">
+          <article class="market-panel">
+            <span class="eyebrow">Current Mode</span>
+            <h2>Frontend provider mode</h2>
+            <div class="metric-grid">
+              <div class="metric-card"><span>Configured Mode</span><strong data-provider-mode>mock</strong></div>
+              <div class="metric-card"><span>Last Checked</span><strong data-last-checked>--</strong></div>
+            </div>
+          </article>
+          <article class="market-panel">
+            <span class="eyebrow">Serverless Endpoint</span>
+            <h2>Function availability</h2>
+            <div data-endpoint-status>
+              <span class="setup-badge status-unavailable">Checking...</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div data-provider-warning></div>
+      </section>
+
+      <section class="market-section">
+        <div data-diagnostics-status></div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Real Provider Integration — Phase 9</span>
+          <h2>Finnhub live data metrics</h2>
+          <p class="market-copy">When Finnhub is the active provider and <code>FINNHUB_API_KEY</code> is set server-side, real market data flows through the serverless proxy. The metrics below update on each diagnostics refresh.</p>
+          <div data-provider-metrics>
+            <p class="market-copy">Run diagnostics to see live provider metrics. Static mode uses mock educational data.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Provider Health</span>
+          <h2>Health checks, latency, fallback, and cache simulation</h2>
+          <p class="market-copy">The health endpoint checks provider configuration and fallback readiness without calling real paid APIs or exposing secret values.</p>
+          <div data-provider-health>
+            <div class="market-card empty-state">
+              <h2>Checking provider health</h2>
+              <p>Diagnostics will appear here when Netlify Functions are available. Static mode remains supported with mock educational data.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Provider Integration Status</span>
+          <h2>Current provider implementations</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><span>Mock</span><strong>Active fallback</strong></div>
+            <div class="metric-card"><span>Finnhub</span><strong>Live integration</strong></div>
+            <div class="metric-card"><span>Alpha Vantage</span><strong>Stub (Phase 10+)</strong></div>
+            <div class="metric-card"><span>Polygon</span><strong>Stub (Phase 10+)</strong></div>
+            <div class="metric-card"><span>Yahoo-compatible</span><strong>Stub (Phase 10+)</strong></div>
+            <div class="metric-card"><span>API Keys</span><strong>Server-side only</strong></div>
+          </div>
+          <p class="market-copy">To activate Finnhub: set <code>FINNHUB_API_KEY</code> and <code>MARKET_DATA_PROVIDER=finnhub</code> in Netlify environment variables. The frontend never sees these keys.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Rate Limit &amp; Cache Notes</span>
+          <h2>Finnhub free tier limits and caching strategy</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><span>Free tier rate limit</span><strong>60 calls/minute</strong></div>
+            <div class="metric-card"><span>Calls per stock request</span><strong>2&ndash;3 calls</strong></div>
+            <div class="metric-card"><span>Server-side cache TTL</span><strong>55 seconds</strong></div>
+            <div class="metric-card"><span>CDN cache header</span><strong>60 seconds</strong></div>
+            <div class="metric-card"><span>Timeout per call</span><strong>5 seconds</strong></div>
+            <div class="metric-card"><span>Rate limit fallback</span><strong>Mock data + warning</strong></div>
+          </div>
+          <p class="market-copy">The in-memory serverless cache prevents duplicate Finnhub calls for the same symbol within a 55-second window across warm function instances. On rate limit (HTTP 429), the function returns safe mock fallback data with a user-facing warning.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Security Note</span>
+          <h2>API keys are never placed in frontend JavaScript</h2>
+          <p class="market-copy">Real provider keys must be configured only as Netlify or serverless environment variables. If no provider is configured, the portal uses mock educational data or safe fallback data.</p>
+          <p class="disclaimer-note">This analysis is for educational and informational purposes only and does not constitute financial advice.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script type="module">import { initDiagnosticsPage } from "./js/market/ui-renderer.js"; initDiagnosticsPage();</script>
+</body>
+</html>
