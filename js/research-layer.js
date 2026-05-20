@@ -11,7 +11,44 @@
 
   function rootPfx() {
     var segs = (window.location.pathname || '').replace(/^\//, '').split('/').filter(Boolean);
-    return segs.length >= 2 ? '../' : '';
+    if (segs.length && /\.[a-z0-9]+$/i.test(segs[segs.length - 1])) segs.pop();
+    return '../'.repeat(segs.length);
+  }
+
+  function isArabic() {
+    return document.documentElement.lang === 'ar' || /^\/ar(?:\/|$)/.test(window.location.pathname || '');
+  }
+
+  function tr(value) {
+    if (!isArabic()) return value;
+    return String(value || '')
+      .replace(/Latest Market Research/g, 'أحدث أبحاث السوق')
+      .replace(/Featured and recent research/g, 'أبحاث مختارة وحديثة')
+      .replace(/Updated market research timeline/g, 'خط زمني محدث لأبحاث السوق')
+      .replace(/Chronological research paths across AI infrastructure, semiconductors, ETFs, and macro risk\. Educational content only\./g, 'مسارات بحثية مرتبة تغطي البنية التحتية للذكاء الاصطناعي وأشباه الموصلات وصناديق المؤشرات والمخاطر الكلية. محتوى تعليمي فقط.')
+      .replace(/Updated this week/g, 'محدث هذا الأسبوع')
+      .replace(/Updated /g, 'آخر تحديث ')
+      .replace(/Rotating Market Themes/g, 'محاور السوق المتغيرة')
+      .replace(/Current research themes/g, 'محاور البحث الحالية')
+      .replace(/Theme clusters connect insights, stock research, ETF education, and hub pages without relying on fabricated market data\./g, 'تربط المحاور بين الرؤى وأبحاث الأسهم وتعليم صناديق المؤشرات وصفحات المحاور دون الاعتماد على بيانات سوق مصطنعة.')
+      .replace(/Market Focus/g, 'تركيز السوق')
+      .replace(/Research Spotlight/g, 'بحث مختار')
+      .replace(/Continue reading/g, 'تابع القراءة')
+      .replace(/AI Infrastructure/g, 'البنية التحتية للذكاء الاصطناعي')
+      .replace(/Semiconductors/g, 'أشباه الموصلات')
+      .replace(/ETF Analysis/g, 'تحليل صناديق المؤشرات')
+      .replace(/Market Research/g, 'أبحاث السوق')
+      .replace(/Risk & Volatility/g, 'المخاطر والتذبذب')
+      .replace(/Diversification/g, 'التنويع')
+      .replace(/Cloud Computing/g, 'الحوسبة السحابية')
+      .replace(/Market Cycles/g, 'دورات السوق')
+      .replace(/6 min/g, '6 دقائق');
+  }
+
+  function localizedHref(base, link) {
+    var raw = href(base, link);
+    if (!isArabic() || /^(?:https?:|mailto:|tel:|#)/.test(raw) || raw.indexOf('../') === 0) return raw;
+    return raw.charAt(0) === '/' ? '/ar' + raw : base + 'ar/' + link;
   }
 
   function esc(value) {
@@ -53,16 +90,16 @@
   }
 
   function timelineCard(item, base) {
-    return '<a class="research-timeline-card" href="' + esc(href(base, item.href)) + '">'
+    return '<a class="research-timeline-card" href="' + esc(localizedHref(base, item.href)) + '">'
       + '<div class="research-card-top">'
-      + '<span class="insight-category-badge">' + esc(item.category) + '</span>'
-      + '<span class="research-signal">' + esc(item.signal || 'Updated this week') + '</span>'
+      + '<span class="insight-category-badge">' + esc(tr(item.category)) + '</span>'
+      + '<span class="research-signal">' + esc(tr(item.signal || 'Updated this week')) + '</span>'
       + '</div>'
-      + '<h3>' + esc(item.title) + '</h3>'
-      + '<p>' + esc(item.summary) + '</p>'
+      + '<h3>' + esc(tr(item.title)) + '</h3>'
+      + '<p>' + esc(tr(item.summary)) + '</p>'
       + '<div class="research-meta-row">'
-      + '<span>' + esc(item.readingTime || '6 min') + '</span>'
-      + '<time datetime="' + esc(item.updated) + '">Updated ' + esc(item.updated) + '</time>'
+      + '<span>' + esc(tr(item.readingTime || '6 min')) + '</span>'
+      + '<time datetime="' + esc(item.updated) + '">' + esc(tr('Updated ')) + esc(item.updated) + '</time>'
       + '</div>'
       + '<div class="research-symbol-row">' + symbolChips(item.symbols) + '</div>'
       + '</a>';
@@ -77,9 +114,9 @@
     var featured = items[0];
     var rest = items.slice(1);
     el.innerHTML = '<div class="research-head">'
-      + '<span class="eyebrow">Latest Market Research</span>'
-      + '<h2>' + esc(mode === 'featured' ? 'Featured and recent research' : 'Updated market research timeline') + '</h2>'
-      + '<p>Chronological research paths across AI infrastructure, semiconductors, ETFs, and macro risk. Educational content only.</p>'
+      + '<span class="eyebrow">' + esc(tr('Latest Market Research')) + '</span>'
+      + '<h2>' + esc(tr(mode === 'featured' ? 'Featured and recent research' : 'Updated market research timeline')) + '</h2>'
+      + '<p>' + esc(tr('Chronological research paths across AI infrastructure, semiconductors, ETFs, and macro risk. Educational content only.')) + '</p>'
       + '</div>'
       + '<div class="research-featured-row">'
       + timelineCard(featured, base)
@@ -89,12 +126,12 @@
 
   function themeCard(theme, data, base) {
     var links = (theme.links || []).slice(0, 4).map(function (link) {
-      return '<a class="theme-pill" href="' + esc(href(base, link)) + '">' + esc(data.linkLabels[link] || link) + '</a>';
+      return '<a class="theme-pill" href="' + esc(localizedHref(base, link)) + '">' + esc(tr(data.linkLabels[link] || link)) + '</a>';
     }).join('');
     return '<article class="research-theme-card">'
-      + '<span class="research-signal">Market Focus</span>'
-      + '<h3>' + esc(theme.label) + '</h3>'
-      + '<p>' + esc(theme.intro) + '</p>'
+      + '<span class="research-signal">' + esc(tr('Market Focus')) + '</span>'
+      + '<h3>' + esc(tr(theme.label)) + '</h3>'
+      + '<p>' + esc(tr(theme.intro)) + '</p>'
       + '<div class="theme-rail">' + links + '</div>'
       + '</article>';
   }
@@ -105,9 +142,9 @@
     var themes = rotate(data.themes, 'themes' + window.location.pathname, count);
     if (!themes.length) return;
     el.innerHTML = '<div class="research-head">'
-      + '<span class="eyebrow">Rotating Market Themes</span>'
-      + '<h2>Current research themes</h2>'
-      + '<p>Theme clusters connect insights, stock research, ETF education, and hub pages without relying on fabricated market data.</p>'
+      + '<span class="eyebrow">' + esc(tr('Rotating Market Themes')) + '</span>'
+      + '<h2>' + esc(tr('Current research themes')) + '</h2>'
+      + '<p>' + esc(tr('Theme clusters connect insights, stock research, ETF education, and hub pages without relying on fabricated market data.')) + '</p>'
       + '</div>'
       + '<div class="research-theme-grid">' + themes.map(function (theme) { return themeCard(theme, data, base); }).join('') + '</div>';
   }
@@ -117,11 +154,11 @@
     var item = rotate(data.insights, 'highlight' + window.location.pathname, 1)[0];
     if (!item) return;
     el.innerHTML = '<div class="research-highlight">'
-      + '<span class="research-signal">Research Spotlight</span>'
-      + '<h3>' + esc(item.title) + '</h3>'
-      + '<p>' + esc(item.summary) + '</p>'
+      + '<span class="research-signal">' + esc(tr('Research Spotlight')) + '</span>'
+      + '<h3>' + esc(tr(item.title)) + '</h3>'
+      + '<p>' + esc(tr(item.summary)) + '</p>'
       + '<div class="research-symbol-row">' + symbolChips(item.symbols) + '</div>'
-      + '<a class="market-btn" href="' + esc(href(base, item.href)) + '">Continue reading</a>'
+      + '<a class="market-btn" href="' + esc(localizedHref(base, item.href)) + '">' + esc(tr('Continue reading')) + '</a>'
       + '</div>';
   }
 

@@ -102,6 +102,9 @@
 .localized-ar {
   font-family: "IBM Plex Sans Arabic", "Cairo", Inter, system-ui, sans-serif;
   text-align: right;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1;
 }
 
 .localized-ar .topbar-inner,
@@ -116,17 +119,24 @@
 .localized-ar .breadcrumb {
   justify-content: flex-start;
   direction: rtl;
+  gap: 10px;
+  line-height: 1.7;
 }
 
 .localized-ar .insight-article-body {
-  max-width: 860px;
+  max-width: 880px;
   margin-inline-start: auto;
   margin-inline-end: auto;
 }
 
 .localized-ar .market-card,
 .localized-ar .insight-card,
-.localized-ar .deep-link-card {
+.localized-ar .deep-link-card,
+.localized-ar .market-panel,
+.localized-ar .hero-copy,
+.localized-ar .section-head,
+.localized-ar .insight-article-body,
+.localized-ar .insight-sidebar {
   text-align: right;
 }
 
@@ -144,7 +154,135 @@
 .localized-ar .market-copy,
 .localized-ar .market-lead {
   letter-spacing: 0;
-  line-height: 1.8;
+  line-height: 1.75;
+}
+
+.localized-ar .market-hero h1,
+.localized-ar .hero-copy h1,
+.localized-ar .detail-title h1,
+.localized-ar .insight-hero-card h1 {
+  font-family: "IBM Plex Sans Arabic", "Cairo", "Space Grotesk", sans-serif;
+  font-weight: 800;
+  line-height: 1.18;
+  max-width: 920px;
+}
+
+.localized-ar .hero-lead,
+.localized-ar .market-lead,
+.localized-ar .insight-article-body p,
+.localized-ar .market-copy {
+  line-height: 1.95;
+}
+
+.localized-ar .insight-article-body p,
+.localized-ar .insight-article-body li {
+  font-size: 16.5px;
+}
+
+.localized-ar .insight-article-body h2 {
+  margin-top: 50px;
+  line-height: 1.42;
+}
+
+.localized-ar .insight-article-body h3 {
+  line-height: 1.5;
+}
+
+.localized-ar .eyebrow,
+.localized-ar .insight-category-badge,
+.localized-ar .deep-link-card > span,
+.localized-ar .insight-summary-box span,
+.localized-ar .insight-meta-clusters strong,
+.localized-ar .hero-stat span,
+.localized-ar .metric-card span,
+.localized-ar .score-row span:first-child {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.localized-ar .topbar-inner {
+  align-items: center;
+}
+
+.localized-ar .top-actions {
+  justify-content: flex-end;
+}
+
+.localized-ar .nav-group {
+  justify-content: flex-end;
+}
+
+.localized-ar .nav-link {
+  min-height: 38px;
+  padding-inline: 13px;
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.localized-ar .locale-links {
+  flex-direction: row-reverse;
+}
+
+.localized-ar .market-actions,
+.localized-ar .cta-actions,
+.localized-ar .hero-actions,
+.localized-ar .insight-meta-bar,
+.localized-ar .research-card-top,
+.localized-ar .research-meta-row,
+.localized-ar .research-symbol-row,
+.localized-ar .insight-card-meta,
+.localized-ar .tile-topline,
+.localized-ar .tile-metrics,
+.localized-ar .detail-meta,
+.localized-ar .price-line {
+  justify-content: flex-start;
+  direction: rtl;
+}
+
+.localized-ar .market-btn,
+.localized-ar .cta-btn,
+.localized-ar .lang-switch {
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.localized-ar .insight-layout {
+  grid-template-columns: 296px minmax(0, 1fr);
+}
+
+.localized-ar .insight-article-body {
+  grid-column: 2;
+}
+
+.localized-ar .insight-sidebar {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.localized-ar .insight-toc ol,
+.localized-ar .insight-article-body ul,
+.localized-ar .insight-article-body ol,
+.localized-ar .insight-sources ul,
+.localized-ar .insight-list,
+.localized-ar .risk-list,
+.localized-ar .spy-compare-col ul {
+  padding-inline-start: 0;
+  padding-inline-end: 22px;
+}
+
+.localized-ar .pull-quote {
+  border-inline-start: 0;
+  border-inline-end: 3px solid var(--market-gold-bright);
+  border-radius: 14px 0 0 14px;
+}
+
+.localized-ar .rc-screener-cta {
+  direction: rtl;
+}
+
+.localized-ar .data-status-top span:last-child {
+  margin-inline-start: 0;
+  margin-inline-end: auto;
 }
 
 .localized-disclaimer {
@@ -2018,6 +2156,16 @@
   .insight-sidebar {
     position: static;
   }
+
+  .localized-ar .insight-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .localized-ar .insight-article-body,
+  .localized-ar .insight-sidebar {
+    grid-column: auto;
+    grid-row: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -2083,5 +2231,53 @@
   .rc-screener-cta {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .localized-ar .topbar-inner {
+    align-items: stretch;
+  }
+
+  .localized-ar .top-actions {
+    align-items: stretch;
+  }
+
+  .localized-ar .nav-group {
+    grid-template-columns: 1fr;
+  }
+
+  .localized-ar .nav-link {
+    min-height: 42px;
+    justify-content: center;
+    font-size: 13px;
+    white-space: normal;
+  }
+
+  .localized-ar .hero-copy h1,
+  .localized-ar .market-hero h1,
+  .localized-ar .detail-title h1,
+  .localized-ar .insight-hero-card h1 {
+    font-size: clamp(31px, 10vw, 44px);
+    line-height: 1.22;
+  }
+
+  .localized-ar .hero-lead,
+  .localized-ar .market-lead,
+  .localized-ar .insight-article-body p,
+  .localized-ar .market-copy {
+    font-size: 15.5px;
+    line-height: 1.9;
+  }
+
+  .localized-ar .market-actions,
+  .localized-ar .cta-actions,
+  .localized-ar .hero-actions,
+  .localized-ar .rc-screener-cta {
+    align-items: stretch;
+  }
+
+  .localized-ar .market-btn,
+  .localized-ar .cta-btn {
+    width: 100%;
+    min-height: 48px;
   }
 }

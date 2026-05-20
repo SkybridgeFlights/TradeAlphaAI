@@ -612,6 +612,10 @@ function checkLocalizedStaticPages() {
         failures.push(`${page.arPath}: Arabic nav contains English labels`);
       }
     }
+    if (sourceHtml && arHtml) {
+      checkArabicStructuralParity(page.source, page.arPath, sourceHtml, arHtml);
+      checkArabicLanguageIsolation(page.arPath, arHtml);
+    }
     if (arHtml) {
       for (const href of extractLinks(arHtml)) {
         if (!isInternalHtmlLink(href)) continue;
@@ -703,6 +707,89 @@ function checkArabicInsightBodies() {
   }
 }
 
+function checkArabicStructuralParity(sourceRel, arRel, sourceHtml, arHtml) {
+  const sourceSections = countMatches(sourceHtml, /<section\b/gi);
+  const arSections = countMatches(arHtml, /<section\b/gi);
+  if (sourceSections !== arSections) {
+    failures.push(`${arRel}: section count ${arSections} does not match English source ${sourceRel} (${sourceSections})`);
+  }
+
+  for (const hook of ["data-rc", "data-research-timeline", "data-research-themes", "data-research-highlight"]) {
+    if (sourceHtml.includes(hook) && !arHtml.includes(hook)) failures.push(`${arRel}: missing source hook ${hook}`);
+  }
+  for (const marker of ["hero", "market-section", "market-panel", "cta-actions", "nav-group"]) {
+    if (sourceHtml.includes(marker) && !arHtml.includes(marker)) failures.push(`${arRel}: missing source layout marker ${marker}`);
+  }
+  if (sourceHtml.includes("related-content.js") && !arHtml.includes("related-content.js")) failures.push(`${arRel}: missing related-content.js script from source page`);
+  if (sourceHtml.includes("research-layer.js") && !arHtml.includes("research-layer.js")) failures.push(`${arRel}: missing research-layer.js script from source page`);
+}
+
+function checkArabicLanguageIsolation(rel, html) {
+  const visible = stripNonVisible(html);
+  const forbiddenLabels = [
+    "Home",
+    "AI Stock Analyzer",
+    "ETF Analyzer",
+    "Market Screener",
+    "Market Insights",
+    "Methodology",
+    "Generated Stock Page",
+    "Generated ETF Page",
+    "Score Breakdown",
+    "Company Snapshot",
+    "Technical Outlook",
+    "Fundamental Overview",
+    "Risk Overview",
+    "Continue Reading",
+    "Frequently Asked Questions",
+    "Educational disclaimer",
+    "Read article",
+    "Related Research",
+    "Research Hub",
+    "Popular Research",
+    "Contents",
+    "FAQ",
+    "Screener",
+    "Future placeholder",
+    "Premium Signals Placeholder",
+    "This article",
+    "investment advice",
+    "price targets",
+    "security recommendations",
+    "Understanding",
+    "Market context",
+    "Cloud Computing",
+    "Equity Factors",
+    "Broad Market"
+  ];
+  for (const label of forbiddenLabels) {
+    if (new RegExp(`\\b${escapeRegExp(label)}\\b`).test(visible)) failures.push(`${rel}: Arabic visible text leaks English label: ${label}`);
+  }
+  if (/Understوing|demو|bاقرأth|alاقرأy|stوard|InfiniBو|bوwidth|Pوemic/i.test(html)) {
+    failures.push(`${rel}: malformed Arabic term replacement artifact detected`);
+  }
+  if (/\b(watchlist candidates|ranking recommendation|provide price targets|predict future performance|market education|future generated|provider architecture|long-term ownership costs|A fast educational|does the analyzer|Can I use this|Will real market data)\b/i.test(visible)) {
+    failures.push(`${rel}: Arabic visible text contains untranslated English content`);
+  }
+  if (/placeholder/i.test(visible)) failures.push(`${rel}: Arabic visible text contains placeholder wording`);
+  if (/Ø|Ù|â| لاt\b|does لاt/i.test(html)) failures.push(`${rel}: malformed Arabic encoding or partial translation detected`);
+  if (/<script type="application\/ld\+json">[\s\S]*?&quot;[\s\S]*?<\/script>/i.test(html)) {
+    failures.push(`${rel}: JSON-LD appears HTML-escaped`);
+  }
+}
+
+function stripNonVisible(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+function countMatches(text, pattern) {
+  return (text.match(pattern) || []).length;
+}
+
 function extractLinks(html) {
   return [...html.matchAll(/\shref="([^"#?]+)(?:#[^"]*)?"/g)].map((m) => m[1]);
 }
@@ -725,4 +812,8 @@ function unique(values) {
 
 function relative(file) {
   return path.relative(root, file).replaceAll("\\", "/");
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

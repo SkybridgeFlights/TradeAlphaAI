@@ -245,7 +245,44 @@
   ====================================================================== */
   function rootPfx() {
     var segs = (window.location.pathname || '').replace(/^\//, '').split('/').filter(Boolean);
-    return segs.length >= 2 ? '../' : '';
+    if (segs.length && /\.[a-z0-9]+$/i.test(segs[segs.length - 1])) segs.pop();
+    return '../'.repeat(segs.length);
+  }
+
+  function isArabic() {
+    return document.documentElement.lang === 'ar' || /^\/ar(?:\/|$)/.test(window.location.pathname || '');
+  }
+
+  function arHref(base, file) {
+    return isArabic() ? base + 'ar/' + file : base + file;
+  }
+
+  function tr(s) {
+    if (!isArabic()) return s;
+    return String(s || '')
+      .replace(/Related AI Infrastructure Research/g, 'أبحاث مرتبطة بالبنية التحتية للذكاء الاصطناعي')
+      .replace(/Related ETF Education/g, 'تعليم صناديق المؤشرات المرتبط')
+      .replace(/Related Market Insights/g, 'رؤى سوق مرتبطة')
+      .replace(/Related Research Hubs/g, 'محاور بحث مرتبطة')
+      .replace(/Continue with the market screener/g, 'تابع باستخدام ماسح السوق')
+      .replace(/Compare these assets with the educational screener and TradeAlpha Score context\./g, 'قارن هذه الأصول باستخدام ماسح السوق التعليمي وسياق درجة TradeAlpha.')
+      .replace(/Screen the full AI market universe/g, 'افحص عالم أسهم وصناديق الذكاء الاصطناعي كاملا')
+      .replace(/TradeAlpha Score across AI stocks and ETFs — educational multi-factor analysis\./g, 'درجة TradeAlpha لأسهم وصناديق الذكاء الاصطناعي عبر تحليل تعليمي متعدد العوامل.')
+      .replace(/TradeAlpha Score across AI stocks and ETFs â€” educational multi-factor analysis\./g, 'درجة TradeAlpha لأسهم وصناديق الذكاء الاصطناعي عبر تحليل تعليمي متعدد العوامل.')
+      .replace(/Open Screener/g, 'افتح ماسح السوق')
+      .replace(/Read article/g, 'اقرأ المقال')
+      .replace(/Hub/g, 'محور')
+      .replace(/Article/g, 'مقال')
+      .replace(/AI Infrastructure/g, 'البنية التحتية للذكاء الاصطناعي')
+      .replace(/Semiconductors/g, 'أشباه الموصلات')
+      .replace(/ETF Analysis/g, 'تحليل صناديق المؤشرات')
+      .replace(/Market Research/g, 'أبحاث السوق')
+      .replace(/Risk & Volatility/g, 'المخاطر والتذبذب')
+      .replace(/Diversification/g, 'التنويع')
+      .replace(/Cloud Computing/g, 'الحوسبة السحابية')
+      .replace(/Growth Equities/g, 'أسهم النمو')
+      .replace(/Dividend Income/g, 'دخل التوزيعات')
+      .replace(/AI Investing/g, 'استثمار الذكاء الاصطناعي');
   }
 
   /* ===== HTML HELPERS =================================================== */
@@ -261,22 +298,23 @@
     var pg = P[key]; if (!pg) return '';
     var badge = (pg.t === 'stock' || pg.t === 'etf') ? pg.k : (pg.t === 'hub' ? 'Hub' : 'Article');
     var nameStr = badge && badge !== pg.n ? pg.n + ' — ' + badge : pg.n;
-    return '<a class="deep-link-card" href="' + esc(base + pg.f) + '">'
-         + '<span>' + esc(pg.l) + '</span>'
-         + '<strong>' + esc(nameStr) + '</strong>'
-         + '<p>' + esc(pg.d) + '</p>'
+    nameStr = nameStr.replace('â€”', '-');
+    return '<a class="deep-link-card" href="' + esc(arHref(base, pg.f)) + '">'
+         + '<span>' + esc(tr(pg.l)) + '</span>'
+         + '<strong>' + esc(tr(nameStr)) + '</strong>'
+         + '<p>' + esc(tr(pg.d)) + '</p>'
          + '</a>';
   }
 
   function articleCard(key, base) {
     var pg = P[key]; if (!pg) return '';
-    return '<a class="insight-card" href="' + esc(base + pg.f) + '">'
+    return '<a class="insight-card" href="' + esc(arHref(base, pg.f)) + '">'
          + '<div class="insight-card-meta">'
-         + '<span class="insight-category-badge" style="margin:0">' + esc(pg.l) + '</span>'
+         + '<span class="insight-category-badge" style="margin:0">' + esc(tr(pg.l)) + '</span>'
          + '</div>'
-         + '<h3>' + esc(pg.n) + '</h3>'
-         + '<p>' + esc(pg.d) + '</p>'
-         + '<span class="insight-card-cta">Read article &rarr;</span>'
+         + '<h3>' + esc(tr(pg.n)) + '</h3>'
+         + '<p>' + esc(tr(pg.d)) + '</p>'
+         + '<span class="insight-card-cta">' + esc(tr('Read article')) + ' &rarr;</span>'
          + '</a>';
   }
 
@@ -290,7 +328,7 @@
     if (rel.themes && rel.themes.length) {
       out += '<div class="rc-themes">';
       rel.themes.forEach(function (t) {
-        out += '<span class="insight-category-badge">' + esc(t) + '</span>';
+        out += '<span class="insight-category-badge">' + esc(tr(t)) + '</span>';
       });
       out += '</div>';
     }
@@ -299,7 +337,7 @@
     var stocks = (rel.stocks || []).filter(function (k) { return P[k]; });
     if (stocks.length) {
       out += '<div class="rc-group">'
-           + '<h3 class="rc-sub-heading">Related AI Infrastructure Research</h3>'
+           + '<h3 class="rc-sub-heading">' + esc(tr('Related AI Infrastructure Research')) + '</h3>'
            + '<div class="market-grid">';
       stocks.forEach(function (k) { out += deepCard(k, base); });
       out += '</div></div>';
@@ -309,7 +347,7 @@
     var etfs = (rel.etfs || []).filter(function (k) { return P[k]; });
     if (etfs.length) {
       out += '<div class="rc-group">'
-           + '<h3 class="rc-sub-heading">Related ETF Education</h3>'
+           + '<h3 class="rc-sub-heading">' + esc(tr('Related ETF Education')) + '</h3>'
            + '<div class="market-grid">';
       etfs.forEach(function (k) { out += deepCard(k, base); });
       out += '</div></div>';
@@ -319,7 +357,7 @@
     var insights = (rel.insights || []).filter(function (k) { return P[k]; });
     if (insights.length) {
       out += '<div class="rc-group">'
-           + '<h3 class="rc-sub-heading">Popular Research</h3>'
+           + '<h3 class="rc-sub-heading">' + esc(tr('Related Market Insights')) + '</h3>'
            + '<div class="insight-grid">';
       insights.forEach(function (k) { out += articleCard(k, base); });
       out += '</div></div>';
@@ -329,7 +367,7 @@
     var hubs = (rel.hubs || []).filter(function (k) { return P[k]; });
     if (hubs.length) {
       out += '<div class="rc-group">'
-           + '<h3 class="rc-sub-heading">Explore This Theme</h3>'
+           + '<h3 class="rc-sub-heading">' + esc(tr('Related Research Hubs')) + '</h3>'
            + '<div class="market-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">';
       hubs.forEach(function (k) { out += deepCard(k, base); });
       out += '</div></div>';
@@ -338,10 +376,10 @@
     /* Screener CTA */
     out += '<div class="rc-screener-cta">'
          + '<div>'
-         + '<p class="rc-screener-title">Screen the full AI market universe</p>'
-         + '<p class="rc-screener-sub">TradeAlpha Score across AI stocks and ETFs — educational multi-factor analysis.</p>'
+         + '<p class="rc-screener-title">' + esc(tr('Screen the full AI market universe')) + '</p>'
+         + '<p class="rc-screener-sub">' + esc(tr('TradeAlpha Score across AI stocks and ETFs — educational multi-factor analysis.')) + '</p>'
          + '</div>'
-         + '<a class="market-btn primary" href="' + esc(base + 'ai-stock-screener.html') + '">Open Screener &rarr;</a>'
+         + '<a class="market-btn primary" href="' + esc(arHref(base, 'ai-stock-screener.html')) + '">' + esc(tr('Open Screener')) + ' &rarr;</a>'
          + '</div>';
 
     el.innerHTML = out;
