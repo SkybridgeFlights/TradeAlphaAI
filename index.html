@@ -11,7 +11,13 @@
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta name="theme-color" content="#040506" />
   <link rel="canonical" href="https://www.tradealphaai.com/" />
-  <meta property="og:locale" content="ar_AR" />
+    <!-- localized-static-pages:start -->
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/" />
+  <link rel="alternate" hreflang="en-US" href="https://www.tradealphaai.com/en/" />
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/" />
+  <!-- localized-static-pages:end -->
+<meta property="og:locale" content="ar_AR" />
   <meta property="og:site_name" content="TradeAlpha AI" />
   <meta property="og:title" content="TradeAlpha AI | Gold Trading System with Verified Performance" />
   <meta property="og:description" content="A premium gold trading system with transparent pricing, Telegram-based access, and a dedicated performance review path." />
@@ -109,15 +115,9 @@
           <a href="insights/" class="nav-link">Market Insights</a>
           <a href="methodology.html" class="nav-link">Methodology</a>
         </nav>
-        <div class="top-controls">
-          <button id="langSwitch" class="lang-switch" aria-label="Switch language" aria-haspopup="menu" aria-expanded="false">
-            <span class="pill">العربية</span>
-          </button>
-          <div id="langMenu" class="lang-menu" role="menu" aria-hidden="true">
-            <button role="menuitem" data-lang="ar" class="lang-item">العربية</button>
-            <button role="menuitem" data-lang="en" class="lang-item">English</button>
-            <button role="menuitem" data-lang="de" class="lang-item">Deutsch</button>
-          </div>
+        <div class="locale-links" aria-label="Language">
+          <a class="lang-switch" data-locale-route="ar" href="/ar/">العربية</a>
+          <a class="lang-switch" data-locale-route="en" href="/">English</a>
         </div>
       </div>
     </div>
@@ -480,9 +480,9 @@
   </div>
 
   <script src="script.js" defer></script>
-  <script src="landing-i18n.js" defer></script>
   <script src="landing-live.js" defer></script>
   <script src="landing-contact.js" defer></script>
   <script src="js/research-layer.js" defer></script>
+  <script src="js/language-router.js" defer></script>
 </body>
 </html>

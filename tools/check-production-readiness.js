@@ -59,6 +59,7 @@ checkFeaturedContentLinks();
 checkInternalLinks();
 checkResearchLayer();
 checkInsightDiscoverability();
+checkLocalizedStaticPages();
 
 if (failures.length) {
   console.error("Production readiness check failed:");
@@ -534,6 +535,52 @@ function checkInsightDiscoverability() {
   }
 }
 
+function checkLocalizedStaticPages() {
+  const configPath = "data/localization/ar-pages.json";
+  const config = JSON.parse(read(configPath) || "{}");
+  if (!Array.isArray(config.pages) || !config.pages.length) {
+    failures.push(`${configPath}: missing localized page config`);
+    return;
+  }
+
+  const sitemapAr = read("sitemap-ar.xml");
+  if (!sitemapAr.includes("https://www.tradealphaai.com/ar/")) failures.push("sitemap-ar.xml missing Arabic homepage");
+
+  const robots = read("robots.txt");
+  if (!robots.includes("sitemap-ar.xml")) failures.push("robots.txt missing sitemap-ar.xml reference");
+
+  const router = read("js/language-router.js");
+  if (!router.includes("localizedRoutes")) failures.push("js/language-router.js missing static route map");
+  if (/openai|claude|api[_-]?key|fetch\(/i.test(router)) {
+    failures.push("js/language-router.js must route only; no translation/API calls allowed");
+  }
+
+  for (const page of config.pages) {
+    for (const rel of [page.arPath, page.enPath]) {
+      const html = read(rel);
+      if (!html) {
+        failures.push(`${rel}: localized static page missing`);
+        continue;
+      }
+      if (!html.includes('rel="canonical"')) failures.push(`${rel}: missing canonical`);
+      if (!html.includes('hreflang="ar"')) failures.push(`${rel}: missing Arabic hreflang`);
+      if (!html.includes('hreflang="en"')) failures.push(`${rel}: missing English hreflang`);
+      if (!html.includes('data-locale-route')) failures.push(`${rel}: missing static language switch route`);
+      if (/landing-i18n|data-copy=|translate\.google|openai|claude/i.test(html)) {
+        failures.push(`${rel}: contains runtime translation or AI client marker`);
+      }
+    }
+
+    const arHtml = read(page.arPath);
+    if (arHtml && !/<html lang="ar" dir="rtl">/.test(arHtml)) failures.push(`${page.arPath}: missing Arabic RTL html attributes`);
+    if (arHtml && !arHtml.includes("نصيحة مالية")) failures.push(`${page.arPath}: missing Arabic financial disclaimer wording`);
+
+    const sourceHtml = read(page.source);
+    if (sourceHtml && !sourceHtml.includes('hreflang="ar"')) failures.push(`${page.source}: missing Arabic hreflang alternate`);
+    if (sourceHtml && !sourceHtml.includes('data-locale-route="ar"')) failures.push(`${page.source}: missing Arabic static language switch link`);
+  }
+}
+
 function extractLinks(html) {
   return [...html.matchAll(/\shref="([^"#?]+)(?:#[^"]*)?"/g)].map((m) => m[1]);
 }
@@ -543,9 +590,10 @@ function isInternalHtmlLink(href) {
 }
 
 function resolveHref(fromRel, href) {
-  let target = href;
+  let target = href.startsWith("/") ? href.slice(1) : href;
   if (target.endsWith("/")) target += "index.html";
   const baseDir = path.dirname(fromRel);
+  if (href.startsWith("/")) return path.normalize(target).replaceAll("\\", "/").replace(/^\.\//, "");
   return path.normalize(path.join(baseDir, target)).replaceAll("\\", "/").replace(/^\.\//, "");
 }
 
