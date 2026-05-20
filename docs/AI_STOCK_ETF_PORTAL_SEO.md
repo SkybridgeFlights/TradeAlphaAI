@@ -226,3 +226,10 @@ Each localized page should include:
 - Correct `dir="rtl"` for Arabic.
 
 Runtime translation can remain for UX, but dedicated localized URLs are stronger for indexing.
+## Social Metadata and CTR Strategy
+
+- Required social tags: `og:title`, `og:description`, `og:type`, `og:url`, `og:image`, `twitter:card`, `twitter:title`, `twitter:description`, and `twitter:image`.
+- Wording should remain professional and educational: no clickbait, no price targets, no guaranteed profit language, and no direct financial advice.
+- OG image placeholder strategy: use `https://www.tradealphaai.com/Image/og-image.svg` until page-specific 1200x630 PNG/WebP previews are generated.
+- Future OG image generation should create static assets by page type: stock symbol cards, ETF education cards, insight topic cards, and hub cards. Generated URLs should be inserted through the same template variables rather than manual page edits.
+- Article schema, FAQ schema, breadcrumb schema, canonical URLs, and `max-image-preview:large` must remain intact.

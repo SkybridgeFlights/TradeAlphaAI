@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{PAGE_TITLE}}</title>
+  <meta name="description" content="{{META_DESC}}" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/insights/{{SLUG}}.html" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="{{OG_TITLE}}" />
+  <meta property="og:description" content="{{OG_DESC}}" />
+  <meta property="og:url" content="https://www.tradealphaai.com/insights/{{SLUG}}.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta property="og:image:alt" content="TradeAlphaAI Market Insights research preview" />
+  <meta property="article:published_time" content="{{DATE_ISO}}" />
+  <meta property="article:modified_time" content="{{UPDATED_ISO}}" />
+  <meta property="article:section" content="{{CATEGORY}}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{OG_TITLE}}" />
+  <meta name="twitter:description" content="{{OG_DESC}}" />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../landing.css" />
+  <link rel="stylesheet" href="../css/market/market-portal.css" />
+  <script type="application/ld+json">
+{{JSON_LD}}
+  </script>
+</head>
+<body class="market-page">
+  <div class="insight-progress-bar" id="read-progress"></div>
+  <main class="market-shell">
+    <div class="wrap">
+
+      <nav class="breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="index.html">Market Insights</a><span>/</span><span>{{BREADCRUMB_LABEL}}</span></nav>
+
+      <!-- Article header -->
+      <section class="market-section">
+        <div class="market-panel insight-hero-card">
+          <div class="insight-label-row">
+            <span class="insight-category-badge">{{CATEGORY}}</span>
+            <span class="insight-category-badge muted">Educational Research</span>
+          </div>
+          <h1>{{H1}}</h1>
+          <div class="insight-meta-bar">
+            <span>Published <strong><time datetime="{{DATE_ISO}}">{{DATE_DISPLAY}}</time></strong></span>
+            <span>Updated <strong><time datetime="{{UPDATED_ISO}}">{{UPDATED_DISPLAY}}</time></strong></span>
+            <span><strong>{{READING_TIME}} read</strong></span>
+            <span><strong>TradeAlphaAI Research</strong></span>
+          </div>
+          <p class="market-lead">{{LEAD}}</p>
+          <div class="insight-summary-box">
+            <span>Research brief</span>
+            <p>{{INTRO_SUMMARY}}</p>
+          </div>
+          <div class="insight-meta-clusters">
+            <div>
+              <strong>Related symbols</strong>
+              <div class="insight-chip-row">{{RELATED_SYMBOLS}}</div>
+            </div>
+            <div>
+              <strong>Topic tags</strong>
+              <div class="insight-chip-row">{{TOPIC_TAGS}}</div>
+            </div>
+          </div>
+          <p class="insight-hero-disclaimer">Educational content only. This article does not provide investment advice, price targets, or security recommendations.</p>
+        </div>
+      </section>
+
+      <!-- Article layout: body + sidebar -->
+      <section class="market-section">
+        <div class="insight-layout">
+
+          <!-- Article body -->
+          <article class="insight-article-body">
+
+{{ARTICLE_BODY}}
+
+            <div class="insight-disclaimer">
+              <strong>Educational disclaimer:</strong> All Market Insights content is for educational and informational purposes only and does not constitute investment or financial advice. TradeAlphaAI does not recommend specific securities or predict future performance. All statistics and data cited are approximate and for educational context only. Consult a qualified financial professional for personalized investment guidance.
+            </div>
+
+          </article>
+
+          <!-- Sidebar -->
+          <aside class="insight-sidebar">
+            <div class="insight-toc">
+              <h3>Contents</h3>
+              <ol>
+{{TOC_ITEMS}}
+              </ol>
+            </div>
+            <div class="market-panel" style="padding:20px;margin-top:20px">
+              <span class="eyebrow" style="font-size:10px">Related Research</span>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+{{SIDEBAR_LINKS}}
+              </div>
+            </div>
+            <div class="market-panel insight-sidebar-note">
+              <span class="eyebrow" style="font-size:10px">Research Use</span>
+              <p>Use this page as educational context alongside company filings, fund documents, and independent financial data sources.</p>
+            </div>
+          </aside>
+
+        </div>
+      </section>
+
+      <!-- Related Content Engine -->
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Continue Reading</span>
+          <h2>Explore connected market research</h2>
+          <div data-rc="{{RC_KEY}}"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+  <script>
+  (function(){
+    var bar=document.getElementById('read-progress');
+    if(!bar)return;
+    window.addEventListener('scroll',function(){
+      var d=document.documentElement;
+      var p=Math.min(d.scrollTop/(d.scrollHeight-d.clientHeight)||0,1);
+      bar.style.width=(p*100).toFixed(1)+'%';
+    },{passive:true});
+  })();
+  </script>
+  <script src="../js/related-content.js"></script>
+</body>
+</html>

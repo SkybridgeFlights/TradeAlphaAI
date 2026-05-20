@@ -57,6 +57,7 @@ function buildSymbolModel(symbol, domain) {
     CONTENT_ANGLE: symbol.contentAngle,
     DOMAIN: domain,
     CANONICAL_URL: urlFor(domain, symbol.pagePath),
+    RC_KEY: rcKeyForSymbol(symbol),
     RELATED_LINKS: relatedLinks,
     FAQ_STATIC: buildFaqHtml(symbol),
     SCHEMA_JSON: buildSchemaScript([
@@ -74,12 +75,27 @@ function buildHubModel(hub, domain) {
     SEO_DESCRIPTION: hub.seoDescription,
     DOMAIN: domain,
     CANONICAL_URL: urlFor(domain, hub.pagePath),
+    RC_KEY: rcKeyForHub(hub),
     FAQ_STATIC: buildHubFaqHtml(hub),
     SCHEMA_JSON: buildSchemaScript([
       buildBreadcrumbSchema(domain, hub.pagePath, "Screener", hub.title),
       buildHubFaqSchema(hub)
     ])
   };
+}
+
+function rcKeyForSymbol(symbol) {
+  return String(symbol.symbol || "").toLowerCase();
+}
+
+function rcKeyForHub(hub) {
+  const map = {
+    "ai-stocks": "hub-ai-stocks",
+    "semiconductor-stocks": "hub-semiconductor",
+    "growth-stocks": "hub-growth",
+    "dividend-etfs": "hub-dividends"
+  };
+  return map[hub.key] || `hub-${hub.key}`;
 }
 
 function findPagePath(symbol) {
@@ -209,7 +225,7 @@ function renderTemplate(template, values) {
 }
 
 function escapeHtmlUnlessHtml(key, value) {
-  if (key === "RELATED_LINKS") return value;
+  if (key === "RELATED_LINKS" || key === "SCHEMA_JSON") return value;
   return escapeHtml(value);
 }
 

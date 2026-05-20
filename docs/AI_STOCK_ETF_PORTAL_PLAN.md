@@ -457,3 +457,10 @@ Remaining tasks:
 - Implement Alpha Vantage, Polygon, Yahoo-compatible provider stubs (Phase 10+).
 - Add multi-provider failover strategy (try Finnhub → Alpha Vantage → mock) in Phase 10+.
 - Connect real edge cache TTLs to the simulated cache metadata fields.
+## CTR, Discover, and Engagement Layer
+
+- Social metadata is standardized through the static templates for stock pages, ETF pages, hub pages, insight articles, the homepage, and the insights index.
+- All page types use the existing `/Image/og-image.svg` as a durable placeholder so OG/Twitter previews never break when custom article images are unavailable.
+- Featured content remains intentionally limited: the homepage receives one featured insights area, one AI research spotlight, one ETF education spotlight, and one screener/theme CTA.
+- Engagement sections prioritize editorial pathways such as Continue Reading, Popular Research, Explore This Theme, related AI infrastructure research, related ETF education, and macro/risk research.
+- The approach is incremental and static-site safe: no framework migration, backend, personalization store, subscriptions, or new dependency layer.

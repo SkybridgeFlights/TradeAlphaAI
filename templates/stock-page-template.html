@@ -7,12 +7,17 @@
   <meta name="description" content="{{SEO_DESCRIPTION}}" />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="{{CANONICAL_URL}}" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
   <meta property="og:title" content="{{SEO_TITLE}}" />
   <meta property="og:description" content="{{SEO_DESCRIPTION}}" />
   <meta property="og:url" content="{{CANONICAL_URL}}" />
   <meta property="og:type" content="article" />
   <meta property="og:image" content="{{DOMAIN}}/Image/og-image.svg" />
+  <meta property="og:image:alt" content="TradeAlphaAI research preview for {{SYMBOL}} stock analysis" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{SEO_TITLE}}" />
+  <meta name="twitter:description" content="{{SEO_DESCRIPTION}}" />
+  <meta name="twitter:image" content="{{DOMAIN}}/Image/og-image.svg" />
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="../landing.css" />
   <link rel="stylesheet" href="../css/market/market-portal.css" />
@@ -44,9 +49,11 @@
       <section class="market-section"><div class="content-columns"><article class="market-panel"><span class="eyebrow">AI Summary</span><h2>Educational explanation</h2><p class="market-copy" data-ai-summary></p></article><article class="market-panel"><span class="eyebrow">Risk Overview</span><h2>Risk factors</h2><ul class="risk-list" data-risk-list></ul></article></div></section>
       <section class="market-section"><div class="content-columns"><article class="market-panel" data-content-depth></article><article class="market-panel"><span class="eyebrow">Related Assets</span><h2>Explore more</h2><div class="related-grid" data-related-stocks></div></article></div></section>
       <section class="market-section"><div class="market-panel stock-faq"><span class="eyebrow">FAQ</span><h2>{{SYMBOL}} stock FAQ</h2><div data-stock-faq></div><noscript>{{FAQ_STATIC}}</noscript></div></section>
+      <section class="market-section"><div class="market-panel"><span class="eyebrow">Continue Reading</span><h2>Explore connected market research</h2><div data-rc="{{RC_KEY}}"></div></div></section>
       <section class="market-section"><div class="market-panel"><span class="eyebrow">Explore</span><h2>Continue research</h2><div class="cta-actions">{{RELATED_LINKS}}<a class="market-btn primary" href="../ai-stock-screener.html">Market Screener</a><a class="market-btn" href="../methodology.html">Methodology</a></div></div></section>
     </div>
   </main>
   <script type="module">import { initStaticSymbolPage } from "../js/market/ui-renderer.js"; initStaticSymbolPage("{{SYMBOL}}");</script>
+  <script src="../js/related-content.js"></script>
 </body>
 </html>

@@ -7,11 +7,17 @@
   <meta name="description" content="{{SEO_DESCRIPTION}}" />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="{{CANONICAL_URL}}" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
   <meta property="og:title" content="{{SEO_TITLE}}" />
   <meta property="og:description" content="{{SEO_DESCRIPTION}}" />
   <meta property="og:url" content="{{CANONICAL_URL}}" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="{{DOMAIN}}/Image/og-image.svg" />
+  <meta property="og:image:alt" content="TradeAlphaAI research hub preview for {{HUB_TITLE}}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{SEO_TITLE}}" />
+  <meta name="twitter:description" content="{{SEO_DESCRIPTION}}" />
+  <meta name="twitter:image" content="{{DOMAIN}}/Image/og-image.svg" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="landing.css" />
   <link rel="stylesheet" href="css/market/market-portal.css" />
@@ -26,10 +32,12 @@
       <section class="market-section"><div data-data-status></div></section>
       <section class="market-section"><div class="market-panel"><span class="eyebrow">Curated Assets</span><h2>{{HUB_TITLE}} watchlist candidates</h2><div class="market-grid" data-hub-assets></div></div></section>
       <section class="market-section"><div class="theme-grid" data-hub-sections></div></section>
+      <section class="market-section"><div class="market-panel"><span class="eyebrow">Continue Reading</span><h2>Explore connected market research</h2><div data-rc="{{RC_KEY}}"></div></div></section>
       <section class="market-section"><div class="market-panel"><span class="eyebrow">Recently Viewed</span><h2>Your local research trail</h2><div class="compact-grid" data-recently-viewed></div></div></section>
       <section class="market-section"><div class="market-panel stock-faq"><span class="eyebrow">FAQ</span><h2>{{HUB_TITLE}} FAQ</h2><noscript>{{FAQ_STATIC}}</noscript></div></section>
     </div>
   </main>
   <script type="module">import { initHubPage } from "./js/market/ui-renderer.js"; initHubPage("{{HUB_KEY}}");</script>
+  <script src="js/related-content.js"></script>
 </body>
 </html>

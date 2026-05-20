@@ -389,3 +389,10 @@ Default remains `MARKET_DATA_PROVIDER=mock` when no key is configured.
 ### Finnhub rate limits
 
 Free tier: 60 API calls/minute. This provider uses 2–3 calls per stock request and 2 calls per ETF request (no metrics for ETFs). The in-memory cache reduces this to 0 calls for repeat requests within 55 seconds.
+## Featured Content Architecture
+
+- The CTR and engagement layer is implemented with existing static templates, `data/insight-topics.json`, `tools/generate-insights.js`, and `js/related-content.js`.
+- Stock, ETF, and hub pages inherit social metadata from `templates/stock-page-template.html`, `templates/etf-page-template.html`, and `templates/hub-page-template.html`.
+- Insight articles inherit article metadata, editorial hero fields, related symbol chips, topic tags, and Continue Reading sections from `templates/insight-template.html`.
+- Homepage and insights index featured modules are static HTML using shared `market-portal.css` components for premium dark panels, gold accents, responsive grids, and glass-style cards.
+- Internal-linking logic remains client-side and static. It uses the existing related-content graph and does not require a backend.
