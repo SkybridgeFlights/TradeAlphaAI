@@ -60,6 +60,7 @@ checkInternalLinks();
 checkResearchLayer();
 checkInsightDiscoverability();
 checkLocalizedStaticPages();
+checkArabicInsightBodies();
 
 if (failures.length) {
   console.error("Production readiness check failed:");
@@ -590,7 +591,7 @@ function checkLocalizedStaticPages() {
       if (!html.includes('hreflang="ar"')) failures.push(`${rel}: missing Arabic hreflang`);
       if (!html.includes('hreflang="en"')) failures.push(`${rel}: missing English hreflang`);
       if (!html.includes('data-locale-route')) failures.push(`${rel}: missing static language switch route`);
-      if (/landing-i18n|data-copy=|translate\.google|openai|claude/i.test(html)) {
+      if (/landing-i18n|data-copy=|translate\.google|new\s+OpenAI\s*\(|import\s+OpenAI|openai\.com\/v1|claude\.ai\/api|anthropic\s*=\s*new/i.test(html)) {
         failures.push(`${rel}: contains runtime translation or AI client marker`);
       }
       if (html.includes("data-rc=") && !html.includes("related-content.js")) {
@@ -627,6 +628,77 @@ function checkLocalizedStaticPages() {
       if (sitemapAr.includes(`https://www.tradealphaai.com/${page.arPath}`)) failures.push(`${page.arPath}: Arabic review draft appears in sitemap-ar.xml`);
     } else if (!sitemapAr.includes(`https://www.tradealphaai.com/${page.arPath.replace(/index\.html$/, "")}`)) {
       failures.push(`sitemap-ar.xml missing ${page.arPath}`);
+    }
+  }
+}
+
+function checkArabicInsightBodies() {
+  const arInsightsDir = path.join(root, "ar", "insights");
+  if (!fs.existsSync(arInsightsDir)) { failures.push("ar/insights/ directory missing"); return; }
+
+  const arContentDir = path.join(root, "data", "localization", "ar-insight-content");
+  const arIndexHtml = read("ar/insights/index.html");
+
+  const files = fs.readdirSync(arInsightsDir)
+    .filter((name) => name.endsWith(".html") && name !== "index.html");
+
+  for (const name of files) {
+    const rel = `ar/insights/${name}`;
+    const html = read(rel);
+    if (!html) { failures.push(`${rel}: Arabic insight file missing`); continue; }
+
+    const isNoindex = /noindex,nofollow/i.test(html);
+    const slug = name.replace(/\.html$/, "");
+    const hasContentFile = fs.existsSync(path.join(arContentDir, `${slug}.json`));
+
+    if (isNoindex) {
+      // noindex page is acceptable only when the content file is missing
+      if (hasContentFile) {
+        failures.push(`${rel}: has Arabic content file but page is noindex — regenerate with npm run localize:generate`);
+      }
+      // Must not appear linked in the Arabic insights index as a published article
+      if (arIndexHtml.includes(`/ar/insights/${name}`) && arIndexHtml.includes('insight-card')) {
+        failures.push(`${rel}: noindex Arabic article is linked from ar/insights/index.html`);
+      }
+      continue;
+    }
+
+    // Indexed Arabic article — must have real body content
+    const h2Matches = (html.match(/<h2[^>]*>/g) || []).length;
+    if (h2Matches < 5) {
+      failures.push(`${rel}: indexed Arabic article has only ${h2Matches} section headings — requires ≥5`);
+    }
+
+    // Must contain Arabic FAQ heading
+    if (!html.includes("أسئلة شائعة")) {
+      failures.push(`${rel}: indexed Arabic article missing FAQ section (أسئلة شائعة)`);
+    }
+
+    // Minimum Arabic character count in the article body
+    const articleBodyMatch = html.match(/<article[\s\S]*?<\/article>/i);
+    const articleText = articleBodyMatch ? articleBodyMatch[0].replace(/<[^>]+>/g, " ") : "";
+    const arabicCharCount = (articleText.match(/[؀-ۿ]/g) || []).length;
+    if (arabicCharCount < 1200) {
+      failures.push(`${rel}: indexed Arabic article body has only ${arabicCharCount} Arabic characters — requires ≥1200`);
+    }
+
+    // Must contain financial disclaimer wording in Arabic
+    if (!html.includes("نصيحة مالية")) {
+      failures.push(`${rel}: indexed Arabic article missing financial disclaimer wording (نصيحة مالية)`);
+    }
+
+    // Must have an Arabic content file backing it
+    if (!hasContentFile) {
+      failures.push(`${rel}: indexed Arabic article has no matching ar-insight-content/${slug}.json`);
+    }
+  }
+
+  // ar/insights/index.html must only link to articles that are indexed
+  const linkedSlugs = [...arIndexHtml.matchAll(/href="\/ar\/insights\/([^"]+\.html)"/g)].map((m) => m[1]);
+  for (const linkedFile of linkedSlugs) {
+    const linkedHtml = read(`ar/insights/${linkedFile}`);
+    if (linkedHtml && /noindex,nofollow/i.test(linkedHtml)) {
+      failures.push(`ar/insights/index.html links to noindex article: ar/insights/${linkedFile}`);
     }
   }
 }

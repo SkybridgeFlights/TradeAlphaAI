@@ -60,42 +60,6 @@
         "ar": "/ar/methodology.html",
         "en": "/en/methodology.html"
     },
-    "/insights/ai-infrastructure-demand.html": {
-        "ar": "/ar/insights/ai-infrastructure-demand.html",
-        "en": "/insights/ai-infrastructure-demand.html"
-    },
-    "/ar/insights/ai-infrastructure-demand.html": {
-        "ar": "/ar/insights/ai-infrastructure-demand.html",
-        "en": "/insights/ai-infrastructure-demand.html"
-    },
-    "/en/insights/ai-infrastructure-demand.html": {
-        "ar": "/ar/insights/ai-infrastructure-demand.html",
-        "en": "/en/insights/ai-infrastructure-demand.html"
-    },
-    "/insights/spy-vs-qqq-explained.html": {
-        "ar": "/ar/insights/spy-vs-qqq-explained.html",
-        "en": "/insights/spy-vs-qqq-explained.html"
-    },
-    "/ar/insights/spy-vs-qqq-explained.html": {
-        "ar": "/ar/insights/spy-vs-qqq-explained.html",
-        "en": "/insights/spy-vs-qqq-explained.html"
-    },
-    "/en/insights/spy-vs-qqq-explained.html": {
-        "ar": "/ar/insights/spy-vs-qqq-explained.html",
-        "en": "/en/insights/spy-vs-qqq-explained.html"
-    },
-    "/insights/semiconductor-cycle-risks.html": {
-        "ar": "/ar/insights/semiconductor-cycle-risks.html",
-        "en": "/insights/semiconductor-cycle-risks.html"
-    },
-    "/ar/insights/semiconductor-cycle-risks.html": {
-        "ar": "/ar/insights/semiconductor-cycle-risks.html",
-        "en": "/insights/semiconductor-cycle-risks.html"
-    },
-    "/en/insights/semiconductor-cycle-risks.html": {
-        "ar": "/ar/insights/semiconductor-cycle-risks.html",
-        "en": "/en/insights/semiconductor-cycle-risks.html"
-    },
     "/ai-stocks.html": {
         "ar": "/ar/ai-stocks.html",
         "en": "/ai-stocks.html"
@@ -456,6 +420,18 @@
         "ar": "/ar/insights/ai-inference-vs-training.html",
         "en": "/en/insights/ai-inference-vs-training.html"
     },
+    "/insights/ai-infrastructure-demand.html": {
+        "ar": "/ar/insights/ai-infrastructure-demand.html",
+        "en": "/insights/ai-infrastructure-demand.html"
+    },
+    "/ar/insights/ai-infrastructure-demand.html": {
+        "ar": "/ar/insights/ai-infrastructure-demand.html",
+        "en": "/insights/ai-infrastructure-demand.html"
+    },
+    "/en/insights/ai-infrastructure-demand.html": {
+        "ar": "/ar/insights/ai-infrastructure-demand.html",
+        "en": "/en/insights/ai-infrastructure-demand.html"
+    },
     "/insights/cloud-computing-ai-market-structure.html": {
         "ar": "/ar/insights/cloud-computing-ai-market-structure.html",
         "en": "/insights/cloud-computing-ai-market-structure.html"
@@ -576,6 +552,18 @@
         "ar": "/ar/insights/sector-etfs-vs-broad-market.html",
         "en": "/en/insights/sector-etfs-vs-broad-market.html"
     },
+    "/insights/semiconductor-cycle-risks.html": {
+        "ar": "/ar/insights/semiconductor-cycle-risks.html",
+        "en": "/insights/semiconductor-cycle-risks.html"
+    },
+    "/ar/insights/semiconductor-cycle-risks.html": {
+        "ar": "/ar/insights/semiconductor-cycle-risks.html",
+        "en": "/insights/semiconductor-cycle-risks.html"
+    },
+    "/en/insights/semiconductor-cycle-risks.html": {
+        "ar": "/ar/insights/semiconductor-cycle-risks.html",
+        "en": "/en/insights/semiconductor-cycle-risks.html"
+    },
     "/insights/semiconductor-market-research-ai-chip-supply-chain-constraints.html": {
         "ar": "/ar/insights/semiconductor-market-research-ai-chip-supply-chain-constraints.html",
         "en": "/insights/semiconductor-market-research-ai-chip-supply-chain-constraints.html"
@@ -587,6 +575,18 @@
     "/en/insights/semiconductor-market-research-ai-chip-supply-chain-constraints.html": {
         "ar": "/ar/insights/semiconductor-market-research-ai-chip-supply-chain-constraints.html",
         "en": "/en/insights/semiconductor-market-research-ai-chip-supply-chain-constraints.html"
+    },
+    "/insights/spy-vs-qqq-explained.html": {
+        "ar": "/ar/insights/spy-vs-qqq-explained.html",
+        "en": "/insights/spy-vs-qqq-explained.html"
+    },
+    "/ar/insights/spy-vs-qqq-explained.html": {
+        "ar": "/ar/insights/spy-vs-qqq-explained.html",
+        "en": "/insights/spy-vs-qqq-explained.html"
+    },
+    "/en/insights/spy-vs-qqq-explained.html": {
+        "ar": "/ar/insights/spy-vs-qqq-explained.html",
+        "en": "/en/insights/spy-vs-qqq-explained.html"
     },
     "/insights/understanding-beta-in-stocks.html": {
         "ar": "/ar/insights/understanding-beta-in-stocks.html",

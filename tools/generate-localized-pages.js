@@ -16,6 +16,20 @@ if (fs.existsSync(phase1Path)) {
     if (!existing.has(page.id)) data.pages.push(page);
   }
 }
+
+const arInsightContentDir = path.join(root, "data", "localization", "ar-insight-content");
+
+function loadArInsightContent(slug) {
+  const filePath = path.join(arInsightContentDir, `${slug}.json`);
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (e) {
+    console.warn(`Warning: Failed to parse ar-insight-content/${slug}.json: ${e.message}`);
+    return null;
+  }
+}
+
 addAutoPages();
 
 const pageBySource = new Map(data.pages.map((page) => [normalize(page.source), page]));
@@ -220,6 +234,8 @@ function insightPage(rel, html) {
   const description = extractHtmlDescription(html);
   const category = extractFirst(html, /<span class="insight-category-badge">([^<]+)<\/span>/) || "أبحاث السوق";
   const arTitle = arInsightTitle(title, slug);
+  const arContent = loadArInsightContent(slug);
+
   return {
     id: `auto-insight-${slug}`,
     type: "article",
@@ -227,27 +243,34 @@ function insightPage(rel, html) {
     arPath: `ar/${rel}`,
     enPath: `en/${rel}`,
     title: arTitle,
-    description: arInsightDescription(description, arTitle),
+    description: arContent ? arContent.summary : arInsightDescription(description, arTitle),
     enTitle: title,
     enDescription: description,
-    category: arCategory(category),
-    readingTime: "6 دقائق قراءة",
+    category: arContent ? (arContent.category || arCategory(category)) : arCategory(category),
+    readingTime: arContent ? (arContent.readingTime || "7 دقائق قراءة") : "7 دقائق قراءة",
     updated: data.generatedAt,
     eyebrow: "رؤى السوق",
     heading: arTitle,
-    lead: `مقال عربي تعليمي يشرح ${arTitle.replace(/^تحليل\s+/, "")} ضمن سياق أبحاث السوق، المخاطر، والروابط المرتبطة في TradeAlphaAI.`,
-    summary: "تم إعداد هذه النسخة العربية كصفحة ثابتة قابلة للفهرسة، مع الحفاظ على الرسالة التعليمية وعدم تقديم أي توصية استثمارية.",
+    lead: arContent ? arContent.lead : arInsightDescription(description, arTitle),
+    summary: arContent ? arContent.summary : "تم إعداد هذه النسخة العربية كصفحة ثابتة قابلة للفهرسة، مع الحفاظ على الرسالة التعليمية وعدم تقديم أي توصية استثمارية.",
     primaryCta: terminology.labels.readInsights,
     secondaryCta: terminology.labels.openScreener,
+    // Generic sections used only for the en/ locale alias
     sections: [
-      { title: "السياق البحثي", body: arInsightDescription(description, arTitle) },
-      { title: "لماذا يهم الموضوع؟", body: "يساعد هذا الموضوع على فهم العلاقة بين القطاعات، صناديق المؤشرات، الأسهم، والمخاطر الكلية بطريقة منظمة." },
-      { title: "عوامل المخاطر", body: "يجب قراءة أي موضوع سوقي مع مراعاة التذبذب، اختلاف الأفق الزمني، تغير أسعار الفائدة، وحساسية التقييمات." }
+      { title: "Research Context", body: description || title },
+      { title: "Why This Topic Matters", body: "This topic helps understand the relationship between sectors, ETFs, stocks, and macro risk in a structured way." },
+      { title: "Risk Factors", body: "Any market topic should be read with consideration of volatility, time horizon, interest rate changes, and valuation sensitivity." }
     ],
     faq: [
-      { q: "هل هذه المقالة نصيحة مالية؟", a: "لا. المقالة تعليمية ومعلوماتية فقط ولا تُعد نصيحة مالية أو توصية بشراء أو بيع أي ورقة مالية." },
-      { q: "كيف أستخدم هذا البحث؟", a: "استخدمه لفهم السياق والعوامل المؤثرة، ثم راجع المنهجية والروابط المرتبطة قبل أي قرار شخصي." }
+      { q: "Is this article financial advice?", a: "No. The article is for educational and informational purposes only and does not constitute financial advice or a recommendation to buy or sell any security." },
+      { q: "How should I use this research?", a: "Use it to understand context and influencing factors, then review the methodology and related links before making any personal decision." }
     ],
+    // Full Arabic content (null when content file does not exist yet)
+    arSections: arContent ? arContent.sections : null,
+    arFaq: arContent ? arContent.faq : null,
+    arLead: arContent ? arContent.lead : null,
+    arSummary: arContent ? arContent.summary : null,
+    hasFullArabicBody: !!arContent,
     related: ["ar/insights/index.html", "ar/methodology.html", "ar/ai-stock-screener.html"]
   };
 }
@@ -260,6 +283,8 @@ function writePage(page, locale) {
 
 function renderPage(page, locale) {
   const isAr = locale === "ar";
+  // Arabic insight articles without a content file get noindex so no broken pages are published
+  const missingArabicBody = isAr && page.type === "article" && !page.hasFullArabicBody;
   const localizedPath = isAr ? page.arPath : page.enPath;
   const title = isAr ? page.title : page.enTitle;
   const description = isAr ? page.description : page.enDescription;
@@ -278,7 +303,7 @@ function renderPage(page, locale) {
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
-  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="robots" content="${missingArabicBody ? "noindex,nofollow" : "index,follow,max-image-preview:large"}" />
   <link rel="canonical" href="${canonical}" />
   <link rel="alternate" hreflang="en" href="${sourceUrl}" />
   <link rel="alternate" hreflang="en-US" href="${enUrl}" />
@@ -309,7 +334,7 @@ function renderPage(page, locale) {
         <div class="market-hero-panel">
           <span class="eyebrow">${escapeHtml(strings.eyebrow || page.category || "")}</span>
           <h1>${escapeHtml(isAr ? arClean(strings.heading || title) : (strings.heading || title))}</h1>
-          <p class="market-lead">${escapeHtml(strings.lead || description)}</p>
+          <p class="market-lead">${escapeHtml(isAr ? (page.arLead || strings.lead || description) : (strings.lead || description))}</p>
           <div class="market-actions">
             <a class="market-btn primary" href="${isAr ? "/ar/insights/" : "/en/insights/"}">${escapeHtml(isAr ? arClean(strings.primaryCta || terminology.labels.readInsights) : (strings.primaryCta || "Open Research"))}</a>
             <a class="market-btn" href="${isAr ? "/ar/ai-stock-screener.html" : "/ai-stock-screener.html"}">${escapeHtml(isAr ? arClean(strings.secondaryCta || terminology.labels.openScreener) : (strings.secondaryCta || "Open Screener"))}</a>
@@ -403,12 +428,25 @@ function detailBody(page, locale) {
 
 function articleBody(page, locale) {
   const isAr = locale === "ar";
-  const sections = (page.sections || [])
-    .map((section) => `<h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p>`)
-    .join("\n");
-  const faq = (page.faq || [])
+  // Use Arabic-specific content sections and FAQ when available
+  const sectionData = (isAr && page.arSections) ? page.arSections : (page.sections || []);
+  const faqData = (isAr && page.arFaq) ? page.arFaq : (page.faq || []);
+  const summaryText = isAr ? (page.arSummary || page.summary) : page.summary;
+
+  const sections = sectionData
+    .map((section) => {
+      const heading = escapeHtml(section.title || section.heading || "");
+      const bodyHtml = Array.isArray(section.body)
+        ? section.body.map((p) => `<p>${escapeHtml(p)}</p>`).join("\n      ")
+        : `<p>${escapeHtml(section.body || "")}</p>`;
+      return `<h2>${heading}</h2>\n      ${bodyHtml}`;
+    })
+    .join("\n      ");
+
+  const faq = faqData
     .map((item) => `<details><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details>`)
     .join("\n");
+
   return `<section class="market-section">
     <div class="market-panel insight-hero-card">
       <div class="insight-label-row">
@@ -416,7 +454,7 @@ function articleBody(page, locale) {
         <span>${escapeHtml(page.readingTime || "7 min read")}</span>
         <time datetime="${page.updated || data.generatedAt}">${page.updated || data.generatedAt}</time>
       </div>
-      <p class="market-copy">${escapeHtml(page.summary)}</p>
+      <p class="market-copy">${escapeHtml(summaryText)}</p>
     </div>
   </section>
   <section class="market-section">
@@ -462,7 +500,7 @@ function researchHooks(page, locale) {
 
 function arabicInsightsIndex() {
   const articles = data.pages
-    .filter((page) => page.type === "article")
+    .filter((page) => page.type === "article" && page.hasFullArabicBody)
     .sort((a, b) => String(a.title).localeCompare(String(b.title), "ar"))
     .map((page) => `<a class="insight-card" href="/${page.arPath}">
       <div class="insight-card-meta"><span class="insight-category-badge" style="margin:0">${escapeHtml(page.category || "رؤى السوق")}</span><time datetime="${escapeHtml(page.updated || data.generatedAt)}">${escapeHtml(page.updated || data.generatedAt)}</time></div>
@@ -506,11 +544,13 @@ function schema(page, locale) {
       }
     ]
   };
-  if (["article", "stock", "etf"].includes(page.type) && Array.isArray(page.faq) && page.faq.length) {
+  // For Arabic articles use arFaq when available so schema stays in Arabic
+  const faqItems = (isAr && page.arFaq) ? page.arFaq : page.faq;
+  if (["article", "stock", "etf"].includes(page.type) && Array.isArray(faqItems) && faqItems.length) {
     json["@graph"].push({
       "@type": "FAQPage",
       inLanguage: locale,
-      mainEntity: page.faq.map((item) => ({
+      mainEntity: faqItems.map((item) => ({
         "@type": "Question",
         name: item.q,
         acceptedAnswer: { "@type": "Answer", text: item.a }
@@ -584,7 +624,9 @@ function replaceMarkedBlock(html, marker, block) {
 }
 
 function writeSitemap() {
-  const urls = data.pages.map((page) => `  <url>
+  const urls = data.pages
+    .filter((page) => page.type !== "article" || page.hasFullArabicBody)
+    .map((page) => `  <url>
     <loc>${site}/${page.arPath.replace(/index\.html$/, "")}</loc>
     <changefreq>${page.type === "article" ? "monthly" : "weekly"}</changefreq>
     <priority>${page.id === "home" ? "0.9" : "0.75"}</priority>
