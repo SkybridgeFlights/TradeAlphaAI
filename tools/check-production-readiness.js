@@ -540,6 +540,22 @@ function checkLocalizedStaticPages() {
   const config = JSON.parse(read(configPath) || "{}");
   const phase1 = JSON.parse(read("data/localization/ar-phase1-pages.json") || "{\"pages\":[]}");
   config.pages = [...(config.pages || []), ...(phase1.pages || [])];
+  const marketConfig = JSON.parse(read("data/market-symbols.json") || "{\"symbols\":[],\"hubs\":[]}");
+  for (const source of [
+    "stocks.html",
+    "etfs.html",
+    "ai-stock-screener.html",
+    "market-data-status.html",
+    ...((marketConfig.hubs || []).map((item) => item.pagePath)),
+    ...((marketConfig.symbols || []).map((item) => item.pagePath)),
+    ...fs.readdirSync(path.join(root, "insights")).filter((name) => name.endsWith(".html") && name !== "index.html").map((name) => `insights/${name}`)
+  ]) {
+    const arPath = `ar/${source}`;
+    const enPath = `en/${source}`;
+    if (!config.pages.some((page) => page.source === source)) {
+      config.pages.push({ source, arPath, enPath });
+    }
+  }
   if (!Array.isArray(config.pages) || !config.pages.length) {
     failures.push(`${configPath}: missing localized page config`);
     return;
@@ -558,6 +574,12 @@ function checkLocalizedStaticPages() {
   }
 
   for (const page of config.pages) {
+    const sourceHtml = read(page.source);
+    const isReviewDraft = sourceHtml && /noindex,nofollow/i.test(sourceHtml);
+    if (isReviewDraft && !read(page.arPath) && !read(page.enPath)) {
+      if (sitemapAr.includes(`https://www.tradealphaai.com/${page.arPath.replace(/index\.html$/, "")}`)) failures.push(`${page.arPath}: Arabic review draft appears in sitemap-ar.xml`);
+      continue;
+    }
     for (const rel of [page.arPath, page.enPath]) {
       const html = read(rel);
       if (!html) {
@@ -597,9 +619,15 @@ function checkLocalizedStaticPages() {
       }
     }
 
-    const sourceHtml = read(page.source);
     if (sourceHtml && !sourceHtml.includes('hreflang="ar"')) failures.push(`${page.source}: missing Arabic hreflang alternate`);
     if (sourceHtml && !sourceHtml.includes('data-locale-route="ar"')) failures.push(`${page.source}: missing Arabic static language switch link`);
+    if (isReviewDraft) {
+      const arHtmlForDraft = read(page.arPath);
+      if (arHtmlForDraft && !/noindex,nofollow/i.test(arHtmlForDraft)) failures.push(`${page.arPath}: Arabic review draft must remain noindex`);
+      if (sitemapAr.includes(`https://www.tradealphaai.com/${page.arPath}`)) failures.push(`${page.arPath}: Arabic review draft appears in sitemap-ar.xml`);
+    } else if (!sitemapAr.includes(`https://www.tradealphaai.com/${page.arPath.replace(/index\.html$/, "")}`)) {
+      failures.push(`sitemap-ar.xml missing ${page.arPath}`);
+    }
   }
 }
 

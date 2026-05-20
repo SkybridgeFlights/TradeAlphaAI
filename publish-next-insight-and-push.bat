@@ -102,7 +102,20 @@ if errorlevel 1 (
 echo.
 
 echo ========================================
-echo 6. Run production readiness checks
+echo 6. Generate Arabic localized equivalent
+echo ========================================
+call npm run localize:generate
+if errorlevel 1 (
+  echo.
+  echo ARABIC LOCALIZATION FAILED
+  echo GitHub push was skipped.
+  pause
+  goto :end
+)
+echo.
+
+echo ========================================
+echo 7. Run production readiness checks
 echo ========================================
 call npm run check:production
 if errorlevel 1 (
@@ -115,7 +128,7 @@ if errorlevel 1 (
 echo.
 
 echo ========================================
-echo 7. Git status
+echo 8. Git status
 echo ========================================
 call git status
 if errorlevel 1 (
@@ -127,7 +140,7 @@ if errorlevel 1 (
 echo.
 
 echo ========================================
-echo 8. Stage changes
+echo 9. Stage changes
 echo ========================================
 call git add .
 if errorlevel 1 (
@@ -139,7 +152,7 @@ if errorlevel 1 (
 echo.
 
 echo ========================================
-echo 9. Commit changes
+echo 10. Commit changes
 echo ========================================
 call git commit -m "Publish insight: %DETECTED_SLUG%"
 if errorlevel 1 (
@@ -152,7 +165,7 @@ if errorlevel 1 (
 echo.
 
 echo ========================================
-echo 10. Push to GitHub
+echo 11. Push to GitHub
 echo ========================================
 call git push origin main
 if errorlevel 1 (

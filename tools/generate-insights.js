@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATE = fs.readFileSync(path.join(ROOT, 'templates/insight-template.html'), 'utf8');
@@ -401,6 +402,13 @@ function run() {
   }
 
   if (USE_QUEUE && !DRY_RUN) writeJson(QUEUE_PATH, queue);
+  if (!DRY_RUN && generated > 0 && MODE === 'publish-if-safe') {
+    const localized = spawnSync(process.execPath, ['tools/generate-localized-pages.js'], { cwd: ROOT, stdio: 'inherit' });
+    if (localized.status !== 0) {
+      console.error('Arabic localization generation failed after insight publishing.');
+      process.exit(localized.status || 1);
+    }
+  }
 
   console.log(`\n  Generated: ${generated}  Skipped: ${skipped}  Sitemap entries added: ${sitemapAdds}\n`);
   if (!DRY_RUN && generated > 0) console.log('Run `npm run insights:quality -- --slug=<slug>` and `npm run check:production` before publishing.\n');
