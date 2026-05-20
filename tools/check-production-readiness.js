@@ -538,6 +538,8 @@ function checkInsightDiscoverability() {
 function checkLocalizedStaticPages() {
   const configPath = "data/localization/ar-pages.json";
   const config = JSON.parse(read(configPath) || "{}");
+  const phase1 = JSON.parse(read("data/localization/ar-phase1-pages.json") || "{\"pages\":[]}");
+  config.pages = [...(config.pages || []), ...(phase1.pages || [])];
   if (!Array.isArray(config.pages) || !config.pages.length) {
     failures.push(`${configPath}: missing localized page config`);
     return;
@@ -569,11 +571,31 @@ function checkLocalizedStaticPages() {
       if (/landing-i18n|data-copy=|translate\.google|openai|claude/i.test(html)) {
         failures.push(`${rel}: contains runtime translation or AI client marker`);
       }
+      if (html.includes("data-rc=") && !html.includes("related-content.js")) {
+        failures.push(`${rel}: related-content hook present without related-content.js`);
+      }
+      if (html.includes("data-research-timeline") && !html.includes("research-layer.js")) {
+        failures.push(`${rel}: research-layer hook present without research-layer.js`);
+      }
     }
 
     const arHtml = read(page.arPath);
     if (arHtml && !/<html lang="ar" dir="rtl">/.test(arHtml)) failures.push(`${page.arPath}: missing Arabic RTL html attributes`);
     if (arHtml && !arHtml.includes("نصيحة مالية")) failures.push(`${page.arPath}: missing Arabic financial disclaimer wording`);
+    if (arHtml) {
+      const navMatch = arHtml.match(/<nav class="nav-group"[\s\S]*?<\/nav>/);
+      const navText = navMatch ? navMatch[0].replace(/<[^>]+>/g, " ") : "";
+      if (/\b(Home|AI Stock Analyzer|ETF Analyzer|Market Screener|Market Insights|Methodology)\b/.test(navText)) {
+        failures.push(`${page.arPath}: Arabic nav contains English labels`);
+      }
+    }
+    if (arHtml) {
+      for (const href of extractLinks(arHtml)) {
+        if (!isInternalHtmlLink(href)) continue;
+        const target = resolveHref(page.arPath, href);
+        if (!fs.existsSync(path.join(root, target))) failures.push(`${page.arPath}: Arabic internal link does not resolve: ${href}`);
+      }
+    }
 
     const sourceHtml = read(page.source);
     if (sourceHtml && !sourceHtml.includes('hreflang="ar"')) failures.push(`${page.source}: missing Arabic hreflang alternate`);

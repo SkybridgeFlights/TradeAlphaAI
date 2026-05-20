@@ -5,9 +5,19 @@ const root = path.resolve(__dirname, "..");
 const site = "https://www.tradealphaai.com";
 const dataPath = path.join(root, "data", "localization", "ar-pages.json");
 const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+const phase1Path = path.join(root, "data", "localization", "ar-phase1-pages.json");
+if (fs.existsSync(phase1Path)) {
+  const phase1 = JSON.parse(fs.readFileSync(phase1Path, "utf8"));
+  const existing = new Set(data.pages.map((page) => page.id));
+  for (const page of phase1.pages || []) {
+    if (!existing.has(page.id)) data.pages.push(page);
+  }
+}
 
 const pageBySource = new Map(data.pages.map((page) => [normalize(page.source), page]));
 const pageById = new Map(data.pages.map((page) => [page.id, page]));
+const arHrefBySource = new Map(data.pages.map((page) => [normalize(page.source), `/${page.arPath.replace(/index\.html$/, "")}`]));
+const enHrefBySource = new Map(data.pages.map((page) => [normalize(page.source), `/${page.enPath.replace(/index\.html$/, "")}`]));
 
 const nav = {
   en: [
@@ -64,6 +74,7 @@ function run() {
 
   writeSitemap();
   syncRobots();
+  writeLanguageRouter();
 
   console.log(`Generated ${data.pages.length} Arabic pages and ${data.pages.length} English localized aliases.`);
   console.log("Updated hreflang metadata on scoped English source pages.");
@@ -133,7 +144,7 @@ function renderPage(page, locale) {
           </div>
         </div>
       </section>
-      ${page.type === "article" ? articleBody(page, locale) : indexBody(page, locale)}
+      ${detailBody(page, locale)}
       <section class="market-section">
         <div class="market-panel">
           <p class="market-copy localized-disclaimer"><strong>${isAr ? "تنبيه تعليمي:" : "Educational disclaimer:"}</strong> ${escapeHtml(isAr ? data.disclaimer : "TradeAlphaAI content is for educational and informational purposes only and does not constitute financial or investment advice. TradeAlphaAI does not recommend securities or predict future performance.")}</p>
@@ -142,6 +153,8 @@ function renderPage(page, locale) {
     </div>
   </main>
   <script src="${cssPrefix}js/language-router.js" defer></script>
+  ${page.rc ? `<script src="${cssPrefix}js/related-content.js" defer></script>` : ""}
+  ${page.type === "hub" ? `<script src="${cssPrefix}js/research-layer.js" defer></script>` : ""}
 </body>
 </html>
 `;
@@ -210,6 +223,11 @@ function indexBody(page, locale) {
   </section>`;
 }
 
+function detailBody(page, locale) {
+  if (["article", "stock", "etf"].includes(page.type)) return articleBody(page, locale);
+  return indexBody(page, locale) + relatedLinks(page, locale) + researchHooks(page, locale);
+}
+
 function articleBody(page, locale) {
   const isAr = locale === "ar";
   const sections = (page.sections || [])
@@ -234,7 +252,38 @@ function articleBody(page, locale) {
       <h2>${isAr ? "أسئلة شائعة" : "Frequently Asked Questions"}</h2>
       <div class="stock-faq">${faq}</div>
     </article>
+  </section>
+  ${relatedLinks(page, locale)}
+  ${researchHooks(page, locale)}`;
+}
+
+function relatedLinks(page, locale) {
+  const isAr = locale === "ar";
+  if (!Array.isArray(page.related) || !page.related.length) return "";
+  const links = page.related
+    .map((href) => {
+      const normalized = href.replace(/^\/+/, "");
+      const target = locale === "ar" ? `/${normalized}` : sourceFromLocalized(normalized);
+      const label = labelForHref(normalized, locale);
+      return `<a class="market-btn" href="${target}">${escapeHtml(label)}</a>`;
+    })
+    .join("\n        ");
+  return `<section class="market-section">
+    <div class="market-panel">
+      <span class="eyebrow">${isAr ? "روابط بحث مرتبطة" : "Related Research"}</span>
+      <div class="market-actions" style="margin-top:16px">
+        ${links}
+      </div>
+    </div>
   </section>`;
+}
+
+function researchHooks(page, locale) {
+  const isAr = locale === "ar";
+  const rc = page.rc ? `<section class="market-section"><div class="market-panel"><span class="eyebrow">${isAr ? "تابع البحث" : "Continue Research"}</span><div data-rc="${escapeHtml(page.rc)}"></div></div></section>` : "";
+  const timeline = page.type === "hub" ? `<section class="market-section"><div class="market-panel"><div data-research-timeline="hub" data-count="4"></div></div></section>` : "";
+  const themes = page.type === "hub" ? `<section class="market-section"><div class="market-panel"><div data-research-themes data-count="4"></div></div></section>` : "";
+  return `${rc}\n${timeline}\n${themes}`;
 }
 
 function schema(page, locale) {
@@ -262,6 +311,17 @@ function schema(page, locale) {
       }
     ]
   };
+  if (["article", "stock", "etf"].includes(page.type) && Array.isArray(page.faq) && page.faq.length) {
+    json["@graph"].push({
+      "@type": "FAQPage",
+      inLanguage: locale,
+      mainEntity: page.faq.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a }
+      }))
+    });
+  }
   return `<script type="application/ld+json">\n${JSON.stringify(json, null, 2)}\n  </script>`;
 }
 
@@ -314,6 +374,38 @@ function writeSitemap() {
   fs.writeFileSync(path.join(root, "sitemap-ar.xml"), xml, "utf8");
 }
 
+function writeLanguageRouter() {
+  const routes = {};
+  for (const page of data.pages) {
+    const source = `/${normalize(page.source).replace(/index\.html$/, "")}`;
+    const sourceIndex = `/${normalize(page.source)}`;
+    const ar = `/${page.arPath.replace(/index\.html$/, "")}`;
+    const arIndex = `/${page.arPath}`;
+    const en = `/${page.enPath.replace(/index\.html$/, "")}`;
+    const enIndex = `/${page.enPath}`;
+    routes[source] = { ar, en: source };
+    routes[sourceIndex] = { ar, en: source };
+    routes[ar] = { ar, en: source };
+    routes[arIndex] = { ar, en: source };
+    routes[en] = { ar, en };
+    routes[enIndex] = { ar, en };
+  }
+
+  const source = `(function () {
+  const localizedRoutes = ${JSON.stringify(routes, null, 4)};
+
+  const currentPath = window.location.pathname;
+  const routes = localizedRoutes[currentPath] || { ar: "/ar/", en: "/" };
+
+  document.querySelectorAll("[data-locale-route]").forEach((link) => {
+    const locale = link.getAttribute("data-locale-route");
+    link.setAttribute("href", routes[locale] || routes.en || "/");
+  });
+})();
+`;
+  fs.writeFileSync(path.join(root, "js", "language-router.js"), source, "utf8");
+}
+
 function syncRobots() {
   const robotsPath = path.join(root, "robots.txt");
   let robots = fs.readFileSync(robotsPath, "utf8");
@@ -322,6 +414,20 @@ function syncRobots() {
     robots = robots.trimEnd() + `\n${line}\n`;
     fs.writeFileSync(robotsPath, robots, "utf8");
   }
+}
+
+function sourceFromLocalized(localizedHref) {
+  const withoutLocale = localizedHref.replace(/^ar\//, "");
+  const page = data.pages.find((entry) => entry.arPath === localizedHref || entry.arPath === withoutLocale);
+  return page ? `/${normalize(page.source).replace(/index\.html$/, "")}` : `/${withoutLocale}`;
+}
+
+function labelForHref(href, locale) {
+  const clean = href.replace(/^ar\//, "");
+  const page = data.pages.find((entry) => entry.arPath.replace(/^ar\//, "") === clean || entry.source === clean);
+  if (!page) return href.split("/").pop().replace(".html", "").toUpperCase();
+  if (locale === "ar") return page.heading || page.symbol || page.title;
+  return page.symbol || page.enTitle || page.id;
 }
 
 function relativePrefix(filePath) {
