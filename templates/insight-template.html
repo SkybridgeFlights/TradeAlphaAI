@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{{PAGE_TITLE}}</title>
   <meta name="description" content="{{META_DESC}}" />
-  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="robots" content="{{ROBOTS_META}}" />
   <link rel="canonical" href="https://www.tradealphaai.com/insights/{{SLUG}}.html" />
   <meta property="og:site_name" content="TradeAlphaAI" />
   <meta property="og:title" content="{{OG_TITLE}}" />
@@ -47,7 +47,7 @@
             <span>Published <strong><time datetime="{{DATE_ISO}}">{{DATE_DISPLAY}}</time></strong></span>
             <span>Updated <strong><time datetime="{{UPDATED_ISO}}">{{UPDATED_DISPLAY}}</time></strong></span>
             <span><strong>{{READING_TIME}} read</strong></span>
-            <span><strong>TradeAlphaAI Research</strong></span>
+            <span><strong>TradeAlphaAI Market Insights Team</strong></span>
           </div>
           <p class="market-lead">{{LEAD}}</p>
           <div class="insight-summary-box">
@@ -115,6 +115,18 @@
         </div>
       </section>
 
+      <section class="market-section">
+        <div class="market-panel">
+          <div data-research-timeline="article" data-count="4"></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <div data-research-themes data-count="4"></div>
+        </div>
+      </section>
+
     </div>
   </main>
   <script>
@@ -129,5 +141,6 @@
   })();
   </script>
   <script src="../js/related-content.js"></script>
+  <script src="../js/research-layer.js"></script>
 </body>
 </html>

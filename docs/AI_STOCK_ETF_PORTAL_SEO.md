@@ -233,3 +233,11 @@ Runtime translation can remain for UX, but dedicated localized URLs are stronger
 - OG image placeholder strategy: use `https://www.tradealphaai.com/Image/og-image.svg` until page-specific 1200x630 PNG/WebP previews are generated.
 - Future OG image generation should create static assets by page type: stock symbol cards, ETF education cards, insight topic cards, and hub cards. Generated URLs should be inserted through the same template variables rather than manual page edits.
 - Article schema, FAQ schema, breadcrumb schema, canonical URLs, and `max-image-preview:large` must remain intact.
+
+## AI Insight SEO Quality Controls
+
+- New insight topics must pass duplicate checks before generation.
+- Draft and review articles are noindexed and excluded from `sitemap.xml` and `sitemap-market.xml`.
+- Published articles must include Article schema, FAQ schema, Breadcrumb schema, educational disclaimer, conclusion, internal stock/ETF/hub links, and related insight links.
+- The quality gate rejects thin pages, duplicate metadata, repeated phrases, broken editorial structure, and promotional language such as buy-now claims, guaranteed-profit claims, risk-free claims, or stock-picking language.
+- Publishing should remain controlled. A safe editorial cadence is 1 to 3 reviewed articles per week until Search Console and engagement metrics confirm quality.

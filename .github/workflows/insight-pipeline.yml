@@ -1,0 +1,38 @@
+name: Insight Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Pipeline mode"
+        required: true
+        default: "review"
+        type: choice
+        options:
+          - review
+          - draft
+          - publish-if-safe
+      slug:
+        description: "Optional queued topic slug"
+        required: false
+        type: string
+
+jobs:
+  insight-pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run controlled insight pipeline
+        run: |
+          if [ -n "${{ github.event.inputs.slug }}" ]; then
+            node tools/run-insight-pipeline.js --mode=${{ github.event.inputs.mode }} --slug=${{ github.event.inputs.slug }}
+          else
+            node tools/run-insight-pipeline.js --mode=${{ github.event.inputs.mode }}
+          fi
+      - name: Production readiness check
+        run: npm run check:production

@@ -211,6 +211,6 @@ Finnhub API URL in frontend: NONE FOUND
 
 - Production checks now verify social metadata on representative homepage, hub, stock, ETF, and insight pages.
 - Checks detect missing Twitter cards, malformed OG tags, duplicate important page titles, unresolved featured links, and broken internal HTML links.
-- Existing safeguards remain in place for disclaimers, generated insight schema, unescaped JSON-LD, sitemap inclusion, related-content hooks, forbidden claims, and frontend secret scanning.
+- Existing safeguards remain in place for disclaimers, insight-page schema, unescaped JSON-LD, sitemap inclusion, related-content hooks, forbidden claims, and frontend secret scanning.
 - Homepage research integration is intentionally constrained to preserve the premium product landing page while increasing session depth into insights, hubs, analyzers, stock pages, and ETF pages.
 - Remaining future improvement: generate page-specific OG images and swap them into the existing metadata architecture without changing page structure.

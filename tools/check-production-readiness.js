@@ -21,7 +21,9 @@ const requiredFiles = [
   "js/market/data-status.js",
   "js/market/provider-health.js",
   "market-data-status.html",
-  "js/related-content.js"
+  "js/related-content.js",
+  "js/research-layer.js",
+  "data/research-layer.json"
 ];
 
 for (const file of requiredFiles) {
@@ -55,6 +57,8 @@ checkSocialMetadata();
 checkImportantTitles();
 checkFeaturedContentLinks();
 checkInternalLinks();
+checkResearchLayer();
+checkInsightDiscoverability();
 
 if (failures.length) {
   console.error("Production readiness check failed:");
@@ -418,6 +422,114 @@ function checkInternalLinks() {
       if (!isInternalHtmlLink(href)) continue;
       const target = resolveHref(rel, href);
       if (!fs.existsSync(path.join(root, target))) failures.push(`${rel}: internal link does not resolve: ${href}`);
+    }
+  }
+}
+
+function checkResearchLayer() {
+  const layer = JSON.parse(read("data/research-layer.json") || "{}");
+  const source = read("js/research-layer.js");
+
+  for (const marker of ["data-research-timeline", "data-research-themes", "data-research-highlight", "rotate(", "daySeed", "hash("]) {
+    if (!source.includes(marker)) failures.push(`js/research-layer.js: missing expected research-layer marker: ${marker}`);
+  }
+
+  if (!Array.isArray(layer.insights) || layer.insights.length < 6) failures.push("data/research-layer.json: expected at least 6 insight timeline entries");
+  if (!Array.isArray(layer.themes) || layer.themes.length < 6) failures.push("data/research-layer.json: expected at least 6 market themes");
+
+  const linkLabels = layer.linkLabels || {};
+  for (const insight of layer.insights || []) {
+    for (const field of ["title", "href", "category", "readingTime", "updated", "symbols", "signal", "summary"]) {
+      if (!insight[field] || (Array.isArray(insight[field]) && !insight[field].length)) failures.push(`data/research-layer.json: insight missing ${field}`);
+    }
+    if (insight.href && !fs.existsSync(path.join(root, insight.href))) failures.push(`data/research-layer.json: insight href does not resolve: ${insight.href}`);
+  }
+
+  for (const theme of layer.themes || []) {
+    for (const field of ["key", "label", "intro", "links"]) {
+      if (!theme[field] || (Array.isArray(theme[field]) && !theme[field].length)) failures.push(`data/research-layer.json: theme missing ${field}`);
+    }
+    for (const href of theme.links || []) {
+      if (!linkLabels[href]) failures.push(`data/research-layer.json: theme link missing label: ${href}`);
+      if (!fs.existsSync(path.join(root, href))) failures.push(`data/research-layer.json: theme link does not resolve: ${href}`);
+    }
+  }
+
+  const hookPages = [
+    "index.html",
+    "insights/index.html",
+    "stocks/nvda.html",
+    "etfs/spy.html",
+    "ai-stocks.html",
+    "insights/ai-inference-vs-training.html"
+  ];
+  for (const rel of hookPages) {
+    const html = read(rel);
+    if (!html.includes("research-layer.js")) failures.push(`${rel}: missing research-layer.js script`);
+    if (!html.includes("data-research-timeline")) failures.push(`${rel}: missing latest market research timeline hook`);
+  }
+
+  for (const rel of ["index.html", "insights/index.html", "ai-stocks.html", "stocks/nvda.html"]) {
+    const html = read(rel);
+    if (!html.includes("data-research-themes")) failures.push(`${rel}: missing rotating market themes hook`);
+  }
+
+  const generatedSource = read("tools/generate-insights.js");
+  for (const marker of [
+    "Executive Summary and Market Context",
+    "Key Market Takeaway and Why It Matters",
+    "ETF Exposure, Related Sectors, and Research Hubs",
+    "Risk Factors and Macro Context",
+    "Portfolio Context and Research Process",
+    "Conclusion"
+  ]) {
+    if (!generatedSource.includes(marker)) failures.push(`tools/generate-insights.js: missing generated insight structure marker: ${marker}`);
+  }
+}
+
+function checkInsightDiscoverability() {
+  const navPages = ["index.html", "stocks.html", "etfs.html", "ai-stock-screener.html"];
+  for (const rel of navPages) {
+    const html = read(rel);
+    if (!html.includes('href="insights/"') && !html.includes('href="insights/index.html"')) {
+      failures.push(`${rel}: missing public Market Insights navigation link`);
+    }
+  }
+
+  for (const rel of ["ai-stocks.html", "semiconductor-stocks.html", "growth-stocks.html", "dividend-etfs.html"]) {
+    const html = read(rel);
+    if (!html.includes('href="insights/"') && !html.includes('href="insights/index.html"')) {
+      failures.push(`${rel}: missing Market Insights hub link`);
+    }
+  }
+
+  const queue = JSON.parse((read("data/insight-topic-queue.json") || "{}").replace(/^\uFEFF/, ""));
+  const insightsIndex = read("insights/index.html");
+  const researchLayer = read("data/research-layer.json");
+  const sitemapMarket = read("sitemap-market.xml");
+  const sitemapMain = read("sitemap.xml");
+
+  for (const topic of queue.topics || []) {
+    const rel = `insights/${topic.slug}.html`;
+    const html = read(rel);
+    const url = `https://www.tradealphaai.com/${rel}`;
+
+    if (topic.status === "published") {
+      if (!html) failures.push(`${rel}: published queue topic is missing article file`);
+      if (html && !html.includes('content="index,follow,max-image-preview:large"')) failures.push(`${rel}: published article is not indexable`);
+      if (!insightsIndex.includes(`${topic.slug}.html`) && !researchLayer.includes(`${topic.slug}.html`)) {
+        failures.push(`${rel}: published article is not reachable from insights index or research layer`);
+      }
+      if (!sitemapMarket.includes(`<loc>${url}</loc>`) && !sitemapMain.includes(`<loc>${url}</loc>`)) {
+        failures.push(`${rel}: published article missing from sitemaps`);
+      }
+    }
+
+    if (["candidate", "approved", "draft"].includes(topic.status) && html) {
+      if (!html.includes('content="noindex,nofollow,max-image-preview:large"')) failures.push(`${rel}: review draft is not noindex`);
+      if (sitemapMarket.includes(`<loc>${url}</loc>`) || sitemapMain.includes(`<loc>${url}</loc>`)) {
+        failures.push(`${rel}: review draft appears in sitemap`);
+      }
     }
   }
 }
