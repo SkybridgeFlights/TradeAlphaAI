@@ -20,7 +20,18 @@
       "Bash(New-Item -ItemType Directory -Force \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\data\\\\localization\\\\ar-insight-content\")",
       "Bash(Out-Null)",
       "Bash(Write-Host \"Directory created\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(node -e ' *)",
+      "Bash(powershell -Command \"Get-ChildItem ar -Recurse -Filter *.html | Measure-Object | Select-Object -ExpandProperty Count\")",
+      "Bash(powershell -Command \"Get-ChildItem ar -Recurse -Filter *.html | Select-String 'Gold Trading System' | Select-Object -ExpandProperty Filename | Sort-Object -Unique | Select-Object -First 10\")",
+      "Bash(powershell -Command ' *)",
+      "Bash(grep -n \"English\\\\|English\\\\|[A-Za-z]\\\\{4,\\\\}\" ar/insights/index.html)",
+      "Bash(node --eval \"const fs=require\\('fs'\\);const html=fs.readFileSync\\('ar/insights/index.html','utf8'\\);const visible=html.replace\\(/<script[\\\\s\\\\S]*?<\\\\/script>/gi,' '\\).replace\\(/<style[\\\\s\\\\S]*?<\\\\/style>/gi,' '\\).replace\\(/<[^>]+>/g,' '\\).replace\\(/\\\\s+/g,' '\\);const bad=['market education','provider architecture','research candidates'];bad.forEach\\(b=>{if\\(new RegExp\\(b,'i'\\).test\\(visible\\)\\)console.log\\('FOUND:',b\\);}\\);\")",
+      "Bash(node --eval \"const fs=require\\('fs'\\);const html=fs.readFileSync\\('ar/insights/index.html','utf8'\\);const visible=html.replace\\(/<script[\\\\s\\\\S]*?<\\\\/script>/gi,' '\\).replace\\(/<style[\\\\s\\\\S]*?<\\\\/style>/gi,' '\\).replace\\(/<[^>]+>/g,' '\\).replace\\(/\\\\s+/g,' '\\);const pats=['watchlist candidates','ranking recommendation','provide price targets','predict future performance','market education','future generated','provider architecture','long-term ownership costs','A fast educational','does the analyzer','Can I use this','Will real market data','high-CTR','buy or sell recommendations','analyst-style explanations','Investors follow','revenue durability','competitive positioning','sector leadership','research candidates','Most followed','Market candidates','Top الأسهم','screening'];pats.forEach\\(p=>{if\\(new RegExp\\(p,'i'\\).test\\(visible\\)\\)console.log\\('FOUND:',p,visible.match\\(new RegExp\\('.{0,30}'+p+'.{0,30}','i'\\)\\)[0]\\);}\\);\")",
+      "Bash(grep -v \"^--$\")",
+      "Bash(grep -v \"^--$\\\\|href\\\\|script\\\\|nav-link\\\\|ld+json\\\\|meta\\\\|og:\\\\|twitter\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
