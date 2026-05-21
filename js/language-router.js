@@ -888,6 +888,18 @@
         "ar": "/ar/insights/hyperscaler-capex-cycles.html",
         "en": "/insights/hyperscaler-capex-cycles.html"
     },
+    "/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html": {
+        "ar": "/ar/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html",
+        "en": "/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html"
+    },
+    "/ar/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html": {
+        "ar": "/ar/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html",
+        "en": "/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html"
+    },
+    "/en/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html": {
+        "ar": "/ar/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html",
+        "en": "/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html"
+    },
     "/insights/interest-rates-and-tech-stocks.html": {
         "ar": "/ar/insights/interest-rates-and-tech-stocks.html",
         "en": "/insights/interest-rates-and-tech-stocks.html"
