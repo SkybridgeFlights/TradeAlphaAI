@@ -31,6 +31,18 @@ export const DATA_STATUS = {
   }
 };
 
+const AR_DATA_STATUS = {
+  mock: { label: "بيانات بحثية ثابتة", description: "تُستخدم بيانات بحثية تعليمية ثابتة للتحليل والمقارنة.", confidence: "بحثي" },
+  live: { label: "بيانات سوق مباشرة", description: "البيانات واردة من مزود بيانات سوق مُعدّ على الخادم.", confidence: "مزود" },
+  stale: { label: "استجابة مؤقتة", description: "تُعرض بيانات مزود مؤقتة. هذه بيانات حقيقية من المزود.", confidence: "مؤقتة" },
+  fallback: { label: "وضع الاحتياط نشط", description: "المزود المُعدّ غير متاح، تُعرض بيانات احتياطية آمنة.", confidence: "احتياطي" },
+  unavailable: { label: "المزود غير متاح", description: "بيانات السوق غير متاحة حالياً. الصفحة متاحة للسياق التعليمي.", confidence: "غير متاح" }
+};
+
+function isArabicContext() {
+  return typeof document !== "undefined" && (document.documentElement.lang === "ar" || document.documentElement.dir === "rtl");
+}
+
 const PROVIDER_DISPLAY_NAMES = {
   finnhub: "Finnhub",
   "alpha-vantage": "Alpha Vantage",
@@ -42,15 +54,16 @@ const PROVIDER_DISPLAY_NAMES = {
 
 export function normalizeDataStatus(metadata = {}) {
   const status = DATA_STATUS[metadata.status] ? metadata.status : metadata.isFallback ? "fallback" : metadata.isMock ? "mock" : "mock";
-  const base = DATA_STATUS[status];
+  const ar = isArabicContext();
+  const base = ar ? (AR_DATA_STATUS[status] || DATA_STATUS[status]) : DATA_STATUS[status];
   const timestamp = metadata.updatedAt || metadata.generatedAt || new Date().toISOString();
   const providerKey = metadata.provider || "mock";
   const providerDisplayName = PROVIDER_DISPLAY_NAMES[providerKey] || providerKey;
 
   const label = (status === "live" && providerDisplayName !== "Static dataset")
-    ? `Live market data — ${providerDisplayName}`
+    ? (ar ? `بيانات سوق مباشرة — ${providerDisplayName}` : `Live market data — ${providerDisplayName}`)
     : (status === "stale" && providerDisplayName !== "Static dataset")
-    ? `Cached response — ${providerDisplayName}`
+    ? (ar ? `استجابة مؤقتة — ${providerDisplayName}` : `Cached response — ${providerDisplayName}`)
     : base.label;
 
   const latencyMs = Number.isFinite(Number(metadata.latencyMs)) ? Number(metadata.latencyMs) : null;

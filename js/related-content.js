@@ -282,8 +282,193 @@
       .replace(/Cloud Computing/g, 'الحوسبة السحابية')
       .replace(/Growth Equities/g, 'أسهم النمو')
       .replace(/Dividend Income/g, 'دخل التوزيعات')
-      .replace(/AI Investing/g, 'استثمار الذكاء الاصطناعي');
+      .replace(/AI Investing/g, 'استثمار الذكاء الاصطناعي')
+      .replace(/Market Cycles/g, 'دورات السوق')
+      /* Stock labels */
+      .replace(/AI GPU Infrastructure/g, 'البنية التحتية لـ GPU الذكاء الاصطناعي')
+      .replace(/GPU & CPU Challenger/g, 'منافس GPU وCPU')
+      .replace(/Cloud AI & Enterprise/g, 'السحابة والذكاء الاصطناعي للمؤسسات')
+      .replace(/AWS Cloud & AI Infrastructure/g, 'AWS والبنية التحتية للذكاء الاصطناعي')
+      .replace(/AI Search & Cloud Platform/g, 'بحث الذكاء الاصطناعي ومنصة السحابة')
+      .replace(/Social AI & Open-Source LLMs/g, 'الذكاء الاصطناعي الاجتماعي ونماذج LLM')
+      .replace(/Networking & Custom AI Silicon/g, 'الشبكات والرقائق المخصصة')
+      .replace(/AI Server Infrastructure/g, 'البنية التحتية لخوادم الذكاء الاصطناعي')
+      .replace(/AI Analytics Platform/g, 'منصة التحليلات بالذكاء الاصطناعي')
+      .replace(/Consumer AI & Silicon Design/g, 'الذكاء الاصطناعي الاستهلاكي وتصميم الرقائق')
+      .replace(/Autonomous & Physical AI/g, 'الذكاء الاصطناعي المستقل والمادي')
+      /* ETF labels */
+      .replace(/S&P 500 Broad-Market ETF/g, 'صندوق مؤشر S&P 500 الشامل')
+      .replace(/Nasdaq-100 Growth ETF/g, 'صندوق مؤشر Nasdaq-100 للنمو')
+      .replace(/Semiconductor Sector ETF/g, 'صندوق مؤشر قطاع أشباه الموصلات')
+      .replace(/S&P 500 Technology ETF/g, 'صندوق مؤشر تقنية S&P 500')
+      .replace(/Total U\.S\. Market ETF/g, 'صندوق مؤشر السوق الأمريكي الشامل')
+      .replace(/S&P 500 ETF \(Low Cost\)/g, 'صندوق مؤشر S&P 500 (منخفض التكلفة)')
+      .replace(/Gold Commodity ETF/g, 'صندوق مؤشر سلع الذهب')
+      .replace(/Long-Duration Bond ETF/g, 'صندوق مؤشر السندات طويلة الأجل')
+      .replace(/Dividend Growth ETF/g, 'صندوق مؤشر نمو التوزيعات')
+      .replace(/Small-Cap Index ETF/g, 'صندوق مؤشر الشركات الصغيرة')
+      /* Theme badge translations */
+      .replace(/AI GPU Computing/g, 'حوسبة GPU للذكاء الاصطناعي')
+      .replace(/Data Center Demand/g, 'طلب مراكز البيانات')
+      .replace(/Data Center Power/g, 'طاقة مراكز البيانات')
+      .replace(/Data Center/g, 'مراكز البيانات')
+      .replace(/Blackwell Architecture/g, 'معمارية Blackwell')
+      .replace(/GPU Competition/g, 'منافسة GPU')
+      .replace(/AI Accelerators/g, 'معجلات الذكاء الاصطناعي')
+      .replace(/CPU Compute/g, 'حوسبة CPU')
+      .replace(/Enterprise Software/g, 'برمجيات المؤسسات')
+      .replace(/Mega-Cap Tech/g, 'تقنية عملاقة السوق')
+      .replace(/AWS Infrastructure/g, 'بنية تحتية AWS')
+      .replace(/E-Commerce AI/g, 'التجارة الإلكترونية والذكاء الاصطناعي')
+      .replace(/AI Search/g, 'بحث الذكاء الاصطناعي')
+      .replace(/Cloud AI Platform/g, 'منصة السحابة بالذكاء الاصطناعي')
+      .replace(/Custom Silicon/g, 'رقائق مخصصة')
+      .replace(/Social AI/g, 'الذكاء الاصطناعي الاجتماعي')
+      .replace(/Open-Source LLMs/g, 'نماذج LLM مفتوحة المصدر')
+      .replace(/Custom AI ASICs/g, 'ASIC الذكاء الاصطناعي المخصصة')
+      .replace(/Semiconductor Networking/g, 'شبكات أشباه الموصلات')
+      .replace(/AI Silicon/g, 'رقائق الذكاء الاصطناعي')
+      .replace(/AI Server Systems/g, 'أنظمة خوادم الذكاء الاصطناعي')
+      .replace(/GPU Infrastructure/g, 'بنية GPU التحتية')
+      .replace(/Liquid Cooling/g, 'التبريد السائل')
+      .replace(/AI Software Platform/g, 'منصة برمجيات الذكاء الاصطناعي')
+      .replace(/Enterprise Analytics/g, 'تحليلات المؤسسات')
+      .replace(/Government AI/g, 'الذكاء الاصطناعي الحكومي')
+      .replace(/Consumer AI/g, 'الذكاء الاصطناعي الاستهلاكي')
+      .replace(/Silicon Design/g, 'تصميم الرقائق')
+      .replace(/On-Device AI/g, 'الذكاء الاصطناعي على الجهاز')
+      .replace(/Autonomous AI/g, 'الذكاء الاصطناعي المستقل')
+      .replace(/Physical Robotics/g, 'الروبوتات المادية')
+      .replace(/EV Technology/g, 'تكنولوجيا السيارات الكهربائية')
+      .replace(/Consumer Tech/g, 'تكنولوجيا المستهلك')
+      .replace(/Broad-Market Diversification/g, 'تنويع السوق الواسع')
+      .replace(/Recession Research/g, 'أبحاث الركود')
+      .replace(/11 Sectors/g, '11 قطاعاً')
+      .replace(/Technology Concentration/g, 'تركز التكنولوجيا')
+      .replace(/Growth ETF/g, 'صندوق مؤشرات النمو')
+      .replace(/AI Equity Exposure/g, 'تعرض أسهم الذكاء الاصطناعي')
+      .replace(/Semiconductor Sector/g, 'قطاع أشباه الموصلات')
+      .replace(/AI Chips/g, 'رقائق الذكاء الاصطناعي')
+      .replace(/Chip Equipment/g, 'معدات الرقائق')
+      .replace(/S&P 500 Technology/g, 'تقنية S&P 500')
+      .replace(/Software & Semiconductors/g, 'البرمجيات وأشباه الموصلات')
+      .replace(/AI Exposure/g, 'تعرض الذكاء الاصطناعي')
+      .replace(/Tech ETF/g, 'صندوق مؤشرات التكنولوجيا')
+      .replace(/Total U\.S\. Market/g, 'إجمالي السوق الأمريكي')
+      .replace(/Broad Diversification/g, 'تنويع واسع')
+      .replace(/Small & Mid Cap/g, 'الشركات الصغيرة والمتوسطة')
+      .replace(/Long-Term/g, 'طويل الأجل')
+      .replace(/S&P 500 Low-Cost/g, 'S&P 500 منخفض التكلفة')
+      .replace(/Vanguard Quality/g, 'جودة Vanguard')
+      .replace(/Broad Market/g, 'السوق الواسع')
+      .replace(/Index Investing/g, 'الاستثمار في المؤشرات')
+      .replace(/\bGold\b/g, 'الذهب')
+      .replace(/Macro Hedge/g, 'تحوط كلي')
+      .replace(/Inflation Research/g, 'أبحاث التضخم')
+      .replace(/Safe Haven Assets/g, 'أصول الملاذ الآمن')
+      .replace(/U\.S\. Treasuries/g, 'سندات الخزانة الأمريكية')
+      .replace(/Interest Rate Sensitivity/g, 'حساسية أسعار الفائدة')
+      .replace(/Duration Risk/g, 'مخاطر الأمد')
+      .replace(/\bBonds\b/g, 'السندات')
+      .replace(/Dividend Growth/g, 'نمو التوزيعات')
+      .replace(/Quality Equity/g, 'أسهم عالية الجودة')
+      .replace(/Income Research/g, 'أبحاث الدخل')
+      .replace(/Value Screening/g, 'فحص القيمة')
+      .replace(/Small-Cap Equities/g, 'أسهم الشركات الصغيرة')
+      .replace(/Russell 2000/g, 'مؤشر Russell 2000')
+      .replace(/Economic Cycle Sensitivity/g, 'حساسية الدورة الاقتصادية')
+      .replace(/Growth Investing/g, 'استثمار النمو')
+      .replace(/Applications/g, 'التطبيقات')
+      .replace(/\bTechnology\b/g, 'التكنولوجيا')
+      .replace(/\bGrowth\b/g, 'النمو')
+      .replace(/GPU Computing/g, 'حوسبة GPU')
+      .replace(/Cloud AI/g, 'سحابة الذكاء الاصطناعي')
+      .replace(/AI Applications/g, 'تطبيقات الذكاء الاصطناعي')
+      .replace(/GPU Design/g, 'تصميم GPU')
+      .replace(/Revenue Momentum/g, 'زخم الإيرادات')
+      .replace(/Yield Research/g, 'أبحاث العائد')
+      .replace(/Value Investing/g, 'استثمار القيمة')
+      .replace(/Stability/g, 'الاستقرار')
+      .replace(/GPU Supply Chain/g, 'سلسلة توريد GPU')
+      .replace(/Hyperscaler Capex/g, 'إنفاق رأسمالي لعملاقة السحابة')
+      .replace(/ETF Comparison/g, 'مقارنة صناديق المؤشرات')
+      .replace(/Index Methodology/g, 'منهجية المؤشر')
+      .replace(/S&P 500 vs Nasdaq-100/g, 'S&P 500 مقابل Nasdaq-100')
+      .replace(/Portfolio Research/g, 'أبحاث المحفظة')
+      .replace(/Semiconductor Cycles/g, 'دورات أشباه الموصلات')
+      .replace(/Inventory Dynamics/g, 'ديناميكيات المخزون')
+      .replace(/AI Chip Risk/g, 'مخاطر رقائق الذكاء الاصطناعي')
+      .replace(/Valuation Research/g, 'أبحاث التقييم');
   }
+
+  /* ===== ARABIC CONTENT LOOKUP =========================================
+     Arabic descriptions and names keyed by catalog key.
+     Used in deepCard() and articleCard() instead of tr(pg.d) / tr(pg.n).
+  ====================================================================== */
+  var AR_D = {
+    nvda:  'نظام CUDA، معمارية Blackwell، سياق طلب GPU لمراكز البيانات بالذكاء الاصطناعي.',
+    amd:   'GPU للذكاء الاصطناعي Instinct MI300X، معالج EPYC لمراكز البيانات، تحليل أشباه الموصلات التنافسي.',
+    msft:  'Azure AI، شراكة OpenAI، أبحاث اشتراكات Copilot للمؤسسات.',
+    amzn:  'AWS Bedrock، رقائق Trainium للذكاء الاصطناعي، الإنفاق الرأسمالي للبنية التحتية السحابية.',
+    googl: 'Google Gemini، رقائق TPU المخصصة، أبحاث Google Cloud Vertex AI.',
+    meta:  'Llama مفتوح المصدر، رقائق MTIA المخصصة، استهداف الإعلانات بالذكاء الاصطناعي.',
+    avgo:  'تصميم رقائق ASIC مخصصة للذكاء الاصطناعي، رقائق الشبكات، تعرض البنية التحتية لمراكز البيانات.',
+    smci:  'تصنيع خوادم GPU، تبريد سائل، تجميع أرفف مراكز بيانات الذكاء الاصطناعي.',
+    pltr:  'AIP للذكاء الاصطناعي المؤسسي، نشر الذكاء الاصطناعي الحكومي والتجاري والتحليلات.',
+    aapl:  'Apple Intelligence، محركات عصبية من سلسلة M، أبحاث معالجة الذكاء الاصطناعي على الجهاز.',
+    tsla:  'الذكاء الاصطناعي للقيادة الذاتية، روبوتات Optimus، أبحاث استدلال الذكاء الاصطناعي بواسطة GPU.',
+    spy:   'تنويع الأسهم الأمريكية لـ 500 شركة، تغطية 11 قطاعاً، سياق التراجع في الركود.',
+    qqq:   'مؤشر مركّز على التكنولوجيا، تعرض مرتفع لشركات الذكاء الاصطناعي، النمو مقابل السوق الواسع.',
+    soxx:  'قطاع أشباه الموصلات الواسع يشمل مصممي GPU للذكاء الاصطناعي وشركات معدات الرقائق.',
+    xlk:   'تركز قطاع التكنولوجيا في S&P 500، تعرض البرمجيات وأشباه الموصلات.',
+    vti:   'سوق الأسهم الأمريكية الكامل عبر الشركات الكبيرة والمتوسطة والصغيرة.',
+    voo:   'تعرض منخفض التكلفة لمؤشر S&P 500، بديل Vanguard لـ SPY للبحث.',
+    gld:   'صندوق مدعوم بالذهب الفعلي للتحوط الكلي وأبحاث حساسية التضخم.',
+    tlt:   'تعرض سندات الحكومة الأمريكية طويلة الأجل، أبحاث حساسية أسعار الفائدة.',
+    schd:  'تعرض عالي الجودة لأسهم نمو التوزيعات، سياق البحث الموجه للدخل.',
+    iwm:   'تعرض الأسهم الأمريكية الصغيرة، حساسية الدورة الاقتصادية وبحث النمو.',
+    'hub-ai-stocks':     'البنية التحتية للذكاء الاصطناعي، طلب GPU من مراكز البيانات، مزودو السحابة، وتحليل برامج الذكاء الاصطناعي.',
+    'hub-semiconductor': 'شركات GPU والمعالجات والشبكات والذاكرة ومعدات الرقائق في بناء الذكاء الاصطناعي.',
+    'hub-growth':        'شركات التكنولوجيا والذكاء الاصطناعي عالية النمو: زخم الإيرادات والتقييم.',
+    'hub-dividends':     'صناديق التوزيعات عالية العائد ونمو التوزيعات للبحث الموجه للدخل.',
+    'ins-ai-infra':      'عناقيد GPU، دورات الإنفاق الرأسمالي لعملاقة السحابة، متطلبات طاقة مراكز البيانات، مخاطر سلسلة التوريد.',
+    'ins-spy-qqq':       'S&P 500 مقابل Nasdaq-100: الاختلافات الهيكلية، تكوين القطاعات، مقارنة التراجعات.',
+    'ins-semi-cycle':    'تصحيحات المخزون، تركز العملاء، تبعيات الإنفاق الرأسمالي، ضغط التقييم.',
+    'ins-ai-inference':  'كيف تختلف أحمال عمل الاستدلال والتدريب وما يعنيه ذلك لطلب GPU والسحابة.',
+    'ins-hyperscaler':   'كيف تقود Amazon وMicrosoft وGoogle وMeta دورات بناء البنية التحتية.',
+    'ins-gpu-cpu':       'لماذا تهيمن معمارية GPU المتوازية على تدريب الذكاء الاصطناعي واستدلاله.',
+    'ins-custom-chips':  'TPUs وTrainium وInferentia — لماذا تصمم عملاقة السحابة رقائق الذكاء الاصطناعي الخاصة.',
+    'ins-expense-ratios':'كيف تتراكم رسوم الصناديق مع الوقت ولماذا تهم مقارنة نسبة المصاريف.',
+    'ins-sector-etfs':   'متى تتفوق صناديق القطاعات وتتأخر مقارنة بصناديق المؤشرات الشاملة.',
+    'ins-beta':          'كيف يقيس معامل بيتا حساسية السوق وما تعنيه أسهم التكنولوجيا عالية البيتا.',
+    'ins-diversification':'كيف يؤثر توزيع المخاطر عبر فئات الأصول والقطاعات على سلوك المحفظة.',
+    'ins-mega-cap':      'كيف تهيمن Apple وMicrosoft وNVIDIA وAmazon على أوزان المؤشرات.',
+    'ins-cloud-ai':      'كيف تجني عملاقة السحابة من أحمال عمل الذكاء الاصطناعي عبر طبقات IaaS وPaaS.',
+    'ins-rates-tech':    'كيف ترتبط دورات أسعار الفائدة تاريخياً بتقييمات التكنولوجيا العالية المضاعفات.',
+    'ins-growth-value':  'الاختلافات الهيكلية بين عوامل أسهم النمو والقيمة، ومتى يميل كل منهما للتصدر.'
+  };
+
+  var AR_N = {
+    'hub-ai-stocks':     'محور أبحاث أسهم الذكاء الاصطناعي',
+    'hub-semiconductor': 'محور أسهم أشباه الموصلات',
+    'hub-growth':        'محور أسهم النمو',
+    'hub-dividends':     'محور صناديق مؤشرات التوزيعات',
+    'ins-ai-infra':      'طلب البنية التحتية للذكاء الاصطناعي',
+    'ins-spy-qqq':       'شرح مقارنة SPY وQQQ',
+    'ins-semi-cycle':    'مخاطر دورة أشباه الموصلات',
+    'ins-ai-inference':  'الاستدلال مقابل التدريب في الذكاء الاصطناعي',
+    'ins-hyperscaler':   'دورات الإنفاق الرأسمالي لعملاقة السحابة',
+    'ins-gpu-cpu':       'GPU مقابل CPU لأحمال عمل الذكاء الاصطناعي',
+    'ins-custom-chips':  'رقائق الذكاء الاصطناعي المخصصة وASICs',
+    'ins-expense-ratios':'شرح نسب مصاريف صناديق المؤشرات',
+    'ins-sector-etfs':   'صناديق القطاعات مقابل السوق الواسع',
+    'ins-beta':          'فهم معامل بيتا في الأسهم',
+    'ins-diversification':'أساسيات تنويع المحفظة',
+    'ins-mega-cap':      'تركز التكنولوجيا العملاقة في المؤشرات',
+    'ins-cloud-ai':      'الحوسبة السحابية وبنية الذكاء الاصطناعي',
+    'ins-rates-tech':    'أسعار الفائدة وأسهم التكنولوجيا',
+    'ins-growth-value':  'أسهم النمو مقابل القيمة'
+  };
 
   /* ===== HTML HELPERS =================================================== */
   function esc(s) {
@@ -296,25 +481,32 @@
 
   function deepCard(key, base) {
     var pg = P[key]; if (!pg) return '';
-    var badge = (pg.t === 'stock' || pg.t === 'etf') ? pg.k : (pg.t === 'hub' ? 'Hub' : 'Article');
-    var nameStr = badge && badge !== pg.n ? pg.n + ' — ' + badge : pg.n;
+    var ar = isArabic();
+    var badge = (pg.t === 'stock' || pg.t === 'etf') ? pg.k : (pg.t === 'hub' ? (ar ? 'محور' : 'Hub') : (ar ? 'مقال' : 'Article'));
+    var nameStr = ar
+      ? (AR_N[key] || (badge && badge !== pg.n ? pg.n + ' — ' + badge : pg.n))
+      : (badge && badge !== pg.n ? pg.n + ' — ' + badge : pg.n);
     nameStr = nameStr.replace('â€”', '-');
-    return '<a class="deep-link-card" href="' + esc(arHref(base, pg.f)) + '">'
+    var desc = ar ? (AR_D[key] || pg.d) : pg.d;
+    return '<a class=”deep-link-card” href=”' + esc(arHref(base, pg.f)) + '”>'
          + '<span>' + esc(tr(pg.l)) + '</span>'
-         + '<strong>' + esc(tr(nameStr)) + '</strong>'
-         + '<p>' + esc(tr(pg.d)) + '</p>'
+         + '<strong>' + esc(nameStr) + '</strong>'
+         + '<p>' + esc(desc) + '</p>'
          + '</a>';
   }
 
   function articleCard(key, base) {
     var pg = P[key]; if (!pg) return '';
-    return '<a class="insight-card" href="' + esc(arHref(base, pg.f)) + '">'
-         + '<div class="insight-card-meta">'
-         + '<span class="insight-category-badge" style="margin:0">' + esc(tr(pg.l)) + '</span>'
+    var ar = isArabic();
+    var name = ar ? (AR_N[key] || pg.n) : pg.n;
+    var desc = ar ? (AR_D[key] || pg.d) : pg.d;
+    return '<a class=”insight-card” href=”' + esc(arHref(base, pg.f)) + '”>'
+         + '<div class=”insight-card-meta”>'
+         + '<span class=”insight-category-badge” style=”margin:0”>' + esc(tr(pg.l)) + '</span>'
          + '</div>'
-         + '<h3>' + esc(tr(pg.n)) + '</h3>'
-         + '<p>' + esc(tr(pg.d)) + '</p>'
-         + '<span class="insight-card-cta">' + esc(tr('Read article')) + ' &rarr;</span>'
+         + '<h3>' + esc(name) + '</h3>'
+         + '<p>' + esc(desc) + '</p>'
+         + '<span class=”insight-card-cta”>' + esc(tr('Read article')) + ' &rarr;</span>'
          + '</a>';
   }
 

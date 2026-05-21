@@ -85,7 +85,7 @@ export async function initStockDetailPage() {
   const asset = await getMarketAsset(symbol);
 
   if (!asset || asset.type !== "stock") {
-    renderMissingAsset(symbol, "stock", "stocks.html", "Try NVDA or AAPL for the stock analyzer.");
+    renderMissingAsset(symbol, "stock", "stocks.html", text("Try NVDA or AAPL for the stock analyzer.", "جرّب NVDA أو AAPL في محلل الأسهم."));
     applyStockDetailSeo(null);
     return;
   }
@@ -100,7 +100,7 @@ export async function initEtfDetailPage() {
   const asset = await getMarketAsset(symbol);
 
   if (!asset || asset.type !== "etf") {
-    renderMissingAsset(symbol, "ETF", "etfs.html", "Try SPY, QQQ, VTI, VOO, or GLD for the ETF analyzer.");
+    renderMissingAsset(symbol, "ETF", "etfs.html", text("Try SPY, QQQ, VTI, VOO, or GLD for the ETF analyzer.", "جرّب SPY أو QQQ أو VTI أو VOO أو GLD في محلل صناديق المؤشرات."));
     applyEtfDetailSeo(null);
     return;
   }
@@ -256,7 +256,7 @@ function renderEtfOnlySections(asset) {
   setText("[data-etf-expense]", formatExpense(asset.expenseRatio));
   setText("[data-etf-category]", asset.category);
   setText("[data-etf-issuer]", asset.issuer);
-  setText("[data-etf-volatility]", `${Math.round(asset.volatility * 100)}% estimated volatility`);
+  setText("[data-etf-volatility]", `${Math.round(asset.volatility * 100)}% ${text("estimated volatility", "تذبذب مقدر")}`);
 }
 
 function renderScoreBreakdown(score) {
@@ -439,7 +439,13 @@ function renderContentDepth(asset) {
     `;
     return;
   }
-  target.innerHTML = `
+  target.innerHTML = isArabicPage() ? `
+    <h2>لماذا يتابع المستثمرون ${asset.symbol}</h2>
+    <p class="market-copy">${content.whyWatch}</p>
+    <h2>تأثير الاقتصاد الكلي والتذبذب</h2>
+    <p class="market-copy">${content.macro}</p>
+    <p class="market-copy">${content.volatility}</p>
+  ` : `
     <h2>Why investors watch ${asset.symbol}</h2>
     <p class="market-copy">${content.whyWatch}</p>
     <h2>Macro impact and volatility</h2>
@@ -452,6 +458,24 @@ function renderStaticSeoContent(asset) {
   const target = document.querySelector("[data-static-symbol-content]");
   if (!target) return;
   const content = getSymbolContent(asset.symbol, asset);
+  if (isArabicPage()) {
+    target.innerHTML = `
+      <span class="eyebrow">أبحاث الرمز المخصصة</span>
+      <h2>نظرة عامة على التحليل التعليمي لـ ${asset.symbol}</h2>
+      <p class="market-copy">${content.intro}</p>
+      <div class="content-columns">
+        <div>
+          <h3>نظرة عامة على معنويات السوق</h3>
+          <p class="market-copy">${asset.analystSentiment || "تتم مراجعة معنويات السوق من خلال سياق تعليمي قائم على قواعد."}</p>
+        </div>
+        <div>
+          <h3>حساسية الأرباح</h3>
+          <p class="market-copy">${asset.earningsSentiment || "تتم مراجعة حساسية الأرباح كسياق تعليمي فقط."}</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
   target.innerHTML = `
     <span class="eyebrow">Dedicated Symbol Research</span>
     <h2>${asset.symbol} educational analysis overview</h2>
@@ -498,7 +522,7 @@ function renderRecentlyViewed() {
   } catch (_) {}
   target.innerHTML = items.length
     ? items.map((item) => `<a class="compact-card" href="${item.type === "etf" ? "etf.html" : "stock.html"}?symbol=${item.symbol}"><strong>${item.symbol}</strong><small>${item.name}</small></a>`).join("")
-    : `<p class="market-copy">Open a stock or ETF analysis page to build a local recently viewed list.</p>`;
+    : `<p class="market-copy">${text("Open a stock or ETF analysis page to build a local recently viewed list.", "افتح صفحة تحليل سهم أو صندوق مؤشرات لبناء قائمة المشاهدة الأخيرة.")}</p>`;
 }
 
 function renderHoldingList(selector, holdings) {
@@ -525,7 +549,10 @@ function renderComparison(selector, etfs) {
   const spy = etfs.find((asset) => asset.symbol === "SPY");
   const qqq = etfs.find((asset) => asset.symbol === "QQQ");
   if (!spy || !qqq) return;
-  target.innerHTML = `
+  target.innerHTML = isArabicPage() ? `
+    <h2>كيف يقارن SPY بـ QQQ</h2>
+    <p class="market-copy">يُصنَّف SPY كتعرض أوسع لأسهم الشركات الكبرى الأمريكية، بينما يُصنَّف QQQ كصندوق أكثر توجهاً نحو النمو والتكنولوجيا. في هذا النموذج التعليمي، يتمتع QQQ بزخم أعلى وتذبذب أكبر، بينما يوفر SPY تنويعاً أوسع.</p>
+  ` : `
     <h2>How SPY compares to QQQ</h2>
     <p class="market-copy">SPY screens as broader U.S. large-cap exposure, while QQQ screens as a more growth- and technology-tilted ETF. In this mock model, QQQ has higher momentum and higher volatility, while SPY has broader diversification.</p>
   `;
@@ -602,6 +629,14 @@ function renderScreenerResults(assets, state) {
 }
 
 function getEtfFundamentalInsights(asset) {
+  if (isArabicPage()) {
+    return [
+      `نسبة المصاريف: ${formatExpense(asset.expenseRatio)}.`,
+      `الفئة: ${asset.category}.`,
+      `أبرز المكونات: ${(asset.holdings || []).slice(0, 3).join("، ")}.`,
+      `يتنوع التعرض القطاعي عبر ${Object.keys(asset.allocation || {}).length} مجموعة توزيع.`
+    ];
+  }
   return [
     `Expense ratio screens at ${formatExpense(asset.expenseRatio)}.`,
     `Category: ${asset.category}.`,
@@ -613,13 +648,18 @@ function getEtfFundamentalInsights(asset) {
 function renderMissingAsset(symbol, type, backHref, helpText) {
   const shell = document.querySelector("[data-stock-detail-shell], [data-etf-detail-shell]");
   if (!shell) return;
+  const eyebrow = text("Symbol not available", "الرمز غير متاح");
+  const heading = isArabicPage()
+    ? `${symbol || "غير معروف"} غير موجود في قاعدة البيانات الحالية`
+    : `${symbol || "Unknown"} is not in the Phase 2 mock ${type} dataset`;
+  const back = text("Back to analyzer", "العودة إلى المحلل");
   shell.innerHTML = `
     <section class="market-section">
       <div class="market-card empty-state">
-        <span class="eyebrow">Symbol not available</span>
-        <h1>${symbol || "Unknown"} is not in the Phase 2 mock ${type} dataset</h1>
+        <span class="eyebrow">${eyebrow}</span>
+        <h1>${heading}</h1>
         <p>${helpText}</p>
-        <a class="market-btn primary" href="${backHref}">Back to analyzer</a>
+        <a class="market-btn primary" href="${backHref}">${back}</a>
       </div>
     </section>
   `;
@@ -629,6 +669,11 @@ function renderDataStatus(metadata, selector = "[data-data-status]") {
   const target = document.querySelector(selector);
   if (!target) return;
   const status = normalizeDataStatus(metadata);
+  const summaryLabel = text("What does this data status mean?", "ماذا تعني حالة البيانات هذه؟");
+  const providerLine = isArabicPage()
+    ? `المزود: ${status.providerName}. آخر تحديث: ${formatDateTime(status.timestamp)}. التخزين المؤقت: ${status.cacheStatus}. تنتهي: ${formatDateTime(status.expiresAt)}. المصدر: ${status.attribution}.`
+    : `Provider: ${status.providerName}. Updated: ${formatDateTime(status.timestamp)}. Cache: ${status.cacheStatus}. Expires: ${formatDateTime(status.expiresAt)}. Attribution: ${status.attribution}.`;
+  const disclaimerLine = text(disclaimer, arDisclaimer);
   target.innerHTML = `
     <div class="data-status-card ${status.className}">
       <div class="data-status-top">
@@ -638,10 +683,10 @@ function renderDataStatus(metadata, selector = "[data-data-status]") {
       </div>
       <p>${status.shortDescription}</p>
       <details>
-        <summary>What does this data status mean?</summary>
+        <summary>${summaryLabel}</summary>
         <p>${status.explanation}</p>
-        <p>Provider: ${status.providerName}. Updated: ${formatDateTime(status.timestamp)}. Cache: ${status.cacheStatus}. Expires: ${formatDateTime(status.expiresAt)}. Attribution: ${status.attribution}.</p>
-        <p>This analysis is for educational and informational purposes only and does not constitute financial advice.</p>
+        <p>${providerLine}</p>
+        <p>${disclaimerLine}</p>
       </details>
     </div>
   `;

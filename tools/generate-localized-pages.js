@@ -888,7 +888,9 @@ function translateText(value = "") {
 }
 
 function normalizeArabicArtifacts(html) {
-  return html
+  const _b = [];
+  html = html.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, m => { _b.push(m); return `\x00B${_b.length - 1}\x00`; });
+  html = html
     .replace(/Score\s+النمطl?/g, "نموذج الدرجة")
     .replace(/Score\s+Model/g, "نموذج الدرجة")
     .replace(/Popular\s+تحليل الأسهم/g, "تحليل الأسهم الشائعة")
@@ -1121,9 +1123,13 @@ function normalizeArabicArtifacts(html) {
     .replace(/Featured Article/g, "مقال مميز")
     .replace(/Reference/g, "مرجع")
     .replace(/Related صناديق المؤشرات/g, "صناديق مؤشرات مرتبطة")
+    .replace(/صناديق مؤشرات مرتبطة و الأسهم/g, "صناديق وأسهم مرتبطة")
     .replace(/مخاطر Analysis/g, "تحليل المخاطر")
     .replace(/FAQ\b/g, "الأسئلة الشائعة")
     .replace(/SEO Overview/g, "نظرة بحثية موجزة")
+    .replace(/TradeAlpha Research Desk/g, "مكتب أبحاث TradeAlpha")
+    .replace(/GPU Compute/g, "وحدة GPU الحاسوبية")
+    .replace(/\bData Centers\b/g, "مراكز البيانات")
     .replace(/Company Overview/g, "نظرة على الشركة")
     .replace(/ETF Methodology/g, "منهجية صندوق المؤشرات")
     .replace(/Research Context/g, "السياق البحثي")
@@ -1133,7 +1139,9 @@ function normalizeArabicArtifacts(html) {
     .replace(/Bear case و المخاطر factors/g, "العوامل السلبية والمخاطر")
     .replace(/Risk layer/g, "طبقة المخاطر")
     .replace(/Valuation Context/g, "سياق التقييم")
+    .replace(/Valuation السياق/g, "سياق التقييم")
     .replace(/Research score context/g, "سياق درجة البحث")
+    .replace(/Research score السياق/g, "سياق درجة البحث")
     .replace(/Related ETFs and stocks/g, "صناديق وأسهم مرتبطة")
     .replace(/Related stocks and ETFs/g, "أسهم وصناديق مرتبطة")
     .replace(/Connected research paths/g, "مسارات بحثية مرتبطة")
@@ -1151,7 +1159,8 @@ function normalizeArabicArtifacts(html) {
     .replace(/Advice/g, "النصيحة")
     .replace(/None/g, "لا يوجد")
     .replace(/Mode/g, "النمط")
-    .replace(/Static/g, "ثابت")
+    .replace(/\bStatic\b/g, "ثابت")
+    .replace(/ثابت research/g, "بحث ثابت")
     .replace(/watchlist/g, "قائمة متابعة")
     .replace(/watchlists/g, "قوائم متابعة")
     .replace(/high-volatility-قائمة متابعة/g, "high-volatility-watchlist")
@@ -1171,12 +1180,26 @@ function normalizeArabicArtifacts(html) {
     .replace(/Stocks \+ ETFs/g, "أسهم وصناديق مؤشرات")
     .replace(/Educational/g, "تعليمي")
     .replace(/Mock Ready/g, "جاهز للبيانات التعليمية")
-    .replace(/business model/g, "نموذج الأعمال")
+    .replace(/business model/gi, "نموذج الأعمال")
     .replace(/themes/g, "المحاور")
     .replace(/bull case/g, "العوامل الإيجابية")
     .replace(/valuation السياق/g, "سياق التقييم")
     .replace(/related صناديق المؤشرات/g, "صناديق مؤشرات مرتبطة")
     .replace(/is tracked as an بحث تعليمي asset because it connects to/g, "تتم متابعته كأصل بحثي تعليمي لأنه يرتبط بمحاور")
+    .replace(/المحاور within public equity markets/g, "ضمن أسواق الأسهم العامة")
+    .replace(/within public equity markets/g, "ضمن أسواق الأسهم العامة")
+    .replace(/product cycle execution/g, "تنفيذ دورات المنتجات")
+    .replace(/pricing power/g, "قوة التسعير")
+    .replace(/operating margin discipline/g, "انضباط الهوامش التشغيلية")
+    .replace(/free cash flow durability/g, "متانة التدفق النقدي الحر")
+    .replace(/peer-relative multiples/g, "مضاعفات نسبية")
+    .replace(/not as a buy or sell signal/g, "وليس كإشارة شراء أو بيع")
+    .replace(/\bResearch Summary\b/g, "ملخص البحث")
+    .replace(/البنية التحتية للذكاء الاصطناعي الطلب/g, "طلب البنية التحتية للذكاء الاصطناعي")
+    .replace(/أشباه الموصلات Cycle المخاطرs/g, "مخاطر دورة أشباه الموصلات")
+    .replace(/Interest الفائدة والتكنولوجيا الأسهم/g, "أسعار الفائدة وأسهم التكنولوجيا")
+    .replace(/Related صناديق مؤشرات و الأسهم/g, "صناديق وأسهم مرتبطة")
+    .replace(/Related الأسهم و صناديق المؤشرات/g, "صناديق وأسهم مرتبطة")
     .replace(/generates value through its core/g, "يبني قيمته عبر نشاطه الأساسي في")
     .replace(/business model, product cycle execution, customer الطلب, pricing power, و operating margin discipline\./g, "ونموذج أعماله وتنفيذ دورات المنتجات وطلب العملاء وقوة التسعير وانضباط الهوامش التشغيلية.")
     .replace(/Clear التعرض profile for research comparison\./g, "ملف تعرض واضح للمقارنة البحثية.")
@@ -1205,6 +1228,7 @@ function normalizeArabicArtifacts(html) {
     .replace(/trade-offs/g, "المفاضلات")
     .replace(/How monetary policy affects multiples/g, "كيف تؤثر السياسة النقدية في مضاعفات التقييم")
     .replace(/Market sensitivity in growth الأسهم/g, "حساسية السوق في أسهم النمو")
+    .replace(/Interest Rates و Tech الأسهم/g, "أسعار الفائدة وأسهم التكنولوجيا")
     .replace(/Rates و Tech/g, "الفائدة والتكنولوجيا")
     .replace(/AI الأسهم Research Hub/g, "محور أبحاث أسهم الذكاء الاصطناعي")
     .replace(/Cloud Computing/g, "الحوسبة السحابية")
@@ -1280,6 +1304,35 @@ function normalizeArabicArtifacts(html) {
     .replace(/Taiwan أشباه الموصلات Manufacturing/g, "Taiwan Semiconductor Manufacturing")
     // etfs.html FAQ eyebrow
     .replace(/صندوق مؤشرات الأسئلة الشائعة/g, "أسئلة شائعة عن صناديق المؤشرات")
+    // ETF detail page remaining contamination
+    .replace(/Fund profile/g, "ملف الصندوق")
+    .replace(/Top Holdings/g, "أكبر الحيازات")
+    .replace(/Portfolio components/g, "مكونات المحفظة")
+    .replace(/Allocation screen/g, "عرض التوزيع")
+    .replace(/<span>Category<\/span>/g, "<span>الفئة</span>")
+    .replace(/\bCore Equity\b/g, "أسهم أساسية")
+    .replace(/فني Analysis/g, "التحليل الفني")
+    .replace(/صندوق مؤشرات أساسيs/g, "أساسيات الصندوق")
+    .replace(/صندوق مؤشرات Research Summary/g, "ملخص بحث الصندوق")
+    .replace(/صندوق مؤشرات Overview/g, "نظرة على الصندوق")
+    .replace(/expense السياق/g, "سياق المصاريف")
+    .replace(/is tracked as an educational صندوق مؤشرات research asset[^<.]*/g, "يُتابَع كأصل بحثي تعليمي لصندوق مؤشرات للتعرض والمقارنة.")
+    .replace(/Spy Vs Qqq Explained/g, "مقارنة SPY وQQQ")
+    .replace(/صندوق مؤشرات نسب المصاريف Explained/g, "شرح نسب مصاريف صناديق المؤشرات")
+    .replace(/القطاع صناديق المؤشرات Vs السوق الواسع/g, "صناديق القطاع مقابل السوق الواسع")
+    .replace(/التركز can increase drawdown sensitivity\./g, "يمكن أن يزيد التركز من حساسية التراجع.")
+    .replace(/نسب المصاريف و trading spreads affect long-term ownership التكلفة\./g, "تؤثر نسب المصاريف والفوارق التداولية في تكلفة الملكية طويلة الأجل.")
+    .replace(/The صندوق مؤشرات can decline with its underlying market or sector\./g, "يمكن أن يتراجع الصندوق مع السوق أو القطاع الأساسي.")
+    .replace(/درجة TradeAlpha is an بحث تعليمي label for comparison\. It ليس a buy or sell recommendation\./g, "درجة TradeAlpha مؤشر بحثي تعليمي للمقارنة، وليست توصية شراء أو بيع.")
+    // stock/ETF insight link title-case fixes
+    .replace(/Ai Infrastructure Demand/g, "طلب البنية التحتية للذكاء الاصطناعي")
+    .replace(/Semiconductor Cycle Risks/g, "مخاطر دورة أشباه الموصلات")
+    .replace(/Interest Rates And Tech Stocks/g, "أسعار الفائدة وأسهم التكنولوجيا")
+    .replace(/Semiconductor Market Research/g, "أبحاث سوق أشباه الموصلات")
+    .replace(/Ai Chip Supply Chain Constraints/g, "قيود سلسلة توريد شرائح الذكاء الاصطناعي")
+    .replace(/Etf Expense Ratios Explained/g, "شرح نسب مصاريف صناديق المؤشرات")
+    .replace(/Sector Etfs Vs Broad Market/g, "صناديق القطاع مقابل السوق الواسع")
+    .replace(/Ai Infrastructure Demand/g, "طلب البنية التحتية للذكاء الاصطناعي")
     // insights/index.html remaining contamination
     .replace(/بحث تعليمي Hub/g, "مركز الأبحاث التعليمية")
     .replace(/\bTopic Clusters\b/g, "مجموعات المحاور")
@@ -1305,6 +1358,8 @@ function normalizeArabicArtifacts(html) {
     .replace(/The portal identifies whether analysis is using educational[^<]*/g, "تُشير البوابة إلى ما إذا كان التحليل يستخدم بيانات تعليمية أو بيانات مباشرة مستقبلية أو بيانات مخزنة متقادمة أو بيانات احتياطية أو بيانات غير متاحة. هذه الشفافية لا تغير الطابع التعليمي فقط للتحليل.")
     .replace(/does لاt/g, "لا")
     .replace(/\bلاt\b/g, "لا");
+  _b.forEach((b, i) => { html = html.replace(`\x00B${i}\x00`, b); });
+  return html;
 }
 
 function preserveEdgeSpace(original, translated) {
