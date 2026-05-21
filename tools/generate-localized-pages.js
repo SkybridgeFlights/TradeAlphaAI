@@ -72,6 +72,20 @@ const AR = {
     "Read Market Insights": "اقرأ رؤى السوق"
   },
   terms: [
+    ["Score Model", "نموذج الدرجة"],
+    ["Screening Tool", "أداة الفحص"],
+    ["Start Screening", "ابدأ الفحص"],
+    ["Join AI Market Alerts", "اشترك في تنبيهات TradeAlphaAI"],
+    ["Follow public Telegram updates and market education from TradeAlphaAI.", "تابع التحديثات العامة على Telegram والمحتوى التعليمي من TradeAlphaAI."],
+    ["Popular Stock Analysis", "تحليل الأسهم الشائعة"],
+    ["Screen high-interest stocks", "فحص الأسهم عالية الاهتمام"],
+    ["Analyze Stock", "حلل السهم"],
+    ["Analyze ETF", "حلل الصندوق"],
+    ["View NVDA", "عرض NVDA"],
+    ["View SPY", "عرض SPY"],
+    ["View QQQ", "عرض QQQ"],
+    ["Free Stock Screening", "فحص الأسهم التعليمي"],
+    ["Free ETF Screening", "فحص صناديق المؤشرات التعليمي"],
     ["This analysis is for educational and informational purposes only and does not constitute financial advice.", "هذا التحليل لأغراض تعليمية ومعلوماتية فقط ولا يُعد نصيحة مالية."],
     ["educational and informational purposes only and does not constitute financial advice", "لأغراض تعليمية ومعلوماتية فقط ولا يُعد نصيحة مالية"],
     ["not financial advice", "ليست نصيحة مالية"],
@@ -127,7 +141,7 @@ function run() {
   normalizeEnglishSources();
 
   for (const page of pages) {
-    writeLocalizedPage(page, "ar");
+    if (!page.static_ar) writeLocalizedPage(page, "ar");
     writeLocalizedPage(page, "en");
     syncEnglishSource(page);
   }
@@ -875,6 +889,35 @@ function translateText(value = "") {
 
 function normalizeArabicArtifacts(html) {
   return html
+    .replace(/Score\s+النمطl?/g, "نموذج الدرجة")
+    .replace(/Score\s+Model/g, "نموذج الدرجة")
+    .replace(/Popular\s+تحليل الأسهم/g, "تحليل الأسهم الشائعة")
+    .replace(/Screen high-interest\s+الأسهم/g, "فحص الأسهم عالية الاهتمام")
+    .replace(/Free AI\s+صندوق مؤشرات\s+Screening/g, "فحص صناديق المؤشرات بالذكاء الاصطناعي")
+    .replace(/Free\s+صندوق مؤشرات\s+Screening\s+Tool/g, "أداة فحص صناديق المؤشرات")
+    .replace(/AI\s+محلل صناديق المؤشرات\s*\|\s*Free\s+صندوق مؤشرات\s+Screening\s+Tool\s*\|\s*TradeAlphaAI/g, "محلل صناديق المؤشرات | أداة فحص صناديق المؤشرات | TradeAlphaAI")
+    .replace(/Screen\s+صناديق المؤشرات\s+with\s+[^<"]+/g, "فحص صناديق المؤشرات مع تحليل بحثي تعليمي ونسب المصاريف وأكبر المكونات والتعرض القطاعي والدرجة الفنية وملخص المخاطر.")
+    .replace(/Analyze\s+صندوق مؤشرات/g, "حلل الصندوق")
+    .replace(/>View\s+([A-Z]{1,5})</g, ">عرض $1<")
+    .replace(/<strong>Screening<\/strong>/g, "<strong>فحص السوق</strong>")
+    .replace(/\bScreening\b/g, "فحص السوق")
+    .replace(/Screen\s+الأسهم\s+و\s+صناديق المؤشرات\s+by\s+score[^<]*/g, "فحص الأسهم وصناديق المؤشرات حسب الدرجة والزخم والمخاطر والقطاع والمعنويات")
+    .replace(/\bProvider\b/g, "مزود البيانات")
+    .replace(/>Screen\s+صناديق المؤشرات</g, ">فحص صناديق المؤشرات<")
+    .replace(/>Screen\s+الأسهم</g, ">فحص الأسهم<")
+    .replace(/Popular educational\s+سهم research المحاور/g, "محاور بحث تعليمية شائعة للأسهم")
+    .replace(/Popular educational\s+سهم\s+research/g, "بحث تعليمي شائع للأسهم")
+    .replace(/تعليمي use only/g, "للاستخدام التعليمي فقط")
+    .replace(/\bCompliance\b/g, "الامتثال")
+    .replace(/security recommendations/g, "توصيات الأوراق المالية")
+    .replace(/price targets/g, "أسعاراً مستهدفة")
+    .replace(/These قائمة متابعةs are for educational و informational purposes only و لا constitute نصيحة مالية, نصيحة استثمارية, أسعارا مستهدفة, or توصيات الأوراق المالية\./g, "هذه القوائم لأغراض تعليمية ومعلوماتية فقط ولا تُعد نصيحة مالية أو استثمارية أو أهدافاً سعرية أو توصيات بأوراق مالية.")
+    .replace(/These قائمة متابعةs are for educational[^<.]*\./g, "هذه القوائم لأغراض تعليمية ومعلوماتية فقط ولا تُعد نصيحة مالية أو استثمارية أو أهدافاً سعرية أو توصيات بأوراق مالية.")
+    .replace(/predict future performance/g, "التنبؤ بالأداء المستقبلي")
+    .replace(/رؤى السوق content is for educational[^<]*/g, "محتوى رؤى السوق لأغراض تعليمية ومعلوماتية فقط ولا يُعد نصيحة مالية أو استثمارية. لا توصي TradeAlphaAI بأوراق مالية ولا تقدم أهدافاً سعرية أو تنبؤات بالأداء المستقبلي.")
+    .replace(/تعليمي multi-factor\s+screening for الأسهم و صناديق المؤشرات/g, "فحص متعدد المعايير للأسهم وصناديق المؤشرات")
+    .replace(/multi-factor\s+screening for الأسهم/g, "فحص متعدد المعايير للأسهم")
+    .replace(/multi-factor\s+screening/g, "فحص متعدد المعايير")
     .replace(/Research Platform/g, "منصة الأبحاث")
     .replace(/Static Research/g, "بحث ثابت")
     .replace(/ثابت Research/g, "بحث ثابت")
@@ -1168,6 +1211,98 @@ function normalizeArabicArtifacts(html) {
     .replace(/Equity Factors/g, "عوامل الأسهم")
     .replace(/Growth vs value الأسهم/g, "أسهم النمو مقابل أسهم القيمة")
     .replace(/Research frameworks for valuation, earnings growth, factor cycles, و rate sensitivity\./g, "أطر بحثية للتقييم ونمو الأرباح ودورات العوامل وحساسية أسعار الفائدة.")
+    // stocks.html remaining contamination
+    .replace(/Free AI سهم فحص السوق/g, "فحص الأسهم بالذكاء الاصطناعي")
+    .replace(/\bHow It Works\b/g, "كيف يعمل")
+    .replace(/شفافة educational scoring/g, "تقييم تعليمي شفاف")
+    .replace(/شفافة تعليمي scoring/g, "تقييم تعليمي شفاف")
+    .replace(/Compare SPY, QQQ, VTI, VOO, و GLD/g, "قارن بين SPY وQQQ وVTI وVOO وGLD")
+    .replace(/>Open محلل صناديق المؤشرات</g, ">افتح محلل صناديق المؤشرات<")
+    .replace(/بحث تعليمي شائع للأسهم المحاور/g, "محاور البحث التعليمية الشائعة للأسهم")
+    .replace(/NVDA Analysis/g, "تحليل NVDA")
+    .replace(/Dedicated NVDA Page/g, "صفحة NVDA التفصيلية")
+    .replace(/Dedicated SPY Page/g, "صفحة SPY التفصيلية")
+    .replace(/Compare QQQ التعرض/g, "قارن تعرض QQQ")
+    .replace(/\bData Status\b/g, "حالة البيانات")
+    .replace(/TradeAlphaAI Ecosystem/g, "منظومة TradeAlphaAI")
+    // etfs.html remaining contamination
+    .replace(/AI محلل صناديق المؤشرات for holdings, allocation, التذبذب, و المخاطر-aware صندوق مؤشرات research/g, "محلل صناديق المؤشرات بالذكاء الاصطناعي للحيازات والتوزيع والتذبذب والبحث الواعي بالمخاطر")
+    .replace(/محلل صناديق المؤشرات questions/g, "أسئلة محلل صناديق المؤشرات")
+    // screener.html remaining contamination
+    .replace(/\bMarket Themes\b/g, "محاور السوق")
+    .replace(/High-engagement screening groups/g, "مجموعات الفحص ذات الاهتمام العالي")
+    .replace(/Filterable ماسح السوق/g, "ماسح السوق القابل للتصفية")
+    .replace(/المخاطر Factors/g, "عوامل المخاطر")
+    .replace(/عوامل المخاطر for أشباه الموصلات الأسهم/g, "عوامل المخاطر لأسهم أشباه الموصلات")
+    .replace(/Build a future قائمة متابعة workflow/g, "بناء مسار قائمة المتابعة المستقبلي")
+    .replace(/تعليمي only/g, "تعليمي فقط")
+    // rankings.html remaining contamination
+    .replace(/Top أشباه الموصلات الأسهم/g, "أفضل أسهم أشباه الموصلات")
+    .replace(/Chip, equipment, memory,[^<]*ليست نصيحة مالية\./g, "شركات الرقائق والمعدات والذاكرة وحوسبة الذكاء الاصطناعي ذات أهمية بحثية عالية. تصنيف بحثي تعليمي وليست نصيحة مالية.")
+    .replace(/Growth-oriented التكنولوجيا[^<]*ليست نصيحة مالية\./g, "شركات تقنية ومنصات موجهة للنمو للمقارنة التعليمية. تصنيف بحثي تعليمي وليست نصيحة مالية.")
+    .replace(/Dividend-focused صناديق المؤشرات[^<]*ليست نصيحة مالية\./g, "صناديق توزيعات الأرباح للبحث عن الدخل والجودة والأسهم الدفاعية. تصنيف بحثي تعليمي وليست نصيحة مالية.")
+    .replace(/Core صندوق مؤشرات building blocks[^<]*ليست نصيحة مالية\./g, "صناديق مؤشرات أساسية للتعرض الواسع للأسهم الأمريكية وسياق المحفظة. تصنيف بحثي تعليمي وليست نصيحة مالية.")
+    .replace(/تصنيف بحثي تعليمي only,/g, "تصنيف بحثي تعليمي وليست")
+    // etfs.html hero stats and paragraphs
+    .replace(/صندوق مؤشرات Data/g, "بيانات الصندوق")
+    .replace(/<strong>Holdings<\/strong>/g, "<strong>الحيازات</strong>")
+    .replace(/المخاطر Lens/g, "منظور المخاطر")
+    .replace(/التكلفةs/g, "التكاليف")
+    .replace(/التكلفة s/g, "التكاليف")
+    .replace(/اعرضing[^<]*/g, "جارٍ تحميل سياق مقارنة الصناديق...")
+    .replace(/placeholder="Search صندوق مؤشرات, e\.g\. SPY or QQQ"/g, 'placeholder="ابحث عن رمز، مثل SPY أو QQQ"')
+    .replace(/aria-label="Search صندوق مؤشرات symbol"/g, 'aria-label="البحث عن رمز صندوق المؤشرات"')
+    .replace(/Compare صناديق المؤشرات with educational[^<]*/g, "قارن صناديق المؤشرات مع سياق درجة TradeAlpha التعليمي ونسب المصاريف وأكبر الحيازات والتعرض القطاعي والإعداد الفني ونظرة المخاطر.")
+    .replace(/The محلل صناديق المؤشرات supports السوق الواسع,[^<]*/g, "يدعم محلل صناديق المؤشرات صناديق السوق الواسع والنمو والتوزيعات والقطاعات والسندات والسلع مع بيانات توزيع تعليمية ثابتة.")
+    // stocks.html paragraphs
+    .replace(/تحليل صناديق المؤشرات is now connected[^<]*/g, "تحليل صناديق المؤشرات متصل الآن ببنية الفحص ذاتها، مع سياق نسبة المصاريف والحيازات والتعرض القطاعي ونظرة التذبذب وملخصات المخاطر التعليمية.")
+    .replace(/Why traders watch NVDA:[^<]*/g, "لماذا يراقب المتداولون NVDA: طلب البنية التحتية للذكاء الاصطناعي وإمدادات أشباه الموصلات وتوقعات الأرباح وحساسية التقييم والزخم — جميعها تؤثر في كيفية فحص NVDA.")
+    .replace(/عوامل المخاطر لأسهم أشباه الموصلات include[^<]*/g, "عوامل المخاطر لأسهم أشباه الموصلات تشمل قيود التصدير وتركز العملاء ودورات المخزون والتغيرات في الإنفاق الرأسمالي وتذبذب قطاع التكنولوجيا.")
+    .replace(/Portfolio-level screening, alerts, و saved بحث تعليمي views planned for future releases\./g, "مساحة مستقبلية لفحص المحافظ والتنبيهات وطرق عرض الأبحاث المحفوظة.")
+    // screener.html paragraphs
+    .replace(/أشباه الموصلات الأسهم can be sensitive to[^<]*/g, "يمكن أن تكون أسهم أشباه الموصلات حساسة للإنفاق على البنية التحتية للذكاء الاصطناعي ودورات المخزون وقيود التصدير وضغط التقييم وتوقعات الأرباح وزخم قطاع التكنولوجيا.")
+    .replace(/Safe labels only\.[^<]*/g, "تسميات آمنة فقط. هذه واجهة فحص تعليمية وليست محرك توصيات.")
+    // screener eyebrow
+    .replace(/\bAI ماسح السوق/g, "ماسح السوق بالذكاء الاصطناعي")
+    // screener filter UI labels
+    .replace(/placeholder="Search symbol or name"/g, 'placeholder="ابحث برمز أو اسم"')
+    .replace(/<option value="0">Any score<\/option>/g, '<option value="0">أي درجة</option>')
+    .replace(/<option value="50">50\+ score<\/option>/g, '<option value="50">50+ درجة</option>')
+    .replace(/<option value="60">60\+ score<\/option>/g, '<option value="60">60+ درجة</option>')
+    .replace(/<option value="70">70\+ score<\/option>/g, '<option value="70">70+ درجة</option>')
+    .replace(/<option value="score">Sort by score<\/option>/g, '<option value="score">ترتيب حسب الدرجة</option>')
+    .replace(/<option value="momentum">Sort by الزخم<\/option>/g, '<option value="momentum">ترتيب حسب الزخم</option>')
+    .replace(/<option value="risk">Sort by المخاطر score<\/option>/g, '<option value="risk">ترتيب حسب درجة المخاطر</option>')
+    .replace(/<option value="symbol">Sort by symbol<\/option>/g, '<option value="symbol">ترتيب حسب الرمز</option>')
+    .replace(/<span>Asset<\/span>/g, '<span>الأصل</span>')
+    .replace(/<span>Score<\/span>/g, '<span>الدرجة</span>')
+    // rankings.html company name fix (semiconductor was over-translated in proper names)
+    .replace(/Taiwan أشباه الموصلات Manufacturing/g, "Taiwan Semiconductor Manufacturing")
+    // etfs.html FAQ eyebrow
+    .replace(/صندوق مؤشرات الأسئلة الشائعة/g, "أسئلة شائعة عن صناديق المؤشرات")
+    // insights/index.html remaining contamination
+    .replace(/بحث تعليمي Hub/g, "مركز الأبحاث التعليمية")
+    .replace(/\bTopic Clusters\b/g, "مجموعات المحاور")
+    .replace(/\bEditor Picks\b/g, "اختيارات المحرر")
+    .replace(/High-signal research paths/g, "مسارات البحث عالية الإشارة")
+    .replace(/استكشف research by theme/g, "استكشف الأبحاث حسب المحور")
+    .replace(/محور أبحاثs[^<]*/g, "محاور الأبحاث والمحللات")
+    .replace(/Continue into سهم, صندوق مؤشرات, و theme research/g, "تابع أبحاث الأسهم وصناديق المؤشرات والمحاور")
+    // methodology.html headings and eyebrows
+    .replace(/Data Transparency/g, "شفافية البيانات")
+    .replace(/Data الشفافية/g, "شفافية البيانات")
+    .replace(/\bTransparency\b/g, "الشفافية")
+    .replace(/How درجة TradeAlpha Works/g, "كيف تعمل درجة TradeAlpha")
+    .replace(/AI Analysis Explanation/g, "شرح التحليل")
+    .replace(/Rule-based, not predictive claims/g, "قائم على قواعد محددة لا ادعاءات تنبؤية")
+    .replace(/Terminology Helper/g, "مساعد المصطلحات")
+    .replace(/Common market terms/g, "مصطلحات السوق الشائعة")
+    .replace(/تعليمي, live, stale, fallback, و unavailable states/g, "حالات التعليمي والمباشر والمتقادم والاحتياطي وغير المتاح")
+    // methodology.html paragraphs
+    .replace(/درجة TradeAlpha is a transparent educational[^<]*نصيحة مالية\./g, "درجة TradeAlpha إطار فحص تعليمي شفاف للأسهم وصناديق المؤشرات. يجمع بين التحليل الفني والأساسيات والزخم والمعنويات وسياق المخاطر دون تقديم نصيحة مالية.")
+    .replace(/The current research explanation layer is deterministic[^<]*/g, "طبقة الشرح البحثي الحالية محددة المنطق وقائمة على قواعد ثابتة. تشرح لماذا تكون الدرجة مرتفعة أو منخفضة استناداً إلى مدخلات تعليمية مرئية، ولا تضمن نتائج ولا تتنبأ بأرباح.")
+    .replace(/RSI reviews الزخم, moving averages summarize trend السياق[^<]*/g, "RSI يراجع الزخم، المتوسطات المتحركة تلخص سياق الاتجاه، نسبة المصاريف تصف تكلفة صندوق المؤشرات، التذبذب يقدر نطاق الحركة، والمعنويات تلخص نبرة السوق.")
+    .replace(/The portal identifies whether analysis is using educational[^<]*/g, "تُشير البوابة إلى ما إذا كان التحليل يستخدم بيانات تعليمية أو بيانات مباشرة مستقبلية أو بيانات مخزنة متقادمة أو بيانات احتياطية أو بيانات غير متاحة. هذه الشفافية لا تغير الطابع التعليمي فقط للتحليل.")
     .replace(/does لاt/g, "لا")
     .replace(/\bلاt\b/g, "لا");
 }

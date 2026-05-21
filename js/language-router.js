@@ -24,6 +24,54 @@
         "ar": "/ar/",
         "en": "/"
     },
+    "/stocks.html": {
+        "ar": "/ar/stocks.html",
+        "en": "/stocks.html"
+    },
+    "/ar/stocks.html": {
+        "ar": "/ar/stocks.html",
+        "en": "/stocks.html"
+    },
+    "/en/stocks.html": {
+        "ar": "/ar/stocks.html",
+        "en": "/stocks.html"
+    },
+    "/etfs.html": {
+        "ar": "/ar/etfs.html",
+        "en": "/etfs.html"
+    },
+    "/ar/etfs.html": {
+        "ar": "/ar/etfs.html",
+        "en": "/etfs.html"
+    },
+    "/en/etfs.html": {
+        "ar": "/ar/etfs.html",
+        "en": "/etfs.html"
+    },
+    "/ai-stock-screener.html": {
+        "ar": "/ar/ai-stock-screener.html",
+        "en": "/ai-stock-screener.html"
+    },
+    "/ar/ai-stock-screener.html": {
+        "ar": "/ar/ai-stock-screener.html",
+        "en": "/ai-stock-screener.html"
+    },
+    "/en/ai-stock-screener.html": {
+        "ar": "/ar/ai-stock-screener.html",
+        "en": "/ai-stock-screener.html"
+    },
+    "/rankings.html": {
+        "ar": "/ar/rankings.html",
+        "en": "/rankings.html"
+    },
+    "/ar/rankings.html": {
+        "ar": "/ar/rankings.html",
+        "en": "/rankings.html"
+    },
+    "/en/rankings.html": {
+        "ar": "/ar/rankings.html",
+        "en": "/rankings.html"
+    },
     "/insights/": {
         "ar": "/ar/insights/",
         "en": "/insights/"
@@ -179,54 +227,6 @@
     "/en/etfs/soxx.html": {
         "ar": "/ar/etfs/soxx.html",
         "en": "/etfs/soxx.html"
-    },
-    "/stocks.html": {
-        "ar": "/ar/stocks.html",
-        "en": "/stocks.html"
-    },
-    "/ar/stocks.html": {
-        "ar": "/ar/stocks.html",
-        "en": "/stocks.html"
-    },
-    "/en/stocks.html": {
-        "ar": "/ar/stocks.html",
-        "en": "/stocks.html"
-    },
-    "/etfs.html": {
-        "ar": "/ar/etfs.html",
-        "en": "/etfs.html"
-    },
-    "/ar/etfs.html": {
-        "ar": "/ar/etfs.html",
-        "en": "/etfs.html"
-    },
-    "/en/etfs.html": {
-        "ar": "/ar/etfs.html",
-        "en": "/etfs.html"
-    },
-    "/ai-stock-screener.html": {
-        "ar": "/ar/ai-stock-screener.html",
-        "en": "/ai-stock-screener.html"
-    },
-    "/ar/ai-stock-screener.html": {
-        "ar": "/ar/ai-stock-screener.html",
-        "en": "/ai-stock-screener.html"
-    },
-    "/en/ai-stock-screener.html": {
-        "ar": "/ar/ai-stock-screener.html",
-        "en": "/ai-stock-screener.html"
-    },
-    "/rankings.html": {
-        "ar": "/ar/rankings.html",
-        "en": "/rankings.html"
-    },
-    "/ar/rankings.html": {
-        "ar": "/ar/rankings.html",
-        "en": "/rankings.html"
-    },
-    "/en/rankings.html": {
-        "ar": "/ar/rankings.html",
-        "en": "/rankings.html"
     },
     "/market-data-status.html": {
         "ar": "/ar/market-data-status.html",
