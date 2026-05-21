@@ -97,7 +97,7 @@ export function initMethodologyPage() {
 export async function initScreenerPage() {
   applyScreenerSeo();
   const assets = await listMarketAssets();
-  const state = { query: "", minScore: 0, risk: "all", sector: "all", sentiment: "all", sort: "score" };
+  const state = { query: "", type: "all", minScore: 0, risk: "all", sector: "all", category: "all", sentiment: "all", sort: "score" };
 
   renderScreenerFacets(assets);
   renderScreenerSections(assets);
@@ -106,9 +106,11 @@ export async function initScreenerPage() {
   document.querySelectorAll("[data-screener-control]").forEach((control) => {
     control.addEventListener("input", () => {
       state.query = getValue("[data-filter-query]").toUpperCase();
+      state.type = getValue("[data-filter-type]") || "all";
       state.minScore = Number(getValue("[data-filter-score]") || 0);
       state.risk = getValue("[data-filter-risk]") || "all";
       state.sector = getValue("[data-filter-sector]") || "all";
+      state.category = getValue("[data-filter-category]") || "all";
       state.sentiment = getValue("[data-filter-sentiment]") || "all";
       state.sort = getValue("[data-filter-sort]") || "score";
       renderScreenerResults(assets, state);
@@ -442,8 +444,10 @@ function renderComparison(selector, etfs) {
 }
 
 function renderScreenerFacets(assets) {
+  fillSelect("[data-filter-type]", unique(assets.map((asset) => asset.type)), "All assets");
   fillSelect("[data-filter-risk]", unique(assets.map((asset) => asset.risk)), "All risk");
   fillSelect("[data-filter-sector]", unique(assets.map((asset) => asset.sector)), "All sectors");
+  fillSelect("[data-filter-category]", unique(assets.map((asset) => asset.category || asset.sector)), "All ETF categories");
   fillSelect("[data-filter-sentiment]", unique(assets.map((asset) => asset.sentiment)), "All sentiment");
 }
 
@@ -479,11 +483,13 @@ function renderScreenerResults(assets, state) {
 
   rows = rows.filter(({ asset, score }) => {
     const matchesQuery = !state.query || asset.symbol.includes(state.query) || asset.name.toUpperCase().includes(state.query);
+    const matchesType = state.type === "all" || asset.type === state.type;
     const matchesScore = score.finalScore >= state.minScore;
     const matchesRisk = state.risk === "all" || asset.risk === state.risk;
     const matchesSector = state.sector === "all" || asset.sector === state.sector;
+    const matchesCategory = state.category === "all" || asset.category === state.category || asset.sector === state.category;
     const matchesSentiment = state.sentiment === "all" || asset.sentiment === state.sentiment;
-    return matchesQuery && matchesScore && matchesRisk && matchesSector && matchesSentiment;
+    return matchesQuery && matchesType && matchesScore && matchesRisk && matchesSector && matchesCategory && matchesSentiment;
   });
 
   rows.sort((a, b) => {

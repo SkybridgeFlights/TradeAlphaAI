@@ -388,6 +388,7 @@ function run() {
 
     fs.writeFileSync(outPath, html, 'utf8');
     console.log(`  write : ${article.slug}.html  [${article.category}]`);
+    writeArabicInsightContent(article);
 
     if (MODE === 'publish-if-safe') {
       const a1 = updateSitemap(sitemapMarket, article.slug);
@@ -412,6 +413,188 @@ function run() {
 
   console.log(`\n  Generated: ${generated}  Skipped: ${skipped}  Sitemap entries added: ${sitemapAdds}\n`);
   if (!DRY_RUN && generated > 0) console.log('Run `npm run insights:quality -- --slug=<slug>` and `npm run check:production` before publishing.\n');
+}
+
+function writeArabicInsightContent(article) {
+  const dir = path.join(ROOT, 'data', 'localization', 'ar-insight-content');
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, article.slug + '.json');
+  const content = {
+    slug: article.slug,
+    title: arTitle(article.h1),
+    category: arCategory(article.category),
+    readingTime: '7 دقائق قراءة',
+    lead: arLead(article),
+    summary: arSummary(article),
+    sections: (article.sections || []).map((section) => ({
+      id: section.id,
+      title: arHeading(section.heading),
+      body: arSectionBody(article, section)
+    })),
+    faq: arFaq(article)
+  };
+  validateArabicInsightContent(content);
+  writeJson(file, content);
+}
+
+function validateArabicInsightContent(content) {
+  const text = JSON.stringify(content);
+  if (!content.slug || !content.title || !content.sections?.length || !content.faq?.length) {
+    throw new Error(`Arabic insight content is incomplete for ${content.slug}`);
+  }
+  const visibleText = [
+    content.title,
+    content.category,
+    content.lead,
+    content.summary,
+    ...(content.sections || []).flatMap((section) => [section.title, ...(section.body || [])]),
+    ...(content.faq || []).flatMap((item) => [item.q, item.a])
+  ].join(' ');
+  const leftover = visibleText.match(/\b(This article|investment advice|security recommendations|price targets|Executive Summary|Market Context|FAQ)\b/i);
+  if (leftover) {
+    throw new Error(`Arabic insight content contains untranslated boilerplate for ${content.slug}: ${leftover[0]}`);
+  }
+}
+
+function arTitle(value) {
+  return arClean(value)
+    .replace(/^(.+?):\s*/, '$1: ')
+    .replace(/Research/gi, 'بحث')
+    .replace(/Education/gi, 'تعليم')
+    .replace(/Explained/gi, 'شرح')
+    .replace(/Structure/gi, 'البنية')
+    .replace(/Methodology/gi, 'المنهجية');
+}
+
+function arCategory(value) {
+  return arClean(value || 'Market Research');
+}
+
+function arLead(article) {
+  return `يتناول هذا البحث التعليمي موضوع ${arClean(article.h1)} من زاوية ${arClean(topicAngle(article))}. يركز المقال على بنية السوق، الأصول المرتبطة، تعرض صناديق المؤشرات، وعوامل المخاطر دون تقديم توقعات أو توصيات أو نصائح مالية شخصية.`;
+}
+
+function arSummary(article) {
+  return `موجز بحثي عربي يربط ${arClean(article.category)} بالأسهم وصناديق المؤشرات ذات الصلة، مع توضيح السياق، المخاطر، الروابط الداخلية، وحدود الاستخدام التعليمي.`;
+}
+
+function arHeading(value) {
+  const map = {
+    'Executive Summary and Market Context': 'ملخص تنفيذي وسياق السوق',
+    'Key Market Takeaway and Why It Matters': 'الخلاصة البحثية وأهميتها',
+    'ETF Exposure, Related Sectors, and Research Hubs': 'تعرض صناديق المؤشرات والقطاعات ومحاور البحث',
+    'Risk Factors and Macro Context': 'عوامل المخاطر والسياق الكلي',
+    'Portfolio Context and Research Process': 'سياق المحفظة ومنهجية البحث',
+    'Conclusion': 'الخلاصة'
+  };
+  return map[value] || arClean(value);
+}
+
+function arSectionBody(article, section) {
+  const angle = arClean(topicAngle(article));
+  const stocks = relatedSymbols(article).filter((symbol) => !isEtfSymbol(symbol)).slice(0, 3).join(' و ') || 'الأسهم المرتبطة';
+  const etfs = relatedSymbols(article).filter(isEtfSymbol).slice(0, 3).join(' و ') || 'صناديق المؤشرات المرتبطة';
+  const category = arClean(article.category);
+  const byId = {
+    's-market-context': [
+      `يقع موضوع ${category} داخل بيئة سوق تتداخل فيها الأساسيات والسيولة والمعنويات وتركيز المؤشرات. زاوية البحث الأساسية هنا هي ${angle}، ولذلك يجب قراءة الموضوع كإطار لفهم العلاقات بين الشركات والصناديق والعوامل الكلية.`,
+      `نقطة البداية هي الفصل بين تعرض الشركة وتعرض السوق. قد ترتبط ${stocks} بالموضوع من خلال الإيرادات أو دورات المنتجات أو تركيز العملاء أو حساسية التقييم، بينما توفر ${etfs} قراءة أوسع من منظور صناديق المؤشرات.`,
+      `تتعامل TradeAlphaAI مع هذا المقال كسياق بحثي لا كإشارة تداول. يمكن للقارئ استخدام الروابط الداخلية والمنهجية وحالة بيانات السوق لفهم حدود المحتوى التعليمي قبل الرجوع إلى المصادر الأولية.`
+    ],
+    's-why-it-matters': [
+      `تنبع أهمية هذا الموضوع من أن البحث المالي لا يعتمد على رقم منفصل. قد تؤثر زاوية مثل ${category} في توقعات الإيرادات، مضاعفات التقييم، قيادة القطاعات، شهية المخاطرة، وتركيز صناديق المؤشرات في الوقت نفسه.`,
+      `بالنسبة للأسهم، السؤال المهم ليس شهرة الشركة بل مدى تعرضها القابل للقياس للموضوع وما إذا كانت التوقعات الحالية تعكس ذلك بالفعل. وبالنسبة لصناديق المؤشرات، ينتقل التركيز إلى المكونات والمنهجية والتكلفة والسيولة وسلوك التراجع.`,
+      `يساعد الربط بين هذا المقال والمقالات القريبة منه على بناء مسار بحث أعمق بدلا من مقالات منفصلة ورفيعة. الهدف هو تحسين قابلية الاكتشاف وفهم العلاقات بين الذكاء الاصطناعي، صناديق المؤشرات، الدورات السوقية، والمخاطر.`
+    ],
+    's-related-assets': [
+      `أهم صفحات الأسهم المرتبطة بهذا الموضوع تشمل ${stocks}. تعرض هذه الصفحات سياقا تعليميا حول نشاط الشركة، التعرض القطاعي، طبقة المخاطر، ومكونات درجة TradeAlpha دون تحويلها إلى توصية.`,
+      `سياق صناديق المؤشرات مهم بالقدر نفسه. يمكن أن تساعد ${etfs} في مقارنة التعرض الفردي بتعرض أكثر تنوعا عبر مؤشر أو قطاع، مع قراءة نسب المصاريف والمكونات والتركيز والتذبذب.`,
+      `تجمع المحاور البحثية الموضوعات المتشابهة في مسار واحد، ما يساعد القارئ على مقارنة الشركات والصناديق داخل الفكرة نفسها قبل الانتقال إلى صفحات تحليل أعمق.`
+    ],
+    's-key-risks': [
+      `لكل محور سوقي حدود بحثية. الخطر الأول هو ضغط السرد في عنوان واحد أو شركة واحدة، مما قد يخفي متغيرات مثل الهوامش، كثافة رأس المال، السيولة، تركيز العملاء، وحساسية الاقتصاد الكلي.`,
+      `الخطر الثاني هو المبالغة في الاستقراء. قد يكون الاتجاه التجاري حقيقيا بينما تكون توقعات السوق مرتفعة بالفعل. لذلك يجب التفريق بين تحديد المحور البحثي وافتراض استجابة الأسعار له.`,
+      `الخطر الثالث هو جودة البيانات وتوقيت تحديثها. قد تختلف وتيرة تحديث الصفحات الثابتة وبيانات المزودين وإفصاحات الشركات، لذلك ينبغي التحقق من الأرقام الحالية عبر المصادر الأولية.`
+    ],
+    's-research-process': [
+      `يبدأ مسار البحث العملي بتحديد الفكرة، ثم ربطها بالأصول والصناديق وفحوص المخاطر. في هذا المقال تتمثل الفكرة في ${angle}، ثم تُقرأ من خلال الأسهم والصناديق والمحاور ذات الصلة.`,
+      `يتجنب هذا الأسلوب الاستنتاجات السريعة. المسار الأفضل هو قراءة سياق السوق، فتح صفحات الأسهم المرتبطة، مقارنة تعرض صناديق المؤشرات، مراجعة المقالات القريبة، ثم التحقق من البيانات الحالية بشكل مستقل.`,
+      `يساعد هذا الانضباط على رفع جودة المحتوى لأن كل مقال جديد يجب أن يضيف زاوية تعليمية واضحة وروابط داخلية مفيدة بدلا من تكرار موضوعات قائمة.`
+    ],
+    's-conclusion': [
+      `يجب فهم ${arClean(article.h1)} كإطار بحثي لا كتوقع. يربط الموضوع بين أساسيات الشركات، تعرض صناديق المؤشرات، سياق التقييم، وعوامل المخاطر التي قد تتغير بمرور الوقت.`,
+      `تنشر TradeAlphaAI هذا النوع من المقالات لتحسين الاكتشاف التعليمي بين الأسهم والصناديق والمحاور ومفاهيم السوق. المحتوى لا يوصي بأوراق مالية ولا يقدم أسعارا مستهدفة ولا يعد بنتائج مستقبلية.`
+    ]
+  };
+  return byId[section.id] || (section.paragraphs || []).map((p) => arClean(stripLinks(p)));
+}
+
+function arFaq(article) {
+  const stocks = relatedSymbols(article).filter((symbol) => !isEtfSymbol(symbol)).slice(0, 3).join('، ') || 'الأصول المرتبطة';
+  const etfs = relatedSymbols(article).filter(isEtfSymbol).slice(0, 3).join('، ') || 'صناديق المؤشرات المرتبطة';
+  return [
+    { q: `ما زاوية البحث الرئيسية في ${arClean(article.h1)}؟`, a: `الزاوية الرئيسية هي ${arClean(topicAngle(article))}. يشرح المقال الموضوع من خلال سياق السوق، الأسهم المرتبطة، صناديق المؤشرات، عوامل المخاطر، والروابط الداخلية للاستخدام التعليمي.` },
+    { q: `ما الأسهم المرتبطة بهذا الموضوع؟`, a: `تشمل صفحات الأسهم التعليمية المرتبطة: ${stocks}. هذه الروابط مخصصة للتنقل البحثي ولا تمثل توصيات.` },
+    { q: `ما صناديق المؤشرات المفيدة للمقارنة؟`, a: `تشمل صناديق المؤشرات المرتبطة: ${etfs}. تساعد صفحات الصناديق في مقارنة التركز، المكونات، التعرض القطاعي، نسب المصاريف، والسياق الواسع للسوق.` },
+    { q: 'كيف ينبغي استخدام هذا المقال؟', a: 'استخدمه كنقطة بداية تعليمية. قارن الصفحات المرتبطة، راجع المنهجية، وافحص المصادر الأولية قبل تكوين أي رأي مستقل.' },
+    { q: 'هل هذا المقال نصيحة استثمارية؟', a: 'لا. هذا المقال لأغراض تعليمية ومعلوماتية فقط ولا يمثل نصيحة استثمارية أو مالية.' }
+  ];
+}
+
+function topicAngle(article) {
+  const first = (article.lead || '').match(/examines ([^.]+?) through/i);
+  return first ? first[1] : (article.category || article.h1);
+}
+
+function arClean(value) {
+  return String(value || '')
+    .replace(/AI Infrastructure/gi, 'البنية التحتية للذكاء الاصطناعي')
+    .replace(/Artificial Intelligence/gi, 'الذكاء الاصطناعي')
+    .replace(/Semiconductor(s)?/gi, 'أشباه الموصلات')
+    .replace(/GPU(s)?/gi, 'وحدات GPU')
+    .replace(/ETF(s)?/gi, 'صناديق المؤشرات')
+    .replace(/Index Methodology/gi, 'منهجية المؤشر')
+    .replace(/Index Funds/gi, 'صناديق المؤشرات')
+    .replace(/Market Research/gi, 'أبحاث السوق')
+    .replace(/GPU Market/gi, 'سوق وحدات GPU')
+    .replace(/Market Share/gi, 'الحصة السوقية')
+    .replace(/ETF Education/gi, 'تعليم صناديق المؤشرات')
+    .replace(/Market Cycles/gi, 'دورات السوق')
+    .replace(/Macro Risk/gi, 'المخاطر الكلية')
+    .replace(/Portfolio Risk/gi, 'مخاطر المحفظة')
+    .replace(/Cloud Computing/gi, 'الحوسبة السحابية')
+    .replace(/Growth Stocks/gi, 'أسهم النمو')
+    .replace(/Value Stocks/gi, 'أسهم القيمة')
+    .replace(/Interest Rates/gi, 'أسعار الفائدة')
+    .replace(/Technology Stocks/gi, 'أسهم التكنولوجيا')
+    .replace(/Dividend/gi, 'التوزيعات')
+    .replace(/Expense Ratios/gi, 'نسب المصاريف')
+    .replace(/Structure/gi, 'البنية')
+    .replace(/Methodology/gi, 'المنهجية')
+    .replace(/Market Context/gi, 'سياق السوق')
+    .replace(/Product Cycle(s)?/gi, 'دورات المنتجات')
+    .replace(/Product/gi, 'المنتج')
+    .replace(/Share/gi, 'الحصة')
+    .replace(/Research/gi, 'بحث')
+    .replace(/Education/gi, 'تعليم')
+    .replace(/Risk/gi, 'المخاطر')
+    .replace(/Exposure/gi, 'التعرض')
+    .replace(/Demand/gi, 'الطلب')
+    .replace(/Supply/gi, 'العرض')
+    .replace(/Cycle(s)?/gi, 'الدورات')
+    .replace(/Explained/gi, 'شرح')
+    .replace(/\band\b/gi, 'و')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function stripLinks(value) {
+  return String(value || '').replace(/<a [^>]+>([\s\S]*?)<\/a>/gi, '$1');
+}
+
+function isEtfSymbol(symbol) {
+  const item = SYMBOLS.symbols.find((entry) => entry.symbol === symbol);
+  return item?.type === 'etf';
 }
 
 function queueTopicsToArticles(queue) {

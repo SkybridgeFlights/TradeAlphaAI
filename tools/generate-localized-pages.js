@@ -127,7 +127,6 @@ function run() {
   normalizeEnglishSources();
 
   for (const page of pages) {
-    if (isNoindexDraft(page.source)) continue;
     writeLocalizedPage(page, "ar");
     writeLocalizedPage(page, "en");
     syncEnglishSource(page);
@@ -149,12 +148,14 @@ function buildPages() {
     "stocks.html",
     "etfs.html",
     "ai-stock-screener.html",
+    "rankings.html",
     "market-data-status.html",
     "methodology.html"
   ]) addPage(bySource, inferredPage(source, "core"));
 
   for (const hub of marketConfig.hubs || []) addPage(bySource, inferredPage(hub.pagePath, "hub"));
   for (const symbol of marketConfig.symbols || []) addPage(bySource, inferredPage(symbol.pagePath, symbol.type || "symbol"));
+  for (const assetPage of researchAssetPages()) addPage(bySource, inferredPage(assetPage.source, assetPage.type));
 
   const insightsDir = path.join(root, "insights");
   if (fs.existsSync(insightsDir)) {
@@ -165,6 +166,21 @@ function buildPages() {
   }
 
   return [...bySource.values()].filter((page) => fs.existsSync(path.join(root, page.source)));
+}
+
+function researchAssetPages() {
+  const out = [];
+  for (const kind of ["stocks", "etfs"]) {
+    const dir = path.join(root, "data", "research-assets", kind);
+    if (!fs.existsSync(dir)) continue;
+    for (const name of fs.readdirSync(dir)) {
+      if (!name.endsWith(".json")) continue;
+      const asset = JSON.parse(fs.readFileSync(path.join(dir, name), "utf8"));
+      const folder = asset.type === "etf" ? "etfs" : "stocks";
+      out.push({ source: `${folder}/${String(asset.symbol).toLowerCase()}.html`, type: asset.type || kind });
+    }
+  }
+  return out;
 }
 
 function addPage(map, page) {
@@ -229,6 +245,8 @@ function writeLocalizedPage(page, locale) {
   html = rewriteUrls(html, page.source, locale);
   html = ensureLocaleSwitch(html, page, locale, true);
   html = localizeNavigation(html, locale);
+  html = ensureMobileNavigation(html, locale, outRel);
+  html = ensureSearchAutocomplete(html, outRel);
   html = html.replace(/<script src="([^"]*landing-i18n\.js)"[^>]*><\/script>\s*/g, "");
   if (isArabic) {
     html = localizeStaticText(html, page);
@@ -596,8 +614,19 @@ function syncEnglishSource(page) {
   html = html.replace(/<html[^>]*>/i, '<html lang="en" dir="ltr">');
   html = replaceHreflangBlock(html, page, "source");
   html = ensureLocaleSwitch(html, page, "en", false);
+  html = localizeNavigation(html, "en");
+  html = ensureMobileNavigation(html, "en", page.source);
+  html = ensureSearchAutocomplete(html, page.source);
   html = ensureLanguageRouter(html, page.source);
   fs.writeFileSync(sourcePath, html, "utf8");
+}
+
+function ensureSearchAutocomplete(html, outRel) {
+  if (!/(type="search"|data-filter-query)/i.test(html)) return html;
+  const depth = norm(path.dirname(outRel)).split("/").filter(Boolean).length;
+  const prefix = depth ? "../".repeat(depth) : "";
+  if (html.includes("js/search-autocomplete.js")) return html;
+  return html.replace(/<\/body>/i, `  <script src="${prefix}js/search-autocomplete.js" defer></script>\n</body>`);
 }
 
 function ensureLanguageRouter(html, outRel) {
@@ -605,6 +634,26 @@ function ensureLanguageRouter(html, outRel) {
   const prefix = depth ? "../".repeat(depth) : "";
   if (html.includes("js/language-router.js")) return html;
   return html.replace(/<\/body>/i, `  <script src="${prefix}js/language-router.js" defer></script>\n</body>`);
+}
+
+function ensureMobileNavigation(html, locale, outRel) {
+  const isArabic = locale === "ar";
+  const label = isArabic ? "فتح القائمة" : "Open menu";
+  const toggle = `<button class="mobile-menu-toggle" type="button" aria-label="${label}" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>`;
+  html = html.replace(/\s*<button class="mobile-menu-toggle"[\s\S]*?<\/button>/g, "");
+  html = html.replace(/(<\/div>\s*<\/div>\s*<\/div>\s*<div class="site-shell"|<\/div>\s*<\/div>\s*<\/div>\s*<main\b)/, (m) => m);
+  html = html.replace(/(<div class="locale-links"[\s\S]*?<\/div>)(?!\s*<button class="mobile-menu-toggle")/, `$1\n        ${toggle}`);
+
+  const depth = norm(path.dirname(outRel)).split("/").filter(Boolean).length;
+  const prefix = depth ? "../".repeat(depth) : "";
+  if (!html.includes("js/mobile-nav.js")) {
+    html = html.replace(/<\/body>/i, `  <script src="${prefix}js/mobile-nav.js" defer></script>\n</body>`);
+  }
+  return html;
 }
 
 function writeSitemap() {

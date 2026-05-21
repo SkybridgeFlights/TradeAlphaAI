@@ -216,6 +216,18 @@
         "ar": "/ar/ai-stock-screener.html",
         "en": "/ai-stock-screener.html"
     },
+    "/rankings.html": {
+        "ar": "/ar/rankings.html",
+        "en": "/rankings.html"
+    },
+    "/ar/rankings.html": {
+        "ar": "/ar/rankings.html",
+        "en": "/rankings.html"
+    },
+    "/en/rankings.html": {
+        "ar": "/ar/rankings.html",
+        "en": "/rankings.html"
+    },
     "/market-data-status.html": {
         "ar": "/ar/market-data-status.html",
         "en": "/market-data-status.html"
@@ -408,6 +420,294 @@
         "ar": "/ar/etfs/schd.html",
         "en": "/etfs/schd.html"
     },
+    "/stocks/adbe.html": {
+        "ar": "/ar/stocks/adbe.html",
+        "en": "/stocks/adbe.html"
+    },
+    "/ar/stocks/adbe.html": {
+        "ar": "/ar/stocks/adbe.html",
+        "en": "/stocks/adbe.html"
+    },
+    "/en/stocks/adbe.html": {
+        "ar": "/ar/stocks/adbe.html",
+        "en": "/stocks/adbe.html"
+    },
+    "/stocks/arm.html": {
+        "ar": "/ar/stocks/arm.html",
+        "en": "/stocks/arm.html"
+    },
+    "/ar/stocks/arm.html": {
+        "ar": "/ar/stocks/arm.html",
+        "en": "/stocks/arm.html"
+    },
+    "/en/stocks/arm.html": {
+        "ar": "/ar/stocks/arm.html",
+        "en": "/stocks/arm.html"
+    },
+    "/stocks/asml.html": {
+        "ar": "/ar/stocks/asml.html",
+        "en": "/stocks/asml.html"
+    },
+    "/ar/stocks/asml.html": {
+        "ar": "/ar/stocks/asml.html",
+        "en": "/stocks/asml.html"
+    },
+    "/en/stocks/asml.html": {
+        "ar": "/ar/stocks/asml.html",
+        "en": "/stocks/asml.html"
+    },
+    "/stocks/crm.html": {
+        "ar": "/ar/stocks/crm.html",
+        "en": "/stocks/crm.html"
+    },
+    "/ar/stocks/crm.html": {
+        "ar": "/ar/stocks/crm.html",
+        "en": "/stocks/crm.html"
+    },
+    "/en/stocks/crm.html": {
+        "ar": "/ar/stocks/crm.html",
+        "en": "/stocks/crm.html"
+    },
+    "/stocks/crwd.html": {
+        "ar": "/ar/stocks/crwd.html",
+        "en": "/stocks/crwd.html"
+    },
+    "/ar/stocks/crwd.html": {
+        "ar": "/ar/stocks/crwd.html",
+        "en": "/stocks/crwd.html"
+    },
+    "/en/stocks/crwd.html": {
+        "ar": "/ar/stocks/crwd.html",
+        "en": "/stocks/crwd.html"
+    },
+    "/stocks/intc.html": {
+        "ar": "/ar/stocks/intc.html",
+        "en": "/stocks/intc.html"
+    },
+    "/ar/stocks/intc.html": {
+        "ar": "/ar/stocks/intc.html",
+        "en": "/stocks/intc.html"
+    },
+    "/en/stocks/intc.html": {
+        "ar": "/ar/stocks/intc.html",
+        "en": "/stocks/intc.html"
+    },
+    "/stocks/mu.html": {
+        "ar": "/ar/stocks/mu.html",
+        "en": "/stocks/mu.html"
+    },
+    "/ar/stocks/mu.html": {
+        "ar": "/ar/stocks/mu.html",
+        "en": "/stocks/mu.html"
+    },
+    "/en/stocks/mu.html": {
+        "ar": "/ar/stocks/mu.html",
+        "en": "/stocks/mu.html"
+    },
+    "/stocks/nflx.html": {
+        "ar": "/ar/stocks/nflx.html",
+        "en": "/stocks/nflx.html"
+    },
+    "/ar/stocks/nflx.html": {
+        "ar": "/ar/stocks/nflx.html",
+        "en": "/stocks/nflx.html"
+    },
+    "/en/stocks/nflx.html": {
+        "ar": "/ar/stocks/nflx.html",
+        "en": "/stocks/nflx.html"
+    },
+    "/stocks/now.html": {
+        "ar": "/ar/stocks/now.html",
+        "en": "/stocks/now.html"
+    },
+    "/ar/stocks/now.html": {
+        "ar": "/ar/stocks/now.html",
+        "en": "/stocks/now.html"
+    },
+    "/en/stocks/now.html": {
+        "ar": "/ar/stocks/now.html",
+        "en": "/stocks/now.html"
+    },
+    "/stocks/orcl.html": {
+        "ar": "/ar/stocks/orcl.html",
+        "en": "/stocks/orcl.html"
+    },
+    "/ar/stocks/orcl.html": {
+        "ar": "/ar/stocks/orcl.html",
+        "en": "/stocks/orcl.html"
+    },
+    "/en/stocks/orcl.html": {
+        "ar": "/ar/stocks/orcl.html",
+        "en": "/stocks/orcl.html"
+    },
+    "/stocks/panw.html": {
+        "ar": "/ar/stocks/panw.html",
+        "en": "/stocks/panw.html"
+    },
+    "/ar/stocks/panw.html": {
+        "ar": "/ar/stocks/panw.html",
+        "en": "/stocks/panw.html"
+    },
+    "/en/stocks/panw.html": {
+        "ar": "/ar/stocks/panw.html",
+        "en": "/stocks/panw.html"
+    },
+    "/stocks/qcom.html": {
+        "ar": "/ar/stocks/qcom.html",
+        "en": "/stocks/qcom.html"
+    },
+    "/ar/stocks/qcom.html": {
+        "ar": "/ar/stocks/qcom.html",
+        "en": "/stocks/qcom.html"
+    },
+    "/en/stocks/qcom.html": {
+        "ar": "/ar/stocks/qcom.html",
+        "en": "/stocks/qcom.html"
+    },
+    "/stocks/tsm.html": {
+        "ar": "/ar/stocks/tsm.html",
+        "en": "/stocks/tsm.html"
+    },
+    "/ar/stocks/tsm.html": {
+        "ar": "/ar/stocks/tsm.html",
+        "en": "/stocks/tsm.html"
+    },
+    "/en/stocks/tsm.html": {
+        "ar": "/ar/stocks/tsm.html",
+        "en": "/stocks/tsm.html"
+    },
+    "/stocks/txn.html": {
+        "ar": "/ar/stocks/txn.html",
+        "en": "/stocks/txn.html"
+    },
+    "/ar/stocks/txn.html": {
+        "ar": "/ar/stocks/txn.html",
+        "en": "/stocks/txn.html"
+    },
+    "/en/stocks/txn.html": {
+        "ar": "/ar/stocks/txn.html",
+        "en": "/stocks/txn.html"
+    },
+    "/etfs/dgro.html": {
+        "ar": "/ar/etfs/dgro.html",
+        "en": "/etfs/dgro.html"
+    },
+    "/ar/etfs/dgro.html": {
+        "ar": "/ar/etfs/dgro.html",
+        "en": "/etfs/dgro.html"
+    },
+    "/en/etfs/dgro.html": {
+        "ar": "/ar/etfs/dgro.html",
+        "en": "/etfs/dgro.html"
+    },
+    "/etfs/dia.html": {
+        "ar": "/ar/etfs/dia.html",
+        "en": "/etfs/dia.html"
+    },
+    "/ar/etfs/dia.html": {
+        "ar": "/ar/etfs/dia.html",
+        "en": "/etfs/dia.html"
+    },
+    "/en/etfs/dia.html": {
+        "ar": "/ar/etfs/dia.html",
+        "en": "/etfs/dia.html"
+    },
+    "/etfs/smh.html": {
+        "ar": "/ar/etfs/smh.html",
+        "en": "/etfs/smh.html"
+    },
+    "/ar/etfs/smh.html": {
+        "ar": "/ar/etfs/smh.html",
+        "en": "/etfs/smh.html"
+    },
+    "/en/etfs/smh.html": {
+        "ar": "/ar/etfs/smh.html",
+        "en": "/etfs/smh.html"
+    },
+    "/etfs/vig.html": {
+        "ar": "/ar/etfs/vig.html",
+        "en": "/etfs/vig.html"
+    },
+    "/ar/etfs/vig.html": {
+        "ar": "/ar/etfs/vig.html",
+        "en": "/etfs/vig.html"
+    },
+    "/en/etfs/vig.html": {
+        "ar": "/ar/etfs/vig.html",
+        "en": "/etfs/vig.html"
+    },
+    "/etfs/vtv.html": {
+        "ar": "/ar/etfs/vtv.html",
+        "en": "/etfs/vtv.html"
+    },
+    "/ar/etfs/vtv.html": {
+        "ar": "/ar/etfs/vtv.html",
+        "en": "/etfs/vtv.html"
+    },
+    "/en/etfs/vtv.html": {
+        "ar": "/ar/etfs/vtv.html",
+        "en": "/etfs/vtv.html"
+    },
+    "/etfs/vug.html": {
+        "ar": "/ar/etfs/vug.html",
+        "en": "/etfs/vug.html"
+    },
+    "/ar/etfs/vug.html": {
+        "ar": "/ar/etfs/vug.html",
+        "en": "/etfs/vug.html"
+    },
+    "/en/etfs/vug.html": {
+        "ar": "/ar/etfs/vug.html",
+        "en": "/etfs/vug.html"
+    },
+    "/etfs/xle.html": {
+        "ar": "/ar/etfs/xle.html",
+        "en": "/etfs/xle.html"
+    },
+    "/ar/etfs/xle.html": {
+        "ar": "/ar/etfs/xle.html",
+        "en": "/etfs/xle.html"
+    },
+    "/en/etfs/xle.html": {
+        "ar": "/ar/etfs/xle.html",
+        "en": "/etfs/xle.html"
+    },
+    "/etfs/xlf.html": {
+        "ar": "/ar/etfs/xlf.html",
+        "en": "/etfs/xlf.html"
+    },
+    "/ar/etfs/xlf.html": {
+        "ar": "/ar/etfs/xlf.html",
+        "en": "/etfs/xlf.html"
+    },
+    "/en/etfs/xlf.html": {
+        "ar": "/ar/etfs/xlf.html",
+        "en": "/etfs/xlf.html"
+    },
+    "/etfs/xlv.html": {
+        "ar": "/ar/etfs/xlv.html",
+        "en": "/etfs/xlv.html"
+    },
+    "/ar/etfs/xlv.html": {
+        "ar": "/ar/etfs/xlv.html",
+        "en": "/etfs/xlv.html"
+    },
+    "/en/etfs/xlv.html": {
+        "ar": "/ar/etfs/xlv.html",
+        "en": "/etfs/xlv.html"
+    },
+    "/etfs/xly.html": {
+        "ar": "/ar/etfs/xly.html",
+        "en": "/etfs/xly.html"
+    },
+    "/ar/etfs/xly.html": {
+        "ar": "/ar/etfs/xly.html",
+        "en": "/etfs/xly.html"
+    },
+    "/en/etfs/xly.html": {
+        "ar": "/ar/etfs/xly.html",
+        "en": "/etfs/xly.html"
+    },
     "/insights/ai-inference-vs-training.html": {
         "ar": "/ar/insights/ai-inference-vs-training.html",
         "en": "/insights/ai-inference-vs-training.html"
@@ -528,6 +828,18 @@
         "ar": "/ar/insights/gpu-market-research-accelerator-competition-across-ai-workloads.html",
         "en": "/insights/gpu-market-research-accelerator-competition-across-ai-workloads.html"
     },
+    "/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html": {
+        "ar": "/ar/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html",
+        "en": "/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html"
+    },
+    "/ar/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html": {
+        "ar": "/ar/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html",
+        "en": "/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html"
+    },
+    "/en/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html": {
+        "ar": "/ar/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html",
+        "en": "/insights/gpu-market-research-gpu-market-share-and-product-cycle-research.html"
+    },
     "/insights/gpu-market-research-gpu-supply-and-demand-signals.html": {
         "ar": "/ar/insights/gpu-market-research-gpu-supply-and-demand-signals.html",
         "en": "/insights/gpu-market-research-gpu-supply-and-demand-signals.html"
@@ -599,6 +911,18 @@
     "/en/insights/mega-cap-tech-index-concentration.html": {
         "ar": "/ar/insights/mega-cap-tech-index-concentration.html",
         "en": "/insights/mega-cap-tech-index-concentration.html"
+    },
+    "/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html": {
+        "ar": "/ar/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html",
+        "en": "/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html"
+    },
+    "/ar/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html": {
+        "ar": "/ar/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html",
+        "en": "/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html"
+    },
+    "/en/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html": {
+        "ar": "/ar/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html",
+        "en": "/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html"
     },
     "/insights/portfolio-diversification-basics.html": {
         "ar": "/ar/insights/portfolio-diversification-basics.html",

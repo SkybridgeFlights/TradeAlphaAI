@@ -58,6 +58,11 @@
           <a class="lang-switch" data-locale-route="ar" href="/ar/ai-stock-screener.html">العربية</a>
           <a class="lang-switch" data-locale-route="en" href="/ai-stock-screener.html">English</a>
         </div>
+        <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
       </div>
     </div>
   </div>
@@ -118,6 +123,7 @@
           </div>
           <div class="filter-grid">
             <input class="market-search" data-screener-control data-filter-query type="search" placeholder="Search symbol or name" />
+            <select class="market-search" data-screener-control data-filter-type></select>
             <select class="market-search" data-screener-control data-filter-score>
               <option value="0">Any score</option>
               <option value="50">50+ score</option>
@@ -126,6 +132,7 @@
             </select>
             <select class="market-search" data-screener-control data-filter-risk></select>
             <select class="market-search" data-screener-control data-filter-sector></select>
+            <select class="market-search" data-screener-control data-filter-category></select>
             <select class="market-search" data-screener-control data-filter-sentiment></select>
             <select class="market-search" data-screener-control data-filter-sort>
               <option value="score">Sort by score</option>
@@ -181,5 +188,7 @@
     initScreenerPage();
   </script>
   <script src="/../js/language-router.js" defer></script>
+  <script src="/../js/mobile-nav.js" defer></script>
+  <script src="/../js/search-autocomplete.js" defer></script>
 </body>
 </html>

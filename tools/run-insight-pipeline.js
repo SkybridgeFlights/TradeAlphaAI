@@ -9,7 +9,7 @@ const QUEUE_PATH = path.join(ROOT, 'data', 'insight-topic-queue.json');
 const mode = argValue('--mode') || 'review';
 const selectedSlug = argValue('--slug');
 
-run('node', ['tools/discover-insight-topics.js', '--limit=12']);
+if (!selectedSlug) run('node', ['tools/discover-insight-topics.js', '--limit=12']);
 
 const queue = readJson(QUEUE_PATH, { topics: [] });
 const topic = selectedSlug
@@ -25,11 +25,14 @@ run('node', ['tools/check-insight-duplicates.js', `--slug=${topic.slug}`]);
 
 if (mode === 'publish-if-safe') {
   run('node', ['tools/generate-insights.js', '--queue', `--slug=${topic.slug}`, '--mode=review', '--force']);
+  run('node', ['tools/generate-localized-pages.js']);
   run('node', ['tools/check-insight-quality.js', `--slug=${topic.slug}`]);
   run('node', ['tools/generate-insights.js', '--queue', `--slug=${topic.slug}`, '--mode=publish-if-safe', '--force']);
+  run('node', ['tools/generate-localized-pages.js']);
   run('node', ['tools/check-insight-quality.js', `--slug=${topic.slug}`]);
 } else {
   run('node', ['tools/generate-insights.js', '--queue', `--slug=${topic.slug}`, `--mode=${mode}`, '--force']);
+  run('node', ['tools/generate-localized-pages.js']);
   run('node', ['tools/check-insight-quality.js', `--slug=${topic.slug}`]);
 }
 

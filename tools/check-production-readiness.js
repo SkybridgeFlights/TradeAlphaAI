@@ -493,14 +493,14 @@ function checkInsightDiscoverability() {
   const navPages = ["index.html", "stocks.html", "etfs.html", "ai-stock-screener.html"];
   for (const rel of navPages) {
     const html = read(rel);
-    if (!html.includes('href="insights/"') && !html.includes('href="insights/index.html"')) {
+    if (!html.includes('href="insights/"') && !html.includes('href="/insights/"') && !html.includes('href="insights/index.html"')) {
       failures.push(`${rel}: missing public Market Insights navigation link`);
     }
   }
 
   for (const rel of ["ai-stocks.html", "semiconductor-stocks.html", "growth-stocks.html", "dividend-etfs.html"]) {
     const html = read(rel);
-    if (!html.includes('href="insights/"') && !html.includes('href="insights/index.html"')) {
+    if (!html.includes('href="insights/"') && !html.includes('href="/insights/"') && !html.includes('href="insights/index.html"')) {
       failures.push(`${rel}: missing Market Insights hub link`);
     }
   }
@@ -654,12 +654,11 @@ function checkArabicInsightBodies() {
     const isNoindex = /noindex,nofollow/i.test(html);
     const slug = name.replace(/\.html$/, "");
     const hasContentFile = fs.existsSync(path.join(arContentDir, `${slug}.json`));
+    const sourceHtml = read(`insights/${name}`);
+    const sourceIsNoindex = sourceHtml && /noindex,nofollow/i.test(sourceHtml);
 
     if (isNoindex) {
-      // noindex page is acceptable only when the content file is missing
-      if (hasContentFile) {
-        failures.push(`${rel}: has Arabic content file but page is noindex — regenerate with npm run localize:generate`);
-      }
+      if (hasContentFile && !sourceIsNoindex) failures.push(`${rel}: published Arabic article is noindex — regenerate with npm run localize:generate`);
       // Must not appear linked in the Arabic insights index as a published article
       if (arIndexHtml.includes(`/ar/insights/${name}`) && arIndexHtml.includes('insight-card')) {
         failures.push(`${rel}: noindex Arabic article is linked from ar/insights/index.html`);

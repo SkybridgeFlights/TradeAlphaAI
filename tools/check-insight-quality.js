@@ -15,6 +15,7 @@ for (const file of files) {
     continue;
   }
   checkFile(file);
+  checkArabicCounterpart(file);
 }
 
 if (failures.length) {
@@ -68,6 +69,28 @@ function checkFile(file) {
 
   const repeated = repeatedPhrases(words, 4, 9);
   if (repeated.length) failures.push(`${rel}: too many repeated phrases (${repeated.slice(0, 3).join(', ')})`);
+}
+
+function checkArabicCounterpart(file) {
+  const rel = relative(file);
+  if (!rel.startsWith('insights/') || rel.endsWith('/index.html')) return;
+  const slug = path.basename(file, '.html');
+  const arContent = path.join(ROOT, 'data', 'localization', 'ar-insight-content', slug + '.json');
+  const arFile = path.join(ROOT, 'ar', 'insights', slug + '.html');
+  if (!fs.existsSync(arContent)) failures.push(`${rel}: missing Arabic editorial content JSON`);
+  if (!fs.existsSync(arFile)) {
+    failures.push(`${rel}: missing Arabic localized article`);
+    return;
+  }
+  const enHtml = fs.readFileSync(file, 'utf8');
+  const arHtml = fs.readFileSync(arFile, 'utf8');
+  const arPlain = stripHtml(arHtml).replace(/\bEnglish\b/g, '');
+  if (!/<html[^>]+lang="ar"[^>]+dir="rtl"/i.test(arHtml)) failures.push(`${relative(arFile)}: missing Arabic RTL html markers`);
+  if ((enHtml.match(/<section\b/g) || []).length !== (arHtml.match(/<section\b/g) || []).length) failures.push(`${relative(arFile)}: section count does not match English article`);
+  if ((enHtml.match(/<details>/g) || []).length !== (arHtml.match(/<details>/g) || []).length) failures.push(`${relative(arFile)}: FAQ count does not match English article`);
+  if (!/<script type="application\/ld\+json">[\s\S]*"Article"[\s\S]*<\/script>/.test(arHtml)) failures.push(`${relative(arFile)}: missing Arabic Article schema`);
+  if (!/تعليمي|تعليمية/.test(arPlain)) failures.push(`${relative(arFile)}: missing Arabic educational language`);
+  if (/\b(This article|Read article|Related Research|Market Context|Executive Summary|security recommendations|price targets|investment advice)\b/i.test(arPlain)) failures.push(`${relative(arFile)}: Arabic article contains untranslated English boilerplate`);
 }
 
 function repeatedPhrases(words, phraseLength, maxCount) {

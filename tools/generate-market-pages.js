@@ -11,13 +11,15 @@ const sitemapMarketPath = path.join(root, "sitemap-market.xml");
 const redirectsPath = path.join(root, "_redirects");
 
 const config = readJson(configPath);
+const researchAssets = loadResearchAssets();
+const symbols = mergeSymbols(config.symbols || [], researchAssets);
 const stockTemplate = readFile(stockTemplatePath);
 const etfTemplate = readFile(etfTemplatePath);
 const hubTemplate = readFile(hubTemplatePath);
 
 const summary = { generated: 0, skipped: 0, urls: [] };
 
-for (const symbol of config.symbols) {
+for (const symbol of symbols) {
   const template = symbol.type === "etf" ? etfTemplate : stockTemplate;
   const outputPath = path.join(root, symbol.pagePath);
   const html = renderTemplate(template, buildSymbolModel(symbol, config.domain));
@@ -59,10 +61,11 @@ function buildSymbolModel(symbol, domain) {
     CANONICAL_URL: urlFor(domain, symbol.pagePath),
     RC_KEY: rcKeyForSymbol(symbol),
     RELATED_LINKS: relatedLinks,
+    RESEARCH_BLOCKS: buildResearchBlocks(symbol),
     FAQ_STATIC: buildFaqHtml(symbol),
     SCHEMA_JSON: buildSchemaScript([
       buildBreadcrumbSchema(domain, symbol.pagePath, symbol.type === "etf" ? "ETFs" : "Stocks", symbol.symbol),
-      buildFaqSchema(symbol.faqSeeds || [], symbol)
+      buildFaqSchema(symbol.faq || symbol.faqSeeds || [], symbol)
     ])
   };
 }
@@ -99,7 +102,7 @@ function rcKeyForHub(hub) {
 }
 
 function findPagePath(symbol) {
-  const match = config.symbols.find((item) => item.symbol === symbol);
+  const match = symbols.find((item) => item.symbol === symbol);
   return match ? match.pagePath : "";
 }
 
@@ -126,6 +129,7 @@ function writeSitemapMarket(urls, domain) {
     `${domain}/etfs.html`,
     `${domain}/etf.html`,
     `${domain}/ai-stock-screener.html`,
+    `${domain}/rankings.html`,
     `${domain}/methodology.html`,
     ...urls
   ]);
@@ -146,8 +150,13 @@ function writeRedirects(config) {
 }
 
 function buildFaqHtml(symbol) {
-  return (symbol.faqSeeds || []).map((question) => {
-    return `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answerForQuestion(question, symbol))}</p></details>`;
+  const faqs = (symbol.faq || []).length
+    ? symbol.faq
+    : (symbol.faqSeeds || []).map((question) => ({ q: question, a: answerForQuestion(question, symbol) }));
+  return faqs.map((item) => {
+    const question = item.q || item.question || item;
+    const answer = item.a || item.answer || answerForQuestion(question, symbol);
+    return `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`;
   }).join("");
 }
 
@@ -159,14 +168,19 @@ function buildHubFaqHtml(hub) {
 }
 
 function buildFaqSchema(questions, symbol) {
+  const faqs = questions.map((item) => {
+    const question = item.q || item.question || item;
+    const answer = item.a || item.answer || answerForQuestion(question, symbol);
+    return { question, answer };
+  });
   return {
     "@type": "FAQPage",
-    mainEntity: questions.map((question) => ({
+    mainEntity: faqs.map((item) => ({
       "@type": "Question",
-      name: question,
+      name: item.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: answerForQuestion(question, symbol)
+        text: item.answer
       }
     }))
   };
@@ -199,6 +213,47 @@ function answerForQuestion(question, symbol) {
   return `${symbol.symbol} is reviewed with educational screening context, related assets, risk overview, and transparent scoring components.`;
 }
 
+function buildResearchBlocks(symbol) {
+  const asset = symbol.researchAsset;
+  if (!asset) return "";
+  const isEtf = symbol.type === "etf";
+  const primaryModel = isEtf ? asset.etfMethodology : asset.businessModel;
+  const modelTitle = isEtf ? "Index methodology" : "Business model";
+  const modelEyebrow = isEtf ? "ETF Methodology" : "Company Overview";
+  const roleTitle = isEtf ? "Diversification role" : "Why investors follow it";
+  const relatedAssetTitle = isEtf ? "Related stocks and ETFs" : "Related ETFs and stocks";
+  return [
+    '<section class="market-section"><div class="content-columns">',
+    `<article class="market-panel"><span class="eyebrow">${modelEyebrow}</span><h2>${escapeHtml(modelTitle)}</h2><p class="market-copy">${escapeHtml(asset.overview)}</p><p class="market-copy">${escapeHtml(primaryModel)}</p></article>`,
+    `<article class="market-panel"><span class="eyebrow">Research Context</span><h2>${escapeHtml(roleTitle)}</h2><p class="market-copy">${escapeHtml(asset.whyInvestorsFollow)}</p><div class="insight-chip-row">${(asset.themes || []).map((theme) => `<span class="insight-chip">${escapeHtml(theme)}</span>`).join("")}</div></article>`,
+    '</div></section>',
+    '<section class="market-section"><div class="content-columns">',
+    `<article class="market-panel"><span class="eyebrow">Positive research factors</span><h2>Bull case framework</h2>${listHtml(asset.bullCase)}</article>`,
+    `<article class="market-panel"><span class="eyebrow">Risk layer</span><h2>Bear case and risk factors</h2>${listHtml([...(asset.bearCase || []), ...(asset.riskFactors || [])])}</article>`,
+    '</div></section>',
+    '<section class="market-section"><div class="content-columns">',
+    `<article class="market-panel"><span class="eyebrow">Valuation Context</span><h2>Research score context</h2><p class="market-copy">${escapeHtml(asset.valuationContext)}</p><p class="market-copy">TradeAlpha Score is an educational research label for comparison. It is not a buy or sell recommendation.</p></article>`,
+    `<article class="market-panel"><span class="eyebrow">${escapeHtml(relatedAssetTitle)}</span><h2>Connected research paths</h2><div class="cta-actions">${researchLinkButtons(asset)}</div></article>`,
+    '</div></section>'
+  ].join("\n      ");
+}
+
+function listHtml(items) {
+  return `<ul class="insight-list">${(items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
+function researchLinkButtons(asset) {
+  const symbols = unique([...(asset.relatedStocks || []), ...(asset.relatedETFs || [])]).slice(0, 6);
+  const links = symbols.map((symbol) => {
+    const href = findPagePath(symbol);
+    return href ? `<a class="market-btn" href="../${href}">${escapeHtml(symbol)}</a>` : "";
+  }).filter(Boolean);
+  for (const slug of (asset.relatedInsights || []).slice(0, 3)) {
+    links.push(`<a class="market-btn" href="../insights/${escapeHtml(slug)}.html">${escapeHtml(titleFromSlug(slug))}</a>`);
+  }
+  return links.join("");
+}
+
 function buildBreadcrumbSchema(domain, pagePath, parentName, pageName) {
   return {
     "@type": "BreadcrumbList",
@@ -225,8 +280,46 @@ function renderTemplate(template, values) {
 }
 
 function escapeHtmlUnlessHtml(key, value) {
-  if (key === "RELATED_LINKS" || key === "SCHEMA_JSON") return value;
+  if (key === "RELATED_LINKS" || key === "SCHEMA_JSON" || key === "RESEARCH_BLOCKS") return value;
   return escapeHtml(value);
+}
+
+function loadResearchAssets() {
+  const out = [];
+  for (const kind of ["stocks", "etfs"]) {
+    const dir = path.join(root, "data", "research-assets", kind);
+    if (!fs.existsSync(dir)) continue;
+    for (const name of fs.readdirSync(dir)) {
+      if (!name.endsWith(".json")) continue;
+      out.push(readJson(path.join(dir, name)));
+    }
+  }
+  return out;
+}
+
+function mergeSymbols(existing, assets) {
+  const bySymbol = new Map((existing || []).map((item) => [item.symbol, item]));
+  for (const asset of assets) {
+    const current = bySymbol.get(asset.symbol) || {};
+    const isEtf = asset.type === "etf";
+    bySymbol.set(asset.symbol, {
+      ...current,
+      symbol: asset.symbol,
+      name: asset.name,
+      type: asset.type,
+      sector: asset.sector || asset.category || current.sector,
+      priority: current.priority || 0.72,
+      pagePath: current.pagePath || `${isEtf ? "etfs" : "stocks"}/${asset.symbol.toLowerCase()}.html`,
+      relatedSymbols: unique([...(asset.relatedStocks || []), ...(asset.relatedETFs || []), ...(current.relatedSymbols || [])]).slice(0, 6),
+      seoTitle: asset.seo?.title || current.seoTitle || `${asset.symbol} Research | TradeAlphaAI`,
+      seoDescription: asset.seo?.description || current.seoDescription || asset.overview,
+      contentAngle: asset.overview || current.contentAngle,
+      faq: asset.faq,
+      faqSeeds: current.faqSeeds,
+      researchAsset: asset
+    });
+  }
+  return [...bySymbol.values()].sort((a, b) => String(a.symbol).localeCompare(String(b.symbol)));
 }
 
 function escapeHtml(value) {
@@ -251,6 +344,14 @@ function urlFor(domain, pagePath) {
 
 function unique(values) {
   return [...new Set(values)];
+}
+
+function titleFromSlug(slug) {
+  return String(slug || "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function relative(file) {
