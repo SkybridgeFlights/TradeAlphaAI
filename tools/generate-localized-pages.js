@@ -252,6 +252,7 @@ function writeLocalizedPage(page, locale) {
     html = localizeStaticText(html, page);
     html = localizeArticleFromContentFile(html, page);
     html = normalizeArabicArtifacts(html);
+    html = finalArabicCleanup(html);
   }
   html = ensureLanguageRouter(html, outRel);
 
@@ -526,6 +527,32 @@ function localizeNavigation(html, locale) {
     "Market Insights": "Market Insights",
     Methodology: "Methodology"
   };
+  const recommendationsLabel = isArabic ? "أفضل الاختيارات" : "Top Picks";
+  const recommendationLinks = isArabic ? [
+    ["أفضل 10 أسهم حالياً", "/ar/rankings.html#top-ai-stocks"],
+    ["أفضل أسهم أشباه الموصلات", "/ar/rankings.html#top-semiconductor-stocks"],
+    ["أفضل أسهم النمو", "/ar/rankings.html#top-growth-stocks"],
+    ["أفضل صناديق توزيعات الأرباح", "/ar/rankings.html#top-dividend-etfs"],
+    ["أفضل صناديق المؤشرات لعام 2026", "/ar/rankings.html#top-broad-market-etfs"],
+    ["قائمة أسهم البنية التحتية للذكاء الاصطناعي", "/ar/rankings.html#ai-infrastructure-focus"],
+    ["قائمة الأسهم عالية التقلب", "/ar/rankings.html#high-volatility-watchlist"],
+    ["أكثر الأسهم التقنية متابعة", "/ar/rankings.html#most-followed-tech"]
+  ] : [
+    ["Top 10 AI Stocks Right Now", "/rankings.html#top-ai-stocks"],
+    ["Best Semiconductor Stocks", "/rankings.html#top-semiconductor-stocks"],
+    ["Top Growth Stocks", "/rankings.html#top-growth-stocks"],
+    ["Top Dividend ETFs", "/rankings.html#top-dividend-etfs"],
+    ["Best ETFs for 2026", "/rankings.html#top-broad-market-etfs"],
+    ["AI Infrastructure Focus List", "/rankings.html#ai-infrastructure-focus"],
+    ["High Volatility Watchlist", "/rankings.html#high-volatility-watchlist"],
+    ["Most Followed Tech Stocks", "/rankings.html#most-followed-tech"]
+  ];
+  const recommendations = `<div class="nav-menu">
+            <a href="${isArabic ? "/ar/rankings.html" : "/rankings.html"}" class="nav-link nav-menu-trigger">${recommendationsLabel}<span class="nav-badge">${isArabic ? "رائج" : "Hot"}</span></a>
+            <div class="nav-dropdown">
+              ${recommendationLinks.map(([label, href]) => `<a href="${href}">${label}</a>`).join("\n              ")}
+            </div>
+          </div>`;
   html = html.replace(/<nav class="nav-group"[^>]*>[\s\S]*?<\/nav>/, (nav) => {
     const aria = isArabic ? "التنقل الرئيسي" : "Primary";
     return `<nav class="nav-group" aria-label="${aria}">
@@ -533,6 +560,7 @@ function localizeNavigation(html, locale) {
           <a href="${isArabic ? "/ar/stocks.html" : "/stocks.html"}" class="nav-link">${labels["AI Stock Analyzer"]}</a>
           <a href="${isArabic ? "/ar/etfs.html" : "/etfs.html"}" class="nav-link">${labels["ETF Analyzer"]}</a>
           <a href="${isArabic ? "/ar/ai-stock-screener.html" : "/ai-stock-screener.html"}" class="nav-link">${labels["Market Screener"]}</a>
+          ${recommendations}
           <a href="${isArabic ? "/ar/insights/" : "/insights/"}" class="nav-link">${labels["Market Insights"]}</a>
           <a href="${isArabic ? "/ar/methodology.html" : "/methodology.html"}" class="nav-link">${labels.Methodology}</a>
         </nav>`;
@@ -847,6 +875,73 @@ function translateText(value = "") {
 
 function normalizeArabicArtifacts(html) {
   return html
+    .replace(/Research Platform/g, "منصة الأبحاث")
+    .replace(/Static Research/g, "بحث ثابت")
+    .replace(/ثابت Research/g, "بحث ثابت")
+    .replace(/static research data/g, "بيانات بحثية ثابتة")
+    .replace(/transparent static research data/g, "بيانات بحثية ثابتة وشفافة")
+    .replace(/The platform uses static educational data with a provider architecture prepared for future market data APIs\./g, "تستخدم المنصة بيانات تعليمية ثابتة مع بنية مزود جاهزة للتكامل مع واجهات بيانات السوق مستقبلا.")
+    .replace(/Research popular U\.S\. الأسهم with a transparent درجة TradeAlpha, analyst-style explanations, المخاطر overview, و educational قائمة متابعة السياق\. لا buy or sell recommendations are provided\./g, "ابحث في الأسهم الأمريكية الشائعة عبر درجة TradeAlpha شفافة وشرح بحثي منظم وملخص للمخاطر وسياق تعليمي لقوائم المتابعة. لا يتم تقديم توصيات شراء أو بيع.")
+    .replace(/Research popular U\.S\. stocks with a transparent درجة TradeAlpha, analyst-style explanations, المخاطر overview, و educational قائمة متابعة السياق\. لا buy or sell recommendations are provided\./g, "ابحث في الأسهم الأمريكية الشائعة عبر درجة TradeAlpha شفافة وشرح بحثي منظم وملخص للمخاطر وسياق تعليمي لقوائم المتابعة. لا يتم تقديم توصيات شراء أو بيع.")
+    .replace(/Research popular U\.S\.[^<]+analyst-style explanations[^<]+provided\./g, "ابحث في الأسهم الأمريكية الشائعة عبر درجة TradeAlpha شفافة وشرح بحثي منظم وملخص للمخاطر وسياق تعليمي لقوائم المتابعة. لا يتم تقديم توصيات شراء أو بيع.")
+    .replace(/محلل أسهم الذكاء الاصطناعي for فني, أساسي, و المخاطر-aware screening/g, "محلل أسهم الذكاء الاصطناعي للفحص الفني والأساسي والواعي بالمخاطر")
+    .replace(/Use the free TradeAlphaAI محلل أسهم الذكاء الاصطناعي for educational سهم screening, فني scores, المخاطر overview, و قائمة متابعة candidate research\./g, "استخدم محلل أسهم الذكاء الاصطناعي من TradeAlphaAI لفحص الأسهم تعليميا مع درجات فنية وملخص للمخاطر وبحث مرشحي قوائم المتابعة.")
+    .replace(/محلل أسهم الذكاء الاصطناعي \| Free سهم Screening Tool \| TradeAlphaAI/g, "محلل أسهم الذكاء الاصطناعي | أداة فحص الأسهم التعليمية | TradeAlphaAI")
+    .replace(/Popular educational سهم research المحاور/g, "محاور بحث تعليمية شائعة للأسهم")
+    .replace(/SEO Research Paths/g, "مسارات البحث")
+    .replace(/using transparent بيانات بحثية ثابتة/g, "باستخدام بيانات بحثية ثابتة وشفافة")
+    .replace(/Move from research to a structured trading workflow/g, "انتقل من البحث إلى مسار تداول منظم")
+    .replace(/Research workflow area for future premium screening views\./g, "مساحة بحثية لعروض فحص متقدمة مستقبلا.")
+    .replace(/How Scores Work/g, "كيف تعمل الدرجات")
+    .replace(/TradeAlphaAI Focus القوائم/g, "قوائم تركيز TradeAlphaAI")
+    .replace(/TradeAlphaAI Focus List/g, "قائمة تركيز TradeAlphaAI")
+    .replace(/Research Rankings and Watchlists/g, "تصنيفات وقوائم متابعة بحثية")
+    .replace(/Research Rankings و Watchlists/g, "تصنيفات وقوائم متابعة بحثية")
+    .replace(/Educational research rankings and watchlists for AI infrastructure stocks, semiconductor leaders, mega-cap technology, broad market ETFs, dividend ETFs, growth ETFs, and high-volatility research candidates\./g, "تصنيفات وقوائم متابعة بحثية تعليمية لأسهم البنية التحتية للذكاء الاصطناعي وقادة أشباه الموصلات والتكنولوجيا الكبرى وصناديق السوق الواسع وصناديق التوزيعات وصناديق النمو ومرشحي التقلب المرتفع.")
+    .replace(/Most followed AI-linked research candidates from the TradeAlphaAI universe\. Educational ranking only, not financial advice\./g, "أبرز مرشحي البحث المرتبطين بالذكاء الاصطناعي ضمن تغطية TradeAlphaAI. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Data center, accelerator, cloud, and infrastructure names followed by the research desk\. Educational ranking only, not financial advice\./g, "أسماء مراكز البيانات والمسرعات والحوسبة السحابية والبنية التحتية التي يتابعها مكتب الأبحاث. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Higher-beta research candidates where risk context matters as much as upside narratives\. Educational ranking only, not financial advice\./g, "مرشحون بحثيون أعلى تقلبا حيث يهم سياق المخاطر بقدر أهمية روايات النمو. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/The TradeAlpha Score combines technical score, fundamental score, momentum score, sentiment score, and risk adjustment\. The output uses safe screening labels such as Strong Setup, Neutral Setup, Weak Setup, Watchlist Candidate, High Risk, and Overextended\./g, "تجمع درجة TradeAlpha بين الدرجة الفنية والدرجة الأساسية والزخم والمعنويات وتعديل المخاطر. وتستخدم المخرجات تسميات فحص آمنة مثل إعداد قوي أو محايد أو ضعيف أو مرشح لقائمة المتابعة أو مخاطر مرتفعة أو امتداد زائد.")
+    .replace(/Watchlists currently remain static-compatible\. Future releases can add saved views, alerts, portfolio research insights, and account-based persistence through protected services\./g, "تبقى قوائم المتابعة متوافقة مع التشغيل الثابت حاليا. ويمكن للإصدارات اللاحقة إضافة العروض المحفوظة والتنبيهات ورؤى أبحاث المحافظ وحفظ التفضيلات عبر خدمات محمية.")
+    .replace(/Mega-Cap Tech/g, "التكنولوجيا الكبرى")
+    .replace(/mega-cap tech/g, "التكنولوجيا الكبرى")
+    .replace(/market leadership/g, "قيادة السوق")
+    .replace(/passive investing/g, "الاستثمار السلبي")
+    .replace(/Trending صناديق المؤشرات/g, "صناديق مؤشرات رائجة")
+    .replace(/Top الأسهم و صناديق المؤشرات to watch across major market المحاور/g, "أفضل الأسهم وصناديق المؤشرات للمتابعة عبر محاور السوق الرئيسية")
+    .replace(/استكشف high-CTR research قائمة متابعةs for AI الأسهم, أشباه الموصلات leaders, growth الأسهم, dividend صناديق المؤشرات, السوق الواسع صناديق المؤشرات, و high-التذبذب candidates\. These lists are بحث تعليمي rankings, not buy or sell recommendations\./g, "استكشف قوائم بحثية جذابة لأسهم الذكاء الاصطناعي وقادة أشباه الموصلات وأسهم النمو وصناديق التوزيعات وصناديق السوق الواسع ومرشحي التقلب المرتفع. هذه القوائم تصنيفات بحثية تعليمية وليست توصيات شراء أو بيع.")
+    .replace(/بحث تعليمي rankings و قائمة متابعةs for البنية التحتية للذكاء الاصطناعي الأسهم, أشباه الموصلات leaders, mega-cap التكنولوجيا, السوق الواسع صناديق المؤشرات, dividend صناديق المؤشرات, growth صناديق المؤشرات, و high-التذبذب research candidates\./g, "تصنيفات وقوائم متابعة بحثية تعليمية لأسهم البنية التحتية للذكاء الاصطناعي وقادة أشباه الموصلات والتكنولوجيا الكبرى وصناديق السوق الواسع وصناديق التوزيعات وصناديق النمو ومرشحي التقلب المرتفع.")
+    .replace(/Top AI الأسهم Right Now/g, "أفضل أسهم الذكاء الاصطناعي حالياً")
+    .replace(/Top Semiconductor الأسهم/g, "أفضل أسهم أشباه الموصلات")
+    .replace(/Best Growth الأسهم to Watch/g, "أفضل أسهم النمو للمتابعة")
+    .replace(/Top Dividend صناديق المؤشرات/g, "أفضل صناديق توزيعات الأرباح")
+    .replace(/Top Broad Market صناديق المؤشرات/g, "أفضل صناديق السوق الواسع")
+    .replace(/Most Followed AI Infrastructure الأسهم/g, "أكثر أسهم البنية التحتية للذكاء الاصطناعي متابعة")
+    .replace(/High التذبذب Watchlist/g, "قائمة الأسهم عالية التقلب")
+    .replace(/Most Followed Tech الأسهم/g, "أكثر الأسهم التقنية متابعة")
+    .replace(/Most followed AI-linked research candidates from the TradeAlphaAI universe\. تصنيف بحثي تعليمي only, ليست نصيحة مالية\./g, "أبرز مرشحي البحث المرتبطين بالذكاء الاصطناعي ضمن تغطية TradeAlphaAI. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Data center, accelerator, cloud, و infrastructure names followed by the research desk\. تصنيف بحثي تعليمي only, ليست نصيحة مالية\./g, "أسماء مراكز البيانات والمسرعات والحوسبة السحابية والبنية التحتية التي يتابعها مكتب الأبحاث. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Chip, equipment, memory, و AI compute names with strong research relevance\. تصنيف بحثي تعليمي only, ليست نصيحة مالية\./g, "شركات الرقائق والمعدات والذاكرة وحوسبة الذكاء الاصطناعي ذات أهمية بحثية عالية. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Growth-oriented technology و platform companies for educational comparison\. تصنيف بحثي تعليمي only, ليست نصيحة مالية\./g, "شركات تقنية ومنصات موجهة للنمو للمقارنة التعليمية. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Higher-beta research candidates where المخاطر السياق matters as much as upside narratives\. تصنيف بحثي تعليمي only, ليست نصيحة مالية\./g, "مرشحون بحثيون أعلى تقلبا حيث يهم سياق المخاطر بقدر أهمية روايات النمو. تصنيف بحثي تعليمي وليس نصيحة مالية.")
+    .replace(/Investors follow ([A-Z0-9.-]+) for signals about [^<.]+?\./g, "يتابع الباحثون $1 لفهم إشارات المحاور المرتبطة به ومتانة الإيرادات والموقع التنافسي وحساسية التقييم وقيادة القطاع.")
+    .replace(/Investors follow ([A-Z0-9.-]+) to compare [^<.]+?\./g, "يتابع الباحثون $1 لمقارنة التعرض ودور التنويع وملف المخاطر وحساسية السوق الواسع.")
+    .replace(/Why do investors follow ([A-Z0-9.-]+)\?/g, "لماذا يتابع الباحثون $1؟")
+    .replace(/([A-Z0-9.-]+) is followed for [^<.]+?\./g, "يحظى $1 بالمتابعة لأغراض بحثية مرتبطة بالمحاور والسياق القطاعي والتقييم.")
+    .replace(/Why investors follow it/g, "لماذا يتابعه المستثمرون")
+    .replace(/Research السياق/g, "السياق البحثي")
+    .replace(/التنويع role/g, "دور التنويع")
+    .replace(/Stronger الطلب tied to البنية التحتية للذكاء الاصطناعي\./g, "طلب أقوى مرتبط بالبنية التحتية للذكاء الاصطناعي.")
+    .replace(/Durable margins و execution quality\./g, "هوامش متينة وجودة تنفيذ مرتفعة.")
+    .replace(/Potential leadership inside its sector research theme\./g, "إمكانات قيادة ضمن محوره القطاعي البحثي.")
+    .replace(/لا\. This page is بحث تعليمي only و لا provide investment or نصيحة مالية\./g, "لا. هذه الصفحة بحث تعليمي فقط ولا تقدم نصيحة استثمارية أو مالية.")
+    .replace(/AI GPU Infrastructure/g, "بنية GPU للذكاء الاصطناعي")
+    .replace(/Cloud AI/g, "الذكاء الاصطناعي السحابي")
+    .replace(/CUDA ecosystem, AI data-center GPU الطلب, و أشباه الموصلات leadership السياق\./g, "منظومة CUDA وطلب وحدات GPU في مراكز بيانات الذكاء الاصطناعي وسياق قيادة أشباه الموصلات.")
+    .replace(/Azure AI, enterprise software, و البنية التحتية للذكاء الاصطناعي monetization research\./g, "أبحاث Azure AI وبرمجيات المؤسسات وفرص تحقيق العائد من البنية التحتية للذكاء الاصطناعي.")
+    .replace(/الزخم Leaders/g, "قادة الزخم")
+    .replace(/أشباه الموصلات Leaders/g, "قادة أشباه الموصلات")
+    .replace(/Market candidates/g, "مرشحو السوق")
     .replace(/â€”|â€“/g, "-")
     .replace(/â†’/g, "←")
     .replace(/â±/g, "")
@@ -985,6 +1080,83 @@ function normalizeArabicArtifacts(html) {
     .replace(/Related صناديق المؤشرات/g, "صناديق مؤشرات مرتبطة")
     .replace(/مخاطر Analysis/g, "تحليل المخاطر")
     .replace(/FAQ\b/g, "الأسئلة الشائعة")
+    .replace(/SEO Overview/g, "نظرة بحثية موجزة")
+    .replace(/Company Overview/g, "نظرة على الشركة")
+    .replace(/ETF Methodology/g, "منهجية صندوق المؤشرات")
+    .replace(/Research Context/g, "السياق البحثي")
+    .replace(/Positive research factors/g, "عوامل بحثية داعمة")
+    .replace(/Bull case framework/g, "إطار العوامل الإيجابية")
+    .replace(/Bear case and risk factors/g, "العوامل السلبية والمخاطر")
+    .replace(/Bear case و المخاطر factors/g, "العوامل السلبية والمخاطر")
+    .replace(/Risk layer/g, "طبقة المخاطر")
+    .replace(/Valuation Context/g, "سياق التقييم")
+    .replace(/Research score context/g, "سياق درجة البحث")
+    .replace(/Related ETFs and stocks/g, "صناديق وأسهم مرتبطة")
+    .replace(/Related stocks and ETFs/g, "أسهم وصناديق مرتبطة")
+    .replace(/Connected research paths/g, "مسارات بحثية مرتبطة")
+    .replace(/Full analysis/g, "افتح التحليل الكامل")
+    .replace(/Related research/g, "بحث مرتبط")
+    .replace(/research score/g, "درجة بحثية")
+    .replace(/Educational ranking/g, "تصنيف بحثي تعليمي")
+    .replace(/Research Watchlists/g, "قوائم متابعة بحثية")
+    .replace(/Educational rankings for market focus lists/g, "تصنيفات تعليمية لقوائم تركيز السوق")
+    .replace(/Research-ranked assets for comparison و watchlist building\. ليست نصيحة مالية\./g, "أصول مرتبة بحثيا للمقارنة وبناء قوائم المتابعة. المحتوى تعليمي وليس نصيحة مالية.")
+    .replace(/Research-ranked assets for comparison and watchlist building\. Not financial advice\./g, "أصول مرتبة بحثيا للمقارنة وبناء قوائم المتابعة. المحتوى تعليمي وليس نصيحة مالية.")
+    .replace(/Compare research-ranked assets across البنية التحتية للذكاء الاصطناعي, أشباه الموصلات, mega-cap التكنولوجيا, broad market صناديق المؤشرات, dividend صناديق المؤشرات, growth صناديق المؤشرات, و high-volatility watchlists\. These rankings are educational research views, not recommendations\./g, "قارن قوائم بحثية جذابة تغطي أسهم الذكاء الاصطناعي وأشباه الموصلات والتكنولوجيا الكبرى وصناديق السوق الواسع وصناديق التوزيعات وصناديق النمو وقوائم التقلب المرتفع. هذه تصنيفات تعليمية وليست توصيات.")
+    .replace(/Coverage/g, "التغطية")
+    .replace(/Lists/g, "القوائم")
+    .replace(/Advice/g, "النصيحة")
+    .replace(/None/g, "لا يوجد")
+    .replace(/Mode/g, "النمط")
+    .replace(/Static/g, "ثابت")
+    .replace(/watchlist/g, "قائمة متابعة")
+    .replace(/watchlists/g, "قوائم متابعة")
+    .replace(/high-volatility-قائمة متابعة/g, "high-volatility-watchlist")
+    .replace(/Top AI Picks/g, "أفضل أسهم الذكاء الاصطناعي")
+    .replace(/Momentum Leaders/g, "قادة الزخم")
+    .replace(/Trending ETFs/g, "صناديق مؤشرات رائجة")
+    .replace(/Semiconductor Leaders/g, "قادة أشباه الموصلات")
+    .replace(/Retention Loop/g, "مسار المتابعة")
+    .replace(/Build a future watchlist workflow/g, "بناء تجربة متابعة مستقبلية")
+    .replace(/Phase 2 keeps watchlists frontend-only\. Future phases can add saved views, alerts, portfolio AI الرؤى, و account-based قائمة متابعة persistence through backend services\./g, "تبقى قوائم المتابعة حاليا داخل الواجهة فقط، ويمكن لاحقا إضافة العروض المحفوظة والتنبيهات ورؤى المحافظ مع طبقة خلفية محمية.")
+    .replace(/AI-style explanations/g, "شرح بحثي منظم")
+    .replace(/educational watchlist السياق/g, "سياق تعليمي لقوائم المتابعة")
+    .replace(/No buy or sell recommendations are provided\./g, "لا يتم تقديم توصيات شراء أو بيع.")
+    .replace(/Analyze سهم/g, "حلل السهم")
+    .replace(/Score Model/g, "نموذج الدرجة")
+    .replace(/5 Factors/g, "5 عوامل")
+    .replace(/Stocks \+ ETFs/g, "أسهم وصناديق مؤشرات")
+    .replace(/Educational/g, "تعليمي")
+    .replace(/Mock Ready/g, "جاهز للبيانات التعليمية")
+    .replace(/business model/g, "نموذج الأعمال")
+    .replace(/themes/g, "المحاور")
+    .replace(/bull case/g, "العوامل الإيجابية")
+    .replace(/valuation السياق/g, "سياق التقييم")
+    .replace(/related صناديق المؤشرات/g, "صناديق مؤشرات مرتبطة")
+    .replace(/is tracked as an بحث تعليمي asset because it connects to/g, "تتم متابعته كأصل بحثي تعليمي لأنه يرتبط بمحاور")
+    .replace(/generates value through its core/g, "يبني قيمته عبر نشاطه الأساسي في")
+    .replace(/business model, product cycle execution, customer الطلب, pricing power, و operating margin discipline\./g, "ونموذج أعماله وتنفيذ دورات المنتجات وطلب العملاء وقوة التسعير وانضباط الهوامش التشغيلية.")
+    .replace(/Clear التعرض profile for research comparison\./g, "ملف تعرض واضح للمقارنة البحثية.")
+    .replace(/Useful portfolio role when matched with appropriate المخاطر السياق\./g, "دور مفيد في المحفظة عند ربطه بسياق المخاطر المناسب.")
+    .replace(/Transparent صندوق مؤشرات structure و holdings data\./g, "بنية صندوق شفافة وبيانات مكونات قابلة للمراجعة.")
+    .replace(/TradeAlpha Score is an educational research label for comparison\. It is not a buy or sell recommendation\./g, "درجة TradeAlpha مؤشر بحثي تعليمي للمقارنة، وليست توصية شراء أو بيع.")
+    .replace(/Nصندوق مؤشراتlix/g, "Netflix")
+    .replace(/TradeAlphaAI Focus القوائم/g, "قوائم تركيز TradeAlphaAI")
+    .replace(/Top الأسهم و صناديق المؤشرات to watch across major market المحاور/g, "أفضل الأسهم وصناديق المؤشرات للمتابعة عبر محاور السوق الرئيسية")
+    .replace(/استكشف high-CTR research قائمة متابعةs for AI الأسهم, أشباه الموصلات leaders, growth الأسهم, dividend صناديق المؤشرات, السوق الواسع صناديق المؤشرات, و high-التذبذب candidates\. These lists are بحث تعليمي rankings, not buy or sell recommendations\./g, "استكشف قوائم بحثية جذابة لأسهم الذكاء الاصطناعي وقادة أشباه الموصلات وأسهم النمو وصناديق التوزيعات وصناديق السوق الواسع ومرشحي التقلب المرتفع. هذه القوائم تصنيفات بحثية تعليمية وليست توصيات شراء أو بيع.")
+    .replace(/data-research-المحاور/g, "data-research-themes")
+    .replace(/المخاطر layer/g, "طبقة المخاطر")
+    .replace(/Valuation expectations may بالفعل price in strong execution\./g, "قد تكون توقعات التقييم قد استوعبت بالفعل جزءا كبيرا من التنفيذ القوي.")
+    .replace(/Cyclical الطلب or تركز العملاء can pressure results\./g, "يمكن أن تضغط دورية الطلب أو تركز العملاء على النتائج.")
+    .replace(/Macro conditions can compress multiples for growth assets\./g, "قد تؤدي الظروف الكلية إلى ضغط مضاعفات أصول النمو.")
+    .replace(/valuation المخاطر/g, "مخاطر التقييم")
+    .replace(/sector التذبذب/g, "تذبذب القطاع")
+    .replace(/macro السيولة/g, "السيولة الكلية")
+    .replace(/Clear التعرض profile/g, "ملف تعرض واضح")
+    .replace(/research comparison/g, "المقارنة البحثية")
+    .replace(/Useful portfolio role/g, "دور مفيد في المحفظة")
+    .replace(/appropriate المخاطر السياق/g, "سياق المخاطر المناسب")
+    .replace(/Transparent/g, "شفافة")
     .replace(/Data center و supply chain overview/g, "نظرة على مراكز البيانات وسلاسل التوريد")
     .replace(/Broad Market/g, "السوق الواسع")
     .replace(/trade-offs/g, "المفاضلات")
@@ -1004,6 +1176,22 @@ function preserveEdgeSpace(original, translated) {
   const leading = original.match(/^\s*/)[0];
   const trailing = original.match(/\s*$/)[0];
   return `${leading}${escapeHtml(translated.trim())}${trailing}`;
+}
+
+function finalArabicCleanup(html) {
+  return html
+    .replace(/Research Rankings [^"<]*Watchlists/g, "&#1578;&#1589;&#1606;&#1610;&#1601;&#1575;&#1578; &#1608;&#1602;&#1608;&#1575;&#1574;&#1605; &#1605;&#1578;&#1575;&#1576;&#1593;&#1577; &#1576;&#1581;&#1579;&#1610;&#1577;")
+    .replace(/[^"]*rankings[^"]*research candidates\./g, "&#1578;&#1589;&#1606;&#1610;&#1601;&#1575;&#1578; &#1608;&#1602;&#1608;&#1575;&#1574;&#1605; &#1605;&#1578;&#1575;&#1576;&#1593;&#1577; &#1576;&#1581;&#1579;&#1610;&#1577; &#1578;&#1593;&#1604;&#1610;&#1605;&#1610;&#1577; &#1604;&#1571;&#1587;&#1607;&#1605; &#1575;&#1604;&#1576;&#1606;&#1610;&#1577; &#1575;&#1604;&#1578;&#1581;&#1578;&#1610;&#1577; &#1604;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610; &#1608;&#1602;&#1575;&#1583;&#1577; &#1571;&#1588;&#1576;&#1575;&#1607; &#1575;&#1604;&#1605;&#1608;&#1589;&#1604;&#1575;&#1578; &#1608;&#1575;&#1604;&#1578;&#1603;&#1606;&#1608;&#1604;&#1608;&#1580;&#1610;&#1575; &#1575;&#1604;&#1603;&#1576;&#1585;&#1609;.")
+    .replace(/Most followed AI-linked research candidates[^<]*\./g, "&#1571;&#1576;&#1585;&#1586; &#1605;&#1585;&#1588;&#1581;&#1610; &#1575;&#1604;&#1576;&#1581;&#1579; &#1575;&#1604;&#1605;&#1585;&#1578;&#1576;&#1591;&#1610;&#1606; &#1576;&#1575;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610; &#1590;&#1605;&#1606; &#1578;&#1594;&#1591;&#1610;&#1577; TradeAlphaAI.")
+    .replace(/Most Followed [^<]*?&#1575;&#1604;&#1571;&#1587;&#1607;&#1605;/g, "&#1571;&#1603;&#1579;&#1585; &#1571;&#1587;&#1607;&#1605; &#1575;&#1604;&#1576;&#1606;&#1610;&#1577; &#1575;&#1604;&#1578;&#1581;&#1578;&#1610;&#1577; &#1604;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610; &#1605;&#1578;&#1575;&#1576;&#1593;&#1577;")
+    .replace(/Most Followed [^<]*?الأسهم/g, "&#1571;&#1603;&#1579;&#1585; &#1571;&#1587;&#1607;&#1605; &#1575;&#1604;&#1576;&#1606;&#1610;&#1577; &#1575;&#1604;&#1578;&#1581;&#1578;&#1610;&#1577; &#1604;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610; &#1605;&#1578;&#1575;&#1576;&#1593;&#1577;")
+    .replace(/Data center, accelerator[^<]*\./g, "&#1571;&#1587;&#1605;&#1575;&#1569; &#1605;&#1585;&#1575;&#1603;&#1586; &#1575;&#1604;&#1576;&#1610;&#1575;&#1606;&#1575;&#1578; &#1608;&#1575;&#1604;&#1605;&#1587;&#1585;&#1593;&#1575;&#1578; &#1608;&#1575;&#1604;&#1581;&#1608;&#1587;&#1576;&#1577; &#1575;&#1604;&#1587;&#1581;&#1575;&#1576;&#1610;&#1577; &#1608;&#1575;&#1604;&#1576;&#1606;&#1610;&#1577; &#1575;&#1604;&#1578;&#1581;&#1578;&#1610;&#1577; &#1575;&#1604;&#1578;&#1610; &#1610;&#1578;&#1575;&#1576;&#1593;&#1607;&#1575; &#1605;&#1603;&#1578;&#1576; &#1575;&#1604;&#1571;&#1576;&#1581;&#1575;&#1579;.")
+    .replace(/Higher-beta research candidates[^<]*\./g, "&#1605;&#1585;&#1588;&#1581;&#1608;&#1606; &#1576;&#1581;&#1579;&#1610;&#1608;&#1606; &#1571;&#1593;&#1604;&#1609; &#1578;&#1602;&#1604;&#1576;&#1575; &#1581;&#1610;&#1579; &#1610;&#1607;&#1605; &#1587;&#1610;&#1575;&#1602; &#1575;&#1604;&#1605;&#1582;&#1575;&#1591;&#1585; &#1576;&#1602;&#1583;&#1585; &#1571;&#1607;&#1605;&#1610;&#1577; &#1585;&#1608;&#1575;&#1610;&#1575;&#1578; &#1575;&#1604;&#1606;&#1605;&#1608;.")
+    .replace(/Watchlists currently remain[^<]*\./g, "&#1578;&#1576;&#1602;&#1609; &#1602;&#1608;&#1575;&#1574;&#1605; &#1575;&#1604;&#1605;&#1578;&#1575;&#1576;&#1593;&#1577; &#1605;&#1578;&#1608;&#1575;&#1601;&#1602;&#1577; &#1605;&#1593; &#1575;&#1604;&#1578;&#1588;&#1594;&#1610;&#1604; &#1575;&#1604;&#1579;&#1575;&#1576;&#1578; &#1581;&#1575;&#1604;&#1610;&#1575;.")
+    .replace(/The [^<]*?TradeAlpha combines[^<]*?Overextended\./g, "&#1578;&#1580;&#1605;&#1593; &#1583;&#1585;&#1580;&#1577; TradeAlpha &#1576;&#1610;&#1606; &#1575;&#1604;&#1583;&#1585;&#1580;&#1577; &#1575;&#1604;&#1601;&#1606;&#1610;&#1577; &#1608;&#1575;&#1604;&#1583;&#1585;&#1580;&#1577; &#1575;&#1604;&#1571;&#1587;&#1575;&#1587;&#1610;&#1577; &#1608;&#1575;&#1604;&#1586;&#1582;&#1605; &#1608;&#1575;&#1604;&#1605;&#1593;&#1606;&#1608;&#1610;&#1575;&#1578; &#1608;&#1578;&#1593;&#1583;&#1610;&#1604; &#1575;&#1604;&#1605;&#1582;&#1575;&#1591;&#1585;.")
+    .replace(/Mega-Cap Tech|mega-cap tech/g, "&#1575;&#1604;&#1578;&#1603;&#1606;&#1608;&#1604;&#1608;&#1580;&#1610;&#1575; &#1575;&#1604;&#1603;&#1576;&#1585;&#1609;")
+    .replace(/market leadership/g, "&#1602;&#1610;&#1575;&#1583;&#1577; &#1575;&#1604;&#1587;&#1608;&#1602;")
+    .replace(/passive investing/g, "&#1575;&#1604;&#1575;&#1587;&#1578;&#1579;&#1605;&#1575;&#1585; &#1575;&#1604;&#1587;&#1604;&#1576;&#1610;");
 }
 
 function setMeta(html, type, key, value) {

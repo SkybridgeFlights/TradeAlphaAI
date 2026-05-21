@@ -199,7 +199,19 @@ function checkPhase9Integration() {
 }
 
 function scanForForbiddenWording() {
-  const forbidden = [/buy now/i, /guaranteed profit/i, /sure signal/i, /guaranteed prediction/i];
+  const forbidden = [
+    /buy now/i,
+    /guaranteed profit/i,
+    /sure signal/i,
+    /guaranteed prediction/i,
+    /AI-generated analysis/i,
+    /AI Market Portal/i,
+    /AI-style/i,
+    /Generated Stock Page/i,
+    /Generated ETF Page/i,
+    /Future placeholder/i,
+    /Placeholder CTA/i
+  ];
   for (const file of listFiles(root, [".html", ".js"])) {
     const rel = relative(file);
     if (rel.includes("node_modules")) continue;
@@ -761,13 +773,30 @@ function checkArabicLanguageIsolation(rel, html) {
     "Equity Factors",
     "Broad Market"
   ];
+  forbiddenLabels.push(
+    "Bull case",
+    "Bear case",
+    "Full analysis",
+    "Related research",
+    "Educational ranking",
+    "Research Context",
+    "SEO Overview",
+    "AI-generated analysis",
+    "Research Platform",
+    "Static Research",
+    "analyst-style explanations",
+    "How Scores Work",
+    "Top الأسهم",
+    "high-CTR",
+    "buy or sell recommendations"
+  );
   for (const label of forbiddenLabels) {
     if (new RegExp(`\\b${escapeRegExp(label)}\\b`).test(visible)) failures.push(`${rel}: Arabic visible text leaks English label: ${label}`);
   }
   if (/Understوing|demو|bاقرأth|alاقرأy|stوard|InfiniBو|bوwidth|Pوemic/i.test(html)) {
     failures.push(`${rel}: malformed Arabic term replacement artifact detected`);
   }
-  if (/\b(watchlist candidates|ranking recommendation|provide price targets|predict future performance|market education|future generated|provider architecture|long-term ownership costs|A fast educational|does the analyzer|Can I use this|Will real market data)\b/i.test(visible)) {
+  if (/\b(watchlist candidates|ranking recommendation|provide price targets|predict future performance|market education|future generated|provider architecture|long-term ownership costs|A fast educational|does the analyzer|Can I use this|Will real market data|high-CTR|buy or sell recommendations|analyst-style explanations|Investors follow|revenue durability|competitive positioning|sector leadership|research candidates|Most followed|Market candidates)\b/i.test(visible) || /Top الأسهم/i.test(visible)) {
     failures.push(`${rel}: Arabic visible text contains untranslated English content`);
   }
   if (/placeholder/i.test(visible)) failures.push(`${rel}: Arabic visible text contains placeholder wording`);

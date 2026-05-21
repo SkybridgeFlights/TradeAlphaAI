@@ -4,7 +4,7 @@ export function applyStockListSeo() {
   setCanonical("https://www.tradealphaai.com/stocks.html");
   setOg({
     title: "AI Stock Analyzer | TradeAlphaAI",
-    description: "Free educational stock screening with AI-style summaries, technical scores, and risk overview.",
+    description: "Free educational stock screening with research summaries, technical scores, and risk overview.",
     url: "https://www.tradealphaai.com/stocks.html"
   });
 }
@@ -28,7 +28,7 @@ export function applyStockDetailSeo(asset) {
 
 export function applyEtfListSeo() {
   setTitle("AI ETF Analyzer | Free ETF Screening Tool | TradeAlphaAI");
-  setMeta("description", "Screen ETFs with educational AI-style analysis, expense ratio context, top holdings, sector exposure, technical scores, and risk overview.");
+  setMeta("description", "Screen ETFs with educational research analysis, expense ratio context, top holdings, sector exposure, technical scores, and risk overview.");
   setCanonical("https://www.tradealphaai.com/etfs.html");
   setOg({
     title: "AI ETF Analyzer | TradeAlphaAI",

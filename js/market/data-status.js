@@ -1,8 +1,8 @@
 export const DATA_STATUS = {
   mock: {
-    label: "Mock educational data",
-    description: "Static mock data is being used for education and interface demonstration.",
-    confidence: "Demo",
+    label: "Static research dataset",
+    description: "Static educational research data is being used for platform analysis and comparison.",
+    confidence: "Research",
     className: "status-mock"
   },
   live: {
@@ -36,8 +36,8 @@ const PROVIDER_DISPLAY_NAMES = {
   "alpha-vantage": "Alpha Vantage",
   polygon: "Polygon.io",
   yahoo: "Yahoo-compatible",
-  mock: "Mock",
-  "mock-serverless": "Mock"
+  mock: "Static dataset",
+  "mock-serverless": "Static dataset"
 };
 
 export function normalizeDataStatus(metadata = {}) {
@@ -47,9 +47,9 @@ export function normalizeDataStatus(metadata = {}) {
   const providerKey = metadata.provider || "mock";
   const providerDisplayName = PROVIDER_DISPLAY_NAMES[providerKey] || providerKey;
 
-  const label = (status === "live" && providerDisplayName !== "Mock")
+  const label = (status === "live" && providerDisplayName !== "Static dataset")
     ? `Live market data — ${providerDisplayName}`
-    : (status === "stale" && providerDisplayName !== "Mock")
+    : (status === "stale" && providerDisplayName !== "Static dataset")
     ? `Cached response — ${providerDisplayName}`
     : base.label;
 
@@ -68,7 +68,7 @@ export function normalizeDataStatus(metadata = {}) {
     isFallback: Boolean(metadata.isFallback || status === "fallback"),
     isMock: Boolean(metadata.isMock || status === "mock"),
     cacheTtlSeconds: Number.isFinite(Number(metadata.cacheTtlSeconds)) ? Number(metadata.cacheTtlSeconds) : 300,
-    attribution: metadata.attribution || "TradeAlphaAI educational mock dataset",
+    attribution: metadata.attribution || "TradeAlphaAI static educational dataset",
     cacheStatus: metadata.cacheStatus || (metadata.servedFromCache ? "cached" : "fresh"),
     staleAfterSeconds: Number.isFinite(Number(metadata.staleAfterSeconds)) ? Number(metadata.staleAfterSeconds) : 60,
     expiresAt: metadata.expiresAt || new Date(Date.now() + 60000).toISOString(),
@@ -88,6 +88,6 @@ export function createMockStatus(provider = "mock") {
     staleAfterSeconds: 300,
     expiresAt: new Date(Date.now() + 300000).toISOString(),
     servedFromCache: false,
-    attribution: "TradeAlphaAI educational mock dataset"
+    attribution: "TradeAlphaAI static educational dataset"
   });
 }

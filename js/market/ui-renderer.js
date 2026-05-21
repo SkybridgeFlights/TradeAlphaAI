@@ -15,6 +15,55 @@ import { createMockStatus, normalizeDataStatus } from "./data-status.js";
 import { normalizeProviderHealthList } from "./provider-health.js";
 
 const disclaimer = "This analysis is for educational and informational purposes only and does not constitute financial advice.";
+const arDisclaimer = "هذا التحليل لأغراض تعليمية ومعلوماتية فقط ولا يشكل نصيحة مالية أو استثمارية.";
+
+function isArabicPage() {
+  return document.documentElement.lang === "ar" || document.documentElement.dir === "rtl";
+}
+
+function text(en, ar) {
+  return isArabicPage() ? ar : en;
+}
+
+function researchField(asset, key, fallback = "") {
+  const research = asset.research || {};
+  return isArabicPage() ? (research.ar?.[key] || research[key] || asset[key] || fallback) : (research[key] || asset[key] || fallback);
+}
+
+function researchList(asset, key, fallback = []) {
+  const value = researchField(asset, key, fallback);
+  return Array.isArray(value) ? value : fallback;
+}
+
+function localizedSector(asset) {
+  return researchField(asset, "sector", asset.sector || asset.category || text("Market Research", "أبحاث السوق"));
+}
+
+function localizedRisk(value) {
+  const map = {
+    low: text("Low", "منخفضة"),
+    medium: text("Medium", "متوسطة"),
+    high: text("High", "مرتفعة")
+  };
+  return map[String(value || "").toLowerCase()] || capitalize(value || text("medium", "متوسطة"));
+}
+
+function localizedFacetValue(value) {
+  const normalized = String(value || "").toLowerCase();
+  if (normalized === "stock") return text("Stock", "سهم");
+  if (normalized === "etf") return text("ETF", "صندوق مؤشرات");
+  if (["low", "medium", "high"].includes(normalized)) return localizedRisk(value);
+  if (normalized === "positive") return text("Positive", "إيجابية");
+  if (normalized === "neutral") return text("Neutral", "محايدة");
+  if (normalized === "mixed") return text("Mixed", "مختلطة");
+  return capitalize(value);
+}
+
+function assetHref(asset) {
+  const folder = asset.type === "etf" ? "etfs" : "stocks";
+  const href = `/${folder}/${asset.symbol.toLowerCase()}.html`;
+  return isArabicPage() ? `/ar${href}` : href;
+}
 
 export async function initStocksPage() {
   applyStockListSeo();
@@ -173,15 +222,15 @@ function renderAssetDetail(asset, universe) {
 
   setText("[data-asset-symbol]", asset.symbol);
   setText("[data-asset-name]", asset.name);
-  setText("[data-asset-exchange]", `${asset.exchange} / ${asset.sector}`);
+  setText("[data-asset-exchange]", `${asset.exchange} / ${localizedSector(asset)}`);
   setText("[data-asset-price]", formatCurrency(asset.price));
   setText("[data-asset-change]", formatChange(asset.changePercent));
   setText("[data-asset-market-cap]", asset.marketCap);
-  setText("[data-asset-sector]", asset.sector);
+  setText("[data-asset-sector]", localizedSector(asset));
   setText("[data-asset-industry]", asset.industry);
   setText("[data-score-value]", score.finalScore);
   setText("[data-score-label]", score.label);
-  setText("[data-score-disclaimer]", disclaimer);
+  setText("[data-score-disclaimer]", text(disclaimer, arDisclaimer));
   setGauge(score.finalScore);
 
   renderScoreBreakdown(score);
@@ -214,11 +263,11 @@ function renderScoreBreakdown(score) {
   const target = document.querySelector("[data-score-breakdown]");
   if (!target) return;
   const items = [
-    ["Technical", score.technical],
-    ["Fundamental", score.fundamental],
-    ["Momentum", score.momentum],
-    ["Sentiment", score.sentiment],
-    ["Risk", score.risk]
+    [text("Technical", "فني"), score.technical],
+    [text("Fundamental", "أساسي"), score.fundamental],
+    [text("Momentum", "زخم"), score.momentum],
+    [text("Sentiment", "معنويات"), score.sentiment],
+    [text("Risk", "مخاطر"), score.risk]
   ];
 
   target.innerHTML = items.map(([label, value]) => `
@@ -236,12 +285,12 @@ function renderMetricCards(asset) {
     ["MACD", capitalize(asset.macdTrend)],
     ["MA50", formatCurrency(asset.ma50)],
     ["MA200", formatCurrency(asset.ma200)],
-    ["Volume", capitalize(asset.volumeTrend)],
-    ["Trend", capitalize(asset.trendDirection || "neutral")]
+    [text("Volume", "الحجم"), capitalize(asset.volumeTrend)],
+    [text("Trend", "الاتجاه"), capitalize(asset.trendDirection || "neutral")]
   ];
   const extra = asset.type === "etf"
-    ? [["Expense", formatExpense(asset.expenseRatio)], ["Category", asset.category]]
-    : [["P/E", asset.peRatio], ["Revenue Growth", formatPercent(asset.revenueGrowth)]];
+    ? [[text("Expense", "المصاريف"), formatExpense(asset.expenseRatio)], [text("Category", "الفئة"), researchField(asset, "category", asset.category)]]
+    : [["P/E", asset.peRatio], [text("Revenue Growth", "نمو الإيرادات"), formatPercent(asset.revenueGrowth)]];
 
   const target = document.querySelector("[data-metric-cards]");
   if (!target) return;
@@ -255,24 +304,41 @@ function renderMetricCards(asset) {
 
 function buildAiSummary(asset, score, technicalInsights, fundamentalInsights) {
   const kind = asset.type === "etf" ? "ETF screening" : "stock screening";
+  if (isArabicPage()) {
+    const kindAr = asset.type === "etf" ? "فحص صندوق المؤشرات" : "فحص السهم";
+    const overview = researchField(asset, "overview", asset.summary);
+    const why = researchField(asset, "whyInvestorsFollow", "");
+    return `يحصل ${asset.symbol} على درجة ${score.finalScore}/100 ضمن نموذج TradeAlpha ويظهر كتقييم بحثي من فئة ${score.label}. ${overview} ${why} هذا ملخص تعليمي ضمن ${kindAr} وليس توصية شراء أو بيع.`;
+  }
   return `${asset.symbol} receives a ${score.finalScore}/100 TradeAlpha Score and screens as ${score.label}. ${asset.summary} ${technicalInsights[1]} ${fundamentalInsights[0]} This is an educational ${kind} summary, not a recommendation to buy or sell.`;
 }
 
 function renderRisks(asset, score) {
-  renderList("[data-risk-list]", [
-    `Risk profile: ${capitalize(asset.risk)}.`,
-    `Volatility estimate: ${Math.round(asset.volatility * 100)}%.`,
-    `Trend direction: ${capitalize(asset.trendDirection || "neutral")}.`,
-    `Risk adjustment reduced the final score by ${score.riskPenalty} screening points before weighting.`,
-    disclaimer
-  ]);
+  const customRisks = researchList(asset, "riskFactors", []);
+  const items = isArabicPage()
+    ? [
+      `ملف المخاطر: ${localizedRisk(asset.risk)}.`,
+      `تقدير التقلب: ${Math.round(asset.volatility * 100)}%.`,
+      ...customRisks.map((risk) => `عامل مخاطرة: ${risk}.`),
+      `خصم عامل المخاطر ${score.riskPenalty} نقطة بحثية قبل الترجيح النهائي.`,
+      arDisclaimer
+    ]
+    : [
+      `Risk profile: ${capitalize(asset.risk)}.`,
+      `Volatility estimate: ${Math.round(asset.volatility * 100)}%.`,
+      `Trend direction: ${capitalize(asset.trendDirection || "neutral")}.`,
+      ...customRisks.map((risk) => `Research risk: ${risk}.`),
+      `Risk adjustment reduced the final score by ${score.riskPenalty} screening points before weighting.`,
+      disclaimer
+    ];
+  renderList("[data-risk-list]", items);
 }
 
 function renderRelated(related) {
   const target = document.querySelector("[data-related-stocks], [data-related-etfs]");
   if (!target) return;
   target.innerHTML = related.map((asset) => `
-    <a class="related-link" href="${asset.type === "etf" ? "etf.html" : "stock.html"}?symbol=${asset.symbol}">
+    <a class="related-link" href="${assetHref(asset)}">
       <strong>${asset.symbol}</strong>
       <span>${asset.name}</span>
     </a>
@@ -335,10 +401,10 @@ function renderTrustStrip(asset) {
   const target = document.querySelector("[data-trust-strip]");
   if (!target) return;
   target.innerHTML = [
-    ["Updated recently", "Mock refresh"],
-    ["AI-generated analysis", "Rule based"],
-    ["Educational only", "No advice"],
-    ["Popular among traders", asset.symbol]
+    [text("Updated recently", "تحديث حديث"), text("Static refresh", "تحديث ثابت")],
+    [text("Research Desk", "مكتب الأبحاث"), "TradeAlphaAI"],
+    [text("Educational only", "تعليمي فقط"), text("No advice", "دون نصيحة")],
+    [text("Market focus", "محور متابعة"), asset.symbol]
   ].map(([label, value]) => `
     <div class="trust-pill">
       <span>${label}</span>
@@ -351,6 +417,28 @@ function renderContentDepth(asset) {
   const target = document.querySelector("[data-content-depth]");
   if (!target) return;
   const content = getSymbolContent(asset.symbol, asset);
+  if (asset.research) {
+    const primary = asset.type === "etf" ? researchField(asset, "etfMethodology", "") : researchField(asset, "businessModel", "");
+    const bull = researchList(asset, "bullCase", []);
+    const bear = researchList(asset, "bearCase", []);
+    target.innerHTML = `
+      <span class="eyebrow">${text("Research Framework", "إطار البحث")}</span>
+      <h2>${text(`Why investors watch ${asset.symbol}`, `لماذا يتابع المستثمرون ${asset.symbol}`)}</h2>
+      <p class="market-copy">${researchField(asset, "whyInvestorsFollow", content.whyWatch)}</p>
+      <p class="market-copy">${primary}</p>
+      <div class="analyzer-brief-grid">
+        <div>
+          <h3>${text("Positive research factors", "عوامل بحثية داعمة")}</h3>
+          <ul class="insight-list">${bull.map((item) => `<li>${item}</li>`).join("")}</ul>
+        </div>
+        <div>
+          <h3>${text("Risk factors", "عوامل المخاطر")}</h3>
+          <ul class="risk-list">${bear.map((item) => `<li>${item}</li>`).join("")}</ul>
+        </div>
+      </div>
+    `;
+    return;
+  }
   target.innerHTML = `
     <h2>Why investors watch ${asset.symbol}</h2>
     <p class="market-copy">${content.whyWatch}</p>
@@ -444,11 +532,11 @@ function renderComparison(selector, etfs) {
 }
 
 function renderScreenerFacets(assets) {
-  fillSelect("[data-filter-type]", unique(assets.map((asset) => asset.type)), "All assets");
-  fillSelect("[data-filter-risk]", unique(assets.map((asset) => asset.risk)), "All risk");
-  fillSelect("[data-filter-sector]", unique(assets.map((asset) => asset.sector)), "All sectors");
-  fillSelect("[data-filter-category]", unique(assets.map((asset) => asset.category || asset.sector)), "All ETF categories");
-  fillSelect("[data-filter-sentiment]", unique(assets.map((asset) => asset.sentiment)), "All sentiment");
+  fillSelect("[data-filter-type]", unique(assets.map((asset) => asset.type)), text("All assets", "كل الأصول"));
+  fillSelect("[data-filter-risk]", unique(assets.map((asset) => asset.risk)), text("All risk", "كل مستويات المخاطر"));
+  fillSelect("[data-filter-sector]", unique(assets.map((asset) => localizedSector(asset))), text("All sectors", "كل القطاعات"));
+  fillSelect("[data-filter-category]", unique(assets.map((asset) => researchField(asset, "category", asset.category || asset.sector))), text("All ETF categories", "كل فئات الصناديق"));
+  fillSelect("[data-filter-sentiment]", unique(assets.map((asset) => asset.sentiment)), text("All sentiment", "كل المعنويات"));
 }
 
 function renderScreenerSections(assets) {
@@ -486,8 +574,10 @@ function renderScreenerResults(assets, state) {
     const matchesType = state.type === "all" || asset.type === state.type;
     const matchesScore = score.finalScore >= state.minScore;
     const matchesRisk = state.risk === "all" || asset.risk === state.risk;
-    const matchesSector = state.sector === "all" || asset.sector === state.sector;
-    const matchesCategory = state.category === "all" || asset.category === state.category || asset.sector === state.category;
+    const sector = localizedSector(asset);
+    const category = researchField(asset, "category", asset.category || asset.sector);
+    const matchesSector = state.sector === "all" || sector === state.sector;
+    const matchesCategory = state.category === "all" || category === state.category || sector === state.category;
     const matchesSentiment = state.sentiment === "all" || asset.sentiment === state.sentiment;
     return matchesQuery && matchesType && matchesScore && matchesRisk && matchesSector && matchesCategory && matchesSentiment;
   });
@@ -500,15 +590,15 @@ function renderScreenerResults(assets, state) {
   });
 
   target.innerHTML = rows.map(({ asset, score }) => `
-    <a class="screener-row" href="${asset.type === "etf" ? "etf.html" : "stock.html"}?symbol=${asset.symbol}">
+    <a class="screener-row" href="${assetHref(asset)}">
       <span><strong>${asset.symbol}</strong><small>${asset.name}</small></span>
-      <span>${asset.type.toUpperCase()}</span>
-      <span>${asset.sector}</span>
+      <span>${asset.type === "etf" ? text("ETF", "صندوق") : text("STOCK", "سهم")}</span>
+      <span>${localizedSector(asset)}</span>
       <span>${score.momentum}</span>
-      <span>${capitalize(asset.risk)}</span>
+      <span>${localizedRisk(asset.risk)}</span>
       <span class="setup-badge">${score.finalScore} - ${score.label}</span>
     </a>
-  `).join("") || `<div class="market-card empty-state"><h2>No matching screening candidates</h2><p>Adjust the filters to broaden the educational screening view.</p></div>`;
+  `).join("") || `<div class="market-card empty-state"><h2>${text("No matching screening candidates", "لا توجد نتائج مطابقة")}</h2><p>${text("Adjust the filters to broaden the educational screening view.", "عدّل المرشحات لتوسيع نطاق الفحص التعليمي.")}</p></div>`;
 }
 
 function getEtfFundamentalInsights(asset) {
@@ -690,7 +780,7 @@ function getSymbolFromUrl(fallback) {
 function fillSelect(selector, values, firstLabel) {
   const select = document.querySelector(selector);
   if (!select) return;
-  select.innerHTML = `<option value="all">${firstLabel}</option>` + values.map((value) => `<option value="${value}">${capitalize(value)}</option>`).join("");
+  select.innerHTML = `<option value="all">${firstLabel}</option>` + values.map((value) => `<option value="${value}">${localizedFacetValue(value)}</option>`).join("");
 }
 
 function setText(selector, value) {

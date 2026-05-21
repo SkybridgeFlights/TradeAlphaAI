@@ -10,13 +10,14 @@ const stocks = data.stocks || [];
 const etfs = data.etfs || [];
 
 const sections = [
-  ['AI Infrastructure Focus List', stocks.filter((a) => has(a, 'AI Infrastructure')).slice(0, 6)],
-  ['Semiconductor Research Leaders', stocks.filter((a) => /semiconductor/i.test(a.sector) || has(a, 'AI Chips')).slice(0, 6)],
-  ['Mega-Cap Tech Watchlist', stocks.filter((a) => ['MSFT', 'AAPL', 'GOOGL', 'AMZN', 'META', 'NVDA', 'AVGO', 'NFLX'].includes(a.symbol)).slice(0, 7)],
-  ['Broad Market ETF Core List', etfs.filter((a) => has(a, 'Broad Market') || has(a, 'Core Equity')).slice(0, 6)],
-  ['Dividend ETF Research List', etfs.filter((a) => /dividend/i.test(JSON.stringify(a))).slice(0, 6)],
-  ['Growth ETF Research List', etfs.filter((a) => has(a, 'Growth Stocks') || /growth/i.test(a.category)).slice(0, 6)],
-  ['High Risk / High Volatility Watchlist', [...stocks, ...etfs].filter((a) => /Semiconductor|GPU|Small|Electric|Cybersecurity/i.test(`${a.sector || a.category} ${(a.themes || []).join(' ')}`)).slice(0, 7)]
+  ['top-ai-stocks', 'Top AI Stocks Right Now', 'Most followed AI-linked research candidates from the TradeAlphaAI universe.', stocks.filter((a) => has(a, 'AI') || has(a, 'Cloud')).slice(0, 10)],
+  ['top-semiconductor-stocks', 'Top Semiconductor Stocks', 'Chip, equipment, memory, and AI compute names with strong research relevance.', stocks.filter((a) => /semiconductor/i.test(a.sector) || has(a, 'AI Chips') || has(a, 'GPU')).slice(0, 8)],
+  ['top-growth-stocks', 'Best Growth Stocks to Watch', 'Growth-oriented technology and platform companies for educational comparison.', stocks.filter((a) => /Software|Communication|Automobiles|Technology/i.test(a.sector)).slice(0, 8)],
+  ['top-dividend-etfs', 'Top Dividend ETFs', 'Dividend-focused ETFs for income, quality, and defensive equity research.', etfs.filter((a) => /dividend/i.test(JSON.stringify(a))).slice(0, 6)],
+  ['top-broad-market-etfs', 'Top Broad Market ETFs', 'Core ETF building blocks for broad U.S. equity exposure and portfolio context.', etfs.filter((a) => has(a, 'Broad Market') || has(a, 'Core Equity') || has(a, 'Total U.S. Market')).slice(0, 7)],
+  ['ai-infrastructure-focus', 'Most Followed AI Infrastructure Stocks', 'Data center, accelerator, cloud, and infrastructure names followed by the research desk.', stocks.filter((a) => has(a, 'AI Infrastructure') || has(a, 'Data Centers') || has(a, 'Cloud')).slice(0, 8)],
+  ['high-volatility-watchlist', 'High Volatility Watchlist', 'Higher-beta research candidates where risk context matters as much as upside narratives.', [...stocks, ...etfs].filter((a) => /Semiconductor|GPU|Small|Electric|Cybersecurity/i.test(`${a.sector || a.category} ${(a.themes || []).join(' ')}`)).slice(0, 8)],
+  ['most-followed-tech', 'Most Followed Tech Stocks', 'Large technology names that anchor many market conversations and ETF exposures.', stocks.filter((a) => ['MSFT', 'AAPL', 'GOOGL', 'AMZN', 'META', 'NVDA', 'AVGO', 'NFLX'].includes(a.symbol)).slice(0, 8)]
 ];
 
 function score(asset) {
@@ -30,20 +31,25 @@ function risk(asset) {
   return 'Market and valuation sensitivity';
 }
 
+function theme(asset) {
+  return (asset.themes || [asset.sector || asset.category || 'Market Research'])[0];
+}
+
 function card(asset) {
   const href = asset.type === 'etf' ? `etfs/${asset.symbol.toLowerCase()}.html` : `stocks/${asset.symbol.toLowerCase()}.html`;
   return `<article class="market-card ranking-card">
               <span class="tile-topline"><strong>${esc(asset.symbol)}</strong><span class="setup-badge">${score(asset)} research score</span></span>
               <h3>${esc(asset.name)}</h3>
+              <div class="ranking-meta"><span>${esc(theme(asset))}</span><span>${esc(risk(asset))}</span></div>
               <p>${esc(asset.whyInvestorsFollow || asset.overview)}</p>
-              <p class="disclaimer-note">${esc(risk(asset))}</p>
+              <div class="ranking-score"><span style="width:${score(asset)}%"></span></div>
               <div class="cta-actions"><a class="market-btn primary" href="${href}">Full analysis</a><a class="market-btn" href="insights/${esc((asset.relatedInsights || ['spy-vs-qqq-explained'])[0])}.html">Related research</a></div>
             </article>`;
 }
 
-const sectionHtml = sections.map(([title, assets]) => `<section class="market-section">
+const sectionHtml = sections.map(([id, title, intro, assets]) => `<section class="market-section" id="${id}">
         <div class="market-panel">
-          <div class="section-head"><div><span class="eyebrow">Educational ranking</span><h2>${esc(title)}</h2></div><p>Research-ranked assets for comparison and watchlist building. Not financial advice.</p></div>
+          <div class="section-head"><div><span class="eyebrow">TradeAlphaAI Focus List</span><h2>${esc(title)}</h2></div><p>${esc(intro)} Educational ranking only, not financial advice.</p></div>
           <div class="market-grid">${assets.map(card).join('\n')}</div>
         </div>
       </section>`).join('\n');
@@ -69,10 +75,9 @@ const html = `<!doctype html>
   <link rel="stylesheet" href="css/market/market-portal.css" />
 </head>
 <body class="market-page">
-  <!-- generated:research-rankings -->
   <div class="topbar">
     <div class="wrap topbar-inner">
-      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlpha AI</strong><span>AI Market Portal</span></span></a>
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlpha AI</strong><span>Research Platform</span></span></a>
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
           <a href="index.html" class="nav-link">Home</a>
@@ -88,7 +93,7 @@ const html = `<!doctype html>
   <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Research Rankings</span></nav>
-      <section class="market-hero"><div class="market-hero-panel"><div class="market-hero-grid"><div><span class="eyebrow">Research Watchlists</span><h1>Educational rankings for market focus lists</h1><p class="market-lead">Compare research-ranked assets across AI infrastructure, semiconductors, mega-cap technology, broad market ETFs, dividend ETFs, growth ETFs, and high-volatility watchlists. These rankings are educational research views, not recommendations.</p><div class="cta-actions"><a class="market-btn primary" href="ai-stock-screener.html">Open Screener</a><a class="market-btn" href="methodology.html">Methodology</a></div></div><div class="hero-stat-grid"><div class="hero-stat"><span>Coverage</span><strong>${stocks.length + etfs.length}</strong></div><div class="hero-stat"><span>Lists</span><strong>${sections.length}</strong></div><div class="hero-stat"><span>Advice</span><strong>None</strong></div><div class="hero-stat"><span>Mode</span><strong>Static</strong></div></div></div></div></section>
+      <section class="market-hero"><div class="market-hero-panel"><div class="market-hero-grid"><div><span class="eyebrow">TradeAlphaAI Focus Lists</span><h1>Top stocks and ETFs to watch across major market themes</h1><p class="market-lead">Explore high-CTR research watchlists for AI stocks, semiconductor leaders, growth stocks, dividend ETFs, broad market ETFs, and high-volatility candidates. These lists are educational research rankings, not buy or sell recommendations.</p><div class="cta-actions"><a class="market-btn primary" href="ai-stock-screener.html">Open Screener</a><a class="market-btn" href="methodology.html">Methodology</a></div></div><div class="hero-stat-grid"><div class="hero-stat"><span>Coverage</span><strong>${stocks.length + etfs.length}</strong></div><div class="hero-stat"><span>Lists</span><strong>${sections.length}</strong></div><div class="hero-stat"><span>Advice</span><strong>None</strong></div><div class="hero-stat"><span>Mode</span><strong>Static</strong></div></div></div></div></section>
       ${sectionHtml}
       <section class="market-section"><div class="market-panel"><span class="eyebrow">Compliance</span><h2>Educational use only</h2><p class="disclaimer-note">These watchlists are for educational and informational purposes only and do not constitute financial advice, investment advice, price targets, or security recommendations.</p></div></section>
     </div>
