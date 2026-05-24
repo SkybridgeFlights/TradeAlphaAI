@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { spawnSync } = require("child_process");
 
 const root = path.resolve(__dirname, "..");
 const failures = [];
@@ -61,6 +62,7 @@ checkResearchLayer();
 checkInsightDiscoverability();
 checkLocalizedStaticPages();
 checkArabicInsightBodies();
+checkArticlePairContract();
 
 if (failures.length) {
   console.error("Production readiness check failed:");
@@ -83,6 +85,18 @@ console.log("     Then: curl 'http://localhost:8888/.netlify/functions/market-da
 console.log("     Expect: fallback === true, metadata.status === 'fallback', metadata.isFallback === true");
 console.log("  4. Static mode test:     npx serve . -l 8098");
 console.log("     Expect: pages load with mock data, no console errors, no API key exposure");
+
+function checkArticlePairContract() {
+  const result = spawnSync(process.execPath, ["tools/check-article-pairs.js"], {
+    cwd: root,
+    encoding: "utf8",
+    shell: false
+  });
+  if (result.status !== 0) {
+    const output = `${result.stdout || ""}\n${result.stderr || ""}`.trim();
+    failures.push(`Article pair contract failed:\n${output}`);
+  }
+}
 
 function checkConfiguredSymbols() {
   const config = JSON.parse(read("data/market-symbols.json"));

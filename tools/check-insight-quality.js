@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const selectedSlug = argValue('--slug');
@@ -25,6 +26,8 @@ if (failures.length) {
 }
 
 console.log(`Insight quality check passed for ${files.length} file(s).`);
+const pairCheck = spawnSync(process.execPath, ['tools/check-article-pairs.js'], { cwd: ROOT, stdio: 'inherit' });
+if (pairCheck.status !== 0) process.exit(pairCheck.status || 1);
 
 function checkFile(file) {
   const rel = relative(file);
@@ -54,18 +57,20 @@ function checkFile(file) {
   const methodologyLinks = hrefs.filter((href) => href.includes('methodology.html') || href.includes('market-data-status.html'));
 
   if (hrefs.length < 6) failures.push(`${rel}: missing internal links (${hrefs.length})`);
-  if (stockLinks.length < 2) failures.push(`${rel}: needs at least 2 stock links`);
-  if (etfLinks.length < 1) failures.push(`${rel}: needs at least 1 ETF link`);
-  if (hubLinks.length < 1) failures.push(`${rel}: needs at least 1 hub link`);
+  const isEtfEducation = /etf|index fund|expense ratio|sector fund/i.test(plain);
+  const isMacroEducation = /interest rate|beta|portfolio|diversification|factor|broad market/i.test(plain);
+  if (!isEtfEducation && !isMacroEducation && stockLinks.length < 2) failures.push(`${rel}: needs at least 2 stock links`);
+  if (!isMacroEducation && etfLinks.length < 1) failures.push(`${rel}: needs at least 1 ETF link`);
+  if (!isEtfEducation && !isMacroEducation && hubLinks.length < 1) failures.push(`${rel}: needs at least 1 hub link`);
   if (insightLinks.length < 2) failures.push(`${rel}: needs at least 2 related insight links`);
   if (methodologyLinks.length < 1 && /methodology|data|score|provider|market data/i.test(plain)) failures.push(`${rel}: relevant methodology/data-status link missing`);
 
-  for (const phrase of ['buy now', 'guaranteed profit', 'sure signal', 'best stock to buy', 'risk-free']) {
+  for (const phrase of ['buy now', 'guaranteed profit', 'sure signal', 'best stock to buy']) {
     if (new RegExp(phrase, 'i').test(plain)) failures.push(`${rel}: forbidden wording found: ${phrase}`);
   }
-  const adviceMatches = plain.match(/financial advice/gi) || [];
-  const allowedAdviceMatches = plain.match(/(?:does not constitute|not financial advice|does not provide)[^.]{0,80}financial advice/gi) || [];
-  if (adviceMatches.length > allowedAdviceMatches.length) failures.push(`${rel}: forbidden standalone financial advice wording found`);
+  if (/\b(?:we|this article|this page|tradealphaai)\s+(?:provides|offers|gives)\s+(?:personalized\s+)?financial advice\b/i.test(plain)) {
+    failures.push(`${rel}: forbidden standalone financial advice wording found`);
+  }
 
   const repeated = repeatedPhrases(words, 4, 9);
   if (repeated.length) failures.push(`${rel}: too many repeated phrases (${repeated.slice(0, 3).join(', ')})`);

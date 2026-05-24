@@ -589,7 +589,7 @@ function ensureLocaleSwitch(html, page, locale, reorder) {
   const links = locale === "ar" && reorder
     ? `<a class="lang-switch" data-locale-route="en" href="${enHref || "/"}">English</a>
           <a class="lang-switch" data-locale-route="ar" href="${arHref}">العربية</a>`
-    : `<a class="lang-switch" data-locale-route="ar" href="${arHref}">العربية</a>
+    : `<a class="lang-switch" data-locale-route="ar" href="${arHref}">Arabic</a>
           <a class="lang-switch" data-locale-route="en" href="${enHref || "/"}">English</a>`;
   const switcher = `<div class="locale-links" aria-label="${label}">
           ${links}
@@ -921,6 +921,8 @@ function normalizeArabicArtifacts(html) {
     .replace(/multi-factor\s+screening for الأسهم/g, "فحص متعدد المعايير للأسهم")
     .replace(/multi-factor\s+screening/g, "فحص متعدد المعايير")
     .replace(/Research Platform/g, "منصة الأبحاث")
+    .replace(/Interest Rate بحث: حساسية أسعار الفائدة In أسهم النمو/g, "بحث أسعار الفائدة: حساسية أسهم النمو لأسعار الفائدة")
+    .replace(/صناديق صندوق مؤشرات/g, "صناديق المؤشرات")
     .replace(/Static Research/g, "بحث ثابت")
     .replace(/ثابت Research/g, "بحث ثابت")
     .replace(/static research data/g, "بيانات بحثية ثابتة")

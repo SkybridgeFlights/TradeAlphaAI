@@ -26,13 +26,17 @@ run('node', ['tools/check-insight-duplicates.js', `--slug=${topic.slug}`]);
 if (mode === 'publish-if-safe') {
   run('node', ['tools/generate-insights.js', '--queue', `--slug=${topic.slug}`, '--mode=review', '--force']);
   run('node', ['tools/generate-localized-pages.js']);
+  run('node', ['tools/generate-article-registry.js']);
   run('node', ['tools/check-insight-quality.js', `--slug=${topic.slug}`]);
   run('node', ['tools/generate-insights.js', '--queue', `--slug=${topic.slug}`, '--mode=publish-if-safe', '--force']);
   run('node', ['tools/generate-localized-pages.js']);
+  run('node', ['tools/generate-article-registry.js']);
   run('node', ['tools/check-insight-quality.js', `--slug=${topic.slug}`]);
+  run('node', ['tools/check-article-pairs.js', '--refresh']);
 } else {
   run('node', ['tools/generate-insights.js', '--queue', `--slug=${topic.slug}`, `--mode=${mode}`, '--force']);
   run('node', ['tools/generate-localized-pages.js']);
+  run('node', ['tools/generate-article-registry.js']);
   run('node', ['tools/check-insight-quality.js', `--slug=${topic.slug}`]);
 }
 
