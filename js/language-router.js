@@ -804,6 +804,18 @@
         "ar": "/ar/insights/etf-education-etf-structure-and-index-methodology.html",
         "en": "/insights/etf-education-etf-structure-and-index-methodology.html"
     },
+    "/insights/etf-education-expense-ratios-and-tracking-differences.html": {
+        "ar": "/ar/insights/etf-education-expense-ratios-and-tracking-differences.html",
+        "en": "/insights/etf-education-expense-ratios-and-tracking-differences.html"
+    },
+    "/ar/insights/etf-education-expense-ratios-and-tracking-differences.html": {
+        "ar": "/ar/insights/etf-education-expense-ratios-and-tracking-differences.html",
+        "en": "/insights/etf-education-expense-ratios-and-tracking-differences.html"
+    },
+    "/en/insights/etf-education-expense-ratios-and-tracking-differences.html": {
+        "ar": "/ar/insights/etf-education-expense-ratios-and-tracking-differences.html",
+        "en": "/insights/etf-education-expense-ratios-and-tracking-differences.html"
+    },
     "/insights/etf-expense-ratios-explained.html": {
         "ar": "/ar/insights/etf-expense-ratios-explained.html",
         "en": "/insights/etf-expense-ratios-explained.html"
