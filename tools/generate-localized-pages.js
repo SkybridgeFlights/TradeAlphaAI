@@ -13,7 +13,7 @@ const landingTranslations = loadLandingTranslations();
 const AR = {
   nav: {
     Home: "الرئيسية",
-    "AI Stock Analyzer": "محلل أسهم الذكاء الاصطناعي",
+    "AI Stock Analyzer": "بحث الأسهم العالمي",
     "ETF Analyzer": "محلل صناديق المؤشرات",
     "Market Screener": "ماسح السوق",
     "Articles": "المقالات",
@@ -535,7 +535,7 @@ function localizeNavigation(html, locale) {
   const isArabic = locale === "ar";
   const labels = isArabic ? AR.nav : {
     Home: "Home",
-    "AI Stock Analyzer": "AI Stock Analyzer",
+    "AI Stock Analyzer": "Global Stock Research",
     "ETF Analyzer": "ETF Analyzer",
     "Market Screener": "Market Screener",
     "Articles": "Articles",
@@ -543,23 +543,19 @@ function localizeNavigation(html, locale) {
   };
   const recommendationsLabel = isArabic ? "أفضل الاختيارات" : "Top Picks";
   const recommendationLinks = isArabic ? [
-    ["أفضل 10 أسهم حالياً", "/ar/rankings.html#top-ai-stocks"],
-    ["أفضل أسهم أشباه الموصلات", "/ar/rankings.html#top-semiconductor-stocks"],
+    ["أفضل 10 أسهم حالياً", "/ar/rankings.html#top-stocks"],
+    ["أفضل أسهم الذكاء الاصطناعي", "/ar/rankings.html#top-ai-stocks"],
+    ["أفضل أسهم أشباه الموصلات", "/ar/rankings.html#top-semiconductors"],
     ["أفضل أسهم النمو", "/ar/rankings.html#top-growth-stocks"],
     ["أفضل صناديق توزيعات الأرباح", "/ar/rankings.html#top-dividend-etfs"],
-    ["أفضل صناديق المؤشرات لعام 2026", "/ar/rankings.html#top-broad-market-etfs"],
-    ["قائمة أسهم البنية التحتية للذكاء الاصطناعي", "/ar/rankings.html#ai-infrastructure-focus"],
-    ["قائمة الأسهم عالية التقلب", "/ar/rankings.html#high-volatility-watchlist"],
-    ["أكثر الأسهم التقنية متابعة", "/ar/rankings.html#most-followed-tech"]
+    ["أفضل صناديق المؤشرات لعام 2026", "/ar/rankings.html#top-etfs"]
   ] : [
-    ["Top 10 AI Stocks Right Now", "/rankings.html#top-ai-stocks"],
+    ["Top 10 Stocks Right Now", "/rankings.html#top-stocks"],
+    ["Best AI Stocks", "/rankings.html#top-ai-stocks"],
     ["Best Semiconductor Stocks", "/rankings.html#top-semiconductor-stocks"],
-    ["Top Growth Stocks", "/rankings.html#top-growth-stocks"],
+    ["Best Growth Stocks", "/rankings.html#top-growth-stocks"],
     ["Top Dividend ETFs", "/rankings.html#top-dividend-etfs"],
-    ["Best ETFs for 2026", "/rankings.html#top-broad-market-etfs"],
-    ["AI Infrastructure Focus List", "/rankings.html#ai-infrastructure-focus"],
-    ["High Volatility Watchlist", "/rankings.html#high-volatility-watchlist"],
-    ["Most Followed Tech Stocks", "/rankings.html#most-followed-tech"]
+    ["Best ETFs for 2026", "/rankings.html#top-broad-market-etfs"]
   ];
   const recommendations = `<div class="nav-menu">
             <a href="${isArabic ? "/ar/rankings.html" : "/rankings.html"}" class="nav-link nav-menu-trigger">${recommendationsLabel}<span class="nav-badge">${isArabic ? "رائج" : "Hot"}</span></a>
@@ -1266,6 +1262,10 @@ function normalizeArabicArtifacts(html) {
     .replace(/Build a future قائمة متابعة workflow/g, "بناء مسار قائمة المتابعة المستقبلي")
     .replace(/تعليمي only/g, "تعليمي فقط")
     // rankings.html remaining contamination
+    .replace(/Top 10 الأسهم Right Now/g, "أفضل 10 أسهم حالياً")
+    .replace(/Best AI الأسهم Right Now/g, "أفضل أسهم الذكاء الاصطناعي حالياً")
+    .replace(/Most-watched broad-market الأسهم[^<]*ليست نصيحة مالية\./g, "أكثر الأسهم متابعةً عبر قطاعات التكنولوجيا والمستهلكين والحوسبة السحابية. تصنيف بحثي تعليمي وليست نصيحة مالية.")
+    .replace(/Most followed AI-linked research candidates[^<]*ليست نصيحة مالية\./g, "أبرز مرشحي البحث المرتبطين بالذكاء الاصطناعي ضمن تغطية TradeAlphaAI. تصنيف بحثي تعليمي وليست نصيحة مالية.")
     .replace(/Top أشباه الموصلات الأسهم/g, "أفضل أسهم أشباه الموصلات")
     .replace(/Chip, equipment, memory,[^<]*ليست نصيحة مالية\./g, "شركات الرقائق والمعدات والذاكرة وحوسبة الذكاء الاصطناعي ذات أهمية بحثية عالية. تصنيف بحثي تعليمي وليست نصيحة مالية.")
     .replace(/Growth-oriented التكنولوجيا[^<]*ليست نصيحة مالية\./g, "شركات تقنية ومنصات موجهة للنمو للمقارنة التعليمية. تصنيف بحثي تعليمي وليست نصيحة مالية.")

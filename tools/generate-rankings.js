@@ -9,15 +9,14 @@ const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/research-assets/in
 const stocks = data.stocks || [];
 const etfs = data.etfs || [];
 
+const TOP_STOCKS_SYMBOLS = ['AAPL', 'MSFT', 'NVDA', 'AMZN', 'GOOGL', 'META', 'TSLA', 'AVGO', 'ORCL', 'NFLX'];
 const sections = [
-  ['top-ai-stocks', 'Top AI Stocks Right Now', 'Most followed AI-linked research candidates from the TradeAlphaAI universe.', stocks.filter((a) => has(a, 'AI') || has(a, 'Cloud')).slice(0, 10)],
+  ['top-stocks', 'Top 10 Stocks Right Now', 'Most-watched broad-market stocks across technology, consumer, and cloud sectors.', stocks.filter((a) => TOP_STOCKS_SYMBOLS.includes(a.symbol)).sort((a, b) => TOP_STOCKS_SYMBOLS.indexOf(a.symbol) - TOP_STOCKS_SYMBOLS.indexOf(b.symbol)).slice(0, 10)],
+  ['top-ai-stocks', 'Best AI Stocks Right Now', 'Most followed AI-linked research candidates from the TradeAlphaAI universe.', stocks.filter((a) => has(a, 'AI') || has(a, 'Cloud')).slice(0, 10)],
   ['top-semiconductor-stocks', 'Top Semiconductor Stocks', 'Chip, equipment, memory, and AI compute names with strong research relevance.', stocks.filter((a) => /semiconductor/i.test(a.sector) || has(a, 'AI Chips') || has(a, 'GPU')).slice(0, 8)],
   ['top-growth-stocks', 'Best Growth Stocks to Watch', 'Growth-oriented technology and platform companies for educational comparison.', stocks.filter((a) => /Software|Communication|Automobiles|Technology/i.test(a.sector)).slice(0, 8)],
   ['top-dividend-etfs', 'Top Dividend ETFs', 'Dividend-focused ETFs for income, quality, and defensive equity research.', etfs.filter((a) => /dividend/i.test(JSON.stringify(a))).slice(0, 6)],
   ['top-broad-market-etfs', 'Top Broad Market ETFs', 'Core ETF building blocks for broad U.S. equity exposure and portfolio context.', etfs.filter((a) => has(a, 'Broad Market') || has(a, 'Core Equity') || has(a, 'Total U.S. Market')).slice(0, 7)],
-  ['ai-infrastructure-focus', 'Most Followed AI Infrastructure Stocks', 'Data center, accelerator, cloud, and infrastructure names followed by the research desk.', stocks.filter((a) => has(a, 'AI Infrastructure') || has(a, 'Data Centers') || has(a, 'Cloud')).slice(0, 8)],
-  ['high-volatility-watchlist', 'High Volatility Watchlist', 'Higher-beta research candidates where risk context matters as much as upside narratives.', [...stocks, ...etfs].filter((a) => /Semiconductor|GPU|Small|Electric|Cybersecurity/i.test(`${a.sector || a.category} ${(a.themes || []).join(' ')}`)).slice(0, 8)],
-  ['most-followed-tech', 'Most Followed Tech Stocks', 'Large technology names that anchor many market conversations and ETF exposures.', stocks.filter((a) => ['MSFT', 'AAPL', 'GOOGL', 'AMZN', 'META', 'NVDA', 'AVGO', 'NFLX'].includes(a.symbol)).slice(0, 8)]
 ];
 
 function score(asset) {
@@ -80,13 +79,33 @@ const html = `<!doctype html>
       <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlpha AI</strong><span>Research Platform</span></span></a>
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
-          <a href="index.html" class="nav-link">Home</a>
-          <a href="stocks.html" class="nav-link">AI Stock Analyzer</a>
-          <a href="etfs.html" class="nav-link">ETF Analyzer</a>
-          <a href="ai-stock-screener.html" class="nav-link">Market Screener</a>
-          <a href="insights/" class="nav-link">Market Insights</a>
-          <a href="methodology.html" class="nav-link">Methodology</a>
+          <a href="/" class="nav-link">Home</a>
+          <a href="/stocks.html" class="nav-link">Global Stock Research</a>
+          <a href="/etfs.html" class="nav-link">ETF Analyzer</a>
+          <a href="/ai-stock-screener.html" class="nav-link">Market Screener</a>
+          <div class="nav-menu">
+            <a href="/rankings.html" class="nav-link nav-menu-trigger">Top Picks<span class="nav-badge">Hot</span></a>
+            <div class="nav-dropdown">
+              <a href="/rankings.html#top-stocks">Top 10 Stocks Right Now</a>
+              <a href="/rankings.html#top-ai-stocks">Best AI Stocks</a>
+              <a href="/rankings.html#top-semiconductor-stocks">Best Semiconductor Stocks</a>
+              <a href="/rankings.html#top-growth-stocks">Best Growth Stocks</a>
+              <a href="/rankings.html#top-dividend-etfs">Top Dividend ETFs</a>
+              <a href="/rankings.html#top-broad-market-etfs">Best ETFs for 2026</a>
+            </div>
+          </div>
+          <a href="/insights/" class="nav-link">Articles</a>
+          <a href="/methodology.html" class="nav-link">Methodology</a>
         </nav>
+        <div class="locale-links" aria-label="Language">
+          <a class="lang-switch" data-locale-route="ar" href="/ar/rankings.html">Arabic</a>
+          <a class="lang-switch" data-locale-route="en" href="/rankings.html">English</a>
+        </div>
+        <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
       </div>
     </div>
   </div>
@@ -98,6 +117,8 @@ const html = `<!doctype html>
       <section class="market-section"><div class="market-panel"><span class="eyebrow">Compliance</span><h2>Educational use only</h2><p class="disclaimer-note">These watchlists are for educational and informational purposes only and do not constitute financial advice, investment advice, price targets, or security recommendations.</p></div></section>
     </div>
   </main>
+  <script src="../js/mobile-nav.js" defer></script>
+  <script src="../js/language-router.js" defer></script>
 </body>
 </html>
 `;

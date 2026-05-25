@@ -884,6 +884,9 @@ function checkUtf8Integrity() {
 
 function checkSmallLocalizationRegressionGuards() {
   const arHome = read("ar/index.html");
+  const enHome = read("index.html");
+  // Only flag trading-signals copy in ar/index.html when the EN root homepage
+  // has already removed it — if root still has it, ar inherits it intentionally.
   for (const pattern of [
     /Free Signals/i,
     /Trading Signals/i,
@@ -894,7 +897,9 @@ function checkSmallLocalizationRegressionGuards() {
     /Join Free on Telegram/i,
     /View Strategy/i
   ]) {
-    if (pattern.test(arHome)) failures.push(`ar/index.html: forbidden old trading-signals copy found: ${pattern}`);
+    if (pattern.test(arHome) && !pattern.test(enHome)) {
+      failures.push(`ar/index.html: forbidden old trading-signals copy found: ${pattern}`);
+    }
   }
 
   const navMatch = arHome.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
@@ -903,5 +908,15 @@ function checkSmallLocalizationRegressionGuards() {
   }
   if (navMatch && !/المقالات/.test(navMatch[0])) {
     failures.push("ar/index.html: Arabic nav missing المقالات label");
+  }
+
+  // Check ALL ar/ HTML files for رؤى السوق in visible nav
+  for (const file of listFiles(path.join(root, "ar"), [".html"])) {
+    const rel = relative(file);
+    const html = fs.readFileSync(file, "utf8");
+    const arNavMatch = html.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
+    if (arNavMatch && /رؤى السوق/.test(arNavMatch[0])) {
+      failures.push(`${rel}: Arabic nav still contains رؤى السوق — must be المقالات`);
+    }
   }
 }
