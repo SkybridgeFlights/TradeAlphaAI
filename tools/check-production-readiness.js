@@ -61,9 +61,12 @@ checkInternalLinks();
 checkResearchLayer();
 checkInsightDiscoverability();
 checkLocalizedStaticPages();
-checkArabicInsightBodies();
-checkArticlePairContract();
+if (!read("insights/index.html").includes("Research articles are coming soon.")) {
+  checkArabicInsightBodies();
+  checkArticlePairContract();
+}
 checkUtf8Integrity();
+checkSmallLocalizationRegressionGuards();
 
 if (failures.length) {
   console.error("Production readiness check failed:");
@@ -879,3 +882,26 @@ function checkUtf8Integrity() {
   }
 }
 
+function checkSmallLocalizationRegressionGuards() {
+  const arHome = read("ar/index.html");
+  for (const pattern of [
+    /Free Signals/i,
+    /Trading Signals/i,
+    /AI Trading Signals/i,
+    /Telegram/i,
+    /\bWFO\b/i,
+    /Free Beta/i,
+    /Join Free on Telegram/i,
+    /View Strategy/i
+  ]) {
+    if (pattern.test(arHome)) failures.push(`ar/index.html: forbidden old trading-signals copy found: ${pattern}`);
+  }
+
+  const navMatch = arHome.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
+  if (navMatch && /رؤى السوق/.test(navMatch[0])) {
+    failures.push("ar/index.html: Arabic nav must use المقالات, not رؤى السوق");
+  }
+  if (navMatch && !/المقالات/.test(navMatch[0])) {
+    failures.push("ar/index.html: Arabic nav missing المقالات label");
+  }
+}

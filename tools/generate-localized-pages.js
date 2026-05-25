@@ -16,9 +16,9 @@ const AR = {
     "AI Stock Analyzer": "محلل أسهم الذكاء الاصطناعي",
     "ETF Analyzer": "محلل صناديق المؤشرات",
     "Market Screener": "ماسح السوق",
-    "Articles": "رؤى السوق",
+    "Articles": "المقالات",
     Methodology: "المنهجية",
-    Insights: "رؤى السوق",
+    Insights: "المقالات",
     Stocks: "الأسهم",
     ETFs: "صناديق المؤشرات"
   },
@@ -67,16 +67,15 @@ const AR = {
     "Frequently Asked Questions": "أسئلة شائعة",
     "Related research": "أبحاث مرتبطة",
     "Related Paths": "مسارات مرتبطة",
-    "Open Articles": "افتح رؤى السوق",
+    "Open Articles": "افتح المقالات",
     "Open Market Screener": "افتح ماسح السوق",
-    "Read Articles": "اقرأ رؤى السوق"
+    "Read Articles": "اقرأ المقالات"
   },
   terms: [
     ["Score Model", "نموذج الدرجة"],
     ["Screening Tool", "أداة الفحص"],
     ["Start Screening", "ابدأ الفحص"],
     ["Join AI Market Alerts", "اشترك في تنبيهات TradeAlphaAI"],
-    ["Follow public Telegram updates and market education from TradeAlphaAI.", "تابع التحديثات العامة على Telegram والمحتوى التعليمي من TradeAlphaAI."],
     ["Popular Stock Analysis", "تحليل الأسهم الشائعة"],
     ["Screen high-interest stocks", "فحص الأسهم عالية الاهتمام"],
     ["Analyze Stock", "حلل السهم"],
@@ -95,7 +94,7 @@ const AR = {
     ["Stock Analysis", "تحليل الأسهم"],
     ["ETF Analyzer", "محلل صناديق المؤشرات"],
     ["AI Stock Analyzer", "محلل أسهم الذكاء الاصطناعي"],
-    ["Articles", "رؤى السوق"],
+    ["Articles", "المقالات"],
     ["Market Research", "أبحاث السوق"],
     ["Market Screener", "ماسح السوق"],
     ["TradeAlpha Score", "درجة TradeAlpha"],
@@ -266,6 +265,7 @@ function writeLocalizedPage(page, locale) {
     html = localizeStaticText(html, page);
     html = localizeArticleFromContentFile(html, page);
     html = normalizeArabicArtifacts(html);
+    if (page.source === "index.html") html = renderArabicHomepage(html);
     html = finalArabicCleanup(html);
   }
   html = ensureLanguageRouter(html, outRel);
@@ -291,7 +291,7 @@ function localizeHead(html, page, locale) {
   html = setMeta(html, "property", "og:url", canonical);
   if (isArabic) {
     html = setMeta(html, "property", "og:image:alt", "معاينة بحثية من TradeAlphaAI");
-    html = html.replace(/<meta property="article:section" content="[^"]*"\s*\/?>/i, (m) => m.replace(/content="[^"]*"/, `content="${escapeHtml(translateText((m.match(/content="([^"]*)"/) || [])[1] || "رؤى السوق"))}"`));
+    html = html.replace(/<meta property="article:section" content="[^"]*"\s*\/?>/i, (m) => m.replace(/content="[^"]*"/, `content="${escapeHtml(translateText((m.match(/content="([^"]*)"/) || [])[1] || "المقالات"))}"`));
   }
   html = setMeta(html, "name", "twitter:title", title);
   html = setMeta(html, "name", "twitter:description", description);
@@ -363,15 +363,15 @@ function localizeArticleFromContentFile(html, page) {
 
   html = html.replace(/<nav class="breadcrumb">[\s\S]*?<\/nav>/, (nav) => nav
     .replace(/<span>[^<]*<\/span>\s*<\/nav>$/, `<span>${escapeHtml(content.title || "")}</span></nav>`)
-    .replace(/>Insights</g, ">رؤى السوق<")
-    .replace(/>Articles</g, ">رؤى السوق<")
+    .replace(/>Insights</g, ">المقالات<")
+    .replace(/>Articles</g, ">المقالات<")
   );
-  html = html.replace(/<span class="insight-category-badge(?: muted)?">[\s\S]*?<\/span>/g, `<span class="insight-category-badge">${escapeHtml(content.category || "رؤى السوق")}</span>`);
+  html = html.replace(/<span class="insight-category-badge(?: muted)?">[\s\S]*?<\/span>/g, `<span class="insight-category-badge">${escapeHtml(content.category || "المقالات")}</span>`);
   html = html.replace(/<div class="insight-meta-bar">[\s\S]*?<\/div>/, `<div class="insight-meta-bar">
             <span><strong><time datetime="${escapeHtml(data.generatedAt || "2026-05-20")}">${escapeHtml(data.generatedAt || "2026-05-20")}</time></strong></span>
             <span><strong>${escapeHtml(content.readingTime || "6 دقائق قراءة")}</strong></span>
             <span><strong>فريق TradeAlphaAI لأبحاث السوق</strong></span>
-            <span><strong>${escapeHtml(content.category || "رؤى السوق")}</strong></span>
+            <span><strong>${escapeHtml(content.category || "المقالات")}</strong></span>
           </div>`);
   html = html.replace(/(<section class="market-section">[\s\S]*?<div class="market-panel[\s\S]*?<span class="insight-category-badge">[\s\S]*?<\/span>[\s\S]*?<h1>)[\s\S]*?(<\/h1>[\s\S]*?<p class="market-lead">)[\s\S]*?(<\/p>)/, `$1${escapeHtml(content.title || "")}$2${escapeHtml(content.lead || content.summary || "")}$3`);
   html = html.replace(/<div class="insight-summary-box">[\s\S]*?<\/div>/, `<div class="insight-summary-box">
@@ -464,7 +464,7 @@ function articleJsonLd(content, page) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "TradeAlphaAI", item: `${site}/ar/` },
-          { "@type": "ListItem", position: 2, name: "رؤى السوق", item: `${site}/ar/insights/` },
+          { "@type": "ListItem", position: 2, name: "المقالات", item: `${site}/ar/insights/` },
           { "@type": "ListItem", position: 3, name: content.title, item: url }
         ]
       },
@@ -1373,8 +1373,54 @@ function preserveEdgeSpace(original, translated) {
   return `${leading}${escapeHtml(translated.trim())}${trailing}`;
 }
 
+function renderArabicHomepage(html) {
+  const main = `<main class="market-shell">
+    <div class="wrap">
+      <section class="market-hero">
+        <div class="market-hero-panel">
+          <span class="eyebrow">منصة أبحاث السوق</span>
+          <h1>أبحاث الأسهم وصناديق المؤشرات ومحاور السوق.</h1>
+          <p class="market-lead">تجمع TradeAlphaAI أدوات تحليل الأسهم وصناديق المؤشرات والتصنيفات والماسحات والمقالات التعليمية في منصة أبحاث سوق ثابتة.</p>
+          <div class="market-actions">
+            <a class="market-btn primary" href="/ar/stocks.html">محلل الأسهم</a>
+            <a class="market-btn" href="/ar/etfs.html">محلل صناديق المؤشرات</a>
+            <a class="market-btn" href="/ar/rankings.html">أفضل الاختيارات</a>
+          </div>
+        </div>
+      </section>
+      <section class="market-section">
+        <div class="market-section-head">
+          <span class="eyebrow">أدوات البحث</span>
+          <h2>مسار بحث منظم للأصول والأسواق</h2>
+          <p>استخدم TradeAlphaAI لمقارنة الأصول، وفهم المحاور، ومراجعة سياق المخاطر، والانتقال بين صفحات البحث بوضوح.</p>
+        </div>
+        <div class="market-grid three">
+          <article class="market-card"><span class="market-card-kicker">الأسهم</span><h3>محلل الأسهم</h3><p>ابحث في الأسهم العالمية من خلال سياق تعليمي ومحاور بحثية وملاحظات مخاطر وروابط مرتبطة.</p><a class="market-card-link" href="/ar/stocks.html">افتح محلل الأسهم</a></article>
+          <article class="market-card"><span class="market-card-kicker">صناديق المؤشرات</span><h3>محلل صناديق المؤشرات</h3><p>قارن التعرض للسوق الواسع والقطاعات والنمو والتوزيعات والسندات والسلع ضمن مسار بحث واحد.</p><a class="market-card-link" href="/ar/etfs.html">افتح محلل صناديق المؤشرات</a></article>
+          <article class="market-card"><span class="market-card-kicker">الفحص</span><h3>ماسح السوق</h3><p>صف عالم الأبحاث حسب نوع الأصل والقطاع والمحور ومستوى المخاطر ودرجة TradeAlpha البحثية.</p><a class="market-card-link" href="/ar/ai-stock-screener.html">افتح ماسح السوق</a></article>
+        </div>
+      </section>
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">المقالات</span>
+          <h2>المقالات البحثية قادمة قريبا.</h2>
+          <p class="market-copy">تعمل TradeAlphaAI على إعداد مكتبة أبحاث سوق ثنائية اللغة تغطي الأسهم وصناديق المؤشرات وهيكل السوق وتثقيف المخاطر.</p>
+          <div class="market-actions"><a class="market-btn primary" href="/ar/insights/">افتح المقالات</a><a class="market-btn" href="/ar/methodology.html">المنهجية</a></div>
+        </div>
+      </section>
+      <section class="market-section"><div class="market-panel"><span class="eyebrow">تنبيه تعليمي</span><h2>أبحاث فقط وليست نصيحة مالية.</h2><p class="market-copy">محتوى TradeAlphaAI لأغراض تعليمية ومعلوماتية فقط ولا يقدم نصيحة مالية أو استثمارية أو توصيات بشراء أو بيع أوراق مالية.</p><div data-research-timeline></div><div data-research-themes></div><div data-research-highlight></div></div></section>
+    </div>
+  </main>`;
+  return html.replace(/<main\b[\s\S]*?<\/main>/i, main);
+}
+
 function finalArabicCleanup(html) {
   return html
+    .replace(/Research المقالات are coming soon from TradeAlphaAI\./g, "المقالات البحثية قادمة قريبا من TradeAlphaAI.")
+    .replace(/Research المقالات are coming soon\./g, "المقالات البحثية قادمة قريبا.")
+    .replace(/TradeAlphaAI is preparing a bilingual أبحاث السوق library\./g, "تعمل TradeAlphaAI على إعداد مكتبة أبحاث سوق ثنائية اللغة.")
+    .replace(/مركز المقالات/g, "المقالات")
+    .replace(/صناديق صناديق المؤشرات/g, "صناديق المؤشرات")
     .replace(/Research Rankings [^"<]*Watchlists/g, "&#1578;&#1589;&#1606;&#1610;&#1601;&#1575;&#1578; &#1608;&#1602;&#1608;&#1575;&#1574;&#1605; &#1605;&#1578;&#1575;&#1576;&#1593;&#1577; &#1576;&#1581;&#1579;&#1610;&#1577;")
     .replace(/[^"]*rankings[^"]*research candidates\./g, "&#1578;&#1589;&#1606;&#1610;&#1601;&#1575;&#1578; &#1608;&#1602;&#1608;&#1575;&#1574;&#1605; &#1605;&#1578;&#1575;&#1576;&#1593;&#1577; &#1576;&#1581;&#1579;&#1610;&#1577; &#1578;&#1593;&#1604;&#1610;&#1605;&#1610;&#1577; &#1604;&#1571;&#1587;&#1607;&#1605; &#1575;&#1604;&#1576;&#1606;&#1610;&#1577; &#1575;&#1604;&#1578;&#1581;&#1578;&#1610;&#1577; &#1604;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610; &#1608;&#1602;&#1575;&#1583;&#1577; &#1571;&#1588;&#1576;&#1575;&#1607; &#1575;&#1604;&#1605;&#1608;&#1589;&#1604;&#1575;&#1578; &#1608;&#1575;&#1604;&#1578;&#1603;&#1606;&#1608;&#1604;&#1608;&#1580;&#1610;&#1575; &#1575;&#1604;&#1603;&#1576;&#1585;&#1609;.")
     .replace(/Most followed AI-linked research candidates[^<]*\./g, "&#1571;&#1576;&#1585;&#1586; &#1605;&#1585;&#1588;&#1581;&#1610; &#1575;&#1604;&#1576;&#1581;&#1579; &#1575;&#1604;&#1605;&#1585;&#1578;&#1576;&#1591;&#1610;&#1606; &#1576;&#1575;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610; &#1590;&#1605;&#1606; &#1578;&#1594;&#1591;&#1610;&#1577; TradeAlphaAI.")
