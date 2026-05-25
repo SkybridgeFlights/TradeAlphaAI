@@ -2747,24 +2747,35 @@
 }
 
 .nav-dropdown {
-  top: calc(100% + 4px);
-  min-width: 240px;
-  padding: 6px;
-  gap: 2px;
-  border-radius: 16px;
-  border-color: rgba(242, 210, 123, 0.14);
-  background: rgba(6, 8, 11, 0.97);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(242, 210, 123, 0.1);
+  top: calc(100% + 8px);
+  min-width: 286px;
+  max-width: min(340px, calc(100vw - 28px));
+  padding: 8px;
+  gap: 4px;
+  border-radius: 18px;
+  border-color: rgba(242, 210, 123, 0.18);
+  background:
+    linear-gradient(180deg, rgba(18, 20, 23, 0.98), rgba(7, 9, 12, 0.98)),
+    rgba(6, 8, 11, 0.98);
+  backdrop-filter: blur(26px) saturate(1.65);
+  -webkit-backdrop-filter: blur(26px) saturate(1.65);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.64),
+    0 0 0 1px rgba(242, 210, 123, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .nav-dropdown a {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
   padding: 9px 12px;
-  border-radius: 10px;
-  font-size: 12.5px;
+  border-radius: 11px;
+  font-size: 12.75px;
   font-weight: 700;
-  letter-spacing: 0.01em;
+  line-height: 1.28;
+  letter-spacing: 0;
+  white-space: normal;
 }
 
 .nav-dropdown a:hover,
@@ -2819,6 +2830,48 @@
 .localized-ar .nav-dropdown {
   inset-inline-start: auto;
   inset-inline-end: 0;
+  text-align: right;
+}
+
+.localized-ar .nav-dropdown a {
+  justify-content: flex-start;
+  direction: rtl;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.localized-ar .system-card {
+  line-height: 1.7;
+}
+
+.localized-ar .system-card-head,
+.localized-ar .product-price-display,
+.localized-ar .product-stats-bar,
+.localized-ar .signal-price-row {
+  direction: rtl;
+}
+
+.localized-ar .product-feature-list {
+  display: grid;
+  gap: 9px;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+  line-height: 1.65;
+}
+
+.localized-ar .system-actions {
+  align-items: flex-start;
+}
+
+.localized-ar .system-actions .cta-btn,
+.localized-ar .signal-cta {
+  text-align: center;
+  justify-content: center;
+}
+
+.localized-ar .product-market,
+.localized-ar .system-note {
+  line-height: 1.65;
 }
 
 /* ─────────────────────────────────────────────────────────── */

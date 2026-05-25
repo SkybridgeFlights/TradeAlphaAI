@@ -267,7 +267,7 @@ function writeLocalizedPage(page, locale) {
       html = html.replace(/<a\b[^>]*class="[^"]*header-signal-cta[^"]*"[^>]*>[\s\S]*?<\/a>\s*/gi, "");
     }
     if (page.source === "index.html") {
-      html = html.replace(/<span>Gold Trading System<\/span>/g, "<span>نظام تداول الذهب</span>");
+      html = html.replace(/<span>Gold Trading System<\/span>/g, "<span>منصة التداول وأبحاث السوق</span>");
     }
     html = localizeStaticText(html, page);
     html = localizeArticleFromContentFile(html, page);

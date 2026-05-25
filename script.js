@@ -30,7 +30,7 @@ const translations = {
   'intro.cta': 'Join Telegram Channel',
 
   // Brand / tagline
-  'brand.tagline':'🤖 Your smart trading partner',
+  'brand.tagline':'TRADING & MARKET RESEARCH PLATFORM',
 
   // Navigation
   'nav.articles': 'Articles',
@@ -238,7 +238,7 @@ const translations = {
     'banner.cta':'اشترك الآن',
 
     // العلامة التجارية / العبارة التعريفية
-    'brand.tagline':'🤖 شريكك الذكي في التداول',
+    'brand.tagline':'منصة التداول وأبحاث السوق',
 
     // Navigation
     'nav.articles': 'مقالات',
@@ -397,7 +397,7 @@ const translations = {
     'banner.cta':'Jetzt abonnieren',
 
     // Marke / Slogan
-    'brand.tagline':'🤖 Ihr intelligenter Trading-Partner',
+    'brand.tagline':'TRADING & MARKET RESEARCH PLATFORM',
 
     // Navigation
     'nav.articles': 'Artikel',
