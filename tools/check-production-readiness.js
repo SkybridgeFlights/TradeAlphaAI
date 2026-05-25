@@ -650,7 +650,9 @@ function checkLocalizedStaticPages() {
       }
     }
     if (sourceHtml && arHtml) {
-      checkArabicStructuralParity(page.source, page.arPath, sourceHtml, arHtml);
+      // Skip structural parity for index.html — AR homepage is intentionally a
+      // research-platform layout that differs from the EN trading-signals homepage.
+      if (page.source !== "index.html") checkArabicStructuralParity(page.source, page.arPath, sourceHtml, arHtml);
       checkArabicLanguageIsolation(page.arPath, arHtml);
     }
     if (arHtml) {
@@ -885,17 +887,24 @@ function checkUtf8Integrity() {
 function checkSmallLocalizationRegressionGuards() {
   const arHome = read("ar/index.html");
   const enHome = read("index.html");
-  // Only flag trading-signals copy in ar/index.html when the EN root homepage
-  // has already removed it — if root still has it, ar inherits it intentionally.
+  // AR homepage must NEVER contain these terms regardless of EN homepage state
   for (const pattern of [
     /Free Signals/i,
-    /Trading Signals/i,
-    /AI Trading Signals/i,
-    /Telegram/i,
-    /\bWFO\b/i,
-    /Free Beta/i,
+    /AI-Powered Trading Signals/i,
     /Join Free on Telegram/i,
-    /View Strategy/i
+    /View Strategy/i,
+    /\bFree Beta\b/i,
+    /&amp;nbsp;/,
+  ]) {
+    if (pattern.test(arHome)) {
+      failures.push(`ar/index.html: forbidden trading-signals copy found: ${pattern}`);
+    }
+  }
+  // These are only forbidden in AR if EN has already removed them
+  for (const pattern of [
+    /Trading Signals/i,
+    /\bWFO\b/i,
+    /\bTelegram\b/,
   ]) {
     if (pattern.test(arHome) && !pattern.test(enHome)) {
       failures.push(`ar/index.html: forbidden old trading-signals copy found: ${pattern}`);

@@ -262,6 +262,20 @@ function writeLocalizedPage(page, locale) {
   html = ensureSearchAutocomplete(html, outRel);
   html = html.replace(/<script src="([^"]*landing-i18n\.js)"[^>]*><\/script>\s*/g, "");
   if (isArabic) {
+    // Remove trading-signals header CTA from all AR pages
+    html = html.replace(/<a\b[^>]*class="[^"]*header-signal-cta[^"]*"[^>]*>[\s\S]*?<\/a>\s*/gi, "");
+    if (page.source === "index.html") {
+      // Brand subtitle: replace product tagline with research platform label
+      html = html.replace(/<span>Gold Trading System<\/span>/g, "<span>منصة الأبحاث</span>");
+      // Remove Trading Signals Product node from JSON-LD @graph
+      html = html.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (block, jsonText) => {
+        try {
+          const parsed = JSON.parse(jsonText.trim());
+          if (parsed["@graph"]) parsed["@graph"] = parsed["@graph"].filter((n) => n["@type"] !== "Product");
+          return `<script type="application/ld+json">\n${JSON.stringify(parsed, null, 2)}\n  </script>`;
+        } catch { return block; }
+      });
+    }
     html = localizeStaticText(html, page);
     html = localizeArticleFromContentFile(html, page);
     html = normalizeArabicArtifacts(html);
@@ -1379,12 +1393,12 @@ function renderArabicHomepage(html) {
       <section class="market-hero">
         <div class="market-hero-panel">
           <span class="eyebrow">منصة أبحاث السوق</span>
-          <h1>أبحاث الأسهم وصناديق المؤشرات ومحاور السوق.</h1>
-          <p class="market-lead">تجمع TradeAlphaAI أدوات تحليل الأسهم وصناديق المؤشرات والتصنيفات والماسحات والمقالات التعليمية في منصة أبحاث سوق ثابتة.</p>
+          <h1>أبحاث الأسهم وصناديق المؤشرات ومحاور المحافظ.</h1>
+          <p class="market-lead">تجمع TradeAlphaAI أدوات تحليل الأسهم وصناديق المؤشرات والتصنيفات والماسحات والمقالات التعليمية في منصة أبحاث سوق متقدمة.</p>
           <div class="market-actions">
-            <a class="market-btn primary" href="/ar/stocks.html">محلل الأسهم</a>
-            <a class="market-btn" href="/ar/etfs.html">محلل صناديق المؤشرات</a>
-            <a class="market-btn" href="/ar/rankings.html">أفضل الاختيارات</a>
+            <a class="market-btn primary" href="/ar/stocks.html">افتح محلل الأسهم</a>
+            <a class="market-btn" href="/ar/etfs.html">افتح محلل صناديق المؤشرات</a>
+            <a class="market-btn" href="/ar/rankings.html">اعرض أفضل الاختيارات</a>
           </div>
         </div>
       </section>
@@ -1411,6 +1425,10 @@ function renderArabicHomepage(html) {
       <section class="market-section"><div class="market-panel"><span class="eyebrow">تنبيه تعليمي</span><h2>أبحاث فقط وليست نصيحة مالية.</h2><p class="market-copy">محتوى TradeAlphaAI لأغراض تعليمية ومعلوماتية فقط ولا يقدم نصيحة مالية أو استثمارية أو توصيات بشراء أو بيع أوراق مالية.</p><div data-research-timeline></div><div data-research-themes></div><div data-research-highlight></div></div></section>
     </div>
   </main>`;
+  // homepage uses <div class="site-shell"> not <main>
+  if (html.includes('class="site-shell"')) {
+    return html.replace(/<div class="site-shell"[\s\S]*?(?=\s*<script\b)/i, main + "\n  ");
+  }
   return html.replace(/<main\b[\s\S]*?<\/main>/i, main);
 }
 

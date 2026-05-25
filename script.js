@@ -646,10 +646,12 @@ function applyLanguage(lang){
     document.documentElement.dir = 'rtl';
     document.body.style.textAlign = 'right';
   } else {
-    // Both English and German are LTR
-    document.documentElement.lang = lang;
-    document.documentElement.dir = 'ltr';
-    document.body.style.textAlign = 'left';
+    // Don't override direction on pre-localized Arabic pages (ar/*, ar/index.html etc.)
+    if(document.documentElement.lang !== 'ar'){
+      document.documentElement.lang = lang;
+      document.documentElement.dir = 'ltr';
+      document.body.style.textAlign = 'left';
+    }
   }
 
   // Show current language label in every language pill (localized name)
