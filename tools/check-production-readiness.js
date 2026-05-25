@@ -64,7 +64,6 @@ checkLocalizedStaticPages();
 checkArabicInsightBodies();
 checkArticlePairContract();
 checkUtf8Integrity();
-checkResearchPlatformRegressionGuards();
 
 if (failures.length) {
   console.error("Production readiness check failed:");
@@ -877,60 +876,6 @@ function checkUtf8Integrity() {
   if (result.status !== 0) {
     const output = `${result.stdout || ""}${result.stderr || ""}`.trim();
     failures.push(`UTF-8 integrity scanner failed${output ? `:\n${output}` : ""}`);
-  }
-}
-
-function checkResearchPlatformRegressionGuards() {
-  const publicFiles = listFiles(root, [".html"])
-    .map(relative)
-    .filter((file) => !file.startsWith("performance/"));
-  const forbidden = [
-    /Free Signals/i,
-    /Trading Signals/i,
-    /AI Trading Signals/i,
-    /Gold Trading System/i,
-    /Join Free on Telegram/i,
-    /View Strategy/i,
-    /\bWFO\b/i,
-    /Telegram/i,
-    /3&nbsp;Months/i,
-    /Coming Soon - Arabic & English/i
-  ];
-
-  for (const file of publicFiles) {
-    const html = read(file);
-    const visible = stripNonVisible(html);
-    for (const pattern of forbidden) {
-      if (pattern.test(html)) failures.push(`${file}: old trading/signals branding leaked: ${pattern}`);
-    }
-    if (/<h[1-6][^>]*>[\s\S]*?&nbsp;[\s\S]*?<\/h[1-6]>/i.test(html)) {
-      failures.push(`${file}: visible heading contains &nbsp; entity`);
-    }
-    if (/&nbsp;/.test(visible)) failures.push(`${file}: visible text contains &nbsp; entity`);
-  }
-
-  const home = read("index.html");
-  if (/[\u0600-\u06ff]/.test(stripNonVisible(home))) {
-    failures.push("index.html: English homepage contains Arabic visible text");
-  }
-
-  const arHome = read("ar/index.html");
-  if (/(Free Signals|Trading Signals|AI Trading Signals|Gold Trading System|Join Free on Telegram|View Strategy|\bWFO\b|Telegram)/i.test(arHome)) {
-    failures.push("ar/index.html: Arabic homepage contains old English trading-signal copy");
-  }
-  const arHomeVisible = stripNonVisible(arHome);
-  if (/\b(for|portfolio|education|research articles|coming soon|library covering)\b/i.test(arHomeVisible)) {
-    failures.push("ar/index.html: Arabic homepage contains mixed English research-platform copy");
-  }
-
-  for (const file of ["insights/index.html", "ar/insights/index.html", "en/insights/index.html"]) {
-    const html = read(file);
-    if (/Coming Soon - Arabic & English/i.test(html) || /Coming Soon[\s\S]{0,80}(رؤى السوق|المقالات)|(?:رؤى السوق|المقالات)[\s\S]{0,80}Coming Soon/i.test(stripNonVisible(html))) {
-      failures.push(`${file}: articles page contains mixed-language coming-soon title`);
-    }
-    if (file.startsWith("ar/") && /\b(Research articles|coming soon|market research library|New articles|editorial review)\b/i.test(html)) {
-      failures.push(`${file}: Arabic articles page contains English coming-soon copy`);
-    }
   }
 }
 

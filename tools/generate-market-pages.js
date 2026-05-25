@@ -249,10 +249,7 @@ function researchLinkButtons(asset) {
     return href ? `<a class="market-btn" href="../${href}">${escapeHtml(symbol)}</a>` : "";
   }).filter(Boolean);
   for (const slug of (asset.relatedInsights || []).slice(0, 3)) {
-    const insightPath = path.join(root, "insights", `${slug}.html`);
-    if (fs.existsSync(insightPath)) {
-      links.push(`<a class="market-btn" href="../insights/${escapeHtml(slug)}.html">${escapeHtml(titleFromSlug(slug))}</a>`);
-    }
+    links.push(`<a class="market-btn" href="../insights/${escapeHtml(slug)}.html">${escapeHtml(titleFromSlug(slug))}</a>`);
   }
   return links.join("");
 }

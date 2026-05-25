@@ -37,15 +37,13 @@ function theme(asset) {
 
 function card(asset) {
   const href = asset.type === 'etf' ? `etfs/${asset.symbol.toLowerCase()}.html` : `stocks/${asset.symbol.toLowerCase()}.html`;
-  const relatedSlug = (asset.relatedInsights || []).find((slug) => fs.existsSync(path.join(ROOT, 'insights', `${slug}.html`)));
-  const relatedLink = relatedSlug ? `<a class="market-btn" href="insights/${esc(relatedSlug)}.html">Related research</a>` : `<a class="market-btn" href="insights/">Articles</a>`;
   return `<article class="market-card ranking-card">
               <span class="tile-topline"><strong>${esc(asset.symbol)}</strong><span class="setup-badge">${score(asset)} research score</span></span>
               <h3>${esc(asset.name)}</h3>
               <div class="ranking-meta"><span>${esc(theme(asset))}</span><span>${esc(risk(asset))}</span></div>
               <p>${esc(asset.whyInvestorsFollow || asset.overview)}</p>
               <div class="ranking-score"><span style="width:${score(asset)}%"></span></div>
-              <div class="cta-actions"><a class="market-btn primary" href="${href}">Full analysis</a>${relatedLink}</div>
+              <div class="cta-actions"><a class="market-btn primary" href="${href}">Full analysis</a><a class="market-btn" href="insights/${esc((asset.relatedInsights || ['spy-vs-qqq-explained'])[0])}.html">Related research</a></div>
             </article>`;
 }
 
