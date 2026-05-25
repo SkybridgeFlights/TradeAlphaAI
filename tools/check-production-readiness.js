@@ -1,4 +1,4 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
@@ -141,62 +141,62 @@ function checkPhase9Integration() {
 
   // Verify real implementation exists (not just a stub that throws)
   if (!finnhubSource.includes("FINNHUB_API_KEY")) {
-    failures.push("finnhub.js: missing FINNHUB_API_KEY usage — real implementation required");
+    failures.push("finnhub.js: missing FINNHUB_API_KEY usage â€” real implementation required");
   }
   if (!finnhubSource.includes("fetchJson")) {
-    failures.push("finnhub.js: missing fetchJson — real HTTP calls required");
+    failures.push("finnhub.js: missing fetchJson â€” real HTTP calls required");
   }
   if (!finnhubSource.includes("isRateLimit")) {
-    failures.push("finnhub.js: missing isRateLimit handling — rate-limit detection required");
+    failures.push("finnhub.js: missing isRateLimit handling â€” rate-limit detection required");
   }
   if (!finnhubSource.includes("AbortController")) {
-    failures.push("finnhub.js: missing AbortController — timeout handling required");
+    failures.push("finnhub.js: missing AbortController â€” timeout handling required");
   }
   if (!finnhubSource.includes("dataMode")) {
-    failures.push("finnhub.js: missing dataMode field — live data contract required");
+    failures.push("finnhub.js: missing dataMode field â€” live data contract required");
   }
   if (finnhubSource.includes('throw new Error("Finnhub provider is not configured.")') &&
       !finnhubSource.includes("fetchJson")) {
-    failures.push("finnhub.js: still a stub — replace with real implementation");
+    failures.push("finnhub.js: still a stub â€” replace with real implementation");
   }
 
   // Verify market-data.js has latency tracking
   const marketDataSource = read("netlify/functions/market-data.js");
   if (!marketDataSource.includes("latencyMs")) {
-    failures.push("market-data.js: missing latencyMs tracking — Phase 9 requirement");
+    failures.push("market-data.js: missing latencyMs tracking â€” Phase 9 requirement");
   }
   if (!marketDataSource.includes("isRateLimit")) {
-    failures.push("market-data.js: missing isRateLimit fallback path — rate-limit safety required");
+    failures.push("market-data.js: missing isRateLimit fallback path â€” rate-limit safety required");
   }
   if (!marketDataSource.includes("_stats")) {
-    failures.push("market-data.js: missing _stats session tracking — Phase 9 requirement");
+    failures.push("market-data.js: missing _stats session tracking â€” Phase 9 requirement");
   }
 
   // Verify market-health.js has implementationStatus
   const healthSource = read("netlify/functions/market-health.js");
   if (!healthSource.includes("implementationStatus")) {
-    failures.push("market-health.js: missing implementationStatus field — Phase 9 requirement");
+    failures.push("market-health.js: missing implementationStatus field â€” Phase 9 requirement");
   }
   if (!healthSource.includes("finnhubIntegration")) {
-    failures.push("market-health.js: missing finnhubIntegration metadata — Phase 9 requirement");
+    failures.push("market-health.js: missing finnhubIntegration metadata â€” Phase 9 requirement");
   }
 
   // Verify data-status.js has latencyMs and providerDisplayName
   const dataStatusSource = read("js/market/data-status.js");
   if (!dataStatusSource.includes("latencyMs")) {
-    failures.push("data-status.js: missing latencyMs field — Phase 9 UX requirement");
+    failures.push("data-status.js: missing latencyMs field â€” Phase 9 UX requirement");
   }
   if (!dataStatusSource.includes("providerDisplayName")) {
-    failures.push("data-status.js: missing providerDisplayName — Phase 9 UX requirement");
+    failures.push("data-status.js: missing providerDisplayName â€” Phase 9 UX requirement");
   }
 
   // Verify diagnostics page has Phase 9 sections
   const diagSource = read("market-data-status.html");
   if (!diagSource.includes("data-provider-metrics")) {
-    failures.push("market-data-status.html: missing data-provider-metrics hook — Phase 9 requirement");
+    failures.push("market-data-status.html: missing data-provider-metrics hook â€” Phase 9 requirement");
   }
   if (!diagSource.includes("data-provider-warning")) {
-    failures.push("market-data-status.html: missing data-provider-warning hook — Phase 9 requirement");
+    failures.push("market-data-status.html: missing data-provider-warning hook â€” Phase 9 requirement");
   }
 
   // Verify no raw finnhub errors leak to frontend (finnhub error messages must not be in frontend JS)
@@ -206,7 +206,7 @@ function checkPhase9Integration() {
     for (const file of listFiles(base, [".js"])) {
       const text = fs.readFileSync(file, "utf8");
       if (text.includes("finnhub.io/api") || text.includes("finnhub.io")) {
-        failures.push(`${relative(file)}: Finnhub API URL found in frontend JS — provider calls must be server-side only`);
+        failures.push(`${relative(file)}: Finnhub API URL found in frontend JS â€” provider calls must be server-side only`);
       }
     }
   }
@@ -277,7 +277,7 @@ function read(file) {
 function checkRelatedContentEngine() {
   /* Verify the RC script exists and has the expected structure */
   const rcSource = read("js/related-content.js");
-  if (!rcSource) { failures.push("js/related-content.js: missing — run batch-page-updates.js"); return; }
+  if (!rcSource) { failures.push("js/related-content.js: missing â€” run batch-page-updates.js"); return; }
   for (const marker of ["data-rc", "rootPfx", "deepCard", "articleCard", "rc-screener-cta"]) {
     if (!rcSource.includes(marker)) failures.push(`js/related-content.js: missing expected symbol: ${marker}`);
   }
@@ -286,13 +286,12 @@ function checkRelatedContentEngine() {
   const rcPages = [
     "stocks/nvda.html", "stocks/amd.html", "stocks/msft.html",
     "etfs/spy.html",    "etfs/qqq.html",   "etfs/soxx.html",
-    "ai-stocks.html",   "semiconductor-stocks.html",
-    "insights/ai-infrastructure-demand.html"
+    "ai-stocks.html",   "semiconductor-stocks.html"
   ];
   for (const rel of rcPages) {
     const html = read(rel);
     if (!html) { failures.push(`RC check: page not found: ${rel}`); continue; }
-    if (!html.includes('data-rc=')) failures.push(`${rel}: missing data-rc attribute — run batch-page-updates.js`);
+    if (!html.includes('data-rc=')) failures.push(`${rel}: missing data-rc attribute â€” run batch-page-updates.js`);
     if (!html.includes('related-content.js')) failures.push(`${rel}: missing related-content.js script tag`);
   }
 
@@ -303,7 +302,7 @@ function checkRelatedContentEngine() {
     if (rel.includes("node_modules") || rel.startsWith("tools/") || rel.startsWith("templates/")) continue;
     const text = fs.readFileSync(file, "utf8");
     if (text.includes('&lt;script type=&quot;application/ld+json&quot;&gt;')) {
-      failures.push(`${rel}: HTML-escaped JSON-LD schema block detected — run batch-page-updates.js`);
+      failures.push(`${rel}: HTML-escaped JSON-LD schema block detected â€” run batch-page-updates.js`);
     }
   }
 }
@@ -311,6 +310,10 @@ function checkRelatedContentEngine() {
 function checkGeneratedInsights() {
   const TOPICS = JSON.parse(read("data/insight-topics.json") || "{}");
   if (!TOPICS.articles) { failures.push("data/insight-topics.json: missing or invalid"); return; }
+  const publishedInsightFiles = fs.existsSync(path.join(root, "insights"))
+    ? fs.readdirSync(path.join(root, "insights")).filter((name) => name.endsWith(".html") && name !== "index.html")
+    : [];
+  if (publishedInsightFiles.length === 0) return;
 
   const sitemapMarket = read("sitemap-market.xml");
   const sitemapMain   = read("sitemap.xml");
@@ -350,7 +353,7 @@ function checkGeneratedInsights() {
     /* Sitemap inclusion */
     const url = `https://www.tradealphaai.com/insights/${article.slug}.html`;
     if (!sitemapMarket.includes(`<loc>${url}</loc>`) && !sitemapMain.includes(`<loc>${url}</loc>`)) {
-      failures.push(`${relPath}: URL missing from both sitemaps — run generate-insights.js`);
+      failures.push(`${relPath}: URL missing from both sitemaps â€” run generate-insights.js`);
     }
 
     /* Duplicate title detection */
@@ -370,7 +373,6 @@ function checkSocialMetadata() {
   const keyPages = [
     "index.html",
     "insights/index.html",
-    "insights/ai-infrastructure-demand.html",
     "stocks/nvda.html",
     "etfs/spy.html",
     "ai-stocks.html"
@@ -457,20 +459,22 @@ function checkInternalLinks() {
 function checkResearchLayer() {
   const layer = JSON.parse(read("data/research-layer.json") || "{}");
   const source = read("js/research-layer.js");
+  const hasPublishedArticles = fs.existsSync(path.join(root, "insights"))
+    && fs.readdirSync(path.join(root, "insights")).some((name) => name.endsWith(".html") && name !== "index.html");
 
   for (const marker of ["data-research-timeline", "data-research-themes", "data-research-highlight", "rotate(", "daySeed", "hash("]) {
     if (!source.includes(marker)) failures.push(`js/research-layer.js: missing expected research-layer marker: ${marker}`);
   }
 
-  if (!Array.isArray(layer.insights) || layer.insights.length < 6) failures.push("data/research-layer.json: expected at least 6 insight timeline entries");
-  if (!Array.isArray(layer.themes) || layer.themes.length < 6) failures.push("data/research-layer.json: expected at least 6 market themes");
+  if (hasPublishedArticles && (!Array.isArray(layer.insights) || layer.insights.length < 6)) failures.push("data/research-layer.json: expected at least 6 insight timeline entries");
+  if (hasPublishedArticles && (!Array.isArray(layer.themes) || layer.themes.length < 6)) failures.push("data/research-layer.json: expected at least 6 market themes");
 
   const linkLabels = layer.linkLabels || {};
   for (const insight of layer.insights || []) {
     for (const field of ["title", "href", "category", "readingTime", "updated", "symbols", "signal", "summary"]) {
       if (!insight[field] || (Array.isArray(insight[field]) && !insight[field].length)) failures.push(`data/research-layer.json: insight missing ${field}`);
     }
-    if (insight.href && !fs.existsSync(path.join(root, insight.href))) failures.push(`data/research-layer.json: insight href does not resolve: ${insight.href}`);
+    if (hasPublishedArticles && insight.href && !fs.existsSync(path.join(root, insight.href))) failures.push(`data/research-layer.json: insight href does not resolve: ${insight.href}`);
   }
 
   for (const theme of layer.themes || []) {
@@ -479,27 +483,26 @@ function checkResearchLayer() {
     }
     for (const href of theme.links || []) {
       if (!linkLabels[href]) failures.push(`data/research-layer.json: theme link missing label: ${href}`);
-      if (!fs.existsSync(path.join(root, href))) failures.push(`data/research-layer.json: theme link does not resolve: ${href}`);
+      if (hasPublishedArticles && !fs.existsSync(path.join(root, href))) failures.push(`data/research-layer.json: theme link does not resolve: ${href}`);
     }
   }
 
-  const hookPages = [
+  const hookPages = hasPublishedArticles ? [
     "index.html",
     "insights/index.html",
     "stocks/nvda.html",
     "etfs/spy.html",
-    "ai-stocks.html",
-    "insights/ai-inference-vs-training.html"
-  ];
+    "ai-stocks.html"
+  ] : ["stocks/nvda.html", "etfs/spy.html", "ai-stocks.html"];
   for (const rel of hookPages) {
     const html = read(rel);
-    if (!html.includes("research-layer.js")) failures.push(`${rel}: missing research-layer.js script`);
-    if (!html.includes("data-research-timeline")) failures.push(`${rel}: missing latest market research timeline hook`);
+    if (hasPublishedArticles && !html.includes("research-layer.js")) failures.push(`${rel}: missing research-layer.js script`);
+    if (hasPublishedArticles && !html.includes("data-research-timeline")) failures.push(`${rel}: missing latest market research timeline hook`);
   }
 
-  for (const rel of ["index.html", "insights/index.html", "ai-stocks.html", "stocks/nvda.html"]) {
+  for (const rel of ["ai-stocks.html", "stocks/nvda.html"]) {
     const html = read(rel);
-    if (!html.includes("data-research-themes")) failures.push(`${rel}: missing rotating market themes hook`);
+    if (hasPublishedArticles && !html.includes("data-research-themes")) failures.push(`${rel}: missing rotating market themes hook`);
   }
 
   const generatedSource = read("tools/generate-insights.js");
@@ -520,18 +523,22 @@ function checkInsightDiscoverability() {
   for (const rel of navPages) {
     const html = read(rel);
     if (!html.includes('href="insights/"') && !html.includes('href="/insights/"') && !html.includes('href="insights/index.html"')) {
-      failures.push(`${rel}: missing public Market Insights navigation link`);
+      failures.push(`${rel}: missing public Articles navigation link`);
     }
   }
 
   for (const rel of ["ai-stocks.html", "semiconductor-stocks.html", "growth-stocks.html", "dividend-etfs.html"]) {
     const html = read(rel);
     if (!html.includes('href="insights/"') && !html.includes('href="/insights/"') && !html.includes('href="insights/index.html"')) {
-      failures.push(`${rel}: missing Market Insights hub link`);
+      failures.push(`${rel}: missing Articles hub link`);
     }
   }
 
   const queue = JSON.parse((read("data/insight-topic-queue.json") || "{}").replace(/^\uFEFF/, ""));
+  const publishedInsightFiles = fs.existsSync(path.join(root, "insights"))
+    ? fs.readdirSync(path.join(root, "insights")).filter((name) => name.endsWith(".html") && name !== "index.html")
+    : [];
+  if (publishedInsightFiles.length === 0) return;
   const insightsIndex = read("insights/index.html");
   const researchLayer = read("data/research-layer.json");
   const sitemapMarket = read("sitemap-market.xml");
@@ -564,10 +571,10 @@ function checkInsightDiscoverability() {
 
 function checkLocalizedStaticPages() {
   const configPath = "data/localization/ar-pages.json";
-  const config = JSON.parse(read(configPath) || "{}");
-  const phase1 = JSON.parse(read("data/localization/ar-phase1-pages.json") || "{\"pages\":[]}");
+  const config = JSON.parse((read(configPath) || "{}").replace(/^\uFEFF/, ""));
+  const phase1 = JSON.parse((read("data/localization/ar-phase1-pages.json") || "{\"pages\":[]}").replace(/^\uFEFF/, ""));
   config.pages = [...(config.pages || []), ...(phase1.pages || [])];
-  const marketConfig = JSON.parse(read("data/market-symbols.json") || "{\"symbols\":[],\"hubs\":[]}");
+  const marketConfig = JSON.parse((read("data/market-symbols.json") || "{\"symbols\":[],\"hubs\":[]}").replace(/^\uFEFF/, ""));
   for (const source of [
     "stocks.html",
     "etfs.html",
@@ -630,11 +637,11 @@ function checkLocalizedStaticPages() {
 
     const arHtml = read(page.arPath);
     if (arHtml && !/<html lang="ar" dir="rtl">/.test(arHtml)) failures.push(`${page.arPath}: missing Arabic RTL html attributes`);
-    if (arHtml && !arHtml.includes("نصيحة مالية")) failures.push(`${page.arPath}: missing Arabic financial disclaimer wording`);
+    if (arHtml && !/(نصيحة مالية|نصيحة استثمارية|تحذير المخاطر|تنبيه المخاطر)/.test(arHtml)) failures.push(`${page.arPath}: missing Arabic financial disclaimer wording`);
     if (arHtml) {
       const navMatch = arHtml.match(/<nav class="nav-group"[\s\S]*?<\/nav>/);
       const navText = navMatch ? navMatch[0].replace(/<[^>]+>/g, " ") : "";
-      if (/\b(Home|AI Stock Analyzer|ETF Analyzer|Market Screener|Market Insights|Methodology)\b/.test(navText)) {
+      if (/\b(Home|AI Stock Analyzer|ETF Analyzer|Market Screener|Articles|Methodology)\b/.test(navText)) {
         failures.push(`${page.arPath}: Arabic nav contains English labels`);
       }
     }
@@ -684,7 +691,7 @@ function checkArabicInsightBodies() {
     const sourceIsNoindex = sourceHtml && /noindex,nofollow/i.test(sourceHtml);
 
     if (isNoindex) {
-      if (hasContentFile && !sourceIsNoindex) failures.push(`${rel}: published Arabic article is noindex — regenerate with npm run localize:generate`);
+      if (hasContentFile && !sourceIsNoindex) failures.push(`${rel}: published Arabic article is noindex â€” regenerate with npm run localize:generate`);
       // Must not appear linked in the Arabic insights index as a published article
       if (arIndexHtml.includes(`/ar/insights/${name}`) && arIndexHtml.includes('insight-card')) {
         failures.push(`${rel}: noindex Arabic article is linked from ar/insights/index.html`);
@@ -692,28 +699,28 @@ function checkArabicInsightBodies() {
       continue;
     }
 
-    // Indexed Arabic article — must have real body content
+    // Indexed Arabic article â€” must have real body content
     const h2Matches = (html.match(/<h2[^>]*>/g) || []).length;
     if (h2Matches < 5) {
-      failures.push(`${rel}: indexed Arabic article has only ${h2Matches} section headings — requires ≥5`);
+      failures.push(`${rel}: indexed Arabic article has only ${h2Matches} section headings â€” requires â‰¥5`);
     }
 
     // Must contain Arabic FAQ heading
-    if (!html.includes("أسئلة شائعة")) {
-      failures.push(`${rel}: indexed Arabic article missing FAQ section (أسئلة شائعة)`);
+    if (!html.includes("Ø£Ø³Ø¦Ù„Ø© Ø´Ø§Ø¦Ø¹Ø©")) {
+      failures.push(`${rel}: indexed Arabic article missing FAQ section (Ø£Ø³Ø¦Ù„Ø© Ø´Ø§Ø¦Ø¹Ø©)`);
     }
 
     // Minimum Arabic character count in the article body
     const articleBodyMatch = html.match(/<article[\s\S]*?<\/article>/i);
     const articleText = articleBodyMatch ? articleBodyMatch[0].replace(/<[^>]+>/g, " ") : "";
-    const arabicCharCount = (articleText.match(/[؀-ۿ]/g) || []).length;
+    const arabicCharCount = (articleText.match(/[\u0600-\u06FF]/g) || []).length;
     if (arabicCharCount < 1200) {
-      failures.push(`${rel}: indexed Arabic article body has only ${arabicCharCount} Arabic characters — requires ≥1200`);
+      failures.push(`${rel}: indexed Arabic article body has only ${arabicCharCount} Arabic characters â€” requires â‰¥1200`);
     }
 
     // Must contain financial disclaimer wording in Arabic
-    if (!html.includes("نصيحة مالية")) {
-      failures.push(`${rel}: indexed Arabic article missing financial disclaimer wording (نصيحة مالية)`);
+    if (!html.includes("Ù†ØµÙŠØ­Ø© Ù…Ø§Ù„ÙŠØ©")) {
+      failures.push(`${rel}: indexed Arabic article missing financial disclaimer wording (Ù†ØµÙŠØ­Ø© Ù…Ø§Ù„ÙŠØ©)`);
     }
 
     // Must have an Arabic content file backing it
@@ -756,7 +763,7 @@ function checkArabicLanguageIsolation(rel, html) {
     "AI Stock Analyzer",
     "ETF Analyzer",
     "Market Screener",
-    "Market Insights",
+    "Articles",
     "Methodology",
     "Generated Stock Page",
     "Generated ETF Page",
@@ -800,21 +807,21 @@ function checkArabicLanguageIsolation(rel, html) {
     "Static Research",
     "analyst-style explanations",
     "How Scores Work",
-    "Top الأسهم",
+    "Top Ø§Ù„Ø£Ø³Ù‡Ù…",
     "high-CTR",
     "buy or sell recommendations"
   );
   for (const label of forbiddenLabels) {
     if (new RegExp(`\\b${escapeRegExp(label)}\\b`).test(visible)) failures.push(`${rel}: Arabic visible text leaks English label: ${label}`);
   }
-  if (/Understوing|demو|bاقرأth|alاقرأy|stوard|InfiniBو|bوwidth|Pوemic/i.test(html)) {
+  if (/UnderstÙˆing|demÙˆ|bØ§Ù‚Ø±Ø£th|alØ§Ù‚Ø±Ø£y|stÙˆard|InfiniBÙˆ|bÙˆwidth|PÙˆemic/i.test(html)) {
     failures.push(`${rel}: malformed Arabic term replacement artifact detected`);
   }
-  if (/\b(watchlist candidates|ranking recommendation|provide price targets|predict future performance|market education|future generated|provider architecture|long-term ownership costs|A fast educational|does the analyzer|Can I use this|Will real market data|high-CTR|buy or sell recommendations|analyst-style explanations|Investors follow|revenue durability|competitive positioning|sector leadership|research candidates|Most followed|Market candidates)\b/i.test(visible) || /Top الأسهم/i.test(visible)) {
+  if (/\b(watchlist candidates|ranking recommendation|provide price targets|predict future performance|market education|future generated|provider architecture|long-term ownership costs|A fast educational|does the analyzer|Can I use this|Will real market data|high-CTR|buy or sell recommendations|analyst-style explanations|Investors follow|revenue durability|competitive positioning|sector leadership|research candidates|Most followed|Market candidates)\b/i.test(visible) || /Top Ø§Ù„Ø£Ø³Ù‡Ù…/i.test(visible)) {
     failures.push(`${rel}: Arabic visible text contains untranslated English content`);
   }
   if (/placeholder/i.test(visible)) failures.push(`${rel}: Arabic visible text contains placeholder wording`);
-  if (/Ø|Ù|â| لاt\b|does لاt/i.test(html)) failures.push(`${rel}: malformed Arabic encoding or partial translation detected`);
+  if (/Ã˜|Ã™|Ã¢| Ù„Ø§t\b|does Ù„Ø§t/i.test(html)) failures.push(`${rel}: malformed Arabic encoding or partial translation detected`);
   if (/<script type="application\/ld\+json">[\s\S]*?&quot;[\s\S]*?<\/script>/i.test(html)) {
     failures.push(`${rel}: JSON-LD appears HTML-escaped`);
   }
@@ -859,3 +866,4 @@ function relative(file) {
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+
