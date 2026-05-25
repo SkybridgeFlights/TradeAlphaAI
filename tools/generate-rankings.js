@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -84,7 +84,7 @@ const html = `<!doctype html>
           <a href="stocks.html" class="nav-link">AI Stock Analyzer</a>
           <a href="etfs.html" class="nav-link">ETF Analyzer</a>
           <a href="ai-stock-screener.html" class="nav-link">Market Screener</a>
-          <a href="insights/" class="nav-link">Articles</a>
+          <a href="insights/" class="nav-link">Market Insights</a>
           <a href="methodology.html" class="nav-link">Methodology</a>
         </nav>
       </div>
@@ -112,4 +112,3 @@ function has(asset, value) {
 function esc(value) {
   return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-

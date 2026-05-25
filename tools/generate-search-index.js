@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -32,8 +32,8 @@ const articleItems = (registry.articles || []).filter((entry) => entry.status ==
   symbol: entry.slug,
   name: entry.languages.en.title,
   type: 'insight',
-  sector: entry.category || 'Articles',
-  category: 'Articles',
+  sector: entry.category || 'Market Insights',
+  category: 'Market Insights',
   themes: entry.symbols || [],
   href: `/${entry.languages.en.path}`,
   arHref: `/${entry.languages.ar.path}`,
@@ -47,4 +47,3 @@ const items = [...assetItems, ...articleItems];
 
 fs.writeFileSync(path.join(ROOT, 'data/search-index.json'), JSON.stringify({ generatedAt: new Date().toISOString().slice(0, 10), items }, null, 2) + '\n', 'utf8');
 console.log(`Generated search index with ${items.length} assets.`);
-
