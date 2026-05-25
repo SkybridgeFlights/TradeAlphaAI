@@ -919,4 +919,23 @@ function checkSmallLocalizationRegressionGuards() {
       failures.push(`${rel}: Arabic nav still contains رؤى السوق — must be المقالات`);
     }
   }
+
+  // Check EN root HTML files for "Market Insights" in visible nav-link
+  const enNavFiles = listFiles(root, [".html"]).filter((f) => !f.includes(path.sep + "ar" + path.sep) && !f.includes(path.sep + "en" + path.sep));
+  for (const file of enNavFiles) {
+    const html = fs.readFileSync(file, "utf8");
+    const enNavMatch = html.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
+    if (enNavMatch && /class="nav-link">Market Insights<\/a>/.test(enNavMatch[0])) {
+      failures.push(`${relative(file)}: EN nav still contains "Market Insights" — must be "Articles"`);
+    }
+  }
+
+  // Check rankings.html top-stocks section is not AI-only titled
+  const rankingsHtml = read("rankings.html");
+  if (rankingsHtml) {
+    const topStocksMatch = rankingsHtml.match(/id="top-stocks"[\s\S]*?<h2>([^<]+)<\/h2>/);
+    if (topStocksMatch && /\bAI\b/i.test(topStocksMatch[1]) && !/broad|top 10|best stocks/i.test(topStocksMatch[1])) {
+      failures.push(`rankings.html: #top-stocks section title appears AI-only: "${topStocksMatch[1]}" — should be broad market`);
+    }
+  }
 }
