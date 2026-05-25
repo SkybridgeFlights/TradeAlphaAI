@@ -38,6 +38,34 @@
     }
   };
 
+  Object.assign(translations.ar, {
+    "perf.backtest.eyebrow": "XAUUSD EA V9",
+    "perf.backtest.title": "TradeAlpha EA  اختبار تاريخي للأداء",
+    "perf.backtest.subtitle": "10,273 صفقة | 20202026",
+    "perf.backtest.totalTrades.label": "إجمالي الصفقات",
+    "perf.backtest.winRate.label": "نسبة النجاح",
+    "perf.backtest.pnl.label": "إجمالي الربح والخسارة",
+    "perf.backtest.winners.label": "الصفقات الرابحة",
+    "perf.backtest.losers.label": "الصفقات الخاسرة",
+    "perf.backtest.profitFactor.label": "معامل الربحية",
+    "perf.backtest.disclaimer1": "الأداء السابق لا يضمن النتائج المستقبلية.",
+    "perf.backtest.disclaimer2": "جميع النتائج مبنية على اختبار خلفي باستخدام بيانات تاريخية."
+  });
+
+  Object.assign(translations.en, {
+    "perf.backtest.eyebrow": "XAUUSD EA V9",
+    "perf.backtest.title": "TradeAlpha EA  Historical Backtest",
+    "perf.backtest.subtitle": "10,273 trades | 20202026",
+    "perf.backtest.totalTrades.label": "Total Trades",
+    "perf.backtest.winRate.label": "Win Rate",
+    "perf.backtest.pnl.label": "Total P&L",
+    "perf.backtest.winners.label": "Winners",
+    "perf.backtest.losers.label": "Losers",
+    "perf.backtest.profitFactor.label": "Profit Factor",
+    "perf.backtest.disclaimer1": "Past performance does not guarantee future results.",
+    "perf.backtest.disclaimer2": "All results are from backtesting on historical data."
+  });
+
   function getLanguage() {
     return localStorage.getItem("ta_lang") || document.documentElement.lang || "ar";
   }
