@@ -887,6 +887,22 @@ function checkUtf8Integrity() {
 function checkSmallLocalizationRegressionGuards() {
   const arHome = read("ar/index.html");
   const enHome = read("index.html");
+  const countSections = (html) => (html.match(/<section\b/gi) || []).length;
+  const countCards = (html) => (
+    html.match(/class="[^"]*(?:card|panel|tile|feature|system|proof)[^"]*"/gi) || []
+  ).length;
+  const enSectionCount = countSections(enHome);
+  const arSectionCount = countSections(arHome);
+  const enCardCount = countCards(enHome);
+  const arCardCount = countCards(arHome);
+
+  if (enSectionCount && arSectionCount !== enSectionCount) {
+    failures.push(`ar/index.html: homepage parity failed — EN has ${enSectionCount} sections, AR has ${arSectionCount}`);
+  }
+  if (enCardCount && arCardCount !== enCardCount) {
+    failures.push(`ar/index.html: homepage parity failed — EN has ${enCardCount} card/panel elements, AR has ${arCardCount}`);
+  }
+
   // AR homepage must NEVER contain these terms regardless of EN homepage state
   for (const pattern of [
     /Free Signals/i,

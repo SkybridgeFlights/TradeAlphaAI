@@ -611,6 +611,8 @@ const allLangSwitches = document.querySelectorAll('.lang-switch');
 const cta = document.getElementById('cta-telegram');
 
 function applyLanguage(lang){
+  const isArabicPath = window.location.pathname === '/ar' || window.location.pathname.startsWith('/ar/');
+  if(isArabicPath) lang = 'ar';
   const map = translations[lang] || translations.en;
   // Re-query elements in case DOM changed since script loaded
   const currentElements = document.querySelectorAll('[data-i18n]');
@@ -680,6 +682,8 @@ function applyLanguage(lang){
 
 // Persist preference in localStorage
 function setLang(lang){
+  const isArabicPath = window.location.pathname === '/ar' || window.location.pathname.startsWith('/ar/');
+  if(isArabicPath) lang = 'ar';
   localStorage.setItem('ta_lang', lang);
   applyLanguage(lang);
 }
@@ -776,9 +780,10 @@ if(langMenu){
   }
 }
 
-// Initialize (default to Arabic)
-const saved = localStorage.getItem('ta_lang') || 'ar';
-setLang(saved);
+// Initialize without letting a saved preference override pre-localized Arabic pages.
+const isArabicPath = window.location.pathname === '/ar' || window.location.pathname.startsWith('/ar/');
+const saved = isArabicPath ? 'ar' : (localStorage.getItem('ta_lang') || document.documentElement.lang || 'en');
+applyLanguage(saved);
 
 // Expose setLang/applyLanguage for inline scripts and debugging (defensive)
 try{ window.setLang = setLang; window.applyLanguage = applyLanguage; }catch(e){}
