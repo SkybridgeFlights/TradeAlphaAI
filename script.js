@@ -780,9 +780,9 @@ if(langMenu){
   }
 }
 
-// Initialize without letting a saved preference override pre-localized Arabic pages.
+// Initialize from the route so saved preferences never override page direction.
 const isArabicPath = window.location.pathname === '/ar' || window.location.pathname.startsWith('/ar/');
-const saved = isArabicPath ? 'ar' : (localStorage.getItem('ta_lang') || document.documentElement.lang || 'en');
+const saved = isArabicPath ? 'ar' : 'en';
 applyLanguage(saved);
 
 // Expose setLang/applyLanguage for inline scripts and debugging (defensive)

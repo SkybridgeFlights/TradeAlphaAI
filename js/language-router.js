@@ -1046,9 +1046,57 @@
     }
 };
   const currentPath = window.location.pathname;
+  const isArabicPath = currentPath === "/ar" || currentPath.startsWith("/ar/");
+  const currentLocale = isArabicPath ? "ar" : "en";
   const routes = localizedRoutes[currentPath] || { ar: "/ar/", en: "/" };
+
+  document.documentElement.lang = currentLocale;
+  document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
+  document.body.classList.toggle("localized-ar", currentLocale === "ar");
+  document.body.classList.toggle("localized-en", currentLocale === "en");
+
+  try {
+    localStorage.setItem("ta_lang", currentLocale);
+  } catch (_) {}
+
+  function setActiveLanguage(link, locale) {
+    const active = locale === currentLocale;
+    link.classList.toggle("active", active);
+    if (active) {
+      link.setAttribute("aria-current", "true");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  }
+
   document.querySelectorAll("[data-locale-route]").forEach((link) => {
     const locale = link.getAttribute("data-locale-route");
     link.setAttribute("href", routes[locale] || routes.en || "/");
+    link.textContent = locale === "ar" ? "العربية" : "English";
+    link.addEventListener("click", () => {
+      try {
+        localStorage.setItem("ta_lang", locale);
+      } catch (_) {}
+    });
+    setActiveLanguage(link, locale);
+  });
+
+  document.querySelectorAll("a[href]").forEach((link) => {
+    if (link.hasAttribute("data-locale-route") || link.target === "_blank") return;
+    const rawHref = link.getAttribute("href");
+    if (!rawHref || rawHref.startsWith("#") || /^(mailto:|tel:|https?:\/\/|\/\/)/i.test(rawHref)) return;
+
+    let url;
+    try {
+      url = new URL(rawHref, window.location.origin);
+    } catch (_) {
+      return;
+    }
+    if (url.origin !== window.location.origin) return;
+
+    const mapped = localizedRoutes[url.pathname];
+    if (!mapped || !mapped[currentLocale]) return;
+
+    link.setAttribute("href", mapped[currentLocale] + url.search + url.hash);
   });
 })();
