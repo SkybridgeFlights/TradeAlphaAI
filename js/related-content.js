@@ -1,4 +1,4 @@
-﻿/* js/related-content.js â€” Topical-authority & internal-linking engine
+/* js/related-content.js — Topical-authority & internal-linking engine
    Injects related stocks, ETFs, insights, hub links, and market-theme
    badges based on a static relationship graph. Zero backend dependency. */
 (function () {
@@ -112,7 +112,7 @@
                             d:'Why parallel GPU architecture dominates AI training and inference over traditional CPUs.',
                             f:'insights/gpu-vs-cpu-ai-workloads.html' },
     'ins-custom-chips':   { t:'insight', n:'Custom AI Chips & ASICs',         l:'Semiconductors',
-                            d:'TPUs, Trainium, Inferentia â€” why hyperscalers are designing proprietary AI silicon.',
+                            d:'TPUs, Trainium, Inferentia — why hyperscalers are designing proprietary AI silicon.',
                             f:'insights/custom-ai-chips-asics-tpus.html' },
     'ins-expense-ratios': { t:'insight', n:'ETF Expense Ratios Explained',    l:'ETF Analysis',
                             d:'How fund fees compound over time and why expense ratio comparison matters for long-term returns.',
@@ -240,8 +240,8 @@
 
   /* ===== PATH PREFIX ====================================================
      Determines the prefix needed to reach root from the current page.
-     /stocks/nvda.html â†’ 2 segments â†’ '../'
-     /ai-stocks.html   â†’ 1 segment  â†’ ''
+     /stocks/nvda.html → 2 segments → '../'
+     /ai-stocks.html   → 1 segment  → ''
   ====================================================================== */
   function rootPfx() {
     var segs = (window.location.pathname || '').replace(/^\//, '').split('/').filter(Boolean);
@@ -260,145 +260,145 @@
   function tr(s) {
     if (!isArabic()) return s;
     return String(s || '')
-      .replace(/Related AI Infrastructure Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ù…Ø±ØªØ¨Ø·Ø© Ø¨Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Related ETF Education/g, 'ØªØ¹Ù„ÙŠÙ… ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„Ù…Ø±ØªØ¨Ø·')
-      .replace(/Related Articles/g, 'Ø±Ø¤Ù‰ Ø³ÙˆÙ‚ Ù…Ø±ØªØ¨Ø·Ø©')
-      .replace(/Related Research Hubs/g, 'Ù…Ø­Ø§ÙˆØ± Ø¨Ø­Ø« Ù…Ø±ØªØ¨Ø·Ø©')
-      .replace(/Continue with the market screener/g, 'ØªØ§Ø¨Ø¹ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…Ø§Ø³Ø­ Ø§Ù„Ø³ÙˆÙ‚')
-      .replace(/Compare these assets with the educational screener and TradeAlpha Score context\./g, 'Ù‚Ø§Ø±Ù† Ù‡Ø°Ù‡ Ø§Ù„Ø£ØµÙˆÙ„ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…Ø§Ø³Ø­ Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„ØªØ¹Ù„ÙŠÙ…ÙŠ ÙˆØ³ÙŠØ§Ù‚ Ø¯Ø±Ø¬Ø© TradeAlpha.')
-      .replace(/Screen the full AI market universe/g, 'Ø§ÙØ­Øµ Ø¹Ø§Ù„Ù… Ø£Ø³Ù‡Ù… ÙˆØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ ÙƒØ§Ù…Ù„Ø§')
-      .replace(/TradeAlpha Score across AI stocks and ETFs â€” educational multi-factor analysis\./g, 'Ø¯Ø±Ø¬Ø© TradeAlpha Ù„Ø£Ø³Ù‡Ù… ÙˆØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¹Ø¨Ø± ØªØ­Ù„ÙŠÙ„ ØªØ¹Ù„ÙŠÙ…ÙŠ Ù…ØªØ¹Ø¯Ø¯ Ø§Ù„Ø¹ÙˆØ§Ù…Ù„.')
-      .replace(/TradeAlpha Score across AI stocks and ETFs Ã¢â‚¬â€ educational multi-factor analysis\./g, 'Ø¯Ø±Ø¬Ø© TradeAlpha Ù„Ø£Ø³Ù‡Ù… ÙˆØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¹Ø¨Ø± ØªØ­Ù„ÙŠÙ„ ØªØ¹Ù„ÙŠÙ…ÙŠ Ù…ØªØ¹Ø¯Ø¯ Ø§Ù„Ø¹ÙˆØ§Ù…Ù„.')
-      .replace(/Open Screener/g, 'Ø§ÙØªØ­ Ù…Ø§Ø³Ø­ Ø§Ù„Ø³ÙˆÙ‚')
-      .replace(/Read article/g, 'Ø§Ù‚Ø±Ø£ Ø§Ù„Ù…Ù‚Ø§Ù„')
-      .replace(/Hub/g, 'Ù…Ø­ÙˆØ±')
-      .replace(/Article/g, 'Ù…Ù‚Ø§Ù„')
-      .replace(/AI Infrastructure/g, 'Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Semiconductors/g, 'Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª')
-      .replace(/ETF Analysis/g, 'ØªØ­Ù„ÙŠÙ„ ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª')
-      .replace(/Market Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„Ø³ÙˆÙ‚')
-      .replace(/Risk & Volatility/g, 'Ø§Ù„Ù…Ø®Ø§Ø·Ø± ÙˆØ§Ù„ØªØ°Ø¨Ø°Ø¨')
-      .replace(/Diversification/g, 'Ø§Ù„ØªÙ†ÙˆÙŠØ¹')
-      .replace(/Cloud Computing/g, 'Ø§Ù„Ø­ÙˆØ³Ø¨Ø© Ø§Ù„Ø³Ø­Ø§Ø¨ÙŠØ©')
-      .replace(/Growth Equities/g, 'Ø£Ø³Ù‡Ù… Ø§Ù„Ù†Ù…Ùˆ')
-      .replace(/Dividend Income/g, 'Ø¯Ø®Ù„ Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§Øª')
-      .replace(/AI Investing/g, 'Ø§Ø³ØªØ«Ù…Ø§Ø± Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Market Cycles/g, 'Ø¯ÙˆØ±Ø§Øª Ø§Ù„Ø³ÙˆÙ‚')
+      .replace(/Related AI Infrastructure Research/g, 'أبحاث مرتبطة بالبنية التحتية للذكاء الاصطناعي')
+      .replace(/Related ETF Education/g, 'تعليم صناديق المؤشرات المرتبط')
+      .replace(/Related Articles/g, 'رؤى سوق مرتبطة')
+      .replace(/Related Research Hubs/g, 'محاور بحث مرتبطة')
+      .replace(/Continue with the market screener/g, 'تابع باستخدام ماسح السوق')
+      .replace(/Compare these assets with the educational screener and TradeAlpha Score context\./g, 'قارن هذه الأصول باستخدام ماسح السوق التعليمي وسياق درجة TradeAlpha.')
+      .replace(/Screen the full AI market universe/g, 'افحص عالم أسهم وصناديق الذكاء الاصطناعي كاملا')
+      .replace(/TradeAlpha Score across AI stocks and ETFs — educational multi-factor analysis\./g, 'درجة TradeAlpha لأسهم وصناديق الذكاء الاصطناعي عبر تحليل تعليمي متعدد العوامل.')
+      .replace(/TradeAlpha Score across AI stocks and ETFs \u00e2\u20ac\u201d educational multi-factor analysis\./g, 'درجة TradeAlpha لأسهم وصناديق الذكاء الاصطناعي عبر تحليل تعليمي متعدد العوامل.')
+      .replace(/Open Screener/g, 'افتح ماسح السوق')
+      .replace(/Read article/g, 'اقرأ المقال')
+      .replace(/Hub/g, 'محور')
+      .replace(/Article/g, 'مقال')
+      .replace(/AI Infrastructure/g, 'البنية التحتية للذكاء الاصطناعي')
+      .replace(/Semiconductors/g, 'أشباه الموصلات')
+      .replace(/ETF Analysis/g, 'تحليل صناديق المؤشرات')
+      .replace(/Market Research/g, 'أبحاث السوق')
+      .replace(/Risk & Volatility/g, 'المخاطر والتذبذب')
+      .replace(/Diversification/g, 'التنويع')
+      .replace(/Cloud Computing/g, 'الحوسبة السحابية')
+      .replace(/Growth Equities/g, 'أسهم النمو')
+      .replace(/Dividend Income/g, 'دخل التوزيعات')
+      .replace(/AI Investing/g, 'استثمار الذكاء الاصطناعي')
+      .replace(/Market Cycles/g, 'دورات السوق')
       /* Stock labels */
-      .replace(/AI GPU Infrastructure/g, 'Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù€ GPU Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/GPU & CPU Challenger/g, 'Ù…Ù†Ø§ÙØ³ GPU ÙˆCPU')
-      .replace(/Cloud AI & Enterprise/g, 'Ø§Ù„Ø³Ø­Ø§Ø¨Ø© ÙˆØ§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ù„Ù„Ù…Ø¤Ø³Ø³Ø§Øª')
-      .replace(/AWS Cloud & AI Infrastructure/g, 'AWS ÙˆØ§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/AI Search & Cloud Platform/g, 'Ø¨Ø­Ø« Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ ÙˆÙ…Ù†ØµØ© Ø§Ù„Ø³Ø­Ø§Ø¨Ø©')
-      .replace(/Social AI & Open-Source LLMs/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠ ÙˆÙ†Ù…Ø§Ø°Ø¬ LLM')
-      .replace(/Networking & Custom AI Silicon/g, 'Ø§Ù„Ø´Ø¨ÙƒØ§Øª ÙˆØ§Ù„Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ù…Ø®ØµØµØ©')
-      .replace(/AI Server Infrastructure/g, 'Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ø®ÙˆØ§Ø¯Ù… Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/AI Analytics Platform/g, 'Ù…Ù†ØµØ© Ø§Ù„ØªØ­Ù„ÙŠÙ„Ø§Øª Ø¨Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Consumer AI & Silicon Design/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø§Ø³ØªÙ‡Ù„Ø§ÙƒÙŠ ÙˆØªØµÙ…ÙŠÙ… Ø§Ù„Ø±Ù‚Ø§Ø¦Ù‚')
-      .replace(/Autonomous & Physical AI/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ù…Ø³ØªÙ‚Ù„ ÙˆØ§Ù„Ù…Ø§Ø¯ÙŠ')
+      .replace(/AI GPU Infrastructure/g, 'البنية التحتية لـ GPU الذكاء الاصطناعي')
+      .replace(/GPU & CPU Challenger/g, 'منافس GPU وCPU')
+      .replace(/Cloud AI & Enterprise/g, 'السحابة والذكاء الاصطناعي للمؤسسات')
+      .replace(/AWS Cloud & AI Infrastructure/g, 'AWS والبنية التحتية للذكاء الاصطناعي')
+      .replace(/AI Search & Cloud Platform/g, 'بحث الذكاء الاصطناعي ومنصة السحابة')
+      .replace(/Social AI & Open-Source LLMs/g, 'الذكاء الاصطناعي الاجتماعي ونماذج LLM')
+      .replace(/Networking & Custom AI Silicon/g, 'الشبكات والرقائق المخصصة')
+      .replace(/AI Server Infrastructure/g, 'البنية التحتية لخوادم الذكاء الاصطناعي')
+      .replace(/AI Analytics Platform/g, 'منصة التحليلات بالذكاء الاصطناعي')
+      .replace(/Consumer AI & Silicon Design/g, 'الذكاء الاصطناعي الاستهلاكي وتصميم الرقائق')
+      .replace(/Autonomous & Physical AI/g, 'الذكاء الاصطناعي المستقل والمادي')
       /* ETF labels */
-      .replace(/S&P 500 Broad-Market ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± S&P 500 Ø§Ù„Ø´Ø§Ù…Ù„')
-      .replace(/Nasdaq-100 Growth ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Nasdaq-100 Ù„Ù„Ù†Ù…Ùˆ')
-      .replace(/Semiconductor Sector ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Ù‚Ø·Ø§Ø¹ Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª')
-      .replace(/S&P 500 Technology ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± ØªÙ‚Ù†ÙŠØ© S&P 500')
-      .replace(/Total U\.S\. Market ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠ Ø§Ù„Ø´Ø§Ù…Ù„')
-      .replace(/S&P 500 ETF \(Low Cost\)/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± S&P 500 (Ù…Ù†Ø®ÙØ¶ Ø§Ù„ØªÙƒÙ„ÙØ©)')
-      .replace(/Gold Commodity ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Ø³Ù„Ø¹ Ø§Ù„Ø°Ù‡Ø¨')
-      .replace(/Long-Duration Bond ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Ø§Ù„Ø³Ù†Ø¯Ø§Øª Ø·ÙˆÙŠÙ„Ø© Ø§Ù„Ø£Ø¬Ù„')
-      .replace(/Dividend Growth ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Ù†Ù…Ùˆ Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§Øª')
-      .replace(/Small-Cap Index ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø± Ø§Ù„Ø´Ø±ÙƒØ§Øª Ø§Ù„ØµØºÙŠØ±Ø©')
+      .replace(/S&P 500 Broad-Market ETF/g, 'صندوق مؤشر S&P 500 الشامل')
+      .replace(/Nasdaq-100 Growth ETF/g, 'صندوق مؤشر Nasdaq-100 للنمو')
+      .replace(/Semiconductor Sector ETF/g, 'صندوق مؤشر قطاع أشباه الموصلات')
+      .replace(/S&P 500 Technology ETF/g, 'صندوق مؤشر تقنية S&P 500')
+      .replace(/Total U\.S\. Market ETF/g, 'صندوق مؤشر السوق الأمريكي الشامل')
+      .replace(/S&P 500 ETF \(Low Cost\)/g, 'صندوق مؤشر S&P 500 (منخفض التكلفة)')
+      .replace(/Gold Commodity ETF/g, 'صندوق مؤشر سلع الذهب')
+      .replace(/Long-Duration Bond ETF/g, 'صندوق مؤشر السندات طويلة الأجل')
+      .replace(/Dividend Growth ETF/g, 'صندوق مؤشر نمو التوزيعات')
+      .replace(/Small-Cap Index ETF/g, 'صندوق مؤشر الشركات الصغيرة')
       /* Theme badge translations */
-      .replace(/AI GPU Computing/g, 'Ø­ÙˆØ³Ø¨Ø© GPU Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Data Center Demand/g, 'Ø·Ù„Ø¨ Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª')
-      .replace(/Data Center Power/g, 'Ø·Ø§Ù‚Ø© Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª')
-      .replace(/Data Center/g, 'Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª')
-      .replace(/Blackwell Architecture/g, 'Ù…Ø¹Ù…Ø§Ø±ÙŠØ© Blackwell')
-      .replace(/GPU Competition/g, 'Ù…Ù†Ø§ÙØ³Ø© GPU')
-      .replace(/AI Accelerators/g, 'Ù…Ø¹Ø¬Ù„Ø§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/CPU Compute/g, 'Ø­ÙˆØ³Ø¨Ø© CPU')
-      .replace(/Enterprise Software/g, 'Ø¨Ø±Ù…Ø¬ÙŠØ§Øª Ø§Ù„Ù…Ø¤Ø³Ø³Ø§Øª')
-      .replace(/Mega-Cap Tech/g, 'ØªÙ‚Ù†ÙŠØ© Ø¹Ù…Ù„Ø§Ù‚Ø© Ø§Ù„Ø³ÙˆÙ‚')
-      .replace(/AWS Infrastructure/g, 'Ø¨Ù†ÙŠØ© ØªØ­ØªÙŠØ© AWS')
-      .replace(/E-Commerce AI/g, 'Ø§Ù„ØªØ¬Ø§Ø±Ø© Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ© ÙˆØ§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/AI Search/g, 'Ø¨Ø­Ø« Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Cloud AI Platform/g, 'Ù…Ù†ØµØ© Ø§Ù„Ø³Ø­Ø§Ø¨Ø© Ø¨Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Custom Silicon/g, 'Ø±Ù‚Ø§Ø¦Ù‚ Ù…Ø®ØµØµØ©')
-      .replace(/Social AI/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠ')
-      .replace(/Open-Source LLMs/g, 'Ù†Ù…Ø§Ø°Ø¬ LLM Ù…ÙØªÙˆØ­Ø© Ø§Ù„Ù…ØµØ¯Ø±')
-      .replace(/Custom AI ASICs/g, 'ASIC Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ù…Ø®ØµØµØ©')
-      .replace(/Semiconductor Networking/g, 'Ø´Ø¨ÙƒØ§Øª Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª')
-      .replace(/AI Silicon/g, 'Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/AI Server Systems/g, 'Ø£Ù†Ø¸Ù…Ø© Ø®ÙˆØ§Ø¯Ù… Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/GPU Infrastructure/g, 'Ø¨Ù†ÙŠØ© GPU Ø§Ù„ØªØ­ØªÙŠØ©')
-      .replace(/Liquid Cooling/g, 'Ø§Ù„ØªØ¨Ø±ÙŠØ¯ Ø§Ù„Ø³Ø§Ø¦Ù„')
-      .replace(/AI Software Platform/g, 'Ù…Ù†ØµØ© Ø¨Ø±Ù…Ø¬ÙŠØ§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Enterprise Analytics/g, 'ØªØ­Ù„ÙŠÙ„Ø§Øª Ø§Ù„Ù…Ø¤Ø³Ø³Ø§Øª')
-      .replace(/Government AI/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø­ÙƒÙˆÙ…ÙŠ')
-      .replace(/Consumer AI/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø§Ø³ØªÙ‡Ù„Ø§ÙƒÙŠ')
-      .replace(/Silicon Design/g, 'ØªØµÙ…ÙŠÙ… Ø§Ù„Ø±Ù‚Ø§Ø¦Ù‚')
-      .replace(/On-Device AI/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¹Ù„Ù‰ Ø§Ù„Ø¬Ù‡Ø§Ø²')
-      .replace(/Autonomous AI/g, 'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ù…Ø³ØªÙ‚Ù„')
-      .replace(/Physical Robotics/g, 'Ø§Ù„Ø±ÙˆØ¨ÙˆØªØ§Øª Ø§Ù„Ù…Ø§Ø¯ÙŠØ©')
-      .replace(/EV Technology/g, 'ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ Ø§Ù„Ø³ÙŠØ§Ø±Ø§Øª Ø§Ù„ÙƒÙ‡Ø±Ø¨Ø§Ø¦ÙŠØ©')
-      .replace(/Consumer Tech/g, 'ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ Ø§Ù„Ù…Ø³ØªÙ‡Ù„Ùƒ')
-      .replace(/Broad-Market Diversification/g, 'ØªÙ†ÙˆÙŠØ¹ Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„ÙˆØ§Ø³Ø¹')
-      .replace(/Recession Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„Ø±ÙƒÙˆØ¯')
-      .replace(/11 Sectors/g, '11 Ù‚Ø·Ø§Ø¹Ø§Ù‹')
-      .replace(/Technology Concentration/g, 'ØªØ±ÙƒØ² Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§')
-      .replace(/Growth ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„Ù†Ù…Ùˆ')
-      .replace(/AI Equity Exposure/g, 'ØªØ¹Ø±Ø¶ Ø£Ø³Ù‡Ù… Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Semiconductor Sector/g, 'Ù‚Ø·Ø§Ø¹ Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª')
-      .replace(/AI Chips/g, 'Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Chip Equipment/g, 'Ù…Ø¹Ø¯Ø§Øª Ø§Ù„Ø±Ù‚Ø§Ø¦Ù‚')
-      .replace(/S&P 500 Technology/g, 'ØªÙ‚Ù†ÙŠØ© S&P 500')
-      .replace(/Software & Semiconductors/g, 'Ø§Ù„Ø¨Ø±Ù…Ø¬ÙŠØ§Øª ÙˆØ£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª')
-      .replace(/AI Exposure/g, 'ØªØ¹Ø±Ø¶ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Tech ETF/g, 'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§')
-      .replace(/Total U\.S\. Market/g, 'Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠ')
-      .replace(/Broad Diversification/g, 'ØªÙ†ÙˆÙŠØ¹ ÙˆØ§Ø³Ø¹')
-      .replace(/Small & Mid Cap/g, 'Ø§Ù„Ø´Ø±ÙƒØ§Øª Ø§Ù„ØµØºÙŠØ±Ø© ÙˆØ§Ù„Ù…ØªÙˆØ³Ø·Ø©')
-      .replace(/Long-Term/g, 'Ø·ÙˆÙŠÙ„ Ø§Ù„Ø£Ø¬Ù„')
-      .replace(/S&P 500 Low-Cost/g, 'S&P 500 Ù…Ù†Ø®ÙØ¶ Ø§Ù„ØªÙƒÙ„ÙØ©')
-      .replace(/Vanguard Quality/g, 'Ø¬ÙˆØ¯Ø© Vanguard')
-      .replace(/Broad Market/g, 'Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„ÙˆØ§Ø³Ø¹')
-      .replace(/Index Investing/g, 'Ø§Ù„Ø§Ø³ØªØ«Ù…Ø§Ø± ÙÙŠ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª')
-      .replace(/\bGold\b/g, 'Ø§Ù„Ø°Ù‡Ø¨')
-      .replace(/Macro Hedge/g, 'ØªØ­ÙˆØ· ÙƒÙ„ÙŠ')
-      .replace(/Inflation Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„ØªØ¶Ø®Ù…')
-      .replace(/Safe Haven Assets/g, 'Ø£ØµÙˆÙ„ Ø§Ù„Ù…Ù„Ø§Ø° Ø§Ù„Ø¢Ù…Ù†')
-      .replace(/U\.S\. Treasuries/g, 'Ø³Ù†Ø¯Ø§Øª Ø§Ù„Ø®Ø²Ø§Ù†Ø© Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠØ©')
-      .replace(/Interest Rate Sensitivity/g, 'Ø­Ø³Ø§Ø³ÙŠØ© Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ÙØ§Ø¦Ø¯Ø©')
-      .replace(/Duration Risk/g, 'Ù…Ø®Ø§Ø·Ø± Ø§Ù„Ø£Ù…Ø¯')
-      .replace(/\bBonds\b/g, 'Ø§Ù„Ø³Ù†Ø¯Ø§Øª')
-      .replace(/Dividend Growth/g, 'Ù†Ù…Ùˆ Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§Øª')
-      .replace(/Quality Equity/g, 'Ø£Ø³Ù‡Ù… Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ø¬ÙˆØ¯Ø©')
-      .replace(/Income Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„Ø¯Ø®Ù„')
-      .replace(/Value Screening/g, 'ÙØ­Øµ Ø§Ù„Ù‚ÙŠÙ…Ø©')
-      .replace(/Small-Cap Equities/g, 'Ø£Ø³Ù‡Ù… Ø§Ù„Ø´Ø±ÙƒØ§Øª Ø§Ù„ØµØºÙŠØ±Ø©')
-      .replace(/Russell 2000/g, 'Ù…Ø¤Ø´Ø± Russell 2000')
-      .replace(/Economic Cycle Sensitivity/g, 'Ø­Ø³Ø§Ø³ÙŠØ© Ø§Ù„Ø¯ÙˆØ±Ø© Ø§Ù„Ø§Ù‚ØªØµØ§Ø¯ÙŠØ©')
-      .replace(/Growth Investing/g, 'Ø§Ø³ØªØ«Ù…Ø§Ø± Ø§Ù„Ù†Ù…Ùˆ')
-      .replace(/Applications/g, 'Ø§Ù„ØªØ·Ø¨ÙŠÙ‚Ø§Øª')
-      .replace(/\bTechnology\b/g, 'Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§')
-      .replace(/\bGrowth\b/g, 'Ø§Ù„Ù†Ù…Ùˆ')
-      .replace(/GPU Computing/g, 'Ø­ÙˆØ³Ø¨Ø© GPU')
-      .replace(/Cloud AI/g, 'Ø³Ø­Ø§Ø¨Ø© Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/AI Applications/g, 'ØªØ·Ø¨ÙŠÙ‚Ø§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/GPU Design/g, 'ØªØµÙ…ÙŠÙ… GPU')
-      .replace(/Revenue Momentum/g, 'Ø²Ø®Ù… Ø§Ù„Ø¥ÙŠØ±Ø§Ø¯Ø§Øª')
-      .replace(/Yield Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„Ø¹Ø§Ø¦Ø¯')
-      .replace(/Value Investing/g, 'Ø§Ø³ØªØ«Ù…Ø§Ø± Ø§Ù„Ù‚ÙŠÙ…Ø©')
-      .replace(/Stability/g, 'Ø§Ù„Ø§Ø³ØªÙ‚Ø±Ø§Ø±')
-      .replace(/GPU Supply Chain/g, 'Ø³Ù„Ø³Ù„Ø© ØªÙˆØ±ÙŠØ¯ GPU')
-      .replace(/Hyperscaler Capex/g, 'Ø¥Ù†ÙØ§Ù‚ Ø±Ø£Ø³Ù…Ø§Ù„ÙŠ Ù„Ø¹Ù…Ù„Ø§Ù‚Ø© Ø§Ù„Ø³Ø­Ø§Ø¨Ø©')
-      .replace(/ETF Comparison/g, 'Ù…Ù‚Ø§Ø±Ù†Ø© ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª')
-      .replace(/Index Methodology/g, 'Ù…Ù†Ù‡Ø¬ÙŠØ© Ø§Ù„Ù…Ø¤Ø´Ø±')
-      .replace(/S&P 500 vs Nasdaq-100/g, 'S&P 500 Ù…Ù‚Ø§Ø¨Ù„ Nasdaq-100')
-      .replace(/Portfolio Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„Ù…Ø­ÙØ¸Ø©')
-      .replace(/Semiconductor Cycles/g, 'Ø¯ÙˆØ±Ø§Øª Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª')
-      .replace(/Inventory Dynamics/g, 'Ø¯ÙŠÙ†Ø§Ù…ÙŠÙƒÙŠØ§Øª Ø§Ù„Ù…Ø®Ø²ÙˆÙ†')
-      .replace(/AI Chip Risk/g, 'Ù…Ø®Ø§Ø·Ø± Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ')
-      .replace(/Valuation Research/g, 'Ø£Ø¨Ø­Ø§Ø« Ø§Ù„ØªÙ‚ÙŠÙŠÙ…');
+      .replace(/AI GPU Computing/g, 'حوسبة GPU للذكاء الاصطناعي')
+      .replace(/Data Center Demand/g, 'طلب مراكز البيانات')
+      .replace(/Data Center Power/g, 'طاقة مراكز البيانات')
+      .replace(/Data Center/g, 'مراكز البيانات')
+      .replace(/Blackwell Architecture/g, 'معمارية Blackwell')
+      .replace(/GPU Competition/g, 'منافسة GPU')
+      .replace(/AI Accelerators/g, 'معجلات الذكاء الاصطناعي')
+      .replace(/CPU Compute/g, 'حوسبة CPU')
+      .replace(/Enterprise Software/g, 'برمجيات المؤسسات')
+      .replace(/Mega-Cap Tech/g, 'تقنية عملاقة السوق')
+      .replace(/AWS Infrastructure/g, 'بنية تحتية AWS')
+      .replace(/E-Commerce AI/g, 'التجارة الإلكترونية والذكاء الاصطناعي')
+      .replace(/AI Search/g, 'بحث الذكاء الاصطناعي')
+      .replace(/Cloud AI Platform/g, 'منصة السحابة بالذكاء الاصطناعي')
+      .replace(/Custom Silicon/g, 'رقائق مخصصة')
+      .replace(/Social AI/g, 'الذكاء الاصطناعي الاجتماعي')
+      .replace(/Open-Source LLMs/g, 'نماذج LLM مفتوحة المصدر')
+      .replace(/Custom AI ASICs/g, 'ASIC الذكاء الاصطناعي المخصصة')
+      .replace(/Semiconductor Networking/g, 'شبكات أشباه الموصلات')
+      .replace(/AI Silicon/g, 'رقائق الذكاء الاصطناعي')
+      .replace(/AI Server Systems/g, 'أنظمة خوادم الذكاء الاصطناعي')
+      .replace(/GPU Infrastructure/g, 'بنية GPU التحتية')
+      .replace(/Liquid Cooling/g, 'التبريد السائل')
+      .replace(/AI Software Platform/g, 'منصة برمجيات الذكاء الاصطناعي')
+      .replace(/Enterprise Analytics/g, 'تحليلات المؤسسات')
+      .replace(/Government AI/g, 'الذكاء الاصطناعي الحكومي')
+      .replace(/Consumer AI/g, 'الذكاء الاصطناعي الاستهلاكي')
+      .replace(/Silicon Design/g, 'تصميم الرقائق')
+      .replace(/On-Device AI/g, 'الذكاء الاصطناعي على الجهاز')
+      .replace(/Autonomous AI/g, 'الذكاء الاصطناعي المستقل')
+      .replace(/Physical Robotics/g, 'الروبوتات المادية')
+      .replace(/EV Technology/g, 'تكنولوجيا السيارات الكهربائية')
+      .replace(/Consumer Tech/g, 'تكنولوجيا المستهلك')
+      .replace(/Broad-Market Diversification/g, 'تنويع السوق الواسع')
+      .replace(/Recession Research/g, 'أبحاث الركود')
+      .replace(/11 Sectors/g, '11 قطاعاً')
+      .replace(/Technology Concentration/g, 'تركز التكنولوجيا')
+      .replace(/Growth ETF/g, 'صندوق مؤشرات النمو')
+      .replace(/AI Equity Exposure/g, 'تعرض أسهم الذكاء الاصطناعي')
+      .replace(/Semiconductor Sector/g, 'قطاع أشباه الموصلات')
+      .replace(/AI Chips/g, 'رقائق الذكاء الاصطناعي')
+      .replace(/Chip Equipment/g, 'معدات الرقائق')
+      .replace(/S&P 500 Technology/g, 'تقنية S&P 500')
+      .replace(/Software & Semiconductors/g, 'البرمجيات وأشباه الموصلات')
+      .replace(/AI Exposure/g, 'تعرض الذكاء الاصطناعي')
+      .replace(/Tech ETF/g, 'صندوق مؤشرات التكنولوجيا')
+      .replace(/Total U\.S\. Market/g, 'إجمالي السوق الأمريكي')
+      .replace(/Broad Diversification/g, 'تنويع واسع')
+      .replace(/Small & Mid Cap/g, 'الشركات الصغيرة والمتوسطة')
+      .replace(/Long-Term/g, 'طويل الأجل')
+      .replace(/S&P 500 Low-Cost/g, 'S&P 500 منخفض التكلفة')
+      .replace(/Vanguard Quality/g, 'جودة Vanguard')
+      .replace(/Broad Market/g, 'السوق الواسع')
+      .replace(/Index Investing/g, 'الاستثمار في المؤشرات')
+      .replace(/\bGold\b/g, 'الذهب')
+      .replace(/Macro Hedge/g, 'تحوط كلي')
+      .replace(/Inflation Research/g, 'أبحاث التضخم')
+      .replace(/Safe Haven Assets/g, 'أصول الملاذ الآمن')
+      .replace(/U\.S\. Treasuries/g, 'سندات الخزانة الأمريكية')
+      .replace(/Interest Rate Sensitivity/g, 'حساسية أسعار الفائدة')
+      .replace(/Duration Risk/g, 'مخاطر الأمد')
+      .replace(/\bBonds\b/g, 'السندات')
+      .replace(/Dividend Growth/g, 'نمو التوزيعات')
+      .replace(/Quality Equity/g, 'أسهم عالية الجودة')
+      .replace(/Income Research/g, 'أبحاث الدخل')
+      .replace(/Value Screening/g, 'فحص القيمة')
+      .replace(/Small-Cap Equities/g, 'أسهم الشركات الصغيرة')
+      .replace(/Russell 2000/g, 'مؤشر Russell 2000')
+      .replace(/Economic Cycle Sensitivity/g, 'حساسية الدورة الاقتصادية')
+      .replace(/Growth Investing/g, 'استثمار النمو')
+      .replace(/Applications/g, 'التطبيقات')
+      .replace(/\bTechnology\b/g, 'التكنولوجيا')
+      .replace(/\bGrowth\b/g, 'النمو')
+      .replace(/GPU Computing/g, 'حوسبة GPU')
+      .replace(/Cloud AI/g, 'سحابة الذكاء الاصطناعي')
+      .replace(/AI Applications/g, 'تطبيقات الذكاء الاصطناعي')
+      .replace(/GPU Design/g, 'تصميم GPU')
+      .replace(/Revenue Momentum/g, 'زخم الإيرادات')
+      .replace(/Yield Research/g, 'أبحاث العائد')
+      .replace(/Value Investing/g, 'استثمار القيمة')
+      .replace(/Stability/g, 'الاستقرار')
+      .replace(/GPU Supply Chain/g, 'سلسلة توريد GPU')
+      .replace(/Hyperscaler Capex/g, 'إنفاق رأسمالي لعملاقة السحابة')
+      .replace(/ETF Comparison/g, 'مقارنة صناديق المؤشرات')
+      .replace(/Index Methodology/g, 'منهجية المؤشر')
+      .replace(/S&P 500 vs Nasdaq-100/g, 'S&P 500 مقابل Nasdaq-100')
+      .replace(/Portfolio Research/g, 'أبحاث المحفظة')
+      .replace(/Semiconductor Cycles/g, 'دورات أشباه الموصلات')
+      .replace(/Inventory Dynamics/g, 'ديناميكيات المخزون')
+      .replace(/AI Chip Risk/g, 'مخاطر رقائق الذكاء الاصطناعي')
+      .replace(/Valuation Research/g, 'أبحاث التقييم');
   }
 
   /* ===== ARABIC CONTENT LOOKUP =========================================
@@ -406,68 +406,68 @@
      Used in deepCard() and articleCard() instead of tr(pg.d) / tr(pg.n).
   ====================================================================== */
   var AR_D = {
-    nvda:  'Ù†Ø¸Ø§Ù… CUDAØŒ Ù…Ø¹Ù…Ø§Ø±ÙŠØ© BlackwellØŒ Ø³ÙŠØ§Ù‚ Ø·Ù„Ø¨ GPU Ù„Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø¨Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ.',
-    amd:   'GPU Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Instinct MI300XØŒ Ù…Ø¹Ø§Ù„Ø¬ EPYC Ù„Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŒ ØªØ­Ù„ÙŠÙ„ Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª Ø§Ù„ØªÙ†Ø§ÙØ³ÙŠ.',
-    msft:  'Azure AIØŒ Ø´Ø±Ø§ÙƒØ© OpenAIØŒ Ø£Ø¨Ø­Ø§Ø« Ø§Ø´ØªØ±Ø§ÙƒØ§Øª Copilot Ù„Ù„Ù…Ø¤Ø³Ø³Ø§Øª.',
-    amzn:  'AWS BedrockØŒ Ø±Ù‚Ø§Ø¦Ù‚ Trainium Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠØŒ Ø§Ù„Ø¥Ù†ÙØ§Ù‚ Ø§Ù„Ø±Ø£Ø³Ù…Ø§Ù„ÙŠ Ù„Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ø§Ù„Ø³Ø­Ø§Ø¨ÙŠØ©.',
-    googl: 'Google GeminiØŒ Ø±Ù‚Ø§Ø¦Ù‚ TPU Ø§Ù„Ù…Ø®ØµØµØ©ØŒ Ø£Ø¨Ø­Ø§Ø« Google Cloud Vertex AI.',
-    meta:  'Llama Ù…ÙØªÙˆØ­ Ø§Ù„Ù…ØµØ¯Ø±ØŒ Ø±Ù‚Ø§Ø¦Ù‚ MTIA Ø§Ù„Ù…Ø®ØµØµØ©ØŒ Ø§Ø³ØªÙ‡Ø¯Ø§Ù Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª Ø¨Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ.',
-    avgo:  'ØªØµÙ…ÙŠÙ… Ø±Ù‚Ø§Ø¦Ù‚ ASIC Ù…Ø®ØµØµØ© Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠØŒ Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ø´Ø¨ÙƒØ§ØªØŒ ØªØ¹Ø±Ø¶ Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.',
-    smci:  'ØªØµÙ†ÙŠØ¹ Ø®ÙˆØ§Ø¯Ù… GPUØŒ ØªØ¨Ø±ÙŠØ¯ Ø³Ø§Ø¦Ù„ØŒ ØªØ¬Ù…ÙŠØ¹ Ø£Ø±ÙÙ Ù…Ø±Ø§ÙƒØ² Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ.',
-    pltr:  'AIP Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ù…Ø¤Ø³Ø³ÙŠØŒ Ù†Ø´Ø± Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø­ÙƒÙˆÙ…ÙŠ ÙˆØ§Ù„ØªØ¬Ø§Ø±ÙŠ ÙˆØ§Ù„ØªØ­Ù„ÙŠÙ„Ø§Øª.',
-    aapl:  'Apple IntelligenceØŒ Ù…Ø­Ø±ÙƒØ§Øª Ø¹ØµØ¨ÙŠØ© Ù…Ù† Ø³Ù„Ø³Ù„Ø© MØŒ Ø£Ø¨Ø­Ø§Ø« Ù…Ø¹Ø§Ù„Ø¬Ø© Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¹Ù„Ù‰ Ø§Ù„Ø¬Ù‡Ø§Ø².',
-    tsla:  'Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ù„Ù„Ù‚ÙŠØ§Ø¯Ø© Ø§Ù„Ø°Ø§ØªÙŠØ©ØŒ Ø±ÙˆØ¨ÙˆØªØ§Øª OptimusØŒ Ø£Ø¨Ø­Ø§Ø« Ø§Ø³ØªØ¯Ù„Ø§Ù„ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¨ÙˆØ§Ø³Ø·Ø© GPU.',
-    spy:   'ØªÙ†ÙˆÙŠØ¹ Ø§Ù„Ø£Ø³Ù‡Ù… Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠØ© Ù„Ù€ 500 Ø´Ø±ÙƒØ©ØŒ ØªØºØ·ÙŠØ© 11 Ù‚Ø·Ø§Ø¹Ø§Ù‹ØŒ Ø³ÙŠØ§Ù‚ Ø§Ù„ØªØ±Ø§Ø¬Ø¹ ÙÙŠ Ø§Ù„Ø±ÙƒÙˆØ¯.',
-    qqq:   'Ù…Ø¤Ø´Ø± Ù…Ø±ÙƒÙ‘Ø² Ø¹Ù„Ù‰ Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ØŒ ØªØ¹Ø±Ø¶ Ù…Ø±ØªÙØ¹ Ù„Ø´Ø±ÙƒØ§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠØŒ Ø§Ù„Ù†Ù…Ùˆ Ù…Ù‚Ø§Ø¨Ù„ Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„ÙˆØ§Ø³Ø¹.',
-    soxx:  'Ù‚Ø·Ø§Ø¹ Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª Ø§Ù„ÙˆØ§Ø³Ø¹ ÙŠØ´Ù…Ù„ Ù…ØµÙ…Ù…ÙŠ GPU Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ ÙˆØ´Ø±ÙƒØ§Øª Ù…Ø¹Ø¯Ø§Øª Ø§Ù„Ø±Ù‚Ø§Ø¦Ù‚.',
-    xlk:   'ØªØ±ÙƒØ² Ù‚Ø·Ø§Ø¹ Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ ÙÙŠ S&P 500ØŒ ØªØ¹Ø±Ø¶ Ø§Ù„Ø¨Ø±Ù…Ø¬ÙŠØ§Øª ÙˆØ£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª.',
-    vti:   'Ø³ÙˆÙ‚ Ø§Ù„Ø£Ø³Ù‡Ù… Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠØ© Ø§Ù„ÙƒØ§Ù…Ù„ Ø¹Ø¨Ø± Ø§Ù„Ø´Ø±ÙƒØ§Øª Ø§Ù„ÙƒØ¨ÙŠØ±Ø© ÙˆØ§Ù„Ù…ØªÙˆØ³Ø·Ø© ÙˆØ§Ù„ØµØºÙŠØ±Ø©.',
-    voo:   'ØªØ¹Ø±Ø¶ Ù…Ù†Ø®ÙØ¶ Ø§Ù„ØªÙƒÙ„ÙØ© Ù„Ù…Ø¤Ø´Ø± S&P 500ØŒ Ø¨Ø¯ÙŠÙ„ Vanguard Ù„Ù€ SPY Ù„Ù„Ø¨Ø­Ø«.',
-    gld:   'ØµÙ†Ø¯ÙˆÙ‚ Ù…Ø¯Ø¹ÙˆÙ… Ø¨Ø§Ù„Ø°Ù‡Ø¨ Ø§Ù„ÙØ¹Ù„ÙŠ Ù„Ù„ØªØ­ÙˆØ· Ø§Ù„ÙƒÙ„ÙŠ ÙˆØ£Ø¨Ø­Ø§Ø« Ø­Ø³Ø§Ø³ÙŠØ© Ø§Ù„ØªØ¶Ø®Ù….',
-    tlt:   'ØªØ¹Ø±Ø¶ Ø³Ù†Ø¯Ø§Øª Ø§Ù„Ø­ÙƒÙˆÙ…Ø© Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠØ© Ø·ÙˆÙŠÙ„Ø© Ø§Ù„Ø£Ø¬Ù„ØŒ Ø£Ø¨Ø­Ø§Ø« Ø­Ø³Ø§Ø³ÙŠØ© Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ÙØ§Ø¦Ø¯Ø©.',
-    schd:  'ØªØ¹Ø±Ø¶ Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¬ÙˆØ¯Ø© Ù„Ø£Ø³Ù‡Ù… Ù†Ù…Ùˆ Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§ØªØŒ Ø³ÙŠØ§Ù‚ Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ù…ÙˆØ¬Ù‡ Ù„Ù„Ø¯Ø®Ù„.',
-    iwm:   'ØªØ¹Ø±Ø¶ Ø§Ù„Ø£Ø³Ù‡Ù… Ø§Ù„Ø£Ù…Ø±ÙŠÙƒÙŠØ© Ø§Ù„ØµØºÙŠØ±Ø©ØŒ Ø­Ø³Ø§Ø³ÙŠØ© Ø§Ù„Ø¯ÙˆØ±Ø© Ø§Ù„Ø§Ù‚ØªØµØ§Ø¯ÙŠØ© ÙˆØ¨Ø­Ø« Ø§Ù„Ù†Ù…Ùˆ.',
-    'hub-ai-stocks':     'Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠØŒ Ø·Ù„Ø¨ GPU Ù…Ù† Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŒ Ù…Ø²ÙˆØ¯Ùˆ Ø§Ù„Ø³Ø­Ø§Ø¨Ø©ØŒ ÙˆØªØ­Ù„ÙŠÙ„ Ø¨Ø±Ø§Ù…Ø¬ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ.',
-    'hub-semiconductor': 'Ø´Ø±ÙƒØ§Øª GPU ÙˆØ§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø§Øª ÙˆØ§Ù„Ø´Ø¨ÙƒØ§Øª ÙˆØ§Ù„Ø°Ø§ÙƒØ±Ø© ÙˆÙ…Ø¹Ø¯Ø§Øª Ø§Ù„Ø±Ù‚Ø§Ø¦Ù‚ ÙÙŠ Ø¨Ù†Ø§Ø¡ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ.',
-    'hub-growth':        'Ø´Ø±ÙƒØ§Øª Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ ÙˆØ§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ù†Ù…Ùˆ: Ø²Ø®Ù… Ø§Ù„Ø¥ÙŠØ±Ø§Ø¯Ø§Øª ÙˆØ§Ù„ØªÙ‚ÙŠÙŠÙ….',
-    'hub-dividends':     'ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§Øª Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ø¹Ø§Ø¦Ø¯ ÙˆÙ†Ù…Ùˆ Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§Øª Ù„Ù„Ø¨Ø­Ø« Ø§Ù„Ù…ÙˆØ¬Ù‡ Ù„Ù„Ø¯Ø®Ù„.',
-    'ins-ai-infra':      'Ø¹Ù†Ø§Ù‚ÙŠØ¯ GPUØŒ Ø¯ÙˆØ±Ø§Øª Ø§Ù„Ø¥Ù†ÙØ§Ù‚ Ø§Ù„Ø±Ø£Ø³Ù…Ø§Ù„ÙŠ Ù„Ø¹Ù…Ù„Ø§Ù‚Ø© Ø§Ù„Ø³Ø­Ø§Ø¨Ø©ØŒ Ù…ØªØ·Ù„Ø¨Ø§Øª Ø·Ø§Ù‚Ø© Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŒ Ù…Ø®Ø§Ø·Ø± Ø³Ù„Ø³Ù„Ø© Ø§Ù„ØªÙˆØ±ÙŠØ¯.',
-    'ins-spy-qqq':       'S&P 500 Ù…Ù‚Ø§Ø¨Ù„ Nasdaq-100: Ø§Ù„Ø§Ø®ØªÙ„Ø§ÙØ§Øª Ø§Ù„Ù‡ÙŠÙƒÙ„ÙŠØ©ØŒ ØªÙƒÙˆÙŠÙ† Ø§Ù„Ù‚Ø·Ø§Ø¹Ø§ØªØŒ Ù…Ù‚Ø§Ø±Ù†Ø© Ø§Ù„ØªØ±Ø§Ø¬Ø¹Ø§Øª.',
-    'ins-semi-cycle':    'ØªØµØ­ÙŠØ­Ø§Øª Ø§Ù„Ù…Ø®Ø²ÙˆÙ†ØŒ ØªØ±ÙƒØ² Ø§Ù„Ø¹Ù…Ù„Ø§Ø¡ØŒ ØªØ¨Ø¹ÙŠØ§Øª Ø§Ù„Ø¥Ù†ÙØ§Ù‚ Ø§Ù„Ø±Ø£Ø³Ù…Ø§Ù„ÙŠØŒ Ø¶ØºØ· Ø§Ù„ØªÙ‚ÙŠÙŠÙ….',
-    'ins-ai-inference':  'ÙƒÙŠÙ ØªØ®ØªÙ„Ù Ø£Ø­Ù…Ø§Ù„ Ø¹Ù…Ù„ Ø§Ù„Ø§Ø³ØªØ¯Ù„Ø§Ù„ ÙˆØ§Ù„ØªØ¯Ø±ÙŠØ¨ ÙˆÙ…Ø§ ÙŠØ¹Ù†ÙŠÙ‡ Ø°Ù„Ùƒ Ù„Ø·Ù„Ø¨ GPU ÙˆØ§Ù„Ø³Ø­Ø§Ø¨Ø©.',
-    'ins-hyperscaler':   'ÙƒÙŠÙ ØªÙ‚ÙˆØ¯ Amazon ÙˆMicrosoft ÙˆGoogle ÙˆMeta Ø¯ÙˆØ±Ø§Øª Ø¨Ù†Ø§Ø¡ Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ©.',
-    'ins-gpu-cpu':       'Ù„Ù…Ø§Ø°Ø§ ØªÙ‡ÙŠÙ…Ù† Ù…Ø¹Ù…Ø§Ø±ÙŠØ© GPU Ø§Ù„Ù…ØªÙˆØ§Ø²ÙŠØ© Ø¹Ù„Ù‰ ØªØ¯Ø±ÙŠØ¨ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ ÙˆØ§Ø³ØªØ¯Ù„Ø§Ù„Ù‡.',
-    'ins-custom-chips':  'TPUs ÙˆTrainium ÙˆInferentia â€” Ù„Ù…Ø§Ø°Ø§ ØªØµÙ…Ù… Ø¹Ù…Ù„Ø§Ù‚Ø© Ø§Ù„Ø³Ø­Ø§Ø¨Ø© Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ø®Ø§ØµØ©.',
-    'ins-expense-ratios':'ÙƒÙŠÙ ØªØªØ±Ø§ÙƒÙ… Ø±Ø³ÙˆÙ… Ø§Ù„ØµÙ†Ø§Ø¯ÙŠÙ‚ Ù…Ø¹ Ø§Ù„ÙˆÙ‚Øª ÙˆÙ„Ù…Ø§Ø°Ø§ ØªÙ‡Ù… Ù…Ù‚Ø§Ø±Ù†Ø© Ù†Ø³Ø¨Ø© Ø§Ù„Ù…ØµØ§Ø±ÙŠÙ.',
-    'ins-sector-etfs':   'Ù…ØªÙ‰ ØªØªÙÙˆÙ‚ ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù‚Ø·Ø§Ø¹Ø§Øª ÙˆØªØªØ£Ø®Ø± Ù…Ù‚Ø§Ø±Ù†Ø© Ø¨ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„Ø´Ø§Ù…Ù„Ø©.',
-    'ins-beta':          'ÙƒÙŠÙ ÙŠÙ‚ÙŠØ³ Ù…Ø¹Ø§Ù…Ù„ Ø¨ÙŠØªØ§ Ø­Ø³Ø§Ø³ÙŠØ© Ø§Ù„Ø³ÙˆÙ‚ ÙˆÙ…Ø§ ØªØ¹Ù†ÙŠÙ‡ Ø£Ø³Ù‡Ù… Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ø¨ÙŠØªØ§.',
-    'ins-diversification':'ÙƒÙŠÙ ÙŠØ¤Ø«Ø± ØªÙˆØ²ÙŠØ¹ Ø§Ù„Ù…Ø®Ø§Ø·Ø± Ø¹Ø¨Ø± ÙØ¦Ø§Øª Ø§Ù„Ø£ØµÙˆÙ„ ÙˆØ§Ù„Ù‚Ø·Ø§Ø¹Ø§Øª Ø¹Ù„Ù‰ Ø³Ù„ÙˆÙƒ Ø§Ù„Ù…Ø­ÙØ¸Ø©.',
-    'ins-mega-cap':      'ÙƒÙŠÙ ØªÙ‡ÙŠÙ…Ù† Apple ÙˆMicrosoft ÙˆNVIDIA ÙˆAmazon Ø¹Ù„Ù‰ Ø£ÙˆØ²Ø§Ù† Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª.',
-    'ins-cloud-ai':      'ÙƒÙŠÙ ØªØ¬Ù†ÙŠ Ø¹Ù…Ù„Ø§Ù‚Ø© Ø§Ù„Ø³Ø­Ø§Ø¨Ø© Ù…Ù† Ø£Ø­Ù…Ø§Ù„ Ø¹Ù…Ù„ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø¹Ø¨Ø± Ø·Ø¨Ù‚Ø§Øª IaaS ÙˆPaaS.',
-    'ins-rates-tech':    'ÙƒÙŠÙ ØªØ±ØªØ¨Ø· Ø¯ÙˆØ±Ø§Øª Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ÙØ§Ø¦Ø¯Ø© ØªØ§Ø±ÙŠØ®ÙŠØ§Ù‹ Ø¨ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ Ø§Ù„Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ù…Ø¶Ø§Ø¹ÙØ§Øª.',
-    'ins-growth-value':  'Ø§Ù„Ø§Ø®ØªÙ„Ø§ÙØ§Øª Ø§Ù„Ù‡ÙŠÙƒÙ„ÙŠØ© Ø¨ÙŠÙ† Ø¹ÙˆØ§Ù…Ù„ Ø£Ø³Ù‡Ù… Ø§Ù„Ù†Ù…Ùˆ ÙˆØ§Ù„Ù‚ÙŠÙ…Ø©ØŒ ÙˆÙ…ØªÙ‰ ÙŠÙ…ÙŠÙ„ ÙƒÙ„ Ù…Ù†Ù‡Ù…Ø§ Ù„Ù„ØªØµØ¯Ø±.'
+    nvda:  'نظام CUDA، معمارية Blackwell، سياق طلب GPU لمراكز البيانات بالذكاء الاصطناعي.',
+    amd:   'GPU للذكاء الاصطناعي Instinct MI300X، معالج EPYC لمراكز البيانات، تحليل أشباه الموصلات التنافسي.',
+    msft:  'Azure AI، شراكة OpenAI، أبحاث اشتراكات Copilot للمؤسسات.',
+    amzn:  'AWS Bedrock، رقائق Trainium للذكاء الاصطناعي، الإنفاق الرأسمالي للبنية التحتية السحابية.',
+    googl: 'Google Gemini، رقائق TPU المخصصة، أبحاث Google Cloud Vertex AI.',
+    meta:  'Llama مفتوح المصدر، رقائق MTIA المخصصة، استهداف الإعلانات بالذكاء الاصطناعي.',
+    avgo:  'تصميم رقائق ASIC مخصصة للذكاء الاصطناعي، رقائق الشبكات، تعرض البنية التحتية لمراكز البيانات.',
+    smci:  'تصنيع خوادم GPU، تبريد سائل، تجميع أرفف مراكز بيانات الذكاء الاصطناعي.',
+    pltr:  'AIP للذكاء الاصطناعي المؤسسي، نشر الذكاء الاصطناعي الحكومي والتجاري والتحليلات.',
+    aapl:  'Apple Intelligence، محركات عصبية من سلسلة M، أبحاث معالجة الذكاء الاصطناعي على الجهاز.',
+    tsla:  'الذكاء الاصطناعي للقيادة الذاتية، روبوتات Optimus، أبحاث استدلال الذكاء الاصطناعي بواسطة GPU.',
+    spy:   'تنويع الأسهم الأمريكية لـ 500 شركة، تغطية 11 قطاعاً، سياق التراجع في الركود.',
+    qqq:   'مؤشر مركّز على التكنولوجيا، تعرض مرتفع لشركات الذكاء الاصطناعي، النمو مقابل السوق الواسع.',
+    soxx:  'قطاع أشباه الموصلات الواسع يشمل مصممي GPU للذكاء الاصطناعي وشركات معدات الرقائق.',
+    xlk:   'تركز قطاع التكنولوجيا في S&P 500، تعرض البرمجيات وأشباه الموصلات.',
+    vti:   'سوق الأسهم الأمريكية الكامل عبر الشركات الكبيرة والمتوسطة والصغيرة.',
+    voo:   'تعرض منخفض التكلفة لمؤشر S&P 500، بديل Vanguard لـ SPY للبحث.',
+    gld:   'صندوق مدعوم بالذهب الفعلي للتحوط الكلي وأبحاث حساسية التضخم.',
+    tlt:   'تعرض سندات الحكومة الأمريكية طويلة الأجل، أبحاث حساسية أسعار الفائدة.',
+    schd:  'تعرض عالي الجودة لأسهم نمو التوزيعات، سياق البحث الموجه للدخل.',
+    iwm:   'تعرض الأسهم الأمريكية الصغيرة، حساسية الدورة الاقتصادية وبحث النمو.',
+    'hub-ai-stocks':     'البنية التحتية للذكاء الاصطناعي، طلب GPU من مراكز البيانات، مزودو السحابة، وتحليل برامج الذكاء الاصطناعي.',
+    'hub-semiconductor': 'شركات GPU والمعالجات والشبكات والذاكرة ومعدات الرقائق في بناء الذكاء الاصطناعي.',
+    'hub-growth':        'شركات التكنولوجيا والذكاء الاصطناعي عالية النمو: زخم الإيرادات والتقييم.',
+    'hub-dividends':     'صناديق التوزيعات عالية العائد ونمو التوزيعات للبحث الموجه للدخل.',
+    'ins-ai-infra':      'عناقيد GPU، دورات الإنفاق الرأسمالي لعملاقة السحابة، متطلبات طاقة مراكز البيانات، مخاطر سلسلة التوريد.',
+    'ins-spy-qqq':       'S&P 500 مقابل Nasdaq-100: الاختلافات الهيكلية، تكوين القطاعات، مقارنة التراجعات.',
+    'ins-semi-cycle':    'تصحيحات المخزون، تركز العملاء، تبعيات الإنفاق الرأسمالي، ضغط التقييم.',
+    'ins-ai-inference':  'كيف تختلف أحمال عمل الاستدلال والتدريب وما يعنيه ذلك لطلب GPU والسحابة.',
+    'ins-hyperscaler':   'كيف تقود Amazon وMicrosoft وGoogle وMeta دورات بناء البنية التحتية.',
+    'ins-gpu-cpu':       'لماذا تهيمن معمارية GPU المتوازية على تدريب الذكاء الاصطناعي واستدلاله.',
+    'ins-custom-chips':  'TPUs وTrainium وInferentia — لماذا تصمم عملاقة السحابة رقائق الذكاء الاصطناعي الخاصة.',
+    'ins-expense-ratios':'كيف تتراكم رسوم الصناديق مع الوقت ولماذا تهم مقارنة نسبة المصاريف.',
+    'ins-sector-etfs':   'متى تتفوق صناديق القطاعات وتتأخر مقارنة بصناديق المؤشرات الشاملة.',
+    'ins-beta':          'كيف يقيس معامل بيتا حساسية السوق وما تعنيه أسهم التكنولوجيا عالية البيتا.',
+    'ins-diversification':'كيف يؤثر توزيع المخاطر عبر فئات الأصول والقطاعات على سلوك المحفظة.',
+    'ins-mega-cap':      'كيف تهيمن Apple وMicrosoft وNVIDIA وAmazon على أوزان المؤشرات.',
+    'ins-cloud-ai':      'كيف تجني عملاقة السحابة من أحمال عمل الذكاء الاصطناعي عبر طبقات IaaS وPaaS.',
+    'ins-rates-tech':    'كيف ترتبط دورات أسعار الفائدة تاريخياً بتقييمات التكنولوجيا العالية المضاعفات.',
+    'ins-growth-value':  'الاختلافات الهيكلية بين عوامل أسهم النمو والقيمة، ومتى يميل كل منهما للتصدر.'
   };
 
   var AR_N = {
-    'hub-ai-stocks':     'Ù…Ø­ÙˆØ± Ø£Ø¨Ø­Ø§Ø« Ø£Ø³Ù‡Ù… Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ',
-    'hub-semiconductor': 'Ù…Ø­ÙˆØ± Ø£Ø³Ù‡Ù… Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª',
-    'hub-growth':        'Ù…Ø­ÙˆØ± Ø£Ø³Ù‡Ù… Ø§Ù„Ù†Ù…Ùˆ',
-    'hub-dividends':     'Ù…Ø­ÙˆØ± ØµÙ†Ø§Ø¯ÙŠÙ‚ Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„ØªÙˆØ²ÙŠØ¹Ø§Øª',
-    'ins-ai-infra':      'Ø·Ù„Ø¨ Ø§Ù„Ø¨Ù†ÙŠØ© Ø§Ù„ØªØ­ØªÙŠØ© Ù„Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ',
-    'ins-spy-qqq':       'Ø´Ø±Ø­ Ù…Ù‚Ø§Ø±Ù†Ø© SPY ÙˆQQQ',
-    'ins-semi-cycle':    'Ù…Ø®Ø§Ø·Ø± Ø¯ÙˆØ±Ø© Ø£Ø´Ø¨Ø§Ù‡ Ø§Ù„Ù…ÙˆØµÙ„Ø§Øª',
-    'ins-ai-inference':  'Ø§Ù„Ø§Ø³ØªØ¯Ù„Ø§Ù„ Ù…Ù‚Ø§Ø¨Ù„ Ø§Ù„ØªØ¯Ø±ÙŠØ¨ ÙÙŠ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ',
-    'ins-hyperscaler':   'Ø¯ÙˆØ±Ø§Øª Ø§Ù„Ø¥Ù†ÙØ§Ù‚ Ø§Ù„Ø±Ø£Ø³Ù…Ø§Ù„ÙŠ Ù„Ø¹Ù…Ù„Ø§Ù‚Ø© Ø§Ù„Ø³Ø­Ø§Ø¨Ø©',
-    'ins-gpu-cpu':       'GPU Ù…Ù‚Ø§Ø¨Ù„ CPU Ù„Ø£Ø­Ù…Ø§Ù„ Ø¹Ù…Ù„ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ',
-    'ins-custom-chips':  'Ø±Ù‚Ø§Ø¦Ù‚ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ Ø§Ù„Ù…Ø®ØµØµØ© ÙˆASICs',
-    'ins-expense-ratios':'Ø´Ø±Ø­ Ù†Ø³Ø¨ Ù…ØµØ§Ø±ÙŠÙ ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª',
-    'ins-sector-etfs':   'ØµÙ†Ø§Ø¯ÙŠÙ‚ Ø§Ù„Ù‚Ø·Ø§Ø¹Ø§Øª Ù…Ù‚Ø§Ø¨Ù„ Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„ÙˆØ§Ø³Ø¹',
-    'ins-beta':          'ÙÙ‡Ù… Ù…Ø¹Ø§Ù…Ù„ Ø¨ÙŠØªØ§ ÙÙŠ Ø§Ù„Ø£Ø³Ù‡Ù…',
-    'ins-diversification':'Ø£Ø³Ø§Ø³ÙŠØ§Øª ØªÙ†ÙˆÙŠØ¹ Ø§Ù„Ù…Ø­ÙØ¸Ø©',
-    'ins-mega-cap':      'ØªØ±ÙƒØ² Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ Ø§Ù„Ø¹Ù…Ù„Ø§Ù‚Ø© ÙÙŠ Ø§Ù„Ù…Ø¤Ø´Ø±Ø§Øª',
-    'ins-cloud-ai':      'Ø§Ù„Ø­ÙˆØ³Ø¨Ø© Ø§Ù„Ø³Ø­Ø§Ø¨ÙŠØ© ÙˆØ¨Ù†ÙŠØ© Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ',
-    'ins-rates-tech':    'Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ÙØ§Ø¦Ø¯Ø© ÙˆØ£Ø³Ù‡Ù… Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§',
-    'ins-growth-value':  'Ø£Ø³Ù‡Ù… Ø§Ù„Ù†Ù…Ùˆ Ù…Ù‚Ø§Ø¨Ù„ Ø§Ù„Ù‚ÙŠÙ…Ø©'
+    'hub-ai-stocks':     'محور أبحاث أسهم الذكاء الاصطناعي',
+    'hub-semiconductor': 'محور أسهم أشباه الموصلات',
+    'hub-growth':        'محور أسهم النمو',
+    'hub-dividends':     'محور صناديق مؤشرات التوزيعات',
+    'ins-ai-infra':      'طلب البنية التحتية للذكاء الاصطناعي',
+    'ins-spy-qqq':       'شرح مقارنة SPY وQQQ',
+    'ins-semi-cycle':    'مخاطر دورة أشباه الموصلات',
+    'ins-ai-inference':  'الاستدلال مقابل التدريب في الذكاء الاصطناعي',
+    'ins-hyperscaler':   'دورات الإنفاق الرأسمالي لعملاقة السحابة',
+    'ins-gpu-cpu':       'GPU مقابل CPU لأحمال عمل الذكاء الاصطناعي',
+    'ins-custom-chips':  'رقائق الذكاء الاصطناعي المخصصة وASICs',
+    'ins-expense-ratios':'شرح نسب مصاريف صناديق المؤشرات',
+    'ins-sector-etfs':   'صناديق القطاعات مقابل السوق الواسع',
+    'ins-beta':          'فهم معامل بيتا في الأسهم',
+    'ins-diversification':'أساسيات تنويع المحفظة',
+    'ins-mega-cap':      'تركز التكنولوجيا العملاقة في المؤشرات',
+    'ins-cloud-ai':      'الحوسبة السحابية وبنية الذكاء الاصطناعي',
+    'ins-rates-tech':    'أسعار الفائدة وأسهم التكنولوجيا',
+    'ins-growth-value':  'أسهم النمو مقابل القيمة'
   };
 
   /* ===== HTML HELPERS =================================================== */
@@ -482,13 +482,13 @@
   function deepCard(key, base) {
     var pg = P[key]; if (!pg) return '';
     var ar = isArabic();
-    var badge = (pg.t === 'stock' || pg.t === 'etf') ? pg.k : (pg.t === 'hub' ? (ar ? 'Ù…Ø­ÙˆØ±' : 'Hub') : (ar ? 'Ù…Ù‚Ø§Ù„' : 'Article'));
+    var badge = (pg.t === 'stock' || pg.t === 'etf') ? pg.k : (pg.t === 'hub' ? (ar ? 'محور' : 'Hub') : (ar ? 'مقال' : 'Article'));
     var nameStr = ar
-      ? (AR_N[key] || (badge && badge !== pg.n ? pg.n + ' â€” ' + badge : pg.n))
-      : (badge && badge !== pg.n ? pg.n + ' â€” ' + badge : pg.n);
-    nameStr = nameStr.replace('Ã¢â‚¬â€', '-');
+      ? (AR_N[key] || (badge && badge !== pg.n ? pg.n + ' — ' + badge : pg.n))
+      : (badge && badge !== pg.n ? pg.n + ' — ' + badge : pg.n);
+    nameStr = nameStr.replace('\u00e2\u20ac\u201d', '-');
     var desc = ar ? (AR_D[key] || pg.d) : pg.d;
-    return '<a class=â€deep-link-cardâ€ href=â€' + esc(arHref(base, pg.f)) + 'â€>'
+    return '<a class=”deep-link-card” href=”' + esc(arHref(base, pg.f)) + '”>'
          + '<span>' + esc(tr(pg.l)) + '</span>'
          + '<strong>' + esc(nameStr) + '</strong>'
          + '<p>' + esc(desc) + '</p>'
@@ -500,13 +500,13 @@
     var ar = isArabic();
     var name = ar ? (AR_N[key] || pg.n) : pg.n;
     var desc = ar ? (AR_D[key] || pg.d) : pg.d;
-    return '<a class=â€insight-cardâ€ href=â€' + esc(arHref(base, pg.f)) + 'â€>'
-         + '<div class=â€insight-card-metaâ€>'
-         + '<span class=â€insight-category-badgeâ€ style=â€margin:0â€>' + esc(tr(pg.l)) + '</span>'
+    return '<a class=”insight-card” href=”' + esc(arHref(base, pg.f)) + '”>'
+         + '<div class=”insight-card-meta”>'
+         + '<span class=”insight-category-badge” style=”margin:0”>' + esc(tr(pg.l)) + '</span>'
          + '</div>'
          + '<h3>' + esc(name) + '</h3>'
          + '<p>' + esc(desc) + '</p>'
-         + '<span class=â€insight-card-ctaâ€>' + esc(tr('Read article')) + ' &rarr;</span>'
+         + '<span class=”insight-card-cta”>' + esc(tr('Read article')) + ' &rarr;</span>'
          + '</a>';
   }
 
@@ -569,7 +569,7 @@
     out += '<div class="rc-screener-cta">'
          + '<div>'
          + '<p class="rc-screener-title">' + esc(tr('Screen the full AI market universe')) + '</p>'
-         + '<p class="rc-screener-sub">' + esc(tr('TradeAlpha Score across AI stocks and ETFs â€” educational multi-factor analysis.')) + '</p>'
+         + '<p class="rc-screener-sub">' + esc(tr('TradeAlpha Score across AI stocks and ETFs — educational multi-factor analysis.')) + '</p>'
          + '</div>'
          + '<a class="market-btn primary" href="' + esc(arHref(base, 'ai-stock-screener.html')) + '">' + esc(tr('Open Screener')) + ' &rarr;</a>'
          + '</div>';
@@ -590,4 +590,3 @@
     init();
   }
 })();
-
