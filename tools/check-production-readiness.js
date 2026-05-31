@@ -650,9 +650,7 @@ function checkLocalizedStaticPages() {
       }
     }
     if (sourceHtml && arHtml) {
-      // Skip structural parity for index.html — AR homepage is intentionally a
-      // research-platform layout that differs from the EN trading-signals homepage.
-      if (page.source !== "index.html") checkArabicStructuralParity(page.source, page.arPath, sourceHtml, arHtml);
+      checkArabicStructuralParity(page.source, page.arPath, sourceHtml, arHtml);
       checkArabicLanguageIsolation(page.arPath, arHtml);
     }
     if (arHtml) {
@@ -895,14 +893,41 @@ function checkSmallLocalizationRegressionGuards() {
   const arSectionCount = countSections(arHome);
   const enCardCount = countCards(enHome);
   const arCardCount = countCards(arHome);
-  const arResearchHome = arHome.includes('class="market-shell"') &&
-    arHome.includes('class="market-hero"') &&
-    arHome.includes('منصة أبحاث السوق');
+  const enProductHome = enHome.includes('class="site-shell"') &&
+    enHome.includes('class="hero-grid"') &&
+    enHome.includes('class="signal-card"') &&
+    enHome.includes('id="systems"') &&
+    enHome.includes("systems-grid-products");
 
-  if (!arResearchHome && enSectionCount && arSectionCount !== enSectionCount) {
+  if (enProductHome) {
+    const requiredArabicHomeMarkers = [
+      ["RTL document", '<html lang="ar" dir="rtl">'],
+      ["product shell", 'class="site-shell"'],
+      ["hero grid", 'class="hero-grid"'],
+      ["signal feed card", 'class="signal-card"'],
+      ["products section", 'id="systems"'],
+      ["product grid", "systems-grid-products"],
+      ["signal bot CTA", "افتح بوت الإشارات"],
+      ["free trial", "تجربة مجانية"],
+      ["trading hero", "إشارات تداول"]
+    ];
+    for (const [label, marker] of requiredArabicHomeMarkers) {
+      if (!arHome.includes(marker)) failures.push(`ar/index.html: Arabic product homepage missing ${label} marker`);
+    }
+    for (const pattern of [
+      /<main class="market-shell">/,
+      /class="market-hero"/,
+      /أبحاث الأسهم وصناديق المؤشرات ومحاور المحافظ/,
+      /<h1>\s*أبحاث الأسهم وصناديق المؤشرات ومحاور المحافظ\.\s*<\/h1>/
+    ]) {
+      if (pattern.test(arHome)) failures.push(`ar/index.html: outdated research-only homepage marker found: ${pattern}`);
+    }
+  }
+
+  if (enProductHome && enSectionCount && arSectionCount !== enSectionCount) {
     failures.push(`ar/index.html: homepage parity failed — EN has ${enSectionCount} sections, AR has ${arSectionCount}`);
   }
-  if (!arResearchHome && enCardCount && arCardCount !== enCardCount) {
+  if (enProductHome && enCardCount && arCardCount !== enCardCount) {
     failures.push(`ar/index.html: homepage parity failed — EN has ${enCardCount} card/panel elements, AR has ${arCardCount}`);
   }
 

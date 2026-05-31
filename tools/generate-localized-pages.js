@@ -133,10 +133,23 @@ const AR = {
 
 const pages = buildPages();
 const pageBySource = new Map(pages.map((page) => [norm(page.source), page]));
+const onlySourceArg = process.argv.find((arg) => arg.startsWith("--only="));
+const onlySource = onlySourceArg ? norm(onlySourceArg.slice("--only=".length)) : "";
 
 run();
 
 function run() {
+  if (onlySource) {
+    const page = pageBySource.get(onlySource);
+    if (!page) {
+      console.error(`No localized page configured for ${onlySource}.`);
+      process.exit(1);
+    }
+    writeLocalizedPage(page, "ar");
+    console.log(`Generated Arabic localized page for ${onlySource}.`);
+    return;
+  }
+
   normalizeEnglishSources();
 
   for (const page of pages) {
@@ -274,6 +287,7 @@ function writeLocalizedPage(page, locale) {
     html = localizeArticleFromContentFile(html, page);
     html = normalizeArabicArtifacts(html);
     html = finalArabicCleanup(html);
+    if (page.source === "index.html") html = localizeArabicLandingCopy(html);
   }
   html = ensureLanguageRouter(html, outRel);
 
@@ -1468,6 +1482,126 @@ function finalArabicCleanup(html) {
     .replace(/Mega-Cap Tech|mega-cap tech/g, "&#1575;&#1604;&#1578;&#1603;&#1606;&#1608;&#1604;&#1608;&#1580;&#1610;&#1575; &#1575;&#1604;&#1603;&#1576;&#1585;&#1609;")
     .replace(/market leadership/g, "&#1602;&#1610;&#1575;&#1583;&#1577; &#1575;&#1604;&#1587;&#1608;&#1602;")
     .replace(/passive investing/g, "&#1575;&#1604;&#1575;&#1587;&#1578;&#1579;&#1605;&#1575;&#1585; &#1575;&#1604;&#1587;&#1604;&#1576;&#1610;");
+}
+
+function localizeArabicLandingCopy(html) {
+  const replacements = [
+    ["TRADING &amp; MARKET RESEARCH PLATFORM", "منصة التداول وأبحاث السوق"],
+    ["TRADING &amp;amp; MARKET RESEARCH PLATFORM", "منصة التداول وأبحاث السوق"],
+    ["TRADING &amp; أبحاث السوق PLATFORM", "منصة التداول وأبحاث السوق"],
+    ["TRADING &amp;amp; أبحاث السوق PLATFORM", "منصة التداول وأبحاث السوق"],
+    ["Gold Trading System", "منصة التداول وأبحاث السوق"],
+    ["Free Signals", "إشارات مجانية"],
+    ["تنبيهات السوق", "إشارات مجانية"],
+    ["Trading Signals &amp; Market Research", "إشارات تداول وأبحاث سوق"],
+    ["Trading Signals & Market Research", "إشارات تداول وأبحاث سوق"],
+    ["Trading Signals &amp; أبحاث السوق", "إشارات تداول وأبحاث سوق"],
+    ["Trading Signals & أبحاث السوق", "إشارات تداول وأبحاث سوق"],
+    ["Institutional-Grade Signals. Free for 1 Month.", "إشارات بمستوى مؤسسي. مجانية لمدة شهر."],
+    ["Institutional-Grade Signals. Free for 1&nbsp;Month.", "إشارات بمستوى مؤسسي. مجانية لمدة شهر."],
+    ["Multi-market trading signals and market research with reviewable signal logic. QQQ/Nasdaq is one active signal stream within the platform.", "إشارات تداول متعددة الأسواق وأبحاث سوق بمنطق إشارات قابل للمراجعة. QQQ وناسداك مسار إشارات نشط داخل المنصة."],
+    ["Multi-market trading signals و أبحاث السوق with reviewable signal logic. QQQ/Nasdaq is one active signal stream within the platform.", "إشارات تداول متعددة الأسواق وأبحاث سوق بمنطق إشارات قابل للمراجعة. QQQ وناسداك مسار إشارات نشط داخل المنصة."],
+    ["Open Signal Bot", "افتح بوت الإشارات"],
+    ["Open Signal Feed", "افتح بث الإشارات"],
+    ["View Strategy →", "عرض الاستراتيجية ←"],
+    ["View Strategy", "عرض الاستراتيجية"],
+    ["WFO Verified 3/5", "تحقق WFO 3/5"],
+    ["Max DD 6%", "أقصى تراجع 6%"],
+    ["Free Trial", "تجربة مجانية"],
+    ["Live Signal Feed", "بث الإشارات المباشر"],
+    ["Live", "مباشر"],
+    ["Multi-market Telegram signal system", "نظام إشارات تيليجرام متعدد الأسواق"],
+    ["QQQ/Nasdaq is one active stream inside the signal feed.", "QQQ وناسداك مسار نشط داخل بث الإشارات."],
+    ["QQQ Nasdaq", "QQQ ناسداك"],
+    ["XAUUSD Gold", "XAUUSD الذهب"],
+    ["Active", "نشط"],
+    ["WFO Verified", "تحقق WFO"],
+    ["3/5 folds", "3/5 مراحل"],
+    ["Free Trial — 1 month", "تجربة مجانية — شهر واحد"],
+    ["تجربة مجانية — 1 month", "تجربة مجانية — شهر واحد"],
+    ["Then $30/month", "ثم 30 دولار شهريا"],
+    ["Products", "المنتجات"],
+    ["Choose Your Trading Product", "اختر منتج التداول"],
+    ["Access QQQ/Nasdaq signals or the XAUUSD Gold MT5 Expert Advisor through Telegram.", "احصل على إشارات QQQ وناسداك أو خبير XAUUSD للذهب على MT5 عبر تيليجرام."],
+    ["Access QQQ/Nasdaq signals or the XAUUSD الذهب خبير MT5 آلي through Telegram.", "احصل على إشارات QQQ وناسداك أو خبير XAUUSD للذهب على MT5 عبر تيليجرام."],
+    ["Telegram Signals", "إشارات تيليجرام"],
+    ["LIVE NOW", "متاح الآن"],
+    ["QQQ/Nasdaq signal bot", "بوت إشارات QQQ وناسداك"],
+    ["WFO verified", "تحقق WFO"],
+    ["Telegram signal access", "وصول لإشارات تيليجرام"],
+    ["MT5 Expert Advisor", "خبير MT5 آلي"],
+    ["Available", "متاح"],
+    ["XAUUSD — Gold MT5 Expert Advisor", "XAUUSD — خبير الذهب الآلي على MT5"],
+    ["XAUUSD — Gold خبير MT5 آلي", "XAUUSD — خبير الذهب الآلي على MT5"],
+    ["Available via Telegram", "متاح عبر تيليجرام"],
+    ["متاح via Telegram", "متاح عبر تيليجرام"],
+    ["XAUUSD الذهب Expert Advisor", "خبير آلي لتداول الذهب XAUUSD"],
+    ["Backtest: 10,273 trades", "اختبار تاريخي: 10,273 صفقة"],
+    ["Win rate: 78.7%", "نسبة الفوز: 78.7%"],
+    ["Historical P&amp;L: +$59,589", "ربح وخسارة تاريخية: +$59,589"],
+    ["Order و onboarding are handled through the customer bot.", "يتم الطلب والإعداد عبر بوت خدمة العملاء."],
+    ["Get MT5 EA", "احصل على خبير MT5"],
+    ["Join Telegram", "انضم إلى تيليجرام"],
+    ["Start Free Trial", "ابدأ التجربة المجانية"],
+    ["Live Since May 2026", "مباشر منذ مايو 2026"],
+    ["مباشر Since May 2026", "مباشر منذ مايو 2026"],
+    ["Strategy to signal in 3 steps", "من الاستراتيجية إلى الإشارة في 3 خطوات"],
+    ["WFO Validated", "تحقق WFO"],
+    ["Strategy backtested 2018–2026 across 5 independent folds. Only deployed after passing 3/5.", "تم اختبار الاستراتيجية تاريخيا بين 2018 و2026 عبر 5 مراحل مستقلة، ولا يتم تشغيلها إلا بعد اجتياز 3 من 5."],
+    ["Signal Generated", "توليد الإشارة"],
+    ["Every H1 bar close, EMA cross + ATR filter checked. Signal sent instantly to your Telegram.", "عند إغلاق كل شمعة H1 يتم فحص تقاطع EMA مع فلتر ATR، ثم ترسل الإشارة مباشرة إلى تيليجرام."],
+    ["You Trade", "أنت تتداول"],
+    ["Receive entry, stop loss, و take profit levels. Trade on any broker. لا platform lock-in.", "استلم مستويات الدخول ووقف الخسارة وجني الأرباح. تداول عبر أي وسيط دون تقييد بمنصة محددة."],
+    ["مباشر on Myfxbook", "مباشر على Myfxbook"],
+    ["مباشر tracking", "تتبع مباشر"],
+    ["Featured المقالات", "مقالات مختارة"],
+    ["Finance research for AI الأسهم, صناديق المؤشرات, و هيكل السوق", "أبحاث مالية عن أسهم الذكاء الاصطناعي وصناديق المؤشرات وهيكل السوق"],
+    ["تعليمي أبحاث السوق designed for deeper reading across البنية التحتية للذكاء الاصطناعي, أشباه الموصلات cycles, صندوق مؤشرات التعرض, و مخاطر المحفظة السياق.", "أبحاث سوق تعليمية مصممة لقراءة أعمق في البنية التحتية للذكاء الاصطناعي ودورات أشباه الموصلات وتعرض صناديق المؤشرات وسياق مخاطر المحافظ."],
+    ["طلب البنية التحتية للذكاء الاصطناعي: GPUs, data centers, و the أشباه الموصلات supply chain", "طلب البنية التحتية للذكاء الاصطناعي: وحدات GPU ومراكز البيانات وسلسلة توريد أشباه الموصلات"],
+    ["السياق البحثي on GPU cluster buildout, hyperscaler capex, power الطلب, و supply-chain dependencies across the AI market stack.", "سياق بحثي حول بناء عناقيد GPU وإنفاق مزودي السحابة والطلب على الطاقة واعتماد سلسلة التوريد عبر سوق الذكاء الاصطناعي."],
+    ["اقرأ featured insight &amp;rarr;", "اقرأ المقال المختار ←"],
+    ["SPY vs QQQ explained", "شرح المقارنة بين SPY وQQQ"],
+    ["منهجية المؤشر, التركز, sector التعرض, و drawdown السياق for broad-market صندوق مؤشرات research.", "منهجية المؤشر والتركيز والتعرض القطاعي وسياق التراجع لأبحاث صناديق السوق الواسع."],
+    ["أشباه الموصلات cycle المخاطرs", "مخاطر دورة أشباه الموصلات"],
+    ["Inventory corrections, capex dependencies, تركز العملاء, و valuation compression المخاطر.", "تصحيحات المخزون واعتماد الإنفاق الرأسمالي وتركيز العملاء ومخاطر ضغط التقييم."],
+    ["Market المقالات", "مقالات السوق"],
+    ["Browse the full research library", "تصفح مكتبة الأبحاث الكاملة"],
+    ["Open the TradeAlphaAI Market المقالات hub for published educational المقالات on البنية التحتية للذكاء الاصطناعي, صندوق مؤشرات education, أشباه الموصلات cycles, macro المخاطر, و portfolio السياق.", "افتح مركز مقالات TradeAlphaAI للاطلاع على مقالات تعليمية منشورة عن البنية التحتية للذكاء الاصطناعي وتعليم صناديق المؤشرات ودورات أشباه الموصلات والمخاطر الكلية وسياق المحافظ."],
+    ["Open Market المقالات", "افتح مقالات السوق"],
+    ["Research Index", "فهرس الأبحاث"],
+    ["Compare البنية التحتية للذكاء الاصطناعي, cloud AI, أشباه الموصلات, و software platform research pages.", "قارن صفحات أبحاث البنية التحتية للذكاء الاصطناعي والذكاء الاصطناعي السحابي وأشباه الموصلات ومنصات البرمجيات."],
+    ["افتح المحور &amp;rarr;", "افتح المحور ←"],
+    ["صندوق مؤشرات نسب المصاريف explained", "شرح نسب مصاريف صناديق المؤشرات"],
+    ["How fund التكاليف compound over time و why fee comparison matters in long-term index research.", "كيف تتراكم تكاليف الصناديق مع الوقت ولماذا تهم مقارنة الرسوم في أبحاث المؤشرات طويلة الأجل."],
+    ["اقرأ guide &amp;rarr;", "اقرأ الدليل ←"],
+    ["Screen AI و صندوق مؤشرات المحاور", "افحص محاور الذكاء الاصطناعي وصناديق المؤشرات"],
+    ["استكشف educational درجة TradeAlpha السياق across AI الأسهم, أشباه الموصلات صناديق المؤشرات, و broad-market funds.", "استكشف سياق درجة TradeAlpha التعليمية عبر أسهم الذكاء الاصطناعي وصناديق أشباه الموصلات وصناديق السوق الواسع."],
+    ["افتح ماسح السوق &amp;rarr;", "افتح ماسح السوق ←"],
+    ["Growth الأسهم", "أسهم النمو"],
+    ["Dividend صناديق المؤشرات", "صناديق توزيعات الأرباح"],
+    ["QQQ research", "أبحاث QQQ"],
+    ["NVDA research", "أبحاث NVDA"],
+    ["Max DD", "أقصى تراجع"]
+  ];
+
+  for (const [from, to] of replacements) {
+    html = html.split(from).join(to);
+  }
+
+  return html
+    .replace(/<span class="brand-copy">\s*<strong>TradeAlpha AI<\/strong>\s*<span>[^<]*<\/span>\s*<\/span>/i, '<span class="brand-copy">\n          <strong>TradeAlpha AI</strong>\n          <span>منصة التداول وأبحاث السوق</span>\n        </span>')
+    .replace(/<title>[\s\S]*?<\/title>/i, "<title>TradeAlpha AI | منصة تداول الذهب بإشارات موثقة</title>")
+    .replace(/<meta name="description" content="[^"]*"\s*\/?>/i, '<meta name="description" content="TradeAlpha AI منصة تداول وإشارات سوق مع تجربة مجانية لمدة شهر وبوت إشارات عبر تيليجرام وأبحاث سوق تعليمية." />')
+    .replace(/<meta property="og:title" content="[^"]*"\s*\/?>/i, '<meta property="og:title" content="TradeAlpha AI | منصة تداول الذهب بإشارات موثقة" />')
+    .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/i, '<meta property="og:description" content="TradeAlpha AI منصة تداول وإشارات سوق مع تجربة مجانية لمدة شهر وبوت إشارات عبر تيليجرام وأبحاث سوق تعليمية." />')
+    .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?>/i, '<meta name="twitter:title" content="TradeAlpha AI | منصة تداول الذهب بإشارات موثقة" />')
+    .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?>/i, '<meta name="twitter:description" content="TradeAlpha AI منصة تداول وإشارات سوق مع تجربة مجانية لمدة شهر وبوت إشارات عبر تيليجرام وأبحاث سوق تعليمية." />')
+    .replace(/<meta property="og:image:alt" content="[^"]*"\s*\/?>/i, '<meta property="og:image:alt" content="معاينة منصة تداول TradeAlpha AI" />')
+    .replace(/Access QQQ\/Nasdaq signals or the XAUUSD [^<]*? through Telegram\./g, "احصل على إشارات QQQ وناسداك أو خبير XAUUSD للذهب على MT5 عبر تيليجرام.")
+    .replace(/"description": "WFO-verified QQQ[^"]*?"/g, '"description": "إشارات QQQ وناسداك موثقة بمنهج WFO عبر تيليجرام، مع تجربة مجانية لمدة شهر ثم 30 دولار شهريا."')
+    .replace(/"category": "Trading Signals"/g, '"category": "إشارات تداول"')
+    .replace(/"name": "TradeAlpha Signals Monthly"/g, '"name": "TradeAlpha Signals شهريا"')
+    .replace(/أبحاث الأسهم وصناديق المؤشرات ومحاور المحافظ\./g, "إشارات تداول ومنتجات سوق من TradeAlpha AI.");
 }
 
 function setMeta(html, type, key, value) {
