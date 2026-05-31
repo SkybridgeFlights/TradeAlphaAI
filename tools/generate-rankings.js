@@ -169,7 +169,7 @@ const html = `<!doctype html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Research Rankings and Watchlists | TradeAlphaAI</title>
-  <meta name="description" content="Educational research rankings for AI infrastructure stocks, semiconductor leaders, momentum stocks, defensive stocks, growth ETFs, dividend ETFs, and broad market ETFs. Live prices load automatically." />
+  <meta name="description" content="Educational research rankings for global stocks, ETFs, sectors, momentum themes, defensive assets, growth funds, dividend ETFs, and broad market ETFs. Live prices load automatically." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="${DOMAIN}/rankings.html" />
   <!-- localized-static-pages:start -->
@@ -196,7 +196,7 @@ const html = `<!doctype html>
 <body class="market-page">
   <div class="topbar">
     <div class="wrap topbar-inner">
-      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlpha AI</strong><span>Research Platform</span></span></a>
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlpha AI</strong><span>Market Research Platform</span></span></a>
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
           <a href="/" class="nav-link">Home</a>
@@ -258,6 +258,9 @@ const html = `<!doctype html>
         ${sections.map(s => `<a href="#${s.id}" class="rankings-nav-link">${esc(s.title.replace(/^(Top|Best) /, ''))}</a>`).join('\n        ')}
       </nav>
       ${snapshotSection}
+      <section class="market-section">
+        <div class="market-panel" data-market-authority="rankings"></div>
+      </section>
       ${sectionsOutput}
       <section class="market-section">
         <div class="market-panel">
@@ -320,6 +323,7 @@ const html = `<!doctype html>
       if (chEl) { chEl.textContent = (top.val >= 0 ? "+" : "") + top.val.toFixed(2) + "%"; chEl.style.color = top.val >= 0 ? "#7dff8c" : "#ff7e7e"; }
     }, 5000);
   </script>
+  <script src="/js/market/market-authority-layer.js"></script>
 </body>
 </html>
 `;

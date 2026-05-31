@@ -33,7 +33,7 @@
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
           <a href="../index.html" class="nav-link">Home</a>
-          <a href="../stocks.html" class="nav-link">AI Stock Analyzer</a>
+          <a href="../stocks.html" class="nav-link">Global Stock Research</a>
           <a href="../etfs.html" class="nav-link">ETF Analyzer</a>
           <a href="../ai-stock-screener.html" class="nav-link">Market Screener</a>
           <a href="../insights/" class="nav-link">Articles</a>
@@ -47,6 +47,7 @@
       <nav class="breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../etfs.html">ETFs</a><span>/</span><span>{{SYMBOL}}</span></nav>
       <section class="market-section"><div class="market-panel detail-header"><div class="detail-title"><span class="eyebrow">TradeAlpha Research Desk</span><h1><span data-asset-symbol>{{SYMBOL}}</span> ETF Analysis</h1><p class="market-lead">{{CONTENT_ANGLE}}</p><div class="detail-meta"><span>{{NAME}} / {{SECTOR}}</span><span class="risk-badge" data-score-label></span></div><div class="price-line"><strong data-asset-price></strong><span class="setup-badge" data-asset-change></span></div></div><aside class="market-card score-card"><div class="score-gauge" data-score-gauge><strong data-score-value>0</strong></div><h2>TradeAlpha Score</h2><p data-score-disclaimer>This analysis is for educational and informational purposes only and does not constitute financial advice.</p></aside></div></section>
       <section class="market-section"><div data-data-status></div></section>
+      <section class="market-section"><div class="market-panel" data-market-authority="etf"></div></section>
       <section class="market-section"><div class="market-panel" data-static-symbol-content><span class="eyebrow">SEO Overview</span><h2>{{SYMBOL}} educational ETF overview</h2><p class="market-copy">{{SEO_DESCRIPTION}}</p></div></section>
       {{RESEARCH_BLOCKS}}
       <section class="market-section"><div class="trust-strip" data-trust-strip></div></section>
@@ -65,6 +66,7 @@
     </div>
   </main>
   <script type="module">import { initStaticSymbolPage } from "../js/market/ui-renderer.js"; initStaticSymbolPage("{{SYMBOL}}");</script>
+  <script src="../js/market/market-authority-layer.js"></script>
   <script src="../js/related-content.js"></script>
   <script src="../js/research-layer.js"></script>
 </body>

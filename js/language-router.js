@@ -1680,6 +1680,18 @@
         "ar": "/ar/etfs/xly.html",
         "en": "/etfs/xly.html"
     },
+    "/insights/aapl-vs-msft-mega-cap-tech-comparison.html": {
+        "ar": "/ar/insights/aapl-vs-msft-mega-cap-tech-comparison.html",
+        "en": "/insights/aapl-vs-msft-mega-cap-tech-comparison.html"
+    },
+    "/ar/insights/aapl-vs-msft-mega-cap-tech-comparison.html": {
+        "ar": "/ar/insights/aapl-vs-msft-mega-cap-tech-comparison.html",
+        "en": "/insights/aapl-vs-msft-mega-cap-tech-comparison.html"
+    },
+    "/en/insights/aapl-vs-msft-mega-cap-tech-comparison.html": {
+        "ar": "/ar/insights/aapl-vs-msft-mega-cap-tech-comparison.html",
+        "en": "/insights/aapl-vs-msft-mega-cap-tech-comparison.html"
+    },
     "/insights/ai-inference-vs-training.html": {
         "ar": "/ar/insights/ai-inference-vs-training.html",
         "en": "/insights/ai-inference-vs-training.html"
@@ -1740,6 +1752,18 @@
         "ar": "/ar/insights/ai-infrastructure-research-hyperscaler-spending-signals-for-ai-infrastructure.html",
         "en": "/insights/ai-infrastructure-research-hyperscaler-spending-signals-for-ai-infrastructure.html"
     },
+    "/insights/ai-stocks-market-overview.html": {
+        "ar": "/ar/insights/ai-stocks-market-overview.html",
+        "en": "/insights/ai-stocks-market-overview.html"
+    },
+    "/ar/insights/ai-stocks-market-overview.html": {
+        "ar": "/ar/insights/ai-stocks-market-overview.html",
+        "en": "/insights/ai-stocks-market-overview.html"
+    },
+    "/en/insights/ai-stocks-market-overview.html": {
+        "ar": "/ar/insights/ai-stocks-market-overview.html",
+        "en": "/insights/ai-stocks-market-overview.html"
+    },
     "/insights/cloud-computing-ai-market-structure.html": {
         "ar": "/ar/insights/cloud-computing-ai-market-structure.html",
         "en": "/insights/cloud-computing-ai-market-structure.html"
@@ -1752,6 +1776,18 @@
         "ar": "/ar/insights/cloud-computing-ai-market-structure.html",
         "en": "/insights/cloud-computing-ai-market-structure.html"
     },
+    "/insights/cloud-computing-stocks-overview.html": {
+        "ar": "/ar/insights/cloud-computing-stocks-overview.html",
+        "en": "/insights/cloud-computing-stocks-overview.html"
+    },
+    "/ar/insights/cloud-computing-stocks-overview.html": {
+        "ar": "/ar/insights/cloud-computing-stocks-overview.html",
+        "en": "/insights/cloud-computing-stocks-overview.html"
+    },
+    "/en/insights/cloud-computing-stocks-overview.html": {
+        "ar": "/ar/insights/cloud-computing-stocks-overview.html",
+        "en": "/insights/cloud-computing-stocks-overview.html"
+    },
     "/insights/custom-ai-chips-asics-tpus.html": {
         "ar": "/ar/insights/custom-ai-chips-asics-tpus.html",
         "en": "/insights/custom-ai-chips-asics-tpus.html"
@@ -1763,6 +1799,30 @@
     "/en/insights/custom-ai-chips-asics-tpus.html": {
         "ar": "/ar/insights/custom-ai-chips-asics-tpus.html",
         "en": "/insights/custom-ai-chips-asics-tpus.html"
+    },
+    "/insights/cybersecurity-stocks-to-watch.html": {
+        "ar": "/ar/insights/cybersecurity-stocks-to-watch.html",
+        "en": "/insights/cybersecurity-stocks-to-watch.html"
+    },
+    "/ar/insights/cybersecurity-stocks-to-watch.html": {
+        "ar": "/ar/insights/cybersecurity-stocks-to-watch.html",
+        "en": "/insights/cybersecurity-stocks-to-watch.html"
+    },
+    "/en/insights/cybersecurity-stocks-to-watch.html": {
+        "ar": "/ar/insights/cybersecurity-stocks-to-watch.html",
+        "en": "/insights/cybersecurity-stocks-to-watch.html"
+    },
+    "/insights/dividend-etfs-explained.html": {
+        "ar": "/ar/insights/dividend-etfs-explained.html",
+        "en": "/insights/dividend-etfs-explained.html"
+    },
+    "/ar/insights/dividend-etfs-explained.html": {
+        "ar": "/ar/insights/dividend-etfs-explained.html",
+        "en": "/insights/dividend-etfs-explained.html"
+    },
+    "/en/insights/dividend-etfs-explained.html": {
+        "ar": "/ar/insights/dividend-etfs-explained.html",
+        "en": "/insights/dividend-etfs-explained.html"
     },
     "/insights/etf-education-etf-structure-and-index-methodology.html": {
         "ar": "/ar/insights/etf-education-etf-structure-and-index-methodology.html",
@@ -1848,6 +1908,18 @@
         "ar": "/ar/insights/gpu-vs-cpu-ai-workloads.html",
         "en": "/insights/gpu-vs-cpu-ai-workloads.html"
     },
+    "/insights/growth-etfs-vs-value-etfs.html": {
+        "ar": "/ar/insights/growth-etfs-vs-value-etfs.html",
+        "en": "/insights/growth-etfs-vs-value-etfs.html"
+    },
+    "/ar/insights/growth-etfs-vs-value-etfs.html": {
+        "ar": "/ar/insights/growth-etfs-vs-value-etfs.html",
+        "en": "/insights/growth-etfs-vs-value-etfs.html"
+    },
+    "/en/insights/growth-etfs-vs-value-etfs.html": {
+        "ar": "/ar/insights/growth-etfs-vs-value-etfs.html",
+        "en": "/insights/growth-etfs-vs-value-etfs.html"
+    },
     "/insights/growth-stocks-vs-value-stocks.html": {
         "ar": "/ar/insights/growth-stocks-vs-value-stocks.html",
         "en": "/insights/growth-stocks-vs-value-stocks.html"
@@ -1919,6 +1991,18 @@
     "/en/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html": {
         "ar": "/ar/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html",
         "en": "/insights/mega-cap-tech-research-mega-cap-concentration-in-passive-indexes.html"
+    },
+    "/insights/nvda-vs-amd-ai-chip-stocks-compared.html": {
+        "ar": "/ar/insights/nvda-vs-amd-ai-chip-stocks-compared.html",
+        "en": "/insights/nvda-vs-amd-ai-chip-stocks-compared.html"
+    },
+    "/ar/insights/nvda-vs-amd-ai-chip-stocks-compared.html": {
+        "ar": "/ar/insights/nvda-vs-amd-ai-chip-stocks-compared.html",
+        "en": "/insights/nvda-vs-amd-ai-chip-stocks-compared.html"
+    },
+    "/en/insights/nvda-vs-amd-ai-chip-stocks-compared.html": {
+        "ar": "/ar/insights/nvda-vs-amd-ai-chip-stocks-compared.html",
+        "en": "/insights/nvda-vs-amd-ai-chip-stocks-compared.html"
     },
     "/insights/portfolio-diversification-basics.html": {
         "ar": "/ar/insights/portfolio-diversification-basics.html",
@@ -1992,6 +2076,30 @@
         "ar": "/ar/insights/semiconductor-market-research-semiconductor-concentration-risk.html",
         "en": "/insights/semiconductor-market-research-semiconductor-concentration-risk.html"
     },
+    "/insights/semiconductor-stocks-outlook.html": {
+        "ar": "/ar/insights/semiconductor-stocks-outlook.html",
+        "en": "/insights/semiconductor-stocks-outlook.html"
+    },
+    "/ar/insights/semiconductor-stocks-outlook.html": {
+        "ar": "/ar/insights/semiconductor-stocks-outlook.html",
+        "en": "/insights/semiconductor-stocks-outlook.html"
+    },
+    "/en/insights/semiconductor-stocks-outlook.html": {
+        "ar": "/ar/insights/semiconductor-stocks-outlook.html",
+        "en": "/insights/semiconductor-stocks-outlook.html"
+    },
+    "/insights/spy-vs-qqq-etf-comparison-guide.html": {
+        "ar": "/ar/insights/spy-vs-qqq-etf-comparison-guide.html",
+        "en": "/insights/spy-vs-qqq-etf-comparison-guide.html"
+    },
+    "/ar/insights/spy-vs-qqq-etf-comparison-guide.html": {
+        "ar": "/ar/insights/spy-vs-qqq-etf-comparison-guide.html",
+        "en": "/insights/spy-vs-qqq-etf-comparison-guide.html"
+    },
+    "/en/insights/spy-vs-qqq-etf-comparison-guide.html": {
+        "ar": "/ar/insights/spy-vs-qqq-etf-comparison-guide.html",
+        "en": "/insights/spy-vs-qqq-etf-comparison-guide.html"
+    },
     "/insights/spy-vs-qqq-explained.html": {
         "ar": "/ar/insights/spy-vs-qqq-explained.html",
         "en": "/insights/spy-vs-qqq-explained.html"
@@ -2015,6 +2123,18 @@
     "/en/insights/understanding-beta-in-stocks.html": {
         "ar": "/ar/insights/understanding-beta-in-stocks.html",
         "en": "/insights/understanding-beta-in-stocks.html"
+    },
+    "/insights/voo-vs-vti-long-term-etf-comparison.html": {
+        "ar": "/ar/insights/voo-vs-vti-long-term-etf-comparison.html",
+        "en": "/insights/voo-vs-vti-long-term-etf-comparison.html"
+    },
+    "/ar/insights/voo-vs-vti-long-term-etf-comparison.html": {
+        "ar": "/ar/insights/voo-vs-vti-long-term-etf-comparison.html",
+        "en": "/insights/voo-vs-vti-long-term-etf-comparison.html"
+    },
+    "/en/insights/voo-vs-vti-long-term-etf-comparison.html": {
+        "ar": "/ar/insights/voo-vs-vti-long-term-etf-comparison.html",
+        "en": "/insights/voo-vs-vti-long-term-etf-comparison.html"
     }
 };
   const currentPath = window.location.pathname;

@@ -54,6 +54,8 @@ for (const rel of arComparePages) checkComparePage(rel, true);
 checkRobots();
 checkSitemapIndex();
 checkDeadInternalLinks();
+checkAuthorityLayer();
+checkInternalAuthorityMesh();
 
 if (failures.length) {
   console.error("SEO structure check failed:");
@@ -138,6 +140,75 @@ function checkDeadInternalLinks() {
       if (!exists(target)) failures.push(`${rel}: broken internal link ${href} -> ${target}`);
     }
   }
+}
+
+function checkAuthorityLayer() {
+  if (!exists("data/market-authority-layer.json")) failures.push("data/market-authority-layer.json missing");
+  if (!exists("js/market/market-authority-layer.js")) failures.push("js/market/market-authority-layer.js missing");
+  const data = readJson("data/market-authority-layer.json", {});
+  if (!data.snapshots || data.snapshots.length < 6) failures.push("market authority layer: expected at least 6 snapshot definitions");
+  if (!data.insightBlocks || data.insightBlocks.length < 6) failures.push("market authority layer: expected at least 6 educational insight blocks");
+
+  const requiredHooks = [
+    "index.html",
+    "ar/index.html",
+    "rankings.html",
+    "ar/rankings.html",
+    ...stockPages.slice(0, 10),
+    ...etfPages.slice(0, 10),
+    ...comparePages.slice(0, 10),
+    ...arComparePages.slice(0, 10),
+    ...hubPages.filter((rel) => !rel.startsWith("ar/"))
+  ];
+  for (const rel of unique(requiredHooks)) {
+    const html = read(rel);
+    if (!html) continue;
+    if (!html.includes("data-market-authority")) failures.push(`${rel}: missing Phase 16 freshness/authority marker`);
+    if (!html.includes("market-authority-layer.js")) failures.push(`${rel}: missing Phase 16 authority layer script`);
+  }
+
+  for (const rel of unique([...stockPages, ...etfPages, ...comparePages, ...arComparePages, ...hubPages, ...insightPages.filter((item) => item.endsWith(".html"))])) {
+    const html = read(rel);
+    if (!html) continue;
+    if (!html.includes('<script type="application/ld+json">')) failures.push(`${rel}: missing JSON-LD schema`);
+  }
+}
+
+function checkInternalAuthorityMesh() {
+  const indexedRels = unique(allUrls.map(urlToRel).filter(Boolean).filter((rel) => rel.endsWith(".html")));
+  const inbound = new Map(indexedRels.map((rel) => [rel, 0]));
+  for (const from of indexedRels) {
+    const html = read(from);
+    for (const href of extractLinks(html)) {
+      if (!isInternalHtmlLink(href)) continue;
+      const target = resolveHref(from, href);
+      if (inbound.has(target) && target !== from) inbound.set(target, inbound.get(target) + 1);
+    }
+  }
+
+  const highValue = indexedRels.filter((rel) => (
+    rel.startsWith("stocks/") ||
+    rel.startsWith("etfs/") ||
+    rel.startsWith("compare/") ||
+    rel.startsWith("insights/") ||
+    hubPages.includes(rel)
+  ));
+  for (const rel of highValue) {
+    if ((inbound.get(rel) || 0) === 0) warnings.push(`${rel}: no inbound static links found in indexed graph`);
+  }
+
+  for (const rel of comparePages.slice(0, 45)) {
+    const html = read(rel);
+    if (!html.includes("insights/") && !html.includes("data-market-authority")) warnings.push(`${rel}: weak article linkage from comparison page`);
+  }
+}
+
+function urlToRel(url) {
+  if (!url.startsWith(`${domain}/`)) return "";
+  const rel = url.slice(domain.length + 1);
+  if (!rel) return "index.html";
+  if (rel.endsWith("/")) return `${rel}index.html`;
+  return rel.endsWith(".html") ? rel : `${rel}index.html`;
 }
 
 function locs(file) {
