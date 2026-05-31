@@ -710,8 +710,8 @@ function checkArabicInsightBodies() {
     }
 
     // Must contain Arabic FAQ heading
-    if (!html.includes("أسئل? ?????")) {
-      failures.push(`${rel}: indexed Arabic article missing FAQ section (أسئل? ?????)`);
+    if (!/(أسئلة شائعة|الأسئلة الشائعة)/.test(html)) {
+      failures.push(`${rel}: indexed Arabic article missing FAQ section`);
     }
 
     // Minimum Arabic character count in the article body
@@ -723,8 +723,8 @@ function checkArabicInsightBodies() {
     }
 
     // Must contain financial disclaimer wording in Arabic
-    if (!html.includes("نصيحة مال??")) {
-      failures.push(`${rel}: indexed Arabic article missing financial disclaimer wording (نصيحة مال??)`);
+    if (!html.includes("نصيحة مالية")) {
+      failures.push(`${rel}: indexed Arabic article missing financial disclaimer wording (نصيحة مالية)`);
     }
 
     // Must have an Arabic content file backing it
