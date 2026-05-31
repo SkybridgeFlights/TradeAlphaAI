@@ -1446,6 +1446,10 @@ function preserveEdgeSpace(original, translated) {
 }
 
 function finalArabicCleanup(html) {
+  html = html
+    .replace(/>Free Signals</g, ">تنبيهات السوق<")
+    .replace(/View Strategy/g, "عرض الاستراتيجية")
+    .replace(/&amp;nbsp;/g, " ");
   return html
     .replace(/Research المقالات are coming soon from TradeAlphaAI\./g, "المقالات البحثية قادمة قريبا من TradeAlphaAI.")
     .replace(/Research المقالات are coming soon\./g, "المقالات البحثية قادمة قريبا.")

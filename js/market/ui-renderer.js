@@ -16,6 +16,18 @@ import { buildSymbolFaq, getMethodologySections, getSymbolContent, hubDefinition
 import { createMockStatus, normalizeDataStatus } from "./data-status.js";
 import { normalizeProviderHealthList } from "./provider-health.js";
 
+const comparisonRoutes = new Map([
+  ["NVDA:AMD", "nvda-vs-amd"], ["NVDA:AVGO", "nvda-vs-avgo"], ["AMD:INTC", "amd-vs-intc"], ["AVGO:QCOM", "avgo-vs-qcom"], ["TSM:ASML", "tsm-vs-asml"], ["AMAT:KLAC", "amat-vs-klac"],
+  ["MSFT:GOOGL", "msft-vs-googl"], ["MSFT:AMZN", "msft-vs-amzn"], ["CRM:NOW", "crm-vs-now"], ["SNOW:MDB", "snow-vs-mdb"], ["DDOG:NET", "ddog-vs-net"],
+  ["CRWD:PANW", "crwd-vs-panw"], ["CRWD:ZS", "crwd-vs-zs"], ["PANW:FTNT", "panw-vs-ftnt"], ["NET:ZS", "net-vs-zs"],
+  ["JPM:GS", "jpm-vs-gs"], ["V:MA", "v-vs-ma"], ["PYPL:SHOP", "pypl-vs-shop"], ["GS:MS", "gs-vs-ms"], ["BLK:JPM", "blk-vs-jpm"],
+  ["KO:PEP", "ko-vs-pep"], ["PG:WMT", "pg-vs-wmt"], ["JNJ:MRK", "jnj-vs-mrk"], ["UNH:LLY", "unh-vs-lly"], ["XOM:CVX", "xom-vs-cvx"], ["COST:WMT", "cost-vs-wmt"],
+  ["META:GOOGL", "meta-vs-googl"], ["TSLA:UBER", "tsla-vs-uber"], ["ADBE:INTU", "adbe-vs-intu"], ["PLTR:SNOW", "pltr-vs-snow"],
+  ["SPY:QQQ", "spy-vs-qqq"], ["SPY:VOO", "spy-vs-voo"], ["SPY:VTI", "spy-vs-vti"], ["QQQ:VUG", "qqq-vs-vug"], ["QQQ:XLK", "qqq-vs-xlk"],
+  ["SMH:SOXX", "smh-vs-soxx"], ["ARKQ:BOTZ", "arkq-vs-botz"], ["ARKK:SCHG", "arkk-vs-schg"], ["SCHD:VIG", "schd-vs-vig"], ["JEPI:SCHD", "jepi-vs-schd"],
+  ["BND:IEF", "bnd-vs-ief"], ["TLT:IEF", "tlt-vs-ief"], ["XLV:VIG", "xlv-vs-vig"], ["XLE:XLF", "xle-vs-xlf"], ["IWM:RSP", "iwm-vs-rsp"]
+]);
+
 const disclaimer = "This analysis is for educational and informational purposes only and does not constitute financial advice.";
 const arDisclaimer = "هذا التحليل لأغراض تعليمية ومعلوماتية فقط ولا يشكل نصيحة مالية أو استثمارية.";
 
@@ -913,7 +925,7 @@ function injectCompareSection(asset, allAssets) {
   section.className = "market-section";
   const cards = peers.map(peer => {
     const score = buildTradeAlphaScore(peer);
-    const href = assetHref(peer);
+    const href = comparisonHref(asset.symbol, peer.symbol) || assetHref(peer);
     const label = text(`Compare ${asset.symbol} vs ${peer.symbol}`, `قارن ${asset.symbol} مقابل ${peer.symbol}`);
     return `<a class="compare-card" href="${href}" aria-label="${label}">
       <strong>${peer.symbol}</strong>
@@ -929,6 +941,12 @@ function injectCompareSection(asset, allAssets) {
       <div class="compare-grid">${cards}</div>
     </div>`;
   anchor.insertAdjacentElement("afterend", section);
+}
+
+function comparisonHref(left, right) {
+  const slug = comparisonRoutes.get(`${left}:${right}`) || comparisonRoutes.get(`${right}:${left}`);
+  if (!slug) return "";
+  return isArabicPage() ? `/ar/compare/${slug}.html` : `/compare/${slug}.html`;
 }
 
 function getSymbolFromUrl(fallback) {

@@ -91,12 +91,29 @@ function buildHubModel(hub, domain) {
     DOMAIN: domain,
     CANONICAL_URL: urlFor(domain, hub.pagePath),
     RC_KEY: rcKeyForHub(hub),
+    HUB_AUTHORITY_LINKS: hubAuthorityLinks(hub),
     FAQ_STATIC: buildHubFaqHtml(hub),
     SCHEMA_JSON: buildSchemaScript([
       buildBreadcrumbSchema(domain, hub.pagePath, "Screener", hub.title),
       buildHubFaqSchema(hub)
     ])
   };
+}
+
+function hubAuthorityLinks(hub) {
+  const links = [
+    `<a class="market-btn primary" href="rankings.html">Rankings</a>`,
+    `<a class="market-btn" href="insights/">Insights</a>`,
+    `<a class="market-btn" href="methodology.html">Methodology</a>`
+  ];
+  for (const comparison of (config.comparisons || []).filter((item) => item.hub === hub.key).slice(0, 4)) {
+    const pagePath = comparison.pagePath || `compare/${String(comparison.left).toLowerCase()}-vs-${String(comparison.right).toLowerCase()}.html`;
+    links.push(`<a class="market-btn" href="${pagePath}">${escapeHtml(comparison.left)} vs ${escapeHtml(comparison.right)}</a>`);
+  }
+  for (const related of (config.hubs || []).filter((item) => item.key !== hub.key).slice(0, 3)) {
+    links.push(`<a class="market-btn" href="${escapeHtml(related.pagePath)}">${escapeHtml(related.title)}</a>`);
+  }
+  return links.join("");
 }
 
 function rcKeyForSymbol(symbol) {
@@ -298,7 +315,7 @@ function renderTemplate(template, values) {
 }
 
 function escapeHtmlUnlessHtml(key, value) {
-  if (key === "RELATED_LINKS" || key === "SCHEMA_JSON" || key === "RESEARCH_BLOCKS") return value;
+  if (key === "RELATED_LINKS" || key === "SCHEMA_JSON" || key === "RESEARCH_BLOCKS" || key === "HUB_AUTHORITY_LINKS") return value;
   return escapeHtml(value);
 }
 

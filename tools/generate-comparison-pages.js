@@ -129,6 +129,9 @@ function renderComparison(pair, left, right, locale) {
       [t(isAr, "Market Screener", "ماسح السوق"), isAr ? "/ar/ai-stock-screener.html" : "/ai-stock-screener.html", false],
       [hubLabel(pair.hub, isAr), hubPath, false]
     ]),
+    RELATED_COMPARE_EYEBROW: t(isAr, "Related comparisons", "مقارنات مرتبطة"),
+    RELATED_COMPARE_TITLE: t(isAr, "Continue with nearby comparison pages", "تابع مع صفحات مقارنة قريبة"),
+    RELATED_COMPARE_LINKS: relatedComparisonCards(pair, left, right, isAr),
     FAQ_LABEL: t(isAr, "FAQ", "الأسئلة الشائعة"),
     FAQ_TITLE: isAr ? `أسئلة عن ${left.symbol} و ${right.symbol}` : `${left.symbol} vs ${right.symbol} FAQ`,
     FAQ_HTML: faqHtml(left, right, isAr),
@@ -136,6 +139,19 @@ function renderComparison(pair, left, right, locale) {
     SCHEMA_JSON: schemaScript(pair, left, right, isAr, title, description)
   };
   return renderTemplate(template, values);
+}
+
+function relatedComparisonCards(pair, left, right, isAr) {
+  const related = pairs
+    .filter((item) => item.pagePath !== pair.pagePath)
+    .filter((item) => item.hub === pair.hub || item.left === left.symbol || item.right === left.symbol || item.left === right.symbol || item.right === right.symbol)
+    .slice(0, 6);
+  return related.map((item) => {
+    const href = `/${isAr ? "ar/" : ""}${item.pagePath}`;
+    const title = `${item.left} vs ${item.right}`;
+    const label = t(isAr, "Open comparison", "افتح المقارنة");
+    return `<a class="compare-card" href="${href}"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(hubLabel(item.hub, isAr))}</span><small>${escapeHtml(label)}</small></a>`;
+  }).join("");
 }
 
 function comparisonRows(left, right, isAr) {
@@ -266,7 +282,7 @@ function renderTemplate(source, values) {
 }
 
 function htmlValue(key, value) {
-  if (["SCHEMA_JSON", "TABLE_ROWS", "LEFT_LIST", "RIGHT_LIST", "CTA_LINKS", "FAQ_HTML", "LIVE_ITEMS_JSON"].includes(key)) return String(value ?? "");
+  if (["SCHEMA_JSON", "TABLE_ROWS", "LEFT_LIST", "RIGHT_LIST", "CTA_LINKS", "RELATED_COMPARE_LINKS", "FAQ_HTML", "LIVE_ITEMS_JSON"].includes(key)) return String(value ?? "");
   return escapeHtml(value);
 }
 
