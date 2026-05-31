@@ -82,16 +82,16 @@ function assetHref(asset) {
 export async function initStocksPage() {
   applyStockListSeo();
   const stocks = await listMarketAssets("stock");
-  renderAssetCards("[data-popular-stocks]", stocks, "stock.html");
-  wireSymbolSearch("[data-stock-search]", "[data-stock-symbol]", stocks, "stock.html", "Try NVDA, AAPL, TSLA, MSFT, AMZN, or META.");
+  renderAssetCards("[data-popular-stocks]", stocks);
+  wireSymbolSearch("[data-stock-search]", "[data-stock-symbol]", stocks, "Try NVDA, AAPL, TSLA, MSFT, AMZN, or META.");
   scheduleLivePricePatch(document.querySelector("[data-popular-stocks]"), stocks);
 }
 
 export async function initEtfsPage() {
   applyEtfListSeo();
   const etfs = await listMarketAssets("etf");
-  renderAssetCards("[data-popular-etfs]", etfs, "etf.html");
-  wireSymbolSearch("[data-etf-search]", "[data-etf-symbol]", etfs, "etf.html", "Try SPY, QQQ, VTI, VOO, or GLD.");
+  renderAssetCards("[data-popular-etfs]", etfs);
+  wireSymbolSearch("[data-etf-search]", "[data-etf-symbol]", etfs, "Try SPY, QQQ, VTI, VOO, or GLD.");
   renderComparison("[data-etf-comparison]", etfs);
   scheduleLivePricePatch(document.querySelector("[data-popular-etfs]"), etfs);
 }
@@ -187,17 +187,17 @@ export async function initScreenerPage() {
   });
 }
 
-function renderAssetCards(selector, assets, hrefBase) {
+function renderAssetCards(selector, assets) {
   const target = document.querySelector(selector);
   if (!target) return;
 
-  target.innerHTML = assets.map((asset) => renderAssetCard(asset, hrefBase)).join("");
+  target.innerHTML = assets.map((asset) => renderAssetCard(asset)).join("");
 }
 
-function renderAssetCard(asset, hrefBase) {
+function renderAssetCard(asset) {
   const score = buildTradeAlphaScore(asset);
   const arrow = asset.changePercent >= 0 ? "up" : "down";
-  const href = hrefBase === "auto" ? `${asset.type === "etf" ? "etf.html" : "stock.html"}?symbol=${asset.symbol}` : `${hrefBase}?symbol=${asset.symbol}`;
+  const href = assetHref(asset);
   return `
     <a class="market-card stock-tile asset-card" href="${href}" aria-label="Open ${asset.symbol} analysis">
       <span class="tile-topline">
@@ -216,7 +216,7 @@ function renderAssetCard(asset, hrefBase) {
   `;
 }
 
-function wireSymbolSearch(formSelector, inputSelector, assets, hrefBase, helpText) {
+function wireSymbolSearch(formSelector, inputSelector, assets, helpText) {
   const form = document.querySelector(formSelector);
   const input = document.querySelector(inputSelector);
   const error = document.querySelector("[data-search-error]");
@@ -225,12 +225,12 @@ function wireSymbolSearch(formSelector, inputSelector, assets, hrefBase, helpTex
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const symbol = normalizeSymbol(input.value);
-    const exists = assets.some((asset) => asset.symbol === symbol);
-    if (!symbol || !exists) {
+    const asset = assets.find((item) => item.symbol === symbol);
+    if (!symbol || !asset) {
       if (error) error.textContent = helpText;
       return;
     }
-    window.location.href = `${hrefBase}?symbol=${encodeURIComponent(symbol)}`;
+    window.location.href = assetHref(asset);
   });
 }
 
@@ -393,14 +393,14 @@ function injectFaqSchema(asset) {
 function injectBreadcrumbSchema(asset) {
   const page = asset.type === "etf" ? "etfs.html" : "stocks.html";
   const label = asset.type === "etf" ? "ETFs" : "Stocks";
-  const detail = asset.type === "etf" ? "etf.html" : "stock.html";
+  const detail = assetHref(asset);
   const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "TradeAlphaAI", item: "https://www.tradealphaai.com/" },
       { "@type": "ListItem", position: 2, name: label, item: `https://www.tradealphaai.com/${page}` },
-      { "@type": "ListItem", position: 3, name: asset.symbol, item: `https://www.tradealphaai.com/${detail}?symbol=${asset.symbol}` }
+      { "@type": "ListItem", position: 3, name: asset.symbol, item: `https://www.tradealphaai.com${detail}` }
     ]
   };
   injectJsonLd(`breadcrumb-${asset.symbol}`, schema);
@@ -541,7 +541,7 @@ function renderRecentlyViewed() {
     items = JSON.parse(localStorage.getItem("ta_recent_symbols") || "[]");
   } catch (_) {}
   target.innerHTML = items.length
-    ? items.map((item) => `<a class="compact-card" href="${item.type === "etf" ? "etf.html" : "stock.html"}?symbol=${item.symbol}"><strong>${item.symbol}</strong><small>${item.name}</small></a>`).join("")
+    ? items.map((item) => `<a class="compact-card" href="${assetHref(item)}"><strong>${item.symbol}</strong><small>${item.name}</small></a>`).join("")
     : `<p class="market-copy">${text("Open a stock or ETF analysis page to build a local recently viewed list.", "افتح صفحة تحليل سهم أو صندوق مؤشرات لبناء قائمة المشاهدة الأخيرة.")}</p>`;
 }
 
@@ -603,7 +603,7 @@ function renderScreenerStrip(selector, assets) {
 function renderCompactCard(asset) {
   const score = buildTradeAlphaScore(asset);
   return `
-    <a class="compact-card" href="${asset.type === "etf" ? "etf.html" : "stock.html"}?symbol=${asset.symbol}">
+    <a class="compact-card" href="${assetHref(asset)}">
       <strong>${asset.symbol}</strong>
       <span>${score.finalScore}/100</span>
       <small>${score.label}</small>

@@ -50,6 +50,7 @@ if (!redirects.includes("/etfs/spy/ /etfs/spy.html 301")) failures.push("_redire
 
 scanForForbiddenWording();
 scanForFrontendSecrets();
+checkLegacySymbolRoutes();
 checkConfiguredSymbols();
 checkPhase9Integration();
 checkRelatedContentEngine();
@@ -259,6 +260,23 @@ function scanForFrontendSecrets() {
       for (const pattern of secretPatterns) {
         if (pattern.test(text)) failures.push(`${relative(file)}: possible frontend secret matched ${pattern}`);
       }
+    }
+  }
+}
+
+function checkLegacySymbolRoutes() {
+  const legacyPatterns = [
+    /stock\.htmlsymbol=/i,
+    /etf\.htmlsymbol=/i,
+    /stock\.html\?symbol=/i,
+    /etf\.html\?symbol=/i
+  ];
+  for (const file of listFiles(root, [".html"])) {
+    const rel = relative(file);
+    if (rel.includes("node_modules") || rel.startsWith("templates/")) continue;
+    const text = fs.readFileSync(file, "utf8");
+    for (const pattern of legacyPatterns) {
+      if (pattern.test(text)) failures.push(`${rel}: legacy query-based symbol route found: ${pattern}`);
     }
   }
 }

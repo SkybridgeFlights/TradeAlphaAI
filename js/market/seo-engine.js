@@ -17,7 +17,7 @@ export function applyStockDetailSeo(asset) {
     ? `${asset.symbol} stock analysis for educational screening, including technical score, fundamental score, sentiment overview, and risk factors.`
     : "Educational AI stock analysis with TradeAlpha Score, technical overview, fundamentals, sentiment, and risk context.";
   const url = asset
-    ? `https://www.tradealphaai.com/stock.html?symbol=${encodeURIComponent(asset.symbol)}`
+    ? `https://www.tradealphaai.com/stocks/${String(asset.symbol).toLowerCase()}.html`
     : "https://www.tradealphaai.com/stock.html";
 
   setTitle(title);
@@ -45,7 +45,7 @@ export function applyEtfDetailSeo(asset) {
     ? `${asset.symbol} ETF analysis for educational screening, including expense ratio, holdings, sector exposure, technical score, and risk overview.`
     : "Educational AI ETF analysis with holdings, sector exposure, technical score, risk context, and TradeAlpha Score.";
   const url = asset
-    ? `https://www.tradealphaai.com/etf.html?symbol=${encodeURIComponent(asset.symbol)}`
+    ? `https://www.tradealphaai.com/etfs/${String(asset.symbol).toLowerCase()}.html`
     : "https://www.tradealphaai.com/etf.html";
 
   setTitle(title);

@@ -1,4 +1,9 @@
 const KEY = 'tradealpha_watchlist_v1';
+const ETF_SYMBOLS = new Set([
+  'ARKG','ARKK','ARKQ','BND','BOTZ','DGRO','DIA','EEM','EFA','GDX','GLD','HYG','ICLN','IEF','IEMG',
+  'IWM','JEPI','LQD','MTUM','QQQ','QUAL','ROBO','RSP','SCHD','SCHG','SMH','SOXL','SOXX','SPY','TLT',
+  'TQQQ','VIG','VLUE','VNQ','VOO','VTI','VTV','VUG','VXUS','XBI','XLE','XLF','XLK','XLV','XLY'
+]);
 
 export function getWatchlist() {
   try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
@@ -57,6 +62,12 @@ function dispatchWatchlistUpdate() {
   try { window.dispatchEvent(new CustomEvent('tradealpha:watchlist-changed')); } catch {}
 }
 
+function watchlistHref(symbol, isAr) {
+  const sym = String(symbol || '').toUpperCase();
+  const folder = ETF_SYMBOLS.has(sym) ? 'etfs' : 'stocks';
+  return `${isAr ? '/ar' : ''}/${folder}/${sym.toLowerCase()}.html`;
+}
+
 export function renderWatchlistStrip(containerSelector) {
   const container = document.querySelector(containerSelector);
   if (!container) return;
@@ -73,8 +84,7 @@ export function renderWatchlistStrip(containerSelector) {
     container.innerHTML = `
       <div class="watchlist-strip">
         ${current.map(sym => {
-          const folder = sym.length <= 4 && !['ABBV','AMGN','ARKG','ARKK','ARKQ','GILD','GOOGL','INTC','LULU','MRVL','NFLX','PANW','PYPL','SBUX','SHOP','SMCI','SNOW','SOXX','SOXL','TQQQ','AVGO'].includes(sym) ? 'stocks' : 'stocks';
-          return `<a class="watchlist-chip" href="/${folder}/${sym.toLowerCase()}.html">
+          return `<a class="watchlist-chip" href="${watchlistHref(sym, isAr)}">
             <strong>${sym}</strong>
             <button type="button" class="watchlist-remove" data-remove="${sym}" aria-label="${isAr ? 'إزالة ' + sym : 'Remove ' + sym}">&times;</button>
           </a>`;

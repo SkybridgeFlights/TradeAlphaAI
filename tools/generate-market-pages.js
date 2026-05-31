@@ -45,7 +45,7 @@ console.log(`Redirects: _redirects`);
 
 function buildSymbolModel(symbol, domain) {
   const relatedLinks = (symbol.relatedSymbols || []).slice(0, 4).map((related) => {
-    const href = findPagePath(related) || `${symbol.type === "etf" ? "../etf.html" : "../stock.html"}?symbol=${encodeURIComponent(related)}`;
+    const href = findPagePath(related) || `${symbol.type === "etf" ? "etfs" : "stocks"}/${String(related).toLowerCase()}.html`;
     return `<a class="market-btn" href="../${href}">${escapeHtml(related)}</a>`;
   }).join("");
   const comparisonLinks = comparisonLinksForSymbol(symbol).join("");
@@ -160,9 +160,7 @@ function writeGeneratedFile(outputPath, html, label) {
 function writeSitemapMarket(urls, domain) {
   const allUrls = unique([
     `${domain}/stocks.html`,
-    `${domain}/stock.html`,
     `${domain}/etfs.html`,
-    `${domain}/etf.html`,
     `${domain}/ai-stock-screener.html`,
     `${domain}/rankings.html`,
     `${domain}/methodology.html`,

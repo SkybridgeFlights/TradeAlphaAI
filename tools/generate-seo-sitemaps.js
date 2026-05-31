@@ -8,7 +8,7 @@ const domain = "https://www.tradealphaai.com";
 const marketConfig = readJson("data/market-symbols.json", { symbols: [], hubs: [], comparisons: [] });
 
 const core = [
-  "", "stocks.html", "stock.html", "etfs.html", "etf.html", "ai-stock-screener.html",
+  "", "stocks.html", "etfs.html", "ai-stock-screener.html",
   "rankings.html", "methodology.html", "market-data-status.html", "tadawul.html"
 ].filter((rel) => exists(rel)).concat((marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists));
 
@@ -27,7 +27,7 @@ writeUrlset("sitemap-insights.xml", insights, "weekly", () => "0.76");
 writeUrlset("sitemap-ar.xml", ar, "weekly", () => "0.80");
 
 // Compatibility sitemap kept for existing production checks and historical robots references.
-writeUrlset("sitemap-market.xml", unique(["stocks.html", "stock.html", "etfs.html", "etf.html", "ai-stock-screener.html", "rankings.html", "methodology.html", ...stocks, ...etfs, ...hubs, ...comparisons, ...insights]), "weekly", () => "0.82");
+writeUrlset("sitemap-market.xml", unique(["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "methodology.html", ...stocks, ...etfs, ...hubs, ...comparisons, ...insights]), "weekly", () => "0.82");
 
 writeSitemapIndex("sitemap.xml", [
   "sitemap-core.xml",
