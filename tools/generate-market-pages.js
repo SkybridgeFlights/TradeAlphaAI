@@ -83,6 +83,8 @@ function comparisonLinksForSymbol(symbol) {
 }
 
 function buildHubModel(hub, domain) {
+  const arPagePath = `ar/${hub.pagePath}`;
+  const enUsPagePath = `en/${hub.pagePath}`;
   return {
     HUB_KEY: hub.key,
     HUB_TITLE: hub.title,
@@ -90,6 +92,10 @@ function buildHubModel(hub, domain) {
     SEO_DESCRIPTION: hub.seoDescription,
     DOMAIN: domain,
     CANONICAL_URL: urlFor(domain, hub.pagePath),
+    AR_URL: `${domain}/${arPagePath}`,
+    EN_US_URL: `${domain}/${enUsPagePath}`,
+    HUB_PAGE_PATH: hub.pagePath,
+    AR_PAGE_PATH: arPagePath,
     RC_KEY: rcKeyForHub(hub),
     HUB_AUTHORITY_LINKS: hubAuthorityLinks(hub),
     FAQ_STATIC: buildHubFaqHtml(hub),

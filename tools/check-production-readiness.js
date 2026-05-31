@@ -393,9 +393,10 @@ function checkGeneratedInsights() {
     : [];
   if (publishedInsightFiles.length === 0) return;
 
-  const sitemapMarket = read("sitemap-market.xml");
-  const sitemapMain   = read("sitemap.xml");
-  const seenTitles    = new Set();
+  const sitemapMarket   = read("sitemap-market.xml");
+  const sitemapMain     = read("sitemap.xml");
+  const sitemapInsights = read("sitemap-insights.xml");
+  const seenTitles      = new Set();
 
   for (const article of TOPICS.articles) {
     const relPath = `insights/${article.slug}.html`;
@@ -430,8 +431,8 @@ function checkGeneratedInsights() {
 
     /* Sitemap inclusion */
     const url = `https://www.tradealphaai.com/insights/${article.slug}.html`;
-    if (!sitemapMarket.includes(`<loc>${url}</loc>`) && !sitemapMain.includes(`<loc>${url}</loc>`)) {
-      failures.push(`${relPath}: URL missing from both sitemaps — run generate-insights.js`);
+    if (!sitemapMarket.includes(`<loc>${url}</loc>`) && !sitemapMain.includes(`<loc>${url}</loc>`) && !sitemapInsights.includes(`<loc>${url}</loc>`)) {
+      failures.push(`${relPath}: URL missing from all sitemaps — run generate-insights.js`);
     }
 
     /* Duplicate title detection */
@@ -619,8 +620,9 @@ function checkInsightDiscoverability() {
   if (publishedInsightFiles.length === 0) return;
   const insightsIndex = read("insights/index.html");
   const researchLayer = read("data/research-layer.json");
-  const sitemapMarket = read("sitemap-market.xml");
-  const sitemapMain = read("sitemap.xml");
+  const sitemapMarket   = read("sitemap-market.xml");
+  const sitemapMain     = read("sitemap.xml");
+  const sitemapInsights = read("sitemap-insights.xml");
 
   for (const topic of queue.topics || []) {
     const rel = `insights/${topic.slug}.html`;
@@ -633,14 +635,14 @@ function checkInsightDiscoverability() {
       if (!insightsIndex.includes(`${topic.slug}.html`) && !researchLayer.includes(`${topic.slug}.html`)) {
         failures.push(`${rel}: published article is not reachable from insights index or research layer`);
       }
-      if (!sitemapMarket.includes(`<loc>${url}</loc>`) && !sitemapMain.includes(`<loc>${url}</loc>`)) {
+      if (!sitemapMarket.includes(`<loc>${url}</loc>`) && !sitemapMain.includes(`<loc>${url}</loc>`) && !sitemapInsights.includes(`<loc>${url}</loc>`)) {
         failures.push(`${rel}: published article missing from sitemaps`);
       }
     }
 
     if (["candidate", "approved", "draft"].includes(topic.status) && html) {
       if (!html.includes('content="noindex,nofollow,max-image-preview:large"')) failures.push(`${rel}: review draft is not noindex`);
-      if (sitemapMarket.includes(`<loc>${url}</loc>`) || sitemapMain.includes(`<loc>${url}</loc>`)) {
+      if (sitemapMarket.includes(`<loc>${url}</loc>`) || sitemapMain.includes(`<loc>${url}</loc>`) || sitemapInsights.includes(`<loc>${url}</loc>`)) {
         failures.push(`${rel}: review draft appears in sitemap`);
       }
     }

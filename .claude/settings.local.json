@@ -45,7 +45,9 @@
       "Bash(powershell -Command \"\\(Get-ChildItem etfs -Filter '*.html'\\).Count\")",
       "Bash(powershell -Command \"\\(Get-ChildItem ar/stocks -Filter '*.html'\\).Count\")",
       "Bash(powershell -Command \"\\(Get-ChildItem ar/etfs -Filter '*.html'\\).Count\")",
-      "Bash(powershell -Command \"\\(Get-ChildItem en/stocks -Filter '*.html'\\).Count\")"
+      "Bash(powershell -Command \"\\(Get-ChildItem en/stocks -Filter '*.html'\\).Count\")",
+      "Bash(xargs -I{} grep -n \"<title>\\\\|name=\\\\\"description\\\\\"\" {})",
+      "Bash(powershell -Command \"Get-Content 'insights/semiconductor-cycle-risks.html' -Encoding utf8 | Select-Object -First 8\")"
     ]
   }
 }

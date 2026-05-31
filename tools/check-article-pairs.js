@@ -112,7 +112,7 @@ function checkIndexes(entries) {
 }
 
 function checkSitemaps(entries) {
-  const sitemap = `${read('sitemap.xml')}\n${read('sitemap-market.xml')}`;
+  const sitemap = `${read('sitemap.xml')}\n${read('sitemap-market.xml')}\n${read('sitemap-insights.xml')}`;
   const sitemapAr = read('sitemap-ar.xml');
   for (const entry of entries) {
     const enUrl = `${SITE}/insights/${entry.slug}.html`;

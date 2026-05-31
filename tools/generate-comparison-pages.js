@@ -64,12 +64,15 @@ function renderComparison(pair, left, right, locale) {
   const rightPage = pagePathFor(right, isAr);
   const hubPath = hubPathFor(pair.hub, isAr);
   const typeLabel = pair.type === "etf" ? t(isAr, "ETF comparison", "مقارنة صناديق المؤشرات") : t(isAr, "Stock comparison", "مقارنة الأسهم");
+  const enTypeSuffix = pair.type === "etf" ? "ETF Comparison" : "Stock Comparison";
   const title = isAr
-    ? `مقارنة ${left.symbol} و ${right.symbol} | TradeAlphaAI`
-    : `${left.symbol} vs ${right.symbol} Comparison | TradeAlphaAI`;
+    ? `مقارنة ${left.symbol} و ${right.symbol} — ${pair.type === "etf" ? "صناديق المؤشرات" : "أسهم"} | TradeAlphaAI`
+    : `${left.symbol} vs ${right.symbol} ${enTypeSuffix}: Performance, Holdings & Risk | TradeAlphaAI`;
+  const leftShort = (left.name || left.symbol).replace(/\b(Inc\.|Inc|Corporation|Corp\.|Holdings|Group|Ltd\.|plc|A\/S|Incorporated|Technologies|Technology|Platforms)\b/gi, "").replace(/\s+/g, " ").trim().split(" ").slice(0, 2).join(" ");
+  const rightShort = (right.name || right.symbol).replace(/\b(Inc\.|Inc|Corporation|Corp\.|Holdings|Group|Ltd\.|plc|A\/S|Incorporated|Technologies|Technology|Platforms)\b/gi, "").replace(/\s+/g, " ").trim().split(" ").slice(0, 2).join(" ");
   const description = isAr
-    ? `مقارنة تعليمية بين ${left.symbol} و ${right.symbol} باستخدام أصول البحث الحالية، وسياق السعر المباشر، والروابط الداخلية في TradeAlphaAI.`
-    : `Educational ${left.symbol} vs ${right.symbol} comparison using current research assets, live price hooks, score context, and TradeAlphaAI internal research links.`;
+    ? `مقارنة تعليمية بين ${left.symbol} و ${right.symbol}: الأداء والقطاع والمخاطر والمحتوى البحثي من TradeAlphaAI. للأغراض التعليمية فقط.`
+    : `Compare ${leftShort} (${left.symbol}) vs ${rightShort} (${right.symbol}): sector positioning, performance context, risk factors, and educational research. Not financial advice.`.slice(0, 160);
   const rows = comparisonRows(left, right, isAr).map(([label, l, r]) => `<tr><td>${escapeHtml(label)}</td><td>${escapeHtml(l)}</td><td>${escapeHtml(r)}</td></tr>`).join("");
   const leftSummary = localized(left, "overview", isAr);
   const rightSummary = localized(right, "overview", isAr);
