@@ -1,5 +1,6 @@
 import { listMarketAssets, getMarketAsset, normalizeSymbol } from "./market-data-provider.js";
 import { buildTradeAlphaScore } from "./scoring-engine.js";
+import { renderWatchlistButton } from "./watchlist.js";
 import { getTechnicalInsights } from "./technical-analysis.js";
 import { getFundamentalInsights } from "./fundamental-analysis.js";
 import { getSentimentSummary } from "./sentiment-engine.js";
@@ -115,9 +116,13 @@ export async function initStaticSymbolPage(symbol) {
   const asset = await getMarketAsset(symbol);
   if (!asset) return;
   rememberViewed(asset);
-  renderAssetDetail(asset, await listMarketAssets());
+  const allAssets = await listMarketAssets();
+  renderAssetDetail(asset, allAssets);
   if (asset.type === "etf") renderEtfOnlySections(asset);
   renderStaticSeoContent(asset);
+  injectWatchlistButton(asset);
+  injectChartSection(asset);
+  injectCompareSection(asset, allAssets);
 }
 
 export async function initHubPage(hubKey) {
@@ -815,6 +820,112 @@ function renderProviderHealthTable(providers, cacheSimulation, finnhubIntegratio
     ${cache}
     ${finnhubNote}
   `;
+}
+
+function injectWatchlistButton(asset) {
+  const priceLine = document.querySelector(".price-line");
+  if (!priceLine) return;
+  const wrap = document.createElement("div");
+  wrap.className = "watchlist-btn-wrap";
+  priceLine.insertAdjacentElement("afterend", wrap);
+  renderWatchlistButton(asset.symbol, ".watchlist-btn-wrap");
+}
+
+function injectChartSection(asset) {
+  const statusEl = document.querySelector("[data-data-status]");
+  if (!statusEl) return;
+  const anchor = statusEl.closest("section");
+  if (!anchor) return;
+
+  const isAr = isArabicPage();
+  const section = document.createElement("section");
+  section.className = "market-section";
+  section.innerHTML = `
+    <div class="market-panel chart-panel">
+      <span class="eyebrow">${text("Price Chart", "الرسم البياني للسعر")}</span>
+      <h2>${asset.symbol} ${text("price overview", "نظرة عامة على السعر")}</h2>
+      <div class="chart-container">
+        <div class="chart-loading">${text("Loading chart…", "جارٍ تحميل الرسم البياني…")}</div>
+      </div>
+    </div>`;
+  anchor.insertAdjacentElement("afterend", section);
+
+  const container = section.querySelector(".chart-container");
+  const observer = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    observer.disconnect();
+    loadTradingViewChart(container, asset, isAr);
+  }, { rootMargin: "200px" });
+  observer.observe(container);
+}
+
+function loadTradingViewChart(container, asset, isAr) {
+  container.innerHTML = "";
+  const wrap = document.createElement("div");
+  wrap.className = "tradingview-widget-container";
+  const inner = document.createElement("div");
+  inner.className = "tradingview-widget-container__widget";
+  wrap.appendChild(inner);
+  const config = {
+    symbol: tvExchangeSymbol(asset),
+    width: "100%",
+    height: 220,
+    locale: isAr ? "ar_AE" : "en",
+    dateRange: "12M",
+    colorTheme: "dark",
+    isTransparent: true,
+    autosize: true,
+    largeChartUrl: ""
+  };
+  const script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+  script.async = true;
+  script.textContent = JSON.stringify(config);
+  wrap.appendChild(script);
+  container.appendChild(wrap);
+}
+
+function tvExchangeSymbol(asset) {
+  if (asset.type === "etf") return `AMEX:${asset.symbol}`;
+  const nyse = new Set(["JPM","GS","MS","BAC","WFC","C","V","MA","JNJ","UNH","MRK","PFE","KO","PEP","PG","WMT","MCD","HD","BA","CAT","DE","HON","LMT","GE","XOM","CVX","COP","NEE","RTX","LLY","ABBV","NKE","DIS","NVO","TSM","UBER","SHOP"]);
+  return nyse.has(asset.symbol) ? `NYSE:${asset.symbol}` : `NASDAQ:${asset.symbol}`;
+}
+
+function injectCompareSection(asset, allAssets) {
+  const relatedEl = document.querySelector("[data-related-stocks]") || document.querySelector("[data-related-etfs]");
+  if (!relatedEl) return;
+  const anchor = relatedEl.closest("section");
+  if (!anchor) return;
+
+  const relatedSyms = new Set(asset.related || []);
+  const peers = allAssets
+    .filter(a => a.symbol !== asset.symbol)
+    .filter(a => relatedSyms.has(a.symbol) || a.sector === asset.sector || a.category === asset.category)
+    .slice(0, 6);
+
+  if (!peers.length) return;
+
+  const section = document.createElement("section");
+  section.className = "market-section";
+  const cards = peers.map(peer => {
+    const score = buildTradeAlphaScore(peer);
+    const href = assetHref(peer);
+    const label = text(`Compare ${asset.symbol} vs ${peer.symbol}`, `قارن ${asset.symbol} مقابل ${peer.symbol}`);
+    return `<a class="compare-card" href="${href}" aria-label="${label}">
+      <strong>${peer.symbol}</strong>
+      <span>${peer.name}</span>
+      <span class="compare-score">${score.finalScore}/100</span>
+      <small>${score.label}</small>
+    </a>`;
+  }).join("");
+  section.innerHTML = `
+    <div class="market-panel compare-panel">
+      <span class="eyebrow">${text("Peer Comparison", "مقارنة مع النظراء")}</span>
+      <h2>${text(`Compare ${asset.symbol} with`, `قارن ${asset.symbol} مع`)}</h2>
+      <div class="compare-grid">${cards}</div>
+    </div>`;
+  anchor.insertAdjacentElement("afterend", section);
 }
 
 function getSymbolFromUrl(fallback) {

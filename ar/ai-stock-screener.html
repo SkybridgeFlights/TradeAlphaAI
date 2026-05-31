@@ -113,6 +113,14 @@
 
       <section class="market-section">
         <div class="market-panel">
+          <span class="eyebrow">قائمة المتابعة</span>
+          <h2>رموزك المحفوظة</h2>
+          <div data-watchlist-strip></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
           <span class="eyebrow">محاور السوق</span>
           <h2>مجموعات الفحص ذات الاهتمام العالي</h2>
           <div class="theme-grid">
@@ -134,7 +142,7 @@
             <p>تسميات آمنة فقط. هذه واجهة فحص تعليمية وليست محرك توصيات.</p>
           </div>
           <div class="filter-grid">
-            <input class="market-search" data-screener-control data-filter-query type="search" placeholder="ابحث برمز أو اسم" />
+            <input class="market-search" data-screener-control data-filter-query type="search" placeholder="Search symbol, name, or sector" />
             <select class="market-search" data-screener-control data-filter-type></select>
             <select class="market-search" data-screener-control data-filter-score>
               <option value="0">أي درجة</option>
@@ -146,20 +154,22 @@
             <select class="market-search" data-screener-control data-filter-sector></select>
             <select class="market-search" data-screener-control data-filter-category></select>
             <select class="market-search" data-screener-control data-filter-sentiment></select>
+            <select class="market-search" data-screener-control data-filter-momentum></select>
+            <select class="market-search" data-screener-control data-filter-setup></select>
             <select class="market-search" data-screener-control data-filter-sort>
               <option value="score">ترتيب حسب الدرجة</option>
               <option value="momentum">ترتيب حسب الزخم</option>
+              <option value="change">Sort by % change</option>
+              <option value="price">Sort by price</option>
               <option value="risk">ترتيب حسب درجة المخاطر</option>
               <option value="symbol">ترتيب حسب الرمز</option>
             </select>
           </div>
-          <div class="screener-table">
-            <div class="screener-head">
-              <span>الأصل</span><span>النوع</span><span>القطاع</span><span>الزخم</span><span>المخاطر</span><span>الدرجة</span>
-            </div>
-            <div data-screener-results>
-              <div class="market-card skeleton"></div>
-            </div>
+          <div class="screener-result-bar">
+            <span data-screener-count class="muted-text"></span>
+          </div>
+          <div data-screener-results>
+            <div class="market-card skeleton"></div>
           </div>
         </div>
       </section>
@@ -196,8 +206,8 @@
 
   <script src="/script.js" defer></script>
   <script type="module">
-    import { initScreenerPage } from "./js/market/ui-renderer.js";
-    initScreenerPage();
+    import { initLiveScreener } from "/js/market/screener-engine.js";
+    initLiveScreener();
   </script>
   <script src="/../js/language-router.js" defer></script>
   <script src="/../js/mobile-nav.js" defer></script>

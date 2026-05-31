@@ -38,7 +38,14 @@
       "Bash(node -e \"const fs=require\\('fs'\\); const d=JSON.parse\\(fs.readFileSync\\('data/research-assets/index.json','utf8'\\)\\); const stocks=d.stocks||[]; const want=['AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA','AVGO','ORCL','NFLX','JPM','XOM','LLY','UNH','COST','V','MA','BRK.B']; want.forEach\\(s=>{ const found=stocks.find\\(x=>x.symbol===s\\); console.log\\(s,':', found?'FOUND':'MISSING'\\); }\\);\")",
       "Bash(node tools/generate-article-registry.js)",
       "Bash(node tools/check-utf8-integrity.js)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(node -e \"const d=require\\('./data/market-symbols.json'\\); console.log\\('Symbols:', d.symbols.length, '| Hubs:', d.hubs.length\\)\")",
+      "Bash(node *)",
+      "Bash(powershell -Command \"\\(Get-ChildItem stocks -Filter '*.html'\\).Count\")",
+      "Bash(powershell -Command \"\\(Get-ChildItem etfs -Filter '*.html'\\).Count\")",
+      "Bash(powershell -Command \"\\(Get-ChildItem ar/stocks -Filter '*.html'\\).Count\")",
+      "Bash(powershell -Command \"\\(Get-ChildItem ar/etfs -Filter '*.html'\\).Count\")",
+      "Bash(powershell -Command \"\\(Get-ChildItem en/stocks -Filter '*.html'\\).Count\")"
     ]
   }
 }

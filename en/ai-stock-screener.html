@@ -112,6 +112,14 @@
 
       <section class="market-section">
         <div class="market-panel">
+          <span class="eyebrow">Watchlist</span>
+          <h2>Your saved symbols</h2>
+          <div data-watchlist-strip></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
           <span class="eyebrow">Market Themes</span>
           <h2>High-engagement screening groups</h2>
           <div class="theme-grid">
@@ -133,7 +141,7 @@
             <p>Safe labels only. This is a screening interface, not a recommendation engine.</p>
           </div>
           <div class="filter-grid">
-            <input class="market-search" data-screener-control data-filter-query type="search" placeholder="Search symbol or name" />
+            <input class="market-search" data-screener-control data-filter-query type="search" placeholder="Search symbol, name, or sector" />
             <select class="market-search" data-screener-control data-filter-type></select>
             <select class="market-search" data-screener-control data-filter-score>
               <option value="0">Any score</option>
@@ -145,20 +153,22 @@
             <select class="market-search" data-screener-control data-filter-sector></select>
             <select class="market-search" data-screener-control data-filter-category></select>
             <select class="market-search" data-screener-control data-filter-sentiment></select>
+            <select class="market-search" data-screener-control data-filter-momentum></select>
+            <select class="market-search" data-screener-control data-filter-setup></select>
             <select class="market-search" data-screener-control data-filter-sort>
               <option value="score">Sort by score</option>
               <option value="momentum">Sort by momentum</option>
+              <option value="change">Sort by % change</option>
+              <option value="price">Sort by price</option>
               <option value="risk">Sort by risk score</option>
               <option value="symbol">Sort by symbol</option>
             </select>
           </div>
-          <div class="screener-table">
-            <div class="screener-head">
-              <span>Asset</span><span>Type</span><span>Sector</span><span>Momentum</span><span>Risk</span><span>Score</span>
-            </div>
-            <div data-screener-results>
-              <div class="market-card skeleton"></div>
-            </div>
+          <div class="screener-result-bar">
+            <span data-screener-count class="muted-text"></span>
+          </div>
+          <div data-screener-results>
+            <div class="market-card skeleton"></div>
           </div>
         </div>
       </section>
@@ -195,8 +205,8 @@
 
   <script src="/script.js" defer></script>
   <script type="module">
-    import { initScreenerPage } from "./js/market/ui-renderer.js";
-    initScreenerPage();
+    import { initLiveScreener } from "/js/market/screener-engine.js";
+    initLiveScreener();
   </script>
   <script src="/../js/language-router.js" defer></script>
   <script src="/../js/mobile-nav.js" defer></script>
