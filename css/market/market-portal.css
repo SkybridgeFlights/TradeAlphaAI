@@ -3473,6 +3473,50 @@
   color: var(--market-muted);
 }
 
+.comparison-header .score-card {
+  align-items: stretch;
+  text-align: start;
+}
+
+.comparison-price-line {
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.comparison-table-wrap {
+  overflow-x: auto;
+  margin-top: 14px;
+}
+
+.comparison-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--market-line);
+  text-align: start;
+  vertical-align: top;
+}
+
+.comparison-table th {
+  color: var(--market-text);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.comparison-table td {
+  color: var(--market-soft);
+}
+
+.comparison-table td:first-child {
+  color: var(--market-muted);
+  font-weight: 700;
+}
+
 /* ===== Phase 12: Market Snapshot ===== */
 .snapshot-grid {
   display: grid;
@@ -3515,4 +3559,3 @@
   .compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .snapshot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-

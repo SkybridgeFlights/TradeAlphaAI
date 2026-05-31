@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="{{LANG}}" dir="{{DIR}}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{SEO_TITLE}}</title>
+  <meta name="description" content="{{SEO_DESCRIPTION}}" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="{{CANONICAL_URL}}" />
+  <link rel="alternate" hreflang="en" href="{{EN_URL}}" />
+  <link rel="alternate" hreflang="ar" href="{{AR_URL}}" />
+  <link rel="alternate" hreflang="x-default" href="{{EN_URL}}" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="{{SEO_TITLE}}" />
+  <meta property="og:description" content="{{SEO_DESCRIPTION}}" />
+  <meta property="og:url" content="{{CANONICAL_URL}}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="{{DOMAIN}}/Image/og-image.svg" />
+  <meta property="og:image:alt" content="{{OG_ALT}}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{SEO_TITLE}}" />
+  <meta name="twitter:description" content="{{SEO_DESCRIPTION}}" />
+  <meta name="twitter:image" content="{{DOMAIN}}/Image/og-image.svg" />
+  <link rel="stylesheet" href="{{ASSET_PREFIX}}styles.css" />
+  <link rel="stylesheet" href="{{ASSET_PREFIX}}landing.css" />
+  <link rel="stylesheet" href="{{ASSET_PREFIX}}css/market/market-portal.css" />
+  {{SCHEMA_JSON}}
+</head>
+<body class="market-page {{BODY_CLASS}}">
+  <!-- generated:market-comparison key={{COMPARISON_KEY}} -->
+  <div class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="{{NAV_PREFIX}}index.html">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy"><strong>TradeAlpha AI</strong><span>{{BRAND_SUBTITLE}}</span></span>
+      </a>
+      <div class="top-actions">
+        <nav class="nav-group" aria-label="{{PRIMARY_LABEL}}">
+          <a href="{{NAV_PREFIX}}index.html" class="nav-link">{{NAV_HOME}}</a>
+          <a href="{{NAV_PREFIX}}stocks.html" class="nav-link">{{NAV_STOCKS}}</a>
+          <a href="{{NAV_PREFIX}}etfs.html" class="nav-link">{{NAV_ETFS}}</a>
+          <a href="{{NAV_PREFIX}}ai-stock-screener.html" class="nav-link">{{NAV_SCREENER}}</a>
+          <a href="{{NAV_PREFIX}}insights/" class="nav-link">{{NAV_ARTICLES}}</a>
+          <a href="{{NAV_PREFIX}}methodology.html" class="nav-link">{{NAV_METHODOLOGY}}</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <main class="market-shell">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="{{NAV_PREFIX}}index.html">{{NAV_HOME}}</a><span>/</span><a href="{{NAV_PREFIX}}rankings.html">{{RANKINGS_LABEL}}</a><span>/</span><span>{{H1}}</span></nav>
+      <section class="market-section">
+        <div class="market-panel detail-header comparison-header">
+          <div class="detail-title">
+            <span class="eyebrow">{{EYEBROW}}</span>
+            <h1>{{H1}}</h1>
+            <p class="market-lead">{{INTRO}}</p>
+            <div class="detail-meta"><span>{{LEFT_SYMBOL}} / {{RIGHT_SYMBOL}}</span><span class="risk-badge">{{TYPE_LABEL}}</span></div>
+          </div>
+          <aside class="market-card score-card">
+            <h2>{{LIVE_TITLE}}</h2>
+            <p>{{LIVE_COPY}}</p>
+            <div class="price-line comparison-price-line"><strong data-live-price="{{LEFT_SYMBOL}}">{{PRICE_PLACEHOLDER}}</strong><span class="setup-badge" data-live-change="{{LEFT_SYMBOL}}">{{CHANGE_PLACEHOLDER}}</span></div>
+            <div class="price-line comparison-price-line"><strong data-live-price="{{RIGHT_SYMBOL}}">{{PRICE_PLACEHOLDER}}</strong><span class="setup-badge" data-live-change="{{RIGHT_SYMBOL}}">{{CHANGE_PLACEHOLDER}}</span></div>
+          </aside>
+        </div>
+      </section>
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">{{TABLE_EYEBROW}}</span>
+          <h2>{{TABLE_TITLE}}</h2>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead><tr><th>{{METRIC_LABEL}}</th><th>{{LEFT_SYMBOL}}</th><th>{{RIGHT_SYMBOL}}</th></tr></thead>
+              <tbody>{{TABLE_ROWS}}</tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section class="market-section">
+        <div class="content-columns">
+          <article class="market-panel"><span class="eyebrow">{{LEFT_EYEBROW}}</span><h2>{{LEFT_TITLE}}</h2><p class="market-copy">{{LEFT_OVERVIEW}}</p>{{LEFT_LIST}}</article>
+          <article class="market-panel"><span class="eyebrow">{{RIGHT_EYEBROW}}</span><h2>{{RIGHT_TITLE}}</h2><p class="market-copy">{{RIGHT_OVERVIEW}}</p>{{RIGHT_LIST}}</article>
+        </div>
+      </section>
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">{{PATHS_EYEBROW}}</span>
+          <h2>{{PATHS_TITLE}}</h2>
+          <div class="cta-actions">{{CTA_LINKS}}</div>
+        </div>
+      </section>
+      <section class="market-section">
+        <div class="market-panel stock-faq">
+          <span class="eyebrow">{{FAQ_LABEL}}</span>
+          <h2>{{FAQ_TITLE}}</h2>
+          {{FAQ_HTML}}
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+  (() => {
+    const items = {{LIVE_ITEMS_JSON}};
+    const money = (value) => Number(value).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+    const change = (value) => `${Number(value) >= 0 ? "+" : ""}${Number(value).toFixed(2)}%`;
+    items.forEach((item) => {
+      fetch(`/api/market-data?symbol=${encodeURIComponent(item.symbol)}&type=${encodeURIComponent(item.type)}`, { headers: { Accept: "application/json" } })
+        .then((response) => response.ok ? response.json() : null)
+        .then((payload) => {
+          if (!payload || !payload.asset) return;
+          document.querySelectorAll(`[data-live-price="${item.symbol}"]`).forEach((node) => { node.textContent = money(payload.asset.price); });
+          document.querySelectorAll(`[data-live-change="${item.symbol}"]`).forEach((node) => {
+            node.textContent = change(payload.asset.changePercent);
+            node.classList.toggle("positive", Number(payload.asset.changePercent) >= 0);
+            node.classList.toggle("negative", Number(payload.asset.changePercent) < 0);
+          });
+        })
+        .catch(() => {});
+    });
+  })();
+  </script>
+</body>
+</html>

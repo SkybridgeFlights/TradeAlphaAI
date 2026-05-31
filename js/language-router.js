@@ -240,6 +240,78 @@
         "ar": "/ar/market-data-status.html",
         "en": "/market-data-status.html"
     },
+    "/cybersecurity-stocks.html": {
+        "ar": "/ar/cybersecurity-stocks.html",
+        "en": "/cybersecurity-stocks.html"
+    },
+    "/ar/cybersecurity-stocks.html": {
+        "ar": "/ar/cybersecurity-stocks.html",
+        "en": "/cybersecurity-stocks.html"
+    },
+    "/en/cybersecurity-stocks.html": {
+        "ar": "/ar/cybersecurity-stocks.html",
+        "en": "/cybersecurity-stocks.html"
+    },
+    "/cloud-stocks.html": {
+        "ar": "/ar/cloud-stocks.html",
+        "en": "/cloud-stocks.html"
+    },
+    "/ar/cloud-stocks.html": {
+        "ar": "/ar/cloud-stocks.html",
+        "en": "/cloud-stocks.html"
+    },
+    "/en/cloud-stocks.html": {
+        "ar": "/ar/cloud-stocks.html",
+        "en": "/cloud-stocks.html"
+    },
+    "/fintech-stocks.html": {
+        "ar": "/ar/fintech-stocks.html",
+        "en": "/fintech-stocks.html"
+    },
+    "/ar/fintech-stocks.html": {
+        "ar": "/ar/fintech-stocks.html",
+        "en": "/fintech-stocks.html"
+    },
+    "/en/fintech-stocks.html": {
+        "ar": "/ar/fintech-stocks.html",
+        "en": "/fintech-stocks.html"
+    },
+    "/defensive-stocks.html": {
+        "ar": "/ar/defensive-stocks.html",
+        "en": "/defensive-stocks.html"
+    },
+    "/ar/defensive-stocks.html": {
+        "ar": "/ar/defensive-stocks.html",
+        "en": "/defensive-stocks.html"
+    },
+    "/en/defensive-stocks.html": {
+        "ar": "/ar/defensive-stocks.html",
+        "en": "/defensive-stocks.html"
+    },
+    "/ai-etfs.html": {
+        "ar": "/ar/ai-etfs.html",
+        "en": "/ai-etfs.html"
+    },
+    "/ar/ai-etfs.html": {
+        "ar": "/ar/ai-etfs.html",
+        "en": "/ai-etfs.html"
+    },
+    "/en/ai-etfs.html": {
+        "ar": "/ar/ai-etfs.html",
+        "en": "/ai-etfs.html"
+    },
+    "/defensive-etfs.html": {
+        "ar": "/ar/defensive-etfs.html",
+        "en": "/defensive-etfs.html"
+    },
+    "/ar/defensive-etfs.html": {
+        "ar": "/ar/defensive-etfs.html",
+        "en": "/defensive-etfs.html"
+    },
+    "/en/defensive-etfs.html": {
+        "ar": "/ar/defensive-etfs.html",
+        "en": "/defensive-etfs.html"
+    },
     "/stocks/aapl.html": {
         "ar": "/ar/stocks/aapl.html",
         "en": "/stocks/aapl.html"

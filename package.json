@@ -4,7 +4,8 @@
   "private": true,
   "description": "Static TradeAlphaAI website tooling for generated market SEO pages.",
   "scripts": {
-    "generate:market-pages": "node tools/generate-market-pages.js",
+    "generate:market-pages": "node tools/generate-market-pages.js && node tools/generate-comparison-pages.js",
+    "generate:comparisons": "node tools/generate-comparison-pages.js",
     "check:market-pages": "node tools/check-market-pages.js",
     "check:utf8": "node tools/check-utf8-integrity.js",
     "check:production": "node tools/check-production-readiness.js",

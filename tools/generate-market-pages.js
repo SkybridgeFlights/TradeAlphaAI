@@ -48,6 +48,7 @@ function buildSymbolModel(symbol, domain) {
     const href = findPagePath(related) || `${symbol.type === "etf" ? "../etf.html" : "../stock.html"}?symbol=${encodeURIComponent(related)}`;
     return `<a class="market-btn" href="../${href}">${escapeHtml(related)}</a>`;
   }).join("");
+  const comparisonLinks = comparisonLinksForSymbol(symbol).join("");
 
   return {
     SYMBOL: symbol.symbol,
@@ -60,7 +61,7 @@ function buildSymbolModel(symbol, domain) {
     DOMAIN: domain,
     CANONICAL_URL: urlFor(domain, symbol.pagePath),
     RC_KEY: rcKeyForSymbol(symbol),
-    RELATED_LINKS: relatedLinks,
+    RELATED_LINKS: `${comparisonLinks}${relatedLinks}`,
     RESEARCH_BLOCKS: buildResearchBlocks(symbol),
     FAQ_STATIC: buildFaqHtml(symbol),
     SCHEMA_JSON: buildSchemaScript([
@@ -68,6 +69,17 @@ function buildSymbolModel(symbol, domain) {
       buildFaqSchema(symbol.faq || symbol.faqSeeds || [], symbol)
     ])
   };
+}
+
+function comparisonLinksForSymbol(symbol) {
+  return (config.comparisons || [])
+    .filter((item) => item.left === symbol.symbol || item.right === symbol.symbol)
+    .slice(0, 3)
+    .map((item) => {
+      const other = item.left === symbol.symbol ? item.right : item.left;
+      const pagePath = item.pagePath || `compare/${String(item.left).toLowerCase()}-vs-${String(item.right).toLowerCase()}.html`;
+      return `<a class="market-btn primary" href="../${pagePath}">Compare ${escapeHtml(symbol.symbol)} vs ${escapeHtml(other)}</a>`;
+    });
 }
 
 function buildHubModel(hub, domain) {
@@ -96,7 +108,13 @@ function rcKeyForHub(hub) {
     "ai-stocks": "hub-ai-stocks",
     "semiconductor-stocks": "hub-semiconductor",
     "growth-stocks": "hub-growth",
-    "dividend-etfs": "hub-dividends"
+    "dividend-etfs": "hub-dividends",
+    "cybersecurity-stocks": "hub-cybersecurity",
+    "cloud-stocks": "hub-cloud",
+    "fintech-stocks": "hub-fintech",
+    "defensive-stocks": "hub-defensive-stocks",
+    "ai-etfs": "hub-ai-etfs",
+    "defensive-etfs": "hub-defensive-etfs"
   };
   return map[hub.key] || `hub-${hub.key}`;
 }

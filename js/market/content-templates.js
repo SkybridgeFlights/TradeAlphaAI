@@ -192,6 +192,72 @@ export const hubDefinitions = {
       ["Macro Impact", "Interest-rate expectations, inflation, risk appetite, and earnings revisions can all affect growth-stock screening conditions."],
       ["Risk Overview", "A strong growth profile can still carry high risk when valuation, volatility, or sentiment becomes stretched."]
     ]
+  },
+  "cybersecurity-stocks": {
+    title: "Cybersecurity Stocks",
+    eyebrow: "Sector Hub",
+    intro: "Cybersecurity stock research focuses on platform demand, enterprise budgets, renewal quality, margin durability, and valuation sensitivity.",
+    symbols: ["CRWD", "PANW", "ZS", "FTNT", "NET", "DDOG"],
+    sections: [
+      ["Security Budget Context", "Security software can remain strategically important, but contract timing, platform consolidation, and valuation still shape screening risk."],
+      ["Peer Comparison", "Compare endpoint, network security, cloud security, and observability-linked names before reviewing individual score context."],
+      ["Research Use", "This hub is educational research only and does not provide buy or sell recommendations."]
+    ]
+  },
+  "cloud-stocks": {
+    title: "Cloud Stocks",
+    eyebrow: "Sector Hub",
+    intro: "Cloud stock research compares infrastructure, application software, data platforms, AI workloads, operating leverage, and customer spending trends.",
+    symbols: ["MSFT", "AMZN", "GOOGL", "CRM", "NOW", "SNOW"],
+    sections: [
+      ["Cloud Demand", "Cloud names can be affected by workload growth, enterprise optimization, AI infrastructure demand, and margin discipline."],
+      ["Software Valuation", "Growth, retention, free cash flow, and multiple compression should be reviewed together."],
+      ["Comparison Workflow", "Use the connected comparison pages to move from sector context to symbol-level research."]
+    ]
+  },
+  "fintech-stocks": {
+    title: "Fintech Stocks",
+    eyebrow: "Sector Hub",
+    intro: "Fintech stock research covers payments, capital markets, digital commerce, asset management, credit sensitivity, and regulatory risk.",
+    symbols: ["V", "MA", "PYPL", "SHOP", "JPM", "BLK"],
+    sections: [
+      ["Payments and Platforms", "Transaction volume, take rates, credit exposure, and merchant activity can affect fintech screening context."],
+      ["Financial Conditions", "Rates, credit spreads, consumer health, and capital markets activity can shift sector sentiment."],
+      ["Research Use", "This hub links fintech candidates to peer comparisons, rankings, and educational methodology."]
+    ]
+  },
+  "defensive-stocks": {
+    title: "Defensive Stocks",
+    eyebrow: "Sector Hub",
+    intro: "Defensive stock research reviews consumer staples, healthcare, utilities-linked demand, dividend durability, and drawdown behavior.",
+    symbols: ["KO", "PEP", "PG", "WMT", "JNJ", "MRK"],
+    sections: [
+      ["Defensive Role", "Defensive stocks may screen differently from growth names because earnings stability, pricing power, and valuation discipline matter more."],
+      ["Risk Context", "Defensive does not mean risk-free; valuation, sector rotation, litigation, and macro conditions can still matter."],
+      ["Comparison Workflow", "Review peer comparisons and rankings before opening each stock research page."]
+    ]
+  },
+  "ai-etfs": {
+    title: "AI ETFs",
+    eyebrow: "ETF Hub",
+    intro: "AI ETF research compares semiconductor, robotics, Nasdaq growth, automation, and technology-sector exposures through fund structure and risk context.",
+    symbols: ["QQQ", "SMH", "SOXX", "BOTZ", "ROBO", "ARKQ"],
+    sections: [
+      ["ETF Exposure", "AI-themed ETFs can differ sharply by holdings, concentration, index rules, expenses, liquidity, and rebalance behavior."],
+      ["Concentration Risk", "A fund may carry broad ETF packaging while still depending on a narrow group of technology or semiconductor leaders."],
+      ["Research Use", "Use this hub to compare ETF structures, not to predict returns or receive investment advice."]
+    ]
+  },
+  "defensive-etfs": {
+    title: "Defensive ETFs",
+    eyebrow: "ETF Hub",
+    intro: "Defensive ETF research reviews dividend, low-volatility, bond, healthcare, staples, and broad-market funds for educational portfolio context.",
+    symbols: ["SCHD", "VIG", "JEPI", "BND", "IEF", "XLV"],
+    sections: [
+      ["Defensive ETF Role", "Defensive ETFs can help compare quality, income, duration, sector exposure, and drawdown behavior."],
+      ["Cost and Liquidity", "Expense ratio, spreads, issuer structure, and holdings transparency remain important even for conservative fund screens."],
+      ["Research Use", "This hub is a static educational research path linking ETF pages, rankings, and comparisons."]
+    ]
   }
 };
 
