@@ -258,6 +258,246 @@ export const hubDefinitions = {
       ["Cost and Liquidity", "Expense ratio, spreads, issuer structure, and holdings transparency remain important even for conservative fund screens."],
       ["Research Use", "This hub is a static educational research path linking ETF pages, rankings, and comparisons."]
     ]
+  },
+  "dividend-stocks": {
+    title: "Dividend Stocks",
+    eyebrow: "Income Hub",
+    intro: "Dividend stock research examines income durability, payout consistency, free cash flow discipline, sector positioning, and rate sensitivity for income-oriented equity screening.",
+    symbols: ["KO","PEP","JNJ","PG","WMT","MCD"],
+    sections: [
+          [
+                "Income and Yield Context",
+                "Dividend-paying stocks are researched for payout history, cash flow coverage, sector exposure, and how income characteristics interact with interest-rate environments."
+          ],
+          [
+                "Defensive Versus Growth",
+                "High-yield dividend stocks often differ from dividend-growth stocks in sector, risk profile, and sensitivity to rate changes."
+          ],
+          [
+                "Research Use",
+                "This hub is for educational screening of income-oriented equity candidates and does not provide buy or sell recommendations."
+          ]
+    ]
+  },
+  "blue-chip-stocks": {
+    title: "Blue Chip Stocks",
+    eyebrow: "Quality Hub",
+    intro: "Blue chip stock research reviews large-cap quality factors including earnings consistency, brand moats, market leadership, capital returns, and sector stability.",
+    symbols: ["AAPL","MSFT","GOOGL","AMZN","JPM","PG"],
+    sections: [
+          [
+                "Quality and Scale",
+                "Large-cap quality names are often researched for earnings durability, balance sheet strength, return on capital, and brand defensibility."
+          ],
+          [
+                "Valuation Sensitivity",
+                "Blue chip stocks can still carry valuation risk when growth expectations or sector leadership assumptions shift."
+          ],
+          [
+                "Research Use",
+                "This hub connects large-cap quality candidates to peer comparisons, rankings, and educational screening context."
+          ]
+    ]
+  },
+  "healthcare-stocks": {
+    title: "Healthcare Stocks",
+    eyebrow: "Sector Hub",
+    intro: "Healthcare stock research covers pharmaceutical pipelines, drug pricing, patent cliffs, margin quality, regulatory approvals, and sector rotation behavior.",
+    symbols: ["LLY","JNJ","ABBV","MRK","NVO","AMGN"],
+    sections: [
+          [
+                "Pipeline and Approval Risk",
+                "Healthcare stocks can be sensitive to clinical trial outcomes, FDA decisions, patent expirations, and reimbursement policy changes."
+          ],
+          [
+                "Defensive Characteristics",
+                "Healthcare sector names can behave defensively in macro downturns, but company-specific risk from pipeline events can be significant."
+          ],
+          [
+                "Research Use",
+                "This hub is educational screening context for pharmaceutical and healthcare equity candidates."
+          ]
+    ]
+  },
+  "energy-stocks": {
+    title: "Energy Stocks",
+    eyebrow: "Sector Hub",
+    intro: "Energy stock research covers commodity exposure, capital discipline, production profiles, geopolitical sensitivity, and free cash flow yield for oil and energy sector screening.",
+    symbols: ["XOM","CVX","SLB"],
+    sections: [
+          [
+                "Commodity Sensitivity",
+                "Energy stocks can move with oil prices, natural gas demand, refining margins, and global supply-demand cycles."
+          ],
+          [
+                "Capex and Free Cash Flow",
+                "Capital discipline, dividend sustainability, and free cash flow yield are key research factors for energy equity screening."
+          ],
+          [
+                "Research Use",
+                "This hub connects energy sector candidates to comparisons, rankings, and educational methodology context."
+          ]
+    ]
+  },
+  "momentum-stocks": {
+    title: "Momentum Stocks",
+    eyebrow: "Theme Hub",
+    intro: "Momentum stock research examines price trends, relative strength, earnings acceleration, sector leadership, and the risk that momentum reversals can be sharp.",
+    symbols: ["NVDA","TSLA","META","AMZN","PLTR"],
+    sections: [
+          [
+                "Momentum Risk",
+                "Momentum strategies can amplify returns in trending markets but carry elevated reversal risk when catalysts change or sentiment shifts quickly."
+          ],
+          [
+                "Earnings and Guidance",
+                "Momentum stocks are often sensitive to earnings guidance revisions and macro liquidity conditions."
+          ],
+          [
+                "Research Use",
+                "This hub is for educational screening of momentum candidates and does not provide buy or sell recommendations."
+          ]
+    ]
+  },
+  "value-stocks": {
+    title: "Value Stocks",
+    eyebrow: "Market Hub",
+    intro: "Value stock research compares price-to-earnings, price-to-book, free cash flow yield, dividend coverage, and balance sheet quality relative to sector peers.",
+    symbols: ["JPM","KO","PEP","WMT","MCD","JNJ"],
+    sections: [
+          [
+                "Value Versus Growth",
+                "Value stocks often screen well when rates rise or growth expectations become stretched, but may lag during strong liquidity cycles."
+          ],
+          [
+                "Sector Concentration",
+                "Value exposure tends to concentrate in financials, consumer staples, healthcare, and industrials — each with distinct macro sensitivities."
+          ],
+          [
+                "Research Use",
+                "This hub links value candidates to comparisons, defensive hubs, and income-oriented screening context."
+          ]
+    ]
+  },
+  "bond-etfs": {
+    title: "Bond ETFs",
+    eyebrow: "Fixed Income Hub",
+    intro: "Bond ETF research compares duration, credit quality, yield, expense structure, and interest-rate sensitivity across government, investment-grade, and high-yield fund categories.",
+    symbols: ["TLT","BND","IEF","HYG","LQD"],
+    sections: [
+          [
+                "Duration and Rate Risk",
+                "Bond ETFs with longer duration can be more sensitive to interest-rate changes, while shorter-duration and floating-rate funds may behave differently."
+          ],
+          [
+                "Credit and Spread Risk",
+                "High-yield bond ETFs carry different risk from investment-grade funds because credit spreads and default risk vary significantly."
+          ],
+          [
+                "Research Use",
+                "This hub provides educational context for fixed-income ETF screening and does not constitute investment advice."
+          ]
+    ]
+  },
+  "real-estate-etfs": {
+    title: "Real Estate ETFs",
+    eyebrow: "Sector ETF Hub",
+    intro: "Real estate ETF research covers REIT sector exposure, dividend yield quality, rate sensitivity, property type diversification, and portfolio income characteristics.",
+    symbols: ["VNQ"],
+    sections: [
+          [
+                "REIT and Rate Sensitivity",
+                "Real estate investment trust ETFs can be sensitive to interest-rate changes because financing costs, cap rates, and income yield all interact with rates."
+          ],
+          [
+                "Property Sector Mix",
+                "REIT ETFs can hold residential, commercial, industrial, healthcare, or data-center real estate, each with distinct macro sensitivities."
+          ],
+          [
+                "Research Use",
+                "This hub is educational context for real estate ETF screening and does not provide investment recommendations."
+          ]
+    ]
+  },
+  "commodity-etfs": {
+    title: "Commodity ETFs",
+    eyebrow: "Alternative Assets Hub",
+    intro: "Commodity ETF research covers gold, metals, energy, and broad commodity exposure with attention to inflation hedging, correlations, futures roll costs, and portfolio diversification.",
+    symbols: ["GLD","GDX"],
+    sections: [
+          [
+                "Inflation and Safe-Haven Context",
+                "Gold ETFs are often researched for inflation hedging, safe-haven demand, and portfolio correlation properties rather than growth screening."
+          ],
+          [
+                "Commodity Cyclicality",
+                "Commodity prices can be affected by demand cycles, currency movements, mining supply, and geopolitical factors."
+          ],
+          [
+                "Research Use",
+                "This hub connects commodity ETF candidates to educational context, comparisons, and sector-level screening."
+          ]
+    ]
+  },
+  "emerging-market-etfs": {
+    title: "Emerging Market ETFs",
+    eyebrow: "Global Markets Hub",
+    intro: "Emerging market ETF research compares geographic exposure, currency risk, earnings quality, political risk, and growth cycle sensitivity across international equity funds.",
+    symbols: ["EEM","IEMG","EFA","VXUS"],
+    sections: [
+          [
+                "Currency and Political Risk",
+                "Emerging market ETFs can be affected by currency movements, sovereign debt levels, political transitions, and trade policy changes."
+          ],
+          [
+                "Growth and Diversification",
+                "International equity exposure can differ from U.S. market behavior, offering diversification context but also distinct risk profiles."
+          ],
+          [
+                "Research Use",
+                "This hub is for educational context on international and emerging-market ETF screening."
+          ]
+    ]
+  },
+  "healthcare-etfs": {
+    title: "Healthcare ETFs",
+    eyebrow: "Sector ETF Hub",
+    intro: "Healthcare ETF research compares pharmaceutical, biotech, medical devices, and services sector exposure across broad and focused healthcare funds.",
+    symbols: ["XBI","XLV"],
+    sections: [
+          [
+                "Biotech Versus Broad Healthcare",
+                "Biotech ETFs can carry higher volatility than broad healthcare ETFs because clinical outcomes and FDA decisions can drive large price moves."
+          ],
+          [
+                "Defensive Versus Growth",
+                "Broad healthcare ETFs may behave more defensively, while biotech-focused funds carry growth and binary event risk."
+          ],
+          [
+                "Research Use",
+                "This hub connects healthcare ETF candidates to related comparisons, sector research, and educational screening."
+          ]
+    ]
+  },
+  "low-volatility-etfs": {
+    title: "Low Volatility ETFs",
+    eyebrow: "Defensive ETF Hub",
+    intro: "Low volatility ETF research examines drawdown profiles, quality factors, income yield, sector tilt, and how defensive fund structures behave across different market environments.",
+    symbols: ["JEPI","QUAL","SCHD","VIG"],
+    sections: [
+          [
+                "Low Vol and Factor Risk",
+                "Low-volatility ETFs can lag in strong bull markets but may provide smoother drawdown profiles during risk-off periods."
+          ],
+          [
+                "Quality and Income Overlap",
+                "Many low-volatility strategies also screen for dividend quality and balance sheet strength, creating overlap with income ETF research."
+          ],
+          [
+                "Research Use",
+                "This hub links defensive factor ETFs to related comparisons, dividend hubs, and educational screening context."
+          ]
+    ]
   }
 };
 
