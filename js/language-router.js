@@ -1048,7 +1048,29 @@
   const currentPath = window.location.pathname;
   const isArabicPath = currentPath === "/ar" || currentPath.startsWith("/ar/");
   const currentLocale = isArabicPath ? "ar" : "en";
-  const routes = localizedRoutes[currentPath] || { ar: "/ar/", en: "/" };
+  function resolveRoute(path) {
+    if (localizedRoutes[path]) return localizedRoutes[path];
+    const stockEn = path.match(/^\/stocks\/([a-z0-9.-]+\.html)$/i);
+    if (stockEn) { const f = stockEn[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
+    const stockAr = path.match(/^\/ar\/stocks\/([a-z0-9.-]+\.html)$/i);
+    if (stockAr) { const f = stockAr[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
+    const stockAlias = path.match(/^\/en\/stocks\/([a-z0-9.-]+\.html)$/i);
+    if (stockAlias) { const f = stockAlias[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
+    const etfEn = path.match(/^\/etfs\/([a-z0-9.-]+\.html)$/i);
+    if (etfEn) { const f = etfEn[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
+    const etfAr = path.match(/^\/ar\/etfs\/([a-z0-9.-]+\.html)$/i);
+    if (etfAr) { const f = etfAr[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
+    const etfAlias = path.match(/^\/en\/etfs\/([a-z0-9.-]+\.html)$/i);
+    if (etfAlias) { const f = etfAlias[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
+    const insightEn = path.match(/^\/insights\/([a-z0-9.-]+\.html)$/i);
+    if (insightEn) { const f = insightEn[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    const insightAr = path.match(/^\/ar\/insights\/([a-z0-9.-]+\.html)$/i);
+    if (insightAr) { const f = insightAr[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    const insightAlias = path.match(/^\/en\/insights\/([a-z0-9.-]+\.html)$/i);
+    if (insightAlias) { const f = insightAlias[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    return { ar: "/ar/", en: "/" };
+  }
+  const routes = resolveRoute(currentPath);
 
   document.documentElement.lang = currentLocale;
   document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
