@@ -47,6 +47,14 @@ async function fetchJson(url) {
   }
 }
 
+async function fetchOptionalJson(url) {
+  try {
+    return await fetchJson(url);
+  } catch (_) {
+    return null;
+  }
+}
+
 async function getMarketData({ symbol, type, env }) {
   const apiKey = (env || process.env).FINNHUB_API_KEY;
   if (!apiKey) throw new Error("FINNHUB_API_KEY is not configured.");
@@ -59,12 +67,12 @@ async function getMarketData({ symbol, type, env }) {
   const sym = encodeURIComponent(symbol);
   const tok = encodeURIComponent(apiKey);
 
-  const [quote, profile, metrics] = await Promise.all([
-    fetchJson(`${FINNHUB_BASE}/quote?symbol=${sym}&token=${tok}`),
-    fetchJson(`${FINNHUB_BASE}/stock/profile2?symbol=${sym}&token=${tok}`),
+  const quote = await fetchJson(`${FINNHUB_BASE}/quote?symbol=${sym}&token=${tok}`);
+  const [profile, metrics] = await Promise.all([
+    fetchOptionalJson(`${FINNHUB_BASE}/stock/profile2?symbol=${sym}&token=${tok}`),
     isEtf
       ? Promise.resolve(null)
-      : fetchJson(`${FINNHUB_BASE}/stock/metric?symbol=${sym}&metric=all&token=${tok}`)
+      : fetchOptionalJson(`${FINNHUB_BASE}/stock/metric?symbol=${sym}&metric=all&token=${tok}`)
   ]);
 
   const price = n(quote.c, 0);

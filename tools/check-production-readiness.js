@@ -51,6 +51,7 @@ if (!redirects.includes("/etfs/spy/ /etfs/spy.html 301")) failures.push("_redire
 scanForForbiddenWording();
 scanForFrontendSecrets();
 checkLegacySymbolRoutes();
+checkEtfLiveDataHooks();
 checkConfiguredSymbols();
 checkPhase9Integration();
 checkRelatedContentEngine();
@@ -278,6 +279,61 @@ function checkLegacySymbolRoutes() {
     for (const pattern of legacyPatterns) {
       if (pattern.test(text)) failures.push(`${rel}: legacy query-based symbol route found: ${pattern}`);
     }
+  }
+}
+
+function checkEtfLiveDataHooks() {
+  const keyEtfs = ["SCHD", "SPY", "QQQ", "VOO", "VTI"];
+  const etfPages = [
+    ["etfs/schd.html", "SCHD"],
+    ["ar/etfs/schd.html", "SCHD"]
+  ];
+
+  for (const [rel, symbol] of etfPages) {
+    const html = read(rel);
+    if (!html) {
+      failures.push(`${rel}: key ETF page missing`);
+      continue;
+    }
+    for (const hook of ["data-asset-price", "data-asset-change", "data-data-status"]) {
+      if (!html.includes(hook)) failures.push(`${rel}: missing ETF live detail hook ${hook}`);
+    }
+    if (!html.includes(`initStaticSymbolPage("${symbol}")`)) {
+      failures.push(`${rel}: missing static ETF live initializer for ${symbol}`);
+    }
+    if ((/\$100\.00|0\.00%/.test(stripNonVisible(html))) &&
+        (!html.includes("data-asset-price") || !html.includes("data-asset-change"))) {
+      failures.push(`${rel}: static ETF fallback price/change found without live detail hooks`);
+    }
+  }
+
+  for (const rel of ["rankings.html", "ar/rankings.html"]) {
+    const html = read(rel);
+    if (!html) {
+      failures.push(`${rel}: rankings page missing`);
+      continue;
+    }
+    for (const symbol of keyEtfs) {
+      if (!html.includes(`data-live-price="${symbol}"`)) failures.push(`${rel}: missing ETF live price hook for ${symbol}`);
+      if (!html.includes(`data-live-change="${symbol}"`)) failures.push(`${rel}: missing ETF live change hook for ${symbol}`);
+    }
+    if ((/\$100\.00|0\.00%/.test(stripNonVisible(html))) &&
+        !keyEtfs.every((symbol) => html.includes(`data-live-price="${symbol}"`) && html.includes(`data-live-change="${symbol}"`))) {
+      failures.push(`${rel}: ETF fallback price/change found without complete live patch hooks`);
+    }
+  }
+
+  const rankingEngine = read("js/market/ranking-engine.js");
+  if (!rankingEngine.includes("ETF_SYMBOLS")) {
+    failures.push("js/market/ranking-engine.js: missing ETF symbol type inference for live price patching");
+  }
+  if (!/market-data\?symbol=.*&type=/.test(rankingEngine)) {
+    failures.push("js/market/ranking-engine.js: live price patch fetch must include type parameter");
+  }
+
+  const finnhubProvider = read("netlify/functions/providers/finnhub.js");
+  if (!finnhubProvider.includes("fetchOptionalJson")) {
+    failures.push("netlify/functions/providers/finnhub.js: optional Finnhub profile/metrics calls must not force ETF quote fallback");
   }
 }
 

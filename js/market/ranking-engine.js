@@ -33,30 +33,47 @@ function scoreLabel(finalScore) {
 // Shared live-price cache and in-flight guard across all tables on the page
 const _priceCache = {};
 const _inFlight = new Set();
+const ETF_SYMBOLS = new Set([
+  "ARKG", "ARKK", "ARKQ", "BND", "BOTZ", "DGRO", "DIA", "EEM", "EFA", "GDX",
+  "GLD", "HYG", "ICLN", "IEF", "IEMG", "IWM", "JEPI", "LQD", "MTUM", "QQQ",
+  "QUAL", "ROBO", "RSP", "SCHD", "SCHG", "SMH", "SOXL", "SOXX", "SPY", "TLT",
+  "TQQQ", "VIG", "VLUE", "VNQ", "VOO", "VTI", "VTV", "VUG", "VXUS", "XBI",
+  "XLE", "XLF", "XLK", "XLV", "XLY"
+]);
 
 export async function scheduleLivePricePatch(container, assets) {
-  const symbols = assets.map(a => a.symbol);
-  await batchFetchPrices(symbols, (symbol, data) => {
+  const requests = assets.map(normalizePriceRequest);
+  await batchFetchPrices(requests, (symbol, data) => {
     patchCells(container, symbol, data);
   });
 }
 
-async function batchFetchPrices(symbols, callback) {
+function normalizePriceRequest(asset) {
+  const symbol = String(asset?.symbol || asset || "").toUpperCase();
+  const explicitType = String(asset?.type || "").toLowerCase();
+  return {
+    symbol,
+    type: explicitType === "etf" || ETF_SYMBOLS.has(symbol) ? "etf" : "stock"
+  };
+}
+
+async function batchFetchPrices(requests, callback) {
   const CONCURRENCY = 3;
-  const queue = [...symbols];
+  const queue = requests.map(normalizePriceRequest);
 
   async function worker() {
     while (queue.length) {
-      const symbol = queue.shift();
+      const { symbol, type } = queue.shift();
       if (!symbol) continue;
-      if (_priceCache[symbol]) {
-        callback(symbol, _priceCache[symbol]);
+      const cacheKey = `${symbol}:${type}`;
+      if (_priceCache[cacheKey]) {
+        callback(symbol, _priceCache[cacheKey]);
         continue;
       }
-      if (_inFlight.has(symbol)) continue;
-      _inFlight.add(symbol);
+      if (_inFlight.has(cacheKey)) continue;
+      _inFlight.add(cacheKey);
       try {
-        const res = await fetch(`/api/market-data?symbol=${encodeURIComponent(symbol)}`, {
+        const res = await fetch(`/api/market-data?symbol=${encodeURIComponent(symbol)}&type=${encodeURIComponent(type)}`, {
           headers: { Accept: "application/json" }
         });
         if (res.ok) {
@@ -67,14 +84,14 @@ async function batchFetchPrices(symbols, callback) {
               changePercent: payload.asset.changePercent,
               isMock: !!(payload.fallback || payload.provider === "mock")
             };
-            _priceCache[symbol] = data;
+            _priceCache[cacheKey] = data;
             callback(symbol, data);
           }
         }
       } catch (_) {
         // silent — keep placeholder
       } finally {
-        _inFlight.delete(symbol);
+        _inFlight.delete(cacheKey);
       }
     }
   }

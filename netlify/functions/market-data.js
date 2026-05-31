@@ -85,9 +85,9 @@ exports.handler = async function handler(event) {
         status: "fallback",
         isFallback: true,
         isMock: true,
-        cacheTtlSeconds: 60,
+        cacheTtlSeconds: 0,
         cacheStatus: "fallback",
-        staleAfterSeconds: 60,
+        staleAfterSeconds: 0,
         servedFromCache: false,
         latencyMs,
         attribution: "TradeAlphaAI serverless mock fallback",
@@ -95,7 +95,7 @@ exports.handler = async function handler(event) {
         stats: { ..._stats }
       }),
       asset: normalizeServerAsset(fallback, symbol, type)
-    }, "public, max-age=60, stale-while-revalidate=300");
+    }, "no-store");
   }
 };
 
