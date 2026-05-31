@@ -1,6 +1,7 @@
 import { listMarketAssets, getMarketAsset, normalizeSymbol } from "./market-data-provider.js";
 import { buildTradeAlphaScore } from "./scoring-engine.js";
 import { renderWatchlistButton } from "./watchlist.js";
+import { scheduleLivePricePatch } from "./ranking-engine.js";
 import { getTechnicalInsights } from "./technical-analysis.js";
 import { getFundamentalInsights } from "./fundamental-analysis.js";
 import { getSentimentSummary } from "./sentiment-engine.js";
@@ -71,6 +72,7 @@ export async function initStocksPage() {
   const stocks = await listMarketAssets("stock");
   renderAssetCards("[data-popular-stocks]", stocks, "stock.html");
   wireSymbolSearch("[data-stock-search]", "[data-stock-symbol]", stocks, "stock.html", "Try NVDA, AAPL, TSLA, MSFT, AMZN, or META.");
+  scheduleLivePricePatch(document.querySelector("[data-popular-stocks]"), stocks);
 }
 
 export async function initEtfsPage() {
@@ -79,6 +81,7 @@ export async function initEtfsPage() {
   renderAssetCards("[data-popular-etfs]", etfs, "etf.html");
   wireSymbolSearch("[data-etf-search]", "[data-etf-symbol]", etfs, "etf.html", "Try SPY, QQQ, VTI, VOO, or GLD.");
   renderComparison("[data-etf-comparison]", etfs);
+  scheduleLivePricePatch(document.querySelector("[data-popular-etfs]"), etfs);
 }
 
 export async function initStockDetailPage() {
@@ -192,8 +195,8 @@ function renderAssetCard(asset, hrefBase) {
       <span class="tile-name">${asset.name}</span>
       <span class="mini-chart" aria-hidden="true"><span class="bar-a"></span><span class="bar-b"></span><span class="bar-c"></span><span class="bar-d"></span></span>
       <span class="tile-metrics">
-        <span>${formatCurrency(asset.price)}</span>
-        <span class="${asset.changePercent >= 0 ? "positive" : "negative"}"><span class="trend-arrow ${arrow}"></span>${formatChange(asset.changePercent)}</span>
+        <span data-live-price="${asset.symbol}">${formatCurrency(asset.price)}</span>
+        <span><span class="trend-arrow ${arrow}"></span><span data-live-change="${asset.symbol}" class="${asset.changePercent >= 0 ? "positive" : "negative"}">${formatChange(asset.changePercent)}</span></span>
       </span>
       <span class="mini-score"><span style="width:${score.finalScore}%"></span></span>
       <span class="tile-score">${score.finalScore}/100 - ${score.label}</span>
