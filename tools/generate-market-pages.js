@@ -106,7 +106,7 @@ function hubAuthorityLinks(hub) {
     `<a class="market-btn" href="insights/">Insights</a>`,
     `<a class="market-btn" href="methodology.html">Methodology</a>`
   ];
-  for (const comparison of (config.comparisons || []).filter((item) => item.hub === hub.key).slice(0, 4)) {
+  for (const comparison of (config.comparisons || []).filter((item) => item.hub === hub.key).slice(0, 9)) {
     const pagePath = comparison.pagePath || `compare/${String(comparison.left).toLowerCase()}-vs-${String(comparison.right).toLowerCase()}.html`;
     links.push(`<a class="market-btn" href="${pagePath}">${escapeHtml(comparison.left)} vs ${escapeHtml(comparison.right)}</a>`);
   }
