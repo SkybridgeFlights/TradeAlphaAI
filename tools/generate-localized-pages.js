@@ -256,6 +256,7 @@ function writeLocalizedPage(page, locale) {
   html = localizeHead(html, page, locale);
   html = replaceHreflangBlock(html, page, locale);
   html = rewriteUrls(html, page.source, locale);
+  html = rewriteModuleImports(html, page.source);
   html = ensureLocaleSwitch(html, page, locale, true);
   html = localizeNavigation(html, locale);
   html = ensureMobileNavigation(html, locale, outRel);
@@ -631,6 +632,17 @@ function rewriteUrls(html, sourceRel, locale) {
   });
 }
 
+function rewriteModuleImports(html, sourceRel) {
+  const sourceDir = path.dirname(sourceRel);
+  return html.replace(/(<script[^>]+type=["']module["'][^>]*>)([\s\S]*?)(<\/script>)/gi, (match, open, body, close) => {
+    const fixed = body.replace(/\bfrom\s+(["'])(\.\.?\/[^"']+)\1/g, (m, q, rel) => {
+      const resolved = norm(path.join(sourceDir, rel));
+      return `from ${q}/${resolved}${q}`;
+    });
+    return open + fixed + close;
+  });
+}
+
 function localizeResolvedHref(resolved, locale) {
   const clean = resolved.replace(/^\.\//, "");
   const hash = clean.includes("#") ? `#${clean.split("#").slice(1).join("#")}` : "";
@@ -721,19 +733,73 @@ function writeLanguageRouter() {
     const en = `/${page.enPath.replace(/index\.html$/, "")}`;
     const enIndex = `/${page.enPath}`;
     routes[source] = { ar, en: source || "/" };
-    routes[sourceIndex] = { ar, en: source || "/" };
+    routes[sourceIndex] = { ar: arIndex, en: sourceIndex };
     routes[ar] = { ar, en: source || "/" };
-    routes[arIndex] = { ar, en: source || "/" };
+    routes[arIndex] = { ar: arIndex, en: sourceIndex };
     routes[en] = { ar, en: source || "/" };
-    routes[enIndex] = { ar, en: source || "/" };
+    routes[enIndex] = { ar: arIndex, en: sourceIndex };
   }
+  const routesJson = JSON.stringify(routes, null, 4);
   fs.writeFileSync(path.join(root, "js/language-router.js"), `(function () {
-  const localizedRoutes = ${JSON.stringify(routes, null, 4)};
+  const localizedRoutes = ${routesJson};
   const currentPath = window.location.pathname;
-  const routes = localizedRoutes[currentPath] || { ar: "/ar/", en: "/" };
-  document.querySelectorAll("[data-locale-route]").forEach((link) => {
-    const locale = link.getAttribute("data-locale-route");
+  const isArabicPath = currentPath === "/ar" || currentPath.startsWith("/ar/");
+  const currentLocale = isArabicPath ? "ar" : "en";
+  function resolveRoute(p) {
+    if (localizedRoutes[p]) return localizedRoutes[p];
+    var withExt = (!p.endsWith('/') && !p.endsWith('.html')) ? p + '.html' : p;
+    if (withExt !== p && localizedRoutes[withExt]) return localizedRoutes[withExt];
+    var n = withExt, m;
+    m = n.match(/^\\/stocks\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
+    m = n.match(/^\\/ar\\/stocks\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
+    m = n.match(/^\\/en\\/stocks\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
+    m = n.match(/^\\/etfs\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
+    m = n.match(/^\\/ar\\/etfs\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
+    m = n.match(/^\\/en\\/etfs\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
+    m = n.match(/^\\/insights\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    m = n.match(/^\\/ar\\/insights\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    m = n.match(/^\\/en\\/insights\\/([a-z0-9.-]+\\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    return { ar: "/ar/", en: "/" };
+  }
+  const routes = resolveRoute(currentPath);
+  document.documentElement.lang = currentLocale;
+  document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
+  document.body.classList.toggle("localized-ar", currentLocale === "ar");
+  document.body.classList.toggle("localized-en", currentLocale === "en");
+  try { localStorage.setItem("ta_lang", currentLocale); } catch (_) {}
+  function setActiveLanguage(link, locale) {
+    var active = locale === currentLocale;
+    link.classList.toggle("active", active);
+    if (active) { link.setAttribute("aria-current", "true"); } else { link.removeAttribute("aria-current"); }
+  }
+  document.querySelectorAll("[data-locale-route]").forEach(function (link) {
+    var locale = link.getAttribute("data-locale-route");
     link.setAttribute("href", routes[locale] || routes.en || "/");
+    link.textContent = locale === "ar" ? "\\u0627\\u0644\\u0639\\u0631\\u0628\\u064a\\u0629" : "English";
+    link.addEventListener("click", function () {
+      try { localStorage.setItem("ta_lang", locale); } catch (_) {}
+    });
+    setActiveLanguage(link, locale);
+  });
+  document.querySelectorAll("a[href]").forEach(function (link) {
+    if (link.hasAttribute("data-locale-route") || link.target === "_blank") return;
+    var rawHref = link.getAttribute("href");
+    if (!rawHref || rawHref.startsWith("#") || /^(mailto:|tel:|https?:\\/\\/|\\/\\/)/i.test(rawHref)) return;
+    var url;
+    try { url = new URL(rawHref, window.location.origin); } catch (_) { return; }
+    if (url.origin !== window.location.origin) return;
+    var mapped = localizedRoutes[url.pathname];
+    if (!mapped || !mapped[currentLocale]) return;
+    link.setAttribute("href", mapped[currentLocale] + url.search + url.hash);
   });
 })();
 `, "utf8");
