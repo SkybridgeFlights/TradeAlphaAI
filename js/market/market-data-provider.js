@@ -25,7 +25,7 @@ const providerRegistry = {
       const local = await providerRegistry.mock.getAsset(normalized);
       const type = local ? local.type : "stock";
       try {
-        const response = await fetch(`/.netlify/functions/market-data?symbol=${encodeURIComponent(normalized)}&type=${encodeURIComponent(type)}`, {
+        const response = await fetch(`/api/market-data?symbol=${encodeURIComponent(normalized)}&type=${encodeURIComponent(type)}`, {
           headers: { Accept: "application/json" }
         });
         if (!response.ok) throw new Error(`Serverless provider returned ${response.status}`);
@@ -55,7 +55,7 @@ export function normalizeSymbol(symbol) {
 }
 
 export function getConfiguredProvider() {
-  const requested = typeof window !== "undefined" ? window.TRADEALPHA_MARKET_PROVIDER || "mock" : "mock";
+  const requested = typeof window !== "undefined" ? window.TRADEALPHA_MARKET_PROVIDER || "serverless" : "mock";
   return providerRegistry[requested] || providerRegistry.mock;
 }
 

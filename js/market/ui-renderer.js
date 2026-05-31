@@ -713,7 +713,7 @@ async function refreshProviderDiagnostics() {
   const healthTarget = document.querySelector("[data-provider-health]");
   if (!endpointTarget) return;
   try {
-    const response = await fetch("/.netlify/functions/market-data?symbol=NVDA&type=stock", { headers: { Accept: "application/json" } });
+    const response = await fetch("/api/market-data?symbol=NVDA&type=stock", { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Endpoint returned ${response.status}`);
     const payload = await response.json();
     const status = normalizeDataStatus(payload.metadata || {});
