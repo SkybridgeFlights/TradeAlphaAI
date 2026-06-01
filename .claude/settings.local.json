@@ -53,7 +53,8 @@
       "PowerShell(ls \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\en\\\\insights\\\\\" | Select-Object -First 5)",
       "PowerShell(ls \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\ar-insight-content\\\\\" | Select-Object -First 5)",
       "PowerShell(ls \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\data\\\\localization\\\\ar-insight-content\\\\\" | Select-Object -First 5)",
-      "Bash(awk -F': ' '{print $3}')"
+      "Bash(awk -F': ' '{print $3}')",
+      "Bash(xargs -I{} bash -c 'grep -l \"application/ld+json\" {} 2>/dev/null || echo \"MISSING: {}\"')"
     ]
   }
 }
