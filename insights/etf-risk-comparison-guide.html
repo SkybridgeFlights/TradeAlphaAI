@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ETF Risk Comparison Guide: Volatility, Beta &amp; Drawdown Research | TradeAlphaAI</title>
+  <meta name="description" content="Educational guide to ETF risk metrics: how volatility, beta, maximum drawdown, Sharpe ratio, and expense ratios differ across broad market, sector, and factor ETFs. Research framework for comparing ETF risk profiles." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/insights/etf-risk-comparison-guide.html" />
+  <!-- localized-static-pages:start -->
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/insights/etf-risk-comparison-guide.html" />
+  <link rel="alternate" hreflang="en-US" href="https://www.tradealphaai.com/en/insights/etf-risk-comparison-guide.html" />
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/insights/etf-risk-comparison-guide.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/insights/etf-risk-comparison-guide.html" />
+  <!-- localized-static-pages:end -->
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="ETF Risk Comparison Guide: Volatility, Beta, and Drawdown Research" />
+  <meta property="og:description" content="Compare ETF risk profiles using volatility, beta, maximum drawdown, and Sharpe ratio. Learn how broad market ETFs (SPY, VTI), sector ETFs (SOXX, XLK), and bond ETFs (TLT, BND) differ in risk characteristics." />
+  <meta property="og:url" content="https://www.tradealphaai.com/insights/etf-risk-comparison-guide.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta property="og:image:alt" content="TradeAlphaAI Market Insights research preview" />
+  <meta property="article:published_time" content="2026-05-31" />
+  <meta property="article:modified_time" content="2026-05-31" />
+  <meta property="article:section" content="ETF Education" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ETF Risk Comparison Guide: Volatility, Beta, and Drawdown Research" />
+  <meta name="twitter:description" content="Compare ETF risk profiles using volatility, beta, maximum drawdown, and Sharpe ratio. Learn how broad market ETFs (SPY, VTI), sector ETFs (SOXX, XLK), and bond ETFs (TLT, BND) differ in risk characteristics." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../landing.css" />
+  <link rel="stylesheet" href="../css/market/market-portal.css" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "TradeAlphaAI",
+          "item": "https://www.tradealphaai.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Market Insights",
+          "item": "https://www.tradealphaai.com/insights/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "ETF Risk Comparison Guide",
+          "item": "https://www.tradealphaai.com/insights/etf-risk-comparison-guide.html"
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "ETF Risk Comparison Guide: Volatility, Beta, and Drawdown Research",
+      "description": "Educational guide to ETF risk metrics: how volatility, beta, maximum drawdown, Sharpe ratio, and expense ratios differ across broad market, sector, and factor ETFs.",
+      "datePublished": "2026-05-31",
+      "dateModified": "2026-05-31",
+      "inLanguage": "en",
+      "author": {
+        "@type": "Organization",
+        "name": "TradeAlphaAI Market Insights Team",
+        "url": "https://www.tradealphaai.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TradeAlphaAI",
+        "url": "https://www.tradealphaai.com"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.tradealphaai.com/insights/etf-risk-comparison-guide.html"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is beta in ETF research?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Beta measures an ETF's price sensitivity relative to a benchmark (usually SPY or the S&P 500). A beta of 1.0 means the ETF moves in line with the benchmark. A beta above 1.0 means it is more volatile — SOXX (semiconductors) and QQQ (Nasdaq-100) typically have betas above 1. A beta below 1.0 means less volatility — BND (bond ETF) and XLV (healthcare) typically have lower betas. A leveraged ETF like TQQQ is designed with 3x daily leverage (beta approximately 3.0 on a daily basis, but compounding effects diverge over longer periods)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is maximum drawdown for an ETF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Maximum drawdown is the largest peak-to-trough price decline an ETF has experienced over a given period. It is a measure of worst-case historical loss. A drawdown of 45% means the ETF fell 45% from its highest price to its subsequent lowest price before recovering. ETFs with higher concentration (SOXX, ARKK) have typically experienced larger drawdowns than diversified broad-market ETFs (SPY, VTI)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does TLT risk compare to SPY risk?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "TLT (20+ Year Treasury Bond ETF) and SPY (S&P 500 ETF) have different risk profiles. TLT is highly sensitive to interest rates — during the 2022 rate-hike cycle, TLT fell approximately 35% while SPY fell approximately 25%. TLT has low correlation to equities in most environments, providing diversification benefits, but significant duration risk when rates rise. SPY has broader market risk across 500 companies and 11 sectors. In a combined portfolio research framework, TLT historically reduced portfolio volatility by offsetting equity drawdowns during recessions, but this relationship weakened during the 2022 inflationary environment."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body class="market-page">
+  <div class="insight-progress-bar" id="read-progress"></div>
+  <div class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy"><strong>TradeAlpha AI</strong><span>Research Platform</span></span>
+      </a>
+      <div class="top-actions">
+        <nav class="nav-group" aria-label="Primary">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/stocks.html" class="nav-link">Global Stock Research</a>
+          <a href="/etfs.html" class="nav-link">ETF Analyzer</a>
+          <a href="/ai-stock-screener.html" class="nav-link">Market Screener</a>
+          <div class="nav-menu">
+            <a href="/rankings.html" class="nav-link nav-menu-trigger">Top Picks<span class="nav-badge">Hot</span></a>
+            <div class="nav-dropdown">
+              <a href="/rankings.html#top-stocks">Top 10 Stocks Right Now</a>
+              <a href="/rankings.html#top-ai-stocks">Best AI Stocks</a>
+              <a href="/rankings.html#top-semiconductor-stocks">Best Semiconductor Stocks</a>
+              <a href="/rankings.html#top-growth-stocks">Best Growth Stocks</a>
+              <a href="/rankings.html#top-dividend-etfs">Top Dividend ETFs</a>
+              <a href="/rankings.html#top-broad-market-etfs">Best ETFs for 2026</a>
+            </div>
+          </div>
+          <a href="/insights/" class="nav-link">Articles</a>
+          <a href="/methodology.html" class="nav-link">Methodology</a>
+        </nav>
+        <div class="locale-links" aria-label="Language">
+          <a class="lang-switch" data-locale-route="ar" href="/ar/insights/etf-risk-comparison-guide.html">Arabic</a>
+          <a class="lang-switch" data-locale-route="en" href="/insights/etf-risk-comparison-guide.html">English</a>
+        </div>
+        <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <main class="market-shell">
+    <div class="wrap">
+
+      <nav class="breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="index.html">Articles</a><span>/</span><span>ETF Risk Comparison Guide</span></nav>
+
+      <section class="market-section">
+        <div class="market-panel insight-hero-card">
+          <div class="insight-label-row">
+            <span class="insight-category-badge">ETF Education</span>
+            <span class="insight-category-badge muted">Risk Research</span>
+          </div>
+          <h1>ETF Risk Comparison Guide: Volatility, Beta, and Drawdown Research</h1>
+          <div class="insight-meta-bar">
+            <span>Published <strong><time datetime="2026-05-31">May 31, 2026</time></strong></span>
+            <span>Updated <strong><time datetime="2026-05-31">May 31, 2026</time></strong></span>
+            <span><strong>8 min read</strong></span>
+            <span><strong>TradeAlphaAI Market Insights Team</strong></span>
+          </div>
+          <p class="market-lead">Not all ETFs carry the same risk. A broad market ETF like SPY distributes risk across 500 companies in 11 sectors. A semiconductor ETF like SOXX concentrates entirely in one industry. A long-duration bond ETF like TLT is highly sensitive to interest rate changes. Understanding the distinct risk profiles — volatility, beta, maximum drawdown, duration, and concentration — is the foundation of ETF comparison research.</p>
+          <div class="insight-summary-box">
+            <span>Research brief</span>
+            <p>This article introduces the key risk metrics for ETF comparison research: volatility (standard deviation), beta, maximum drawdown, Sharpe ratio, duration, and expense ratio. Each metric captures a different dimension of ETF behavior, and understanding all of them together provides a more complete risk picture than any single measure alone.</p>
+          </div>
+          <div class="insight-meta-clusters">
+            <div>
+              <strong>Reference ETFs</strong>
+              <div class="insight-chip-row"><span class="insight-chip">SPY</span><span class="insight-chip">QQQ</span><span class="insight-chip">SOXX</span><span class="insight-chip">TLT</span><span class="insight-chip">BND</span><span class="insight-chip">SCHD</span></div>
+            </div>
+            <div>
+              <strong>Topic tags</strong>
+              <div class="insight-chip-row"><span class="insight-chip">ETF Risk</span><span class="insight-chip">Beta</span><span class="insight-chip">Volatility</span><span class="insight-chip">Drawdown</span><span class="insight-chip">ETF Education</span></div>
+            </div>
+          </div>
+          <p class="insight-hero-disclaimer">Educational content only. This article does not provide investment advice, price targets, or security recommendations.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="insight-layout">
+
+          <article class="insight-article-body">
+
+            <h2 id="erc-volatility">Volatility: How Much Does an ETF Move?</h2>
+            <p class="market-copy">Volatility is the most direct measure of price variability, typically expressed as annualized standard deviation of daily returns. A higher standard deviation means the ETF's price fluctuates more widely. SPY (S&amp;P 500) has historically had annualized volatility around 15–20% in normal conditions. QQQ (Nasdaq-100) has historically been somewhat more volatile (~18–25%) due to its higher technology concentration. SOXX (semiconductors) has historically been among the most volatile major ETFs (~30–40%) because semiconductor business cycles amplify both upside and downside.</p>
+            <p class="market-copy">Bond ETFs like BND (Total Bond Market) have much lower equity-like volatility (~3–5% annualized standard deviation), but TLT (Long-Term Treasuries) has significantly higher rate-driven volatility (~15–20%) than short-duration bonds because 20+ year bond prices move substantially with rate changes. Understanding which type of risk (equity, rate, commodity) drives an ETF's volatility is essential for comparison research.</p>
+
+            <h2 id="erc-beta">Beta: Sensitivity to the Market</h2>
+            <p class="market-copy">Beta measures an ETF's price sensitivity relative to a benchmark. The convention is to use SPY (S&amp;P 500) as the reference with beta = 1.0. An ETF with beta 1.5 has historically moved 1.5x the benchmark — rising more during market rallies and falling more during selloffs. An ETF with beta 0.7 has historically moved 0.7x the benchmark — less upside in rallies, but less downside in selloffs.</p>
+            <p class="market-copy">Reference beta profiles by ETF type: QQQ (beta ~1.1–1.2 vs SPY), SOXX (beta ~1.3–1.5), TQQQ 3x leveraged (~2.8–3.0 on a short-term basis), SCHD/VIG dividend ETFs (~0.7–0.9), BND (~0.0–0.1), XLV Healthcare (~0.7–0.8), XLE Energy (~1.0–1.2 with high oil price correlation). Note: beta is not stable — it changes across market regimes. All values are approximate educational estimates; verify against current fund documentation.</p>
+            <div class="insight-stat-grid" style="margin:20px 0">
+              <div class="insight-stat-card">
+                <span>SPY beta</span>
+                <strong>1.0 (benchmark)</strong>
+                <p>S&amp;P 500 ETF is the standard market benchmark</p>
+              </div>
+              <div class="insight-stat-card">
+                <span>SOXX beta (approx.)</span>
+                <strong>~1.3–1.5</strong>
+                <p>Semiconductor concentration amplifies market moves</p>
+              </div>
+              <div class="insight-stat-card">
+                <span>SCHD beta (approx.)</span>
+                <strong>~0.75–0.85</strong>
+                <p>Dividend quality screen reduces market sensitivity</p>
+              </div>
+              <div class="insight-stat-card">
+                <span>BND beta (approx.)</span>
+                <strong>~0.0–0.1</strong>
+                <p>Bond ETF has near-zero correlation to equity market benchmark</p>
+              </div>
+            </div>
+
+            <h2 id="erc-drawdown">Maximum Drawdown: Worst Historical Loss</h2>
+            <p class="market-copy">Maximum drawdown is the largest peak-to-trough percentage decline an ETF has experienced in a given historical window. It is a commonly used measure of downside risk — how bad could things have gotten? SPY's maximum drawdown was approximately 55% during the 2008–2009 financial crisis. QQQ's maximum drawdown was approximately 83% from the 2000 tech bubble peak to its 2002 trough. SOXX's 2022 drawdown was approximately 45% from peak to trough.</p>
+            <p class="market-copy">TLT had a historically severe drawdown from 2020 to 2023 — approximately 50% — driven by the fastest rate-hike cycle in decades. This was unexpected by many researchers who had modeled TLT as a low-drawdown safe-haven asset. It illustrated that duration risk in long-bond ETFs can produce equity-like drawdowns in rate-spike environments. BND (shorter average duration) declined less — approximately 18% in the same period.</p>
+            <p class="market-copy">Drawdown research is most useful as a stress-test: "How much could I have lost holding this ETF during its historical worst period?" Compare drawdowns across ETFs you're analyzing to understand the worst-case downside envelope. Importantly, drawdowns reflect the past — future worst-case scenarios may be different in character or magnitude.</p>
+
+            <h2 id="erc-sharpe">Sharpe Ratio: Return Per Unit of Risk</h2>
+            <p class="market-copy">The Sharpe ratio measures risk-adjusted return: (return minus risk-free rate) divided by standard deviation. A higher Sharpe ratio means more return per unit of volatility. In research comparison frameworks, Sharpe ratio helps distinguish ETFs that outperformed by taking on more risk versus ETFs that delivered competitive returns with lower volatility.</p>
+            <p class="market-copy">Dividend-quality ETFs (SCHD, VIG) have historically shown competitive Sharpe ratios over long periods because their lower volatility partially offsets their modest underperformance in strong bull markets. High-concentration sector ETFs (SOXX, QQQ) can have excellent Sharpe ratios during AI-driven bull markets when their concentration pays off, but historically lower Sharpe ratios when measured across full cycles including drawdowns.</p>
+
+            <h2 id="erc-expense">Expense Ratios and Tracking Differences</h2>
+            <p class="market-copy">Expense ratio is the annual cost of holding an ETF, expressed as a percentage of assets under management. SPY charges 0.0945%; VOO (Vanguard S&amp;P 500) charges 0.03%; IVV (iShares S&amp;P 500) charges 0.03%. For identical index exposure, the lower-cost fund delivers better long-term net-of-fees performance. Over 20 years, a 0.06% annual cost difference compounds to meaningful performance differences.</p>
+            <p class="market-copy">Sector ETFs typically charge more than broad-market ETFs. SOXX charges ~0.35%; SMH charges ~0.35%; ARKK charges ~0.75%. Leveraged ETFs charge more still and have additional return drag from daily rebalancing. The <a href="etf-expense-ratios-explained.html">ETF expense ratios explained</a> article covers this in detail.</p>
+
+            <h2 id="erc-comparison">ETF Risk Comparison: SPY vs QQQ vs SOXX vs SCHD vs TLT</h2>
+            <p class="market-copy">Putting the risk metrics together across five commonly researched ETFs:</p>
+            <ul class="insight-list">
+              <li><strong>SPY</strong> — moderate volatility (~15–18%), beta 1.0, broad diversification (500 stocks, 11 sectors), expense ratio 0.0945%, historical max drawdown ~55% (2008–09).</li>
+              <li><strong>QQQ</strong> — higher volatility (~18–22%), beta ~1.1–1.2, technology-concentrated (Nasdaq-100), expense ratio 0.20%, historical max drawdown ~83% (2000–02).</li>
+              <li><strong>SOXX</strong> — highest volatility (~30–40%), beta ~1.3–1.5, semiconductor-concentrated, expense ratio ~0.35%, 2022 drawdown ~45%.</li>
+              <li><strong>SCHD</strong> — lower volatility (~12–16%), beta ~0.75–0.85, dividend quality screen, expense ratio 0.06%, historical max drawdown ~40% (2008–09).</li>
+              <li><strong>TLT</strong> — rate-driven volatility (~15–20%), near-zero equity beta, long-duration Treasury bonds, expense ratio 0.15%, 2020–2023 drawdown ~50% from rate hikes.</li>
+            </ul>
+            <p class="market-copy">These comparisons are for educational research context using approximate historical data. Always verify current metrics against fund documentation, Bloomberg data, or ETF provider research tools. See the <a href="spy-vs-qqq-etf-comparison-guide.html">SPY vs QQQ comparison guide</a> and the <a href="../bond-etfs.html">bond ETFs hub</a> for additional research paths.</p>
+
+            <h2 id="erc-faq">Frequently Asked Questions</h2>
+            <div class="stock-faq" style="margin-top:0">
+              <details>
+                <summary>What is beta in ETF research?</summary>
+                <p>Beta measures an ETF's historical price sensitivity relative to a market benchmark (typically SPY). A beta above 1.0 means the ETF amplifies market moves; below 1.0 means less sensitivity. SOXX has beta ~1.3–1.5; SCHD has beta ~0.75–0.85; BND has near-zero beta. Beta is unstable across market regimes and should not be treated as a fixed property.</p>
+              </details>
+              <details>
+                <summary>What is the safest ETF in terms of risk?</summary>
+                <p>No ETF is "safe" in absolute terms. Lower-risk ETFs in research frameworks include short-term Treasury ETFs (minimal duration risk, near-zero equity risk), broad market ETFs (SPY, VTI) with hundreds of holdings diversifying single-name risk, and dividend-quality ETFs (SCHD, VIG) with lower beta. "Safe" depends on the type of risk most relevant to your research context: equity, rate, credit, currency, or liquidity risk.</p>
+              </details>
+              <details>
+                <summary>How is TQQQ different from QQQ in risk terms?</summary>
+                <p>TQQQ (ProShares UltraPro QQQ) is a 3x leveraged daily ETF targeting 3x the daily return of the Nasdaq-100. Because it rebalances daily to maintain 3x leverage, it experiences volatility decay over time — meaning in choppy or sideways markets, TQQQ can lose value even if QQQ is flat or slightly positive. During QQQ's 2022 drawdown of ~35%, TQQQ declined approximately 80%. TQQQ is a high-volatility, high-risk instrument designed for short-term use, not long-term holding.</p>
+              </details>
+              <details>
+                <summary>Should I choose ETFs based on risk metrics alone?</summary>
+                <p>Risk metrics are one input in a multi-dimensional ETF comparison framework. Return history, expense ratio, index methodology, holdings overlap, liquidity, and your specific research context all matter. Risk metrics like beta and drawdown are backward-looking — they describe what happened in the past, not what will happen. Educational use only; this is not financial advice.</p>
+              </details>
+              <details>
+                <summary>Is this content financial advice?</summary>
+                <p>No. This article is for educational and informational purposes only. It explains ETF risk metrics and comparison frameworks for research context. It does not recommend any specific ETF for investment and does not constitute financial advice. All statistics are approximate educational estimates. Consult a qualified financial professional for personalized investment guidance.</p>
+              </details>
+            </div>
+
+            <div class="insight-disclaimer">
+              <strong>Educational disclaimer:</strong> All Market Insights content is for educational and informational purposes only and does not constitute investment or financial advice. TradeAlphaAI does not recommend specific securities or predict future performance. All statistics and data cited are approximate and for educational context only. Consult a qualified financial professional for personalized investment guidance.
+            </div>
+
+          </article>
+
+          <aside class="insight-sidebar">
+            <div class="insight-toc">
+              <h3>Contents</h3>
+              <ol>
+                <li><a href="#erc-volatility">Volatility</a></li>
+                <li><a href="#erc-beta">Beta</a></li>
+                <li><a href="#erc-drawdown">Maximum Drawdown</a></li>
+                <li><a href="#erc-sharpe">Sharpe Ratio</a></li>
+                <li><a href="#erc-expense">Expense Ratios</a></li>
+                <li><a href="#erc-comparison">SPY vs QQQ vs SOXX</a></li>
+                <li><a href="#erc-faq">FAQ</a></li>
+              </ol>
+            </div>
+            <div class="market-panel" style="padding:20px;margin-top:20px">
+              <span class="eyebrow" style="font-size:10px">Related Research</span>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+                <a href="spy-vs-qqq-etf-comparison-guide.html" class="related-link"><strong>SPY vs QQQ Comparison</strong><span>Index methodology comparison</span></a>
+                <a href="etf-expense-ratios-explained.html" class="related-link"><strong>Expense Ratios</strong><span>ETF annual cost comparison</span></a>
+                <a href="understanding-beta-in-stocks.html" class="related-link"><strong>Beta in Stocks</strong><span>How beta affects stock research</span></a>
+                <a href="sector-etfs-vs-broad-market.html" class="related-link"><strong>Sector vs Broad Market ETFs</strong><span>Concentration and diversification</span></a>
+                <a href="../ai-etfs.html" class="related-link"><strong>AI ETFs Hub</strong><span>QQQ, SMH, SOXX, and AI-themed ETFs</span></a>
+                <a href="../bond-etfs.html" class="related-link"><strong>Bond ETFs Hub</strong><span>TLT, BND, IEF, and duration risk</span></a>
+                <a href="../defensive-etfs.html" class="related-link"><strong>Defensive ETFs Hub</strong><span>Lower-risk ETF options</span></a>
+              </div>
+            </div>
+            <div class="market-panel insight-sidebar-note">
+              <span class="eyebrow" style="font-size:10px">Research Use</span>
+              <p>All risk metrics cited are approximate historical estimates for educational context. Always verify against current fund documentation and independent data sources.</p>
+            </div>
+          </aside>
+
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Continue Reading</span>
+          <h2>Explore connected market research</h2>
+          <div data-rc="ins-etf-risk"></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <div data-research-timeline="article" data-count="4"></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <div data-research-themes data-count="4"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+  <script>
+  (function(){
+    var bar=document.getElementById('read-progress');
+    if(!bar)return;
+    window.addEventListener('scroll',function(){
+      var d=document.documentElement;
+      var p=Math.min(d.scrollTop/(d.scrollHeight-d.clientHeight)||0,1);
+      bar.style.width=(p*100).toFixed(1)+'%';
+    },{passive:true});
+  })();
+  </script>
+  <script src="../js/related-content.js"></script>
+  <script src="../js/research-layer.js"></script>
+  <script src="../js/language-router.js" defer></script>
+  <script src="../js/mobile-nav.js" defer></script>
+</body>
+</html>

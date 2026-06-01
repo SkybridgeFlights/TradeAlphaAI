@@ -112,12 +112,29 @@ function hubAuthorityLinks(hub) {
     `<a class="market-btn" href="insights/">Insights</a>`,
     `<a class="market-btn" href="methodology.html">Methodology</a>`
   ];
-  for (const comparison of (config.comparisons || []).filter((item) => item.hub === hub.key).slice(0, 9)) {
-    const pagePath = comparison.pagePath || `compare/${String(comparison.left).toLowerCase()}-vs-${String(comparison.right).toLowerCase()}.html`;
-    links.push(`<a class="market-btn" href="${pagePath}">${escapeHtml(comparison.left)} vs ${escapeHtml(comparison.right)}</a>`);
+  // Use curated relatedCompares if defined, otherwise fall back to comparisons with hub tag
+  if (hub.relatedCompares && hub.relatedCompares.length) {
+    for (const comparePath of hub.relatedCompares.slice(0, 6)) {
+      const label = comparePath.replace(/\.html$/, "").replace(/-vs-/, " vs ").toUpperCase();
+      links.push(`<a class="market-btn" href="${escapeHtml(comparePath)}">${escapeHtml(label)}</a>`);
+    }
+  } else {
+    for (const comparison of (config.comparisons || []).filter((item) => item.hub === hub.key).slice(0, 6)) {
+      const pagePath = comparison.pagePath || `${String(comparison.left).toLowerCase()}-vs-${String(comparison.right).toLowerCase()}.html`;
+      links.push(`<a class="market-btn" href="${pagePath}">${escapeHtml(comparison.left)} vs ${escapeHtml(comparison.right)}</a>`);
+    }
   }
-  for (const related of (config.hubs || []).filter((item) => item.key !== hub.key).slice(0, 3)) {
-    links.push(`<a class="market-btn" href="${escapeHtml(related.pagePath)}">${escapeHtml(related.title)}</a>`);
+  // Use curated relatedHubs if defined, otherwise fall back to first 3 non-self hubs
+  const relatedHubKeys = hub.relatedHubs && hub.relatedHubs.length
+    ? hub.relatedHubs.slice(0, 4)
+    : (config.hubs || []).filter((item) => item.key !== hub.key).slice(0, 3).map((h) => h.key);
+  for (const key of relatedHubKeys) {
+    const related = (config.hubs || []).find((h) => h.key === key);
+    if (related) links.push(`<a class="market-btn" href="${escapeHtml(related.pagePath)}">${escapeHtml(related.title)}</a>`);
+  }
+  // Add curated insight links
+  for (const slug of (hub.relatedInsights || []).slice(0, 3)) {
+    links.push(`<a class="market-btn" href="insights/${escapeHtml(slug)}.html">${escapeHtml(titleFromSlug(slug))}</a>`);
   }
   return links.join("");
 }
@@ -200,10 +217,12 @@ function buildFaqHtml(symbol) {
 }
 
 function buildHubFaqHtml(hub) {
-  return [
-    [`What is the ${hub.title} hub?`, `${hub.title} is an educational screening hub with curated symbols, internal research links, and TradeAlphaAI score context.`],
-    [`Is ${hub.title} content financial advice?`, "No. This hub is for educational and informational purposes only and does not constitute financial advice."]
-  ].map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("");
+  const base = [
+    [`What is the ${hub.title} hub?`, `${hub.title} is an educational research hub with curated watchlist candidates, sector context, internal research links, and TradeAlphaAI score context. It is for educational purposes only and does not provide financial advice.`],
+    [`Is ${hub.title} content financial advice?`, "No. This hub is for educational and informational purposes only. Nothing here constitutes investment advice, a price target, or a security recommendation."]
+  ];
+  const custom = (hub.hubFaq || []).map((item) => [item.q, item.a]);
+  return [...base, ...custom].map(([q, a]) => `<details><summary>${escapeHtml(q)}</summary><p>${escapeHtml(a)}</p></details>`).join("");
 }
 
 function buildFaqSchema(questions, symbol) {
@@ -226,21 +245,24 @@ function buildFaqSchema(questions, symbol) {
 }
 
 function buildHubFaqSchema(hub) {
-  return {
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: `What is the ${hub.title} hub?`,
-        acceptedAnswer: { "@type": "Answer", text: `${hub.title} is an educational screening hub with curated symbols, internal research links, and TradeAlphaAI score context.` }
-      },
-      {
-        "@type": "Question",
-        name: `Is ${hub.title} content financial advice?`,
-        acceptedAnswer: { "@type": "Answer", text: "No. This hub is for educational and informational purposes only and does not constitute financial advice." }
-      }
-    ]
-  };
+  const base = [
+    {
+      "@type": "Question",
+      name: `What is the ${hub.title} hub?`,
+      acceptedAnswer: { "@type": "Answer", text: `${hub.title} is an educational research hub with curated watchlist candidates, sector context, internal research links, and TradeAlphaAI score context. It is for educational purposes only and does not provide financial advice.` }
+    },
+    {
+      "@type": "Question",
+      name: `Is ${hub.title} content financial advice?`,
+      acceptedAnswer: { "@type": "Answer", text: "No. This hub is for educational and informational purposes only. Nothing here constitutes investment advice, a price target, or a security recommendation." }
+    }
+  ];
+  const custom = (hub.hubFaq || []).map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a }
+  }));
+  return { "@type": "FAQPage", mainEntity: [...base, ...custom] };
 }
 
 function answerForQuestion(question, symbol) {

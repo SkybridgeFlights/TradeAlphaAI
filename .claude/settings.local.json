@@ -47,7 +47,13 @@
       "Bash(powershell -Command \"\\(Get-ChildItem ar/etfs -Filter '*.html'\\).Count\")",
       "Bash(powershell -Command \"\\(Get-ChildItem en/stocks -Filter '*.html'\\).Count\")",
       "Bash(xargs -I{} grep -n \"<title>\\\\|name=\\\\\"description\\\\\"\" {})",
-      "Bash(powershell -Command \"Get-Content 'insights/semiconductor-cycle-risks.html' -Encoding utf8 | Select-Object -First 8\")"
+      "Bash(powershell -Command \"Get-Content 'insights/semiconductor-cycle-risks.html' -Encoding utf8 | Select-Object -First 8\")",
+      "Bash(Get-Content \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\sitemap-insights.xml\")",
+      "Bash(Select-Object -Last 30)",
+      "PowerShell(ls \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\en\\\\insights\\\\\" | Select-Object -First 5)",
+      "PowerShell(ls \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\ar-insight-content\\\\\" | Select-Object -First 5)",
+      "PowerShell(ls \"C:\\\\EA_AI\\\\TradeAlphaAI Final\\\\data\\\\localization\\\\ar-insight-content\\\\\" | Select-Object -First 5)",
+      "Bash(awk -F': ' '{print $3}')"
     ]
   }
 }
