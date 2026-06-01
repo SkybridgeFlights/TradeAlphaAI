@@ -57,7 +57,8 @@
       "Bash(xargs -I{} bash -c 'grep -l \"application/ld+json\" {} 2>/dev/null || echo \"MISSING: {}\"')",
       "Bash(dir en\\\\insights)",
       "Bash(dir insights\\\\etf-education-etf-structure-and-index-methodology.html)",
-      "PowerShell(Test-Path *)"
+      "PowerShell(Test-Path *)",
+      "PowerShell(cd \"C:\\\\EA_AI\\\\TradeAlphaAI Final\"; \\(Get-Content \"insights\\\\index.html\" | Select-String \"market-card\" | Measure-Object\\).Count; \\(Get-Content \"data\\\\insight-topic-queue.json\" | Select-String '\"status\": \"draft\"' | Measure-Object\\).Count)"
     ]
   }
 }
