@@ -39,7 +39,7 @@ function checkTopic(topic, slugs) {
   if (!Array.isArray(topic.tags) || topic.tags.length < 2) failures.push(`${label}: needs at least 2 tags`);
   if (!Array.isArray(topic.language_support) || !topic.language_support.includes('en') || !topic.language_support.includes('ar')) failures.push(`${label}: must include EN and AR language support`);
   if (!allowedStatuses.has(topic.status)) failures.push(`${label}: invalid status ${topic.status}`);
-  if (topic.status === 'published') failures.push(`${label}: queue should not mark generated editorial topics as published without release review`);
+  if (topic.status === 'published') checkPublishedTopic(topic);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(topic.target_publish_date || '')) failures.push(`${label}: target_publish_date must be YYYY-MM-DD`);
   if (!Number.isInteger(topic.estimated_read_time) || topic.estimated_read_time < 4 || topic.estimated_read_time > 15) failures.push(`${label}: estimated_read_time must be 4-15 minutes`);
   if (!topic.evergreen_category) failures.push(`${label}: missing evergreen_category`);
@@ -70,6 +70,29 @@ function checkDraftIfPresent(topic) {
     if (!/id="discovery"/.test(html)) failures.push(`${rel}: missing discovery section`);
     if (locale === 'ar' && !/<html lang="ar" dir="rtl">/.test(html)) failures.push(`${rel}: missing Arabic RTL markers`);
     if (forbiddenClaims(stripHtml(html))) failures.push(`${rel}: forbidden promotional or advice wording found`);
+  }
+}
+
+function checkPublishedTopic(topic) {
+  const slug = topic.slug || '';
+  const enFile = path.join(ROOT, 'insights', `${slug}.html`);
+  const arFile = path.join(ROOT, 'ar', 'insights', `${slug}.html`);
+  const registryFile = path.join(ROOT, 'data', 'insights', 'article-registry.json');
+  if (!fs.existsSync(enFile)) failures.push(`${slug}: published status requires insights/${slug}.html`);
+  if (!fs.existsSync(arFile)) failures.push(`${slug}: published status requires ar/insights/${slug}.html`);
+  if (!fs.existsSync(registryFile)) failures.push(`${slug}: published status requires article registry`);
+  for (const file of [enFile, arFile]) {
+    if (!fs.existsSync(file)) continue;
+    const html = fs.readFileSync(file, 'utf8');
+    const rel = relative(file);
+    if (!/<meta name="robots" content="index,follow/.test(html)) failures.push(`${rel}: published article must be indexable`);
+    if (!/<link rel="canonical"/.test(html)) failures.push(`${rel}: missing canonical`);
+    if (!/<link rel="alternate" hreflang="ar"/.test(html) || !/<link rel="alternate" hreflang="en"/.test(html)) failures.push(`${rel}: missing bilingual hreflang`);
+    if (!/<meta property="og:title"/.test(html) || !/<meta name="twitter:card"/.test(html)) failures.push(`${rel}: missing social metadata`);
+    if (!/<script type="application\/ld\+json">[\s\S]*"Article"[\s\S]*<\/script>/.test(html)) failures.push(`${rel}: missing Article schema`);
+    if (!/<script type="application\/ld\+json">[\s\S]*"FAQPage"[\s\S]*<\/script>/.test(html)) failures.push(`${rel}: missing FAQ schema`);
+    if ((html.match(/<details/g) || []).length < 3) failures.push(`${rel}: missing FAQ blocks`);
+    if (!/id="related-research"/.test(html) || !/id="continue-learning"/.test(html)) failures.push(`${rel}: missing related/discovery sections`);
   }
 }
 

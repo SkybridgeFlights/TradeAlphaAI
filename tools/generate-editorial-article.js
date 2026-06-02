@@ -40,7 +40,7 @@ function renderArticle(topic, locale) {
     ? `مسودة تعليمية للمراجعة حول ${topic.title_ar}. لا تمثل نصيحة مالية.`
     : `Editorial review draft for ${topic.title_en}. Educational content only; no financial advice.`;
   const relatedLinks = renderRelatedLinks(topic, isAr);
-  const faq = isAr ? renderArabicFaq(topic) : renderEnglishFaq(topic);
+  const faq = isAr ? renderArabicFaq() : renderEnglishFaq();
 
   return `<!doctype html>
 <html lang="${lang}" dir="${dir}">
@@ -75,7 +75,7 @@ ${JSON.stringify(articleSchema(topic, locale), null, 2)}
 
       <section id="executive-summary">
         <h2>${isAr ? 'ملخص تنفيذي' : 'Executive summary'}</h2>
-        <p>${isAr ? 'اكتب ملخصاً تعليمياً موجزاً يشرح سؤال البحث، نطاق المقال، وما لا يغطيه. تجنب أي توصيات شراء أو بيع.' : 'Write a concise educational summary explaining the research question, article scope, and what the article does not cover. Avoid buy or sell recommendations.'}</p>
+        <p>${isAr ? 'اكتب ملخصاً تعليمياً موجزاً يشرح سؤال البحث ونطاق المقال وما لا يغطيه. تجنب أي توصيات شراء أو بيع.' : 'Write a concise educational summary explaining the research question, article scope, and what the article does not cover. Avoid buy or sell recommendations.'}</p>
       </section>
 
       <section id="key-takeaways">
@@ -157,7 +157,7 @@ function renderRelatedLinks(topic, isAr) {
   return links.slice(0, 12).map(([href, label]) => `          <li><a href="${href}">${escapeHtml(label)}</a></li>`).join('\n');
 }
 
-function renderEnglishFaq(topic) {
+function renderEnglishFaq() {
   return `        <details open><summary>Is this article financial advice?</summary><p>No. This draft is educational only and must not recommend buying or selling any security.</p></details>
         <details><summary>What sources can editors use?</summary><p>Editors should use existing TradeAlphaAI static research pages, fund methodology pages, official issuer documents, and clearly evergreen educational context.</p></details>
         <details><summary>What should be reviewed before publication?</summary><p>Review metadata, schema, related links, bilingual parity, disclaimers, and any claims that could become time-sensitive.</p></details>`;
