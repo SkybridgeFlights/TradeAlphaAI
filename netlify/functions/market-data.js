@@ -34,8 +34,9 @@ exports.handler = async function handler(event) {
   try {
     const asset = await provider.getMarketData({ symbol, type, env: process.env });
     const latencyMs = Date.now() - requestStart;
+    const responseProvider = asset.provider || requestedProvider;
     const isLive = requestedProvider !== "mock" && asset.dataMode !== "mock";
-    const status = isLive ? "live" : "mock";
+    const status = asset.quoteFallback ? "fallback_quote" : isLive ? "live" : "mock";
     const servedFromCache = Boolean(asset.servedFromCache);
 
     if (isLive) {
@@ -45,9 +46,9 @@ exports.handler = async function handler(event) {
 
     return json(200, {
       ok: true,
-      provider: requestedProvider,
+      provider: responseProvider,
       metadata: buildMetadata({
-        provider: requestedProvider,
+        provider: responseProvider,
         status,
         isFallback: false,
         isMock: status === "mock",
@@ -56,7 +57,7 @@ exports.handler = async function handler(event) {
         staleAfterSeconds: requestedProvider === "mock" ? 300 : 60,
         servedFromCache,
         latencyMs,
-        attribution: attributionFor(requestedProvider),
+        attribution: attributionFor(responseProvider),
         warning: status === "mock" ? "Mock educational data is active. No live provider is configured." : "",
         stats: { ..._stats }
       }),
@@ -65,6 +66,38 @@ exports.handler = async function handler(event) {
   } catch (error) {
     const latencyMs = Date.now() - requestStart;
     const isRateLimit = Boolean(error.isRateLimit);
+    if (type === "etf" && requestedProvider === "finnhub") {
+      try {
+        const fallbackAsset = await providers.yahoo.getMarketData({ symbol, type, env: process.env });
+        const quoteLatencyMs = Date.now() - requestStart;
+        const servedFromCache = Boolean(fallbackAsset.servedFromCache);
+
+        _stats.liveRequests++;
+        _stats.lastSuccessAt = new Date().toISOString();
+
+        return json(200, {
+          ok: true,
+          provider: "yahoo-compatible",
+          metadata: buildMetadata({
+            provider: "yahoo-compatible",
+            status: "fallback_quote",
+            isFallback: false,
+            isMock: false,
+            cacheTtlSeconds: 60,
+            cacheStatus: servedFromCache ? "cached" : "fresh",
+            staleAfterSeconds: 60,
+            servedFromCache,
+            latencyMs: quoteLatencyMs,
+            attribution: attributionFor("yahoo-compatible"),
+            warning: "Finnhub ETF quote was unavailable. Returned a public Yahoo-compatible ETF quote.",
+            stats: { ..._stats }
+          }),
+          asset: normalizeServerAsset(fallbackAsset, symbol, type)
+        }, cacheHeader("yahoo-compatible", servedFromCache));
+      } catch (_) {
+        // Ranking UI refuses mock payloads and renders N/A, so fake values are not displayed.
+      }
+    }
     const fallback = await providers.mock.getMarketData({ symbol, type, env: process.env });
 
     _stats.fallbackRequests++;
@@ -178,7 +211,7 @@ function buildMetadata({ provider, status, isFallback, isMock, cacheTtlSeconds, 
     latencyMs: Number.isFinite(Number(latencyMs)) ? Number(latencyMs) : null,
     attribution,
     warning: warning || "",
-    confidence: status === "live" ? "Provider" : status === "fallback" ? "Fallback" : "Demo",
+    confidence: status === "live" || status === "fallback_quote" ? "Provider" : status === "fallback" ? "Fallback" : "Demo",
     stats: stats || {}
   };
 }
@@ -187,7 +220,7 @@ function attributionFor(provider) {
   if (provider === "finnhub") return "Finnhub.io — real-time market data, server-side proxy";
   if (provider === "alpha-vantage") return "Alpha Vantage provider, server-side integration pending";
   if (provider === "polygon") return "Polygon.io provider, server-side integration pending";
-  if (provider === "yahoo") return "Yahoo-compatible provider, server-side integration pending";
+  if (provider === "yahoo" || provider === "yahoo-compatible") return "Yahoo-compatible public ETF quote endpoint, server-side proxy";
   return "TradeAlphaAI educational mock dataset";
 }
 

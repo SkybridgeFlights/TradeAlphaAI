@@ -121,10 +121,12 @@ async function fetchLiveQuote(symbol, type) {
 function isLivePayload(payload) {
   if (!payload || !payload.asset) return false;
   const metadata = payload.metadata || {};
+  const isPrimaryLive = metadata.provider === "finnhub" && metadata.status === "live";
+  const isQuoteFallback = metadata.provider === "yahoo-compatible" && metadata.status === "fallback_quote";
   return !payload.fallback &&
     payload.provider !== "mock" &&
     metadata.provider !== "mock" &&
-    metadata.status === "live" &&
+    (isPrimaryLive || isQuoteFallback) &&
     !metadata.isFallback &&
     !metadata.isMock;
 }
