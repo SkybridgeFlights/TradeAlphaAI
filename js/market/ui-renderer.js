@@ -531,6 +531,13 @@ function rememberViewed(asset) {
     const next = [{ symbol: asset.symbol, name: asset.name, type: asset.type }, ...current.filter((item) => item.symbol !== asset.symbol)].slice(0, 6);
     localStorage.setItem(key, JSON.stringify(next));
   } catch (_) {}
+  try {
+    const rvKey = "ta_recently_viewed_v1";
+    const rvItems = JSON.parse(localStorage.getItem(rvKey) || "[]");
+    const entry = { title: asset.name || asset.symbol, url: location.pathname, type: asset.type, symbol: asset.symbol, timestamp: Date.now() };
+    const rvNext = [entry, ...rvItems.filter(i => i.url !== entry.url)].slice(0, 10);
+    localStorage.setItem(rvKey, JSON.stringify(rvNext));
+  } catch (_) {}
 }
 
 function renderRecentlyViewed() {

@@ -175,5 +175,9 @@
   })();
   </script>
   <script src="/js/market/market-authority-layer.js"></script>
+  <script type="module">
+    import { trackRecentlyViewed } from "/js/market/recently-viewed.js";
+    trackRecentlyViewed({ title: document.title, url: location.pathname, type: "comparison" });
+  </script>
 </body>
 </html>

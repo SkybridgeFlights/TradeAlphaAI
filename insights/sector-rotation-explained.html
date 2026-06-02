@@ -352,5 +352,9 @@
   <script src="../js/research-layer.js"></script>
   <script src="../js/language-router.js" defer></script>
   <script src="../js/mobile-nav.js" defer></script>
+  <script type="module">
+    import { trackRecentlyViewed } from "/js/market/recently-viewed.js";
+    trackRecentlyViewed({ title: document.title, url: location.pathname, type: "insight" });
+  </script>
 </body>
 </html>

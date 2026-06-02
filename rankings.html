@@ -177,6 +177,25 @@
       <section class="market-section">
         <div class="market-panel" data-market-authority="rankings"></div>
       </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Watchlist</span>
+          <h2>Your saved symbols</h2>
+          <div data-watchlist-strip></div>
+          <div class="cta-actions">
+            <a class="market-btn" href="/ai-stock-screener.html">View saved research &rarr;</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Recently Viewed</span>
+          <h2>Your research trail</h2>
+          <div data-recently-viewed-strip></div>
+        </div>
+      </section>
       <section class="market-section" id="top-stocks">
   <div class="market-panel">
     <div class="section-head">
@@ -1393,6 +1412,76 @@
 </section>
       <section class="market-section">
         <div class="market-panel">
+          <span class="eyebrow">Research Paths</span>
+          <h2>Guided research by market topic</h2>
+          <p class="market-copy">Follow a curated path from educational overview to detailed comparisons and rankings. Educational only &mdash; no financial advice.</p>
+          <div class="market-grid three">
+            <article class="market-card">
+              <span class="market-card-kicker">Beginner ETF</span>
+              <h3>ETF fundamentals</h3>
+              <p>Learn index methodology, expense ratios, and how to compare broad market funds side by side.</p>
+              <div class="market-actions">
+                <a class="market-btn" href="/insights/portfolio-diversification-basics.html">Diversification basics</a>
+                <a class="market-btn" href="/insights/etf-expense-ratios-explained.html">Expense ratios</a>
+                <a class="market-btn" href="/insights/etf-research-methodology.html">ETF framework</a>
+              </div>
+            </article>
+            <article class="market-card">
+              <span class="market-card-kicker">Dividend ETF</span>
+              <h3>Income ETF research</h3>
+              <p>Research dividend-focused ETFs using yield context, holdings, and head-to-head fund comparisons.</p>
+              <div class="market-actions">
+                <a class="market-btn" href="/insights/dividend-etfs-explained.html">Dividend ETFs explained</a>
+                <a class="market-btn" href="/compare/jepi-vs-schd.html">JEPI vs SCHD</a>
+                <a class="market-btn" href="/compare/schd-vs-vig.html">SCHD vs VIG</a>
+              </div>
+            </article>
+            <article class="market-card">
+              <span class="market-card-kicker">Semiconductor</span>
+              <h3>Chip sector research</h3>
+              <p>Follow AI chip demand, inventory cycles, and top semiconductor stock comparisons for research context.</p>
+              <div class="market-actions">
+                <a class="market-btn" href="/semiconductor-stocks.html">Semiconductor hub</a>
+                <a class="market-btn" href="/insights/semiconductor-stocks-outlook.html">Sector outlook</a>
+                <a class="market-btn" href="/compare/nvda-vs-amd.html">NVDA vs AMD</a>
+              </div>
+            </article>
+            <article class="market-card">
+              <span class="market-card-kicker">Defensive Investing</span>
+              <h3>Low-volatility research</h3>
+              <p>Explore defensive sectors, low-beta ETFs, and how investors research risk-adjusted portfolios.</p>
+              <div class="market-actions">
+                <a class="market-btn" href="/insights/defensive-investing-explained.html">Defensive investing</a>
+                <a class="market-btn" href="/defensive-etfs.html">Defensive ETFs</a>
+                <a class="market-btn" href="/defensive-stocks.html">Defensive stocks</a>
+              </div>
+            </article>
+            <article class="market-card">
+              <span class="market-card-kicker">SPY vs QQQ</span>
+              <h3>Broad market comparison</h3>
+              <p>Understand the structural differences between broad-market and tech-focused index funds.</p>
+              <div class="market-actions">
+                <a class="market-btn" href="/insights/spy-vs-qqq-etf-comparison-guide.html">Full comparison guide</a>
+                <a class="market-btn" href="/compare/spy-vs-qqq.html">Side-by-side</a>
+                <a class="market-btn" href="/compare/qqq-vs-vug.html">QQQ vs VUG</a>
+              </div>
+            </article>
+            <article class="market-card">
+              <span class="market-card-kicker">Portfolio Basics</span>
+              <h3>Diversification research</h3>
+              <p>Learn how portfolio diversification, beta, and multi-asset allocation work in research frameworks.</p>
+              <div class="market-actions">
+                <a class="market-btn" href="/insights/portfolio-diversification-basics.html">Diversification</a>
+                <a class="market-btn" href="/insights/etf-diversification-guide.html">ETF diversification</a>
+                <a class="market-btn" href="/insights/understanding-beta-in-stocks.html">Understanding beta</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
           <span class="eyebrow">Research Hubs</span>
           <h2>Explore stocks and ETFs by sector theme</h2>
           <p class="market-copy">Each hub provides curated watchlist candidates, sector context, and research links - no financial advice.</p>
@@ -1485,6 +1574,10 @@
   <script src="../js/language-router.js" defer></script>
   <script type="module">
     import { scheduleLivePricePatch, renderRankingTable } from "/js/market/ranking-engine.js";
+    import { renderWatchlistStrip } from "/js/market/watchlist.js";
+    import { renderRecentlyViewed } from "/js/market/recently-viewed.js";
+    renderWatchlistStrip("[data-watchlist-strip]");
+    renderRecentlyViewed("[data-recently-viewed-strip]");
     // Patch live prices for all data-live-price cells on this page
     const allSymbols = Array.from(document.querySelectorAll("[data-live-price]"))
       .map(el => el.dataset.livePrice)
