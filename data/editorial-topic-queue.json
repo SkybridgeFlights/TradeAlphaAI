@@ -1,320 +1,824 @@
 {
   "version": "1.0",
-  "updated": "2026-06-01",
+  "updated": "2026-06-02",
   "policy": {
     "default_status": "draft",
-    "allowed_statuses": ["draft", "review", "scheduled", "published"],
+    "allowed_statuses": [
+      "draft",
+      "review",
+      "reviewed",
+      "scheduled",
+      "published"
+    ],
     "auto_publish": false,
     "content_type": "evergreen educational market research",
     "financial_advice": false,
-    "requires_editorial_review": true
+    "requires_editorial_review": true,
+    "scheduling": {
+      "max_articles_per_day": 1,
+      "max_articles_per_week": 3,
+      "default_publish_time": "14:00",
+      "require_bilingual_publish": true,
+      "require_review_before_publish": true,
+      "auto_publish": false
+    }
   },
   "topics": [
     {
       "slug": "etf-diversification-guide",
       "title_en": "ETF Diversification Guide: Holdings, Sectors, Overlap, and Risk",
-      "title_ar": "دليل التنويع في صناديق المؤشرات: الحيازات والقطاعات والتداخل والمخاطر",
+      "title_ar": "???? ??????? ?? ?????? ????????: ???????? ????????? ???????? ????????",
       "category": "ETF Education",
-      "tags": ["ETF diversification", "holdings overlap", "sector exposure", "beginner investing"],
-      "related_stocks": ["AAPL", "MSFT", "NVDA"],
-      "related_etfs": ["SPY", "VTI", "VOO", "QQQ", "SCHD", "BND"],
-      "related_comparisons": ["spy-vs-vti", "spy-vs-voo", "spy-vs-qqq", "bnd-vs-ief"],
-      "related_hubs": ["defensive-etfs", "dividend-etfs", "semiconductor-stocks"],
+      "tags": [
+        "ETF diversification",
+        "holdings overlap",
+        "sector exposure",
+        "beginner investing"
+      ],
+      "related_stocks": [
+        "AAPL",
+        "MSFT",
+        "NVDA"
+      ],
+      "related_etfs": [
+        "SPY",
+        "VTI",
+        "VOO",
+        "QQQ",
+        "SCHD",
+        "BND"
+      ],
+      "related_comparisons": [
+        "spy-vs-vti",
+        "spy-vs-voo",
+        "spy-vs-qqq",
+        "bnd-vs-ief"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "dividend-etfs",
+        "semiconductor-stocks"
+      ],
       "priority": 1,
       "status": "published",
       "target_publish_date": "2026-06-02",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "ETF education",
-      "discovery_cluster": "beginner investing"
+      "discovery_cluster": "beginner investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "dry_run_done",
+      "review_status": "approved",
+      "editor_notes": "",
+      "revision_count": 1,
+      "last_reviewed": "2026-06-02",
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 100
     },
     {
       "slug": "how-dividend-etfs-generate-income",
       "title_en": "How Dividend ETFs Generate Income: Yield, Quality, and Risk",
-      "title_ar": "كيف تحقق صناديق توزيعات الأرباح الدخل: العائد والجودة والمخاطر",
+      "title_ar": "??? ???? ?????? ??????? ??????? ?????: ?????? ??????? ????????",
       "category": "ETF Education",
-      "tags": ["dividend ETFs", "income research", "ETF risk"],
-      "related_stocks": ["KO", "PEP", "JNJ"],
-      "related_etfs": ["SCHD", "VIG", "JEPI"],
-      "related_comparisons": ["schd-vs-vig", "jepi-vs-schd"],
-      "related_hubs": ["dividend-etfs", "defensive-etfs"],
+      "tags": [
+        "dividend ETFs",
+        "income research",
+        "ETF risk"
+      ],
+      "related_stocks": [
+        "KO",
+        "PEP",
+        "JNJ"
+      ],
+      "related_etfs": [
+        "SCHD",
+        "VIG",
+        "JEPI"
+      ],
+      "related_comparisons": [
+        "schd-vs-vig",
+        "jepi-vs-schd"
+      ],
+      "related_hubs": [
+        "dividend-etfs",
+        "defensive-etfs"
+      ],
       "priority": 1,
-      "status": "draft",
+      "status": "scheduled",
       "target_publish_date": "2026-06-10",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "income investing education",
-      "discovery_cluster": "dividend investing"
+      "discovery_cluster": "dividend investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "in_review",
+      "editor_notes": "Phase 26 demo scheduled queue entry only. Do not publish until EN/AR drafts are reviewed and status moves to reviewed.",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 95
     },
     {
       "slug": "etf-diversification-basics",
       "title_en": "ETF Diversification Basics: Holdings, Sectors, and Overlap",
-      "title_ar": "أساسيات التنويع في صناديق المؤشرات: الحيازات والقطاعات والتداخل",
+      "title_ar": "??????? ??????? ?? ?????? ????????: ???????? ????????? ????????",
       "category": "Beginner Investing",
-      "tags": ["ETF diversification", "beginner investing", "portfolio research"],
-      "related_stocks": ["AAPL", "MSFT", "NVDA"],
-      "related_etfs": ["SPY", "VTI", "VOO"],
-      "related_comparisons": ["spy-vs-vti", "spy-vs-voo"],
-      "related_hubs": ["defensive-etfs", "growth-etfs"],
+      "tags": [
+        "ETF diversification",
+        "beginner investing",
+        "portfolio research"
+      ],
+      "related_stocks": [
+        "AAPL",
+        "MSFT",
+        "NVDA"
+      ],
+      "related_etfs": [
+        "SPY",
+        "VTI",
+        "VOO"
+      ],
+      "related_comparisons": [
+        "spy-vs-vti",
+        "spy-vs-voo"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "growth-etfs"
+      ],
       "priority": 1,
       "status": "draft",
       "target_publish_date": "2026-06-12",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "beginner education",
-      "discovery_cluster": "beginner investing"
+      "discovery_cluster": "beginner investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 100
     },
     {
       "slug": "growth-vs-value-etf-research-framework",
       "title_en": "Growth vs Value ETF Research Framework",
-      "title_ar": "إطار بحث صناديق النمو مقابل صناديق القيمة",
+      "title_ar": "???? ??? ?????? ????? ????? ?????? ??????",
       "category": "ETF Education",
-      "tags": ["growth ETFs", "value ETFs", "factor research"],
-      "related_stocks": ["MSFT", "AAPL", "BRK.B"],
-      "related_etfs": ["QQQ", "VUG", "VTV"],
-      "related_comparisons": ["qqq-vs-vug", "spy-vs-qqq"],
-      "related_hubs": ["growth-stocks", "defensive-stocks"],
+      "tags": [
+        "growth ETFs",
+        "value ETFs",
+        "factor research"
+      ],
+      "related_stocks": [
+        "MSFT",
+        "AAPL",
+        "BRK.B"
+      ],
+      "related_etfs": [
+        "QQQ",
+        "VUG",
+        "VTV"
+      ],
+      "related_comparisons": [
+        "qqq-vs-vug",
+        "spy-vs-qqq"
+      ],
+      "related_hubs": [
+        "growth-stocks",
+        "defensive-stocks"
+      ],
       "priority": 2,
       "status": "draft",
       "target_publish_date": "2026-06-14",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "factor education",
-      "discovery_cluster": "growth vs value"
+      "discovery_cluster": "growth vs value",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 80
     },
     {
       "slug": "healthcare-etf-research-guide",
       "title_en": "Healthcare ETF Research Guide: Defensive Traits and Sector Risk",
-      "title_ar": "دليل بحث صناديق الرعاية الصحية: السمات الدفاعية ومخاطر القطاع",
+      "title_ar": "???? ??? ?????? ??????? ??????: ?????? ???????? ?????? ??????",
       "category": "Sector Outlook",
-      "tags": ["healthcare ETFs", "defensive sectors", "sector risk"],
-      "related_stocks": ["UNH", "JNJ", "LLY"],
-      "related_etfs": ["XLV", "VHT", "IYH"],
-      "related_comparisons": ["xlv-vs-vht"],
-      "related_hubs": ["healthcare-etfs", "defensive-stocks"],
+      "tags": [
+        "healthcare ETFs",
+        "defensive sectors",
+        "sector risk"
+      ],
+      "related_stocks": [
+        "UNH",
+        "JNJ",
+        "LLY"
+      ],
+      "related_etfs": [
+        "XLV",
+        "VHT",
+        "IYH"
+      ],
+      "related_comparisons": [
+        "xlv-vs-vht"
+      ],
+      "related_hubs": [
+        "healthcare-etfs",
+        "defensive-stocks"
+      ],
       "priority": 2,
       "status": "draft",
       "target_publish_date": "2026-06-16",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "sector education",
-      "discovery_cluster": "defensive investing"
+      "discovery_cluster": "defensive investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 120,
+      "priority_score": 80
     },
     {
       "slug": "semiconductor-etf-risk-research",
       "title_en": "Semiconductor ETF Risk Research: Cycles, Concentration, and Volatility",
-      "title_ar": "بحث مخاطر صناديق أشباه الموصلات: الدورات والتركيز والتقلب",
+      "title_ar": "??? ????? ?????? ????? ????????: ??????? ???????? ???????",
       "category": "Sector Outlook",
-      "tags": ["semiconductors", "ETF risk", "sector concentration"],
-      "related_stocks": ["NVDA", "AMD", "TSM"],
-      "related_etfs": ["SMH", "SOXX", "XLK"],
-      "related_comparisons": ["smh-vs-soxx", "nvda-vs-amd"],
-      "related_hubs": ["semiconductor-stocks", "ai-etfs"],
+      "tags": [
+        "semiconductors",
+        "ETF risk",
+        "sector concentration"
+      ],
+      "related_stocks": [
+        "NVDA",
+        "AMD",
+        "TSM"
+      ],
+      "related_etfs": [
+        "SMH",
+        "SOXX",
+        "XLK"
+      ],
+      "related_comparisons": [
+        "smh-vs-soxx",
+        "nvda-vs-amd"
+      ],
+      "related_hubs": [
+        "semiconductor-stocks",
+        "ai-etfs"
+      ],
       "priority": 1,
       "status": "draft",
       "target_publish_date": "2026-06-18",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "sector education",
-      "discovery_cluster": "semiconductor investing"
+      "discovery_cluster": "semiconductor investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 120,
+      "priority_score": 100
     },
     {
       "slug": "defensive-investing-etf-checklist",
       "title_en": "Defensive Investing ETF Checklist: Beta, Drawdown, and Income",
-      "title_ar": "قائمة فحص صناديق الاستثمار الدفاعي: البيتا والتراجع والدخل",
+      "title_ar": "????? ??? ?????? ????????? ???????: ?????? ???????? ??????",
       "category": "Educational Explainer",
-      "tags": ["defensive investing", "ETF risk", "drawdown"],
-      "related_stocks": ["JNJ", "PG", "KO"],
-      "related_etfs": ["SCHD", "VIG", "BND"],
-      "related_comparisons": ["schd-vs-vig", "bnd-vs-ief"],
-      "related_hubs": ["defensive-etfs", "defensive-stocks"],
+      "tags": [
+        "defensive investing",
+        "ETF risk",
+        "drawdown"
+      ],
+      "related_stocks": [
+        "JNJ",
+        "PG",
+        "KO"
+      ],
+      "related_etfs": [
+        "SCHD",
+        "VIG",
+        "BND"
+      ],
+      "related_comparisons": [
+        "schd-vs-vig",
+        "bnd-vs-ief"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "defensive-stocks"
+      ],
       "priority": 1,
       "status": "draft",
       "target_publish_date": "2026-06-20",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "risk education",
-      "discovery_cluster": "defensive investing"
+      "discovery_cluster": "defensive investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 100
     },
     {
       "slug": "how-to-compare-two-etfs",
       "title_en": "How to Compare Two ETFs: Index, Cost, Holdings, and Risk",
-      "title_ar": "كيفية مقارنة صندوقي مؤشرات: المؤشر والتكلفة والحيازات والمخاطر",
+      "title_ar": "????? ?????? ?????? ??????: ?????? ???????? ????????? ????????",
       "category": "ETF Comparison Article",
-      "tags": ["ETF comparison", "expense ratios", "holdings overlap"],
-      "related_stocks": ["AAPL", "MSFT", "NVDA"],
-      "related_etfs": ["SPY", "QQQ", "VTI"],
-      "related_comparisons": ["spy-vs-qqq", "spy-vs-vti", "schd-vs-vig"],
-      "related_hubs": ["dividend-etfs", "defensive-etfs"],
+      "tags": [
+        "ETF comparison",
+        "expense ratios",
+        "holdings overlap"
+      ],
+      "related_stocks": [
+        "AAPL",
+        "MSFT",
+        "NVDA"
+      ],
+      "related_etfs": [
+        "SPY",
+        "QQQ",
+        "VTI"
+      ],
+      "related_comparisons": [
+        "spy-vs-qqq",
+        "spy-vs-vti",
+        "schd-vs-vig"
+      ],
+      "related_hubs": [
+        "dividend-etfs",
+        "defensive-etfs"
+      ],
       "priority": 1,
       "status": "draft",
       "target_publish_date": "2026-06-22",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "comparison education",
-      "discovery_cluster": "comparing ETFs"
+      "discovery_cluster": "comparing ETFs",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 100
     },
     {
       "slug": "sector-etfs-vs-broad-market-etfs",
       "title_en": "Sector ETFs vs Broad Market ETFs: Concentration and Diversification",
-      "title_ar": "صناديق القطاعات مقابل صناديق السوق الواسع: التركيز والتنويع",
+      "title_ar": "?????? ???????? ????? ?????? ????? ??????: ??????? ????????",
       "category": "ETF Education",
-      "tags": ["sector ETFs", "broad market ETFs", "diversification"],
-      "related_stocks": ["AAPL", "MSFT", "UNH"],
-      "related_etfs": ["SPY", "VTI", "XLK"],
-      "related_comparisons": ["spy-vs-vti", "xle-vs-xlf"],
-      "related_hubs": ["cloud-stocks", "healthcare-etfs", "defensive-etfs"],
+      "tags": [
+        "sector ETFs",
+        "broad market ETFs",
+        "diversification"
+      ],
+      "related_stocks": [
+        "AAPL",
+        "MSFT",
+        "UNH"
+      ],
+      "related_etfs": [
+        "SPY",
+        "VTI",
+        "XLK"
+      ],
+      "related_comparisons": [
+        "spy-vs-vti",
+        "xle-vs-xlf"
+      ],
+      "related_hubs": [
+        "cloud-stocks",
+        "healthcare-etfs",
+        "defensive-etfs"
+      ],
       "priority": 2,
       "status": "draft",
       "target_publish_date": "2026-06-24",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "sector education",
-      "discovery_cluster": "market sectors"
+      "discovery_cluster": "market sectors",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 80
     },
     {
       "slug": "etf-expense-ratio-research-guide",
       "title_en": "ETF Expense Ratio Research Guide: Fees, Tracking, and Long-Term Cost",
-      "title_ar": "دليل بحث نسب مصاريف ETF: الرسوم والتتبع والتكلفة طويلة الأجل",
+      "title_ar": "???? ??? ??? ?????? ETF: ?????? ??????? ???????? ????? ?????",
       "category": "Educational Explainer",
-      "tags": ["expense ratios", "tracking error", "ETF cost"],
+      "tags": [
+        "expense ratios",
+        "tracking error",
+        "ETF cost"
+      ],
       "related_stocks": [],
-      "related_etfs": ["SPY", "VOO", "QQQ"],
-      "related_comparisons": ["spy-vs-voo", "spy-vs-qqq"],
-      "related_hubs": ["dividend-etfs", "defensive-etfs"],
+      "related_etfs": [
+        "SPY",
+        "VOO",
+        "QQQ"
+      ],
+      "related_comparisons": [
+        "spy-vs-voo",
+        "spy-vs-qqq"
+      ],
+      "related_hubs": [
+        "dividend-etfs",
+        "defensive-etfs"
+      ],
       "priority": 2,
       "status": "draft",
       "target_publish_date": "2026-06-26",
       "estimated_read_time": 6,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "ETF education",
-      "discovery_cluster": "beginner investing"
+      "discovery_cluster": "beginner investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 80
     },
     {
       "slug": "bond-etfs-in-market-research",
       "title_en": "Bond ETFs in Market Research: Duration, Yield, and Rate Sensitivity",
-      "title_ar": "صناديق السندات في أبحاث السوق: المدة والعائد وحساسية الفائدة",
+      "title_ar": "?????? ??????? ?? ????? ?????: ????? ??????? ??????? ???????",
       "category": "Educational Explainer",
-      "tags": ["bond ETFs", "duration", "interest rates"],
+      "tags": [
+        "bond ETFs",
+        "duration",
+        "interest rates"
+      ],
       "related_stocks": [],
-      "related_etfs": ["BND", "IEF", "TLT"],
-      "related_comparisons": ["bnd-vs-ief", "spy-vs-vti"],
-      "related_hubs": ["defensive-etfs", "bond-etfs"],
+      "related_etfs": [
+        "BND",
+        "IEF",
+        "TLT"
+      ],
+      "related_comparisons": [
+        "bnd-vs-ief",
+        "spy-vs-vti"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "bond-etfs"
+      ],
       "priority": 3,
       "status": "draft",
       "target_publish_date": "2026-06-28",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "risk education",
-      "discovery_cluster": "defensive investing"
+      "discovery_cluster": "defensive investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 60
     },
     {
       "slug": "beginner-guide-to-market-sectors",
       "title_en": "Beginner Guide to Market Sectors: Cyclical, Defensive, and Growth Themes",
-      "title_ar": "دليل المبتدئين لقطاعات السوق: الدورية والدفاعية وموضوعات النمو",
+      "title_ar": "???? ????????? ??????? ?????: ??????? ????????? ???????? ?????",
       "category": "Beginner Investing",
-      "tags": ["market sectors", "beginner investing", "sector rotation"],
-      "related_stocks": ["NVDA", "UNH", "JPM"],
-      "related_etfs": ["XLK", "XLV", "XLF"],
-      "related_comparisons": ["xle-vs-xlf", "spy-vs-qqq"],
-      "related_hubs": ["semiconductor-stocks", "defensive-stocks", "cloud-stocks"],
+      "tags": [
+        "market sectors",
+        "beginner investing",
+        "sector rotation"
+      ],
+      "related_stocks": [
+        "NVDA",
+        "UNH",
+        "JPM"
+      ],
+      "related_etfs": [
+        "XLK",
+        "XLV",
+        "XLF"
+      ],
+      "related_comparisons": [
+        "xle-vs-xlf",
+        "spy-vs-qqq"
+      ],
+      "related_hubs": [
+        "semiconductor-stocks",
+        "defensive-stocks",
+        "cloud-stocks"
+      ],
       "priority": 2,
       "status": "draft",
       "target_publish_date": "2026-06-30",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "beginner education",
-      "discovery_cluster": "market sectors"
+      "discovery_cluster": "market sectors",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 80
     },
     {
       "slug": "etf-liquidity-and-spread-basics",
       "title_en": "ETF Liquidity and Spread Basics for Educational Research",
-      "title_ar": "أساسيات سيولة ETF والفروق السعرية للأبحاث التعليمية",
+      "title_ar": "??????? ????? ETF ??????? ??????? ??????? ?????????",
       "category": "Educational Explainer",
-      "tags": ["ETF liquidity", "bid ask spread", "trading cost"],
+      "tags": [
+        "ETF liquidity",
+        "bid ask spread",
+        "trading cost"
+      ],
       "related_stocks": [],
-      "related_etfs": ["SPY", "QQQ", "VOO"],
-      "related_comparisons": ["spy-vs-qqq", "spy-vs-voo"],
-      "related_hubs": ["defensive-etfs", "dividend-etfs"],
+      "related_etfs": [
+        "SPY",
+        "QQQ",
+        "VOO"
+      ],
+      "related_comparisons": [
+        "spy-vs-qqq",
+        "spy-vs-voo"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "dividend-etfs"
+      ],
       "priority": 3,
       "status": "draft",
       "target_publish_date": "2026-07-02",
       "estimated_read_time": 6,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "ETF education",
-      "discovery_cluster": "comparing ETFs"
+      "discovery_cluster": "comparing ETFs",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 60
     },
     {
       "slug": "cloud-stocks-research-framework",
       "title_en": "Cloud Stocks Research Framework: Platforms, Margins, and AI Capacity",
-      "title_ar": "إطار بحث أسهم الحوسبة السحابية: المنصات والهوامش وقدرة الذكاء الاصطناعي",
+      "title_ar": "???? ??? ???? ??????? ????????: ??????? ???????? ????? ?????? ?????????",
       "category": "Sector Outlook",
-      "tags": ["cloud stocks", "software", "AI infrastructure"],
-      "related_stocks": ["MSFT", "AMZN", "GOOGL"],
-      "related_etfs": ["QQQ", "XLK", "VUG"],
-      "related_comparisons": ["msft-vs-amzn", "aapl-vs-msft"],
-      "related_hubs": ["cloud-stocks", "ai-stocks"],
+      "tags": [
+        "cloud stocks",
+        "software",
+        "AI infrastructure"
+      ],
+      "related_stocks": [
+        "MSFT",
+        "AMZN",
+        "GOOGL"
+      ],
+      "related_etfs": [
+        "QQQ",
+        "XLK",
+        "VUG"
+      ],
+      "related_comparisons": [
+        "msft-vs-amzn",
+        "aapl-vs-msft"
+      ],
+      "related_hubs": [
+        "cloud-stocks",
+        "ai-stocks"
+      ],
       "priority": 2,
       "status": "draft",
       "target_publish_date": "2026-07-04",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "sector education",
-      "discovery_cluster": "cloud investing"
+      "discovery_cluster": "cloud investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 120,
+      "priority_score": 80
     },
     {
       "slug": "cybersecurity-stocks-research-framework",
       "title_en": "Cybersecurity Stocks Research Framework: Platforms, Spend, and Valuation Risk",
-      "title_ar": "إطار بحث أسهم الأمن السيبراني: المنصات والإنفاق ومخاطر التقييم",
+      "title_ar": "???? ??? ???? ????? ?????????: ??????? ???????? ?????? ???????",
       "category": "Sector Outlook",
-      "tags": ["cybersecurity stocks", "software platforms", "valuation risk"],
-      "related_stocks": ["CRWD", "PANW", "FTNT"],
-      "related_etfs": ["CIBR", "HACK", "QQQ"],
-      "related_comparisons": ["crwd-vs-panw", "spy-vs-qqq"],
-      "related_hubs": ["cybersecurity-stocks", "cloud-stocks"],
+      "tags": [
+        "cybersecurity stocks",
+        "software platforms",
+        "valuation risk"
+      ],
+      "related_stocks": [
+        "CRWD",
+        "PANW",
+        "FTNT"
+      ],
+      "related_etfs": [
+        "CIBR",
+        "HACK",
+        "QQQ"
+      ],
+      "related_comparisons": [
+        "crwd-vs-panw",
+        "spy-vs-qqq"
+      ],
+      "related_hubs": [
+        "cybersecurity-stocks",
+        "cloud-stocks"
+      ],
       "priority": 3,
       "status": "draft",
       "target_publish_date": "2026-07-06",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "sector education",
-      "discovery_cluster": "cybersecurity investing"
+      "discovery_cluster": "cybersecurity investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 120,
+      "priority_score": 60
     },
     {
       "slug": "portfolio-risk-research-for-beginners",
       "title_en": "Portfolio Risk Research for Beginners: Beta, Drawdown, and Concentration",
-      "title_ar": "بحث مخاطر المحافظ للمبتدئين: البيتا والتراجع والتركيز",
+      "title_ar": "??? ????? ??????? ?????????: ?????? ???????? ????????",
       "category": "Beginner Investing",
-      "tags": ["portfolio risk", "beta", "drawdown"],
-      "related_stocks": ["AAPL", "MSFT", "NVDA"],
-      "related_etfs": ["SPY", "VTI", "BND"],
-      "related_comparisons": ["spy-vs-vti", "bnd-vs-ief"],
-      "related_hubs": ["defensive-etfs", "defensive-stocks"],
+      "tags": [
+        "portfolio risk",
+        "beta",
+        "drawdown"
+      ],
+      "related_stocks": [
+        "AAPL",
+        "MSFT",
+        "NVDA"
+      ],
+      "related_etfs": [
+        "SPY",
+        "VTI",
+        "BND"
+      ],
+      "related_comparisons": [
+        "spy-vs-vti",
+        "bnd-vs-ief"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "defensive-stocks"
+      ],
       "priority": 1,
       "status": "draft",
       "target_publish_date": "2026-07-08",
       "estimated_read_time": 8,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "risk education",
-      "discovery_cluster": "beginner investing"
+      "discovery_cluster": "beginner investing",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 100
     },
     {
       "slug": "international-etf-research-basics",
       "title_en": "International ETF Research Basics: Regions, Currency, and Diversification",
-      "title_ar": "أساسيات بحث صناديق المؤشرات الدولية: المناطق والعملات والتنويع",
+      "title_ar": "??????? ??? ?????? ???????? ???????: ??????? ???????? ????????",
       "category": "ETF Education",
-      "tags": ["international ETFs", "currency risk", "regional exposure"],
-      "related_stocks": ["TSM", "ASML", "NVO"],
-      "related_etfs": ["EFA", "VEA", "VWO"],
-      "related_comparisons": ["spy-vs-vti", "iwm-vs-rsp"],
-      "related_hubs": ["defensive-etfs", "growth-stocks"],
+      "tags": [
+        "international ETFs",
+        "currency risk",
+        "regional exposure"
+      ],
+      "related_stocks": [
+        "TSM",
+        "ASML",
+        "NVO"
+      ],
+      "related_etfs": [
+        "EFA",
+        "VEA",
+        "VWO"
+      ],
+      "related_comparisons": [
+        "spy-vs-vti",
+        "iwm-vs-rsp"
+      ],
+      "related_hubs": [
+        "defensive-etfs",
+        "growth-stocks"
+      ],
       "priority": 3,
       "status": "draft",
       "target_publish_date": "2026-07-10",
       "estimated_read_time": 7,
-      "language_support": ["en", "ar"],
+      "language_support": [
+        "en",
+        "ar"
+      ],
       "evergreen_category": "ETF education",
-      "discovery_cluster": "global market research"
+      "discovery_cluster": "global market research",
+      "scheduled_publish_time": "14:00",
+      "telegram_status": "not_ready",
+      "review_status": "not_started",
+      "editor_notes": "",
+      "revision_count": 0,
+      "last_reviewed": null,
+      "evergreen_refresh_cycle": 180,
+      "priority_score": 60
     }
   ]
 }
