@@ -13,13 +13,14 @@ function assetHref(asset) {
 }
 
 function fmtPrice(p) {
-  if (p == null) return null;
-  return "$" + Number(p).toFixed(2);
+  const n = Number(p);
+  if (!Number.isFinite(n)) return null;
+  return "$" + n.toFixed(2);
 }
 
 function fmtChange(c) {
-  if (c == null) return null;
   const n = Number(c);
+  if (!Number.isFinite(n)) return null;
   return (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
 }
 
@@ -32,7 +33,9 @@ function scoreLabel(finalScore) {
 
 // Shared live-price cache and in-flight guard across all tables on the page
 const _priceCache = {};
-const _inFlight = new Set();
+const _inFlight = new Map();
+const UNAVAILABLE = "N/A";
+const RETRY_DELAY_MS = 500;
 const ETF_SYMBOLS = new Set([
   "ARKG", "ARKK", "ARKQ", "BND", "BOTZ", "DGRO", "DIA", "EEM", "EFA", "GDX",
   "GLD", "HYG", "ICLN", "IEF", "IEMG", "IWM", "JEPI", "LQD", "MTUM", "QQQ",
@@ -70,24 +73,18 @@ async function batchFetchPrices(requests, callback) {
         callback(symbol, _priceCache[cacheKey]);
         continue;
       }
-      if (_inFlight.has(cacheKey)) continue;
-      _inFlight.add(cacheKey);
+      if (_inFlight.has(cacheKey)) {
+        const data = await _inFlight.get(cacheKey);
+        callback(symbol, data);
+        continue;
+      }
+      const pending = fetchLiveQuote(symbol, type);
+      _inFlight.set(cacheKey, pending);
       try {
-        const res = await fetch(`/api/market-data?symbol=${encodeURIComponent(symbol)}&type=${encodeURIComponent(type)}`, {
-          headers: { Accept: "application/json" }
-        });
-        if (res.ok) {
-          const payload = await res.json();
-          if (payload && payload.asset) {
-            const data = {
-              price: payload.asset.price,
-              changePercent: payload.asset.changePercent,
-              isMock: !!(payload.fallback || payload.provider === "mock")
-            };
-            _priceCache[cacheKey] = data;
-            callback(symbol, data);
-          }
-        }
+        const liveData = await pending;
+        if (liveData) _priceCache[cacheKey] = liveData;
+        callback(symbol, liveData);
+        continue;
       } catch (_) {
         // silent — keep placeholder
       } finally {
@@ -99,21 +96,77 @@ async function batchFetchPrices(requests, callback) {
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 }
 
+async function fetchLiveQuote(symbol, type) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`/api/market-data?symbol=${encodeURIComponent(symbol)}&type=${encodeURIComponent(type)}`, {
+        headers: { Accept: "application/json" }
+      });
+      if (!res.ok) throw new Error(`market-data ${res.status}`);
+      const payload = await res.json();
+      if (!isLivePayload(payload)) throw new Error("market-data fallback payload");
+      const price = Number(payload.asset.price);
+      const changePercent = Number(payload.asset.changePercent);
+      if (!Number.isFinite(price) || !Number.isFinite(changePercent)) {
+        throw new Error("market-data incomplete quote");
+      }
+      return { price, changePercent };
+    } catch (_) {
+      if (attempt === 0) await delay(RETRY_DELAY_MS);
+    }
+  }
+  return null;
+}
+
+function isLivePayload(payload) {
+  if (!payload || !payload.asset) return false;
+  const metadata = payload.metadata || {};
+  return !payload.fallback &&
+    payload.provider !== "mock" &&
+    metadata.provider !== "mock" &&
+    metadata.status === "live" &&
+    !metadata.isFallback &&
+    !metadata.isMock;
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function patchCells(container, symbol, data) {
   const root = container || document;
-  const priceEl = root.querySelector(`[data-live-price="${symbol}"]`);
-  const changeEl = root.querySelector(`[data-live-change="${symbol}"]`);
+  const priceEls = root.querySelectorAll(`[data-live-price="${symbol}"]`);
+  const changeEls = root.querySelectorAll(`[data-live-change="${symbol}"]`);
+  const priceText = data ? fmtPrice(data.price) : null;
+  const changeText = data ? fmtChange(data.changePercent) : null;
 
-  if (priceEl && data.price != null) {
-    priceEl.textContent = fmtPrice(data.price);
-    priceEl.classList.toggle("live-price", !data.isMock);
+  priceEls.forEach((priceEl) => {
     priceEl.classList.remove("live-loading");
-  }
-  if (changeEl && data.changePercent != null) {
-    changeEl.textContent = fmtChange(data.changePercent);
-    changeEl.className = "change-cell " + (data.changePercent >= 0 ? "price-up" : "price-down");
-    if (!data.isMock) changeEl.classList.add("live-change");
-  }
+    if (priceText) {
+      priceEl.textContent = priceText;
+      priceEl.classList.add("live-price");
+      priceEl.classList.remove("live-unavailable");
+    } else {
+      setUnavailable(priceEl);
+    }
+  });
+
+  changeEls.forEach((changeEl) => {
+    changeEl.classList.remove("live-loading");
+    if (changeText) {
+      changeEl.textContent = changeText;
+      changeEl.className = "change-cell " + (data.changePercent >= 0 ? "price-up" : "price-down") + " live-change";
+    } else {
+      changeEl.className = "change-cell live-unavailable";
+      changeEl.textContent = UNAVAILABLE;
+    }
+  });
+}
+
+function setUnavailable(el) {
+  el.textContent = UNAVAILABLE;
+  el.classList.remove("live-price");
+  el.classList.add("live-unavailable");
 }
 
 export function renderRankingTable(selector, assets, opts = {}) {
@@ -170,7 +223,7 @@ function buildTableRow({ asset, score }, rank) {
   );
   const scoreClass = score.finalScore >= 70 ? "badge-strong" : score.finalScore >= 55 ? "badge-watch" : "badge-neutral";
 
-  return `<tr data-symbol="${asset.symbol}">
+  return `<tr data-symbol="${asset.symbol}" data-asset-type="${asset.type === "etf" ? "etf" : "stock"}">
     <td class="col-rank rank-num">${rank}</td>
     <td class="col-symbol"><a class="symbol-link" href="${href}"><strong>${asset.symbol}</strong></a></td>
     <td class="col-name asset-name"><a href="${href}">${asset.name}</a></td>
@@ -179,10 +232,10 @@ function buildTableRow({ asset, score }, rank) {
       <small>${score.label}</small>
     </td>
     <td class="col-price price-cell" data-live-price="${asset.symbol}">
-      <span class="live-loading">…</span>
+      <span class="live-unavailable">${UNAVAILABLE}</span>
     </td>
     <td class="col-change change-cell" data-live-change="${asset.symbol}">
-      <span class="live-loading">…</span>
+      <span class="live-unavailable">${UNAVAILABLE}</span>
     </td>
     <td class="col-sector sector-cell">${sector}</td>
     <td class="col-momentum momentum-cell ${momentumClass}">${momentumLabel}</td>

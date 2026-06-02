@@ -283,7 +283,8 @@ function checkLegacySymbolRoutes() {
 }
 
 function checkEtfLiveDataHooks() {
-  const keyEtfs = ["SCHD", "SPY", "QQQ", "VOO", "VTI"];
+  const keyEtfs = ["SCHD", "SPY", "QQQ", "VOO", "VTI", "SOXX", "SMH", "XLK", "VIG", "DGRO", "JEPI"];
+  const requiredEtfRoutingSymbols = [...keyEtfs, "BND", "IEF"];
   const etfPages = [
     ["etfs/schd.html", "SCHD"],
     ["ar/etfs/schd.html", "SCHD"]
@@ -321,11 +322,17 @@ function checkEtfLiveDataHooks() {
         !keyEtfs.every((symbol) => html.includes(`data-live-price="${symbol}"`) && html.includes(`data-live-change="${symbol}"`))) {
       failures.push(`${rel}: ETF fallback price/change found without complete live patch hooks`);
     }
+    checkRankingLiveCellSafety(rel, html);
   }
 
   const rankingEngine = read("js/market/ranking-engine.js");
   if (!rankingEngine.includes("ETF_SYMBOLS")) {
     failures.push("js/market/ranking-engine.js: missing ETF symbol type inference for live price patching");
+  }
+  for (const symbol of requiredEtfRoutingSymbols) {
+    if (!rankingEngine.includes(`"${symbol}"`)) {
+      failures.push(`js/market/ranking-engine.js: ETF live routing set missing ${symbol}`);
+    }
   }
   if (!/market-data\?symbol=.*&type=/.test(rankingEngine)) {
     failures.push("js/market/ranking-engine.js: live price patch fetch must include type parameter");
@@ -334,6 +341,24 @@ function checkEtfLiveDataHooks() {
   const finnhubProvider = read("netlify/functions/providers/finnhub.js");
   if (!finnhubProvider.includes("fetchOptionalJson")) {
     failures.push("netlify/functions/providers/finnhub.js: optional Finnhub profile/metrics calls must not force ETF quote fallback");
+  }
+}
+
+function checkRankingLiveCellSafety(rel, html) {
+  const tableBlocks = html.match(/<table class="ranking-table"[\s\S]*?<\/table>/g) || [];
+  for (const table of tableBlocks) {
+    const liveCells = table.match(/<td[^>]+data-live-(?:price|change)="[^"]+"[\s\S]*?<\/td>/g) || [];
+    for (const cell of liveCells) {
+      if (/&(?:amp;)?hellip;|hellip&|\u00e2\u20ac\u00a6|\u2026/.test(cell)) {
+        failures.push(`${rel}: ranking live cell contains visible ellipsis placeholder instead of N/A`);
+      }
+      if (/data-live-price=/.test(cell) && /\$100\.00/.test(cell)) {
+        failures.push(`${rel}: ranking live price cell contains hardcoded $100.00 fallback`);
+      }
+      if (/data-live-change=/.test(cell) && /0\.00%/.test(cell)) {
+        failures.push(`${rel}: ranking live change cell contains hardcoded 0.00% fallback`);
+      }
+    }
   }
 }
 

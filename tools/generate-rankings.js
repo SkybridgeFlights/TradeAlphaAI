@@ -80,13 +80,13 @@ function tableRow(asset, rank) {
   const mClass = m === 'bullish' ? 'momentum-up' : m === 'bearish' ? 'momentum-down' : 'momentum-neutral';
   const href = assetHref(asset);
   const sect = sector(asset);
-  return `<tr data-symbol="${esc(asset.symbol)}">
+  return `<tr data-symbol="${esc(asset.symbol)}" data-asset-type="${asset.type === 'etf' ? 'etf' : 'stock'}">
     <td class="col-rank rank-num">${rank}</td>
     <td class="col-symbol"><a class="symbol-link" href="${href}"><strong>${esc(asset.symbol)}</strong></a></td>
     <td class="col-name asset-name"><a href="${href}">${esc(asset.name)}</a></td>
     <td class="col-score score-cell"><span class="score-badge ${sc}">${s}</span> <small>${sl}</small></td>
-    <td class="col-price price-cell" data-live-price="${esc(asset.symbol)}"><span class="live-loading">&hellip;</span></td>
-    <td class="col-change change-cell" data-live-change="${esc(asset.symbol)}"><span class="live-loading">&hellip;</span></td>
+    <td class="col-price price-cell" data-live-price="${esc(asset.symbol)}"><span class="live-unavailable">N/A</span></td>
+    <td class="col-change change-cell" data-live-change="${esc(asset.symbol)}"><span class="live-unavailable">N/A</span></td>
     <td class="col-sector sector-cell">${esc(sect)}</td>
     <td class="col-momentum momentum-cell ${mClass}">${m === 'bullish' ? 'Bullish' : m === 'bearish' ? 'Bearish' : 'Neutral'}</td>
   </tr>`;
@@ -142,7 +142,7 @@ const snapshotSection = `<section class="market-section" id="market-snapshot">
       <div class="snapshot-card">
         <span class="snapshot-label">Top Mover</span>
         <strong data-snap-top-mover>&mdash;</strong>
-        <span class="snapshot-sub" data-snap-top-mover-change>Awaiting live data&hellip;</span>
+        <span class="snapshot-sub" data-snap-top-mover-change>Awaiting live data</span>
       </div>
       <div class="snapshot-card">
         <span class="snapshot-label">Best Score</span>
@@ -279,7 +279,10 @@ const html = `<!doctype html>
     const allSymbols = Array.from(document.querySelectorAll("[data-live-price]"))
       .map(el => el.dataset.livePrice)
       .filter((s, i, arr) => s && arr.indexOf(s) === i);
-    const fakeAssets = allSymbols.map(symbol => ({ symbol }));
+    const fakeAssets = allSymbols.map(symbol => {
+      const row = document.querySelector('[data-symbol="' + symbol + '"]');
+      return { symbol, type: row?.dataset.assetType || "" };
+    });
     scheduleLivePricePatch(document, fakeAssets);
     // Wire sortable table headers
     document.querySelectorAll(".ranking-table").forEach(table => {
