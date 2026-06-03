@@ -40,15 +40,16 @@ if (!execute) process.exit(0);
 if (fs.existsSync(publicEn) || fs.existsSync(publicAr)) fail('Refusing to overwrite existing public article files.');
 fs.copyFileSync(draftEn, publicEn);
 fs.copyFileSync(draftAr, publicAr);
-run('npm.cmd', ['run', 'article-registry:generate']);
-run('npm.cmd', ['run', 'search:generate']);
-run('npm.cmd', ['run', 'generate:seo-sitemaps']);
-run('npm.cmd', ['run', 'check:editorial']);
-run('npm.cmd', ['run', 'check:utf8']);
-run('npm.cmd', ['run', 'check:production']);
-run('npm.cmd', ['run', 'check:seo']);
-run('npm.cmd', ['run', 'check:indexing']);
-run('npm.cmd', ['run', 'check:social-meta']);
+const NPM = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+run(NPM, ['run', 'article-registry:generate']);
+run(NPM, ['run', 'search:generate']);
+run(NPM, ['run', 'generate:seo-sitemaps']);
+run(NPM, ['run', 'check:editorial']);
+run(NPM, ['run', 'check:utf8']);
+run(NPM, ['run', 'check:production']);
+run(NPM, ['run', 'check:seo']);
+run(NPM, ['run', 'check:indexing']);
+run(NPM, ['run', 'check:social-meta']);
 
 if (telegram) {
   const args = ['tools/telegram-publish-article.js', `--slug=${slug}`, '--locale=both'];

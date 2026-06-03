@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       slug:
-        description: 'Article slug to dry-run publish (optional, e.g. how-dividend-etfs-generate-income)'
+        description: 'Article slug to publish (leave empty to auto-detect next approved article)'
         required: false
         default: ''
       dry_run_only:
-        description: 'Dry run only (no real publishing)'
+        description: 'Dry run only — set false to publish manually. Scheduled runs always publish autonomously.'
         required: false
         type: choice
         options:
@@ -16,11 +16,20 @@ on:
           - 'false'
         default: 'true'
   schedule:
-    # Every Monday at 08:00 UTC
+    # Autonomous publish every Monday 08:00 UTC.
+    # Cron runs have no workflow_dispatch inputs — they always attempt real publish.
     - cron: '0 8 * * 1'
 
+# contents: write is required for git commit/push.
+# All write operations are gated by the REAL_PUBLISH condition below, which is
+# never satisfied on dry-run manual dispatch (dry_run_only == 'true').
 permissions:
-  contents: read
+  contents: write
+
+env:
+  # REAL_PUBLISH is true when: scheduled cron, OR manual dispatch with dry_run_only=false.
+  # Evaluates to the string 'true' or 'false' for use in step conditions.
+  REAL_PUBLISH: ${{ github.event_name == 'schedule' || github.event.inputs.dry_run_only == 'false' }}
 
 jobs:
   editorial-pipeline:
@@ -35,12 +44,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # No cache: 'npm' — project has no lockfile (zero npm dependencies)
+          # No cache: 'npm' — project has zero npm dependencies, no lockfile
 
       - name: Install dependencies
         run: npm install
 
-      # ── Validators ──────────────────────────────────────────────────────────
+      # ── Validators (always run — pipeline fails here on any quality issue) ─────
 
       - name: Check editorial queue
         run: npm run check:editorial
@@ -60,43 +69,231 @@ jobs:
       - name: Check social meta
         run: npm run check:social-meta
 
-      # ── Editorial dry-run ────────────────────────────────────────────────────
+      # ── Queue preview (always runs) ───────────────────────────────────────────
 
       - name: List upcoming publications
         run: node tools/list-upcoming-publications.js
 
-      - name: Dry-run publish reviewed article
-        # Runs only when a slug was supplied via workflow_dispatch.
-        # Absence of --execute is what triggers dry-run mode in publish-reviewed-article.js
-        if: ${{ github.event.inputs.slug != '' }}
+      # ── Dry-run preview (manual dry-run only — not on real publish or schedule) ─
+
+      - name: Dry-run publish preview
+        # Prints what would be published without touching any files.
+        # Only runs on manual dry-run dispatch with a slug supplied.
+        if: ${{ github.event.inputs.slug != '' && github.event.inputs.dry_run_only == 'true' }}
         env:
           ARTICLE_SLUG: ${{ github.event.inputs.slug }}
         run: node tools/publish-reviewed-article.js --slug="$ARTICLE_SLUG"
 
-      - name: Telegram preview (dry run — no message sent)
-        # Absence of --send is what triggers dry-run mode in telegram-publish-article.js.
-        # Using etf-diversification-guide as the example slug (status=published, review_status=approved).
+      - name: Telegram message preview (dry run — no message sent)
+        # Formats and prints the Telegram message. Never sends. Skipped on real publish runs.
+        if: ${{ env.REAL_PUBLISH != 'true' }}
         run: node tools/telegram-publish-article.js --slug=etf-diversification-guide --locale=both
 
-      # ── Real publishing (disabled — uncomment only after explicit approval) ──
-      #
-      # To enable real Telegram publishing:
-      #   1. Add secrets in GitHub → Settings → Secrets and variables → Actions:
-      #      - TELEGRAM_BOT_TOKEN
-      #      - TELEGRAM_CHANNEL_ID
-      #   2. Ensure the article has status=published and review_status=approved
-      #   3. Remove the leading '#' from the steps below
-      #
-      # - name: Publish reviewed article (REAL — requires approval)
-      #   if: ${{ github.event.inputs.slug != '' && github.event.inputs.dry_run_only == 'false' }}
-      #   env:
-      #     ARTICLE_SLUG: ${{ github.event.inputs.slug }}
-      #   run: node tools/publish-reviewed-article.js --slug="$ARTICLE_SLUG" --execute
-      #
-      # - name: Send Telegram announcement (REAL — requires secrets)
-      #   if: ${{ github.event.inputs.slug != '' && github.event.inputs.dry_run_only == 'false' }}
-      #   env:
-      #     TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      #     TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-      #     ARTICLE_SLUG: ${{ github.event.inputs.slug }}
-      #   run: node tools/telegram-publish-article.js --slug="$ARTICLE_SLUG" --locale=both --send
+      # ── Real publish path ─────────────────────────────────────────────────────
+      # All steps below are gated by REAL_PUBLISH == 'true'.
+      # Scheduled cron: always enters this path and auto-detects the next due article.
+      # Manual dispatch with dry_run_only=false: uses provided slug or auto-detects.
+
+      - name: Find publishable approved article
+        id: find-article
+        if: ${{ env.REAL_PUBLISH == 'true' }}
+        env:
+          ARTICLE_SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const queue = JSON.parse(fs.readFileSync('data/editorial-topic-queue.json', 'utf8'));
+          const slug = process.env.ARTICLE_SLUG || '';
+          let topic;
+
+          if (slug) {
+            // Explicit slug provided via workflow_dispatch
+            topic = queue.topics.find(t => t.slug === slug);
+            if (!topic) {
+              console.error(`No topic found with slug: ${slug}`);
+              process.exit(1);
+            }
+          } else {
+            // Auto-detect: find the first reviewed+approved article whose date is due
+            const today = new Date().toISOString().slice(0, 10);
+            topic = queue.topics.find(t =>
+              t.status === 'reviewed' &&
+              t.review_status === 'approved' &&
+              t.target_publish_date <= today
+            );
+          }
+
+          if (!topic) {
+            console.log('No publishable article found (need status=reviewed, review_status=approved, target_publish_date <= today). Nothing to publish.');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
+            process.exit(0);
+          }
+
+          if (topic.status !== 'reviewed') {
+            console.log(`${topic.slug}: status=${topic.status} — must be "reviewed". Skipping.`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
+            process.exit(0);
+          }
+
+          if (topic.review_status !== 'approved') {
+            console.log(`${topic.slug}: review_status=${topic.review_status} — must be "approved". Skipping.`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
+            process.exit(0);
+          }
+
+          console.log(`Publishable article selected: ${topic.slug}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `publish_slug=${topic.slug}\n`);
+          NODESCRIPT
+
+      - name: Duplicate protection check
+        id: dup-check
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' }}
+        env:
+          ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const slug = process.env.ARTICLE_SLUG;
+
+          // Guard 1: published-history.json already records this slug
+          const historyPath = 'data/published-history.json';
+          if (fs.existsSync(historyPath)) {
+            const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+            const existing = (history.publications || []).find(p => p.slug === slug);
+            if (existing) {
+              console.log(`DUPLICATE PROTECTION: ${slug} is already recorded in published-history.json (published ${existing.publish_date}). Aborting safely — no files changed.`);
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, 'already_published=true\n');
+              process.exit(0);
+            }
+          }
+
+          // Guard 2: public article file already exists on disk
+          if (fs.existsSync(`insights/${slug}.html`)) {
+            console.log(`DUPLICATE PROTECTION: insights/${slug}.html already exists on disk. Aborting safely — no files changed.`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'already_published=true\n');
+            process.exit(0);
+          }
+
+          console.log(`Duplicate check passed: ${slug} not yet published.`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'already_published=false\n');
+          NODESCRIPT
+
+      - name: Publish reviewed article
+        id: publish
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
+        env:
+          ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+        run: |
+          # publish-reviewed-article.js --execute:
+          #   1. Re-checks status=reviewed + review_status=approved in queue
+          #   2. Verifies both draft files exist and pass hasRequiredArticleParts
+          #   3. Refuses to overwrite if public files already exist (third duplicate guard)
+          #   4. Copies drafts/editorial/<slug>/en.html → insights/<slug>.html
+          #   5. Copies drafts/editorial/<slug>/ar.html → ar/insights/<slug>.html
+          #   6. Runs: article-registry:generate, search:generate, generate:seo-sitemaps
+          #   7. Runs all 6 validators — fails loudly if any check fails
+          node tools/publish-reviewed-article.js --slug="$ARTICLE_SLUG" --execute
+
+      - name: Mark article as published in queue
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
+        env:
+          ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const slug = process.env.ARTICLE_SLUG;
+          const queuePath = 'data/editorial-topic-queue.json';
+          const queue = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+          const topic = queue.topics.find(t => t.slug === slug);
+          if (!topic) { console.error(`Topic not found in queue: ${slug}`); process.exit(1); }
+          topic.status = 'published';
+          topic.published_at = new Date().toISOString().slice(0, 10);
+          fs.writeFileSync(queuePath, JSON.stringify(queue, null, 2) + '\n');
+          console.log(`Queue updated: ${slug} → status=published, published_at=${topic.published_at}`);
+          NODESCRIPT
+
+      - name: Update published history
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
+        env:
+          ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+          WORKFLOW_RUN_ID: ${{ github.run_id }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const slug = process.env.ARTICLE_SLUG;
+          const runId = process.env.WORKFLOW_RUN_ID;
+          const historyPath = 'data/published-history.json';
+
+          let history = { version: '1.0', updated: '', publications: [] };
+          if (fs.existsSync(historyPath)) {
+            try { history = JSON.parse(fs.readFileSync(historyPath, 'utf8')); }
+            catch (e) { console.warn('Could not parse published-history.json; starting fresh.'); }
+          }
+
+          const today = new Date().toISOString().slice(0, 10);
+          history.updated = today;
+          history.publications.push({
+            slug,
+            publish_date: today,
+            workflow_run_id: runId,
+            languages: ['en', 'ar']
+          });
+
+          fs.writeFileSync(historyPath, JSON.stringify(history, null, 2) + '\n');
+          console.log(`Published history updated: ${slug} (workflow run ${runId}).`);
+          NODESCRIPT
+
+      - name: Commit and push published article
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
+        env:
+          ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "=== Files changed by publish ==="
+          git status --short
+
+          # Stage all publish-generated files — never stage drafts/, .env, or unrelated files
+          git add "insights/${ARTICLE_SLUG}.html"
+          git add "ar/insights/${ARTICLE_SLUG}.html"
+          git add "data/editorial-topic-queue.json"
+          git add "data/published-history.json"
+          git add "data/insights/article-registry.json"
+          git add "data/search-index.json"
+          git add "data/research-assets/index.json"
+          git add sitemap*.xml
+          git add robots.txt
+
+          echo "=== Staged for commit ==="
+          git diff --cached --name-only
+
+          # Idempotent: exit cleanly if nothing staged
+          git diff --cached --quiet && echo "Nothing to commit — already up to date." && exit 0
+
+          git commit -m "Publish article: ${ARTICLE_SLUG}"
+          git push
+          echo "=== Pushed to remote ==="
+
+      - name: Send Telegram announcement
+        # Runs after successful publish + commit.
+        # Silently skips if secrets are not configured — does not fail the pipeline.
+        # Telegram failure after push does NOT roll back the commit.
+        # --delay-ms=3000 adds a 3-second gap between EN and AR posts.
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
+            echo "Telegram secrets not configured. Article is published and committed. Skipping Telegram send."
+            echo "To enable: add TELEGRAM_BOT_TOKEN and TELEGRAM_CHANNEL_ID in GitHub → Settings → Secrets."
+            exit 0
+          fi
+          # Queue status is 'published' (updated by earlier step) — no --allow-unpublished needed
+          node tools/telegram-publish-article.js \
+            --slug="$ARTICLE_SLUG" \
+            --locale=both \
+            --send \
+            --delay-ms=3000
