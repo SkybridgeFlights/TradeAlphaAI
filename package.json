@@ -26,11 +26,14 @@
     "localize:generate": "node tools/generate-localized-pages.js && node tools/generate-article-registry.js",
     "check:indexing": "node tools/check-indexing-readiness.js",
     "check:social-meta": "node tools/check-social-meta.js",
-    "check:editorial": "node tools/check-editorial-quality.js && node tools/check-editorial-schedule.js",
+    "check:editorial": "node tools/check-editorial-quality.js && node tools/check-editorial-schedule.js && node tools/check-publishing-safety.js",
     "editorial:upcoming": "node tools/list-upcoming-publications.js",
     "editorial:schedule": "node tools/check-editorial-schedule.js",
     "check:seo-performance": "node tools/analyze-seo-performance.js",
     "editorial:priorities": "node tools/update-editorial-priorities.js",
-    "editorial:generate-draft": "node tools/generate-ai-editorial-draft.js"
+    "editorial:generate-draft": "node tools/generate-ai-editorial-draft.js",
+    "market-outlook:generate-draft": "node tools/generate-market-outlook-draft.js",
+    "market-outlook:publish": "node tools/publish-market-outlook.js",
+    "news-analysis:generate-draft": "node tools/generate-news-analysis-draft.js"
   }
 }

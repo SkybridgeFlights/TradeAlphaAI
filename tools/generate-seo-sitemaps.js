@@ -16,7 +16,8 @@ const stocks = htmlFiles("stocks").map(toRel);
 const etfs = htmlFiles("etfs").map(toRel);
 const hubs = (marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists);
 const comparisons = htmlFiles("compare").map(toRel);
-const insights = ["insights/"].filter(existsDir).concat(htmlFiles("insights").filter((rel) => !rel.endsWith("/index.html")).map(toRel));
+const marketOutlook = htmlFiles("market-outlook").map(toRel);
+const insights = ["insights/"].filter(existsDir).concat(htmlFiles("insights").filter((rel) => !rel.endsWith("/index.html")).map(toRel), marketOutlook);
 const ar = arUrls();
 
 writeUrlset("sitemap-core.xml", core, "weekly", priorityFor);
@@ -49,7 +50,7 @@ function arUrls() {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
-  for (const dir of ["stocks", "etfs", "compare", "insights"]) {
+  for (const dir of ["stocks", "etfs", "compare", "insights", "market-outlook"]) {
     for (const file of htmlFiles(path.join("ar", dir))) {
       if (file.endsWith("/index.html") && dir === "insights") continue;
       out.push(toRel(file));

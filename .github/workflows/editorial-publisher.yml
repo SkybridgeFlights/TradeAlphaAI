@@ -16,9 +16,9 @@ on:
           - 'false'
         default: 'true'
   schedule:
-    # Autonomous publish every Monday 08:00 UTC.
+    # Autonomous educational publishing every day at 08:00 UTC.
     # Cron runs have no workflow_dispatch inputs — they always attempt real publish.
-    - cron: '0 8 * * 1'
+    - cron: '0 8 * * *'
 
 # contents: write is required for git commit/push.
 # All write operations are gated by the REAL_PUBLISH condition below, which is

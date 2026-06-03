@@ -8,7 +8,7 @@ const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
 const DRAFT_ROOT = path.join(ROOT, 'drafts', 'editorial');
 const TODAY = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);
 const MAX_PER_DAY = 1;
-const MAX_PER_WEEK = 3;
+const MAX_PER_WEEK = 7;
 const failures = [];
 const warnings = [];
 

@@ -5,7 +5,8 @@ const path = require('path');
 const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
-const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
+const EDITORIAL_QUEUE = path.join(ROOT, 'data', 'editorial-topic-queue.json');
+const OUTLOOK_QUEUE = path.join(ROOT, 'data', 'market-outlook-queue.json');
 const slug = argValue('--slug');
 const localeArg = argValue('--locale') || 'both';
 const dryRun = !process.argv.includes('--send');
@@ -13,11 +14,10 @@ const forceSend = process.argv.includes('--force-send');
 const delayMs = Number(argValue('--delay-ms') || 0);
 const siteUrl = (process.env.SITE_URL || 'https://www.tradealphaai.com').replace(/\/$/, '');
 
-if (!slug) fail('Usage: node tools/telegram-publish-article.js --slug=<published-slug> [--locale=en|ar|both] [--send] [--force-send] [--delay-ms=5000]');
+if (!slug) fail('Usage: node tools/telegram-publish-article.js --slug=<slug> [--locale=en|ar|both] [--send] [--force-send] [--delay-ms=5000]');
 if (!['en', 'ar', 'both'].includes(localeArg)) fail('--locale must be en, ar, or both');
 
-const queue = readJson(QUEUE_PATH);
-const topic = queue.topics.find((item) => item.slug === slug);
+const topic = findTopic(slug);
 if (!topic) fail(`Editorial topic not found: ${slug}`);
 if (!forceSend && !['published', 'reviewed'].includes(topic.status)) {
   fail(`Refusing to post topic with status=${topic.status}. Telegram announcements require status=published or status=reviewed. Use --force-send only for manual recovery.`);
@@ -48,68 +48,97 @@ if (!token || !chatId) fail('TELEGRAM_BOT_TOKEN and TELEGRAM_CHANNEL_ID are requ
   }
 })().catch((error) => fail(error.message));
 
+function findTopic(slugValue) {
+  const editorial = readJson(EDITORIAL_QUEUE, { topics: [] });
+  const foundEditorial = (editorial.topics || []).find((item) => item.slug === slugValue);
+  if (foundEditorial) return { ...foundEditorial, content_type: 'insight' };
+  const outlook = readJson(OUTLOOK_QUEUE, { topics: [] });
+  const foundOutlook = (outlook.topics || []).find((item) => item.slug === slugValue);
+  return foundOutlook ? { ...foundOutlook, content_type: 'market_outlook' } : null;
+}
+
 function formatPost(topic, locale) {
-  const isAr = locale === 'ar';
   const title = resolveTitle(topic, locale);
   const summary = resolveSummary(topic, locale);
-  const url = `${siteUrl}${isAr ? '/ar' : ''}/insights/${topic.slug}.html`;
-  const tags = isAr ? '#TradeAlphaAI #ETF #استثمار' : '#TradeAlphaAI #ETF #Investing';
+  const url = `${siteUrl}${locale === 'ar' ? '/ar' : ''}/${contentPath(topic)}/${topic.slug}.html`;
   return {
     locale,
-    text: `${title}\n\n${summary}\n\n${url}\n\n${tags}`
+    text: `${categoryEmoji(topic)} ${title}\n\n${summary}\n\n${url}\n\n${hashtags(topic, locale)}`
   };
 }
 
 function resolveTitle(topic, locale) {
-  const isAr = locale === 'ar';
-  const candidates = isAr
+  const ar = locale === 'ar';
+  const paths = articlePaths(topic, locale);
+  const candidates = ar
     ? [
-        extractHtmlMeta(`ar/insights/${topic.slug}.html`, ['og:title', 'twitter:title']),
-        extractHtmlTitle(`ar/insights/${topic.slug}.html`),
-        extractHtmlMeta(`drafts/editorial/${topic.slug}/ar.html`, ['og:title', 'twitter:title']),
-        extractHtmlTitle(`drafts/editorial/${topic.slug}/ar.html`),
+        ...paths.flatMap((rel) => [extractHtmlMeta(rel, ['og:title', 'twitter:title']), extractHtmlTitle(rel)]),
         topic.title_ar
       ]
     : [
         topic.title_en,
-        extractHtmlMeta(`insights/${topic.slug}.html`, ['og:title', 'twitter:title']),
-        extractHtmlTitle(`insights/${topic.slug}.html`),
-        extractHtmlMeta(`drafts/editorial/${topic.slug}/en.html`, ['og:title', 'twitter:title']),
-        extractHtmlTitle(`drafts/editorial/${topic.slug}/en.html`)
+        ...paths.flatMap((rel) => [extractHtmlMeta(rel, ['og:title', 'twitter:title']), extractHtmlTitle(rel)])
       ];
-
   for (const candidate of candidates) {
-    const clean = cleanText(candidate, { requireArabic: isAr, stripBrand: true });
-    if (isSafeText(clean, isAr)) return clean;
+    const clean = cleanText(candidate, { requireArabic: ar, stripBrand: true });
+    if (isSafeText(clean, ar)) return clean;
   }
-
-  return isAr
-    ? 'بحث تعليمي جديد من TradeAlphaAI'
-    : topic.title_en || 'New TradeAlphaAI Educational Research';
+  return ar ? 'بحث تعليمي جديد من TradeAlphaAI' : topic.title_en || 'New TradeAlphaAI Educational Research';
 }
 
 function resolveSummary(topic, locale) {
-  const isAr = locale === 'ar';
+  const ar = locale === 'ar';
   const cluster = topic.discovery_cluster || topic.category || 'market research';
-  const candidates = isAr
-    ? [
-        readArLocalizationSummary(topic.slug),
-        extractHtmlDescription(`ar/insights/${topic.slug}.html`),
-        extractHtmlDescription(`drafts/editorial/${topic.slug}/ar.html`)
-      ]
-    : [
-        extractHtmlDescription(`insights/${topic.slug}.html`),
-        extractHtmlDescription(`drafts/editorial/${topic.slug}/en.html`)
-      ];
-
+  const paths = articlePaths(topic, locale);
+  const candidates = ar
+    ? [readArLocalizationSummary(topic.slug), topic.summary_ar, ...paths.map(extractHtmlDescription)]
+    : [topic.summary_en, ...paths.map(extractHtmlDescription)];
   for (const candidate of candidates) {
-    const clean = cleanText(candidate, { requireArabic: isAr });
-    if (isSafeText(clean, isAr)) return truncate(clean, isAr ? 180 : 170);
+    const clean = cleanText(candidate, { requireArabic: ar });
+    if (isSafeText(clean, ar)) return truncate(clean, ar ? 180 : 170);
   }
-
-  return isAr
+  return ar
     ? 'ملخص تعليمي قصير من TradeAlphaAI يوضح الفكرة البحثية دون تقديم نصيحة مالية.'
     : `Short educational summary from TradeAlphaAI on ${cluster}. No financial advice.`;
+}
+
+function articlePaths(topic, locale) {
+  const ar = locale === 'ar';
+  const base = contentPath(topic);
+  const draftBase = topic.content_type === 'market_outlook' ? 'drafts/market-outlook' : 'drafts/editorial';
+  return ar
+    ? [`ar/${base}/${topic.slug}.html`, `${draftBase}/${topic.slug}/ar.html`]
+    : [`${base}/${topic.slug}.html`, `${draftBase}/${topic.slug}/en.html`];
+}
+
+function contentPath(topic) {
+  return topic.content_type === 'market_outlook' ? 'market-outlook' : 'insights';
+}
+
+function categoryEmoji(topic) {
+  const value = topicText(topic);
+  if (value.includes('market_outlook') || value.includes('outlook')) return '📊';
+  if (value.includes('dividend')) return '💵';
+  if (value.includes('semiconductor') || value.includes('ai')) return '🧠';
+  if (value.includes('risk') || value.includes('defensive')) return '🛡️';
+  if (value.includes('etf')) return '📘';
+  return '📈';
+}
+
+function hashtags(topic, locale) {
+  const value = topicText(topic);
+  const tags = ['#TradeAlphaAI'];
+  if (topic.content_type === 'market_outlook') tags.push('#MarketOutlook');
+  if (value.includes('semiconductor')) tags.push('#Semiconductors');
+  if (value.includes('ai')) tags.push('#AIStocks');
+  if (value.includes('dividend')) tags.push('#DividendETF');
+  if (value.includes('etf')) tags.push('#ETF');
+  tags.push(locale === 'ar' ? '#استثمار' : '#Investing');
+  return [...new Set(tags)].slice(0, 5).join(' ');
+}
+
+function topicText(topic) {
+  return `${topic.content_type || ''} ${topic.category || ''} ${topic.discovery_cluster || ''} ${(topic.tags || []).join(' ')}`.toLowerCase();
 }
 
 function readArLocalizationSummary(slugValue) {
@@ -195,7 +224,7 @@ function isSafeText(value, requireArabic) {
 
 function truncate(value, maxLength) {
   if (value.length <= maxLength) return value;
-  return value.slice(0, maxLength - 1).replace(/\s+\S*$/, '') + '…';
+  return value.slice(0, maxLength - 3).replace(/\s+\S*$/, '') + '...';
 }
 
 function decodeHtmlEntities(value) {
@@ -214,11 +243,7 @@ function escapeRegExp(value) {
 }
 
 function sendTelegram(tokenValue, chatIdValue, text) {
-  const body = JSON.stringify({
-    chat_id: chatIdValue,
-    text,
-    disable_web_page_preview: false
-  });
+  const body = JSON.stringify({ chat_id: chatIdValue, text, disable_web_page_preview: false });
   const options = {
     hostname: 'api.telegram.org',
     path: `/bot${tokenValue}/sendMessage`,
@@ -248,9 +273,9 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function readJson(file) {
+function readJson(file, fallback = {}) {
   try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
+    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : fallback;
   } catch (error) {
     fail(`Unable to read ${path.relative(ROOT, file)}: ${error.message}`);
   }

@@ -1,0 +1,132 @@
+name: Market Outlook Publisher
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Market outlook slug to publish, or empty for auto-detect'
+        required: false
+        default: ''
+      dry_run_only:
+        description: 'Dry run only'
+        required: false
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+        default: 'true'
+  schedule:
+    - cron: '30 8 * * 1,2,4,6'
+
+permissions:
+  contents: write
+
+env:
+  REAL_PUBLISH: ${{ github.event_name == 'schedule' || github.event.inputs.dry_run_only == 'false' }}
+
+jobs:
+  market-outlook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate before publish
+        run: |
+          npm run check:editorial
+          npm run check:utf8
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+
+      - name: Find approved market outlook
+        id: find-outlook
+        env:
+          OUTLOOK_SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
+          const historyPath = 'data/market-outlook-history.json';
+          const history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, 'utf8')) : { publications: [] };
+          const published = new Set((history.publications || []).map((item) => item.slug));
+          const today = new Date().toISOString().slice(0, 10);
+          const requested = process.env.OUTLOOK_SLUG || '';
+          function ready(item) {
+            return item &&
+              item.status === 'reviewed' &&
+              item.review_status === 'approved' &&
+              item.target_publish_date <= today &&
+              !published.has(item.slug) &&
+              !fs.existsSync(`market-outlook/${item.slug}.html`);
+          }
+          const topic = requested ? (queue.topics || []).find((item) => item.slug === requested) : (queue.topics || []).find(ready);
+          if (!topic || !ready(topic)) {
+            console.log('No approved market outlook ready for publishing');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'outlook_slug=\n');
+            process.exit(0);
+          }
+          console.log(`Market outlook selected: ${topic.slug}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `outlook_slug=${topic.slug}\n`);
+          NODESCRIPT
+
+      - name: Dry-run market outlook publish
+        if: ${{ env.REAL_PUBLISH != 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
+        env:
+          OUTLOOK_SLUG: ${{ steps.find-outlook.outputs.outlook_slug }}
+        run: node tools/publish-market-outlook.js --slug="$OUTLOOK_SLUG"
+
+      - name: Publish market outlook
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
+        env:
+          OUTLOOK_SLUG: ${{ steps.find-outlook.outputs.outlook_slug }}
+        run: node tools/publish-market-outlook.js --slug="$OUTLOOK_SLUG" --execute
+
+      - name: Validate after publish
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
+        run: |
+          npm run check:editorial
+          npm run check:utf8
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+
+      - name: Commit market outlook
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
+        run: |
+          if git diff --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add market-outlook ar/market-outlook en/market-outlook data/market-outlook-queue.json data/market-outlook-history.json sitemap*.xml robots.txt
+          git commit -m "Publish market outlook: ${{ steps.find-outlook.outputs.outlook_slug }}"
+          git push origin HEAD:main
+
+      - name: Send Telegram market outlook
+        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          SITE_URL: https://tradealphaai.com
+          OUTLOOK_SLUG: ${{ steps.find-outlook.outputs.outlook_slug }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
+            echo "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHANNEL_ID"
+            exit 1
+          fi
+          node tools/telegram-publish-article.js --slug="$OUTLOOK_SLUG" --locale=both --send --delay-ms=3000

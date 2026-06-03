@@ -32,7 +32,9 @@ const arComparePages = htmlFiles(path.join("ar", "compare"));
 const stockPages = htmlFiles("stocks");
 const etfPages = htmlFiles("etfs");
 const hubPages = readJson("data/market-symbols.json", { hubs: [] }).hubs.map((hub) => hub.pagePath).filter(exists);
-const insightPages = ["insights/"].concat(htmlFiles("insights").filter((rel) => !rel.endsWith("/index.html")));
+const marketOutlookPages = htmlFiles("market-outlook");
+const arMarketOutlookPages = htmlFiles(path.join("ar", "market-outlook"));
+const insightPages = ["insights/"].concat(htmlFiles("insights").filter((rel) => !rel.endsWith("/index.html")), marketOutlookPages);
 
 requireSitemapCoverage("sitemap-core.xml", [""]);
 requireSitemapCoverage("sitemap-compare.xml", comparePages);
@@ -41,8 +43,9 @@ requireSitemapCoverage("sitemap-stocks.xml", stockPages);
 requireSitemapCoverage("sitemap-etfs.xml", etfPages);
 requireSitemapCoverage("sitemap-core.xml", hubPages.filter((rel) => !rel.startsWith("ar/")));
 requireSitemapCoverage("sitemap-insights.xml", insightPages);
+requireSitemapCoverage("sitemap-ar.xml", arMarketOutlookPages);
 
-for (const rel of unique([...comparePages, ...arComparePages, ...hubPages, ...stockPages, ...etfPages, ...insightPages])) {
+for (const rel of unique([...comparePages, ...arComparePages, ...hubPages, ...stockPages, ...etfPages, ...insightPages, ...arMarketOutlookPages])) {
   if (!rel.endsWith(".html") && !rel.endsWith("/")) continue;
   const fileRel = rel.endsWith("/") ? `${rel}index.html` : rel;
   if (!exists(fileRel)) continue;
