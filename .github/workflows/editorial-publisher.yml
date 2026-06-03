@@ -87,7 +87,7 @@ jobs:
       - name: Telegram message preview (dry run — no message sent)
         # Formats and prints the Telegram message. Never sends. Skipped on real publish runs.
         if: ${{ env.REAL_PUBLISH != 'true' }}
-        run: node tools/send-telegram-preview.js --slug=etf-diversification-guide --locale=both
+        run: node tools/telegram-publish-article.js --slug=etf-diversification-guide --locale=both
 
       # ── Real publish path ─────────────────────────────────────────────────────
       # All steps below are gated by REAL_PUBLISH == 'true'.
@@ -284,14 +284,19 @@ jobs:
         # Runs after successful publish + commit.
         # Telegram failure after push does NOT roll back the commit.
         # --delay-ms=3000 adds a 3-second gap between EN and AR posts.
-        if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
+        if: ${{ always() && env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && (steps.publish.outcome == 'success' || steps.dup-check.outputs.already_published == 'true') }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          SITE_URL: https://tradealphaai.com
           ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
         run: |
           # Queue status is 'published' (updated by earlier step) — no --allow-unpublished needed
-          node tools/send-telegram-preview.js \
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
+            echo "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHANNEL_ID"
+            exit 1
+          fi
+          node tools/telegram-publish-article.js \
             --slug="$ARTICLE_SLUG" \
             --locale=both \
             --send \
