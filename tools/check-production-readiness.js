@@ -547,7 +547,7 @@ function checkFeaturedContentLinks() {
 function checkInternalLinks() {
   const htmlFiles = listFiles(root, [".html"]).filter((file) => {
     const rel = relative(file);
-    return !rel.includes("node_modules") && !rel.startsWith("templates/");
+    return !rel.includes("node_modules") && !rel.startsWith("templates/") && !rel.startsWith("drafts/");
   });
   for (const file of htmlFiles) {
     const rel = relative(file);

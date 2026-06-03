@@ -53,6 +53,8 @@ function checkTopic(topic, slugs) {
 function checkDraftIfPresent(topic) {
   const dir = path.join(DRAFT_DIR, topic.slug || '');
   if (!fs.existsSync(dir)) return;
+  // Published topics: draft folder is stale staging; published files are validated by checkPublishedTopic
+  if (topic.status === 'published') return;
   const files = ['en.html', 'ar.html', 'metadata.json'];
   for (const file of files) {
     if (!fs.existsSync(path.join(dir, file))) failures.push(`${relative(dir)}: missing ${file}`);
@@ -62,13 +64,18 @@ function checkDraftIfPresent(topic) {
     if (!fs.existsSync(file)) continue;
     const html = fs.readFileSync(file, 'utf8');
     const rel = relative(file);
-    if (!/<meta name="robots" content="noindex,nofollow"/.test(html)) failures.push(`${rel}: draft must remain noindex,nofollow`);
+    // Drafts are copied as-is to insights/ by publish-reviewed-article.js — they must be publication-ready
+    if (!/<meta name="robots" content="index,follow/.test(html)) failures.push(`${rel}: must have index,follow robots (draft is copied directly to insights/ on publish)`);
+    if (!/<link rel="canonical"/.test(html)) failures.push(`${rel}: missing canonical link`);
+    if (!/<link rel="alternate" hreflang="en"/.test(html) || !/<link rel="alternate" hreflang="ar"/.test(html)) failures.push(`${rel}: missing bilingual hreflang`);
     if (!/<meta property="og:title"/.test(html) || !/<meta property="og:description"/.test(html)) failures.push(`${rel}: missing social metadata`);
-    if (!/<script type="application\/ld\+json">[\s\S]*"@type": "Article"[\s\S]*<\/script>/.test(html)) failures.push(`${rel}: missing Article schema`);
-    if ((html.match(/<details/g) || []).length < 3) failures.push(`${rel}: missing FAQ blocks`);
-    if (!/id="related-research"/.test(html)) failures.push(`${rel}: missing related research section`);
-    if (!/id="discovery"/.test(html)) failures.push(`${rel}: missing discovery section`);
-    if (locale === 'ar' && !/<html lang="ar" dir="rtl">/.test(html)) failures.push(`${rel}: missing Arabic RTL markers`);
+    if (!/<meta name="twitter:card"/.test(html)) failures.push(`${rel}: missing twitter:card`);
+    if (!/<script type="application\/ld\+json">[\s\S]*"Article"[\s\S]*<\/script>/.test(html)) failures.push(`${rel}: missing Article schema`);
+    if (!/<script type="application\/ld\+json">[\s\S]*"FAQPage"[\s\S]*<\/script>/.test(html)) failures.push(`${rel}: missing FAQPage schema`);
+    if ((html.match(/<details/g) || []).length < 3) failures.push(`${rel}: needs at least 3 FAQ blocks`);
+    if (!/id="related-research"/.test(html)) failures.push(`${rel}: missing related-research section`);
+    if (!/id="continue-learning"/.test(html)) failures.push(`${rel}: missing continue-learning section`);
+    if (locale === 'ar' && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) failures.push(`${rel}: missing Arabic RTL markers`);
     if (forbiddenClaims(stripHtml(html))) failures.push(`${rel}: forbidden promotional or advice wording found`);
   }
 }
