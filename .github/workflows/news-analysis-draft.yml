@@ -24,25 +24,49 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Validate queue before generation
+      - name: Validate news source registry
+        # Validates all entries in data/news-source-registry.json without writing.
+        # Fails the pipeline if any source has an unsupported type, invalid URL,
+        # missing required field, or invalid reliability level.
+        run: node tools/ingest-news-sources.js --validate-only
+
+      - name: Ingest sources into news-analysis queue
+        # Reads validated sources and adds new queue candidates to
+        # data/news-analysis-queue.json. Idempotent — skips already-queued URLs.
+        run: node tools/ingest-news-sources.js
+
+      - name: Pre-generation queue safety check
+        # Validates editorial queue, market-outlook queue, and news-analysis queue.
+        # Also runs publishing safety checks on all draft trees.
         run: npm run check:editorial
 
       - name: Generate sourced news-analysis draft
+        # Picks the next planned topic from news-analysis-queue.json that has
+        # validated sources. Generates EN and AR drafts under drafts/news-analysis/.
+        # Exits 0 with no changes when no eligible topic is found.
         run: node tools/generate-news-analysis-draft.js
 
-      - name: Validate generated draft
-        run: |
-          npm run check:editorial
-          npm run check:utf8
+      - name: Post-generation safety check
+        # Re-runs all publishing safety checks, including news-analysis draft
+        # tree inspection (sources section, Arabic text, disclaimer, no advice
+        # language, no fake quote patterns, no unsupported market claims).
+        run: npm run check:editorial
+
+      - name: UTF-8 integrity check
+        run: npm run check:utf8
 
       - name: Commit draft if changed
         run: |
-          if git diff --quiet; then
-            echo "No news-analysis draft changes to commit"
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No news-analysis changes to commit"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/news-analysis-queue.json drafts/news-analysis
+          git add data/news-analysis-queue.json
+          git add drafts/news-analysis
+          echo "=== Staged for commit ==="
+          git diff --cached --name-only
+          git diff --cached --quiet && echo "Nothing to stage" && exit 0
           git commit -m "Generate sourced news-analysis draft"
           git push origin HEAD:main

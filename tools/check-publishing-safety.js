@@ -9,7 +9,15 @@ const warnings = [];
 const today = new Date().toISOString().slice(0, 10);
 const forbiddenCertainty = /\b(?:guaranteed returns?|guaranteed profits?|certain profits?|will definitely|must buy|must sell|sure profit|can't lose|price target is certain|buy now|sell now)\b/i;
 const fabricatedStats = /\b(?:according to unnamed sources|sources say|rumored data|estimated official CPI|fabricated|made-up)\b/i;
+const fakeQuote = /\b(?:as told to us|according to our sources|we spoke with|our insider|unnamed trader|market insider told|source close to|unconfirmed reports)\b/i;
+const unsupportedClaim = /\b(?:markets will|stocks will rally|guaranteed upside|inevitable crash|price will reach|will outperform the market|definitive price target)\b/i;
 const excessiveBrand = /(?:TradeAlphaAI[\s\S]*){5,}/i;
+
+const ALLOWED_NEWS_SOURCE_TYPES = new Set([
+  'sec_filing', 'official_earnings_report', 'federal_reserve_release',
+  'cpi_release', 'nfp_release', 'gdp_release', 'pce_release',
+  'etf_provider_update', 'platform_market_data'
+]);
 const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only and is not investment advice.';
 const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي على الأسواق فقط ولا يُعتبر نصيحة استثمارية.';
 
@@ -18,6 +26,7 @@ checkMarketRegime();
 checkEditorialQueue();
 checkMarketOutlookQueue();
 checkNewsQueue();
+checkNewsSourceRegistry();
 checkDraftTree(path.join(ROOT, 'drafts', 'editorial'), 'editorial');
 checkDraftTree(path.join(ROOT, 'drafts', 'market-outlook'), 'market_outlook');
 checkDraftTree(path.join(ROOT, 'drafts', 'news-analysis'), 'news_analysis');
@@ -84,10 +93,26 @@ function checkNewsQueue() {
   const queue = readJson('data/news-analysis-queue.json', { topics: [] });
   checkQueueBasics('news_analysis', queue.topics || []);
   for (const topic of queue.topics || []) {
-    if (!Array.isArray(topic.sources) || topic.sources.length === 0) failures.push(`${topic.slug}: news_analysis requires explicit real sources`);
+    if (!Array.isArray(topic.sources) || topic.sources.length === 0) {
+      failures.push(`${topic.slug}: news_analysis requires explicit real sources`);
+      continue;
+    }
     for (const source of topic.sources || []) {
       if (!source.url || !/^https?:\/\//.test(source.url)) failures.push(`${topic.slug}: news_analysis source missing valid URL`);
+      if (!source.type || !ALLOWED_NEWS_SOURCE_TYPES.has(source.type)) failures.push(`${topic.slug}: news_analysis source has unsupported type "${source.type || '<missing>'}"`);
     }
+  }
+}
+
+function checkNewsSourceRegistry() {
+  const registry = readJson('data/news-source-registry.json', { sources: [] });
+  if (registry.policy && registry.policy.auto_publish !== false) failures.push('news-source-registry: policy.auto_publish must be false');
+  for (const source of registry.sources || []) {
+    const label = source.source_name || '<unnamed>';
+    if (!source.source_url || !/^https?:\/\//.test(source.source_url)) failures.push(`news-source-registry:${label}: missing valid source_url`);
+    if (!source.source_type || !ALLOWED_NEWS_SOURCE_TYPES.has(source.source_type)) failures.push(`news-source-registry:${label}: unsupported source_type "${source.source_type || '<missing>'}"`);
+    if (!source.fetched_at || !/^\d{4}-\d{2}-\d{2}/.test(source.fetched_at)) failures.push(`news-source-registry:${label}: fetched_at must be YYYY-MM-DD`);
+    if (!Array.isArray(source.related_tickers) || !source.related_tickers.length) failures.push(`news-source-registry:${label}: related_tickers must be a non-empty array`);
   }
 }
 
@@ -147,6 +172,8 @@ function checkDraftTree(dir, type) {
       if (type === 'market_outlook' && !plain.includes(name === 'ar.html' ? OUTLOOK_DISCLAIMER_AR : OUTLOOK_DISCLAIMER_EN)) {
         failures.push(`${rel}: missing required market outlook disclaimer`);
       }
+      if (type === 'news_analysis' && !/id="sources"/.test(html)) failures.push(`${rel}: news-analysis draft missing id="sources" section`);
+      if (type === 'news_analysis' && name === 'ar.html' && !/[؀-ۿ]/.test(plain)) failures.push(`${rel}: news-analysis Arabic draft contains no Arabic text`);
     }
   }
 }

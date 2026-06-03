@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "updated": "2026-06-03",
+  "policy": {
+    "description": "Human-curated registry of real, verified sources for news-analysis draft generation. All entries must be real official documents found and verified by a human editor. No fabricated, inferred, or AI-generated source entries are allowed.",
+    "allowed_source_types": [
+      "sec_filing",
+      "official_earnings_report",
+      "federal_reserve_release",
+      "cpi_release",
+      "nfp_release",
+      "gdp_release",
+      "pce_release",
+      "etf_provider_update",
+      "platform_market_data"
+    ],
+    "allowed_reliability_levels": ["high", "official", "verified"],
+    "auto_publish": false,
+    "manual_review_required": true,
+    "required_fields": [
+      "source_type",
+      "source_name",
+      "source_url",
+      "fetched_at",
+      "related_tickers",
+      "event_type",
+      "reliability_level"
+    ],
+    "how_to_add": "Add a new object to the sources array below. All required_fields must be present. source_url must be the real URL of the official document. Run: node tools/ingest-news-sources.js --validate-only to check before committing."
+  },
+  "sources": []
+}
