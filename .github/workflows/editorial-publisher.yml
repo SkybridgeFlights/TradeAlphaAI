@@ -87,7 +87,7 @@ jobs:
       - name: Telegram message preview (dry run — no message sent)
         # Formats and prints the Telegram message. Never sends. Skipped on real publish runs.
         if: ${{ env.REAL_PUBLISH != 'true' }}
-        run: node tools/telegram-publish-article.js --slug=etf-diversification-guide --locale=both
+        run: node tools/send-telegram-preview.js --slug=etf-diversification-guide --locale=both
 
       # ── Real publish path ─────────────────────────────────────────────────────
       # All steps below are gated by REAL_PUBLISH == 'true'.
@@ -247,6 +247,7 @@ jobs:
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
         env:
           ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -257,6 +258,10 @@ jobs:
           # Stage all publish-generated files — never stage drafts/, .env, or unrelated files
           git add "insights/${ARTICLE_SLUG}.html"
           git add "ar/insights/${ARTICLE_SLUG}.html"
+          git add "en/insights/${ARTICLE_SLUG}.html"
+          git add "data/localization/ar-insight-content/${ARTICLE_SLUG}.json"
+          git add "insights/index.html"
+          git add "ar/insights/index.html"
           git add "data/editorial-topic-queue.json"
           git add "data/published-history.json"
           git add "data/insights/article-registry.json"
@@ -272,12 +277,11 @@ jobs:
           git diff --cached --quiet && echo "Nothing to commit — already up to date." && exit 0
 
           git commit -m "Publish article: ${ARTICLE_SLUG}"
-          git push
+          git push origin HEAD:main
           echo "=== Pushed to remote ==="
 
       - name: Send Telegram announcement
         # Runs after successful publish + commit.
-        # Silently skips if secrets are not configured — does not fail the pipeline.
         # Telegram failure after push does NOT roll back the commit.
         # --delay-ms=3000 adds a 3-second gap between EN and AR posts.
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' && steps.dup-check.outputs.already_published != 'true' }}
@@ -286,13 +290,8 @@ jobs:
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
         run: |
-          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
-            echo "Telegram secrets not configured. Article is published and committed. Skipping Telegram send."
-            echo "To enable: add TELEGRAM_BOT_TOKEN and TELEGRAM_CHANNEL_ID in GitHub → Settings → Secrets."
-            exit 0
-          fi
           # Queue status is 'published' (updated by earlier step) — no --allow-unpublished needed
-          node tools/telegram-publish-article.js \
+          node tools/send-telegram-preview.js \
             --slug="$ARTICLE_SLUG" \
             --locale=both \
             --send \
