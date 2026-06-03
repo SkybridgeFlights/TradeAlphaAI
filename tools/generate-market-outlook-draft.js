@@ -5,14 +5,20 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
+const ECONOMIC_CALENDAR_PATH = path.join(ROOT, 'data', 'economic-calendar.json');
+const REGIME_PATH = path.join(ROOT, 'data', 'market-regime-state.json');
+const MEMORY_PATH = path.join(ROOT, 'data', 'topic-memory.json');
 const OUT_DIR = path.join(ROOT, 'drafts', 'market-outlook');
 const SITE_URL = 'https://tradealphaai.com';
 const ELIGIBLE = new Set(['planned', 'draft']);
-const DISCLAIMER_EN = 'This content is educational market commentary only and does not constitute financial advice or investment recommendations.';
-const DISCLAIMER_AR = 'هذا المحتوى عبارة عن تحليل وتعليق تعليمي للأسواق فقط ولا يُعتبر نصيحة مالية أو توصية شراء أو بيع.';
+const DISCLAIMER_EN = 'This analysis is educational market commentary only and is not investment advice.';
+const DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي على الأسواق فقط ولا يُعتبر نصيحة استثمارية.';
 
-const queue = readJson(QUEUE_PATH);
-const topic = (queue.topics || []).find((item) => ELIGIBLE.has(item.status));
+const queue = readJson(QUEUE_PATH, { topics: [] });
+const calendar = readJson(ECONOMIC_CALENDAR_PATH, { events: [] });
+const regime = readJson(REGIME_PATH, {});
+const memory = readJson(MEMORY_PATH, { recent_topics: [] });
+const topic = (queue.topics || []).find((item) => ELIGIBLE.has(item.status) && !isCoolingDown(item));
 
 if (!topic) {
   console.log('No market outlook draft topic available');
@@ -24,16 +30,20 @@ if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug || '')) fail('Market outlook topic h
 const dir = path.join(OUT_DIR, slug);
 if (fs.existsSync(path.join(dir, 'en.html')) || fs.existsSync(path.join(dir, 'ar.html'))) fail(`${slug}: draft already exists`);
 
-fs.mkdirSync(dir, { recursive: true });
 const normalized = normalizeTopic(topic);
-fs.writeFileSync(path.join(dir, 'en.html'), render(normalized, 'en'), 'utf8');
-fs.writeFileSync(path.join(dir, 'ar.html'), render(normalized, 'ar'), 'utf8');
+const matchingEvents = upcomingEvents(normalized);
+fs.mkdirSync(dir, { recursive: true });
+fs.writeFileSync(path.join(dir, 'en.html'), render(normalized, 'en', matchingEvents), 'utf8');
+fs.writeFileSync(path.join(dir, 'ar.html'), render(normalized, 'ar', matchingEvents), 'utf8');
 fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   slug,
   content_type: 'market_outlook',
   status: 'in_review',
   review_status: 'pending',
   generated_at: new Date().toISOString(),
+  market_regime_used: regime.state || {},
+  event_context_used: matchingEvents.map((event) => ({ id: event.id, name: event.name, date: event.date, source_url: event.source_url })),
+  quality_score_required: 85,
   auto_publish: false,
   telegram_ready: false,
   public_site_updated: false,
@@ -44,6 +54,8 @@ topic.status = 'in_review';
 topic.review_status = 'pending';
 topic.revision_count = 0;
 topic.last_reviewed = null;
+topic.event_tags = unique([...(topic.event_tags || []), ...matchingEvents.map((event) => event.type)]);
+topic.regime_tags = regimeTags();
 queue.updated = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 
@@ -55,12 +67,13 @@ function normalizeTopic(topic) {
     title_en: clean(topic.title_en) || titleCase(topic.slug),
     title_ar: safeArabic(topic.title_ar) ? clean(topic.title_ar) : 'تعليق تعليمي على اتجاهات السوق',
     category: clean(topic.category) || 'Market Outlook',
+    topic_cluster: clean(topic.topic_cluster || topic.discovery_cluster || topic.category || 'market outlook'),
     summary_en: clean(topic.summary_en) || 'Educational market outlook draft focused on context, risks, and research links without investment recommendations.',
     summary_ar: safeArabic(topic.summary_ar) ? clean(topic.summary_ar) : 'مسودة تعليق تعليمي على السوق تركز على السياق والمخاطر وروابط البحث دون تقديم توصيات استثمارية.'
   };
 }
 
-function render(topic, locale) {
+function render(topic, locale, events) {
   const ar = locale === 'ar';
   const title = ar ? topic.title_ar : topic.title_en;
   const summary = ar ? topic.summary_ar : topic.summary_en;
@@ -74,7 +87,8 @@ function render(topic, locale) {
     inLanguage: locale,
     author: { '@type': 'Organization', name: 'TradeAlphaAI' },
     publisher: { '@type': 'Organization', name: 'TradeAlphaAI' },
-    mainEntityOfPage: canonical
+    mainEntityOfPage: canonical,
+    about: unique([topic.topic_cluster, ...(topic.event_tags || []), ...regimeTags()]).filter(Boolean)
   };
   return `<!doctype html>
 <html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}">
@@ -94,7 +108,7 @@ function render(topic, locale) {
 </head>
 <body>
   <main>
-    <article data-content-type="market_outlook">
+    <article data-content-type="market_outlook" data-topic-cluster="${escapeHtml(topic.topic_cluster)}">
       <header>
         <p>${escapeHtml(ar ? 'تعليق تعليمي على السوق' : 'Educational market outlook')}</p>
         <h1>${escapeHtml(title)}</h1>
@@ -102,11 +116,19 @@ function render(topic, locale) {
       </header>
       <section id="market-context">
         <h2>${ar ? 'سياق السوق' : 'Market context'}</h2>
-        <p>${ar ? 'اشرح السياق التعليمي العام باستخدام بيانات حقيقية متاحة أو مفاهيم دائمة الصلاحية فقط. لا تضف أخبارا أو محفزات غير موثقة.' : 'Explain the educational context using available real data or evergreen concepts only. Do not add unsourced news or catalysts.'}</p>
+        <p>${escapeHtml(ar ? marketContextAr(topic, events) : marketContextEn(topic, events))}</p>
+      </section>
+      <section id="event-context">
+        <h2>${ar ? 'أحداث يجب مراقبتها' : 'Events to watch'}</h2>
+${renderEvents(events, ar)}
+      </section>
+      <section id="regime-context">
+        <h2>${ar ? 'سياق نظام السوق' : 'Market regime context'}</h2>
+        <p>${escapeHtml(ar ? regimeContextAr() : regimeContextEn())}</p>
       </section>
       <section id="risk-context">
         <h2>${ar ? 'سياق المخاطر' : 'Risk context'}</h2>
-        <p>${ar ? 'اربط الموضوع بالمخاطر، التقلب، التنويع، والسيولة بلغة احتمالية وغير جازمة.' : 'Connect the topic to risk, volatility, diversification, and liquidity using non-certain language.'}</p>
+        <p>${escapeHtml(ar ? 'يربط هذا التحليل الموضوع بالمخاطر والتقلب والتنويع والسيولة بلغة احتمالية وغير جازمة.' : 'This analysis connects the topic to risk, volatility, diversification, and liquidity using non-certain language.')}</p>
       </section>
       <section id="related-research">
         <h2>${ar ? 'أبحاث مرتبطة' : 'Related research'}</h2>
@@ -125,6 +147,77 @@ function render(topic, locale) {
 `;
 }
 
+function marketContextEn(topic, events) {
+  const eventText = events.length ? ` It references ${events.map((event) => event.name).join(', ')} because those events are present in the sourced economic calendar.` : ' No specific event is added unless it exists in the sourced calendar.';
+  return `TradeAlphaAI frames this outlook around ${topic.topic_cluster} using educational scenario analysis, not trading calls.${eventText}`;
+}
+
+function marketContextAr(topic, events) {
+  const eventText = events.length ? ` ويشير إلى ${events.map((event) => event.name).join('، ')} لأن هذه الأحداث موجودة في التقويم الاقتصادي الموثق.` : ' ولا تتم إضافة أي حدث محدد ما لم يكن موجودا في التقويم الموثق.';
+  return `يعرض TradeAlphaAI هذا التعليق حول ${topic.topic_cluster} باستخدام تحليل سيناريوهات تعليمي وليس دعوات تداول.${eventText}`;
+}
+
+function regimeContextEn() {
+  const state = regime.state || {};
+  return `Current regime tags: ${regimeTags().join(', ') || 'not enough sourced regime context'}. Editors should verify all regime labels before approval.`;
+}
+
+function regimeContextAr() {
+  return `وسوم نظام السوق الحالية: ${regimeTags().join('، ') || 'لا توجد بيانات سياقية موثقة كافية'}. يجب على المحرر مراجعة جميع الوسوم قبل الاعتماد.`;
+}
+
+function renderEvents(events, ar) {
+  if (!events.length) return `        <p>${ar ? 'لا توجد أحداث موثقة مرتبطة بهذه المسودة في التقويم الحالي.' : 'No sourced calendar events are attached to this draft.'}</p>`;
+  const items = events.map((event) => `          <li>${escapeHtml(event.date)} - <a href="${escapeHtml(event.source_url)}">${escapeHtml(event.name)}</a></li>`).join('\n');
+  return `        <ul>\n${items}\n        </ul>`;
+}
+
+function upcomingEvents(topic) {
+  const today = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);
+  const terms = normalize(`${topic.title_en} ${topic.category} ${topic.topic_cluster} ${(topic.tags || []).join(' ')}`).split(' ');
+  return (calendar.events || [])
+    .filter((event) => event.source_url && event.date && event.status === 'confirmed')
+    .filter((event) => {
+      const date = new Date(`${event.date}T00:00:00Z`);
+      const days = (date - today) / 86400000;
+      return days >= 0 && days <= 14;
+    })
+    .filter((event) => {
+      const eventText = normalize(`${event.name} ${event.type} ${(event.tags || []).join(' ')}`);
+      return terms.some((term) => term.length > 2 && eventText.includes(term));
+    })
+    .slice(0, 3);
+}
+
+function isCoolingDown(item) {
+  const cluster = item.topic_cluster || item.discovery_cluster || item.category;
+  if (!cluster) return false;
+  const recent = memory.recent_topics || [];
+  return recent.some((entry) => entry.cluster === cluster && daysSince(entry.published_at || entry.created_at) < 14);
+}
+
+function daysSince(day) {
+  if (!day) return Infinity;
+  return Math.floor((Date.now() - new Date(`${day}T00:00:00Z`).getTime()) / 86400000);
+}
+
+function regimeTags() {
+  const state = regime.state || {};
+  return unique([
+    state.volatility_regime,
+    state.risk_regime,
+    state.ai_sector_momentum,
+    state.semiconductor_strength,
+    state.rates_trend,
+    state.defensive_rotation,
+    state.growth_value_bias
+  ].filter(Boolean));
+}
+
+function normalize(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9\u0600-\u06ff]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function clean(value) {
   return String(value || '').replace(/\s+/g, ' ').trim();
 }
@@ -138,13 +231,17 @@ function titleCase(value) {
   return String(value || '').replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
+}
+
 function escapeHtml(value) {
   return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function readJson(file) {
+function readJson(file, fallback) {
   try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
+    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : fallback;
   } catch (error) {
     fail(`${path.relative(ROOT, file)}: ${error.message}`);
   }

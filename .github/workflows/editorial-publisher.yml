@@ -191,6 +191,7 @@ jobs:
         env:
           ARTICLE_SLUG: ${{ steps.find-article.outputs.publish_slug }}
         run: |
+          npm run content:score -- --type=editorial --slug="$ARTICLE_SLUG" --min-score=85
           # publish-reviewed-article.js --execute:
           #   1. Re-checks status=reviewed + review_status=approved in queue
           #   2. Verifies both draft files exist and pass hasRequiredArticleParts

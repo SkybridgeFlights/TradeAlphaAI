@@ -129,16 +129,33 @@ function hashtags(topic, locale) {
   const value = topicText(topic);
   const tags = ['#TradeAlphaAI'];
   if (topic.content_type === 'market_outlook') tags.push('#MarketOutlook');
+  for (const eventTag of topic.event_tags || []) {
+    const tag = hashtagForEvent(eventTag);
+    if (tag) tags.push(tag);
+  }
+  if (value.includes('macro') || value.includes('rates') || value.includes('fed')) tags.push('#Macro');
   if (value.includes('semiconductor')) tags.push('#Semiconductors');
   if (value.includes('ai')) tags.push('#AIStocks');
   if (value.includes('dividend')) tags.push('#DividendETF');
-  if (value.includes('etf')) tags.push('#ETF');
+  if (value.includes('etf')) tags.push(topic.content_type === 'market_outlook' ? '#ETFResearch' : '#ETF');
   tags.push(locale === 'ar' ? '#استثمار' : '#Investing');
-  return [...new Set(tags)].slice(0, 5).join(' ');
+  return [...new Set(tags)].slice(0, 6).join(' ');
 }
 
 function topicText(topic) {
-  return `${topic.content_type || ''} ${topic.category || ''} ${topic.discovery_cluster || ''} ${(topic.tags || []).join(' ')}`.toLowerCase();
+  return `${topic.content_type || ''} ${topic.category || ''} ${topic.discovery_cluster || ''} ${topic.topic_cluster || ''} ${(topic.tags || []).join(' ')} ${(topic.event_tags || []).join(' ')}`.toLowerCase();
+}
+
+function hashtagForEvent(value) {
+  const normalized = String(value || '').toLowerCase();
+  if (normalized.includes('cpi')) return '#CPI';
+  if (normalized.includes('fomc')) return '#FOMC';
+  if (normalized.includes('nfp')) return '#NFP';
+  if (normalized.includes('pce')) return '#PCE';
+  if (normalized.includes('gdp')) return '#GDP';
+  if (normalized.includes('jobless')) return '#JoblessClaims';
+  if (normalized.includes('earnings')) return '#Earnings';
+  return '';
 }
 
 function readArLocalizationSummary(slugValue) {

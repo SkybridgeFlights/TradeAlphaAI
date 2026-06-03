@@ -10,7 +10,11 @@ const today = new Date().toISOString().slice(0, 10);
 const forbiddenCertainty = /\b(?:guaranteed returns?|guaranteed profits?|certain profits?|will definitely|must buy|must sell|sure profit|can't lose|price target is certain|buy now|sell now)\b/i;
 const fabricatedStats = /\b(?:according to unnamed sources|sources say|rumored data|estimated official CPI|fabricated|made-up)\b/i;
 const excessiveBrand = /(?:TradeAlphaAI[\s\S]*){5,}/i;
+const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only and is not investment advice.';
+const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي على الأسواق فقط ولا يُعتبر نصيحة استثمارية.';
 
+checkEconomicCalendar();
+checkMarketRegime();
 checkEditorialQueue();
 checkMarketOutlookQueue();
 checkNewsQueue();
@@ -31,6 +35,30 @@ if (failures.length) {
 
 console.log('Publishing safety check passed.');
 
+function checkEconomicCalendar() {
+  const calendar = readJson('data/economic-calendar.json', { events: [] });
+  const allowed = new Set(calendar.source_policy?.allowed_event_types || []);
+  const seen = new Set();
+  for (const event of calendar.events || []) {
+    if (seen.has(event.id)) failures.push(`economic-calendar:${event.id}: duplicate event id`);
+    seen.add(event.id);
+    if (!allowed.has(event.type)) failures.push(`economic-calendar:${event.id}: unsupported event type ${event.type}`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(event.date || '')) failures.push(`economic-calendar:${event.id}: date must be YYYY-MM-DD`);
+    if (!/^https?:\/\//.test(event.source_url || '')) failures.push(`economic-calendar:${event.id}: missing real source_url`);
+    if (event.status !== 'confirmed') failures.push(`economic-calendar:${event.id}: status must be confirmed`);
+  }
+}
+
+function checkMarketRegime() {
+  const regime = readJson('data/market-regime-state.json', { state: {}, sources: [] });
+  const state = regime.state || {};
+  const sourceRequired = Object.values(state).some((value) => Array.isArray(value) ? value.length : value && value !== 'unverified');
+  if (sourceRequired && (!Array.isArray(regime.sources) || !regime.sources.length)) failures.push('market-regime-state: verified regime labels require source URLs');
+  for (const source of regime.sources || []) {
+    if (!/^https?:\/\//.test(source.url || '')) failures.push('market-regime-state: source missing valid URL');
+  }
+}
+
 function checkEditorialQueue() {
   const queue = readJson('data/editorial-topic-queue.json', { topics: [] });
   checkQueueBasics('editorial', queue.topics || []);
@@ -41,11 +69,14 @@ function checkMarketOutlookQueue() {
   const queue = readJson('data/market-outlook-queue.json', { topics: [] });
   checkQueueBasics('market_outlook', queue.topics || []);
   checkClusterCooldown('market_outlook', queue.topics || [], 14);
+  if (queue.policy) {
+    if (queue.policy.disclaimer_en !== OUTLOOK_DISCLAIMER_EN) failures.push('market_outlook policy: required EN disclaimer mismatch');
+    if (queue.policy.disclaimer_ar !== OUTLOOK_DISCLAIMER_AR) failures.push('market_outlook policy: required AR disclaimer mismatch');
+  }
   for (const topic of queue.topics || []) {
-    if (!topic.disclaimer_en && topic.status !== 'published') continue;
     const text = JSON.stringify(topic);
-    if (!text.includes('educational market commentary')) failures.push(`${topic.slug}: market outlook missing required EN educational disclaimer`);
-    if (!text.includes('تحليل وتعليق تعليمي')) failures.push(`${topic.slug}: market outlook missing required AR educational disclaimer`);
+    if (topic.disclaimer_en && !text.includes(OUTLOOK_DISCLAIMER_EN)) failures.push(`${topic.slug}: market outlook missing required EN disclaimer`);
+    if (topic.disclaimer_ar && !text.includes(OUTLOOK_DISCLAIMER_AR)) failures.push(`${topic.slug}: market outlook missing required AR disclaimer`);
   }
 }
 
@@ -110,10 +141,10 @@ function checkDraftTree(dir, type) {
       if (forbiddenCertainty.test(plain)) failures.push(`${rel}: forbidden overconfident or advice language`);
       if (fabricatedStats.test(plain)) failures.push(`${rel}: fabricated-source wording found`);
       if (excessiveBrand.test(plain)) failures.push(`${rel}: excessive TradeAlphaAI repetition`);
-      if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي|educational market commentary|تحليل وتعليق تعليمي/.test(html)) {
+      if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي|educational market commentary|تعليق تعليمي/.test(html)) {
         failures.push(`${rel}: missing educational disclaimer`);
       }
-      if (type === 'market_outlook' && !plain.includes(name === 'ar.html' ? 'هذا المحتوى عبارة عن تحليل وتعليق تعليمي للأسواق فقط' : 'This content is educational market commentary only')) {
+      if (type === 'market_outlook' && !plain.includes(name === 'ar.html' ? OUTLOOK_DISCLAIMER_AR : OUTLOOK_DISCLAIMER_EN)) {
         failures.push(`${rel}: missing required market outlook disclaimer`);
       }
     }

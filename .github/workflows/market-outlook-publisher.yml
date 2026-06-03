@@ -44,6 +44,7 @@ jobs:
 
       - name: Validate before publish
         run: |
+          npm run calendar:check
           npm run check:editorial
           npm run check:utf8
           npm run check:production
@@ -92,7 +93,9 @@ jobs:
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
         env:
           OUTLOOK_SLUG: ${{ steps.find-outlook.outputs.outlook_slug }}
-        run: node tools/publish-market-outlook.js --slug="$OUTLOOK_SLUG" --execute
+        run: |
+          npm run content:score -- --type=market_outlook --slug="$OUTLOOK_SLUG" --min-score=85
+          node tools/publish-market-outlook.js --slug="$OUTLOOK_SLUG" --execute
 
       - name: Validate after publish
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
