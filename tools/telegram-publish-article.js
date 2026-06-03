@@ -138,8 +138,33 @@ function hashtags(topic, locale) {
   if (value.includes('ai')) tags.push('#AIStocks');
   if (value.includes('dividend')) tags.push('#DividendETF');
   if (value.includes('etf')) tags.push(topic.content_type === 'market_outlook' ? '#ETFResearch' : '#ETF');
+
+  // Market-state-aware tags (non-promotional — only added when live data exists)
+  const market = readLiveMarketState();
+  if (market.metadata && market.metadata.status === 'live') {
+    const vix = market.vix && market.vix.value;
+    if (typeof vix === 'number' && vix > 30) tags.push('#MarketStress');
+    else if (typeof vix === 'number' && vix > 20) tags.push('#HighVolatility');
+    const aiMom = market.ai_sector_momentum && market.ai_sector_momentum.value;
+    if (aiMom === 'bullish') tags.push('#AIRally');
+    else if (aiMom === 'bearish') tags.push('#TechPressure');
+    const semiMom = market.semiconductor_momentum && market.semiconductor_momentum.value;
+    if (semiMom === 'bullish' && !tags.includes('#AIRally') && !tags.includes('#Semiconductors')) tags.push('#SemiRally');
+    const volatility = market.volatility_state && market.volatility_state.value;
+    if (volatility === 'elevated' && !tags.some((t) => t.includes('Volatility') || t.includes('Stress'))) tags.push('#MarketVolatility');
+  }
+
   tags.push(locale === 'ar' ? '#استثمار' : '#Investing');
   return [...new Set(tags)].slice(0, 6).join(' ');
+}
+
+function readLiveMarketState() {
+  const file = path.join(ROOT, 'data', 'live-market-state.json');
+  try {
+    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+  } catch (_) {
+    return {};
+  }
 }
 
 function topicText(topic) {

@@ -23,6 +23,7 @@ const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق 
 
 checkEconomicCalendar();
 checkMarketRegime();
+checkLiveMarketState();
 checkEditorialQueue();
 checkMarketOutlookQueue();
 checkNewsQueue();
@@ -54,6 +55,10 @@ function checkEconomicCalendar() {
     if (!allowed.has(event.type)) failures.push(`economic-calendar:${event.id}: unsupported event type ${event.type}`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(event.date || '')) failures.push(`economic-calendar:${event.id}: date must be YYYY-MM-DD`);
     if (!/^https?:\/\//.test(event.source_url || '')) failures.push(`economic-calendar:${event.id}: missing real source_url`);
+    if (!event.source_name) failures.push(`economic-calendar:${event.id}: missing source_name`);
+    if (!event.fetched_at || !/^\d{4}-\d{2}-\d{2}/.test(event.fetched_at || '')) failures.push(`economic-calendar:${event.id}: fetched_at must be YYYY-MM-DD`);
+    if (!event.country) failures.push(`economic-calendar:${event.id}: missing country`);
+    if (!event.impact_level || !['high', 'medium', 'low'].includes(event.impact_level)) failures.push(`economic-calendar:${event.id}: impact_level must be high/medium/low`);
     if (event.status !== 'confirmed') failures.push(`economic-calendar:${event.id}: status must be confirmed`);
   }
 }
@@ -113,6 +118,49 @@ function checkNewsSourceRegistry() {
     if (!source.source_type || !ALLOWED_NEWS_SOURCE_TYPES.has(source.source_type)) failures.push(`news-source-registry:${label}: unsupported source_type "${source.source_type || '<missing>'}"`);
     if (!source.fetched_at || !/^\d{4}-\d{2}-\d{2}/.test(source.fetched_at)) failures.push(`news-source-registry:${label}: fetched_at must be YYYY-MM-DD`);
     if (!Array.isArray(source.related_tickers) || !source.related_tickers.length) failures.push(`news-source-registry:${label}: related_tickers must be a non-empty array`);
+  }
+}
+
+function checkLiveMarketState() {
+  const state = readJson('data/live-market-state.json', null);
+  if (!state) return;
+  const status = state.metadata && state.metadata.status;
+  if (!status || status === 'fallback') return;
+
+  const NUMERIC_BOUNDS = {
+    sp500: [100, 100000], nasdaq: [100, 100000], dowjones: [1000, 200000],
+    russell2000: [50, 10000], vix: [1, 200], us10y_yield: [-5, 25],
+    dxy: [50, 200], gold: [100, 15000], bitcoin: [100, 10000000]
+  };
+  const STRING_ALLOWED = {
+    ai_sector_momentum: new Set(['bullish', 'bearish', 'neutral', 'mixed', 'unverified']),
+    semiconductor_momentum: new Set(['bullish', 'bearish', 'neutral', 'mixed', 'unverified']),
+    market_regime: new Set(['risk-on', 'risk-off', 'mixed', 'unverified']),
+    risk_state: new Set(['elevated', 'moderate', 'low', 'unverified']),
+    volatility_state: new Set(['elevated', 'moderate', 'low', 'unverified'])
+  };
+  const STALENESS_MS = 26 * 3600 * 1000;
+
+  for (const [field, [min, max]] of Object.entries(NUMERIC_BOUNDS)) {
+    const entry = state[field];
+    if (!entry || entry.value === null) continue;
+    if (typeof entry.value !== 'number' || !isFinite(entry.value)) {
+      failures.push('live-market-state:' + field + ': value must be a finite number');
+    } else if (entry.value < min || entry.value > max) {
+      failures.push('live-market-state:' + field + ': value ' + entry.value + ' outside valid range [' + min + ', ' + max + ']');
+    }
+    if (!entry.source_url || !/^https?:\/\//.test(entry.source_url)) {
+      failures.push('live-market-state:' + field + ': non-null value requires valid source_url');
+    }
+    if (entry.fetched_at) {
+      const age = Date.now() - new Date(entry.fetched_at).getTime();
+      if (isNaN(age) || age > STALENESS_MS) warnings.push('live-market-state:' + field + ': fetched_at ' + entry.fetched_at + ' may be stale (>26h)');
+    }
+  }
+  for (const [field, allowed] of Object.entries(STRING_ALLOWED)) {
+    const entry = state[field];
+    if (!entry || entry.value === null) continue;
+    if (!allowed.has(entry.value)) failures.push('live-market-state:' + field + ': value "' + entry.value + '" not in allowed set');
   }
 }
 

@@ -8,6 +8,7 @@ const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
 const ECONOMIC_CALENDAR_PATH = path.join(ROOT, 'data', 'economic-calendar.json');
 const REGIME_PATH = path.join(ROOT, 'data', 'market-regime-state.json');
 const MEMORY_PATH = path.join(ROOT, 'data', 'topic-memory.json');
+const LIVE_MARKET_PATH = path.join(ROOT, 'data', 'live-market-state.json');
 const OUT_DIR = path.join(ROOT, 'drafts', 'market-outlook');
 const SITE_URL = 'https://tradealphaai.com';
 const ELIGIBLE = new Set(['planned', 'draft']);
@@ -18,6 +19,8 @@ const queue = readJson(QUEUE_PATH, { topics: [] });
 const calendar = readJson(ECONOMIC_CALENDAR_PATH, { events: [] });
 const regime = readJson(REGIME_PATH, {});
 const memory = readJson(MEMORY_PATH, { recent_topics: [] });
+const liveMarket = readJson(LIVE_MARKET_PATH, { metadata: { status: 'fallback' } });
+const liveDataAvailable = liveMarket.metadata && liveMarket.metadata.status === 'live';
 const topic = (queue.topics || []).find((item) => ELIGIBLE.has(item.status) && !isCoolingDown(item));
 
 if (!topic) {
@@ -42,6 +45,7 @@ fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   review_status: 'pending',
   generated_at: new Date().toISOString(),
   market_regime_used: regime.state || {},
+  live_market_status: liveMarket.metadata && liveMarket.metadata.status,
   event_context_used: matchingEvents.map((event) => ({ id: event.id, name: event.name, date: event.date, source_url: event.source_url })),
   quality_score_required: 85,
   auto_publish: false,
@@ -126,6 +130,7 @@ ${renderEvents(events, ar)}
         <h2>${ar ? 'سياق نظام السوق' : 'Market regime context'}</h2>
         <p>${escapeHtml(ar ? regimeContextAr() : regimeContextEn())}</p>
       </section>
+${liveDataAvailable ? renderLiveSnapshot(ar) : ''}
       <section id="risk-context">
         <h2>${ar ? 'سياق المخاطر' : 'Risk context'}</h2>
         <p>${escapeHtml(ar ? 'يربط هذا التحليل الموضوع بالمخاطر والتقلب والتنويع والسيولة بلغة احتمالية وغير جازمة.' : 'This analysis connects the topic to risk, volatility, diversification, and liquidity using non-certain language.')}</p>
@@ -166,6 +171,47 @@ function regimeContextAr() {
   return `وسوم نظام السوق الحالية: ${regimeTags().join('، ') || 'لا توجد بيانات سياقية موثقة كافية'}. يجب على المحرر مراجعة جميع الوسوم قبل الاعتماد.`;
 }
 
+function renderLiveSnapshot(ar) {
+  const lines = [];
+  const numFields = [
+    ['sp500',       ar ? 'S&P 500'              : 'S&P 500'],
+    ['nasdaq',      ar ? 'ناسداك'               : 'NASDAQ'],
+    ['vix',         ar ? 'مؤشر التقلب (VIX)'   : 'VIX volatility index'],
+    ['us10y_yield', ar ? 'عائد سندات 10 سنوات' : 'US 10-year yield'],
+    ['gold',        ar ? 'الذهب'                : 'Gold'],
+    ['bitcoin',     ar ? 'بيتكوين'              : 'Bitcoin']
+  ];
+  const strFields = [
+    ['ai_sector_momentum',     ar ? 'زخم قطاع الذكاء الاصطناعي' : 'AI sector momentum'],
+    ['semiconductor_momentum', ar ? 'زخم أشباه الموصلات'         : 'Semiconductor momentum'],
+    ['market_regime',          ar ? 'نظام السوق'                  : 'Market regime'],
+    ['volatility_state',       ar ? 'حالة التقلب'                 : 'Volatility state']
+  ];
+  for (const [field, label] of numFields) {
+    const entry = liveMarket[field];
+    if (entry && entry.value !== null) {
+      lines.push(`    <li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(String(entry.value))} <small>(<a href="${escapeHtml(entry.source_url)}">${escapeHtml(entry.source_name)}</a>)</small></li>`);
+    }
+  }
+  for (const [field, label] of strFields) {
+    const entry = liveMarket[field];
+    if (entry && entry.value && entry.value !== 'unverified') {
+      lines.push(`    <li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(entry.value)}</li>`);
+    }
+  }
+  if (!lines.length) return '';
+  const disclaimer = ar
+    ? 'بيانات السوق للسياق التعليمي فقط. قد لا تعكس الأسعار اللحظية الحالية. لا تُعتبر توصية استثمارية.'
+    : 'Market data shown for educational context only. Values may not reflect real-time prices. Not investment advice.';
+  return `      <section id="live-market-snapshot">
+        <h2>${ar ? 'لقطة السوق الحالية' : 'Live market snapshot'}</h2>
+        <p class="snapshot-disclaimer">${escapeHtml(disclaimer)}</p>
+        <ul class="market-snapshot-list">
+${lines.join('\n')}
+        </ul>
+      </section>`;
+}
+
 function renderEvents(events, ar) {
   if (!events.length) return `        <p>${ar ? 'لا توجد أحداث موثقة مرتبطة بهذه المسودة في التقويم الحالي.' : 'No sourced calendar events are attached to this draft.'}</p>`;
   const items = events.map((event) => `          <li>${escapeHtml(event.date)} - <a href="${escapeHtml(event.source_url)}">${escapeHtml(event.name)}</a></li>`).join('\n');
@@ -180,7 +226,7 @@ function upcomingEvents(topic) {
     .filter((event) => {
       const date = new Date(`${event.date}T00:00:00Z`);
       const days = (date - today) / 86400000;
-      return days >= 0 && days <= 14;
+      return days >= 0 && days <= 7;
     })
     .filter((event) => {
       const eventText = normalize(`${event.name} ${event.type} ${(event.tags || []).join(' ')}`);

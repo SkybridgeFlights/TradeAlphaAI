@@ -7,7 +7,8 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'data', 'economic-calendar.json');
 const sourcePath = argValue('--source');
 const write = process.argv.includes('--write');
-const allowedTypes = new Set(['CPI', 'Core CPI', 'NFP', 'FOMC', 'GDP', 'Retail Sales', 'PCE', 'Jobless Claims', 'Fed Speech', 'Major Earnings Week']);
+const allowedTypes = new Set(['CPI', 'Core CPI', 'NFP', 'FOMC', 'GDP', 'Retail Sales', 'PCE', 'Jobless Claims', 'Unemployment', 'Fed Speech', 'Major Earnings Week']);
+const allowedImpact = new Set(['high', 'medium', 'low']);
 
 if (!sourcePath) {
   console.log('No economic calendar source provided. Use --source=<json> --write with real sourced events.');
@@ -44,22 +45,30 @@ fs.writeFileSync(OUT, JSON.stringify(output, null, 2) + '\n', 'utf8');
 console.log(`Updated data/economic-calendar.json with ${normalized.length} sourced event(s).`);
 
 function normalizeEvent(event) {
+  const name = event.event_name || event.name;
+  const date = event.event_date || event.date;
   const out = {
-    id: event.id || slugify(`${event.date}-${event.name}`),
+    id: event.id || slugify(`${date}-${name}`),
     type: event.type,
-    name: event.name,
-    date: event.date,
+    name,
+    date,
+    country: event.country || null,
+    impact_level: event.impact_level || null,
     timezone: event.timezone || 'UTC',
     status: event.status || 'confirmed',
     source_name: event.source_name,
     source_url: event.source_url,
+    fetched_at: event.fetched_at || null,
     tags: Array.isArray(event.tags) ? event.tags : []
   };
   if (!allowedTypes.has(out.type)) out.error = `unsupported type ${out.type}`;
   else if (!/^\d{4}-\d{2}-\d{2}$/.test(out.date || '')) out.error = 'date must be YYYY-MM-DD';
-  else if (!out.name) out.error = 'missing event name';
+  else if (!out.name) out.error = 'missing event name (event_name or name)';
   else if (!/^https?:\/\//.test(out.source_url || '')) out.error = 'missing real source_url';
   else if (!out.source_name) out.error = 'missing source_name';
+  else if (!out.country) out.error = 'missing country';
+  else if (!out.impact_level || !allowedImpact.has(out.impact_level)) out.error = `impact_level must be one of: ${[...allowedImpact].join(', ')}`;
+  else if (!out.fetched_at || !/^\d{4}-\d{2}-\d{2}/.test(out.fetched_at)) out.error = 'fetched_at must be YYYY-MM-DD';
   return out;
 }
 
