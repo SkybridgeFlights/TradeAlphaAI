@@ -7,7 +7,7 @@ const ROOT = path.resolve(__dirname, '..');
 const failures = [];
 const warnings = [];
 const today = new Date().toISOString().slice(0, 10);
-const forbiddenCertainty = /\b(?:guaranteed returns?|guaranteed profits?|certain profits?|will definitely|must buy|must sell|sure profit|can't lose|price target is certain|buy now|sell now)\b/i;
+const forbiddenCertainty = /\b(?:guaranteed returns?|guaranteed profits?|certain profits?|guaranteed rally|will definitely|definitely will|certain to|must buy|must sell|sure profit|can't lose|can't miss|price target is certain|buy now|sell now|foolproof|life-changing returns|always rises|to the moon)\b|100%\s+(?:bullish|bearish)/i;
 const fabricatedStats = /\b(?:according to unnamed sources|sources say|rumored data|estimated official CPI|fabricated|made-up)\b/i;
 const fakeQuote = /\b(?:as told to us|according to our sources|we spoke with|our insider|unnamed trader|market insider told|source close to|unconfirmed reports)\b/i;
 const unsupportedClaim = /\b(?:markets will|stocks will rally|guaranteed upside|inevitable crash|price will reach|will outperform the market|definitive price target)\b/i;
@@ -18,8 +18,8 @@ const ALLOWED_NEWS_SOURCE_TYPES = new Set([
   'cpi_release', 'nfp_release', 'gdp_release', 'pce_release',
   'etf_provider_update', 'platform_market_data'
 ]);
-const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only and is not investment advice.';
-const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي على الأسواق فقط ولا يُعتبر نصيحة استثمارية.';
+const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market conditions can change rapidly and uncertainty remains present.';
+const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق وتعليم حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
 
 checkEconomicCalendar();
 checkMarketRegime();

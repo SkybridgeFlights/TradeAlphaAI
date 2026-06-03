@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { calculateConfidence } = require('./calculate-market-confidence.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const EDITORIAL_QUEUE = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -61,6 +62,22 @@ function formatPost(topic, locale) {
   const title = resolveTitle(topic, locale);
   const summary = resolveSummary(topic, locale);
   const url = `${siteUrl}${locale === 'ar' ? '/ar' : ''}/${contentPath(topic)}/${topic.slug}.html`;
+  const ar = locale === 'ar';
+
+  if (topic.content_type === 'market_outlook') {
+    const confidence = computeMarketConfidence();
+    const toneEmoji = confidence ? confidence.market_tone_emoji : categoryEmoji(topic);
+    const confidenceLine = confidence
+      ? (ar
+          ? `📊 ${confidenceLabelAr(confidence.label)} · ${uncertaintyLabelAr(confidence.uncertainty_label)}`
+          : `📊 Educational market tone: ${confidence.label} · ${confidence.uncertainty_label}`)
+      : '';
+    const lines = [`${toneEmoji} ${title}`, '', summary];
+    if (confidenceLine) lines.push('', confidenceLine);
+    lines.push('', url, '', hashtags(topic, locale));
+    return { locale, text: lines.join('\n') };
+  }
+
   return {
     locale,
     text: `${categoryEmoji(topic)} ${title}\n\n${summary}\n\n${url}\n\n${hashtags(topic, locale)}`
@@ -165,6 +182,38 @@ function readLiveMarketState() {
   } catch (_) {
     return {};
   }
+}
+
+function computeMarketConfidence() {
+  const market = readLiveMarketState();
+  if (!market.metadata || market.metadata.status !== 'live') return null;
+  const valueOf = (field) => (market[field] && market[field].value !== undefined ? market[field].value : null);
+  const calendarFile = path.join(ROOT, 'data', 'economic-calendar.json');
+  let proximityDays = null;
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const cal = fs.existsSync(calendarFile) ? JSON.parse(fs.readFileSync(calendarFile, 'utf8')) : { events: [] };
+    const upcoming = (cal.events || []).filter((e) => e.date >= today && e.status === 'confirmed').sort((a, b) => a.date.localeCompare(b.date));
+    if (upcoming[0]) proximityDays = Math.floor((new Date(upcoming[0].date + 'T00:00:00Z') - Date.now()) / 86400000);
+  } catch (_) {}
+  return calculateConfidence({
+    vix: valueOf('vix'),
+    volatilityState: valueOf('volatility_state'),
+    riskState: valueOf('risk_state'),
+    aiMomentum: valueOf('ai_sector_momentum'),
+    marketRegime: valueOf('market_regime'),
+    eventProximityDays: proximityDays
+  });
+}
+
+function confidenceLabelAr(label) {
+  const map = { constructive: 'بنّاء', 'improving breadth': 'تحسّن التوسع', cautious: 'حذر', defensive: 'دفاعي', volatile: 'متقلب', 'elevated uncertainty': 'ارتفاع عدم اليقين' };
+  return map[label] || label;
+}
+
+function uncertaintyLabelAr(label) {
+  const map = { 'low uncertainty': 'عدم يقين منخفض', 'moderate uncertainty': 'عدم يقين معتدل', 'elevated uncertainty': 'ارتفاع عدم اليقين', 'high uncertainty': 'عدم يقين مرتفع' };
+  return map[label] || label;
 }
 
 function topicText(topic) {

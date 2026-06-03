@@ -44,6 +44,16 @@ function scoreDraft(dir) {
     educational_compliance: !/(buy now|sell now|guaranteed returns?|must buy|must sell)/i.test(combined),
     disclaimer_presence: /(Educational disclaimer|educational-disclaimer|تنبيه تعليمي|إخلاء المسؤولية التعليمي|educational market commentary|تعليق تعليمي)/.test(`${en} ${ar}`)
   };
+  if (type === 'market_outlook') {
+    const conditionalMatches = (combined.match(/\b(?:may|might|could|if)\b/gi) || []).length;
+    Object.assign(checks, {
+      uncertainty_awareness: conditionalMatches >= 3,
+      directional_safety: !/(guaranteed rally|certain to|definitely will|100% bullish|100% bearish|will rally|will crash|will rise|will fall)\b/i.test(combined),
+      educational_framing: /(educational|commentary|market commentary|for educational|is not investment advice)/i.test(combined),
+      macro_coherence: /\b(CPI|FOMC|NFP|GDP|PCE|Fed|Federal Reserve|inflation|interest rates|yield)\b/i.test(combined),
+      market_context_quality: /id="market-narrative"|market-narrative|S&P|NASDAQ|VIX|market regime|sector momentum/i.test(en)
+    });
+  }
   const passed = Object.values(checks).filter(Boolean).length;
   const quality_score = Math.round((passed / Object.keys(checks).length) * 100);
   return {
