@@ -50,33 +50,188 @@ if (!token || !chatId) fail('TELEGRAM_BOT_TOKEN and TELEGRAM_CHANNEL_ID are requ
 
 function formatPost(topic, locale) {
   const isAr = locale === 'ar';
-  const title = isAr ? topic.title_ar : topic.title_en;
+  const title = resolveTitle(topic, locale);
+  const summary = resolveSummary(topic, locale);
   const url = `${siteUrl}${isAr ? '/ar' : ''}/insights/${topic.slug}.html`;
-  const cluster = topic.discovery_cluster || topic.category;
-  const text = isAr
-    ? `${title}\n\nبحث تعليمي جديد من TradeAlphaAI ضمن مكتبة أبحاث السوق. لا يمثل نصيحة مالية.\n\n${url}`
-    : `${title}\n\nNew TradeAlphaAI educational research on ${cluster}. No financial advice.\n\n${url}`;
-  return { locale, text };
+  const tags = isAr ? '#TradeAlphaAI #ETF #استثمار' : '#TradeAlphaAI #ETF #Investing';
+  return {
+    locale,
+    text: `${title}\n\n${summary}\n\n${url}\n\n${tags}`
+  };
 }
 
-function sendTelegram(token, chatId, text) {
+function resolveTitle(topic, locale) {
+  const isAr = locale === 'ar';
+  const candidates = isAr
+    ? [
+        extractHtmlMeta(`ar/insights/${topic.slug}.html`, ['og:title', 'twitter:title']),
+        extractHtmlTitle(`ar/insights/${topic.slug}.html`),
+        extractHtmlMeta(`drafts/editorial/${topic.slug}/ar.html`, ['og:title', 'twitter:title']),
+        extractHtmlTitle(`drafts/editorial/${topic.slug}/ar.html`),
+        topic.title_ar
+      ]
+    : [
+        topic.title_en,
+        extractHtmlMeta(`insights/${topic.slug}.html`, ['og:title', 'twitter:title']),
+        extractHtmlTitle(`insights/${topic.slug}.html`),
+        extractHtmlMeta(`drafts/editorial/${topic.slug}/en.html`, ['og:title', 'twitter:title']),
+        extractHtmlTitle(`drafts/editorial/${topic.slug}/en.html`)
+      ];
+
+  for (const candidate of candidates) {
+    const clean = cleanText(candidate, { requireArabic: isAr, stripBrand: true });
+    if (isSafeText(clean, isAr)) return clean;
+  }
+
+  return isAr
+    ? 'بحث تعليمي جديد من TradeAlphaAI'
+    : topic.title_en || 'New TradeAlphaAI Educational Research';
+}
+
+function resolveSummary(topic, locale) {
+  const isAr = locale === 'ar';
+  const cluster = topic.discovery_cluster || topic.category || 'market research';
+  const candidates = isAr
+    ? [
+        readArLocalizationSummary(topic.slug),
+        extractHtmlDescription(`ar/insights/${topic.slug}.html`),
+        extractHtmlDescription(`drafts/editorial/${topic.slug}/ar.html`)
+      ]
+    : [
+        extractHtmlDescription(`insights/${topic.slug}.html`),
+        extractHtmlDescription(`drafts/editorial/${topic.slug}/en.html`)
+      ];
+
+  for (const candidate of candidates) {
+    const clean = cleanText(candidate, { requireArabic: isAr });
+    if (isSafeText(clean, isAr)) return truncate(clean, isAr ? 180 : 170);
+  }
+
+  return isAr
+    ? 'ملخص تعليمي قصير من TradeAlphaAI يوضح الفكرة البحثية دون تقديم نصيحة مالية.'
+    : `Short educational summary from TradeAlphaAI on ${cluster}. No financial advice.`;
+}
+
+function readArLocalizationSummary(slugValue) {
+  const file = path.join(ROOT, 'data', 'localization', 'ar-insight-content', `${slugValue}.json`);
+  if (!fs.existsSync(file)) return '';
+  try {
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return data.summary || data.description || '';
+  } catch (_) {
+    return '';
+  }
+}
+
+function extractHtmlDescription(relPath) {
+  return extractHtmlMeta(relPath, ['description', 'og:description', 'twitter:description']);
+}
+
+function extractHtmlTitle(relPath) {
+  const html = readTextIfExists(relPath);
+  if (!html) return '';
+  const h1 = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  if (h1) return h1[1];
+  const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return title ? title[1] : '';
+}
+
+function extractHtmlMeta(relPath, names) {
+  const html = readTextIfExists(relPath);
+  if (!html) return '';
+  for (const name of names) {
+    const escaped = escapeRegExp(name);
+    const patterns = [
+      new RegExp(`<meta[^>]+(?:name|property)=["']${escaped}["'][^>]+content=["']([^"']+)["'][^>]*>`, 'i'),
+      new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["']${escaped}["'][^>]*>`, 'i')
+    ];
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (match) return match[1];
+    }
+  }
+  return '';
+}
+
+function readTextIfExists(relPath) {
+  const file = path.join(ROOT, relPath);
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+}
+
+function cleanText(value, options = {}) {
+  if (!value) return '';
+  let text = String(value);
+  text = decodeHtmlEntities(text.replace(/<[^>]+>/g, ' '));
+  text = repairMojibake(text);
+  text = decodeHtmlEntities(text);
+  text = text.replace(/\s+/g, ' ').trim();
+  if (options.stripBrand) text = text.replace(/\s*\|\s*TradeAlphaAI\s*$/i, '').trim();
+  return text;
+}
+
+function repairMojibake(value) {
+  if (!/[\u00d8\u00d9\u00c2\u00e2]/.test(value)) return value;
+  try {
+    const repaired = Buffer.from(value, 'latin1').toString('utf8');
+    return scoreText(repaired) > scoreText(value) ? repaired : value;
+  } catch (_) {
+    return value;
+  }
+}
+
+function scoreText(value) {
+  const arabic = (value.match(/[\u0600-\u06ff]/g) || []).length;
+  const broken = (value.match(/[\ufffd\u00d8\u00d9\u00c2\u00e2]|\?{2,}/g) || []).length;
+  return arabic * 3 - broken * 4;
+}
+
+function isSafeText(value, requireArabic) {
+  if (!value) return false;
+  if (/[\ufffd]/.test(value) || /\?{2,}/.test(value)) return false;
+  if (/[\u00d8\u00d9\u00c2\u00e2]/.test(value)) return false;
+  if (requireArabic && !/[\u0600-\u06ff]/.test(value)) return false;
+  return value.length >= 8;
+}
+
+function truncate(value, maxLength) {
+  if (value.length <= maxLength) return value;
+  return value.slice(0, maxLength - 1).replace(/\s+\S*$/, '') + '…';
+}
+
+function decodeHtmlEntities(value) {
+  return String(value)
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)));
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function sendTelegram(tokenValue, chatIdValue, text) {
   const body = JSON.stringify({
-    chat_id: chatId,
+    chat_id: chatIdValue,
     text,
     disable_web_page_preview: false
   });
   const options = {
     hostname: 'api.telegram.org',
-    path: `/bot${token}/sendMessage`,
+    path: `/bot${tokenValue}/sendMessage`,
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body)
+      'Content-Type': 'application/json; charset=utf-8',
+      'Content-Length': Buffer.byteLength(body, 'utf8')
     }
   };
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       let data = '';
+      res.setEncoding('utf8');
       res.on('data', (chunk) => { data += chunk; });
       res.on('end', () => {
         if (res.statusCode >= 200 && res.statusCode < 300) resolve(data);
@@ -84,7 +239,7 @@ function sendTelegram(token, chatId, text) {
       });
     });
     req.on('error', reject);
-    req.write(body);
+    req.write(body, 'utf8');
     req.end();
   });
 }
