@@ -9,17 +9,18 @@ const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
 const slug = argValue('--slug');
 const localeArg = argValue('--locale') || 'both';
 const dryRun = !process.argv.includes('--send');
+const forceSend = process.argv.includes('--force-send');
 const delayMs = Number(argValue('--delay-ms') || 0);
 const siteUrl = (process.env.SITE_URL || 'https://www.tradealphaai.com').replace(/\/$/, '');
 
-if (!slug) fail('Usage: node tools/telegram-publish-article.js --slug=<published-slug> [--locale=en|ar|both] [--send] [--delay-ms=5000]');
+if (!slug) fail('Usage: node tools/telegram-publish-article.js --slug=<published-slug> [--locale=en|ar|both] [--send] [--force-send] [--delay-ms=5000]');
 if (!['en', 'ar', 'both'].includes(localeArg)) fail('--locale must be en, ar, or both');
 
 const queue = readJson(QUEUE_PATH);
 const topic = queue.topics.find((item) => item.slug === slug);
 if (!topic) fail(`Editorial topic not found: ${slug}`);
-if (topic.status !== 'published' && !process.argv.includes('--allow-unpublished')) {
-  fail('Refusing to post a topic that is not marked published. Use --allow-unpublished only for manual preview testing.');
+if (!forceSend && !['published', 'reviewed'].includes(topic.status)) {
+  fail(`Refusing to post topic with status=${topic.status}. Telegram announcements require status=published or status=reviewed. Use --force-send only for manual recovery.`);
 }
 
 const posts = [];
