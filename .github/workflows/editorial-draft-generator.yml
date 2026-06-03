@@ -1,0 +1,54 @@
+name: Editorial Draft Generator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-draft:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Pre-generation editorial check
+        run: npm run check:editorial
+
+      - name: Generate one editorial draft
+        run: node tools/generate-ai-editorial-draft.js
+
+      - name: Post-generation editorial check
+        run: npm run check:editorial
+
+      - name: UTF-8 integrity check
+        run: npm run check:utf8
+
+      - name: Commit generated draft if changed
+        run: |
+          if git diff --quiet; then
+            echo "No draft changes to commit"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/editorial-topic-queue.json drafts/editorial tools/generate-ai-editorial-draft.js tools/check-editorial-quality.js tools/check-editorial-schedule.js package.json docs/AI_EDITORIAL_DRAFT_GENERATOR.md .github/workflows/editorial-draft-generator.yml
+          git commit -m "Generate editorial draft"
+          git push origin main

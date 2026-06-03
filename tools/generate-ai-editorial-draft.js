@@ -1,0 +1,371 @@
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
+const DRAFT_ROOT = path.join(ROOT, 'drafts', 'editorial');
+const ELIGIBLE_STATUSES = new Set(['draft', 'planned', 'queued']);
+const SITE_URL = 'https://tradealphaai.com';
+
+const queue = readJson(QUEUE_PATH);
+const topics = Array.isArray(queue.topics) ? queue.topics : [];
+const topic = topics.find((item) => ELIGIBLE_STATUSES.has(item.status));
+
+if (!topic) {
+  console.log('No draft topic available');
+  process.exit(0);
+}
+
+if (!Array.isArray(topic.language_support) || !topic.language_support.includes('en') || !topic.language_support.includes('ar')) {
+  fail(`${topic.slug}: AI draft generation requires EN and AR language support`);
+}
+
+const draftDir = path.join(DRAFT_ROOT, topic.slug);
+if (fs.existsSync(path.join(draftDir, 'en.html')) || fs.existsSync(path.join(draftDir, 'ar.html'))) {
+  fail(`${topic.slug}: draft files already exist; refusing to overwrite review workspace`);
+}
+
+fs.mkdirSync(draftDir, { recursive: true });
+
+const normalized = normalizeTopic(topic);
+fs.writeFileSync(path.join(draftDir, 'en.html'), renderArticle(normalized, 'en'), 'utf8');
+fs.writeFileSync(path.join(draftDir, 'ar.html'), renderArticle(normalized, 'ar'), 'utf8');
+fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized), null, 2) + '\n', 'utf8');
+
+topic.status = 'in_review';
+topic.review_status = 'pending';
+topic.revision_count = 0;
+topic.last_reviewed = null;
+queue.updated = new Date().toISOString().slice(0, 10);
+fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+
+console.log(`Generated AI-assisted editorial draft: ${relative(draftDir)}`);
+console.log(`${topic.slug}: status set to in_review; review_status set to pending`);
+console.log('Draft only. No public pages, sitemaps, search index, registry, or Telegram actions were updated.');
+
+function normalizeTopic(topic) {
+  const titleEn = cleanText(topic.title_en) || titleFromSlug(topic.slug);
+  const titleAr = safeArabic(topic.title_ar) ? cleanText(topic.title_ar) : arabicTitleFallback(topic);
+  const categoryAr = arabicCategory(topic.category);
+  const descriptionEn = `${titleEn} for evergreen market research. Learn how to evaluate exposure, risk, and related research without financial advice.`;
+  const descriptionAr = `${titleAr} ضمن بحث تعليمي دائم حول الأسواق، مع التركيز على المخاطر والتنويع والروابط البحثية ذات الصلة دون تقديم نصيحة مالية.`;
+
+  return {
+    ...topic,
+    title_en: titleEn,
+    title_ar: titleAr,
+    category_ar: categoryAr,
+    description_en: descriptionEn,
+    description_ar: descriptionAr,
+    related_stocks: Array.isArray(topic.related_stocks) ? topic.related_stocks : [],
+    related_etfs: Array.isArray(topic.related_etfs) ? topic.related_etfs : [],
+    related_comparisons: Array.isArray(topic.related_comparisons) ? topic.related_comparisons : [],
+    related_hubs: Array.isArray(topic.related_hubs) ? topic.related_hubs : []
+  };
+}
+
+function renderArticle(topic, locale) {
+  const ar = locale === 'ar';
+  const lang = ar ? 'ar' : 'en';
+  const dir = ar ? 'rtl' : 'ltr';
+  const title = ar ? topic.title_ar : topic.title_en;
+  const description = ar ? topic.description_ar : topic.description_en;
+  const canonical = ar ? `${SITE_URL}/ar/insights/${topic.slug}.html` : `${SITE_URL}/insights/${topic.slug}.html`;
+  const article = articleSchema(topic, locale);
+  const faq = faqSchema(topic, locale);
+
+  return `<!doctype html>
+<html lang="${lang}" dir="${dir}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="index,follow" />
+  <title>${escapeHtml(title)} | TradeAlphaAI Research Draft</title>
+  <meta name="description" content="${escapeHtml(description)}" />
+  <link rel="canonical" href="${canonical}" />
+  <link rel="alternate" hreflang="en" href="${SITE_URL}/insights/${topic.slug}.html" />
+  <link rel="alternate" hreflang="ar" href="${SITE_URL}/ar/insights/${topic.slug}.html" />
+  <link rel="alternate" hreflang="x-default" href="${SITE_URL}/insights/${topic.slug}.html" />
+  <meta property="og:title" content="${escapeHtml(title)}" />
+  <meta property="og:description" content="${escapeHtml(description)}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="${canonical}" />
+  <meta property="og:image" content="${SITE_URL}/Image/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">
+${JSON.stringify(article, null, 2)}
+  </script>
+  <script type="application/ld+json">
+${JSON.stringify(faq, null, 2)}
+  </script>
+</head>
+<body>
+  <main>
+    <article class="market-article editorial-draft" data-editorial-draft="true" data-status="in_review">
+      <header>
+        <span class="insight-category-badge">${escapeHtml(ar ? topic.category_ar : topic.category)}</span>
+        <p class="reading-time">${escapeHtml(ar ? `${topic.estimated_read_time} دقائق قراءة` : `${topic.estimated_read_time} min read`)}</p>
+        <h1>${escapeHtml(title)}</h1>
+        <p class="market-lead">${escapeHtml(description)}</p>
+      </header>
+
+      <section id="executive-summary">
+        <h2>${ar ? 'ملخص تنفيذي' : 'Executive summary'}</h2>
+        <p>${escapeHtml(ar ? arabicSummary(topic) : englishSummary(topic))}</p>
+      </section>
+
+      <section id="key-takeaways">
+        <h2>${ar ? 'أهم النقاط' : 'Key takeaways'}</h2>
+        <ul>
+${renderTakeaways(topic, ar)}
+        </ul>
+      </section>
+
+      <section id="research-framework">
+        <h2>${ar ? 'إطار البحث' : 'Research framework'}</h2>
+        <p>${escapeHtml(ar ? arabicFramework(topic) : englishFramework(topic))}</p>
+        <p>${escapeHtml(ar ? 'يركز هذا المسار على عوامل ثابتة مثل نوع التعرض، التركز، التنويع، تكلفة الصندوق، وسلوك المخاطر. يجب على المحرر مراجعة أي مثال قبل النشر النهائي.' : 'This path focuses on durable factors such as exposure type, concentration, diversification, fund cost, and risk behavior. Editors should review any example before final publication.')}</p>
+      </section>
+
+      <section id="related-research">
+        <h2>${ar ? 'أبحاث مرتبطة' : 'Related research'}</h2>
+        <ul>
+${renderRelatedLinks(topic, ar)}
+        </ul>
+      </section>
+
+      <section id="continue-learning">
+        <h2>${ar ? 'تابع التعلم' : 'Continue learning'}</h2>
+        <ul>
+${renderContinueLearning(ar)}
+        </ul>
+      </section>
+
+      <section id="faq">
+        <h2>${ar ? 'أسئلة شائعة' : 'FAQ'}</h2>
+${renderFaqBlocks(ar)}
+      </section>
+
+      <footer>
+        <p class="educational-disclaimer">${ar ? 'تنبيه تعليمي: هذا المحتوى لأغراض تعليمية ومعلوماتية فقط ولا يمثل نصيحة مالية أو استثمارية أو توصية بشراء أو بيع أي ورقة مالية.' : 'Educational disclaimer: this content is for educational and informational purposes only and does not constitute financial or investment advice, or a recommendation to buy or sell any security.'}</p>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
+`;
+}
+
+function renderMetadata(topic) {
+  return {
+    slug: topic.slug,
+    source: 'deterministic-template',
+    status: 'in_review',
+    review_status: 'pending',
+    generated_at: new Date().toISOString(),
+    publish_target: topic.target_publish_date,
+    languages: ['en', 'ar'],
+    canonical_placeholder: {
+      en: `${SITE_URL}/insights/${topic.slug}.html`,
+      ar: `${SITE_URL}/ar/insights/${topic.slug}.html`
+    },
+    review_required: true,
+    auto_publish: false,
+    telegram_ready: false,
+    public_site_updated: false
+  };
+}
+
+function articleSchema(topic, locale) {
+  const ar = locale === 'ar';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: ar ? topic.title_ar : topic.title_en,
+    description: ar ? topic.description_ar : topic.description_en,
+    inLanguage: locale,
+    datePublished: topic.target_publish_date,
+    dateModified: new Date().toISOString().slice(0, 10),
+    author: { '@type': 'Organization', name: 'TradeAlphaAI' },
+    publisher: { '@type': 'Organization', name: 'TradeAlphaAI' },
+    mainEntityOfPage: `${SITE_URL}${ar ? '/ar' : ''}/insights/${topic.slug}.html`
+  };
+}
+
+function faqSchema(topic, locale) {
+  const ar = locale === 'ar';
+  const items = ar
+    ? [
+        ['هل هذا المحتوى نصيحة مالية؟', 'لا. هذا المحتوى تعليمي فقط ولا يقدم توصية بشراء أو بيع أي ورقة مالية.'],
+        ['ما الذي يجب مراجعته قبل النشر؟', 'يجب مراجعة الدقة اللغوية، الروابط، المخطط المنظم، التكافؤ بين الإنجليزية والعربية، وأي عبارة قد تبدو زمنية أو توصية مباشرة.'],
+        ['كيف يستخدم القارئ هذا البحث؟', 'يمكن استخدامه كإطار تعليمي لفهم الموضوع وربطه بصفحات المقارنات والصناديق والقطاعات ذات الصلة.']
+      ]
+    : [
+        ['Is this content financial advice?', 'No. This content is educational only and does not recommend buying or selling any security.'],
+        ['What should be reviewed before publication?', 'Editors should review language quality, links, schema, bilingual parity, and any phrase that may sound time-sensitive or advisory.'],
+        ['How can readers use this research?', 'Readers can use it as an educational framework connected to related comparison, ETF, stock, and sector research pages.']
+      ];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(([name, answer]) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text: answer }
+    }))
+  };
+}
+
+function renderTakeaways(topic, ar) {
+  const items = ar
+    ? [
+        `يربط هذا الدليل موضوع ${topic.title_ar} بعوامل تعليمية مثل التنويع والمخاطر والتركز.`,
+        'تساعد الروابط المرتبطة القارئ على الانتقال بين الأصول والمقارنات ومحاور القطاعات دون تغيير سياق البحث.',
+        'يجب أن تبقى النسخة النهائية دائمة الصلاحية وخالية من الأخبار غير الموثقة أو توقعات الأداء.'
+      ]
+    : [
+        `This guide connects ${topic.title_en} to evergreen factors such as diversification, risk, and concentration.`,
+        'Related links help readers move between assets, comparisons, and sector hubs without losing research context.',
+        'The final version should remain evergreen and avoid unsourced news, predictions, or performance claims.'
+      ];
+  return items.map((item) => `          <li>${escapeHtml(item)}</li>`).join('\n');
+}
+
+function renderRelatedLinks(topic, ar) {
+  const prefix = ar ? '/ar' : '';
+  const links = [];
+  for (const symbol of topic.related_stocks) links.push([`${prefix}/stocks/${slugify(symbol)}.html`, symbol]);
+  for (const symbol of topic.related_etfs) links.push([`${prefix}/etfs/${slugify(symbol)}.html`, symbol]);
+  for (const item of topic.related_comparisons) links.push([`${prefix}/compare/${item}.html`, item.toUpperCase().replace(/-/g, ' ')]);
+  for (const item of topic.related_hubs) links.push([`${prefix}/${item}.html`, titleCase(item)]);
+  return links.slice(0, 12).map(([href, label]) => `          <li><a href="${href}">${escapeHtml(label)}</a></li>`).join('\n');
+}
+
+function renderContinueLearning(ar) {
+  const links = ar
+    ? [
+        ['/ar/insights/index.html', 'مكتبة الرؤى التعليمية'],
+        ['/ar/rankings.html', 'تصنيفات السوق'],
+        ['/ar/etfs.html', 'أبحاث صناديق المؤشرات'],
+        ['/ar/stocks.html', 'أبحاث الأسهم']
+      ]
+    : [
+        ['/insights/index.html', 'Educational insights library'],
+        ['/rankings.html', 'Market rankings'],
+        ['/etfs.html', 'ETF research'],
+        ['/stocks.html', 'Stock research']
+      ];
+  return links.map(([href, label]) => `          <li><a href="${href}">${escapeHtml(label)}</a></li>`).join('\n');
+}
+
+function renderFaqBlocks(ar) {
+  const items = ar
+    ? [
+        ['هل هذا المحتوى نصيحة مالية؟', 'لا. هذا المحتوى تعليمي فقط ولا يقدم توصية بشراء أو بيع أي ورقة مالية.'],
+        ['ما الذي يجب مراجعته قبل النشر؟', 'يجب مراجعة الدقة اللغوية، الروابط، المخطط المنظم، التكافؤ بين الإنجليزية والعربية، وأي عبارة قد تبدو زمنية أو توصية مباشرة.'],
+        ['كيف يستخدم القارئ هذا البحث؟', 'يمكن استخدامه كإطار تعليمي لفهم الموضوع وربطه بصفحات المقارنات والصناديق والقطاعات ذات الصلة.']
+      ]
+    : [
+        ['Is this content financial advice?', 'No. This content is educational only and does not recommend buying or selling any security.'],
+        ['What should be reviewed before publication?', 'Editors should review language quality, links, schema, bilingual parity, and any phrase that may sound time-sensitive or advisory.'],
+        ['How can readers use this research?', 'Readers can use it as an educational framework connected to related comparison, ETF, stock, and sector research pages.']
+      ];
+  return items.map(([q, a], index) => `        <details${index === 0 ? ' open' : ''}><summary>${escapeHtml(q)}</summary><p>${escapeHtml(a)}</p></details>`).join('\n');
+}
+
+function englishSummary(topic) {
+  return `${topic.title_en} is a draft educational research article for the ${topic.discovery_cluster || topic.category} cluster. It should explain the research framework, link to relevant assets, and avoid claims that depend on unsourced news or short-term forecasts.`;
+}
+
+function arabicSummary(topic) {
+  return `${topic.title_ar} مسودة بحثية تعليمية ضمن مجموعة ${arabicDiscovery(topic.discovery_cluster || topic.category)}. يجب أن تشرح إطار البحث، وتربط القارئ بالصفحات ذات الصلة، وتتجنب الأخبار غير الموثقة أو التوقعات قصيرة الأجل.`;
+}
+
+function englishFramework(topic) {
+  return `Use this draft to compare the topic through exposure, concentration, liquidity, fees, and risk context. Related symbols include ${(topic.related_etfs.concat(topic.related_stocks)).slice(0, 6).join(', ') || 'market assets'}.`;
+}
+
+function arabicFramework(topic) {
+  const symbols = topic.related_etfs.concat(topic.related_stocks).slice(0, 6).join('، ') || 'أصول السوق';
+  return `استخدم هذه المسودة لمقارنة الموضوع من خلال التعرض، التركز، السيولة، الرسوم، وسياق المخاطر. تشمل الرموز المرتبطة: ${symbols}.`;
+}
+
+function arabicTitleFallback(topic) {
+  const map = {
+    'etf-diversification-basics': 'أساسيات تنويع صناديق المؤشرات: المكونات والقطاعات والتداخل',
+    'growth-vs-value-etf-research-framework': 'إطار بحث صناديق النمو مقابل صناديق القيمة',
+    'healthcare-etf-research-guide': 'دليل بحث صناديق الرعاية الصحية: السمات الدفاعية ومخاطر القطاع',
+    'semiconductor-etf-risk-research': 'بحث مخاطر صناديق أشباه الموصلات: الدورات والتركيز والتقلب',
+    'defensive-investing-etf-checklist': 'قائمة فحص صناديق الاستثمار الدفاعي: بيتا والتراجع والدخل',
+    'how-to-compare-two-etfs': 'كيفية مقارنة صندوقي مؤشرات: المؤشر والتكلفة والمكونات والمخاطر'
+  };
+  return map[topic.slug] || `دليل تعليمي حول ${arabicCategory(topic.category)}`;
+}
+
+function arabicCategory(category) {
+  const value = String(category || '').toLowerCase();
+  if (value.includes('beginner')) return 'استثمار للمبتدئين';
+  if (value.includes('comparison')) return 'مقارنات تعليمية';
+  if (value.includes('sector')) return 'أبحاث القطاعات';
+  if (value.includes('etf')) return 'تعليم صناديق المؤشرات';
+  return 'أبحاث تعليمية';
+}
+
+function arabicDiscovery(value) {
+  const text = String(value || '').toLowerCase();
+  if (text.includes('beginner')) return 'استثمار المبتدئين';
+  if (text.includes('dividend')) return 'استثمار التوزيعات';
+  if (text.includes('defensive')) return 'الاستثمار الدفاعي';
+  if (text.includes('semiconductor')) return 'أشباه الموصلات';
+  if (text.includes('market sectors')) return 'قطاعات السوق';
+  return 'الأبحاث التعليمية';
+}
+
+function safeArabic(value) {
+  const text = String(value || '');
+  return /[\u0600-\u06FF]/.test(text) && !/[\uFFFD]/.test(text) && !/\?{3,}/.test(text);
+}
+
+function cleanText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function titleFromSlug(slug) {
+  return titleCase(slug || 'editorial draft');
+}
+
+function titleCase(value) {
+  return String(value || '').replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function slugify(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function readJson(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (error) {
+    fail(`${relative(file)}: ${error.message}`);
+  }
+}
+
+function relative(file) {
+  return path.relative(ROOT, file).replaceAll('\\', '/');
+}
+
+function fail(message) {
+  console.error(message);
+  process.exit(1);
+}

@@ -18,7 +18,7 @@ const byDay = new Map();
 const byWeek = new Map();
 const byWeekCluster = new Map();
 const allowedTelegram = new Set(['not_ready', 'dry_run_ready', 'dry_run_done', 'scheduled', 'posted', 'skipped']);
-const allowedReview = new Set(['not_started', 'needs_draft', 'in_review', 'approved', 'changes_requested']);
+const allowedReview = new Set(['not_started', 'needs_draft', 'pending', 'in_review', 'approved', 'changes_requested']);
 
 for (const topic of topics) {
   checkSchedulingShape(topic);

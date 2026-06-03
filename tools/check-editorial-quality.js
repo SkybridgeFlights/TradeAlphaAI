@@ -11,7 +11,7 @@ const failures = [];
 const queue = readJson(QUEUE_PATH);
 const topics = Array.isArray(queue.topics) ? queue.topics : [];
 const slugs = new Set();
-const allowedStatuses = new Set(queue.policy?.allowed_statuses || ['draft', 'review', 'scheduled', 'published']);
+const allowedStatuses = new Set(queue.policy?.allowed_statuses || ['draft', 'planned', 'queued', 'in_review', 'review', 'reviewed', 'scheduled', 'published']);
 
 if (!topics.length) failures.push('data/editorial-topic-queue.json: topics must not be empty');
 if (queue.policy?.auto_publish !== false) failures.push('data/editorial-topic-queue.json: policy.auto_publish must be false');
@@ -65,6 +65,9 @@ function checkDraftIfPresent(topic) {
     const html = fs.readFileSync(file, 'utf8');
     const rel = relative(file);
     // Drafts are copied as-is to insights/ by publish-reviewed-article.js — they must be publication-ready
+    if (hasCorruptedText(html)) failures.push(`${rel}: corrupted or mojibake text found`);
+    if (!/<title>[^<]{10,}<\/title>/.test(html)) failures.push(`${rel}: missing meaningful title`);
+    if (!/<meta name="description" content="[^"]{50,}"/.test(html)) failures.push(`${rel}: missing meaningful meta description`);
     if (!/<meta name="robots" content="index,follow/.test(html)) failures.push(`${rel}: must have index,follow robots (draft is copied directly to insights/ on publish)`);
     if (!/<link rel="canonical"/.test(html)) failures.push(`${rel}: missing canonical link`);
     if (!/<link rel="alternate" hreflang="en"/.test(html) || !/<link rel="alternate" hreflang="ar"/.test(html)) failures.push(`${rel}: missing bilingual hreflang`);
@@ -75,8 +78,18 @@ function checkDraftIfPresent(topic) {
     if ((html.match(/<details/g) || []).length < 3) failures.push(`${rel}: needs at least 3 FAQ blocks`);
     if (!/id="related-research"/.test(html)) failures.push(`${rel}: missing related-research section`);
     if (!/id="continue-learning"/.test(html)) failures.push(`${rel}: missing continue-learning section`);
+    if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي/.test(html)) failures.push(`${rel}: missing educational disclaimer`);
     if (locale === 'ar' && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) failures.push(`${rel}: missing Arabic RTL markers`);
     if (forbiddenClaims(stripHtml(html))) failures.push(`${rel}: forbidden promotional or advice wording found`);
+  }
+  const metadata = path.join(dir, 'metadata.json');
+  if (fs.existsSync(metadata)) {
+    const data = readJson(metadata);
+    const rel = relative(metadata);
+    if (hasCorruptedText(JSON.stringify(data))) failures.push(`${rel}: corrupted or mojibake text found`);
+    if (data.auto_publish !== false) failures.push(`${rel}: auto_publish must be false`);
+    if (topic.status === 'in_review' && data.public_site_updated !== false) failures.push(`${rel}: public_site_updated must be false for generated drafts`);
+    if (!Array.isArray(data.languages) || !data.languages.includes('en') || !data.languages.includes('ar')) failures.push(`${rel}: missing bilingual language metadata`);
   }
 }
 
@@ -105,6 +118,11 @@ function checkPublishedTopic(topic) {
 
 function forbiddenClaims(value) {
   return /\b(?:guaranteed profit|best stock to buy|buy now|sure signal|price target|will outperform|must own)\b/i.test(value || '');
+}
+
+function hasCorruptedText(value) {
+  const text = String(value || '');
+  return /[\uFFFD]/.test(text) || /(?:\?{3,}|\u00D8|\u00D9|\u00E2\u20AC|\u00C3)/.test(text);
 }
 
 function stripHtml(html) {
