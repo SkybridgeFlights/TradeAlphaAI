@@ -1,0 +1,220 @@
+name: Market Outlook Draft Generator
+
+# Runs before the publisher (Mon/Tue/Thu/Sat at 06:00 UTC).
+# Publisher runs at 08:30 UTC on the same days, giving 2h30m for draft generation and approval.
+# The publisher is also triggered by workflow_run on this workflow completing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — generate but do not commit'
+        required: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+  schedule:
+    - cron: '0 6 * * 1,2,4,6'  # Mon, Tue, Thu, Sat at 06:00 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  generate-outlook-draft:
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+      NODE_ENV: production
+
+    steps:
+      # ── Context ───────────────────────────────────────────────────────────────
+
+      - name: Log workflow context
+        run: |
+          echo "======================================================"
+          echo "  Market Outlook Draft Generator"
+          echo "  Run ID:  ${{ github.run_id }}"
+          echo "  Trigger: ${{ github.event_name }}"
+          echo "  Branch:  ${{ github.ref_name }}"
+          echo "  Date:    $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "  Dry run: ${DRY_RUN}"
+          echo "======================================================"
+
+      # ── Setup ─────────────────────────────────────────────────────────────────
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      # ── Market context refresh ────────────────────────────────────────────────
+      # These three steps run in report-only mode (no --source provided).
+      # They log current state and validate existing data without modifying files.
+      # Operators must supply real sourced data separately via the update tools.
+
+      - name: Refresh market regime state
+        run: |
+          echo "--- Market regime state ---"
+          node tools/update-market-regime.js 2>&1 || true
+          echo "--- End market regime ---"
+
+      - name: Refresh economic calendar
+        run: |
+          echo "--- Economic calendar state ---"
+          node tools/update-economic-calendar.js 2>&1 || true
+          echo "--- End economic calendar ---"
+
+      - name: Refresh live market state
+        run: |
+          echo "--- Live market state ---"
+          node tools/update-live-market-state.js 2>&1 || true
+          echo "--- End live market state ---"
+
+      # ── Pre-generation safety gate ─────────────────────────────────────────────
+
+      - name: Pre-generation safety check
+        run: |
+          echo "--- Pre-generation safety gate ---"
+          npm run check:editorial
+          npm run check:utf8
+
+      # ── Eligible topic check ───────────────────────────────────────────────────
+
+      - name: Check for eligible outlook topic
+        id: eligible-check
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+
+          const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
+          const eligible = (queue.topics || []).find(
+            (t) => t.status === 'planned' || t.status === 'draft'
+          );
+
+          if (!eligible) {
+            console.log('No eligible market outlook topics in queue (status=planned or draft).');
+            console.log('Skipping draft generation.');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_topic=false\n');
+          } else {
+            console.log(`Eligible topic found: ${eligible.slug}`);
+            console.log(`  status:            ${eligible.status}`);
+            console.log(`  topic_cluster:     ${eligible.topic_cluster || eligible.discovery_cluster || '(none)'}`);
+            console.log(`  target_publish:    ${eligible.target_publish_date || '(unset)'}`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_topic=true\n`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `topic_slug=${eligible.slug}\n`);
+          }
+          NODESCRIPT
+
+      # ── Draft generation ──────────────────────────────────────────────────────
+
+      - name: Generate market outlook draft
+        if: steps.eligible-check.outputs.has_topic == 'true'
+        run: |
+          echo "--- Generating market outlook draft: ${{ steps.eligible-check.outputs.topic_slug }} ---"
+          node tools/generate-market-outlook-draft.js
+          echo "--- Draft generation complete ---"
+
+      # ── Post-generation validation ─────────────────────────────────────────────
+
+      - name: Post-generation editorial check
+        if: steps.eligible-check.outputs.has_topic == 'true'
+        run: |
+          echo "--- Post-generation editorial check ---"
+          npm run check:editorial
+
+      - name: UTF-8 integrity check
+        if: steps.eligible-check.outputs.has_topic == 'true'
+        run: |
+          echo "--- UTF-8 integrity check ---"
+          npm run check:utf8
+
+      - name: Production readiness check
+        if: steps.eligible-check.outputs.has_topic == 'true'
+        run: |
+          echo "--- Production readiness check ---"
+          npm run check:production
+
+      # ── Quality scoring and approval report ────────────────────────────────────
+
+      - name: Score draft quality
+        if: steps.eligible-check.outputs.has_topic == 'true'
+        run: |
+          echo "--- Draft quality score (market_outlook type) ---"
+          node tools/score-generated-content.js --type=market_outlook 2>&1 || true
+          echo "--- End quality score ---"
+
+      - name: Report auto-approval result
+        if: steps.eligible-check.outputs.has_topic == 'true'
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+
+          const slug = '${{ steps.eligible-check.outputs.topic_slug }}';
+          const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
+          const topic = (queue.topics || []).find((t) => t.slug === slug);
+
+          if (!topic) {
+            console.log(`Topic "${slug}" not found in queue after generation.`);
+            process.exit(0);
+          }
+
+          const isApproved = topic.status === 'reviewed' && topic.review_status === 'approved';
+
+          console.log('====================================================');
+          console.log('  Auto-approval report');
+          console.log('====================================================');
+          console.log(`  Topic:             ${slug}`);
+          console.log(`  Status:            ${topic.status}`);
+          console.log(`  Review status:     ${topic.review_status}`);
+          console.log(`  Auto-approved:     ${isApproved ? 'YES' : 'NO'}`);
+          if (topic.confidence_label) {
+            console.log(`  Confidence label:  ${topic.confidence_label}`);
+          }
+          if (topic.target_publish_date) {
+            console.log(`  Target publish:    ${topic.target_publish_date}`);
+          }
+          console.log('====================================================');
+
+          if (isApproved) {
+            console.log('RESULT: Draft approved. Publisher can pick this up at next run.');
+          } else {
+            console.log('RESULT: Draft requires manual editorial review before publishing.');
+          }
+          NODESCRIPT
+
+      # ── Commit ────────────────────────────────────────────────────────────────
+
+      - name: Commit generated draft
+        if: steps.eligible-check.outputs.has_topic == 'true' && env.DRY_RUN != 'true'
+        run: |
+          git add data/market-outlook-queue.json drafts/market-outlook
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "Nothing staged — no commit needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Generate market outlook draft: ${{ steps.eligible-check.outputs.topic_slug }}"
+          git push origin HEAD:main
+          echo "Committed and pushed draft for: ${{ steps.eligible-check.outputs.topic_slug }}"
+
+      - name: Dry run notice
+        if: env.DRY_RUN == 'true'
+        run: |
+          echo "DRY RUN: draft was generated in-memory but no commit was made."
+          echo "Run without dry_run=true to persist the draft."
+
+      - name: Skip notice
+        if: steps.eligible-check.outputs.has_topic != 'true'
+        run: echo "No eligible topic — no draft generated this run."

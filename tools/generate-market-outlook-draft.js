@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { generateIntelligence } = require('./generate-market-intelligence.js');
+const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH          = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -72,6 +73,14 @@ fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 console.log(`Generated market outlook draft: drafts/market-outlook/${slug}`);
 console.log(`Confidence: ${intelligence.confidence.label} (score: ${intelligence.confidence.confidence_score})`);
 console.log(`Data completeness: ${intelligence.data_completeness} (${intelligence.sourced_fields.length} sourced fields)`);
+console.log(`Upcoming events used: ${intelligence.upcoming_events.slice(0, 3).map((e) => e.name).join(', ') || 'none'}`);
+
+const approved = attemptAutoApproval(topic, slug);
+if (approved) {
+  console.log(`${slug}: AUTO-APPROVED — all quality checks passed (score >= 85). Eligible for publishing on target_publish_date.`);
+} else {
+  console.log(`${slug}: requires manual editorial review. Queue status: in_review/pending.`);
+}
 
 // ── Render ────────────────────────────────────────────────────────────────────
 
@@ -259,9 +268,111 @@ function normalizeTopic(topic) {
 
 function isCoolingDown(item) {
   const cluster = item.topic_cluster || item.discovery_cluster || item.category;
-  if (!cluster) return false;
-  const recent = memory.recent_topics || [];
-  return recent.some((entry) => entry.cluster === cluster && daysSince(entry.published_at || entry.created_at) < 14);
+
+  // Cluster cooldown via topic-memory (14 days default, 30 days for ETF clusters)
+  if (cluster) {
+    const recentMemory = memory.recent_topics || [];
+    const etfCluster = /etf|rotation|sector\s*flow/i.test(cluster);
+    const clusterDays = etfCluster ? 30 : 14;
+    if (recentMemory.some((entry) => entry.cluster === cluster && daysSince(entry.published_at || entry.created_at) < clusterDays)) {
+      console.log(`${item.slug}: skipped — cluster "${cluster}" in cooldown (${clusterDays}d)`);
+      return true;
+    }
+  }
+
+  // ETF extended cooldown: check queue topics too (any ETF-flavoured cluster within 30 days)
+  if (cluster && /etf|rotation|sector\s*flow/i.test(cluster)) {
+    const recentEtf = (queue.topics || []).filter((t) =>
+      t.slug !== item.slug &&
+      ['reviewed', 'published'].includes(t.status) &&
+      /etf|rotation|sector\s*flow/i.test(t.topic_cluster || t.discovery_cluster || t.category || '') &&
+      daysSince(t.target_publish_date || t.last_reviewed) < 30
+    );
+    if (recentEtf.length > 0) {
+      console.log(`${item.slug}: skipped — ETF cluster "${cluster}" repeat within 30-day window`);
+      return true;
+    }
+  }
+
+  // Headline similarity: reject if title is ≥82% similar to a recently reviewed/published topic
+  if (item.title_en) {
+    const recentTopics = (queue.topics || []).filter((t) =>
+      t.slug !== item.slug &&
+      ['reviewed', 'published'].includes(t.status) &&
+      daysSince(t.target_publish_date || t.last_reviewed) < 14
+    );
+    const aWords = normalize(item.title_en).split(' ').filter(Boolean);
+    for (const recent of recentTopics) {
+      if (!recent.title_en) continue;
+      const bWords = normalize(recent.title_en).split(' ').filter(Boolean);
+      if (titleSimilarity(aWords, bWords) >= 0.82) {
+        console.log(`${item.slug}: skipped — headline too similar to "${recent.slug}" (within 14 days)`);
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function titleSimilarity(aWords, bWords) {
+  if (!aWords.length || !bWords.length) return 0;
+  const aSet = new Set(aWords);
+  const bSet = new Set(bWords);
+  const overlap = [...aSet].filter((word) => bSet.has(word)).length;
+  return overlap / Math.max(aSet.size, bSet.size);
+}
+
+function attemptAutoApproval(topicItem, slugValue) {
+  const result = spawnSync(
+    process.execPath,
+    [path.join(__dirname, 'score-generated-content.js'), `--slug=${slugValue}`, '--type=market_outlook'],
+    { cwd: ROOT, encoding: 'utf8' }
+  );
+
+  if (result.status !== 0 || !result.stdout) {
+    console.log('Auto-approval skipped: scorer did not complete successfully.');
+    if (result.stderr) console.log(result.stderr.trim());
+    return false;
+  }
+
+  let scoreReport;
+  try { scoreReport = JSON.parse(result.stdout); }
+  catch { console.log('Auto-approval skipped: could not parse scorer output.'); return false; }
+
+  const entry = (scoreReport.results || []).find((r) => r.slug === slugValue);
+  if (!entry) {
+    console.log(`Auto-approval skipped: no score entry for ${slugValue}.`);
+    return false;
+  }
+
+  console.log(`Quality score: ${entry.quality_score}/100`);
+  if (entry.quality_score < 85) {
+    console.log(`Auto-approval denied: score ${entry.quality_score} < 85.`);
+    logFailedChecks(entry.checks);
+    return false;
+  }
+
+  const failedChecks = Object.entries(entry.checks).filter(([, passed]) => !passed);
+  if (failedChecks.length > 0) {
+    console.log('Auto-approval denied: one or more quality checks failed.');
+    logFailedChecks(entry.checks);
+    return false;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  topicItem.status = 'reviewed';
+  topicItem.review_status = 'approved';
+  topicItem.last_reviewed = today;
+  queue.updated = today;
+  fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+  return true;
+}
+
+function logFailedChecks(checks) {
+  for (const [name, passed] of Object.entries(checks)) {
+    if (!passed) console.log(`  FAILED: ${name}`);
+  }
 }
 
 function daysSince(day) {

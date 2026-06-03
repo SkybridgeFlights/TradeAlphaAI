@@ -15,20 +15,40 @@ on:
           - 'true'
           - 'false'
         default: 'true'
+  # Publish automatically after the draft generator completes (Mon/Tue/Thu/Sat)
+  workflow_run:
+    workflows: ["Market Outlook Draft Generator"]
+    types: [completed]
   schedule:
-    - cron: '30 8 * * 1,2,4,6'
+    - cron: '30 8 * * 1,2,4,6'  # Mon, Tue, Thu, Sat at 08:30 UTC (fallback)
 
 permissions:
   contents: write
 
 env:
-  REAL_PUBLISH: ${{ github.event_name == 'schedule' || github.event.inputs.dry_run_only == 'false' }}
+  # True for scheduled runs, workflow_run triggers, or when dry_run_only=false on manual dispatch.
+  REAL_PUBLISH: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_run' || github.event.inputs.dry_run_only == 'false' }}
 
 jobs:
   market-outlook:
     runs-on: ubuntu-latest
+    # Skip if triggered by a failed draft-generator run.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
+      - name: Log workflow context
+        run: |
+          echo "======================================================"
+          echo "  Market Outlook Publisher"
+          echo "  Run ID:  ${{ github.run_id }}"
+          echo "  Trigger: ${{ github.event_name }}"
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "  Source:  ${{ github.event.workflow_run.name }} (${{ github.event.workflow_run.conclusion }})"
+          fi
+          echo "  Date:    $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "  Publish: ${REAL_PUBLISH}"
+          echo "======================================================"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -65,12 +85,17 @@ jobs:
         run: |
           node - << 'NODESCRIPT'
           const fs = require('fs');
+
           const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
           const historyPath = 'data/market-outlook-history.json';
-          const history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, 'utf8')) : { publications: [] };
+          const history = fs.existsSync(historyPath)
+            ? JSON.parse(fs.readFileSync(historyPath, 'utf8'))
+            : { publications: [] };
           const published = new Set((history.publications || []).map((item) => item.slug));
           const today = new Date().toISOString().slice(0, 10);
           const requested = process.env.OUTLOOK_SLUG || '';
+
+          // Only items that are explicitly approved and within their publish window
           function ready(item) {
             return item &&
               item.status === 'reviewed' &&
@@ -79,13 +104,34 @@ jobs:
               !published.has(item.slug) &&
               !fs.existsSync(`market-outlook/${item.slug}.html`);
           }
-          const topic = requested ? (queue.topics || []).find((item) => item.slug === requested) : (queue.topics || []).find(ready);
+
+          console.log(`Queue has ${(queue.topics || []).length} topic(s).`);
+          const approved = (queue.topics || []).filter(
+            (t) => t.status === 'reviewed' && t.review_status === 'approved'
+          );
+          console.log(`Approved topics: ${approved.map((t) => t.slug).join(', ') || '(none)'}`);
+
+          const topic = requested
+            ? (queue.topics || []).find((item) => item.slug === requested)
+            : (queue.topics || []).find(ready);
+
           if (!topic || !ready(topic)) {
-            console.log('No approved market outlook ready for publishing');
+            if (topic && !ready(topic)) {
+              console.log(`Topic "${topic.slug}" found but not ready:`);
+              console.log(`  status:        ${topic.status}`);
+              console.log(`  review_status: ${topic.review_status}`);
+              console.log(`  target_date:   ${topic.target_publish_date} (today: ${today})`);
+              console.log(`  published:     ${published.has(topic.slug)}`);
+            } else {
+              console.log('No approved market outlook ready for publishing.');
+            }
             fs.appendFileSync(process.env.GITHUB_OUTPUT, 'outlook_slug=\n');
             process.exit(0);
           }
-          console.log(`Market outlook selected: ${topic.slug}`);
+
+          console.log(`Selected for publishing: ${topic.slug}`);
+          console.log(`  confidence_label: ${topic.confidence_label || '(unset)'}`);
+          console.log(`  target_date:      ${topic.target_publish_date}`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `outlook_slug=${topic.slug}\n`);
           NODESCRIPT
 
@@ -116,17 +162,21 @@ jobs:
       - name: Commit market outlook
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
         run: |
-          if git diff --quiet; then
+          git add market-outlook ar/market-outlook en/market-outlook \
+            data/market-outlook-queue.json data/market-outlook-history.json \
+            sitemap*.xml robots.txt
+          git diff --staged --stat
+          if git diff --staged --quiet; then
             echo "Nothing to commit"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add market-outlook ar/market-outlook en/market-outlook data/market-outlook-queue.json data/market-outlook-history.json sitemap*.xml robots.txt
           git commit -m "Publish market outlook: ${{ steps.find-outlook.outputs.outlook_slug }}"
           git push origin HEAD:main
+          echo "Published and pushed: ${{ steps.find-outlook.outputs.outlook_slug }}"
 
-      - name: Send Telegram market outlook
+      - name: Send Telegram announcements (EN then AR)
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-outlook.outputs.outlook_slug != '' }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -135,7 +185,13 @@ jobs:
           OUTLOOK_SLUG: ${{ steps.find-outlook.outputs.outlook_slug }}
         run: |
           if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
-            echo "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHANNEL_ID"
-            exit 1
+            echo "Skipping Telegram: TELEGRAM_BOT_TOKEN or TELEGRAM_CHANNEL_ID not configured."
+            exit 0
           fi
-          node tools/telegram-publish-article.js --slug="$OUTLOOK_SLUG" --locale=both --send --delay-ms=3000
+          echo "Sending EN outlook post..."
+          node tools/telegram-publish-article.js --slug="$OUTLOOK_SLUG" --locale=en --send
+          echo "EN post sent. Waiting 5s before AR post..."
+          sleep 5
+          echo "Sending AR outlook post..."
+          node tools/telegram-publish-article.js --slug="$OUTLOOK_SLUG" --locale=ar --send
+          echo "Both Telegram posts sent for: $OUTLOOK_SLUG"
