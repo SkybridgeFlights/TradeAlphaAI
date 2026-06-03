@@ -1,0 +1,102 @@
+name: Editorial Publisher
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Article slug to dry-run publish (optional, e.g. how-dividend-etfs-generate-income)'
+        required: false
+        default: ''
+      dry_run_only:
+        description: 'Dry run only (no real publishing)'
+        required: false
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+        default: 'true'
+  schedule:
+    # Every Monday at 08:00 UTC
+    - cron: '0 8 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  editorial-pipeline:
+    name: Editorial Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # No cache: 'npm' — project has no lockfile (zero npm dependencies)
+
+      - name: Install dependencies
+        run: npm install
+
+      # ── Validators ──────────────────────────────────────────────────────────
+
+      - name: Check editorial queue
+        run: npm run check:editorial
+
+      - name: Check UTF-8 encoding
+        run: npm run check:utf8
+
+      - name: Check production readiness
+        run: npm run check:production
+
+      - name: Check SEO
+        run: npm run check:seo
+
+      - name: Check indexing signals
+        run: npm run check:indexing
+
+      - name: Check social meta
+        run: npm run check:social-meta
+
+      # ── Editorial dry-run ────────────────────────────────────────────────────
+
+      - name: List upcoming publications
+        run: node tools/list-upcoming-publications.js
+
+      - name: Dry-run publish reviewed article
+        # Runs only when a slug was supplied via workflow_dispatch.
+        # Absence of --execute is what triggers dry-run mode in publish-reviewed-article.js
+        if: ${{ github.event.inputs.slug != '' }}
+        env:
+          ARTICLE_SLUG: ${{ github.event.inputs.slug }}
+        run: node tools/publish-reviewed-article.js --slug="$ARTICLE_SLUG"
+
+      - name: Telegram preview (dry run — no message sent)
+        # Absence of --send is what triggers dry-run mode in telegram-publish-article.js.
+        # Using etf-diversification-guide as the example slug (status=published, review_status=approved).
+        run: node tools/telegram-publish-article.js --slug=etf-diversification-guide --locale=both
+
+      # ── Real publishing (disabled — uncomment only after explicit approval) ──
+      #
+      # To enable real Telegram publishing:
+      #   1. Add secrets in GitHub → Settings → Secrets and variables → Actions:
+      #      - TELEGRAM_BOT_TOKEN
+      #      - TELEGRAM_CHANNEL_ID
+      #   2. Ensure the article has status=published and review_status=approved
+      #   3. Remove the leading '#' from the steps below
+      #
+      # - name: Publish reviewed article (REAL — requires approval)
+      #   if: ${{ github.event.inputs.slug != '' && github.event.inputs.dry_run_only == 'false' }}
+      #   env:
+      #     ARTICLE_SLUG: ${{ github.event.inputs.slug }}
+      #   run: node tools/publish-reviewed-article.js --slug="$ARTICLE_SLUG" --execute
+      #
+      # - name: Send Telegram announcement (REAL — requires secrets)
+      #   if: ${{ github.event.inputs.slug != '' && github.event.inputs.dry_run_only == 'false' }}
+      #   env:
+      #     TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      #     TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      #     ARTICLE_SLUG: ${{ github.event.inputs.slug }}
+      #   run: node tools/telegram-publish-article.js --slug="$ARTICLE_SLUG" --locale=both --send
