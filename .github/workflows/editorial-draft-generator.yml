@@ -40,6 +40,11 @@ jobs:
       - name: UTF-8 integrity check
         run: npm run check:utf8
 
+      - name: Score draft quality (auto-approval report)
+        # Reports quality scores for all drafts. Never fails the pipeline —
+        # the auto-approval decision was already made inside generate-ai-editorial-draft.js.
+        run: node tools/score-generated-content.js --type=editorial || true
+
       - name: Commit generated draft if changed
         run: |
           if git diff --quiet; then

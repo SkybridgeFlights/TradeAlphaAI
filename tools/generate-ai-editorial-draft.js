@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -44,6 +45,70 @@ fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 console.log(`Generated AI-assisted editorial draft: ${relative(draftDir)}`);
 console.log(`${topic.slug}: status set to in_review; review_status set to pending`);
 console.log('Draft only. No public pages, sitemaps, search index, registry, or Telegram actions were updated.');
+
+if (attemptAutoApproval(topic)) {
+  console.log(`${topic.slug}: AUTO-APPROVED — all 9 quality checks passed (score >= 85). status=reviewed, review_status=approved.`);
+  console.log('The article is eligible for autonomous publishing on its target_publish_date.');
+} else {
+  console.log(`${topic.slug}: requires manual editorial review. Queue status remains in_review/pending.`);
+}
+
+function attemptAutoApproval(topic) {
+  const result = spawnSync(
+    process.execPath,
+    [path.join(__dirname, 'score-generated-content.js'), `--slug=${topic.slug}`, '--type=editorial'],
+    { cwd: ROOT, encoding: 'utf8' }
+  );
+
+  if (result.status !== 0 || !result.stdout) {
+    console.log('Auto-approval skipped: scorer did not complete successfully.');
+    if (result.stderr) console.log(result.stderr.trim());
+    return false;
+  }
+
+  let scoreReport;
+  try {
+    scoreReport = JSON.parse(result.stdout);
+  } catch {
+    console.log('Auto-approval skipped: could not parse scorer output.');
+    return false;
+  }
+
+  const entry = (scoreReport.results || []).find((r) => r.slug === topic.slug);
+  if (!entry) {
+    console.log(`Auto-approval skipped: no score entry found for ${topic.slug}.`);
+    return false;
+  }
+
+  console.log(`Quality score: ${entry.quality_score}/100`);
+
+  if (entry.quality_score < 85) {
+    console.log(`Auto-approval denied: score ${entry.quality_score} < 85. Manual review required.`);
+    logFailedChecks(entry.checks);
+    return false;
+  }
+
+  const failedChecks = Object.entries(entry.checks).filter(([, passed]) => !passed);
+  if (failedChecks.length > 0) {
+    console.log('Auto-approval denied: one or more safety checks failed. Manual review required.');
+    logFailedChecks(entry.checks);
+    return false;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  topic.status = 'reviewed';
+  topic.review_status = 'approved';
+  topic.last_reviewed = today;
+  queue.updated = today;
+  fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+  return true;
+}
+
+function logFailedChecks(checks) {
+  for (const [name, passed] of Object.entries(checks)) {
+    if (!passed) console.log(`  FAILED check: ${name}`);
+  }
+}
 
 function normalizeTopic(topic) {
   const titleEn = cleanText(topic.title_en) || titleFromSlug(topic.slug);
