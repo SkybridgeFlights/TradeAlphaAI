@@ -104,39 +104,47 @@ jobs:
           const fs = require('fs');
           const queue = JSON.parse(fs.readFileSync('data/editorial-topic-queue.json', 'utf8'));
           const slug = process.env.ARTICLE_SLUG || '';
+          const today = new Date().toISOString().slice(0, 10);
+          const historyPath = 'data/published-history.json';
+          const history = fs.existsSync(historyPath)
+            ? JSON.parse(fs.readFileSync(historyPath, 'utf8'))
+            : { publications: [] };
+          const publishedSlugs = new Set((history.publications || []).map((item) => item.slug));
+
+          function publicArticleExists(itemSlug) {
+            return fs.existsSync(`insights/${itemSlug}.html`);
+          }
+
+          function isPublishable(item) {
+            return Boolean(
+              item &&
+              item.status === 'reviewed' &&
+              item.review_status === 'approved' &&
+              item.target_publish_date <= today &&
+              !publishedSlugs.has(item.slug) &&
+              !publicArticleExists(item.slug)
+            );
+          }
+
           let topic;
 
           if (slug) {
-            // Explicit slug provided via workflow_dispatch
-            topic = queue.topics.find(t => t.slug === slug);
+            topic = queue.topics.find((item) => item.slug === slug);
             if (!topic) {
               console.error(`No topic found with slug: ${slug}`);
               process.exit(1);
             }
+            if (!isPublishable(topic)) {
+              console.log('No approved article ready for publishing');
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
+              process.exit(0);
+            }
           } else {
-            // Auto-detect: find the first reviewed+approved article whose date is due
-            const today = new Date().toISOString().slice(0, 10);
-            topic = queue.topics.find(t =>
-              t.status === 'reviewed' &&
-              t.review_status === 'approved' &&
-              t.target_publish_date <= today
-            );
+            topic = queue.topics.find(isPublishable);
           }
 
           if (!topic) {
-            console.log('No publishable article found (need status=reviewed, review_status=approved, target_publish_date <= today). Nothing to publish.');
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
-            process.exit(0);
-          }
-
-          if (topic.status !== 'reviewed') {
-            console.log(`${topic.slug}: status=${topic.status} — must be "reviewed". Skipping.`);
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
-            process.exit(0);
-          }
-
-          if (topic.review_status !== 'approved') {
-            console.log(`${topic.slug}: review_status=${topic.review_status} — must be "approved". Skipping.`);
+            console.log('No approved article ready for publishing');
             fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
             process.exit(0);
           }
@@ -144,7 +152,6 @@ jobs:
           console.log(`Publishable article selected: ${topic.slug}`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `publish_slug=${topic.slug}\n`);
           NODESCRIPT
-
       - name: Duplicate protection check
         id: dup-check
         if: ${{ env.REAL_PUBLISH == 'true' && steps.find-article.outputs.publish_slug != '' }}
