@@ -1,0 +1,590 @@
+name: Publishing Control Center
+
+# Single dispatch entry point for all publishing operations.
+# Replaces the need to trigger individual workflows for routine operations.
+# Scheduled workflows (draft generators, publishers) continue to run independently.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Operation mode'
+        required: true
+        type: choice
+        options:
+          - status
+          - validate
+          - generate-draft
+          - publish
+          - seed-topics
+        default: 'status'
+      content_type:
+        description: 'Content type (all = every applicable type)'
+        required: true
+        type: choice
+        options:
+          - all
+          - editorial
+          - market-outlook
+          - news-analysis
+        default: 'all'
+      slug:
+        description: 'Specific slug (optional — leave empty for auto-detect)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Dry run — validate and report only, do not write or commit'
+        required: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+
+permissions:
+  contents: write
+
+env:
+  MODE: ${{ github.event.inputs.mode }}
+  CONTENT_TYPE: ${{ github.event.inputs.content_type }}
+  SLUG: ${{ github.event.inputs.slug }}
+  DRY_RUN: ${{ github.event.inputs.dry_run }}
+  # REAL_PUBLISH is true only when mode=publish and dry_run=false.
+  REAL_PUBLISH: ${{ github.event.inputs.mode == 'publish' && github.event.inputs.dry_run == 'false' }}
+
+jobs:
+  control-center:
+    name: "${{ github.event.inputs.mode }} / ${{ github.event.inputs.content_type }}${{ github.event.inputs.dry_run == 'true' && ' [dry-run]' || '' }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Context ─────────────────────────────────────────────────────────────
+
+      - name: Log workflow context
+        run: |
+          echo "======================================================"
+          echo "  Publishing Control Center"
+          echo "  Mode:         ${{ github.event.inputs.mode }}"
+          echo "  Content type: ${{ github.event.inputs.content_type }}"
+          echo "  Slug:         ${{ github.event.inputs.slug || '(auto-detect)' }}"
+          echo "  Dry run:      ${{ github.event.inputs.dry_run }}"
+          echo "  Real publish: ${REAL_PUBLISH}"
+          echo "  Run ID:       ${{ github.run_id }}"
+          echo "  Date:         $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "======================================================"
+
+      # ── Setup ────────────────────────────────────────────────────────────────
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      # ══════════════════════════════════════════════════════════════════════════
+      # STATUS MODE — unified queue dashboard (all content types)
+      # ══════════════════════════════════════════════════════════════════════════
+
+      - name: Publishing status report
+        if: env.MODE == 'status'
+        run: node tools/publishing-control-center.js
+
+      # ══════════════════════════════════════════════════════════════════════════
+      # VALIDATE MODE — run all quality and production gates
+      # ══════════════════════════════════════════════════════════════════════════
+
+      - name: Validate — editorial queue and safety
+        if: env.MODE == 'validate'
+        run: npm run check:editorial
+
+      - name: Validate — UTF-8 encoding integrity
+        if: env.MODE == 'validate'
+        run: npm run check:utf8
+
+      - name: Validate — production readiness
+        if: env.MODE == 'validate'
+        run: npm run check:production
+
+      - name: Validate — SEO structure
+        if: env.MODE == 'validate'
+        run: npm run check:seo
+
+      - name: Validate — indexing signals
+        if: env.MODE == 'validate'
+        run: npm run check:indexing
+
+      - name: Validate — social meta tags
+        if: env.MODE == 'validate'
+        run: npm run check:social-meta
+
+      - name: Validate — Arabic RTL integrity
+        if: env.MODE == 'validate'
+        run: npm run check:ar-rtl
+
+      - name: Validate — upcoming market events
+        if: env.MODE == 'validate'
+        run: npm run calendar:check || true
+
+      # ══════════════════════════════════════════════════════════════════════════
+      # SEED-TOPICS MODE — market-outlook only
+      # ══════════════════════════════════════════════════════════════════════════
+
+      - name: Seed market outlook topics
+        if: env.MODE == 'seed-topics' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all')
+        run: |
+          echo "--- Seeding market outlook topics ---"
+          node tools/seed-market-outlook-topics.js
+          echo "--- Seeding complete ---"
+
+      - name: Post-seed editorial check
+        if: env.MODE == 'seed-topics' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all')
+        run: npm run check:editorial
+
+      - name: Commit seeded topics
+        if: env.MODE == 'seed-topics' && env.DRY_RUN != 'true' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all')
+        run: |
+          git add data/market-outlook-queue.json
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "Queue unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Seed market outlook topics: $(date -u '+%Y-%m-%d') [control-center]"
+          git push origin HEAD:main
+          echo "Topics committed and pushed."
+
+      # ══════════════════════════════════════════════════════════════════════════
+      # GENERATE-DRAFT MODE
+      # ══════════════════════════════════════════════════════════════════════════
+
+      # ── Editorial draft ───────────────────────────────────────────────────────
+
+      - name: Pre-generation safety check (editorial)
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all')
+        run: |
+          npm run check:editorial
+          npm run check:utf8
+
+      - name: Generate editorial draft
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all')
+        run: |
+          echo "--- Generating editorial draft ---"
+          node tools/generate-ai-editorial-draft.js
+          echo "--- Editorial draft generation complete ---"
+
+      - name: Score editorial draft quality
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all')
+        run: node tools/score-generated-content.js --type=editorial 2>&1 || true
+
+      - name: Commit editorial draft
+        if: env.MODE == 'generate-draft' && env.DRY_RUN != 'true' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all')
+        run: |
+          git add data/editorial-topic-queue.json drafts/editorial
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "No editorial draft changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Generate editorial draft [control-center]"
+          git push origin HEAD:main
+
+      # ── Market outlook draft ──────────────────────────────────────────────────
+
+      - name: Refresh market context (outlook)
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all')
+        run: |
+          node tools/update-market-regime.js 2>&1 || true
+          node tools/update-economic-calendar.js 2>&1 || true
+          node tools/update-live-market-state.js 2>&1 || true
+
+      - name: Check for eligible outlook topic
+        id: outlook-eligible
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all')
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const { spawnSync } = require('child_process');
+
+          function findEligible() {
+            const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
+            return (queue.topics || []).find(t => t.status === 'planned' || t.status === 'draft');
+          }
+
+          let eligible = findEligible();
+
+          if (!eligible) {
+            console.log('No eligible outlook topic — invoking seeder...');
+            const result = spawnSync(process.execPath, ['tools/seed-market-outlook-topics.js'], {
+              encoding: 'utf8',
+              stdio: 'inherit'
+            });
+            if (result.status === 0) eligible = findEligible();
+          }
+
+          if (!eligible) {
+            console.log('No eligible market outlook topic found after seeding. Skipping draft generation.');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_topic=false\n');
+          } else {
+            console.log(`Eligible topic: ${eligible.slug} (status=${eligible.status})`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_topic=true\n');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `topic_slug=${eligible.slug}\n`);
+          }
+          NODESCRIPT
+
+      - name: Generate market outlook draft
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.outlook-eligible.outputs.has_topic == 'true'
+        run: |
+          echo "--- Generating market outlook draft: ${{ steps.outlook-eligible.outputs.topic_slug }} ---"
+          node tools/generate-market-outlook-draft.js
+          echo "--- Market outlook draft generation complete ---"
+
+      - name: Score market outlook draft quality
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.outlook-eligible.outputs.has_topic == 'true'
+        run: node tools/score-generated-content.js --type=market_outlook 2>&1 || true
+
+      - name: Commit market outlook draft
+        if: env.MODE == 'generate-draft' && env.DRY_RUN != 'true' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.outlook-eligible.outputs.has_topic == 'true'
+        run: |
+          git add data/market-outlook-queue.json drafts/market-outlook
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "No market outlook draft changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Generate market outlook draft: ${{ steps.outlook-eligible.outputs.topic_slug }} [control-center]"
+          git push origin HEAD:main
+
+      - name: Skip notice (no eligible market outlook topic)
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.outlook-eligible.outputs.has_topic != 'true'
+        run: echo "No eligible market outlook topic found — skipping outlook draft generation."
+
+      # ── News-analysis draft ───────────────────────────────────────────────────
+
+      - name: Validate news source registry
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'news-analysis' || env.CONTENT_TYPE == 'all')
+        run: node tools/ingest-news-sources.js --validate-only
+
+      - name: Ingest news sources into queue
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'news-analysis' || env.CONTENT_TYPE == 'all')
+        run: node tools/ingest-news-sources.js
+
+      - name: Generate news-analysis draft
+        if: env.MODE == 'generate-draft' && (env.CONTENT_TYPE == 'news-analysis' || env.CONTENT_TYPE == 'all')
+        run: |
+          echo "--- Generating news-analysis draft ---"
+          node tools/generate-news-analysis-draft.js
+          echo "--- News-analysis draft generation complete ---"
+
+      - name: Commit news-analysis draft
+        if: env.MODE == 'generate-draft' && env.DRY_RUN != 'true' && (env.CONTENT_TYPE == 'news-analysis' || env.CONTENT_TYPE == 'all')
+        run: |
+          git add data/news-analysis-queue.json drafts/news-analysis
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "No news-analysis draft changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Generate news-analysis draft [control-center]"
+          git push origin HEAD:main
+
+      # ══════════════════════════════════════════════════════════════════════════
+      # PUBLISH MODE — gates on REAL_PUBLISH (mode=publish AND dry_run=false)
+      # ══════════════════════════════════════════════════════════════════════════
+
+      # ── Shared pre-publish validation ─────────────────────────────────────────
+
+      - name: Validate before publish
+        if: env.MODE == 'publish'
+        run: |
+          npm run check:editorial
+          npm run check:utf8
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+
+      # ── Editorial publish ─────────────────────────────────────────────────────
+
+      - name: Find publishable editorial article
+        id: find-editorial
+        if: env.MODE == 'publish' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all')
+        env:
+          ARTICLE_SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const queue = JSON.parse(fs.readFileSync('data/editorial-topic-queue.json', 'utf8'));
+          const slug = process.env.ARTICLE_SLUG || '';
+          const today = new Date().toISOString().slice(0, 10);
+          const historyPath = 'data/published-history.json';
+          const history = fs.existsSync(historyPath)
+            ? JSON.parse(fs.readFileSync(historyPath, 'utf8'))
+            : { publications: [] };
+          const publishedSlugs = new Set((history.publications || []).map(item => item.slug));
+
+          function isPublishable(item) {
+            return Boolean(
+              item &&
+              item.status === 'reviewed' &&
+              item.review_status === 'approved' &&
+              item.target_publish_date <= today &&
+              !publishedSlugs.has(item.slug) &&
+              !fs.existsSync(`insights/${item.slug}.html`)
+            );
+          }
+
+          const topic = slug
+            ? queue.topics.find(t => t.slug === slug)
+            : queue.topics.find(isPublishable);
+
+          if (!topic || !isPublishable(topic)) {
+            console.log('No approved editorial article ready for publishing.');
+            if (topic && !isPublishable(topic)) {
+              console.log(`  status:        ${topic.status}`);
+              console.log(`  review_status: ${topic.review_status}`);
+              console.log(`  target_date:   ${topic.target_publish_date} (today: ${today})`);
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'publish_slug=\n');
+            process.exit(0);
+          }
+
+          console.log(`Selected for publishing: ${topic.slug}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `publish_slug=${topic.slug}\n`);
+          NODESCRIPT
+
+      - name: Score editorial article quality
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all') && steps.find-editorial.outputs.publish_slug != ''
+        env:
+          ARTICLE_SLUG: ${{ steps.find-editorial.outputs.publish_slug }}
+        run: npm run content:score -- --type=editorial --slug="$ARTICLE_SLUG" --min-score=85
+
+      - name: Publish editorial article
+        id: publish-editorial
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all') && steps.find-editorial.outputs.publish_slug != ''
+        env:
+          ARTICLE_SLUG: ${{ steps.find-editorial.outputs.publish_slug }}
+        run: node tools/publish-reviewed-article.js --slug="$ARTICLE_SLUG" --execute
+
+      - name: Mark editorial as published and update history
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all') && steps.find-editorial.outputs.publish_slug != '' && steps.publish-editorial.outcome == 'success'
+        env:
+          ARTICLE_SLUG: ${{ steps.find-editorial.outputs.publish_slug }}
+          WORKFLOW_RUN_ID: ${{ github.run_id }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const slug = process.env.ARTICLE_SLUG;
+          const today = new Date().toISOString().slice(0, 10);
+
+          const queuePath = 'data/editorial-topic-queue.json';
+          const queue = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+          const topic = queue.topics.find(t => t.slug === slug);
+          if (!topic) { console.error(`Topic not found in queue: ${slug}`); process.exit(1); }
+          topic.status = 'published';
+          topic.published_at = today;
+          fs.writeFileSync(queuePath, JSON.stringify(queue, null, 2) + '\n');
+
+          const historyPath = 'data/published-history.json';
+          let history = { version: '1.0', updated: '', publications: [] };
+          if (fs.existsSync(historyPath)) {
+            try { history = JSON.parse(fs.readFileSync(historyPath, 'utf8')); } catch {}
+          }
+          history.updated = today;
+          history.publications.push({
+            slug,
+            publish_date: today,
+            workflow_run_id: process.env.WORKFLOW_RUN_ID,
+            languages: ['en', 'ar']
+          });
+          fs.writeFileSync(historyPath, JSON.stringify(history, null, 2) + '\n');
+          console.log(`Queue updated and history recorded: ${slug}`);
+          NODESCRIPT
+
+      - name: Commit and push editorial publish
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all') && steps.find-editorial.outputs.publish_slug != '' && steps.publish-editorial.outcome == 'success'
+        env:
+          ARTICLE_SLUG: ${{ steps.find-editorial.outputs.publish_slug }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "=== Files changed by editorial publish ==="
+          git status --short
+
+          git add "insights/${ARTICLE_SLUG}.html" || true
+          git add "ar/insights/${ARTICLE_SLUG}.html" || true
+          git add "en/insights/${ARTICLE_SLUG}.html" || true
+          git add "data/localization/ar-insight-content/${ARTICLE_SLUG}.json" || true
+          git add insights/index.html || true
+          git add ar/insights/index.html || true
+          git add data/editorial-topic-queue.json
+          git add data/published-history.json
+          git add data/insights/article-registry.json || true
+          git add data/search-index.json || true
+          git add data/research-assets/index.json || true
+          git add sitemap*.xml || true
+          git add robots.txt || true
+
+          echo "=== Staged for commit ==="
+          git diff --cached --name-only
+
+          git diff --cached --quiet && echo "Nothing to commit." && exit 0
+          git commit -m "Publish editorial: ${ARTICLE_SLUG} [control-center]"
+          git push origin HEAD:main
+          echo "Published and pushed: ${ARTICLE_SLUG}"
+
+      - name: Send Telegram announcement (editorial)
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all') && steps.find-editorial.outputs.publish_slug != '' && steps.publish-editorial.outcome == 'success'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          SITE_URL: https://tradealphaai.com
+          ARTICLE_SLUG: ${{ steps.find-editorial.outputs.publish_slug }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
+            echo "Skipping Telegram: secrets not configured."
+            exit 0
+          fi
+          node tools/telegram-publish-article.js --slug="$ARTICLE_SLUG" --locale=both --send --delay-ms=3000
+
+      - name: Report editorial publish skipped
+        if: env.MODE == 'publish' && (env.CONTENT_TYPE == 'editorial' || env.CONTENT_TYPE == 'all') && steps.find-editorial.outputs.publish_slug == ''
+        run: echo "No approved editorial article ready for publishing — skipped."
+
+      # ── Market outlook publish ────────────────────────────────────────────────
+
+      - name: Find publishable market outlook
+        id: find-outlook-pub
+        if: env.MODE == 'publish' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all')
+        env:
+          OUTLOOK_SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          node - << 'NODESCRIPT'
+          const fs = require('fs');
+          const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
+          const historyPath = 'data/market-outlook-history.json';
+          const history = fs.existsSync(historyPath)
+            ? JSON.parse(fs.readFileSync(historyPath, 'utf8'))
+            : { publications: [] };
+          const published = new Set((history.publications || []).map(item => item.slug));
+          const today = new Date().toISOString().slice(0, 10);
+          const requested = process.env.OUTLOOK_SLUG || '';
+
+          function ready(item) {
+            return item &&
+              item.status === 'reviewed' &&
+              item.review_status === 'approved' &&
+              item.target_publish_date <= today &&
+              !published.has(item.slug) &&
+              !fs.existsSync(`market-outlook/${item.slug}.html`);
+          }
+
+          const topic = requested
+            ? (queue.topics || []).find(t => t.slug === requested)
+            : (queue.topics || []).find(ready);
+
+          if (!topic || !ready(topic)) {
+            if (topic && !ready(topic)) {
+              console.log(`Topic "${topic.slug}" not ready for publishing:`);
+              console.log(`  status:        ${topic.status}`);
+              console.log(`  review_status: ${topic.review_status}`);
+              console.log(`  target_date:   ${topic.target_publish_date} (today: ${today})`);
+            } else {
+              console.log('No approved market outlook ready for publishing.');
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'outlook_slug=\n');
+            process.exit(0);
+          }
+
+          console.log(`Selected for publishing: ${topic.slug}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `outlook_slug=${topic.slug}\n`);
+          NODESCRIPT
+
+      - name: Score market outlook quality
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.find-outlook-pub.outputs.outlook_slug != ''
+        env:
+          OUTLOOK_SLUG: ${{ steps.find-outlook-pub.outputs.outlook_slug }}
+        run: npm run content:score -- --type=market_outlook --slug="$OUTLOOK_SLUG" --min-score=85
+
+      - name: Publish market outlook
+        id: publish-outlook
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.find-outlook-pub.outputs.outlook_slug != ''
+        env:
+          OUTLOOK_SLUG: ${{ steps.find-outlook-pub.outputs.outlook_slug }}
+        run: node tools/publish-market-outlook.js --slug="$OUTLOOK_SLUG" --execute
+
+      - name: Commit and push market outlook publish
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.find-outlook-pub.outputs.outlook_slug != '' && steps.publish-outlook.outcome == 'success'
+        env:
+          OUTLOOK_SLUG: ${{ steps.find-outlook-pub.outputs.outlook_slug }}
+        run: |
+          git add market-outlook ar/market-outlook en/market-outlook \
+            data/market-outlook-queue.json data/market-outlook-history.json \
+            data/market-outlook-published.json sitemap*.xml robots.txt
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publish market outlook: ${OUTLOOK_SLUG} [control-center]"
+          git push origin HEAD:main
+          echo "Published and pushed: ${OUTLOOK_SLUG}"
+
+      - name: Send Telegram announcement (market outlook)
+        if: env.REAL_PUBLISH == 'true' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.find-outlook-pub.outputs.outlook_slug != '' && steps.publish-outlook.outcome == 'success'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          SITE_URL: https://tradealphaai.com
+          OUTLOOK_SLUG: ${{ steps.find-outlook-pub.outputs.outlook_slug }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHANNEL_ID" ]; then
+            echo "Skipping Telegram: secrets not configured."
+            exit 0
+          fi
+          echo "Sending EN outlook post..."
+          node tools/telegram-publish-article.js --slug="$OUTLOOK_SLUG" --locale=en --send
+          echo "Waiting 5s before AR post..."
+          sleep 5
+          echo "Sending AR outlook post..."
+          node tools/telegram-publish-article.js --slug="$OUTLOOK_SLUG" --locale=ar --send
+
+      - name: Report market outlook publish skipped
+        if: env.MODE == 'publish' && (env.CONTENT_TYPE == 'market-outlook' || env.CONTENT_TYPE == 'all') && steps.find-outlook-pub.outputs.outlook_slug == ''
+        run: echo "No approved market outlook ready for publishing — skipped."
+
+      # ── Dry-run / validate-only notices ──────────────────────────────────────
+
+      - name: Dry-run publish preview
+        if: env.MODE == 'publish' && env.DRY_RUN == 'true'
+        run: |
+          echo "======================================================"
+          echo "  DRY RUN — publish mode with dry_run=true."
+          echo "  Validation gates ran. No files were written or committed."
+          echo "  Re-run with dry_run=false to perform the real publish."
+          echo "======================================================"
+
+      - name: Dry-run generate/seed notice
+        if: env.DRY_RUN == 'true' && (env.MODE == 'generate-draft' || env.MODE == 'seed-topics')
+        run: |
+          echo "======================================================"
+          echo "  DRY RUN — no drafts or topics were committed."
+          echo "  Re-run with dry_run=false to persist changes."
+          echo "======================================================"
