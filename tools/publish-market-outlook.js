@@ -7,6 +7,7 @@ const { spawnSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
 const HISTORY_PATH = path.join(ROOT, 'data', 'market-outlook-history.json');
+const PUBLISHED_PATH = path.join(ROOT, 'data', 'market-outlook-published.json');
 const slugArg = argValue('--slug');
 const execute = process.argv.includes('--execute');
 const today = new Date().toISOString().slice(0, 10);
@@ -46,6 +47,26 @@ history.updated = today;
 history.publications = history.publications || [];
 history.publications.push({ slug, publish_date: today, languages: ['en', 'ar'], content_type: 'market_outlook' });
 fs.writeFileSync(HISTORY_PATH, JSON.stringify(history, null, 2) + '\n', 'utf8');
+
+const publishedData = readJson(PUBLISHED_PATH, { version: '1.0', updated: '', articles: [] });
+publishedData.updated = today;
+publishedData.articles = publishedData.articles || [];
+publishedData.articles.push({
+  slug,
+  title_en: topic.title_en || '',
+  title_ar: topic.title_ar || '',
+  summary_en: topic.summary_en || topic.description_en || '',
+  summary_ar: topic.summary_ar || topic.description_ar || '',
+  publish_date: today,
+  topic_cluster: topic.topic_cluster || topic.discovery_cluster || '',
+  confidence_label: topic.confidence_label || '',
+  confidence_label_ar: topic.confidence_label_ar || '',
+  uncertainty_label: topic.uncertainty_label || '',
+  uncertainty_label_ar: topic.uncertainty_label_ar || '',
+  url_en: `/market-outlook/${slug}.html`,
+  url_ar: `/ar/market-outlook/${slug}.html`
+});
+fs.writeFileSync(PUBLISHED_PATH, JSON.stringify(publishedData, null, 2) + '\n', 'utf8');
 
 run('npm', ['run', 'generate:seo-sitemaps']);
 console.log(`Published market outlook: ${slug}`);
