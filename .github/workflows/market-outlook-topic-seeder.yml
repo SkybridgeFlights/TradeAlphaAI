@@ -1,0 +1,95 @@
+name: Market Outlook Topic Seeder
+
+# Runs daily at 05:30 UTC — 30 minutes before the draft generator (06:00 UTC).
+# Seeds up to 4 planned topics into data/market-outlook-queue.json so the draft
+# generator always has an eligible topic to process.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — seed but do not commit'
+        required: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+  schedule:
+    - cron: '30 5 * * *'  # Daily at 05:30 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  seed-topics:
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+
+    steps:
+      - name: Log workflow context
+        run: |
+          echo "======================================================"
+          echo "  Market Outlook Topic Seeder"
+          echo "  Run ID:  ${{ github.run_id }}"
+          echo "  Trigger: ${{ github.event_name }}"
+          echo "  Date:    $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "  Dry run: ${DRY_RUN}"
+          echo "======================================================"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Pre-seed editorial safety check
+        run: npm run check:editorial
+
+      - name: Refresh economic calendar
+        run: node tools/update-economic-calendar.js 2>&1 || true
+
+      - name: Seed market outlook topics
+        id: seed
+        run: |
+          echo "--- Seeding market outlook topics ---"
+          node tools/seed-market-outlook-topics.js
+          echo "--- Seeding complete ---"
+
+      - name: Post-seed editorial check
+        run: npm run check:editorial
+
+      - name: UTF-8 integrity check
+        run: npm run check:utf8
+
+      - name: Production readiness check
+        run: npm run check:production
+
+      - name: Commit seeded topics
+        if: env.DRY_RUN != 'true'
+        run: |
+          git add data/market-outlook-queue.json
+          git diff --staged --stat
+          if git diff --staged --quiet; then
+            echo "Nothing staged — queue unchanged, no commit needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Seed market outlook topics: $(date -u '+%Y-%m-%d')"
+          git push origin HEAD:main
+          echo "Committed and pushed seeded topics."
+
+      - name: Dry run notice
+        if: env.DRY_RUN == 'true'
+        run: |
+          echo "DRY RUN: topics were seeded in-memory but no commit was made."
+          echo "Run without dry_run=true to persist the topics."

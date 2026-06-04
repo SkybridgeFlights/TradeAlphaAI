@@ -88,18 +88,41 @@ jobs:
           npm run check:editorial
           npm run check:utf8
 
-      # ── Eligible topic check ───────────────────────────────────────────────────
+      # ── Eligible topic check (with auto-seeder fallback) ──────────────────────
 
       - name: Check for eligible outlook topic
         id: eligible-check
         run: |
           node - << 'NODESCRIPT'
           const fs = require('fs');
+          const { spawnSync } = require('child_process');
 
-          const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
-          const eligible = (queue.topics || []).find(
-            (t) => t.status === 'planned' || t.status === 'draft'
-          );
+          function findEligible() {
+            const queue = JSON.parse(fs.readFileSync('data/market-outlook-queue.json', 'utf8'));
+            return (queue.topics || []).find(
+              (t) => t.status === 'planned' || t.status === 'draft'
+            );
+          }
+
+          let eligible = findEligible();
+
+          if (!eligible) {
+            console.log('No eligible market outlook topics in queue — invoking seeder...');
+            const result = spawnSync(process.execPath, ['tools/seed-market-outlook-topics.js'], {
+              encoding: 'utf8',
+              stdio: 'inherit'
+            });
+            if (result.status !== 0) {
+              console.log('Seeder exited with non-zero status — continuing without seeded topics.');
+            } else {
+              eligible = findEligible();
+              if (eligible) {
+                console.log(`Seeder added eligible topic: ${eligible.slug}`);
+              } else {
+                console.log('Seeder ran but no eligible topic was added.');
+              }
+            }
+          }
 
           if (!eligible) {
             console.log('No eligible market outlook topics in queue (status=planned or draft).');
