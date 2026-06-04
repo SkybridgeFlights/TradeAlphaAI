@@ -2135,6 +2135,30 @@
     "/en/insights/voo-vs-vti-long-term-etf-comparison.html": {
         "ar": "/ar/insights/voo-vs-vti-long-term-etf-comparison.html",
         "en": "/insights/voo-vs-vti-long-term-etf-comparison.html"
+    },
+    "/market-outlook/": {
+        "ar": "/ar/market-outlook/",
+        "en": "/market-outlook/"
+    },
+    "/market-outlook/index.html": {
+        "ar": "/ar/market-outlook/index.html",
+        "en": "/market-outlook/index.html"
+    },
+    "/ar/market-outlook/": {
+        "ar": "/ar/market-outlook/",
+        "en": "/market-outlook/"
+    },
+    "/ar/market-outlook/index.html": {
+        "ar": "/ar/market-outlook/index.html",
+        "en": "/market-outlook/index.html"
+    },
+    "/en/market-outlook/": {
+        "ar": "/ar/market-outlook/",
+        "en": "/market-outlook/"
+    },
+    "/en/market-outlook/index.html": {
+        "ar": "/ar/market-outlook/index.html",
+        "en": "/market-outlook/index.html"
     }
 };
   const currentPath = window.location.pathname;
@@ -2163,6 +2187,12 @@
     if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
     m = n.match(/^\/en\/insights\/([a-z0-9.-]+\.html)$/i);
     if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
+    m = n.match(/^\/market-outlook\/([a-z0-9.-]+\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/market-outlook/" + f, en: "/market-outlook/" + f }; }
+    m = n.match(/^\/ar\/market-outlook\/([a-z0-9.-]+\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/market-outlook/" + f, en: "/market-outlook/" + f }; }
+    m = n.match(/^\/en\/market-outlook\/([a-z0-9.-]+\.html)$/i);
+    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/market-outlook/" + f, en: "/market-outlook/" + f }; }
     return { ar: "/ar/", en: "/" };
   }
   const routes = resolveRoute(currentPath);
