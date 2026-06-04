@@ -10,6 +10,8 @@ const HISTORY_PATH = path.join(ROOT, 'data', 'market-outlook-history.json');
 const PUBLISHED_PATH = path.join(ROOT, 'data', 'market-outlook-published.json');
 const slugArg = argValue('--slug');
 const execute = process.argv.includes('--execute');
+// --force-date: skip target_publish_date gate (used by full_pipeline to publish immediately after generation)
+const forceDate = process.argv.includes('--force-date');
 const today = new Date().toISOString().slice(0, 10);
 
 const queue = readJson(QUEUE_PATH, { topics: [] });
@@ -76,7 +78,7 @@ function isPublishable(item) {
     item &&
     item.status === 'reviewed' &&
     item.review_status === 'approved' &&
-    item.target_publish_date <= today &&
+    (forceDate || item.target_publish_date <= today) &&
     !published.has(item.slug) &&
     !fs.existsSync(path.join(ROOT, 'market-outlook', `${item.slug}.html`))
   );
