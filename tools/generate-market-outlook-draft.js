@@ -103,22 +103,35 @@ function render(topic, locale, intel) {
     [ar ? labelSets.ar.etfContext : labelSets.en.etfContext, ar ? n.etf_rotation.ar : n.etf_rotation.en]
   ].map(([heading, text]) => marketCard(text, heading)).join('\n');
   const watchItems = (ar ? labelSets.ar.watch : labelSets.en.watch).map((item) => `              <li>${escapeHtml(item)}</li>`).join('\n');
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: title,
-    description: summary,
-    inLanguage: locale,
-    author: { '@type': 'Organization', name: 'TradeAlphaAI' },
-    publisher: { '@type': 'Organization', name: 'TradeAlphaAI' },
-    mainEntityOfPage: canonical,
-    about: unique([topic.topic_cluster, ...(topic.event_tags || []), ...regimeTags()]).filter(Boolean)
-  };
   const L = ar ? labelSets.ar : labelSets.en;
+  const generatedAt = new Date().toISOString();
+  const updatedDate = generatedAt.slice(0, 10);
+  const readingMinutes = estimateReadingMinutes([
+    title,
+    summary,
+    ar ? n.market_narrative.ar : n.market_narrative.en,
+    ar ? n.volatility_interpretation.ar : n.volatility_interpretation.en,
+    ar ? n.macro_pressure.ar : n.macro_pressure.en,
+    ar ? n.sector_narrative.ar : n.sector_narrative.en,
+    ar ? n.etf_rotation.ar : n.etf_rotation.en
+  ].join(' '), ar);
+  const contextual = contextualLinks(topic, ar).slice(0, 8);
+  const contextualCards = contextual.map((link) => `          <a class="market-context-link" href="${link.href}"><span>${escapeHtml(link.label)}</span><small>${escapeHtml(link.reason)}</small></a>`).join('\n');
+  const takeawayCards = L.takeaways.map((item) => `          <article class="market-takeaway-card"><span>${escapeHtml(item.kicker)}</span><p>${escapeHtml(item.text)}</p></article>`).join('\n');
+  const schema = buildSchemas({ title, summary, locale, canonical, enUrl, arUrl, updatedDate, topic, ar, L });
   const nav = ar ? renderArNav(topic.slug) : renderEnNav(topic.slug);
   const breadcrumb = ar
     ? `<nav class="breadcrumb"><a href="/ar/">الرئيسية</a><span>/</span><a href="/ar/market-outlook/">توقعات السوق</a><span>/</span><span>${escapeHtml(title)}</span></nav>`
     : `<nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/market-outlook/">Market Outlook</a><span>/</span><span>${escapeHtml(title)}</span></nav>`;
+  const sidebarLinks = [
+    ['market-narrative', L.executiveSummary],
+    ['volatility-context', L.marketTone],
+    ['key-drivers', L.keyDrivers],
+    ['scenario-outlook', L.scenarioOutlook],
+    ['risk-factors', L.riskFactorsTitle],
+    ['watch-next', L.watchNextTitle],
+    ['related-research', L.relatedTitle]
+  ].map(([id, label]) => `            <a href="#${id}">${escapeHtml(label)}</a>`).join('\n');
 
   return `<!doctype html>
 <html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}">
@@ -145,6 +158,7 @@ function render(topic, locale, intel) {
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
 <body class="market-page">
+  <div class="reading-progress" aria-hidden="true"><span></span></div>
   ${nav}
   <main class="market-shell">
     <div class="wrap">
@@ -154,13 +168,37 @@ function render(topic, locale, intel) {
           <span class="eyebrow">${escapeHtml(L.label)}</span>
           <h1>${escapeHtml(title)}</h1>
           <p class="market-lead">${escapeHtml(summary)}</p>
+          <div class="market-article-meta">
+            <span>${escapeHtml(L.researchDesk)}</span>
+            <span>${escapeHtml(L.updatedAt)}: <time datetime="${updatedDate}">${updatedDate}</time></span>
+            <span>${escapeHtml(L.readTime)}: ${readingMinutes} ${escapeHtml(L.minutes)}</span>
+          </div>
           <div class="market-actions">
             <span class="market-btn">${escapeHtml(L.tone)}: ${escapeHtml(ar ? confidenceAr(intel.confidence.label) : intel.confidence.label)}</span>
             <span class="market-btn">${escapeHtml(L.uncertainty)}: ${escapeHtml(ar ? uncertaintyAr(intel.confidence.uncertainty_label) : intel.confidence.uncertainty_label)}</span>
           </div>
+          <div class="market-takeaway-grid">
+${takeawayCards}
+          </div>
         </div>
       </section>
 
+      <div class="market-outlook-layout">
+        <aside class="market-outlook-sidebar" aria-label="${escapeHtml(L.sectionNavigation)}">
+          <div class="market-sidebar-card">
+            <span class="eyebrow">${escapeHtml(L.sectionNavigation)}</span>
+            <nav class="market-anchor-nav">
+${sidebarLinks}
+            </nav>
+          </div>
+          <div class="market-sidebar-card">
+            <span class="eyebrow">${escapeHtml(L.researchFramework)}</span>
+            <p>${escapeHtml(L.frameworkCopy)}</p>
+            <a href="${ar ? '/ar/methodology.html' : '/methodology.html'}">${escapeHtml(L.methodologyLink)}</a>
+          </div>
+        </aside>
+
+        <article class="market-outlook-article">
       <section class="market-section" id="disclaimer-block">
         <div class="market-panel">
           <span class="eyebrow">${escapeHtml(L.disclaimerTitle)}</span>
@@ -214,6 +252,9 @@ ${watchItems}
         <div class="market-grid three">
 ${relatedCards(ar)}
         </div>
+        <div class="market-context-grid" aria-label="${escapeHtml(L.contextualLinks)}">
+${contextualCards}
+        </div>
       </section>
 
       <section class="market-section" id="footer-disclaimer">
@@ -223,10 +264,25 @@ ${relatedCards(ar)}
           <p class="market-copy">${escapeHtml(L.footerNote)}</p>
         </div>
       </section>
+        </article>
+      </div>
     </div>
   </main>
   <script src="${pathPrefix}js/language-router.js" defer></script>
   <script src="${pathPrefix}js/mobile-nav.js" defer></script>
+  <script>
+(function(){
+  var bar = document.querySelector('.reading-progress span');
+  if (!bar) return;
+  function updateProgress(){
+    var doc = document.documentElement;
+    var max = Math.max(1, doc.scrollHeight - doc.clientHeight);
+    bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, doc.scrollTop / max)) + ')';
+  }
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+})();
+  </script>
 </body>
 </html>
 `;
@@ -234,6 +290,126 @@ ${relatedCards(ar)}
   function marketCard(text, heading = '') {
     return `          <article class="market-card">${heading ? `<span class="market-card-kicker">${escapeHtml(heading)}</span>` : ''}<p class="market-copy">${escapeHtml(text)}</p></article>`;
   }
+}
+
+function estimateReadingMinutes(text, ar) {
+  const units = ar
+    ? (String(text || '').match(/[\u0600-\u06ff]+/g) || []).length
+    : String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(4, Math.ceil(units / (ar ? 180 : 220)));
+}
+
+function buildSchemas({ title, summary, locale, canonical, enUrl, arUrl, updatedDate, topic, ar, L }) {
+  const home = ar ? `${SITE_URL}/ar/` : `${SITE_URL}/`;
+  const collection = ar ? `${SITE_URL}/ar/market-outlook/` : `${SITE_URL}/market-outlook/`;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Article',
+        headline: title,
+        description: summary,
+        inLanguage: locale,
+        datePublished: updatedDate,
+        dateModified: updatedDate,
+        author: { '@type': 'Organization', name: 'TradeAlphaAI Research Desk', url: SITE_URL },
+        publisher: { '@type': 'Organization', name: 'TradeAlphaAI', url: SITE_URL },
+        mainEntityOfPage: canonical,
+        isAccessibleForFree: true,
+        about: unique([topic.topic_cluster, ...(topic.event_tags || []), ...regimeTags()]).filter(Boolean),
+        educationalLevel: 'General market research'
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: ar ? 'الرئيسية' : 'Home', item: home },
+          { '@type': 'ListItem', position: 2, name: ar ? 'توقعات السوق' : 'Market Outlook', item: collection },
+          { '@type': 'ListItem', position: 3, name: title, item: canonical }
+        ]
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: ar ? 'هل هذا التقرير توصية استثمارية؟' : 'Is this outlook investment advice?',
+            acceptedAnswer: { '@type': 'Answer', text: ar ? DISCLAIMER_AR : DISCLAIMER_EN }
+          },
+          {
+            '@type': 'Question',
+            name: ar ? 'كيف ينبغي قراءة السيناريوهات؟' : 'How should the scenarios be read?',
+            acceptedAnswer: { '@type': 'Answer', text: L.scenarioNote }
+          }
+        ]
+      }
+    ],
+    alternateName: [enUrl, arUrl]
+  };
+}
+
+function contextualLinks(topic, ar) {
+  const cluster = normalize(`${topic.topic_cluster || ''} ${topic.discovery_cluster || ''} ${topic.slug || ''} ${(topic.macro_tags || []).join(' ')}`);
+  const prefix = ar ? '/ar' : '';
+  const common = ar
+    ? [
+        { href: `${prefix}/rankings.html`, label: 'تصنيفات السوق', reason: 'مقارنة تعليمية بين الأسهم وصناديق المؤشرات' },
+        { href: `${prefix}/etfs.html`, label: 'مركز أبحاث صناديق المؤشرات', reason: 'سياق أوسع للتعرضات والقطاعات' },
+        { href: `${prefix}/insights/etf-risk-comparison-guide.html`, label: 'دليل مخاطر صناديق المؤشرات', reason: 'إطار تعليمي لتقييم المخاطر' },
+        { href: `${prefix}/methodology.html`, label: 'منهجية البحث', reason: 'شفافية حول طريقة بناء الأبحاث' }
+      ]
+    : [
+        { href: '/rankings.html', label: 'Market rankings', reason: 'Educational comparison across stocks and ETFs' },
+        { href: '/etfs.html', label: 'ETF research hub', reason: 'Broader context for exposures and sectors' },
+        { href: '/insights/etf-risk-comparison-guide.html', label: 'ETF risk comparison guide', reason: 'Educational framework for risk review' },
+        { href: '/methodology.html', label: 'Research methodology', reason: 'Transparent explanation of research process' }
+      ];
+  const thematic = [];
+  if (cluster.includes('ai') || cluster.includes('semiconductor')) {
+    thematic.push(
+      ar
+        ? { href: '/ar/semiconductor-stocks.html', label: 'محور أشباه الموصلات', reason: 'سياق قطاعي للتكنولوجيا والدورات الإنتاجية' }
+        : { href: '/semiconductor-stocks.html', label: 'Semiconductor stocks hub', reason: 'Sector context for technology and chip cycles' },
+      ar
+        ? { href: '/ar/etfs/smh.html', label: 'SMH', reason: 'صندوق مؤشر مرتبط بمحور أشباه الموصلات' }
+        : { href: '/etfs/smh.html', label: 'SMH ETF', reason: 'ETF exposure tied to semiconductor themes' },
+      ar
+        ? { href: '/ar/stocks/nvda.html', label: 'NVDA', reason: 'شركة رئيسية ضمن بنية الذكاء الاصطناعي' }
+        : { href: '/stocks/nvda.html', label: 'NVDA research', reason: 'Large-cap AI infrastructure context' }
+    );
+  }
+  if (cluster.includes('etf') || cluster.includes('rotation')) {
+    thematic.push(
+      ar
+        ? { href: '/ar/compare/spy-vs-qqq.html', label: 'SPY مقابل QQQ', reason: 'مقارنة تعليمية بين تعرضين واسعَين' }
+        : { href: '/compare/spy-vs-qqq.html', label: 'SPY vs QQQ', reason: 'Broad-market and growth exposure comparison' },
+      ar
+        ? { href: '/ar/dividend-etfs.html', label: 'محور صناديق التوزيعات', reason: 'سياق دفاعي ودخلي لصناديق المؤشرات' }
+        : { href: '/dividend-etfs.html', label: 'Dividend ETFs hub', reason: 'Income and defensive ETF context' },
+      ar
+        ? { href: '/ar/etfs/qqq.html', label: 'QQQ', reason: 'تعرض للنمو والتكنولوجيا ضمن صناديق المؤشرات' }
+        : { href: '/etfs/qqq.html', label: 'QQQ ETF', reason: 'Growth and technology ETF exposure' }
+    );
+  }
+  if (cluster.includes('yield') || cluster.includes('rates') || cluster.includes('macro')) {
+    thematic.push(
+      ar
+        ? { href: '/ar/etfs/bnd.html', label: 'BND', reason: 'سياق السندات عند تحليل الفائدة' }
+        : { href: '/etfs/bnd.html', label: 'BND ETF', reason: 'Bond context for rate-sensitive research' },
+      ar
+        ? { href: '/ar/bond-etfs.html', label: 'محور صناديق السندات', reason: 'تعليم حول الفائدة والدخل الثابت' }
+        : { href: '/bond-etfs.html', label: 'Bond ETFs hub', reason: 'Rate and fixed-income education' }
+    );
+  }
+  return uniqueLinks([...thematic, ...common]);
+}
+
+function uniqueLinks(links) {
+  const seen = new Set();
+  return links.filter((link) => {
+    if (!link || !link.href || seen.has(link.href)) return false;
+    seen.add(link.href);
+    return true;
+  });
 }
 
 function getLabels() {
@@ -254,8 +430,22 @@ function getLabels() {
     riskFactorsTitle: 'Risk Factors',
     watchNextTitle: 'What to Watch Next',
     relatedTitle: 'Related Research',
+    contextualLinks: 'Contextual research links',
     educationalDisclaimer: 'Educational Disclaimer',
+    sectionNavigation: 'Section navigation',
+    researchFramework: 'Research framework',
+    methodologyLink: 'Read methodology',
+    researchDesk: 'TradeAlphaAI Research Desk',
+    updatedAt: 'Updated',
+    readTime: 'Reading time',
+    minutes: 'min',
+    frameworkCopy: 'This outlook uses scenario-based analysis, educational market commentary, and transparent uncertainty language. It avoids directional calls and separates context from recommendations.',
     footerNote: 'TradeAlphaAI publishes market outlook research for education and context. Readers should evaluate risk, uncertainty, and source quality before making independent decisions.',
+    takeaways: [
+      { kicker: 'Research posture', text: 'Scenario-based analysis keeps the discussion conditional and avoids certainty claims.' },
+      { kicker: 'Market context', text: 'Macro, sector, and ETF rotation themes are reviewed as educational inputs, not trade signals.' },
+      { kicker: 'Reader use', text: 'Use this outlook as a structured research guide alongside methodology and related pages.' }
+    ],
     risks: [
       'Macro data may shift rate expectations and change market tone quickly.',
       'Earnings guidance can affect sector leadership and valuation sensitivity.',
@@ -284,8 +474,22 @@ function getLabels() {
     riskFactorsTitle: 'عوامل المخاطر',
     watchNextTitle: 'ما الذي يجب مراقبته لاحقا',
     relatedTitle: 'أبحاث مرتبطة',
+    contextualLinks: 'روابط بحثية سياقية',
     educationalDisclaimer: 'إخلاء المسؤولية التعليمي',
+    sectionNavigation: 'تنقل الأقسام',
+    researchFramework: 'إطار البحث',
+    methodologyLink: 'قراءة المنهجية',
+    researchDesk: 'فريق أبحاث TradeAlphaAI',
+    updatedAt: 'آخر تحديث',
+    readTime: 'مدة القراءة',
+    minutes: 'دقائق',
+    frameworkCopy: 'يعتمد هذا التقرير على تحليل قائم على السيناريوهات وتعليق تعليمي للأسواق ولغة واضحة حول عدم اليقين، مع تجنب الدعوات الاتجاهية وفصل السياق عن التوصيات.',
     footerNote: 'تنشر TradeAlphaAI أبحاث توقعات السوق لأغراض التعليم والسياق. ينبغي للقارئ تقييم المخاطر وعدم اليقين وجودة المصادر قبل اتخاذ قرارات مستقلة.',
+    takeaways: [
+      { kicker: 'منهجية البحث', text: 'يعتمد التحليل على سيناريوهات مشروطة ويتجنب لغة اليقين أو التوقعات الحاسمة.' },
+      { kicker: 'سياق السوق', text: 'تُعرض المحاور الكلية والقطاعية وصناديق المؤشرات كمدخلات تعليمية وليست إشارات تداول.' },
+      { kicker: 'استخدام القارئ', text: 'يمكن قراءة هذا التقرير كدليل بحث منظم إلى جانب صفحة المنهجية والروابط المرتبطة.' }
+    ],
     risks: [
       'قد تغير البيانات الكلية توقعات الفائدة ونبرة السوق بسرعة.',
       'قد تؤثر توجيهات الأرباح في قيادة القطاعات وحساسية التقييم.',
@@ -348,8 +552,8 @@ function attemptAutoApproval(topicItem, slugValue) {
   const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality'];
   if (required.some((name) => entry.checks[name] !== true)) return false;
   const today = new Date().toISOString().slice(0, 10);
-  topicItem.status = 'reviewed';
-  topicItem.review_status = 'approved';
+  if (topicItem.status !== 'published') topicItem.status = 'reviewed';
+  if (topicItem.review_status !== 'approved') topicItem.review_status = 'approved';
   topicItem.last_reviewed = today;
   queue.updated = today;
   fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');

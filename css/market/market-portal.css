@@ -3702,3 +3702,235 @@
 .negative {
   color: #dc2626;
 }
+
+/* ===== Phase 46: Market Outlook Research Layout ===== */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 3000;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.reading-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--market-gold-bright), var(--market-green));
+}
+
+[dir="rtl"] .reading-progress span {
+  transform-origin: right center;
+}
+
+.market-article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 20px;
+  color: var(--market-muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.market-article-meta span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.market-takeaway-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.market-takeaway-card,
+.market-sidebar-card,
+.market-context-link {
+  border: 1px solid rgba(242, 210, 123, 0.14);
+  background: linear-gradient(180deg, rgba(216, 177, 90, 0.075), rgba(255, 255, 255, 0.025));
+}
+
+.market-takeaway-card {
+  min-height: 128px;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.market-takeaway-card span {
+  color: var(--market-gold-bright);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.market-takeaway-card p {
+  margin: 8px 0 0;
+  color: var(--market-soft);
+  line-height: 1.6;
+}
+
+.market-outlook-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.market-outlook-sidebar {
+  position: sticky;
+  top: calc(var(--market-nav-height) + 24px);
+  display: grid;
+  gap: 14px;
+}
+
+.market-sidebar-card {
+  padding: 18px;
+  border-radius: 18px;
+}
+
+.market-sidebar-card p {
+  margin: 12px 0;
+  color: var(--market-soft);
+  line-height: 1.65;
+}
+
+.market-sidebar-card a {
+  color: var(--market-gold-bright);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.market-anchor-nav {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.market-anchor-nav a {
+  display: block;
+  padding: 9px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  color: var(--market-soft);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.market-anchor-nav a:hover,
+.market-anchor-nav a:focus-visible,
+.market-context-link:hover,
+.market-context-link:focus-visible {
+  border-color: rgba(242, 210, 123, 0.36);
+  color: var(--market-text);
+  background: rgba(216, 177, 90, 0.08);
+}
+
+.market-outlook-article .market-section {
+  scroll-margin-top: calc(var(--market-nav-height) + 18px);
+}
+
+.market-outlook-article .market-section-head {
+  margin-bottom: 14px;
+}
+
+.disclaimer-panel {
+  border-color: rgba(242, 210, 123, 0.22);
+  background: linear-gradient(180deg, rgba(216, 177, 90, 0.085), rgba(17, 21, 27, 0.94));
+}
+
+.market-context-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.market-context-link {
+  display: grid;
+  gap: 5px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  color: var(--market-text);
+  text-decoration: none;
+}
+
+.market-context-link span {
+  font-weight: 850;
+}
+
+.market-context-link small {
+  color: var(--market-muted);
+  line-height: 1.45;
+}
+
+.market-outlook-index-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.market-filter-chip,
+.market-tone-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--market-soft);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.market-tone-badge {
+  border-color: rgba(242, 210, 123, 0.28);
+  color: var(--market-gold-bright);
+}
+
+.market-featured-outlook {
+  display: grid;
+  gap: 14px;
+  min-height: 100%;
+}
+
+@media (max-width: 920px) {
+  .market-outlook-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .market-outlook-sidebar {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .market-takeaway-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .market-shell {
+    padding-top: 28px;
+  }
+
+  .market-outlook-sidebar,
+  .market-context-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-article-meta span {
+    width: 100%;
+  }
+}

@@ -69,10 +69,11 @@ function formatPost(topic, locale) {
     const toneEmoji = confidence ? confidence.market_tone_emoji : categoryEmoji(topic);
     const confidenceLine = confidence
       ? (ar
-          ? `📊 ${confidenceLabelAr(confidence.label)} · ${uncertaintyLabelAr(confidence.uncertainty_label)}`
-          : `📊 Educational market tone: ${confidence.label} · ${confidence.uncertainty_label}`)
+          ? `📊 نبرة تعليمية: ${confidenceLabelAr(confidence.label)} · ${uncertaintyLabelAr(confidence.uncertainty_label)}`
+          : `📊 Educational tone: ${titleCase(confidence.label)} · ${confidence.uncertainty_label}`)
       : '';
-    const lines = [`${toneEmoji} ${title}`, '', summary];
+    const label = ar ? 'تعليق سوقي تعليمي' : 'Educational Market Outlook';
+    const lines = [`${toneEmoji} ${label}`, title, '', summary];
     if (confidenceLine) lines.push('', confidenceLine);
     lines.push('', url, '', hashtags(topic, locale));
     return { locale, text: lines.join('\n') };
@@ -316,6 +317,10 @@ function isSafeText(value, requireArabic) {
 function truncate(value, maxLength) {
   if (value.length <= maxLength) return value;
   return value.slice(0, maxLength - 3).replace(/\s+\S*$/, '') + '...';
+}
+
+function titleCase(value) {
+  return String(value || '').replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function decodeHtmlEntities(value) {
