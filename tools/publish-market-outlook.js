@@ -12,16 +12,40 @@ const slugArg = argValue('--slug');
 const execute = process.argv.includes('--execute');
 // --force-date: skip target_publish_date gate (used by full_pipeline to publish immediately after generation)
 const forceDate = process.argv.includes('--force-date');
+// --require-publishable: exit 1 instead of 0 when no publishable topic found (pipeline mode)
+const requirePublishable = process.argv.includes('--require-publishable');
 const today = new Date().toISOString().slice(0, 10);
 
 const queue = readJson(QUEUE_PATH, { topics: [] });
 const history = readJson(HISTORY_PATH, { version: '1.0', updated: '', publications: [] });
 const published = new Set((history.publications || []).map((item) => item.slug));
+
+// ── Topic eligibility diagnostics ─────────────────────────────────────────────
+console.log(`[PUBLISH] force_date=${forceDate}  require_publishable=${requirePublishable}  execute=${execute}  today=${today}`);
+for (const t of (queue.topics || [])) {
+  const inHistory   = published.has(t.slug);
+  const onDisk      = fs.existsSync(path.join(ROOT, 'market-outlook', `${t.slug}.html`));
+  const dateOk      = forceDate || (t.target_publish_date || '') <= today;
+  const eligible    = t.status === 'reviewed' && t.review_status === 'approved' && dateOk && !inHistory && !onDisk;
+  let reason = '';
+  if (t.status !== 'reviewed')              reason = `status=${t.status}`;
+  else if (t.review_status !== 'approved')  reason = `review_status=${t.review_status}`;
+  else if (!dateOk)                         reason = `target_publish_date=${t.target_publish_date} > today=${today}`;
+  else if (inHistory)                       reason = 'already_in_history';
+  else if (onDisk)                          reason = 'file_already_on_disk';
+  console.log(
+    `[TOPIC CHECK] slug=${t.slug}  status=${t.status}  review_status=${t.review_status}` +
+    `  target_publish_date=${t.target_publish_date}  force_date=${forceDate}` +
+    `  in_history=${inHistory}  on_disk=${onDisk}  publishable=${eligible}` +
+    (reason ? `  rejection_reason=${reason}` : '')
+  );
+}
+
 const topic = slugArg ? findBySlug(slugArg) : (queue.topics || []).find(isPublishable);
 
 if (!topic) {
-  console.log('No approved market outlook ready for publishing');
-  process.exit(0);
+  console.log('[PUBLISH] No approved market outlook ready for publishing — exiting.');
+  process.exit(requirePublishable ? 1 : 0);
 }
 
 const slug = topic.slug;
