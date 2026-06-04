@@ -19,7 +19,7 @@ const ALLOWED_NEWS_SOURCE_TYPES = new Set([
   'etf_provider_update', 'platform_market_data'
 ]);
 const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market conditions can change rapidly and uncertainty remains present.';
-const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق وتعليم حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
+const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
 
 checkEconomicCalendar();
 checkMarketRegime();
@@ -219,6 +219,34 @@ function checkDraftTree(dir, type) {
       }
       if (type === 'market_outlook' && !plain.includes(name === 'ar.html' ? OUTLOOK_DISCLAIMER_AR : OUTLOOK_DISCLAIMER_EN)) {
         failures.push(`${rel}: missing required market outlook disclaimer`);
+      }
+      if (type === 'market_outlook') {
+        const BANNED = [
+          'data is not currently sourced',
+          'not currently sourced',
+          'educational context:',
+          'analysis uses structural context only',
+          'editors should verify',
+          'framework derived from',
+          'placeholder',
+          'TODO',
+          'TBD',
+          'lorem ipsum'
+        ];
+        for (const phrase of BANNED) {
+          if (plain.toLowerCase().includes(phrase.toLowerCase())) {
+            failures.push(`${rel}: market_outlook draft contains banned placeholder phrase: "${phrase}"`);
+          }
+        }
+        if (name === 'ar.html') {
+          const cleaned = plain
+            .replace(/\b(TradeAlphaAI|VIX|NASDAQ|S&P|ETF|CPI|NFP|PCE|FOMC|GDP|DXY)\b/gi, '')
+            .replace(/\b[A-Z]{1,5}\b/g, '')
+            .replace(/[\d.,%-]+/g, '');
+          if (/[A-Za-z]{3,}(\s+[A-Za-z]{3,}){4,}/.test(cleaned)) {
+            failures.push(`${rel}: market_outlook AR draft contains English sentence fragments`);
+          }
+        }
       }
       if (type === 'news_analysis' && !/id="sources"/.test(html)) failures.push(`${rel}: news-analysis draft missing id="sources" section`);
       if (type === 'news_analysis' && name === 'ar.html' && !/[؀-ۿ]/.test(plain)) failures.push(`${rel}: news-analysis Arabic draft contains no Arabic text`);

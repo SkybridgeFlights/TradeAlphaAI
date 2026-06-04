@@ -12,7 +12,7 @@ const { spawnSync } = require('child_process');
 const ROOT         = path.resolve(__dirname, '..');
 const QUEUE_PATH   = path.join(ROOT, 'data', 'market-outlook-queue.json');
 const HISTORY_PATH = path.join(ROOT, 'data', 'market-outlook-history.json');
-const SITE_URL     = 'https://tradealphaai.com';
+const SITE_URL     = 'https://www.tradealphaai.com';
 const DRY_RUN      = process.argv.includes('--dry-run=true') || process.argv.includes('--dry-run');
 
 // ── Named skip reasons ────────────────────────────────────────────────────────
@@ -200,6 +200,11 @@ if (approvedTopic) {
 
   if (!eligible) {
     console.log('\n[Phase 2] No planned/draft topic found — running seeder...');
+    if (DRY_RUN) {
+      console.log('[Phase 2] DRY RUN — would run seed-market-outlook-topics.js, but no files will be written.');
+      printSummary();
+      process.exit(0);
+    }
     const seedResult = run([path.join(__dirname, 'seed-market-outlook-topics.js')]);
     if (seedResult.status !== 0) {
       abort(SKIP.NO_ELIGIBLE_TOPIC, 'Seeder exited non-zero and no topics exist in the queue.');
@@ -226,6 +231,16 @@ if (approvedTopic) {
   if (draftExists) {
     console.log(`[Phase 3] Draft files already on disk for ${eligible.slug} — skipping re-generation.`);
   } else {
+    if (DRY_RUN) {
+      console.log(`[Phase 3] DRY RUN — would generate draft for: ${eligible.slug}`);
+      state.slug = eligible.slug;
+      state.generated = false;
+      state.approved = false;
+      state.en_url = `${SITE_URL}/market-outlook/${eligible.slug}.html`;
+      state.ar_url = `${SITE_URL}/ar/market-outlook/${eligible.slug}.html`;
+      printSummary();
+      process.exit(0);
+    }
     console.log(`[Phase 3] Generating draft for: ${eligible.slug}`);
     const genResult = run([path.join(__dirname, 'generate-market-outlook-draft.js')]);
     if (genResult.status !== 0) {

@@ -1,13 +1,33 @@
 'use strict';
 
-// ── Market Intelligence Engine ────────────────────────────────────────────────
-// Analyzes sourced market state, macro calendar, and regime signals to produce
-// educational market narratives, sector context, and directional scenarios.
-//
-// LEGAL: All output is educational commentary. No financial advice.
-// No guaranteed predictions. No price targets. No certainty language.
-
 const { calculateConfidence, buildScenarios } = require('./calculate-market-confidence.js');
+
+const FALLBACKS = {
+  market_narrative: {
+    en: 'Markets are being evaluated through a structural lens that considers policy expectations, earnings visibility, liquidity conditions, and investor risk appetite. This framework is useful for education because it separates broad context from short-term directional claims.',
+    ar: 'تتم قراءة الأسواق من خلال إطار هيكلي يراعي توقعات السياسة النقدية ووضوح الأرباح وظروف السيولة وميل المستثمرين نحو المخاطرة. يفيد هذا الإطار تعليميا لأنه يفصل بين السياق العام والادعاءات الاتجاهية قصيرة الأجل.'
+  },
+  sector_narrative: {
+    en: 'Sector leadership can change as macro conditions, earnings expectations, and positioning evolve. Technology, semiconductor, defensive, and cyclical groups may respond differently to the same market backdrop.',
+    ar: 'قد تتغير قيادة القطاعات مع تطور الظروف الكلية وتوقعات الأرباح وتمركز المستثمرين. يمكن أن تستجيب قطاعات التكنولوجيا وأشباه الموصلات والقطاعات الدفاعية والدورية بطرق مختلفة للخلفية السوقية نفسها.'
+  },
+  volatility_interpretation: {
+    en: 'Volatility should be treated as a measure of uncertainty rather than a prediction. Lower volatility can coexist with hidden risk, while elevated volatility can reflect caution, repositioning, or event sensitivity.',
+    ar: 'ينبغي التعامل مع التقلب بوصفه مقياسا لعدم اليقين وليس توقعا. يمكن أن يتزامن انخفاض التقلب مع مخاطر غير ظاهرة، بينما قد يعكس ارتفاعه الحذر أو إعادة التمركز أو الحساسية تجاه الأحداث.'
+  },
+  macro_pressure: {
+    en: 'The macro backdrop includes inflation trends, labor-market signals, rate expectations, growth data, and central-bank communication. These variables can influence how investors price risk across stocks, ETFs, and bonds.',
+    ar: 'تشمل الخلفية الكلية اتجاهات التضخم وإشارات سوق العمل وتوقعات الفائدة وبيانات النمو وتواصل البنوك المركزية. قد تؤثر هذه المتغيرات في كيفية تسعير المستثمرين للمخاطر عبر الأسهم وصناديق المؤشرات والسندات.'
+  },
+  etf_rotation: {
+    en: 'ETF rotation often reflects how investors compare growth exposure, defensive exposure, income strategies, and broad-market diversification as conditions change.',
+    ar: 'غالبا ما يعكس التناوب بين صناديق المؤشرات كيفية مقارنة المستثمرين بين التعرض للنمو والتعرض الدفاعي واستراتيجيات الدخل والتنويع الواسع مع تغير الظروف.'
+  },
+  ai_semiconductor_context: {
+    en: 'AI and semiconductor themes remain tied to infrastructure spending cycles, supply-chain capacity, valuation sensitivity, and earnings guidance. These factors support educational analysis without implying a guaranteed direction.',
+    ar: 'تظل موضوعات الذكاء الاصطناعي وأشباه الموصلات مرتبطة بدورات الإنفاق على البنية التحتية وقدرة سلاسل التوريد وحساسية التقييم وتوجيهات الأرباح. تدعم هذه العوامل التحليل التعليمي دون الإيحاء باتجاه مضمون.'
+  }
+};
 
 function generateIntelligence(liveMarket, calendar, regime) {
   const live = liveMarket && liveMarket.metadata && liveMarket.metadata.status === 'live';
@@ -16,40 +36,41 @@ function generateIntelligence(liveMarket, calendar, regime) {
   const today = new Date().toISOString().slice(0, 10);
 
   const upcomingEvents = (calendar.events || [])
-    .filter((e) => e.date >= today && e.status === 'confirmed')
+    .filter((event) => event.date >= today && event.status === 'confirmed' && event.source_url)
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5);
 
   const nearest = upcomingEvents[0];
-  const proximityDays = nearest
-    ? Math.floor((new Date(nearest.date + 'T00:00:00Z') - Date.now()) / 86400000)
-    : null;
+  const proximityDays = nearest ? Math.floor((new Date(`${nearest.date}T00:00:00Z`) - Date.now()) / 86400000) : null;
 
-  const vix          = valueOf(state.vix);
-  const sp500        = valueOf(state.sp500);
-  const nasdaq       = valueOf(state.nasdaq);
-  const us10y        = valueOf(state.us10y_yield);
-  const dxy          = valueOf(state.dxy);
-  const gold         = valueOf(state.gold);
-  const bitcoin      = valueOf(state.bitcoin);
-  const aiMom        = valueOf(state.ai_sector_momentum);
-  const semiMom      = valueOf(state.semiconductor_momentum);
+  const vix = valueOf(state.vix);
+  const sp500 = valueOf(state.sp500);
+  const nasdaq = valueOf(state.nasdaq);
+  const us10y = valueOf(state.us10y_yield);
+  const dxy = valueOf(state.dxy);
+  const aiMom = valueOf(state.ai_sector_momentum);
+  const semiMom = valueOf(state.semiconductor_momentum);
   const marketRegime = valueOf(state.market_regime) || regimeState.growth_value_bias || null;
-  const riskState    = valueOf(state.risk_state) || regimeState.risk_regime || null;
-  const volatState   = valueOf(state.volatility_state) || regimeState.volatility_regime || null;
+  const riskState = valueOf(state.risk_state) || regimeState.risk_regime || null;
+  const volatState = valueOf(state.volatility_state) || regimeState.volatility_regime || null;
 
   const confidence = calculateConfidence({
     vix,
-    volatilityState:    volatState,
+    volatilityState: volatState,
     riskState,
-    aiMomentum:         aiMom,
+    aiMomentum: aiMom,
     marketRegime,
     eventProximityDays: proximityDays
   });
 
-  const scenarios = buildScenarios({
-    vix, aiMomentum: aiMom, semiconductorMomentum: semiMom,
-    us10yYield: us10y, marketRegime, upcomingEvents, confidence
+  const rawScenarios = buildScenarios({
+    vix,
+    aiMomentum: aiMom,
+    semiconductorMomentum: semiMom,
+    us10yYield: us10y,
+    marketRegime,
+    upcomingEvents,
+    confidence
   });
 
   const sourced = [
@@ -58,119 +79,152 @@ function generateIntelligence(liveMarket, calendar, regime) {
     live && vix !== null && 'vix',
     live && us10y !== null && 'us10y_yield',
     live && dxy !== null && 'dxy',
-    live && gold !== null && 'gold',
-    live && bitcoin !== null && 'bitcoin',
     live && aiMom !== null && 'ai_sector_momentum',
     live && semiMom !== null && 'semiconductor_momentum'
   ].filter(Boolean);
 
   return {
     confidence,
-    scenarios,
+    scenarios: buildBilingualScenarios(rawScenarios),
     sourced_fields: sourced,
-    data_completeness: sourced.length >= 7 ? 'full' : sourced.length >= 3 ? 'partial' : 'minimal',
+    data_completeness: sourced.length >= 6 ? 'full' : sourced.length >= 3 ? 'partial' : 'structural',
     narratives: {
-      market_narrative:          buildMarketNarrative(live, sp500, nasdaq, vix, us10y, dxy, confidence),
-      sector_narrative:          buildSectorNarrative(live, aiMom, semiMom, confidence),
-      volatility_interpretation: buildVolatilityInterp(live, vix, volatState),
-      macro_pressure:            buildMacroPressure(upcomingEvents, proximityDays),
-      etf_rotation:              buildEtfRotation(live, aiMom, semiMom, marketRegime, us10y),
-      ai_semiconductor_context:  buildAiSemiContext(live, aiMom, semiMom)
+      market_narrative: buildMarketNarrative(live, sp500, nasdaq, vix, us10y, dxy, confidence),
+      sector_narrative: buildSectorNarrative(live, aiMom, semiMom),
+      volatility_interpretation: buildVolatilityInterp(live, vix),
+      macro_pressure: buildMacroPressure(upcomingEvents, proximityDays),
+      etf_rotation: buildEtfRotation(live, aiMom, marketRegime, us10y),
+      ai_semiconductor_context: buildAiSemiContext(live, aiMom, semiMom)
     },
     upcoming_events: upcomingEvents
   };
 }
 
-// ── Narrative builders ────────────────────────────────────────────────────────
-// All functions return CONDITIONAL educational text. Never use certainty
-// language, price targets, or guaranteed outcomes.
-
 function buildMarketNarrative(live, sp500, nasdaq, vix, us10y, dxy, confidence) {
-  if (!live) {
-    return `No live market state is currently available. This educational commentary is based on structural market context only. The market outlook reflects the ${confidence.label} framework derived from regime signals.`;
-  }
-  const parts = [];
-  if (sp500 !== null) parts.push(`S&P 500 at ${sp500}`);
-  if (nasdaq !== null) parts.push(`NASDAQ at ${nasdaq}`);
-  if (vix !== null)   parts.push(`VIX at ${vix}`);
-  if (us10y !== null) parts.push(`US 10-year yield at ${us10y}%`);
-  if (dxy !== null)   parts.push(`DXY at ${dxy}`);
-  const dataStr = parts.length ? `With ${parts.join(', ')}, ` : '';
-  return `${dataStr}the current market environment may be characterised as ${confidence.label}. This context is educational — conditions can shift rapidly and should be interpreted with appropriate uncertainty.`;
+  if (!live) return FALLBACKS.market_narrative;
+  const en = [];
+  const ar = [];
+  if (sp500 !== null) { en.push(`S&P 500 near ${sp500}`); ar.push(`مؤشر S&P 500 قرب ${sp500}`); }
+  if (nasdaq !== null) { en.push(`NASDAQ near ${nasdaq}`); ar.push(`مؤشر NASDAQ قرب ${nasdaq}`); }
+  if (vix !== null) { en.push(`VIX near ${vix}`); ar.push(`مؤشر VIX قرب ${vix}`); }
+  if (us10y !== null) { en.push(`the US 10-year yield near ${us10y}%`); ar.push(`عائد السندات الأمريكية لعشر سنوات قرب ${us10y}%`); }
+  if (dxy !== null) { en.push(`DXY near ${dxy}`); ar.push(`مؤشر الدولار DXY قرب ${dxy}`); }
+  if (!en.length) return FALLBACKS.market_narrative;
+  return {
+    en: `With ${en.join(', ')}, the current tone can be framed as ${confidence.label}. This remains conditional context, not a forecast.`,
+    ar: `مع ${ar.join(' و')}, يمكن تأطير نبرة السوق الحالية بوصفها ${confidenceLabelAr(confidence.label)}. يبقى ذلك سياقا مشروطا وليس توقعا.`
+  };
 }
 
-function buildSectorNarrative(live, aiMom, semiMom, confidence) {
-  if (!live || (aiMom === null && semiMom === null)) {
-    return 'Sector momentum data is not currently sourced. Educational commentary focuses on general sector dynamics without directional claims.';
-  }
-  const parts = [];
-  if (aiMom !== null && aiMom !== 'unverified')   parts.push(`AI sector momentum is ${aiMom}`);
-  if (semiMom !== null && semiMom !== 'unverified') parts.push(`semiconductor momentum is ${semiMom}`);
-  if (!parts.length) return 'Sector momentum signals are currently unverified. No directional sector commentary can be made from this data.';
-  return `${parts.join(' and ')}. These signals are educational indicators — they do not predict future performance and past momentum does not guarantee continuation.`;
+function buildSectorNarrative(live, aiMom, semiMom) {
+  if (!live || (aiMom === null && semiMom === null)) return FALLBACKS.sector_narrative;
+  const en = [];
+  const ar = [];
+  if (aiMom && aiMom !== 'unverified') { en.push(`AI momentum appears ${aiMom}`); ar.push(`يبدو زخم الذكاء الاصطناعي ${momentumAr(aiMom)}`); }
+  if (semiMom && semiMom !== 'unverified') { en.push(`semiconductor momentum appears ${semiMom}`); ar.push(`يبدو زخم أشباه الموصلات ${momentumAr(semiMom)}`); }
+  if (!en.length) return FALLBACKS.sector_narrative;
+  return {
+    en: `${en.join(' and ')}. These are educational signals that can change as earnings expectations and macro conditions evolve.`,
+    ar: `${ar.join(' و')}. هذه إشارات تعليمية قد تتغير مع تطور توقعات الأرباح والظروف الكلية.`
+  };
 }
 
-function buildVolatilityInterp(live, vix, volatState) {
-  if (!live || vix === null) {
-    return 'Volatility data is not currently sourced. Educational context: VIX above 20 is historically associated with elevated market uncertainty. Editors should verify current conditions.';
-  }
-  if (vix > 30) return `VIX at ${vix} suggests elevated market stress. Historically, VIX above 30 has been associated with heightened uncertainty — not a prediction of direction or timing.`;
-  if (vix > 20) return `VIX at ${vix} indicates above-average volatility. This is an educational observation about current conditions, not a trading signal.`;
-  if (vix < 15) return `VIX at ${vix} suggests relatively low volatility. Educational note: low volatility can precede sudden moves in either direction.`;
-  return `VIX at ${vix} is within a moderate historical range. Market conditions may shift and this data is for educational context only.`;
+function buildVolatilityInterp(live, vix) {
+  if (!live || vix === null) return FALLBACKS.volatility_interpretation;
+  if (vix > 30) return {
+    en: `VIX near ${vix} indicates elevated stress and a higher sensitivity to events.`,
+    ar: `يشير مؤشر VIX قرب ${vix} إلى ضغط مرتفع وحساسية أكبر تجاه الأحداث.`
+  };
+  if (vix > 20) return {
+    en: `VIX near ${vix} indicates above-average volatility and a need for careful interpretation of risk signals.`,
+    ar: `يشير مؤشر VIX قرب ${vix} إلى تقلب فوق المتوسط وحاجة إلى تفسير حذر لإشارات المخاطر.`
+  };
+  return {
+    en: `VIX near ${vix} suggests calmer conditions, although low volatility can still change quickly.`,
+    ar: `يشير مؤشر VIX قرب ${vix} إلى ظروف أكثر هدوءا، مع أن التقلب المنخفض قد يتغير بسرعة.`
+  };
 }
 
-function buildMacroPressure(upcomingEvents, proximityDays) {
-  if (!upcomingEvents.length) {
-    return 'No sourced macro events are currently in the educational calendar. Analysis uses structural context only.';
-  }
-  const next = upcomingEvents[0];
-  const urgency = proximityDays !== null && proximityDays <= 3 ? 'imminent (within 3 days)' : proximityDays !== null && proximityDays <= 7 ? 'near-term (within 7 days)' : 'upcoming';
-  return `The nearest sourced macro event is ${next.name} on ${next.date} — classified as ${urgency}. Educational context: major data releases can create volatility in either direction. This is not predictive.`;
+function buildMacroPressure(events, proximityDays) {
+  if (!events.length) return FALLBACKS.macro_pressure;
+  const next = events[0];
+  const enWindow = proximityDays !== null && proximityDays <= 3 ? 'near-term' : 'upcoming';
+  const arWindow = proximityDays !== null && proximityDays <= 3 ? 'قريب' : 'قادم';
+  return {
+    en: `${next.name} on ${next.date} is the nearest sourced ${enWindow} macro event. Such releases can affect volatility in either direction, so the outlook should remain conditional.`,
+    ar: `يعد ${next.name} بتاريخ ${next.date} أقرب حدث كلي موثق و${arWindow}. يمكن لهذه الإصدارات أن تؤثر في التقلب في أي اتجاه، لذلك ينبغي أن يبقى التحليل مشروطا.`
+  };
 }
 
-function buildEtfRotation(live, aiMom, semiMom, marketRegime, us10y) {
-  if (!live) return 'ETF rotation context requires live data. Educational framework: regime and yield environments may influence relative performance across ETF categories.';
-  const parts = [];
-  if (marketRegime === 'risk-off') parts.push('risk-off regimes have historically been associated with flows toward defensive ETFs');
-  if (typeof us10y === 'number' && us10y > 4.5) parts.push('elevated yields may apply valuation pressure on growth-oriented ETFs');
-  if (aiMom === 'bullish') parts.push('constructive AI momentum may support technology-sector ETFs subject to broader market conditions');
-  if (!parts.length) return 'Current ETF rotation signals are not sufficiently sourced for educational commentary. Structural diversification principles apply.';
-  return `Educational ETF context: ${parts.join('; ')}. These are educational observations — not investment recommendations or guaranteed outcomes.`;
+function buildEtfRotation(live, aiMom, marketRegime, us10y) {
+  if (!live) return FALLBACKS.etf_rotation;
+  const en = [];
+  const ar = [];
+  if (marketRegime === 'risk-off') { en.push('defensive ETF categories may receive more attention'); ar.push('قد تحظى فئات صناديق المؤشرات الدفاعية بمزيد من الاهتمام'); }
+  if (typeof us10y === 'number' && us10y > 4.5) { en.push('higher yields may affect growth-oriented ETF valuations'); ar.push('قد تؤثر العوائد المرتفعة في تقييمات صناديق المؤشرات الموجهة للنمو'); }
+  if (aiMom === 'bullish') { en.push('technology ETF exposure may remain sensitive to AI earnings expectations'); ar.push('قد يبقى تعرض صناديق التكنولوجيا حساسا لتوقعات أرباح الذكاء الاصطناعي'); }
+  if (!en.length) return FALLBACKS.etf_rotation;
+  return {
+    en: `ETF context: ${en.join('; ')}. This is a research framework rather than a recommendation.`,
+    ar: `سياق صناديق المؤشرات: ${ar.join('؛ ')}. هذا إطار بحثي وليس توصية.`
+  };
 }
 
 function buildAiSemiContext(live, aiMom, semiMom) {
-  if (!live || (aiMom === null && semiMom === null)) {
-    return 'AI and semiconductor data is not currently sourced. Educational note: these sectors are sensitive to earnings cycles, yield changes, and supply chain developments.';
-  }
-  const parts = [];
-  if (aiMom && aiMom !== 'unverified')   parts.push(`AI sector momentum appears ${aiMom}`);
-  if (semiMom && semiMom !== 'unverified') parts.push(`semiconductor momentum appears ${semiMom}`);
-  return `${parts.join('. ')}. These are sourced educational signals — past momentum does not indicate future performance. Sector conditions can change rapidly on macro or earnings developments.`;
+  if (!live || (aiMom === null && semiMom === null)) return FALLBACKS.ai_semiconductor_context;
+  return buildSectorNarrative(live, aiMom, semiMom);
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+function buildBilingualScenarios(raw) {
+  const source = raw && raw.length ? raw : [
+    'If macro conditions remain stable, broad-market participation could remain balanced while leadership rotates across sectors.',
+    'If volatility rises, defensive positioning and liquidity awareness could become more important in educational portfolio research.',
+    'If earnings visibility improves, growth-oriented themes could receive renewed attention while still carrying valuation risk.'
+  ];
+  return source.slice(0, 3).map((text, index) => ({
+    en: String(text),
+    ar: [
+      'إذا بقيت الظروف الكلية مستقرة، فقد يظل اتساع المشاركة في السوق متوازنا مع تناوب القيادة بين القطاعات.',
+      'إذا ارتفع التقلب، فقد تصبح الوضعية الدفاعية والاهتمام بالسيولة أكثر أهمية في أبحاث المحافظ التعليمية.',
+      'إذا تحسن وضوح الأرباح، فقد تحظى موضوعات النمو باهتمام متجدد مع استمرار مخاطر التقييم.'
+    ][index] || 'يبقى هذا السيناريو تعليميا ومشروطا ولا يمثل توقعا أو توصية.'
+  }));
+}
+
+function confidenceLabelAr(label) {
+  const map = {
+    constructive: 'بناءة',
+    cautious: 'حذرة',
+    defensive: 'دفاعية',
+    volatile: 'متقلبة',
+    'improving breadth': 'اتساع متحسن',
+    'elevated uncertainty': 'عدم يقين مرتفع'
+  };
+  return map[label] || 'مشروطة';
+}
+
+function momentumAr(label) {
+  const map = { bullish: 'إيجابيا', bearish: 'سلبيا', neutral: 'محايدا', mixed: 'مختلطا', positive: 'إيجابيا', negative: 'سلبيا' };
+  return map[String(label).toLowerCase()] || 'مشروطا';
+}
 
 function valueOf(entry) {
-  return (entry && entry.value !== undefined && entry.value !== null) ? entry.value : null;
+  return entry && entry.value !== undefined && entry.value !== null ? entry.value : null;
 }
 
 module.exports = { generateIntelligence };
 
-// ── CLI mode ──────────────────────────────────────────────────────────────────
 if (require.main === module) {
   const fs = require('fs');
   const path = require('path');
   const ROOT = path.resolve(__dirname, '..');
-
-  const marketFile   = path.join(ROOT, 'data', 'live-market-state.json');
-  const calendarFile = path.join(ROOT, 'data', 'economic-calendar.json');
-  const regimeFile   = path.join(ROOT, 'data', 'market-regime-state.json');
-
-  const liveMarket = fs.existsSync(marketFile)   ? JSON.parse(fs.readFileSync(marketFile, 'utf8'))   : {};
-  const calendar   = fs.existsSync(calendarFile) ? JSON.parse(fs.readFileSync(calendarFile, 'utf8')) : { events: [] };
-  const regime     = fs.existsSync(regimeFile)   ? JSON.parse(fs.readFileSync(regimeFile, 'utf8'))   : {};
-
-  const intelligence = generateIntelligence(liveMarket, calendar, regime);
-  console.log(JSON.stringify(intelligence, null, 2));
+  const read = (rel, fallback) => {
+    const file = path.join(ROOT, rel);
+    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : fallback;
+  };
+  console.log(JSON.stringify(generateIntelligence(
+    read('data/live-market-state.json', { metadata: { status: 'fallback' } }),
+    read('data/economic-calendar.json', { events: [] }),
+    read('data/market-regime-state.json', {})
+  ), null, 2));
 }
