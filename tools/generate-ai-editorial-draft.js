@@ -10,13 +10,30 @@ const DRAFT_ROOT = path.join(ROOT, 'drafts', 'editorial');
 const ELIGIBLE_STATUSES = new Set(['draft', 'planned', 'queued']);
 const SITE_URL = 'https://tradealphaai.com';
 
+// Parse optional --slug=<value> so the brain can target a specific topic
+const slugArg = process.argv.find(a => a.startsWith('--slug='));
+const targetSlug = slugArg ? slugArg.slice('--slug='.length).trim() : null;
+
 const queue = readJson(QUEUE_PATH);
 const topics = Array.isArray(queue.topics) ? queue.topics : [];
-const topic = topics.find((item) => ELIGIBLE_STATUSES.has(item.status));
 
-if (!topic) {
-  console.log('No draft topic available');
-  process.exit(0);
+// When targeting a specific slug, accept broader statuses — the brain may have already
+// advanced the topic to in_review during an earlier generation pass.
+const SLUG_TARGETED_STATUSES = new Set(['draft', 'planned', 'queued', 'in_review', 'approved', 'reviewed']);
+
+let topic;
+if (targetSlug) {
+  topic = topics.find(t => t.slug === targetSlug);
+  if (!topic) fail(`--slug=${targetSlug}: topic not found in editorial queue`);
+  if (!SLUG_TARGETED_STATUSES.has(topic.status)) {
+    fail(`--slug=${targetSlug}: topic status '${topic.status}' is not eligible for generation`);
+  }
+} else {
+  topic = topics.find((item) => ELIGIBLE_STATUSES.has(item.status));
+  if (!topic) {
+    console.log('No draft topic available');
+    process.exit(0);
+  }
 }
 
 if (!Array.isArray(topic.language_support) || !topic.language_support.includes('en') || !topic.language_support.includes('ar')) {

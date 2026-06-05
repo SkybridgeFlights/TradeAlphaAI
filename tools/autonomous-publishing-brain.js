@@ -709,7 +709,7 @@ function executeAction(contentType, mode, dryRun, action) {
       };
     }
     if (mode === 'publish_ready' || mode === 'full_pipeline') {
-      return executeReviewedPipeline(contentType, action, mode === 'full_pipeline' ? () => runNode('tools/generate-ai-editorial-draft.js', [], { inherit: true }) : null, (slug) => {
+      return executeReviewedPipeline(contentType, action, mode === 'full_pipeline' ? () => runNode('tools/generate-ai-editorial-draft.js', action.topic ? [`--slug=${action.topic}`] : [], { inherit: true }) : null, (slug) => {
         const args = [`--slug=${slug}`, '--execute'];
         if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) args.push('--telegram-send');
         return runNode('tools/publish-reviewed-article.js', args, { inherit: true });
@@ -820,8 +820,32 @@ function markTopicManualRevision(contentType, slug, reason) {
   } catch { /* best-effort */ }
 }
 
+function snapshotDraftDirs(contentType) {
+  const dir = path.join(ROOT, 'drafts', contentType);
+  if (!fs.existsSync(dir)) return new Set();
+  try { return new Set(fs.readdirSync(dir)); } catch { return new Set(); }
+}
+
+function detectGeneratedSlug(contentType, canonicalSlug, beforeDirs) {
+  const afterDirs = snapshotDraftDirs(contentType);
+  const newDirs = [...afterDirs].filter(d => !beforeDirs.has(d));
+  if (newDirs.includes(canonicalSlug)) return canonicalSlug;
+  if (newDirs.length > 0) return newDirs[0];
+  // No new directories — generator overwrote an existing one (overwrite: true profile)
+  return canonicalSlug;
+}
+
+function invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug) {
+  const beforeDirs = snapshotDraftDirs(contentType);
+  const result = generateFn();
+  const detectedSlug = detectGeneratedSlug(contentType, canonicalSlug, beforeDirs);
+  const slugMismatch = Boolean(detectedSlug && detectedSlug !== canonicalSlug);
+  return { result, detectedSlug: detectedSlug || canonicalSlug, slugMismatch };
+}
+
 function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
   let slug = action.topic;
+  const canonicalSlug = slug;
   let generationResult = 'not required';
   let currentState = slug ? inferState(contentType, slug) : 'none';
 
@@ -830,6 +854,11 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
   let artifactCheckAfterRepair= null;
   let missingArtifacts        = [];
   let artifactIntegrityResult = 'not_checked';
+
+  // Slug integrity tracking
+  let generatedSlug       = null;
+  let slugIntegrityResult = 'not_checked';
+  let slugMismatchAction  = 'none';
 
   // Authority repair tracking
   let authorityRepairAttempted = false;
@@ -843,15 +872,52 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
     return blockedExecution('no eligible topic selected for reviewed pipeline', currentState);
   }
 
+  function slugFields() {
+    return {
+      canonical_slug:        canonicalSlug,
+      generated_slug:        generatedSlug || (generateFn ? 'not_generated' : 'no_generator'),
+      slug_integrity_result: slugIntegrityResult,
+      slug_mismatch_action:  slugMismatchAction,
+    };
+  }
+
+  function artifactFields() {
+    const beforeLabel = artifactCheckBefore ? (artifactCheckBefore.ok ? 'passed' : 'failed') : 'not_checked';
+    return {
+      draft_artifact_check_before_review: beforeLabel,
+      draft_artifact_check_after_repair:  artifactCheckAfterRepair || 'not_reached',
+      missing_artifacts:                  missingArtifacts,
+      regeneration_after_repair:          regenerationAfterRepair,
+      artifact_integrity_result:          artifactIntegrityResult,
+    };
+  }
+
   // ── Generate initial draft if needed ────────────────────────────────────────
   if (!hasDraft(contentType, slug) && generateFn) {
-    const generated = generateFn();
+    const { result: generated, detectedSlug, slugMismatch } = invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug);
+    generatedSlug = detectedSlug;
     generationResult = generated.status === 0 ? 'draft generated' : 'draft generation failed';
+
+    if (generated.status === 0 && slugMismatch) {
+      slugIntegrityResult = 'mismatch';
+      slugMismatchAction  = 'wrong_draft_deleted_marked_manual_revision';
+      console.log(`[brain] Slug mismatch: expected ${canonicalSlug}, got ${detectedSlug}`);
+      cleanDraftDirectory(contentType, detectedSlug);
+      cleanDraftDirectory(contentType, canonicalSlug);
+      markTopicManualRevision(contentType, canonicalSlug, `slug mismatch: expected ${canonicalSlug}, got ${detectedSlug}`);
+      return {
+        ...blockedExecution(`slug mismatch: expected ${canonicalSlug}, got ${detectedSlug}`, currentState),
+        ...slugFields(),
+        ...artifactFields(),
+        artifact_integrity_result: 'mismatch_initial_generation',
+      };
+    }
+    if (generated.status === 0) slugIntegrityResult = 'passed';
+
     if (generated.status !== 0) {
-      // Clean up any partial directory the failed generator may have left
       cleanDraftDirectory(contentType, slug);
       markTopicManualRevision(contentType, slug, `initial generation failed: exit ${generated.status}`);
-      return blockedExecution(generationResult, currentState, generated.status);
+      return { ...blockedExecution(generationResult, currentState, generated.status), ...slugFields(), ...artifactFields() };
     }
   } else if (!hasDraft(contentType, slug) && !generateFn) {
     return blockedExecution('missing draft for review', currentState);
@@ -863,10 +929,29 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
     missingArtifacts = artifactCheckBefore.missing;
     console.log(`[brain] Artifact integrity failure before review: ${missingArtifacts.join(', ')}`);
     if (generateFn) {
-      // Attempt to recover: clean directory + regenerate once
       console.log(`[brain] Attempting recovery — cleaning partial draft and regenerating...`);
       cleanDraftDirectory(contentType, slug);
-      const regenResult = generateFn();
+      const { result: regenResult, detectedSlug: recoverySlug, slugMismatch: recoveryMismatch } =
+        invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug);
+      generatedSlug = recoverySlug;
+      if (regenResult.status === 0 && recoveryMismatch) {
+        slugIntegrityResult = 'mismatch';
+        slugMismatchAction  = 'wrong_draft_deleted_marked_manual_revision';
+        console.log(`[brain] Slug mismatch during recovery: expected ${canonicalSlug}, got ${recoverySlug}`);
+        cleanDraftDirectory(contentType, recoverySlug);
+        cleanDraftDirectory(contentType, canonicalSlug);
+        markTopicManualRevision(contentType, canonicalSlug, `slug mismatch during recovery: expected ${canonicalSlug}, got ${recoverySlug}`);
+        return {
+          ...blockedExecution(`slug mismatch during recovery: expected ${canonicalSlug}, got ${recoverySlug}`, currentState),
+          ...slugFields(),
+          draft_artifact_check_before_review: 'failed',
+          draft_artifact_check_after_repair:  'not_reached',
+          missing_artifacts:                  missingArtifacts,
+          regeneration_after_repair:          'attempted',
+          artifact_integrity_result:          'mismatch_recovery',
+        };
+      }
+      if (regenResult.status === 0) slugIntegrityResult = 'passed';
       const recheck = ensureDraftArtifacts(contentType, slug);
       if (regenResult.status !== 0 || !recheck.ok) {
         cleanDraftDirectory(contentType, slug);
@@ -875,11 +960,12 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
         artifactIntegrityResult = 'recovery_failed';
         return {
           ...blockedExecution(reason, currentState),
-          draft_artifact_check_before_review:  'failed',
-          draft_artifact_check_after_repair:   'not_reached',
-          missing_artifacts:                   missingArtifacts,
-          regeneration_after_repair:           'attempted',
-          artifact_integrity_result:           'recovery_failed',
+          ...slugFields(),
+          draft_artifact_check_before_review: 'failed',
+          draft_artifact_check_after_repair:  'not_reached',
+          missing_artifacts:                  missingArtifacts,
+          regeneration_after_repair:          'attempted',
+          artifact_integrity_result:          'recovery_failed',
         };
       }
       generationResult = 'draft regenerated for artifact recovery';
@@ -891,15 +977,17 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
       artifactIntegrityResult = 'missing_no_generator';
       return {
         ...blockedExecution(`draft artifacts missing: ${missingArtifacts.join(', ')}`, currentState),
-        draft_artifact_check_before_review:  'failed',
-        draft_artifact_check_after_repair:   'not_reached',
-        missing_artifacts:                   missingArtifacts,
-        regeneration_after_repair:           'not_possible',
-        artifact_integrity_result:           'missing_no_generator',
+        ...slugFields(),
+        draft_artifact_check_before_review: 'failed',
+        draft_artifact_check_after_repair:  'not_reached',
+        missing_artifacts:                  missingArtifacts,
+        regeneration_after_repair:          'not_possible',
+        artifact_integrity_result:          'missing_no_generator',
       };
     }
   } else {
     artifactIntegrityResult = 'ok';
+    if (generateFn && !generatedSlug) slugIntegrityResult = 'not_applicable';
   }
 
   // ── First review attempt ──────────────────────────────────────────────────
@@ -934,14 +1022,49 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
           // DELETE the entire draft directory so no partial state can be left behind
           cleanDraftDirectory(contentType, slug);
 
-          const regenResult = generateFn();
+          const { result: regenResult, detectedSlug: repairSlug, slugMismatch: repairMismatch } =
+            invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug);
+          generatedSlug = repairSlug;
+
+          if (regenResult.status === 0 && repairMismatch) {
+            slugIntegrityResult = 'mismatch';
+            slugMismatchAction  = 'wrong_draft_deleted_marked_manual_revision';
+            const reason = `slug mismatch after repair: expected ${canonicalSlug}, got ${repairSlug}`;
+            console.log(`[brain] ${reason}`);
+            cleanDraftDirectory(contentType, repairSlug);
+            cleanDraftDirectory(contentType, canonicalSlug);
+            markTopicManualRevision(contentType, canonicalSlug, reason);
+            authorityRepairResult = `blocked: ${reason}`;
+            regenerationAfterRepair = 'mismatch';
+            artifactIntegrityResult = 'mismatch_after_repair';
+            return {
+              generation_result:           generationResult,
+              publish_result:              `blocked: ${reason}`,
+              telegram_result:             telegramStatus(),
+              command_status:              0,
+              current_state:               review.current_state,
+              transition_path:             [...review.transition_path, 'manual_revision_required'],
+              regeneration_attempts:       review.regeneration_attempts,
+              review_result:               `failed: ${failedChecks.join(', ')}`,
+              approval_reason:             '',
+              publish_gate_result:         `blocked: ${reason}`,
+              authority_repair_attempted:  authorityRepairAttempted,
+              authority_repair_result:     authorityRepairResult,
+              repaired_orphans_count:      repairedOrphansCount,
+              repaired_links_count:        repairedLinksCount,
+              review_after_repair:         'not_reached',
+              publish_after_repair:        false,
+              ...slugFields(),
+              ...artifactFields(),
+            };
+          }
+          if (regenResult.status === 0) slugIntegrityResult = 'passed';
 
           // Verify artifacts exist regardless of exit code
           const artifactRecheck = ensureDraftArtifacts(contentType, slug);
           artifactCheckAfterRepair = artifactRecheck.ok ? 'passed' : 'failed';
 
           if (regenResult.status !== 0 || !artifactRecheck.ok) {
-            // Regeneration failed or produced incomplete output — clean up and stop safely
             missingArtifacts = artifactRecheck.missing;
             cleanDraftDirectory(contentType, slug);
             const reason = regenResult.status !== 0
@@ -968,11 +1091,8 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
               repaired_links_count:        repairedLinksCount,
               review_after_repair:         'not_reached',
               publish_after_repair:        false,
-              draft_artifact_check_before_review:  artifactCheckBefore ? (artifactCheckBefore.ok ? 'passed' : 'failed') : 'not_checked',
-              draft_artifact_check_after_repair:   artifactCheckAfterRepair,
-              missing_artifacts:           missingArtifacts,
-              regeneration_after_repair:   regenerationAfterRepair,
-              artifact_integrity_result:   artifactIntegrityResult,
+              ...slugFields(),
+              ...artifactFields(),
             };
           }
 
@@ -985,7 +1105,6 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
         reviewAfterRepair = review.approved ? 'passed' : `failed: ${review.failed_checks.join(', ')}`;
 
       } catch (repairError) {
-        // If repair throws unexpectedly, clean up and stop safely
         cleanDraftDirectory(contentType, slug);
         markTopicManualRevision(contentType, slug, `repair cycle error: ${repairError.message}`);
         authorityRepairResult = `repair_error: ${repairError.message}`;
@@ -999,8 +1118,6 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
       authorityRepairResult = 'skipped: non-repairable failures present';
     }
   }
-
-  const artifactCheckBeforeLabel = artifactCheckBefore ? (artifactCheckBefore.ok ? 'passed' : 'failed') : 'not_checked';
 
   if (!review.approved) {
     return {
@@ -1020,11 +1137,8 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
       repaired_links_count:        repairedLinksCount,
       review_after_repair:         reviewAfterRepair,
       publish_after_repair:        false,
-      draft_artifact_check_before_review:  artifactCheckBeforeLabel,
-      draft_artifact_check_after_repair:   artifactCheckAfterRepair || 'not_reached',
-      missing_artifacts:           missingArtifacts,
-      regeneration_after_repair:   regenerationAfterRepair,
-      artifact_integrity_result:   artifactIntegrityResult,
+      ...slugFields(),
+      ...artifactFields(),
     };
   }
 
@@ -1046,11 +1160,9 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
     repaired_links_count:        repairedLinksCount,
     review_after_repair:         reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
     publish_after_repair:        authorityRepairAttempted && publish.status === 0,
-    draft_artifact_check_before_review:  artifactCheckBeforeLabel,
-    draft_artifact_check_after_repair:   artifactCheckAfterRepair || 'not_needed',
-    missing_artifacts:           missingArtifacts,
-    regeneration_after_repair:   regenerationAfterRepair,
-    artifact_integrity_result:   artifactIntegrityResult,
+    ...slugFields(),
+    ...artifactFields(),
+    draft_artifact_check_after_repair: artifactCheckAfterRepair || 'not_needed',
   };
 }
 
@@ -1218,6 +1330,16 @@ function printDecisionReport(report) {
     console.log(`  review_after_repair:        ${report.review_after_repair}`);
     console.log(`  publish_after_repair:       ${report.publish_after_repair}`);
   }
+  if (report.slug_integrity_result !== undefined) {
+    console.log('\n  SLUG INTEGRITY');
+    console.log('  ----------------------------------------------------');
+    console.log(`  canonical_slug:        ${report.canonical_slug}`);
+    console.log(`  generated_slug:        ${report.generated_slug}`);
+    console.log(`  slug_integrity_result: ${report.slug_integrity_result}`);
+    if (report.slug_mismatch_action && report.slug_mismatch_action !== 'none') {
+      console.log(`  slug_mismatch_action:  ${report.slug_mismatch_action}`);
+    }
+  }
   if (report.artifact_integrity_result !== undefined) {
     console.log('\n  DRAFT ARTIFACT INTEGRITY');
     console.log('  ----------------------------------------------------');
@@ -1302,6 +1424,10 @@ function main() {
     missing_artifacts:          execution.missing_artifacts,
     regeneration_after_repair:  execution.regeneration_after_repair,
     artifact_integrity_result:  execution.artifact_integrity_result,
+    canonical_slug:             execution.canonical_slug,
+    generated_slug:             execution.generated_slug,
+    slug_integrity_result:      execution.slug_integrity_result,
+    slug_mismatch_action:       execution.slug_mismatch_action,
   };
   printDecisionReport(report);
   process.exit(execution.command_status);
