@@ -14,6 +14,7 @@
 const fs    = require('fs');
 const path  = require('path');
 const https = require('https');
+const { appendSnapshot } = require('./analyze-regime-transition');
 
 const ROOT        = path.resolve(__dirname, '..');
 const STATE_PATH  = path.join(ROOT, 'data', 'live-market-state.json');
@@ -440,6 +441,29 @@ async function fetchAndUpdate() {
   };
   fs.writeFileSync(REGIME_PATH, JSON.stringify(regimeOutput, null, 2) + '\n', 'utf8');
   console.log('[WRITE] Updated data/market-regime-state.json');
+
+  // Append rolling regime snapshot for transition analysis
+  try {
+    appendSnapshot({
+      date:               ts.slice(0, 10),
+      market_regime:      regime.market_regime,
+      volatility_regime:  regime.volatility_regime,
+      risk_regime:        regime.risk_regime,
+      rates_trend:        regime.rates_trend,
+      ai_sector_momentum: regime.ai_sector_momentum,
+      defensive_rotation: regime.defensive_rotation,
+      sector_leadership:  regime.sector_leadership || [],
+      vix_level:          regime.vix_level,
+      spy_change_pct:     collected.sp500    && collected.sp500.change_pct,
+      qqq_change_pct:     collected.nasdaq   && collected.nasdaq.change_pct,
+      iwm_change_pct:     collected.russell2000 && collected.russell2000.change_pct,
+      yield_spread_bps:   yield_spread_2y10y && yield_spread_2y10y.spread_bps != null ? yield_spread_2y10y.spread_bps : null,
+      us10y_yield:        collected.us10y_yield && collected.us10y_yield.value,
+    });
+    console.log('[WRITE] Appended regime snapshot to data/market-regime-history.json');
+  } catch (e) {
+    console.warn(`[WARN] Could not append regime snapshot: ${e.message}`);
+  }
 }
 
 // ── API helpers ───────────────────────────────────────────────────────────────
