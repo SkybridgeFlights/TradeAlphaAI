@@ -4,6 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { calculateConfidence } = require('./calculate-market-confidence.js');
+const { readMemory, buildSnapshot } = require('./macro-intelligence-core');
+const { detectNarrativeDrift } = require('./detect-narrative-drift');
+const { buildRegimeSequence } = require('./build-regime-sequence');
+const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 
 const ROOT = path.resolve(__dirname, '..');
 const EDITORIAL_QUEUE = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -111,6 +115,8 @@ function formatPost(topic, locale) {
     const lines = [`${toneEmoji} ${label}`, title, '', summary];
     if (biasBadge) lines.push('', biasBadge);
     if (liveRegimeLine) lines.push('', liveRegimeLine);
+    const evolution = buildTelegramEvolutionBlock(topic, ar);
+    if (evolution.length) lines.push('', ...evolution);
     lines.push('', disclaimer, '', url, '', hashtags(topic, locale));
     return { locale, text: lines.join('\n') };
   }
@@ -119,6 +125,32 @@ function formatPost(topic, locale) {
     locale,
     text: `${categoryEmoji(topic)} ${title}\n\n${summary}\n\n${url}\n\n${hashtags(topic, locale)}`
   };
+}
+
+function buildTelegramEvolutionBlock(topic, ar) {
+  try {
+    const current = buildSnapshot({ slug: topic.slug, topic });
+    const memory = readMemory();
+    const drift = detectNarrativeDrift(current, memory);
+    const sequence = buildRegimeSequence(current, memory);
+    const divergence = detectCrossAssetDivergence(current);
+    if (ar) {
+      return [
+        `Regime shift: ${truncate(drift.notes[0] || 'Macro narrative continuity is stable.', 120)}`,
+        `Dominant condition: ${truncate(current.dominant_macro_narrative, 110)}`,
+        `Internal divergence: ${truncate(divergence.primary_tension.signal, 90)}`,
+        `Risk appetite: ${current.dominant_risk_regime || 'unverified'} · ${sequence.primary_sequence.transition_maturity}`
+      ];
+    }
+    return [
+      `Regime transition note: ${truncate(drift.notes[0] || 'Macro narrative continuity is stable.', 135)}`,
+      `Dominant macro condition: ${truncate(current.dominant_macro_narrative, 125)}`,
+      `Internal divergence signal: ${truncate(divergence.primary_tension.signal, 100)}`,
+      `Risk appetite state: ${current.dominant_risk_regime || 'unverified'} · sequence ${sequence.primary_sequence.transition_maturity}`
+    ];
+  } catch (_) {
+    return [];
+  }
 }
 
 function resolveTitle(topic, locale) {

@@ -183,6 +183,11 @@ function marketOutlookHardGateFailures(entry) {
     'has_scenarios',
     'scenario_structure',
     'institutional_density',
+    'continuity_depth',
+    'cross_asset_relationships',
+    'transmission_chains',
+    'supported_directional_claims',
+    'narrative_originality',
     'specificity',
     'no_generic_filler',
   ];

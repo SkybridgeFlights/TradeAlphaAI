@@ -4,6 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { generateIntelligence } = require('./generate-market-intelligence.js');
+const { appendSnapshot, buildSnapshot } = require('./macro-intelligence-core');
+const { detectNarrativeDrift } = require('./detect-narrative-drift');
+const { buildRegimeSequence } = require('./build-regime-sequence');
+const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -88,6 +92,7 @@ console.log(`AI-generated: ${aiMode}`);
 console.log(`Confidence: ${intelligence.confidence.label}`);
 console.log(`Data completeness: ${intelligence.data_completeness}`);
 if (aiMode) console.log(`Directional bias: ${aiContent.en.directional_bias}`);
+updateNarrativeMemory(topic, aiContent);
 
 if (aiMode) {
   if (attemptAutoApproval(topic, topic.slug)) {
@@ -335,6 +340,26 @@ ${contextualCards}
 
   function marketCard(text, heading = '') {
     return `          <article class="market-card">${heading ? `<span class="market-card-kicker">${escapeHtml(heading)}</span>` : ''}<p class="market-copy">${escapeHtml(text)}</p></article>`;
+  }
+}
+
+function updateNarrativeMemory(topicItem, aiContentValue) {
+  try {
+    const snapshot = buildSnapshot({ slug: topicItem.slug, topic: topicItem, generatedContent: aiContentValue });
+    const memoryBefore = require('./macro-intelligence-core').readMemory();
+    const drift = detectNarrativeDrift(snapshot, memoryBefore);
+    const sequence = buildRegimeSequence(snapshot, memoryBefore);
+    const divergence = detectCrossAssetDivergence(snapshot);
+    snapshot.drift_notes = drift.notes;
+    snapshot.regime_sequence = sequence.primary_sequence;
+    snapshot.cross_asset_divergence = divergence.primary_tension;
+    appendSnapshot(snapshot);
+    console.log(`[NARRATIVE MEMORY] Appended snapshot: ${snapshot.id}`);
+    console.log(`[NARRATIVE MEMORY] Drift: ${drift.notes[0]}`);
+    console.log(`[NARRATIVE MEMORY] Sequence: ${sequence.primary_sequence.pattern}`);
+    console.log(`[NARRATIVE MEMORY] Divergence: ${divergence.primary_tension.signal}`);
+  } catch (error) {
+    console.log(`[NARRATIVE MEMORY] Update skipped: ${error.message}`);
   }
 }
 
@@ -642,7 +667,7 @@ function attemptAutoApproval(topicItem, slugValue) {
   const report = JSON.parse(result.stdout);
   const entry = (report.results || []).find((item) => item.slug === slugValue);
   if (!entry || entry.quality_score < 96) return false;
-  const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality', 'has_directional_bias', 'has_scenarios', 'scenario_structure', 'institutional_density', 'specificity', 'no_generic_filler'];
+  const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality', 'has_directional_bias', 'has_scenarios', 'scenario_structure', 'institutional_density', 'continuity_depth', 'cross_asset_relationships', 'transmission_chains', 'supported_directional_claims', 'narrative_originality', 'specificity', 'no_generic_filler'];
   if (required.some((name) => entry.checks[name] !== true)) return false;
   const today = new Date().toISOString().slice(0, 10);
   if (topicItem.status !== 'published') topicItem.status = 'reviewed';

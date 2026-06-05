@@ -58,6 +58,11 @@ function scoreDraft(dir) {
     checks.has_scenarios &&
     checks.scenario_structure &&
     checks.institutional_density &&
+    checks.continuity_depth &&
+    checks.cross_asset_relationships &&
+    checks.transmission_chains &&
+    checks.supported_directional_claims &&
+    checks.narrative_originality &&
     checks.specificity &&
     checks.no_generic_filler
   );
@@ -96,14 +101,58 @@ function marketOutlookChecks(en, ar, enBody, arBody, combined) {
     public_placeholder_risk: !banned.some((phrase) => lower.includes(phrase)),
     market_context_quality: /(policy|inflation|earnings|volatility|sector|ETF|risk|liquidity|rates|Federal Reserve)/i.test(enBody),
     layout_quality: requiredSections.every((id) => en.includes(`id="${id}"`) && ar.includes(`id="${id}"`)),
-    has_directional_bias: /(cautiously bullish|cautiously bearish|neutral|mixed|elevated uncertainty|directional bias|الميل الاتجاهي|صاعد بحذر|هابط بحذر|محايد)/i.test(combined),
     has_scenarios: /(bullish scenario|bearish scenario|السيناريو الصاعد|السيناريو الهابط)/i.test(combined),
     has_directional_bias: checkDirectionalBias(combined),
     scenario_structure: checkScenarioStructure(enBody),
     institutional_density: checkInstitutionalDensity(enBody),
+    continuity_depth: checkContinuityDepth(enBody),
+    cross_asset_relationships: checkCrossAssetRelationships(enBody),
+    transmission_chains: checkTransmissionChains(enBody),
+    supported_directional_claims: checkSupportedDirectionalClaims(enBody),
+    narrative_originality: checkNarrativeOriginality(enBody),
     specificity: checkSpecificity(enBody),
     no_generic_filler: checkNoGenericFiller(enBody),
   };
+}
+
+function checkContinuityDepth(enBody) {
+  return /(baseline|prior|previous|earlier|extends|persist|deteriorat|improv|unlike|transition|memory window|regime shift|stabilization phase|defensive rotation phase)/i.test(enBody);
+}
+
+function checkCrossAssetRelationships(enBody) {
+  const relationships = [
+    /\b(TLT|duration|10-year|2-year|yield curve)\b/i,
+    /\b(QQQ|SPY|IWM|RSP|breadth|participation)\b/i,
+    /\b(VIX|volatility regime|implied vol)\b/i,
+    /\b(DXY|dollar|GLD|gold)\b/i,
+    /\b(XLK|XLF|XLE|XLU|XLV|sector rotation)\b/i
+  ];
+  return relationships.filter((pattern) => pattern.test(enBody)).length >= 3;
+}
+
+function checkTransmissionChains(enBody) {
+  const chainSignals = (enBody.match(/->|→|transmission mechanism|transmission chain|leads to|results in|repric|flows? into|pressures?|supports?/gi) || []).length;
+  return chainSignals >= 4;
+}
+
+function checkSupportedDirectionalClaims(enBody) {
+  const directional = /(bullish|bearish|constructive|defensive|risk-on|risk-off|upside|downside|supportive|pressure)/i.test(enBody);
+  if (!directional) return false;
+  return /(if|when|should|conditional|catalyst|transmission|mechanism|because|driven by|via|through)/i.test(enBody);
+}
+
+function checkNarrativeOriginality(enBody) {
+  const banned = [
+    'markets remain uncertain',
+    'the outlook remains uncertain',
+    'investors should remain cautious',
+    'market conditions can change',
+    'various macroeconomic factors'
+  ];
+  const lower = enBody.toLowerCase();
+  if (banned.some((phrase) => lower.includes(phrase))) return false;
+  const sentences = enBody.split(/[.!?]+/).map((item) => item.trim().toLowerCase()).filter((item) => item.length > 45);
+  return new Set(sentences).size >= Math.ceil(sentences.length * 0.85);
 }
 
 function checkDirectionalBias(text) {

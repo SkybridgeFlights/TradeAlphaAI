@@ -18,6 +18,10 @@ const https = require('https');
 const { buildNarrative }    = require('./build-market-narrative');
 const { analyzeTransition } = require('./analyze-regime-transition');
 const { detectRetailPhrasing, detectFinancialAdvice, detectInstitutionalPhrasing } = require('./institutional-language-filter');
+const { readMemory, buildSnapshot } = require('./macro-intelligence-core');
+const { detectNarrativeDrift } = require('./detect-narrative-drift');
+const { buildRegimeSequence } = require('./build-regime-sequence');
+const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -295,7 +299,33 @@ ABSOLUTE PROHIBITIONS — any of these in your output will cause hard rejection:
 - "it remains to be seen", "dynamic market landscape", "at the end of the day", "broadly speaking"`;
 }
 
-function buildMarketContextLayer(topic, fw, narrativeContext, calendarText) {
+function buildContinuityContext(topic) {
+  const memory = readMemory();
+  const current = buildSnapshot({ slug: topic.slug, topic });
+  const drift = detectNarrativeDrift(current, memory);
+  const sequence = buildRegimeSequence(current, memory);
+  const divergence = detectCrossAssetDivergence(current);
+  const prior = (memory.snapshots || []).slice(-3).reverse();
+  const priorContext = prior.length
+    ? prior.map((item, index) => {
+      const stance = item.directional_bias ? `directional bias ${item.directional_bias}` : 'directional bias unverified';
+      return `${index + 1}. ${item.dominant_macro_narrative || 'Prior macro narrative mixed'}; ${stance}; breadth ${item.breadth_state || 'unverified'}; concentration ${item.concentration_risk || 'unverified'}.`;
+    }).join('\n')
+    : 'No prior narrative snapshots yet. Establish a baseline without claiming a regime shift.';
+
+  return `continuity_context
+Prior narrative memory:
+${priorContext}
+Narrative drift notes:
+${drift.notes.map((note) => `- ${note}`).join('\n')}
+Regime sequence:
+- ${sequence.primary_sequence.note} Confidence ${sequence.primary_sequence.sequence_confidence}; maturity ${sequence.primary_sequence.transition_maturity}; persistence ${sequence.primary_sequence.persistence_duration}.
+Cross-asset divergence:
+- ${divergence.primary_tension.signal}: ${divergence.primary_tension.commentary}
+Continuity writing rule: reference prior context naturally without naming article titles. Use varied phrasing such as "the prior regime", "the recent memory window", "earlier defensive rotation", or "the previous stabilization phase".`;
+}
+
+function buildMarketContextLayer(topic, fw, narrativeContext, calendarText, continuityContext) {
   const today = new Date().toISOString().slice(0, 10);
   const lensesText = fw.lenses.map((l, i) => `${i + 1}. ${l}`).join('\n');
   const dataBlock = narrativeContext
@@ -314,7 +344,8 @@ ${lensesText}
 Directional bias context: ${fw.bias_note}
 ${dataBlock}
 Calendar:
-${calendarText}`;
+${calendarText}
+${continuityContext}`;
 }
 
 function buildAnalyticalRequirementsLayer() {
@@ -326,7 +357,9 @@ function buildAnalyticalRequirementsLayer() {
 4. Reference at least two named instruments across the analytical sections.
 5. Specificity can be ticker/instrument based or macro institutional: yield curve, duration, breadth, participation, liquidity, volatility regime, risk appetite, positioning, sector rotation, or transmission mechanism.
 6. Each analytical section must contain institutional signal density; avoid generic market structure prose.
-7. executive_summary must state the normalized directional stance and the structural condition behind it.`;
+7. executive_summary must state the normalized directional stance and the structural condition behind it.
+8. Continuity must explain what changed, persisted, deteriorated, or improved versus the narrative memory window.
+9. Include at least one cross-asset divergence or confirmation and the transmission chain behind it.`;
 }
 
 function buildFormattingRequirementsLayer() {
@@ -350,10 +383,10 @@ Return only valid JSON with this shape:
 }`;
 }
 
-function buildEnUserPrompt(topic, fw, narrativeContext, calendarText) {
+function buildEnUserPrompt(topic, fw, narrativeContext, calendarText, continuityContext = buildContinuityContext(topic)) {
   const promptLayers = {
     system_core: 'provided in system message',
-    market_context: buildMarketContextLayer(topic, fw, narrativeContext, calendarText),
+    market_context: buildMarketContextLayer(topic, fw, narrativeContext, calendarText, continuityContext),
     analytical_requirements: buildAnalyticalRequirementsLayer(),
     formatting_requirements: buildFormattingRequirementsLayer(),
   };

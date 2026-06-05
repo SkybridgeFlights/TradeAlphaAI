@@ -15,6 +15,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const { buildAdvancedInternals } = require('./macro-intelligence-core');
 
 const ROOT        = path.resolve(__dirname, '..');
 const LIVE_PATH   = path.join(ROOT, 'data', 'live-market-state.json');
@@ -82,6 +83,7 @@ function computeInternals(live, sectorEtfs) {
       : 'balanced';
   }
 
+  const advanced = buildAdvancedInternals(live, { snapshots: [] });
   return {
     sector_breadth_score: sectorBreadthScore,
     breadth_signal: breadthSignal,
@@ -91,6 +93,19 @@ function computeInternals(live, sectorEtfs) {
     participation_quality: participationQuality,
     sectors_positive: sectorsPositive,
     sectors_total: sectorsTotal,
+    equal_weight_vs_cap_weight_divergence: advanced.equal_weight_vs_cap_weight_divergence,
+    rolling_breadth_persistence: advanced.rolling_breadth_persistence,
+    participation_deterioration: advanced.participation_deterioration,
+    leadership_concentration: advanced.leadership_concentration,
+    concentration_risk: advanced.concentration_risk,
+    momentum_diffusion: advanced.momentum_diffusion,
+    sector_participation_score: advanced.sector_participation_score,
+    volatility_compression_expansion_rate: advanced.volatility_compression_expansion_rate,
+    volatility_rate_state: advanced.volatility_rate_state,
+    ai_semiconductor_participation: advanced.ai_semiconductor_participation,
+    cyclical_participation: advanced.cyclical_participation,
+    defensive_participation: advanced.defensive_participation,
+    small_cap_confirmation: advanced.small_cap_confirmation
   };
 }
 
