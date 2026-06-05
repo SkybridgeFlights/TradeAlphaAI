@@ -178,7 +178,7 @@ function renderArticle(topic, locale) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="robots" content="index,follow" />
-  <title>${escapeHtml(title)} | TradeAlphaAI Research Draft</title>
+  <title>${escapeHtml(title)} | TradeAlphaAI</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <link rel="canonical" href="${canonical}" />
   <link rel="alternate" hreflang="en" href="${SITE_URL}/insights/${topic.slug}.html" />

@@ -82,12 +82,14 @@ function checkPair(entry) {
   if (/[\u0600-\u06FF]/.test(enVisible)) failures.push(`${enPath}: English article contains Arabic visible text`);
   if (!/[\u0600-\u06FF]/.test(arVisible)) failures.push(`${arPath}: Arabic article has no Arabic body text`);
   if (count(arHtml, /[\u0600-\u06FF]/g) < 900) failures.push(`${arPath}: Arabic body appears incomplete`);
-  if (/\b(Executive Summary|Market Context|Frequently Asked Questions|Related Research|Read article|This article|investment advice|security recommendations|price targets)\b/i.test(arVisible)) {
-    failures.push(`${arPath}: Arabic article contains untranslated English body/UI text`);
+  const arBodyMatch = arVisible.match(/\b(Executive Summary|Market Context|Frequently Asked Questions|Related Research|Read article|This article|investment advice|security recommendations|price targets)\b/i);
+  if (arBodyMatch) {
+    failures.push(`${arPath}: Arabic article contains untranslated English body/UI text — matched "${arBodyMatch[0]}"`);
   }
   const arMeta = `${entry.languages?.ar?.title || ''} ${entry.languages?.ar?.summary || ''}`;
-  if (/\b(Interest Rate|Research|Market Context|Executive Summary|Growth Stocks| In )\b/i.test(arMeta)) {
-    failures.push(`${arPath}: Arabic registry metadata contains untranslated English text`);
+  const arMetaMatch = arMeta.match(/\b(Interest Rate|Research|Market Context|Executive Summary|Growth Stocks| In )\b/i);
+  if (arMetaMatch) {
+    failures.push(`${arPath}: Arabic registry metadata contains untranslated English text — matched "${arMetaMatch[0]}" in title: "${(entry.languages?.ar?.title || '').slice(0, 120)}"`);
   }
   if (/placeholder|lorem ipsum/i.test(arVisible)) failures.push(`${arPath}: Arabic article contains placeholder wording`);
 }
