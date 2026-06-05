@@ -1,0 +1,135 @@
+name: Autonomous Publishing Brain
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Brain mode'
+        required: true
+        type: choice
+        options:
+          - status
+          - dry_run
+          - generate_only
+          - publish_ready
+          - full_pipeline
+        default: status
+      content_type:
+        description: 'Content type'
+        required: true
+        type: choice
+        options:
+          - auto
+          - editorial
+          - market-outlook
+          - news-analysis
+          - all
+        default: auto
+      dry_run:
+        description: 'Validate and report without publishing'
+        required: true
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+        default: 'true'
+      manual_topic:
+        description: 'Optional manual topic candidate; safety gates still apply'
+        required: false
+        default: ''
+      force_content_type:
+        description: 'Force requested content type instead of autonomous selection'
+        required: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+  schedule:
+    # Conservative autonomy: scheduled runs report decisions only. Real publishing is manual dispatch.
+    - cron: '30 9 * * *'
+    - cron: '0 10 * * 1,2,4,6'
+
+permissions:
+  contents: write
+
+jobs:
+  autonomous-publishing-brain:
+    runs-on: ubuntu-latest
+    env:
+      MODE: ${{ github.event.inputs.mode || 'dry_run' }}
+      CONTENT_TYPE: ${{ github.event.inputs.content_type || 'auto' }}
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
+      MANUAL_TOPIC: ${{ github.event.inputs.manual_topic || '' }}
+      FORCE_CONTENT_TYPE: ${{ github.event.inputs.force_content_type || 'false' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      - name: Log autonomous publishing context
+        run: |
+          echo "======================================================"
+          echo "  Autonomous Publishing Brain"
+          echo "  Mode:               ${MODE}"
+          echo "  Content type:       ${CONTENT_TYPE}"
+          echo "  Dry run:            ${DRY_RUN}"
+          echo "  Manual topic:       ${MANUAL_TOPIC:-'(none)'}"
+          echo "  Force content type: ${FORCE_CONTENT_TYPE}"
+          echo "  Trigger:            ${{ github.event_name }}"
+          echo "  Run ID:             ${{ github.run_id }}"
+          echo "======================================================"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Preflight production gates
+        run: |
+          npm run check:editorial
+          npm run check:language-purity
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+
+      - name: Run autonomous publishing brain
+        run: |
+          node tools/autonomous-publishing-brain.js \
+            --mode="${MODE}" \
+            --content-type="${CONTENT_TYPE}" \
+            --dry-run="${DRY_RUN}" \
+            --manual-topic="${MANUAL_TOPIC}" \
+            --force-content-type="${FORCE_CONTENT_TYPE}"
+
+      - name: Validate generated changes
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          npm run check:editorial
+          npm run check:language-purity
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+
+      - name: Commit publishing changes
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data drafts insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook sitemap*.xml search-index.json article-registry.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No publishing changes to commit."
+          else
+            git commit -m "Autonomous publishing update"
+            git push origin "${GITHUB_REF_NAME}"
+          fi
