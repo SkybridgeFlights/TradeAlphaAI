@@ -882,12 +882,17 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
   let repairRegenStatusOverride    = false;
 
   // Authority repair tracking
-  let authorityRepairAttempted = false;
-  let authorityRepairResult    = 'not_attempted';
-  let repairedOrphansCount     = 0;
-  let repairedLinksCount       = 0;
-  let reviewAfterRepair        = null;
-  let regenerationAfterRepair  = 'not_attempted';
+  let authorityRepairAttempted  = false;
+  let authorityRepairResult     = 'not_attempted';
+  let repairedOrphansCount      = 0;
+  let repairedLinksCount        = 0;
+  let reviewAfterRepair         = null;
+  let regenerationAfterRepair   = 'not_attempted';
+  let targetedRepairAttempted   = false;
+  let targetedRepairResult      = null;
+  let targetedLinksAdded        = 0;
+  let targetedPairsAdded        = 0;
+  let targetedRepairChecksFix   = [];
 
   if (!slug) {
     return blockedExecution('no eligible topic selected for reviewed pipeline', currentState);
@@ -1035,10 +1040,18 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
           maxOrphanRepairs:   5,
           maxLinkInjections:  10,
           quiet:              false,
+          targetSlug:         canonicalSlug,
+          targetContentType:  contentType,
+          failedChecks:       failedChecks,
         });
-        repairedOrphansCount  = repairSummary.orphan_repairs || 0;
-        repairedLinksCount    = repairSummary.injected_links  || 0;
-        authorityRepairResult = repairSummary.success ? 'completed' : 'completed_with_warnings';
+        repairedOrphansCount        = repairSummary.orphan_repairs          || 0;
+        repairedLinksCount          = repairSummary.injected_links           || 0;
+        authorityRepairResult       = repairSummary.success ? 'completed' : 'completed_with_warnings';
+        targetedRepairAttempted     = repairSummary.targeted_repair_attempted || false;
+        targetedRepairResult        = repairSummary.targeted_repair_result;
+        targetedLinksAdded          = repairSummary.targeted_links_added      || 0;
+        targetedPairsAdded          = repairSummary.targeted_pairs_added      || 0;
+        targetedRepairChecksFix     = repairSummary.targeted_repair_checks_fixed || [];
 
         if (generateFn) {
           console.log(`[brain] Regenerating draft after repair cycle...`);
@@ -1075,12 +1088,17 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
               review_result:               `failed: ${failedChecks.join(', ')}`,
               approval_reason:             '',
               publish_gate_result:         `blocked: ${reason}`,
-              authority_repair_attempted:  authorityRepairAttempted,
-              authority_repair_result:     authorityRepairResult,
-              repaired_orphans_count:      repairedOrphansCount,
-              repaired_links_count:        repairedLinksCount,
-              review_after_repair:         'not_reached',
-              publish_after_repair:        false,
+              authority_repair_attempted:    authorityRepairAttempted,
+              authority_repair_result:       authorityRepairResult,
+              repaired_orphans_count:        repairedOrphansCount,
+              repaired_links_count:          repairedLinksCount,
+              review_after_repair:           'not_reached',
+              publish_after_repair:          false,
+              targeted_repair_attempted:     targetedRepairAttempted,
+              targeted_repair_result:        targetedRepairResult,
+              targeted_links_added:          targetedLinksAdded,
+              targeted_pairs_added:          targetedPairsAdded,
+              targeted_repair_checks_fixed:  targetedRepairChecksFix,
               ...slugFields(),
               ...artifactFields(),
             };
@@ -1112,12 +1130,17 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
               review_result:               `failed: ${failedChecks.join(', ')}`,
               approval_reason:             '',
               publish_gate_result:         `blocked: ${reason}`,
-              authority_repair_attempted:  authorityRepairAttempted,
-              authority_repair_result:     authorityRepairResult,
-              repaired_orphans_count:      repairedOrphansCount,
-              repaired_links_count:        repairedLinksCount,
-              review_after_repair:         'not_reached',
-              publish_after_repair:        false,
+              authority_repair_attempted:    authorityRepairAttempted,
+              authority_repair_result:       authorityRepairResult,
+              repaired_orphans_count:        repairedOrphansCount,
+              repaired_links_count:          repairedLinksCount,
+              review_after_repair:           'not_reached',
+              publish_after_repair:          false,
+              targeted_repair_attempted:     targetedRepairAttempted,
+              targeted_repair_result:        targetedRepairResult,
+              targeted_links_added:          targetedLinksAdded,
+              targeted_pairs_added:          targetedPairsAdded,
+              targeted_repair_checks_fixed:  targetedRepairChecksFix,
               ...slugFields(),
               ...artifactFields(),
             };
@@ -1158,12 +1181,17 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
       review_result:               `failed: ${review.failed_checks.join(', ')}`,
       approval_reason:             review.approval_reason || '',
       publish_gate_result:         review.publish_gate_result,
-      authority_repair_attempted:  authorityRepairAttempted,
-      authority_repair_result:     authorityRepairResult,
-      repaired_orphans_count:      repairedOrphansCount,
-      repaired_links_count:        repairedLinksCount,
-      review_after_repair:         reviewAfterRepair,
-      publish_after_repair:        false,
+      authority_repair_attempted:    authorityRepairAttempted,
+      authority_repair_result:       authorityRepairResult,
+      repaired_orphans_count:        repairedOrphansCount,
+      repaired_links_count:          repairedLinksCount,
+      review_after_repair:           reviewAfterRepair,
+      publish_after_repair:          false,
+      targeted_repair_attempted:     targetedRepairAttempted,
+      targeted_repair_result:        targetedRepairResult,
+      targeted_links_added:          targetedLinksAdded,
+      targeted_pairs_added:          targetedPairsAdded,
+      targeted_repair_checks_fixed:  targetedRepairChecksFix,
       ...slugFields(),
       ...artifactFields(),
     };
@@ -1171,22 +1199,27 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
 
   const publish = publishFn(slug);
   return {
-    generation_result:           generationResult,
-    publish_result:              publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
-    telegram_result:             telegramStatus(),
-    command_status:              publish.status,
-    current_state:               review.current_state,
-    transition_path:             [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
-    regeneration_attempts:       review.regeneration_attempts,
-    review_result:               'passed',
-    approval_reason:             review.approval_reason,
-    publish_gate_result:         publish.status === 0 ? 'approved' : 'blocked: publish command failed',
-    authority_repair_attempted:  authorityRepairAttempted,
-    authority_repair_result:     authorityRepairResult,
-    repaired_orphans_count:      repairedOrphansCount,
-    repaired_links_count:        repairedLinksCount,
-    review_after_repair:         reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
-    publish_after_repair:        authorityRepairAttempted && publish.status === 0,
+    generation_result:             generationResult,
+    publish_result:                publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
+    telegram_result:               telegramStatus(),
+    command_status:                publish.status,
+    current_state:                 review.current_state,
+    transition_path:               [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
+    regeneration_attempts:         review.regeneration_attempts,
+    review_result:                 'passed',
+    approval_reason:               review.approval_reason,
+    publish_gate_result:           publish.status === 0 ? 'approved' : 'blocked: publish command failed',
+    authority_repair_attempted:    authorityRepairAttempted,
+    authority_repair_result:       authorityRepairResult,
+    repaired_orphans_count:        repairedOrphansCount,
+    repaired_links_count:          repairedLinksCount,
+    review_after_repair:           reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
+    publish_after_repair:          authorityRepairAttempted && publish.status === 0,
+    targeted_repair_attempted:     targetedRepairAttempted,
+    targeted_repair_result:        targetedRepairResult,
+    targeted_links_added:          targetedLinksAdded,
+    targeted_pairs_added:          targetedPairsAdded,
+    targeted_repair_checks_fixed:  targetedRepairChecksFix,
     ...slugFields(),
     ...artifactFields(),
     draft_artifact_check_after_repair: artifactCheckAfterRepair || 'not_needed',
@@ -1356,6 +1389,15 @@ function printDecisionReport(report) {
     console.log(`  repaired_links_count:       ${report.repaired_links_count}`);
     console.log(`  review_after_repair:        ${report.review_after_repair}`);
     console.log(`  publish_after_repair:       ${report.publish_after_repair}`);
+    if (report.targeted_repair_attempted !== undefined) {
+      console.log('\n  TARGETED ARTICLE REPAIR');
+      console.log('  ----------------------------------------------------');
+      console.log(`  targeted_repair_attempted:    ${report.targeted_repair_attempted}`);
+      console.log(`  targeted_repair_result:       ${report.targeted_repair_result}`);
+      console.log(`  targeted_links_added:         ${report.targeted_links_added}`);
+      console.log(`  targeted_pairs_added:         ${report.targeted_pairs_added}`);
+      console.log(`  targeted_repair_checks_fixed: ${Array.isArray(report.targeted_repair_checks_fixed) ? report.targeted_repair_checks_fixed.join(', ') || 'none' : report.targeted_repair_checks_fixed}`);
+    }
   }
   if (report.slug_integrity_result !== undefined) {
     console.log('\n  SLUG INTEGRITY');
@@ -1459,6 +1501,11 @@ function main() {
     slug_mismatch_action:                execution.slug_mismatch_action,
     repair_regeneration_mode:            execution.repair_regeneration_mode,
     repair_regeneration_status_override: execution.repair_regeneration_status_override,
+    targeted_repair_attempted:           execution.targeted_repair_attempted,
+    targeted_repair_result:              execution.targeted_repair_result,
+    targeted_links_added:                execution.targeted_links_added,
+    targeted_pairs_added:                execution.targeted_pairs_added,
+    targeted_repair_checks_fixed:        execution.targeted_repair_checks_fixed,
   };
   printDecisionReport(report);
   process.exit(execution.command_status);

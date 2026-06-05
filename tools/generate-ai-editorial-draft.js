@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
 const DRAFT_ROOT = path.join(ROOT, 'drafts', 'editorial');
 const ELIGIBLE_STATUSES = new Set(['draft', 'planned', 'queued']);
-const SITE_URL = 'https://tradealphaai.com';
+const SITE_URL = 'https://www.tradealphaai.com';
 
 // Parse optional --slug=<value> so the brain can target a specific topic
 const slugArg = process.argv.find(a => a.startsWith('--slug='));
@@ -170,6 +170,7 @@ function renderArticle(topic, locale) {
   const canonical = ar ? `${SITE_URL}/ar/insights/${topic.slug}.html` : `${SITE_URL}/insights/${topic.slug}.html`;
   const article = articleSchema(topic, locale);
   const faq = faqSchema(topic, locale);
+  const breadcrumb = breadcrumbSchema(topic, locale);
 
   return `<!doctype html>
 <html lang="${lang}" dir="${dir}">
@@ -194,6 +195,9 @@ ${JSON.stringify(article, null, 2)}
   </script>
   <script type="application/ld+json">
 ${JSON.stringify(faq, null, 2)}
+  </script>
+  <script type="application/ld+json">
+${JSON.stringify(breadcrumb, null, 2)}
   </script>
 </head>
 <body>
@@ -248,6 +252,10 @@ ${renderFaqBlocks(ar)}
       </footer>
     </article>
   </main>
+  <nav class="locale-links" aria-label="Language">
+    <a class="lang-switch" data-locale-route="ar" href="/ar/insights/${topic.slug}.html">${ar ? 'العربية' : 'Arabic'}</a>
+    <a class="lang-switch" data-locale-route="en" href="/insights/${topic.slug}.html">${ar ? 'الإنجليزية' : 'English'}</a>
+  </nav>
 </body>
 </html>
 `;
@@ -286,6 +294,20 @@ function articleSchema(topic, locale) {
     author: { '@type': 'Organization', name: 'TradeAlphaAI' },
     publisher: { '@type': 'Organization', name: 'TradeAlphaAI' },
     mainEntityOfPage: `${SITE_URL}${ar ? '/ar' : ''}/insights/${topic.slug}.html`
+  };
+}
+
+function breadcrumbSchema(topic, locale) {
+  const ar = locale === 'ar';
+  const prefix = ar ? '/ar' : '';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'TradeAlphaAI', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: ar ? 'رؤى السوق' : 'Market Insights', item: `${SITE_URL}${prefix}/insights/` },
+      { '@type': 'ListItem', position: 3, name: ar ? topic.title_ar : topic.title_en, item: `${SITE_URL}${prefix}/insights/${topic.slug}.html` }
+    ]
   };
 }
 
@@ -331,11 +353,16 @@ function renderTakeaways(topic, ar) {
 
 function renderRelatedLinks(topic, ar) {
   const prefix = ar ? '/ar' : '';
-  const links = [];
-  for (const symbol of topic.related_stocks) links.push([`${prefix}/stocks/${slugify(symbol)}.html`, symbol]);
-  for (const symbol of topic.related_etfs) links.push([`${prefix}/etfs/${slugify(symbol)}.html`, symbol]);
-  for (const item of topic.related_comparisons) links.push([`${prefix}/compare/${item}.html`, item.toUpperCase().replace(/-/g, ' ')]);
-  for (const item of topic.related_hubs) links.push([`${prefix}/${item}.html`, titleCase(item)]);
+  const candidates = [];
+  for (const symbol of topic.related_stocks) candidates.push([`${prefix}/stocks/${slugify(symbol)}.html`, symbol]);
+  for (const symbol of topic.related_etfs) candidates.push([`${prefix}/etfs/${slugify(symbol)}.html`, symbol]);
+  for (const item of topic.related_comparisons) candidates.push([`${prefix}/compare/${item}.html`, item.toUpperCase().replace(/-/g, ' ')]);
+  for (const item of topic.related_hubs) candidates.push([`${prefix}/${item}.html`, titleCase(item)]);
+  // Only include links that exist on disk to satisfy internal_link_resolution
+  const links = candidates.filter(([href]) => {
+    const normalized = href.replace(/^\//, '');
+    return fs.existsSync(path.join(ROOT, normalized)) || fs.existsSync(path.join(ROOT, normalized, 'index.html'));
+  });
   return links.slice(0, 12).map(([href, label]) => `          <li><a href="${href}">${escapeHtml(label)}</a></li>`).join('\n');
 }
 
