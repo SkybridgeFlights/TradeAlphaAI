@@ -145,9 +145,17 @@ jobs:
       - name: "[full_pipeline] Run complete market outlook pipeline"
         id: full-pipeline
         if: env.MODE == 'full_pipeline'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o-mini' }}
         run: |
           DRY_RUN_ARG=""
           if [ "$DRY_RUN" = "true" ]; then DRY_RUN_ARG="--dry-run=true"; fi
+          if [ -n "$OPENAI_API_KEY" ]; then
+            echo "[pipeline] OPENAI_API_KEY is set — AI-generated content enabled."
+          else
+            echo "[pipeline] OPENAI_API_KEY not set — structural content only (no auto-approve)."
+          fi
           node tools/run-full-market-outlook-pipeline.js $DRY_RUN_ARG
 
       # Extract the published slug from the pipeline output for use in commit/Telegram steps.

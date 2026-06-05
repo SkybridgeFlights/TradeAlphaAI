@@ -43,9 +43,15 @@ if (!overwrite && (fs.existsSync(enDraft) || fs.existsSync(arDraft))) fail(`${to
 
 const normalized = normalizeTopic(topic);
 const intelligence = generateIntelligence(liveMarket, calendar, regime, normalized.topic_cluster);
+
+// Attempt AI-generated content (requires OPENAI_API_KEY).
+// When unavailable the draft is structural only and must not be auto-approved.
+const aiContent = tryGetAiContent(topic.slug);
+const aiMode = aiContent !== null;
+
 fs.mkdirSync(dir, { recursive: true });
-fs.writeFileSync(enDraft, render(normalized, 'en', intelligence), 'utf8');
-fs.writeFileSync(arDraft, render(normalized, 'ar', intelligence), 'utf8');
+fs.writeFileSync(enDraft, render(normalized, 'en', intelligence, aiContent), 'utf8');
+fs.writeFileSync(arDraft, render(normalized, 'ar', intelligence, aiContent), 'utf8');
 fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   slug: topic.slug,
   content_type: 'market_outlook',
@@ -53,6 +59,8 @@ fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   review_status: 'pending',
   generated_at: new Date().toISOString(),
   quality_score_required: 90,
+  ai_generated: aiMode,
+  directional_bias: aiMode ? aiContent.en.directional_bias : null,
   live_market_status: intelligence.data_completeness,
   confidence: intelligence.confidence,
   event_context_used: intelligence.upcoming_events.slice(0, 3).map((event) => ({ name: event.name, date: event.date, source_url: event.source_url })),
@@ -71,20 +79,27 @@ topic.last_reviewed = topic.last_reviewed || null;
 topic.event_tags = unique([...(topic.event_tags || []), ...intelligence.upcoming_events.map((event) => event.type)]);
 topic.regime_tags = regimeTags();
 topic.confidence_label = intelligence.confidence.label;
+if (aiMode && aiContent.en.directional_bias) topic.directional_bias = aiContent.en.directional_bias;
 queue.updated = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 
 console.log(`Generated market outlook draft: drafts/market-outlook/${topic.slug}`);
+console.log(`AI-generated: ${aiMode}`);
 console.log(`Confidence: ${intelligence.confidence.label}`);
 console.log(`Data completeness: ${intelligence.data_completeness}`);
+if (aiMode) console.log(`Directional bias: ${aiContent.en.directional_bias}`);
 
-if (attemptAutoApproval(topic, topic.slug)) {
-  console.log(`${topic.slug}: auto-approved after score >= 90 and all required checks passed.`);
+if (aiMode) {
+  if (attemptAutoApproval(topic, topic.slug)) {
+    console.log(`${topic.slug}: auto-approved (AI-generated content, score >= 96, all hard gates passed including specificity and no-filler).`);
+  } else {
+    console.log(`${topic.slug}: AI content generated but quality gate failed. Requires manual review.`);
+  }
 } else {
-  console.log(`${topic.slug}: requires manual review.`);
+  console.log(`${topic.slug}: no OPENAI_API_KEY — structural draft saved, review_status=pending (no auto-approve).`);
 }
 
-function render(topic, locale, intel) {
+function render(topic, locale, intel, aiContent = null) {
   const labelSets = getLabels();
   const ar = locale === 'ar';
   const title = ar ? topic.title_ar : topic.title_en;
@@ -95,14 +110,46 @@ function render(topic, locale, intel) {
   const canonical = ar ? arUrl : enUrl;
   const pathPrefix = ar ? '../../' : '../';
   const n = intel.narratives;
-  const scenarioCards = intel.scenarios.slice(0, 3).map((scenario) => marketCard(ar ? scenario.ar : scenario.en)).join('\n');
-  const riskCards = (ar ? labelSets.ar.risks : labelSets.en.risks).map(marketCard).join('\n');
-  const driverCards = [
-    [ar ? labelSets.ar.macroBackdrop : labelSets.en.macroBackdrop, ar ? n.macro_pressure.ar : n.macro_pressure.en],
-    [ar ? labelSets.ar.sectorContext : labelSets.en.sectorContext, ar ? n.sector_narrative.ar : n.sector_narrative.en],
-    [ar ? labelSets.ar.etfContext : labelSets.en.etfContext, ar ? n.etf_rotation.ar : n.etf_rotation.en]
-  ].map(([heading, text]) => marketCard(text, heading)).join('\n');
-  const watchItems = (ar ? labelSets.ar.watch : labelSets.en.watch).map((item) => `              <li>${escapeHtml(item)}</li>`).join('\n');
+  const ai = aiContent ? (ar ? aiContent.ar : aiContent.en) : null;
+
+  // Scenario cards — AI: explicit bullish/bearish pair; structural: 3 generic cards
+  const scenarioCards = ai
+    ? [
+        marketCard(ai.bullish_scenario, ar ? labelSets.ar.bullishScenario : labelSets.en.bullishScenario),
+        marketCard(ai.bearish_scenario, ar ? labelSets.ar.bearishScenario : labelSets.en.bearishScenario)
+      ].join('\n')
+    : intel.scenarios.slice(0, 3).map((s) => marketCard(ar ? s.ar : s.en)).join('\n');
+
+  // Risk factor cards — AI: specific; structural: generic label set
+  const riskCards = ai
+    ? ai.risk_factors.map(marketCard).join('\n')
+    : (ar ? labelSets.ar.risks : labelSets.en.risks).map(marketCard).join('\n');
+
+  // Key driver cards — AI: specific 3-item drivers; structural: macro/sector/ETF
+  const driverCards = ai
+    ? ai.key_drivers.map((d, i) => marketCard(d, String(i + 1))).join('\n')
+    : [
+        [ar ? labelSets.ar.macroBackdrop : labelSets.en.macroBackdrop, ar ? n.macro_pressure.ar : n.macro_pressure.en],
+        [ar ? labelSets.ar.sectorContext : labelSets.en.sectorContext, ar ? n.sector_narrative.ar : n.sector_narrative.en],
+        [ar ? labelSets.ar.etfContext : labelSets.en.etfContext, ar ? n.etf_rotation.ar : n.etf_rotation.en]
+      ].map(([heading, text]) => marketCard(text, heading)).join('\n');
+
+  // Watch-next items — AI: specific; structural: generic list
+  const watchItems = ai
+    ? ai.what_to_watch.map((item) => `              <li>${escapeHtml(item)}</li>`).join('\n')
+    : (ar ? labelSets.ar.watch : labelSets.en.watch).map((item) => `              <li>${escapeHtml(item)}</li>`).join('\n');
+
+  // Executive summary — AI: ai.executive_summary; structural: market_narrative
+  const execSummaryText = ai
+    ? ai.executive_summary
+    : (ar ? n.market_narrative.ar : n.market_narrative.en);
+
+  // Market tone section — AI: market_context + directional bias; structural: volatility text
+  const marketToneContent = ai
+    ? `<p class="market-copy">${escapeHtml(ai.market_context)}</p>
+          <p class="market-copy"><strong>${escapeHtml(ar ? labelSets.ar.bias : labelSets.en.bias)}:</strong> ${escapeHtml(ai.directional_bias)}</p>`
+    : `<p class="market-copy"><strong>${escapeHtml(ar ? labelSets.ar.tone : labelSets.en.tone)}:</strong> ${escapeHtml(ar ? confidenceAr(intel.confidence.label) : intel.confidence.label)}</p>
+          <p class="market-copy">${escapeHtml(ar ? n.volatility_interpretation.ar : n.volatility_interpretation.en)}</p>`;
   const L = ar ? labelSets.ar : labelSets.en;
   const generatedAt = new Date().toISOString();
   const updatedDate = generatedAt.slice(0, 10);
@@ -208,14 +255,13 @@ ${sidebarLinks}
 
       <section class="market-section" id="market-narrative">
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.executiveSummary)}</span><h2>${escapeHtml(L.executiveSummary)}</h2></div>
-        <div class="market-panel"><p class="market-copy">${escapeHtml(ar ? n.market_narrative.ar : n.market_narrative.en)}</p></div>
+        <div class="market-panel"><p class="market-copy">${escapeHtml(execSummaryText)}</p></div>
       </section>
 
       <section class="market-section" id="volatility-context">
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.marketTone)}</span><h2>${escapeHtml(L.marketTone)}</h2></div>
         <div class="market-panel">
-          <p class="market-copy"><strong>${escapeHtml(L.tone)}:</strong> ${escapeHtml(ar ? confidenceAr(intel.confidence.label) : intel.confidence.label)}</p>
-          <p class="market-copy">${escapeHtml(ar ? n.volatility_interpretation.ar : n.volatility_interpretation.en)}</p>
+          ${marketToneContent}
         </div>
       </section>
 
@@ -417,6 +463,9 @@ function getLabels() {
   en: {
     label: 'Educational market commentary',
     tone: 'Market tone',
+    bias: 'Directional bias',
+    bullishScenario: 'Bullish Scenario',
+    bearishScenario: 'Bearish Scenario',
     uncertainty: 'Uncertainty',
     disclaimerTitle: 'Educational Disclaimer',
     executiveSummary: 'Executive Summary',
@@ -461,6 +510,9 @@ function getLabels() {
   ar: {
     label: 'تعليق تعليمي على السوق',
     tone: 'نبرة السوق',
+    bias: 'الميل الاتجاهي',
+    bullishScenario: 'السيناريو الصاعد',
+    bearishScenario: 'السيناريو الهابط',
     uncertainty: 'عدم اليقين',
     disclaimerTitle: 'إخلاء المسؤولية التعليمي',
     executiveSummary: 'الملخص التنفيذي',
@@ -540,16 +592,52 @@ function normalizeTopic(topic) {
   };
 }
 
+function tryGetAiContent(slug) {
+  if (!process.env.OPENAI_API_KEY) {
+    console.log('[AI] OPENAI_API_KEY not set — using structural content (no auto-approve).');
+    return null;
+  }
+  console.log(`[AI] Generating AI content for: ${slug}`);
+  const result = spawnSync(process.execPath, [
+    path.join(__dirname, 'generate-ai-market-outlook-content.js'),
+    `--slug=${slug}`
+  ], {
+    cwd: ROOT,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    timeout: 60000,
+    env: { ...process.env }
+  });
+  // Use buffer.toString('utf8') explicitly to handle multi-byte Arabic characters on Windows
+  if (result.stderr) process.stderr.write(Buffer.isBuffer(result.stderr) ? result.stderr.toString('utf8') : result.stderr);
+  const stdout = result.stdout ? (Buffer.isBuffer(result.stdout) ? result.stdout.toString('utf8') : result.stdout) : '';
+  if (result.status !== 0 || !stdout.trim()) {
+    console.log(`[AI] AI content generation failed or returned empty — falling back to structural.`);
+    return null;
+  }
+  try {
+    const content = JSON.parse(stdout);
+    if (!content.en || !content.ar) {
+      console.log('[AI] AI content missing en or ar — falling back to structural.');
+      return null;
+    }
+    console.log(`[AI] AI content ready. Bias: ${content.en.directional_bias}`);
+    return content;
+  } catch (e) {
+    console.log(`[AI] Could not parse AI content JSON: ${e.message}`);
+    return null;
+  }
+}
+
 function attemptAutoApproval(topicItem, slugValue) {
-  const result = spawnSync(process.execPath, [path.join(__dirname, 'score-generated-content.js'), `--slug=${slugValue}`, '--type=market_outlook', '--min-score=90'], { cwd: ROOT, encoding: 'utf8' });
+  const result = spawnSync(process.execPath, [path.join(__dirname, 'score-generated-content.js'), `--slug=${slugValue}`, '--type=market_outlook', '--min-score=96'], { cwd: ROOT, encoding: 'utf8' });
   if (result.status !== 0 || !result.stdout) {
     if (result.stderr) console.log(result.stderr.trim());
     return false;
   }
   const report = JSON.parse(result.stdout);
   const entry = (report.results || []).find((item) => item.slug === slugValue);
-  if (!entry || entry.quality_score < 90) return false;
-  const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality'];
+  if (!entry || entry.quality_score < 96) return false;
+  const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality', 'has_directional_bias', 'has_scenarios', 'specificity', 'no_generic_filler'];
   if (required.some((name) => entry.checks[name] !== true)) return false;
   const today = new Date().toISOString().slice(0, 10);
   if (topicItem.status !== 'published') topicItem.status = 'reviewed';

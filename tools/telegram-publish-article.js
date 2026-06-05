@@ -67,15 +67,27 @@ function formatPost(topic, locale) {
   if (topic.content_type === 'market_outlook') {
     const confidence = computeMarketConfidence();
     const toneEmoji = confidence ? confidence.market_tone_emoji : categoryEmoji(topic);
-    const confidenceLine = confidence
+
+    // Directional bias line — use stored AI-generated bias when available
+    const biasValue = topic.directional_bias || null;
+    const biasBadge = biasValue
       ? (ar
-          ? `📊 نبرة تعليمية: ${confidenceLabelAr(confidence.label)} · ${uncertaintyLabelAr(confidence.uncertainty_label)}`
-          : `📊 Educational tone: ${titleCase(confidence.label)} · ${confidence.uncertainty_label}`)
-      : '';
+          ? `🧭 ${biasValue}`
+          : `🧭 Directional bias: ${biasValue}`)
+      : (confidence
+          ? (ar
+              ? `📊 نبرة تعليمية: ${confidenceLabelAr(confidence.label)} · ${uncertaintyLabelAr(confidence.uncertainty_label)}`
+              : `📊 Educational tone: ${titleCase(confidence.label)} · ${confidence.uncertainty_label}`)
+          : '');
+
+    const disclaimer = ar
+      ? '⚠️ هذا تعليق تعليمي فقط. ليس نصيحة استثمارية.'
+      : '⚠️ Educational commentary only. Not investment advice.';
+
     const label = ar ? 'تعليق سوقي تعليمي' : 'Educational Market Outlook';
     const lines = [`${toneEmoji} ${label}`, title, '', summary];
-    if (confidenceLine) lines.push('', confidenceLine);
-    lines.push('', url, '', hashtags(topic, locale));
+    if (biasBadge) lines.push('', biasBadge);
+    lines.push('', disclaimer, '', url, '', hashtags(topic, locale));
     return { locale, text: lines.join('\n') };
   }
 

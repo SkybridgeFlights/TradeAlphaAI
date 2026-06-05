@@ -53,7 +53,11 @@ function scoreDraft(dir) {
     checks.language_purity &&
     checks.public_placeholder_risk &&
     checks.semantic_depth &&
-    checks.layout_quality
+    checks.layout_quality &&
+    checks.has_directional_bias &&
+    checks.has_scenarios &&
+    checks.specificity &&
+    checks.no_generic_filler
   );
   return {
     slug: slugValue,
@@ -89,8 +93,45 @@ function marketOutlookChecks(en, ar, enBody, arBody, combined) {
     template_repetition_risk: !hasRepeatedParagraphs(en),
     public_placeholder_risk: !banned.some((phrase) => lower.includes(phrase)),
     market_context_quality: /(policy|inflation|earnings|volatility|sector|ETF|risk|liquidity|rates|Federal Reserve)/i.test(enBody),
-    layout_quality: requiredSections.every((id) => en.includes(`id="${id}"`) && ar.includes(`id="${id}"`))
+    layout_quality: requiredSections.every((id) => en.includes(`id="${id}"`) && ar.includes(`id="${id}"`)),
+    has_directional_bias: /(cautiously bullish|cautiously bearish|neutral|mixed|elevated uncertainty|directional bias|الميل الاتجاهي|صاعد بحذر|هابط بحذر|محايد)/i.test(combined),
+    has_scenarios: /(bullish scenario|bearish scenario|السيناريو الصاعد|السيناريو الهابط)/i.test(combined),
+    specificity: checkSpecificity(enBody),
+    no_generic_filler: checkNoGenericFiller(enBody),
   };
+}
+
+function checkSpecificity(enBody) {
+  const INSTRUMENTS = [
+    /\b(TLT|IEF|SHY|AGG|BND|LQD|HYG|TIP|TIPS|SCHP|ZROZ|EDV)\b/,
+    /\b(QQQ|SPY|IWM|DIA|VOO|VTI|RSP|SPLG)\b/,
+    /\b(SMH|SOXX|SOXL|XSD|NVDA|AMD|TSMC|TSM|ASML|INTC|QCOM)\b/,
+    /\b(XLK|XLF|XLE|XLU|XLV|XLI|XLRE|XLP|XLB|XLY|XLC)\b/,
+    /\b(MSFT|GOOGL|GOOG|META|AAPL|AMZN|TSLA|JPM|BAC|GS|MS)\b/,
+    /\b(GLD|SLV|GDX|USO|DBA)\b/,
+    /\b\d+[- ]?[Yy](ear)?\s*(Treasury|yield|note|bond)\b/i,
+    /\b(Fed\s+funds|federal\s+funds|FOMC\s+rate)\b/i,
+    /\b(yield\s+curve|2Y10Y|10Y2Y|inverted\s+curve|duration\s+risk)\b/i,
+    /\b(VIX|CBOE\s+volatility)\b/i,
+    /\b(DXY|dollar\s+index)\b/i,
+  ];
+  return INSTRUMENTS.filter(p => p.test(enBody)).length >= 2;
+}
+
+function checkNoGenericFiller(enBody) {
+  const FILLER = [
+    'various macroeconomic factors',
+    'navigating a complex landscape',
+    'market participants are closely monitoring',
+    'it remains to be seen',
+    'dynamic market landscape',
+    'complex macro environment',
+    'economic conditions can change',
+    'broadly speaking',
+    'at the end of the day',
+  ];
+  const lower = enBody.toLowerCase();
+  return !FILLER.some(phrase => lower.includes(phrase));
 }
 
 function englishPurity(text) {
@@ -114,9 +155,15 @@ function hasMojibake(value) {
 }
 
 function hasRepeatedParagraphs(html) {
+  // Exclude intentionally-repeated legal/disclaimer text
+  const ALLOWED_REPEATS = [
+    'this analysis is educational market commentary',
+    'هذا التحليل عبارة عن تعليق'
+  ];
   const paragraphs = [...String(html || '').matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
     .map((match) => bodyText(match[1]).toLowerCase())
-    .filter((text) => text.length > 40);
+    .filter((text) => text.length > 40)
+    .filter((text) => !ALLOWED_REPEATS.some(d => text.includes(d)));
   const seen = new Set();
   for (const paragraph of paragraphs) {
     if (seen.has(paragraph)) return true;
