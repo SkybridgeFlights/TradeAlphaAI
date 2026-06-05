@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { hasRealSources } = require('./score-autonomous-topic');
+const { validateInternalLinks, checkClusterConnectivity, checkAnchorDiversity } = require('./internal-link-intelligence');
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -52,7 +53,9 @@ const PROFILES = {
       'supported_directional_claims',
       'narrative_originality',
       'specificity',
-      'no_generic_filler'
+      'no_generic_filler',
+      'internal_link_resolution',
+      'cluster_connectivity',
     ]
   },
   'news-analysis': {
@@ -144,6 +147,7 @@ function scoreDraft(contentType, slug) {
     if (!entry) return { score: 0, failed_checks: ['score_entry_missing'], checks: {}, review_summary: 'No score entry found.' };
     const checks = { ...(entry.checks || {}) };
     if (contentType === 'editorial') Object.assign(checks, editorialPrepublishChecks(slug));
+    if (contentType === 'market-outlook') Object.assign(checks, marketOutlookKnowledgeChecks(slug));
     const failed = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
     return {
       score: Number(entry.quality_score || 0),
@@ -155,6 +159,24 @@ function scoreDraft(contentType, slug) {
   } catch (error) {
     return { score: 0, failed_checks: ['score_parse_failed'], checks: {}, review_summary: error.message };
   }
+}
+
+function marketOutlookKnowledgeChecks(slug) {
+  const dir  = draftPath('market-outlook', slug);
+  const en   = readFile(path.join(dir, 'en.html'));
+  const ar   = readFile(path.join(dir, 'ar.html'));
+  // internal_link_resolution: only external/nav links, never flag expected market-outlook/insights links
+  const enLinks = validateInternalLinks(en);
+  const arLinks = validateInternalLinks(ar);
+  const { queuePath, queue, topic } = queueTopic('market-outlook', slug);
+  const clusters = topic ? [topic.topic_cluster, topic.discovery_cluster].filter(Boolean) : [];
+  const enConn = checkClusterConnectivity(en, clusters);
+  const enDiv  = checkAnchorDiversity(en);
+  return {
+    internal_link_resolution: enLinks.valid && arLinks.valid,
+    cluster_connectivity:     enConn.connected,
+    anchor_diversity:         enDiv.diverse,
+  };
 }
 
 function editorialPrepublishChecks(slug) {

@@ -5,6 +5,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { scoreCandidates, scoreTopic, hasRealSources } = require('./score-autonomous-topic');
 const { reviewDraft, hasDraft } = require('./autonomous-review-engine');
+const { CLUSTER_DEFINITIONS } = require('./analyze-content-clusters');
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -232,6 +233,25 @@ function inspectMarketIntelligence() {
   };
 }
 
+function inspectClusterHealth() {
+  const clustersPath = path.join(ROOT, 'data', 'content-clusters.json');
+  const orphanPath   = path.join(ROOT, 'data', 'orphan-pages-report.json');
+  const clusters     = readJson(clustersPath, null);
+  const orphans      = readJson(orphanPath, null);
+  if (!clusters) return { available: false, summary: null, weakest: [], orphan_count: 0 };
+  const summary = clusters.summary || {};
+  const clusterList = Object.values(clusters.clusters || {});
+  const weakClusters = clusterList.filter(c => c.health_grade === 'WEAK').map(c => c.cluster);
+  return {
+    available:       true,
+    summary,
+    weakest:         weakClusters.slice(0, 3),
+    orphan_count:    orphans ? (orphans.summary || {}).orphan_count || 0 : 0,
+    strong_clusters: summary.strong || 0,
+    weak_clusters:   summary.weak   || 0,
+  };
+}
+
 function buildStatus() {
   return {
     generated_at: new Date().toISOString(),
@@ -239,7 +259,8 @@ function buildStatus() {
     editorial: inspectEditorial(),
     market_outlook: inspectMarketOutlook(),
     news_analysis: inspectNewsAnalysis(),
-    market_intelligence: inspectMarketIntelligence()
+    market_intelligence: inspectMarketIntelligence(),
+    cluster_health: inspectClusterHealth(),
   };
 }
 
@@ -267,12 +288,16 @@ function chooseContentType(status, requestedType, forceContentType) {
       : 'editorial queue has eligible educational coverage'
   });
 
+  const clusterBonus = status.cluster_health && status.cluster_health.available
+    ? Math.min(8, status.cluster_health.weak_clusters * 2)
+    : 0;
   const marketScore =
     (status.market_outlook.publishable_slug ? 42 : 0) +
     (status.market_outlook.draft_candidate ? 24 : 0) +
     Math.min(18, (status.market_outlook.days_since_publish == null ? 8 : status.market_outlook.days_since_publish) * 5) +
     Math.min(16, status.market_intelligence.active_signal_count * 4 + status.market_intelligence.active_divergence_count * 4) +
-    (status.market_intelligence.state_available ? 8 : 0);
+    (status.market_intelligence.state_available ? 8 : 0) +
+    clusterBonus;
   candidates.push({
     type: 'market-outlook',
     score: marketScore,
@@ -795,6 +820,17 @@ function printStatus(status) {
   console.log(`  active_signals:            ${status.market_intelligence.active_signal_count}`);
   console.log(`  active_divergences:        ${status.market_intelligence.active_divergence_count}`);
   console.log(`  sequence_confidence:       ${status.market_intelligence.sequence_confidence || 'n/a'}`);
+
+  const ch = status.cluster_health || {};
+  console.log('\n  KNOWLEDGE GRAPH & CLUSTER HEALTH');
+  console.log('  ----------------------------------------------------');
+  if (ch.available) {
+    console.log(`  cluster_grades:            strong=${ch.strong_clusters} weak=${ch.weak_clusters}`);
+    console.log(`  weakest_clusters:          ${ch.weakest.length ? ch.weakest.join(', ') : 'none'}`);
+    console.log(`  orphan_count:              ${ch.orphan_count}`);
+  } else {
+    console.log('  cluster_data:              not available (run node tools/analyze-content-clusters.js --write)');
+  }
 }
 
 function printContentStatus(section) {

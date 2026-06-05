@@ -9,6 +9,7 @@ const { detectNarrativeDrift } = require('./detect-narrative-drift');
 const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 const { extractMarketSignals } = require('./extract-market-signals');
+const { recommendLinks } = require('./internal-link-intelligence');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -473,59 +474,24 @@ function buildSchemas({ title, summary, locale, canonical, enUrl, arUrl, updated
 }
 
 function contextualLinks(topic, ar) {
-  const cluster = normalize(`${topic.topic_cluster || ''} ${topic.discovery_cluster || ''} ${topic.slug || ''} ${(topic.macro_tags || []).join(' ')}`);
-  const prefix = ar ? '/ar' : '';
-  const common = ar
-    ? [
-        { href: `${prefix}/rankings.html`, label: 'تصنيفات السوق', reason: 'مقارنة تعليمية بين الأسهم وصناديق المؤشرات' },
-        { href: `${prefix}/etfs.html`, label: 'مركز أبحاث صناديق المؤشرات', reason: 'سياق أوسع للتعرضات والقطاعات' },
-        { href: `${prefix}/insights/etf-risk-comparison-guide.html`, label: 'دليل مخاطر صناديق المؤشرات', reason: 'إطار تعليمي لتقييم المخاطر' },
-        { href: `${prefix}/methodology.html`, label: 'منهجية البحث', reason: 'شفافية حول طريقة بناء الأبحاث' }
-      ]
-    : [
-        { href: '/rankings.html', label: 'Market rankings', reason: 'Educational comparison across stocks and ETFs' },
-        { href: '/etfs.html', label: 'ETF research hub', reason: 'Broader context for exposures and sectors' },
-        { href: '/insights/etf-risk-comparison-guide.html', label: 'ETF risk comparison guide', reason: 'Educational framework for risk review' },
-        { href: '/methodology.html', label: 'Research methodology', reason: 'Transparent explanation of research process' }
-      ];
-  const thematic = [];
-  if (cluster.includes('ai') || cluster.includes('semiconductor')) {
-    thematic.push(
-      ar
-        ? { href: '/ar/semiconductor-stocks.html', label: 'محور أشباه الموصلات', reason: 'سياق قطاعي للتكنولوجيا والدورات الإنتاجية' }
-        : { href: '/semiconductor-stocks.html', label: 'Semiconductor stocks hub', reason: 'Sector context for technology and chip cycles' },
-      ar
-        ? { href: '/ar/etfs/smh.html', label: 'SMH', reason: 'صندوق مؤشر مرتبط بمحور أشباه الموصلات' }
-        : { href: '/etfs/smh.html', label: 'SMH ETF', reason: 'ETF exposure tied to semiconductor themes' },
-      ar
-        ? { href: '/ar/stocks/nvda.html', label: 'NVDA', reason: 'شركة رئيسية ضمن بنية الذكاء الاصطناعي' }
-        : { href: '/stocks/nvda.html', label: 'NVDA research', reason: 'Large-cap AI infrastructure context' }
-    );
-  }
-  if (cluster.includes('etf') || cluster.includes('rotation')) {
-    thematic.push(
-      ar
-        ? { href: '/ar/compare/spy-vs-qqq.html', label: 'SPY مقابل QQQ', reason: 'مقارنة تعليمية بين تعرضين واسعَين' }
-        : { href: '/compare/spy-vs-qqq.html', label: 'SPY vs QQQ', reason: 'Broad-market and growth exposure comparison' },
-      ar
-        ? { href: '/ar/dividend-etfs.html', label: 'محور صناديق التوزيعات', reason: 'سياق دفاعي ودخلي لصناديق المؤشرات' }
-        : { href: '/dividend-etfs.html', label: 'Dividend ETFs hub', reason: 'Income and defensive ETF context' },
-      ar
-        ? { href: '/ar/etfs/qqq.html', label: 'QQQ', reason: 'تعرض للنمو والتكنولوجيا ضمن صناديق المؤشرات' }
-        : { href: '/etfs/qqq.html', label: 'QQQ ETF', reason: 'Growth and technology ETF exposure' }
-    );
-  }
-  if (cluster.includes('yield') || cluster.includes('rates') || cluster.includes('macro')) {
-    thematic.push(
-      ar
-        ? { href: '/ar/etfs/bnd.html', label: 'BND', reason: 'سياق السندات عند تحليل الفائدة' }
-        : { href: '/etfs/bnd.html', label: 'BND ETF', reason: 'Bond context for rate-sensitive research' },
-      ar
-        ? { href: '/ar/bond-etfs.html', label: 'محور صناديق السندات', reason: 'تعليم حول الفائدة والدخل الثابت' }
-        : { href: '/bond-etfs.html', label: 'Bond ETFs hub', reason: 'Rate and fixed-income education' }
-    );
-  }
-  return uniqueLinks([...thematic, ...common]);
+  const clusters   = [topic.topic_cluster, topic.discovery_cluster].filter(Boolean);
+  const macro_tags = topic.macro_tags || [];
+  // Derive entity list from topic tags and slug keyword matching
+  const etfWords   = ['TLT','IEF','SHY','BND','QQQ','SPY','IWM','SMH','SOXX','XLK','GLD','ARKK','JEPI','SCHD','VIG'];
+  const entities   = etfWords.filter(t => {
+    const hay = `${(topic.macro_tags || []).join(' ')} ${topic.slug || ''} ${topic.topic_cluster || ''}`.toUpperCase();
+    return new RegExp(`\\b${t}\\b`).test(hay);
+  });
+  const links = recommendLinks({
+    slug:     topic.slug || '',
+    clusters,
+    macro_tags,
+    entities,
+    locale:   ar ? 'ar' : 'en',
+    maxLinks: 8,
+  });
+  // Map to the href/label/reason shape expected by the template
+  return links.map(l => ({ href: l.href, label: l.label, reason: l.reason }));
 }
 
 function uniqueLinks(links) {

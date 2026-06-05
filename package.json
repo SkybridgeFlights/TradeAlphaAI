@@ -52,6 +52,14 @@
     "publishing:review": "node tools/autonomous-review-engine.js",
     "market-outlook:full-pipeline": "node tools/run-full-market-outlook-pipeline.js",
     "market-outlook:full-pipeline-dry": "node tools/run-full-market-outlook-pipeline.js --dry-run=true",
-    "check:language-purity": "node tools/check-language-purity.js"
+    "check:language-purity": "node tools/check-language-purity.js",
+    "knowledge:build": "node tools/build-content-knowledge-graph.js --write",
+    "knowledge:pairs": "node tools/build-article-pairs.js --write",
+    "knowledge:clusters": "node tools/analyze-content-clusters.js --write",
+    "knowledge:orphans": "node tools/detect-orphan-pages.js --write",
+    "knowledge:gaps": "node tools/detect-content-gaps.js --write",
+    "knowledge:topology": "node tools/analyze-seo-topology.js --write",
+    "knowledge:full": "npm run knowledge:build && npm run knowledge:pairs && npm run knowledge:clusters && npm run knowledge:orphans && npm run knowledge:gaps && npm run knowledge:topology",
+    "links:intelligence": "node tools/internal-link-intelligence.js"
   }
 }
