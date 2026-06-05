@@ -60,6 +60,13 @@
     "knowledge:gaps": "node tools/detect-content-gaps.js --write",
     "knowledge:topology": "node tools/analyze-seo-topology.js --write",
     "knowledge:full": "npm run knowledge:build && npm run knowledge:pairs && npm run knowledge:clusters && npm run knowledge:orphans && npm run knowledge:gaps && npm run knowledge:topology",
-    "links:intelligence": "node tools/internal-link-intelligence.js"
+    "links:intelligence": "node tools/internal-link-intelligence.js",
+    "authority:score": "node tools/score-authority-expansion.js",
+    "authority:plan": "node tools/authority-expansion-engine.js --write",
+    "authority:repair-orphans": "node tools/repair-orphan-pages.js --write",
+    "authority:repair-orphans:execute": "node tools/repair-orphan-pages.js --execute --write",
+    "authority:rebalance": "node tools/rebalance-content-topology.js --write",
+    "authority:roadmap": "node tools/build-content-roadmap.js --write",
+    "authority:full": "npm run authority:plan && npm run authority:repair-orphans && npm run authority:rebalance && npm run authority:roadmap"
   }
 }

@@ -252,6 +252,50 @@ function inspectClusterHealth() {
   };
 }
 
+function inspectAuthorityExpansion() {
+  const planPath = path.join(ROOT, 'data', 'authority-expansion-plan.json');
+  const roadmapPath = path.join(ROOT, 'data', 'content-roadmap.json');
+  const topoPath = path.join(ROOT, 'data', 'topology-rebalance-report.json');
+
+  const plan    = readJson(planPath, null);
+  const roadmap = readJson(roadmapPath, null);
+  const topo    = readJson(topoPath, null);
+
+  if (!plan) return { available: false };
+
+  const plans       = plan.plans || [];
+  const criticalPlans = plans.filter(p => p.priority === 'CRITICAL');
+  const highPlans     = plans.filter(p => p.priority === 'HIGH');
+  const nextActions   = plans.slice(0, 3).map(p => ({
+    id:          p.id,
+    priority:    p.priority,
+    action_type: p.action_type,
+    cluster:     p.target_cluster,
+    title:       p.title || p.action_type,
+  }));
+
+  const roadmapItems      = roadmap ? (roadmap.items || []) : [];
+  const immediateItems    = roadmapItems.filter(i => i.window === 'immediate');
+
+  return {
+    available:          true,
+    topology_grade:     (plan.summary || {}).current_topology_grade || 'D',
+    projected_grade:    topo ? topo.projected_grade : null,
+    orphan_count:       (plan.summary || {}).current_orphan_count || 0,
+    crawl_coverage_pct: (plan.summary || {}).current_crawl_coverage || 0,
+    total_plans:        plans.length,
+    critical_count:     criticalPlans.length,
+    high_count:         highPlans.length,
+    next_actions:       nextActions,
+    immediate_roadmap:  immediateItems.slice(0, 3).map(i => ({
+      id:     i.id,
+      type:   i.type,
+      title:  i.title || i.action,
+      window: i.window,
+    })),
+  };
+}
+
 function buildStatus() {
   return {
     generated_at: new Date().toISOString(),
@@ -261,6 +305,7 @@ function buildStatus() {
     news_analysis: inspectNewsAnalysis(),
     market_intelligence: inspectMarketIntelligence(),
     cluster_health: inspectClusterHealth(),
+    authority_expansion: inspectAuthorityExpansion(),
   };
 }
 
@@ -291,13 +336,17 @@ function chooseContentType(status, requestedType, forceContentType) {
   const clusterBonus = status.cluster_health && status.cluster_health.available
     ? Math.min(8, status.cluster_health.weak_clusters * 2)
     : 0;
+  const authorityBonus = status.authority_expansion && status.authority_expansion.available
+    ? Math.min(6, status.authority_expansion.critical_count)
+    : 0;
   const marketScore =
     (status.market_outlook.publishable_slug ? 42 : 0) +
     (status.market_outlook.draft_candidate ? 24 : 0) +
     Math.min(18, (status.market_outlook.days_since_publish == null ? 8 : status.market_outlook.days_since_publish) * 5) +
     Math.min(16, status.market_intelligence.active_signal_count * 4 + status.market_intelligence.active_divergence_count * 4) +
     (status.market_intelligence.state_available ? 8 : 0) +
-    clusterBonus;
+    clusterBonus +
+    authorityBonus;
   candidates.push({
     type: 'market-outlook',
     score: marketScore,
@@ -830,6 +879,30 @@ function printStatus(status) {
     console.log(`  orphan_count:              ${ch.orphan_count}`);
   } else {
     console.log('  cluster_data:              not available (run node tools/analyze-content-clusters.js --write)');
+  }
+
+  const ae = status.authority_expansion || {};
+  console.log('\n  AUTHORITY EXPANSION ENGINE');
+  console.log('  ----------------------------------------------------');
+  if (ae.available) {
+    console.log(`  topology_grade:            ${ae.topology_grade}  projected: ${ae.projected_grade || 'n/a'}`);
+    console.log(`  orphan_count:              ${ae.orphan_count}  crawl_coverage: ${ae.crawl_coverage_pct}%`);
+    console.log(`  expansion_plans:           total=${ae.total_plans}  critical=${ae.critical_count}  high=${ae.high_count}`);
+    if (ae.next_actions && ae.next_actions.length) {
+      console.log('  top_priority_actions:');
+      for (const a of ae.next_actions) {
+        console.log(`    [${a.priority}] ${a.action_type} → ${a.cluster}: ${String(a.title).slice(0, 60)}`);
+      }
+    }
+    if (ae.immediate_roadmap && ae.immediate_roadmap.length) {
+      console.log('  immediate_roadmap:');
+      for (const r of ae.immediate_roadmap) {
+        const title = Array.isArray(r.title) ? r.title[0] : r.title;
+        console.log(`    [${r.type}] ${String(title).slice(0, 60)}`);
+      }
+    }
+  } else {
+    console.log('  authority_plan:            not available (run node tools/authority-expansion-engine.js --write)');
   }
 }
 

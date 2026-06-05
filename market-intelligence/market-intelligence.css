@@ -281,6 +281,44 @@
   gap: 10px;
 }
 
+/* Cluster grade cards */
+.market-grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cluster-grade {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.grade-strong {
+  background: rgba(73, 199, 144, 0.14);
+  color: #49c790;
+  border: 1px solid rgba(73, 199, 144, 0.25);
+}
+
+.grade-fair {
+  background: rgba(242, 210, 123, 0.12);
+  color: var(--market-gold-bright);
+  border: 1px solid rgba(242, 210, 123, 0.22);
+}
+
+.grade-weak {
+  background: rgba(242, 100, 100, 0.1);
+  color: #f27070;
+  border: 1px solid rgba(242, 100, 100, 0.2);
+}
+
+.grade-d   { color: #f27070; border-color: rgba(242, 100, 100, 0.2); background: rgba(242, 100, 100, 0.1); }
+.grade-warn{ color: var(--market-gold-bright); border-color: rgba(242, 210, 123, 0.22); background: rgba(242, 210, 123, 0.1); }
+.grade-info{ color: #7ecbf7; border-color: rgba(126, 203, 247, 0.2); background: rgba(126, 203, 247, 0.08); }
+
 @media (max-width: 1020px) {
   .intelligence-hero,
   .intelligence-layout {
@@ -291,11 +329,16 @@
   .structure-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .market-grid.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
   .regime-card-grid,
-  .structure-grid {
+  .structure-grid,
+  .market-grid.four {
     grid-template-columns: 1fr;
   }
 }
