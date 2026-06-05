@@ -184,12 +184,16 @@ function renderArticle(topic, locale) {
   <link rel="alternate" hreflang="en" href="${SITE_URL}/insights/${topic.slug}.html" />
   <link rel="alternate" hreflang="ar" href="${SITE_URL}/ar/insights/${topic.slug}.html" />
   <link rel="alternate" hreflang="x-default" href="${SITE_URL}/insights/${topic.slug}.html" />
+  <meta property="og:locale" content="${ar ? 'ar_AR' : 'en_US'}" />
+  <meta property="og:type" content="article" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
-  <meta property="og:type" content="article" />
   <meta property="og:url" content="${canonical}" />
   <meta property="og:image" content="${SITE_URL}/Image/og-image.svg" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${escapeHtml(title)}" />
+  <meta name="twitter:description" content="${escapeHtml(description)}" />
   <script type="application/ld+json">
 ${JSON.stringify(article, null, 2)}
   </script>
