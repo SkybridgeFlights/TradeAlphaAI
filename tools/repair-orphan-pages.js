@@ -12,8 +12,41 @@ const OUT        = path.join(ROOT, 'data', 'orphan-repair-report.json');
 const DRY_RUN = !process.argv.includes('--execute');
 const WRITE   =  process.argv.includes('--write');
 const MAX_REPAIRS_PER_PAGE = 2;
-const MAX_REPAIRS_TOTAL    = 30;
 const MIN_RELEVANCE_SCORE  = 25;
+
+// Support --max-repairs=N and --max-injections=N CLI args (used by repair cycle)
+function cliInt(name, fallback) {
+  const prefix = `${name}=`;
+  const found  = process.argv.find(a => a.startsWith(prefix));
+  return found ? Math.max(1, parseInt(found.slice(prefix.length), 10) || fallback) : fallback;
+}
+const MAX_REPAIRS_TOTAL    = cliInt('--max-repairs', 30);
+const MAX_INJECTIONS_TOTAL = cliInt('--max-injections', 60);
+
+// Safety: forbidden injection zones inside source HTML
+const DANGER_OPEN_TAGS  = ['<script', '<nav ', '<nav>', '<footer', '<noscript', 'application/ld+json'];
+const DANGER_CLOSE_TAGS = ['</script>', '</nav>', '</footer>', '</noscript>', '</script>'];
+
+function isSafeInsertionPoint(html) {
+  // Quick heuristic: find the </main> or </article> position and verify it's in body content
+  const lc = html.toLowerCase();
+  const mainClose    = lc.lastIndexOf('</main>');
+  const articleClose = lc.lastIndexOf('</article>');
+  const insertPos    = Math.max(mainClose, articleClose);
+  if (insertPos === -1) return false;
+
+  const before = lc.slice(0, insertPos);
+  // Reject if the last unclosed dangerous block extends past insertion point
+  for (const dangerTag of DANGER_OPEN_TAGS) {
+    const lastOpen = before.lastIndexOf(dangerTag);
+    if (lastOpen === -1) continue;
+    const closeFor = DANGER_CLOSE_TAGS[DANGER_OPEN_TAGS.indexOf(dangerTag)];
+    if (!closeFor) continue;
+    const lastClose = before.lastIndexOf(closeFor);
+    if (lastClose < lastOpen) return false; // unclosed dangerous block before insertion
+  }
+  return true;
+}
 
 // Blocks insertion in these files (they are templates or pure listings)
 const SKIP_SOURCES = new Set([
@@ -167,7 +200,7 @@ function alreadyLinksTo(sourceHtml, targetPath) {
 // ─── MAIN REPAIR LOGIC ───────────────────────────────────────────────────────
 
 function repairOrphans(options = {}) {
-  const { dryRun = true, maxRepairs = MAX_REPAIRS_TOTAL } = options;
+  const { dryRun = true, maxRepairs = MAX_REPAIRS_TOTAL, maxInjections = MAX_INJECTIONS_TOTAL } = options;
   const graph   = loadGraph();
   const orphanReport = readJson(ORPHAN_PATH, { orphans: [] });
   const nodeMap = new Map((graph.nodes || []).map(n => [n.id, n]));
@@ -176,12 +209,14 @@ function repairOrphans(options = {}) {
     .filter(o => (o.risk_score || o.orphan_risk_score || 0) >= 30)
     .sort((a, b) => (b.risk_score || b.orphan_risk_score || 0) - (a.risk_score || a.orphan_risk_score || 0));
 
-  const repairs  = [];
-  const skipped  = [];
-  let repairCount = 0;
+  const repairs    = [];
+  const skipped    = [];
+  let repairCount  = 0;
+  let linkCount    = 0;
 
   for (const orphan of orphans) {
     if (repairCount >= maxRepairs) break;
+    if (linkCount   >= maxInjections) break;
 
     const orphanNode = nodeMap.get(orphan.id);
     if (!orphanNode) { skipped.push({ id: orphan.id, reason: 'not_in_graph' }); continue; }
@@ -196,6 +231,12 @@ function repairOrphans(options = {}) {
 
     if (alreadyLinksTo(sourceHtml, orphan.id)) {
       skipped.push({ id: orphan.id, reason: 'already_linked', source: topCandidate.id });
+      continue;
+    }
+
+    // Safety check: only inject in safe content zones (not nav/footer/script/schema)
+    if (!isSafeInsertionPoint(sourceHtml)) {
+      skipped.push({ id: orphan.id, reason: 'unsafe_insertion_context', source: topCandidate.id });
       continue;
     }
 
@@ -222,12 +263,14 @@ function repairOrphans(options = {}) {
     });
 
     repairCount++;
+    linkCount++;
   }
 
   return {
     total_orphans:    orphans.length,
     repairs_executed: repairs.filter(r => r.status === 'executed').length,
     repairs_planned:  repairs.filter(r => r.status === 'planned').length,
+    links_injected:   linkCount,
     skipped_count:    skipped.length,
     repairs,
     skipped: skipped.slice(0, 20),

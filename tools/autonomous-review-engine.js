@@ -437,9 +437,21 @@ function main() {
 
 if (require.main === module) main();
 
+// Checks that can be repaired by running the authority repair cycle + draft regeneration.
+// Other failures (content quality, source_backed, etc.) require human revision.
+const TOPOLOGY_REPAIRABLE_CHECKS = new Set([
+  'internal_link_resolution',
+  'cluster_connectivity',
+  'anchor_diversity',
+  'article_pair_contract',
+  'orphan_risk',
+  'topical_authority',
+]);
+
 module.exports = {
   PROFILES,
   reviewDraft,
   hasDraft,
-  scoreDraft
+  scoreDraft,
+  TOPOLOGY_REPAIRABLE_CHECKS,
 };

@@ -102,6 +102,13 @@ jobs:
           npm run check:indexing
           npm run check:social-meta
 
+      - name: Rebuild knowledge graph (ensure graph is current before brain run)
+        run: |
+          node tools/build-content-knowledge-graph.js --write
+          node tools/build-article-pairs.js --write
+          node tools/analyze-content-clusters.js --write
+          node tools/detect-orphan-pages.js --write
+
       - name: Run autonomous publishing brain
         run: |
           node tools/autonomous-publishing-brain.js \
@@ -130,6 +137,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No publishing changes to commit."
           else
-            git commit -m "Autonomous publishing update"
+            git commit -m "Autonomous publishing update [full_pipeline]"
             git push origin "${GITHUB_REF_NAME}"
           fi

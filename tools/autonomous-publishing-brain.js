@@ -4,8 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { scoreCandidates, scoreTopic, hasRealSources } = require('./score-autonomous-topic');
-const { reviewDraft, hasDraft } = require('./autonomous-review-engine');
+const { reviewDraft, hasDraft, TOPOLOGY_REPAIRABLE_CHECKS, PROFILES } = require('./autonomous-review-engine');
 const { CLUSTER_DEFINITIONS } = require('./analyze-content-clusters');
+const { runRepairCycle } = require('./run-authority-repair-cycle');
+
+// Cache overwrite flags per content type so we know if we need to force-clear drafts
+const PROFILES_OVERWRITE = Object.fromEntries(
+  Object.entries(PROFILES).map(([k, v]) => [k, Boolean(v.overwrite)])
+);
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -772,34 +778,111 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
     return blockedExecution('missing draft for review', currentState);
   }
 
-  const review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: true });
+  // ── First review attempt ──────────────────────────────────────────────────
+  let review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: true });
+
+  // ── Authority repair cycle (once, for topology/linking failures only) ─────
+  let authorityRepairAttempted = false;
+  let authorityRepairResult    = 'not_attempted';
+  let repairedOrphansCount     = 0;
+  let repairedLinksCount       = 0;
+  let reviewAfterRepair        = null;
+
+  if (!review.approved) {
+    const failedChecks = review.failed_checks || [];
+    const hasRepairableFailure = failedChecks.some(c => TOPOLOGY_REPAIRABLE_CHECKS.has(c));
+    const hasNonRepairableFailure = failedChecks.some(c => !TOPOLOGY_REPAIRABLE_CHECKS.has(c));
+
+    if (hasRepairableFailure && !hasNonRepairableFailure) {
+      console.log(`[brain] Review failed with repairable checks: ${failedChecks.join(', ')}`);
+      console.log(`[brain] Starting authority repair cycle...`);
+
+      authorityRepairAttempted = true;
+      try {
+        const repairSummary = runRepairCycle({
+          dryRun:             false,
+          maxOrphanRepairs:   5,
+          maxLinkInjections:  10,
+          quiet:              false,
+        });
+        repairedOrphansCount = repairSummary.orphan_repairs || 0;
+        repairedLinksCount   = repairSummary.injected_links || 0;
+        authorityRepairResult = repairSummary.success ? 'completed' : 'completed_with_warnings';
+
+        // Re-generate draft to pick up fresh knowledge graph links.
+        // For non-overwrite profiles (editorial), remove the failing draft first so
+        // the generator creates a fresh one instead of skipping.
+        if (generateFn) {
+          console.log(`[brain] Re-generating draft after repair cycle...`);
+          const draftDir = path.join(ROOT, 'drafts', contentType, slug);
+          if (!PROFILES_OVERWRITE[contentType] && fs.existsSync(draftDir)) {
+            const enFile = path.join(draftDir, 'en.html');
+            const arFile = path.join(draftDir, 'ar.html');
+            if (fs.existsSync(enFile)) fs.unlinkSync(enFile);
+            if (fs.existsSync(arFile)) fs.unlinkSync(arFile);
+            console.log(`[brain] Cleared existing draft for fresh regeneration`);
+          }
+          const regenResult = generateFn();
+          if (regenResult.status !== 0) {
+            authorityRepairResult = 'regeneration_failed_after_repair';
+          }
+        }
+
+        // Second review after repair
+        console.log(`[brain] Re-running review after authority repair...`);
+        review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: false });
+        reviewAfterRepair = review.approved ? 'passed' : `failed: ${review.failed_checks.join(', ')}`;
+      } catch (repairError) {
+        authorityRepairResult = `repair_error: ${repairError.message}`;
+        reviewAfterRepair = 'not_reached';
+      }
+    } else if (hasRepairableFailure && hasNonRepairableFailure) {
+      // Mixed failures: topology repairs won't fix content quality issues
+      console.log(`[brain] Review failed with mixed checks (repairable + non-repairable): ${failedChecks.join(', ')}`);
+      console.log(`[brain] Skipping repair cycle — non-repairable failures require manual revision`);
+      authorityRepairResult = 'skipped: non-repairable failures present';
+    }
+  }
+
   if (!review.approved) {
     return {
-      generation_result: generationResult,
-      publish_result: `blocked: ${review.recommended_action}`,
-      telegram_result: telegramStatus(),
-      command_status: 0,
-      current_state: review.current_state,
-      transition_path: review.transition_path,
-      regeneration_attempts: review.regeneration_attempts,
-      review_result: `failed: ${review.failed_checks.join(', ')}`,
-      approval_reason: review.approval_reason || '',
-      publish_gate_result: review.publish_gate_result
+      generation_result:          generationResult,
+      publish_result:             `blocked: ${review.recommended_action}`,
+      telegram_result:            telegramStatus(),
+      command_status:             0,
+      current_state:              review.current_state,
+      transition_path:            review.transition_path,
+      regeneration_attempts:      review.regeneration_attempts,
+      review_result:              `failed: ${review.failed_checks.join(', ')}`,
+      approval_reason:            review.approval_reason || '',
+      publish_gate_result:        review.publish_gate_result,
+      authority_repair_attempted: authorityRepairAttempted,
+      authority_repair_result:    authorityRepairResult,
+      repaired_orphans_count:     repairedOrphansCount,
+      repaired_links_count:       repairedLinksCount,
+      review_after_repair:        reviewAfterRepair,
+      publish_after_repair:       false,
     };
   }
 
   const publish = publishFn(slug);
   return {
-    generation_result: generationResult,
-    publish_result: publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
-    telegram_result: telegramStatus(),
-    command_status: publish.status,
-    current_state: review.current_state,
-    transition_path: [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
-    regeneration_attempts: review.regeneration_attempts,
-    review_result: 'passed',
-    approval_reason: review.approval_reason,
-    publish_gate_result: publish.status === 0 ? 'approved' : 'blocked: publish command failed'
+    generation_result:          generationResult,
+    publish_result:             publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
+    telegram_result:            telegramStatus(),
+    command_status:             publish.status,
+    current_state:              review.current_state,
+    transition_path:            [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
+    regeneration_attempts:      review.regeneration_attempts,
+    review_result:              'passed',
+    approval_reason:            review.approval_reason,
+    publish_gate_result:        publish.status === 0 ? 'approved' : 'blocked: publish command failed',
+    authority_repair_attempted: authorityRepairAttempted,
+    authority_repair_result:    authorityRepairResult,
+    repaired_orphans_count:     repairedOrphansCount,
+    repaired_links_count:       repairedLinksCount,
+    review_after_repair:        reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
+    publish_after_repair:       authorityRepairAttempted && publish.status === 0,
   };
 }
 
@@ -957,6 +1040,16 @@ function printDecisionReport(report) {
   console.log(`  publish_result:            ${report.publish_result}`);
   console.log(`  telegram_result:           ${report.telegram_result}`);
   console.log(`  commit_result:             ${report.commit_result}`);
+  if (report.authority_repair_attempted !== undefined) {
+    console.log('\n  AUTHORITY REPAIR CYCLE');
+    console.log('  ----------------------------------------------------');
+    console.log(`  authority_repair_attempted: ${report.authority_repair_attempted}`);
+    console.log(`  authority_repair_result:    ${report.authority_repair_result}`);
+    console.log(`  repaired_orphans_count:     ${report.repaired_orphans_count}`);
+    console.log(`  repaired_links_count:       ${report.repaired_links_count}`);
+    console.log(`  review_after_repair:        ${report.review_after_repair}`);
+    console.log(`  publish_after_repair:       ${report.publish_after_repair}`);
+  }
   console.log('======================================================');
 }
 
@@ -1013,11 +1106,17 @@ function main() {
     publish_gate_result: execution.publish_gate_result || 'not evaluated',
     next_action: action.next_action,
     stop_reason: action.stop_reason,
-    generation_result: execution.generation_result,
-    publish_result: execution.publish_result,
-    telegram_result: execution.telegram_result,
-    commit_result: dryRun || mode === 'status' ? 'not requested in dry run/status mode' : 'delegated to workflow post-run commit step',
-    command_status: execution.command_status
+    generation_result:          execution.generation_result,
+    publish_result:             execution.publish_result,
+    telegram_result:            execution.telegram_result,
+    commit_result:              dryRun || mode === 'status' ? 'not requested in dry run/status mode' : 'delegated to workflow post-run commit step',
+    command_status:             execution.command_status,
+    authority_repair_attempted: execution.authority_repair_attempted,
+    authority_repair_result:    execution.authority_repair_result,
+    repaired_orphans_count:     execution.repaired_orphans_count,
+    repaired_links_count:       execution.repaired_links_count,
+    review_after_repair:        execution.review_after_repair,
+    publish_after_repair:       execution.publish_after_repair,
   };
   printDecisionReport(report);
   process.exit(execution.command_status);

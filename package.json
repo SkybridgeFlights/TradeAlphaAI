@@ -67,6 +67,8 @@
     "authority:repair-orphans:execute": "node tools/repair-orphan-pages.js --execute --write",
     "authority:rebalance": "node tools/rebalance-content-topology.js --write",
     "authority:roadmap": "node tools/build-content-roadmap.js --write",
-    "authority:full": "npm run authority:plan && npm run authority:repair-orphans && npm run authority:rebalance && npm run authority:roadmap"
+    "authority:full": "npm run authority:plan && npm run authority:repair-orphans && npm run authority:rebalance && npm run authority:roadmap",
+    "authority:repair-cycle": "node tools/run-authority-repair-cycle.js",
+    "authority:repair-cycle:dry": "node tools/run-authority-repair-cycle.js --dry-run"
   }
 }
