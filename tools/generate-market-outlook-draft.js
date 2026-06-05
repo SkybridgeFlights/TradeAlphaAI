@@ -8,6 +8,7 @@ const { appendSnapshot, buildSnapshot } = require('./macro-intelligence-core');
 const { detectNarrativeDrift } = require('./detect-narrative-drift');
 const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
+const { extractMarketSignals } = require('./extract-market-signals');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -172,11 +173,13 @@ function render(topic, locale, intel, aiContent = null) {
   const takeawayCards = L.takeaways.map((item) => `          <article class="market-takeaway-card"><span>${escapeHtml(item.kicker)}</span><p>${escapeHtml(item.text)}</p></article>`).join('\n');
   const schema = buildSchemas({ title, summary, locale, canonical, enUrl, arUrl, updatedDate, topic, ar, L });
   const nav = ar ? renderArNav(topic.slug) : renderEnNav(topic.slug);
+  const articleIntelligence = buildArticleIntelligence(topic, ar);
   const breadcrumb = ar
     ? `<nav class="breadcrumb"><a href="/ar/">الرئيسية</a><span>/</span><a href="/ar/market-outlook/">توقعات السوق</a><span>/</span><span>${escapeHtml(title)}</span></nav>`
     : `<nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/market-outlook/">Market Outlook</a><span>/</span><span>${escapeHtml(title)}</span></nav>`;
   const sidebarLinks = [
     ['market-narrative', L.executiveSummary],
+    ['intelligence-snapshot', L.intelligenceSnapshot],
     ['volatility-context', L.marketTone],
     ['key-drivers', L.keyDrivers],
     ['scenario-outlook', L.scenarioOutlook],
@@ -263,6 +266,8 @@ ${sidebarLinks}
         <div class="market-panel"><p class="market-copy">${escapeHtml(execSummaryText)}</p></div>
       </section>
 
+${articleIntelligence}
+
       <section class="market-section" id="volatility-context">
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.marketTone)}</span><h2>${escapeHtml(L.marketTone)}</h2></div>
         <div class="market-panel">
@@ -341,6 +346,55 @@ ${contextualCards}
   function marketCard(text, heading = '') {
     return `          <article class="market-card">${heading ? `<span class="market-card-kicker">${escapeHtml(heading)}</span>` : ''}<p class="market-copy">${escapeHtml(text)}</p></article>`;
   }
+}
+
+function buildArticleIntelligence(topic, ar) {
+  const labels = getLabels();
+  const L = { ...labels.en, ...(ar ? labels.ar : {}) };
+  try {
+    const current = buildSnapshot({ slug: topic.slug, topic });
+    const memoryBefore = require('./macro-intelligence-core').readMemory();
+    const drift = detectNarrativeDrift(current, memoryBefore);
+    const sequence = buildRegimeSequence(current, memoryBefore);
+    const divergence = detectCrossAssetDivergence(current);
+    const signals = extractMarketSignals(current, memoryBefore).signals.slice(0, 5);
+    const tags = signals.length ? signals.map((signal) => signal.signal) : [ar ? 'مراقبة أساسية' : 'baseline monitoring'];
+    const stateCards = [
+      [L.riskRegime, current.dominant_risk_regime],
+      [L.volatilityRegime, current.volatility_environment],
+      [L.breadthCondition, current.breadth_quality == null ? current.breadth_state : `${current.breadth_quality}%`],
+      [L.concentrationRisk, current.concentration_risk]
+    ];
+    return `      <section class="market-section" id="intelligence-snapshot">
+        <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.intelligenceSnapshot)}</span><h2>${escapeHtml(L.intelligenceSnapshot)}</h2><p class="market-copy">${escapeHtml(L.intelligenceIntro)}</p></div>
+        <div class="article-intelligence-panel">
+          <div class="article-intel-grid">
+${stateCards.map(([label, value]) => `            <article class="article-intel-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(cleanState(value))}</strong><small>${escapeHtml(L.confidence)}: ${escapeHtml(confidenceFor(value))}</small></article>`).join('\n')}
+          </div>
+          <div class="article-signal-tags" aria-label="${escapeHtml(L.activeSignals)}">
+${tags.map((tag) => `            <span>${escapeHtml(cleanState(tag))}</span>`).join('\n')}
+          </div>
+          <div class="article-intel-notes">
+            <p><strong>${escapeHtml(L.continuitySummary)}:</strong> ${escapeHtml(drift.notes[0] || L.baselineContinuity)}</p>
+            <p><strong>${escapeHtml(L.divergenceContext)}:</strong> ${escapeHtml(`${divergence.primary_tension.signal}: ${divergence.primary_tension.commentary}`)}</p>
+            <p><strong>${escapeHtml(L.relatedSequence)}:</strong> ${escapeHtml(`${sequence.primary_sequence.pattern} (${sequence.primary_sequence.transition_maturity}, confidence ${sequence.primary_sequence.sequence_confidence})`)}</p>
+          </div>
+        </div>
+      </section>`;
+  } catch (error) {
+    return '';
+  }
+}
+
+function cleanState(value) {
+  if (value === null || value === undefined || value === '') return 'unverified';
+  return String(value).replace(/_/g, ' ');
+}
+
+function confidenceFor(value) {
+  if (!value || value === 'unverified') return 'low';
+  if (String(value).includes('mixed')) return 'medium';
+  return 'medium-high';
 }
 
 function updateNarrativeMemory(topicItem, aiContentValue) {
@@ -494,6 +548,18 @@ function getLabels() {
     uncertainty: 'Uncertainty',
     disclaimerTitle: 'Educational Disclaimer',
     executiveSummary: 'Executive Summary',
+    intelligenceSnapshot: 'Market Intelligence Snapshot',
+    intelligenceIntro: 'This article is connected to the macro intelligence layer: regime memory, active signals, divergence checks, and sequence analysis.',
+    riskRegime: 'Risk Regime',
+    volatilityRegime: 'Volatility Regime',
+    breadthCondition: 'Breadth Condition',
+    concentrationRisk: 'Concentration Risk',
+    confidence: 'Confidence',
+    activeSignals: 'Active signals',
+    continuitySummary: 'Narrative continuity',
+    divergenceContext: 'Divergence context',
+    relatedSequence: 'Related macro sequence',
+    baselineContinuity: 'This establishes a baseline for future narrative comparison.',
     marketTone: 'Market Tone',
     keyDrivers: 'Key Drivers',
     macroBackdrop: 'Macro Backdrop',

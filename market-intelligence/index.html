@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Market Intelligence Dashboard | Regime, Breadth &amp; Macro Signals | TradeAlphaAI</title>
+  <meta name="description" content="TradeAlphaAI Market Intelligence tracks macro regimes, volatility state, breadth quality, sector leadership, divergence alerts, and institutional scenario signals for educational research." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/market-intelligence/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="Market Intelligence Dashboard | TradeAlphaAI" />
+  <meta property="og:description" content="A public macro intelligence hub for regimes, breadth, volatility, sector leadership, and scenario-aware institutional signals." />
+  <meta property="og:url" content="https://www.tradealphaai.com/market-intelligence/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Market Intelligence Dashboard | TradeAlphaAI" />
+  <meta name="twitter:description" content="Macro regime, breadth, volatility, divergence, and institutional signal monitoring for educational research." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../landing.css" />
+  <link rel="stylesheet" href="../css/market/market-portal.css" />
+  <link rel="stylesheet" href="./market-intelligence.css" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Dataset","name":"TradeAlphaAI Market Intelligence","description":"Educational macro intelligence dataset covering regime state, volatility, market breadth, sector leadership, divergence alerts, and scenario-aware institutional signals.","url":"https://www.tradealphaai.com/market-intelligence/","creator":{"@type":"Organization","name":"TradeAlphaAI"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TradeAlphaAI","item":"https://www.tradealphaai.com/"},{"@type":"ListItem","position":2,"name":"Market Intelligence","item":"https://www.tradealphaai.com/market-intelligence/"}]}]}</script>
+</head>
+<body class="market-page intelligence-page">
+  <div class="topbar"><div class="wrap topbar-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlphaAI</strong><span>Research Platform</span></span></a><div class="top-actions"><nav class="nav-group" aria-label="Primary"><a href="/" class="nav-link">Home</a><a href="/stocks.html" class="nav-link">Global Stock Research</a><a href="/etfs.html" class="nav-link">ETF Analyzer</a><a href="/rankings.html" class="nav-link">Rankings</a><a href="/insights/" class="nav-link">Articles</a><a href="/market-outlook/" class="nav-link">Market Outlook</a><a href="/market-intelligence/" class="nav-link">Intelligence</a></nav></div></div></div>
+
+  <main class="market-shell intelligence-shell">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Market Intelligence</span></nav>
+
+      <section class="intelligence-hero">
+        <div class="intelligence-hero-copy">
+          <span class="eyebrow">Macro Intelligence OS</span>
+          <h1>Institutional market state, regime evolution, and cross-asset signal monitoring</h1>
+          <p class="market-lead">A static-first research interface that turns TradeAlphaAI's regime memory, market internals, and divergence engines into a public macro intelligence cockpit. Educational context only, not investment advice.</p>
+          <div class="intelligence-hero-meta">
+            <span id="data-status">Local intelligence state</span>
+            <span id="memory-count">Memory: --</span>
+            <span id="last-updated">Updated: --</span>
+          </div>
+        </div>
+        <aside class="intelligence-command-panel" aria-label="Current dominant market state">
+          <span class="eyebrow">Dominant Narrative</span>
+          <p id="dominant-narrative">Loading narrative memory...</p>
+          <div class="command-readout">
+            <strong id="primary-signal">Signal: --</strong>
+            <span id="primary-sequence">Sequence: --</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="market-section">
+        <div class="market-section-head">
+          <span class="eyebrow">Regime Status</span>
+          <h2>Current macro state cards</h2>
+          <p class="market-copy">Each card combines current state, directional change, confidence, and historical context from bounded local memory.</p>
+        </div>
+        <div class="regime-card-grid" id="regime-cards"></div>
+      </section>
+
+      <section class="intelligence-layout">
+        <div class="market-panel">
+          <div class="market-section-head compact">
+            <span class="eyebrow">Narrative Evolution</span>
+            <h2>Memory timeline</h2>
+          </div>
+          <div class="timeline" id="narrative-timeline"></div>
+        </div>
+        <div class="market-panel">
+          <div class="market-section-head compact">
+            <span class="eyebrow">Signal Monitor</span>
+            <h2>Active institutional signals</h2>
+          </div>
+          <div class="signal-feed" id="signal-feed"></div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-section-head">
+          <span class="eyebrow">Market Structure</span>
+          <h2>Breadth, concentration, volatility, and curve state</h2>
+        </div>
+        <div class="structure-grid">
+          <article class="market-panel">
+            <h3>Sector Participation</h3>
+            <div class="meter"><span id="sector-meter"></span></div>
+            <p class="market-copy" id="sector-copy">--</p>
+          </article>
+          <article class="market-panel">
+            <h3>Breadth vs Concentration</h3>
+            <div class="axis-plot" id="breadth-plot"><span></span></div>
+            <p class="market-copy" id="breadth-copy">--</p>
+          </article>
+          <article class="market-panel">
+            <h3>Equal vs Cap Weight</h3>
+            <div class="bar-pair"><span id="ew-bar"></span><span id="cw-bar"></span></div>
+            <p class="market-copy" id="weight-copy">--</p>
+          </article>
+          <article class="market-panel">
+            <h3>Regime Persistence</h3>
+            <div class="persistence-strip" id="persistence-strip"></div>
+            <p class="market-copy" id="persistence-copy">--</p>
+          </article>
+          <article class="market-panel">
+            <h3>Volatility State</h3>
+            <div class="state-pill" id="vol-pill">--</div>
+            <p class="market-copy" id="vol-copy">--</p>
+          </article>
+          <article class="market-panel">
+            <h3>Yield Curve State</h3>
+            <div class="state-pill" id="curve-pill">--</div>
+            <p class="market-copy" id="curve-copy">--</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel intelligence-forward">
+          <span class="eyebrow">Future Intelligence Layer</span>
+          <h2>Built for premium research views, watchlists, macro alerts, and intelligence APIs</h2>
+          <p class="market-copy">The current portal is static and educational. Its structure is prepared for saved intelligence views, signal subscriptions, institutional watchlists, and API-driven macro alerts without implementing authentication or payments yet.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/language-router.js" defer></script>
+  <script src="../js/mobile-nav.js" defer></script>
+  <script src="./market-intelligence.js" defer></script>
+</body>
+</html>
