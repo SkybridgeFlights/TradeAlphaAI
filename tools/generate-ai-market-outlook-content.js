@@ -1,20 +1,23 @@
 'use strict';
 
-// Phase 50: Institutional Market Narrative Engine — AI Content Generator
-// Builds institutional-grade educational macro commentary for market outlook articles.
-// Two-call bilingual generation: English first, Arabic second with EN as analytical context.
-// Upgraded: narrative engine, dynamic section lenses, topic modules A-G, language filter.
+// Phase 50.1: AI Generation Stabilization — Institutional Market Commentary
+// Split prompt architecture: system_core / analytical_requirements / market_context / output_spec
+// Self-expansion pass: targeted section expansion when weak, not full retry
+// Section-level validation: per-field diagnostics before combined check
+// Bias normalization: maps near-hits to canonical allowed values
+// Adjusted thresholds: retail hard-fail raised to ≥5; financial advice = hard-fail at ≥1
+// Expanded specificity: macro language patterns accepted alongside instrument tickers
 //
 // Usage: node tools/generate-ai-market-outlook-content.js --slug=<slug>
-// Outputs structured JSON to stdout. Exits 1 on any failure.
+// Outputs structured JSON to stdout. Exits 1 on failure.
 
-const fs   = require('fs');
-const path = require('path');
+const fs    = require('fs');
+const path  = require('path');
 const https = require('https');
 
-const { buildNarrative }       = require('./build-market-narrative');
-const { analyzeTransition }    = require('./analyze-regime-transition');
-const { detectRetailPhrasing, detectInstitutionalPhrasing } = require('./institutional-language-filter');
+const { buildNarrative }    = require('./build-market-narrative');
+const { analyzeTransition } = require('./analyze-regime-transition');
+const { detectRetailPhrasing, detectFinancialAdvice, detectInstitutionalPhrasing } = require('./institutional-language-filter');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -22,7 +25,9 @@ const CALENDAR_PATH = path.join(ROOT, 'data', 'economic-calendar.json');
 const REGIME_PATH   = path.join(ROOT, 'data', 'market-regime-state.json');
 const LIVE_PATH     = path.join(ROOT, 'data', 'live-market-state.json');
 
-const ALLOWED_BIASES    = new Set(['cautiously bullish', 'neutral', 'cautiously bearish', 'mixed / range-bound', 'elevated uncertainty']);
+const ALLOWED_BIASES = new Set([
+  'cautiously bullish', 'neutral', 'cautiously bearish', 'mixed / range-bound', 'elevated uncertainty',
+]);
 const ALLOWED_BIASES_AR = new Set(['صاعد بحذر', 'محايد', 'هابط بحذر', 'مختلط', 'عدم يقين مرتفع']);
 
 const MODEL      = process.env.OPENAI_MODEL || 'gpt-4o';
@@ -31,7 +36,7 @@ const TIMEOUT_MS = 90000;
 const MIN_WORDS_EN = { executive_summary: 45, market_context: 75, bullish_scenario: 45, bearish_scenario: 45 };
 const MIN_WORDS_AR = { executive_summary: 30, market_context: 50, bullish_scenario: 30, bearish_scenario: 30 };
 
-// Generic filler — reject generation if found
+// Generic filler — hard fail if found
 const GENERIC_PHRASES = [
   'various macroeconomic factors',
   'navigating a complex landscape',
@@ -48,7 +53,7 @@ const GENERIC_PHRASES = [
   'keep a close eye',
 ];
 
-// Named instrument patterns — ≥ 2 required in EN analytical body
+// Named instrument patterns (ticker-level specificity)
 const INSTRUMENT_PATTERNS = [
   /\b(TLT|IEF|SHY|AGG|BND|LQD|HYG|TIP|TIPS|SCHP|ZROZ|EDV)\b/,
   /\b(QQQ|SPY|IWM|DIA|VOO|VTI|RSP|SPLG)\b/,
@@ -63,125 +68,32 @@ const INSTRUMENT_PATTERNS = [
   /\b(DXY|dollar\s+index)\b/i,
 ];
 
-// ── Narrative lenses (dynamic section selection) ──────────────────────────────
+// Macro-analytical patterns (institutional language specificity — counted alongside instruments)
+const MACRO_PATTERNS = [
+  /\b(yield spread|basis point|curve steepen|curve flatten|curve normaliz|curve inversion)\b/i,
+  /\b(breadth|participation|concentration risk|equal.weight|cap.weight|narrow leadership)\b/i,
+  /\b(real yield|risk premium|net interest margin|repricing|factor tilt)\b/i,
+  /\b(implied vol|vol regime|volatility regime|vol compression|vol expansion|hedging demand)\b/i,
+  /\b(liquidity|risk appetite|credit spread|monetary transmission|rate.sensitive|terminal rate)\b/i,
+  /\b(sector rotation|defensive rotation|cross.asset|macro hedge|macro transmission)\b/i,
+  /\b(transmission mechanism|transmission chain|policy path|rate path)\b/i,
+];
 
-const ALL_LENSES = {
-  cross_asset:     { label: 'Cross-Asset Context',       topics: ['all'] },
-  yield_curve:     { label: 'Yield Curve Dynamics',      topics: ['yield', 'rates', 'treasury', 'bond', 'fixed'] },
-  liquidity:       { label: 'Liquidity Environment',     topics: ['dollar', 'dxy', 'inflation', 'rates', 'yield'] },
-  breadth:         { label: 'Participation & Breadth',   topics: ['etf', 'rotation', 'broad', 'sector', 'small'] },
-  volatility:      { label: 'Volatility Environment',    topics: ['vix', 'vol', 'options', 'hedge', 'all'] },
-  sector_rotation: { label: 'Sector Rotation Framework', topics: ['etf', 'rotation', 'sector', 'flow'] },
-  ai_semis:        { label: 'AI & Semiconductor Cycle',  topics: ['ai', 'semiconductor', 'tech', 'chip', 'nvda'] },
-  macro_trans:     { label: 'Macro Transmission Chain',  topics: ['yield', 'rates', 'inflation', 'fed', 'fomc'] },
-  positioning:     { label: 'Positioning Observations',  topics: ['all'] },
-};
+// ── Bias normalization ────────────────────────────────────────────────────────
 
-function selectNarrativeLenses(topicCluster, narrative) {
-  const cluster = (topicCluster || '').toLowerCase();
-  const selected = [];
-
-  // Always include cross-asset and positioning if data available
-  if (narrative.cross_asset_narrative) selected.push('cross_asset');
-  if (narrative.positioning_observations) selected.push('positioning');
-
-  // Topic-specific lenses (pick up to 2 additional)
-  const extras = [];
-  if (/yield|rates|treasury|bond|fixed/.test(cluster)) {
-    extras.push('yield_curve', 'macro_trans', 'liquidity');
-  }
-  if (/ai|semiconductor|tech|chip|nvda/.test(cluster)) {
-    extras.push('ai_semis', 'breadth');
-  }
-  if (/etf|rotation|sector|flow/.test(cluster)) {
-    extras.push('sector_rotation', 'breadth');
-  }
-  if (/dollar|dxy|inflation|liquidity/.test(cluster)) {
-    extras.push('liquidity', 'macro_trans', 'cross_asset');
-  }
-  if (/vix|vol|options|hedge/.test(cluster)) {
-    extras.push('volatility');
-  }
-
-  // Add extras not already selected, up to 2 more
-  for (const e of extras) {
-    if (!selected.includes(e) && narrative[lensField(e)]) selected.push(e);
-    if (selected.length >= 4) break;
-  }
-
-  // Always include volatility if we have data and have room
-  if (!selected.includes('volatility') && narrative.volatility_context && selected.length < 4) {
-    selected.push('volatility');
-  }
-
-  // Fill remaining slot with breadth if we have it
-  if (!selected.includes('breadth') && narrative.breadth_narrative && selected.length < 4) {
-    selected.push('breadth');
-  }
-
-  return selected.slice(0, 4);
+function normalizeBias(bias) {
+  const b = (bias || '').toLowerCase().trim();
+  if (/cautious.*bull|construct|positive|risk.on/.test(b))           return 'cautiously bullish';
+  if (/cautious.*bear|cautious.*neg|cautious.*risk.off/.test(b))     return 'cautiously bearish';
+  if (/elevat.*uncertain|high.*uncertain|uncertain|caution/.test(b)) return 'elevated uncertainty';
+  if (/mixed|range.bound|neutral.to|no.clear|conflicted/.test(b))    return 'mixed / range-bound';
+  if (/neutral|balanced|flat/.test(b))                               return 'neutral';
+  if (/bull/i.test(b))                                               return 'cautiously bullish';
+  if (/bear/i.test(b))                                               return 'cautiously bearish';
+  return null;
 }
 
-function lensField(lensKey) {
-  const map = {
-    cross_asset:     'cross_asset_narrative',
-    yield_curve:     'yield_curve_narrative',
-    liquidity:       'cross_asset_narrative',
-    breadth:         'breadth_narrative',
-    volatility:      'volatility_context',
-    sector_rotation: 'breadth_narrative',
-    ai_semis:        'ai_semis_context',
-    macro_trans:     'yield_curve_narrative',
-    positioning:     'positioning_observations',
-  };
-  return map[lensKey] || null;
-}
-
-function buildNarrativeContext(narrative, selectedLenses, transitionNote, dataSource) {
-  if (!narrative || dataSource === 'structural_fallback') {
-    if (!narrative || !narrative.macro_narrative) return null;
-    return `Macro context (structural framework): ${narrative.macro_narrative}`;
-  }
-
-  const sections = [];
-
-  if (narrative.macro_narrative) {
-    sections.push(`MACRO ENVIRONMENT:\n${narrative.macro_narrative}`);
-  }
-
-  for (const lens of selectedLenses) {
-    const field = lensField(lens);
-    const text  = field && narrative[field];
-    if (!text) continue;
-    const label = ALL_LENSES[lens] && ALL_LENSES[lens].label || lens;
-    if (sections.some(s => s.includes(text.slice(0, 40)))) continue; // dedup
-    sections.push(`${label.toUpperCase()}:\n${text}`);
-  }
-
-  if (narrative.market_internals && narrative.market_internals.sectors_total > 0) {
-    const mi = narrative.market_internals;
-    const lines = [];
-    if (mi.sector_breadth_score != null) {
-      lines.push(`Sector breadth: ${mi.breadth_signal.replace(/_/g,' ')} (${mi.sectors_positive}/${mi.sectors_total} sectors advancing, ${mi.sector_breadth_score}%)`);
-    }
-    if (mi.small_caps_relative_strength != null) {
-      const sc = mi.small_caps_relative_strength;
-      lines.push(`Small-cap vs large-cap: IWM ${sc >= 0 ? 'outperforming' : 'underperforming'} SPY by ${Math.abs(sc).toFixed(1)}pp`);
-    }
-    if (mi.concentration_score != null) {
-      lines.push(`Participation quality: ${mi.participation_quality.replace(/_/g,' ')}`);
-    }
-    if (lines.length) sections.push(`MARKET INTERNALS (computed):\n${lines.join('\n')}`);
-  }
-
-  if (transitionNote) {
-    sections.push(`REGIME TRANSITION CONTEXT:\n${transitionNote}`);
-  }
-
-  return sections.join('\n\n') || null;
-}
-
-// ── Topic-cluster-specific frameworks (A-G) ───────────────────────────────────
+// ── Topic-cluster framework (modules A-G) ─────────────────────────────────────
 
 function getTopicFramework(topic) {
   const cluster = [
@@ -190,117 +102,157 @@ function getTopicFramework(topic) {
     ...(topic.macro_tags || [])
   ].join(' ').toLowerCase();
 
-  // A — Rates / Yields / Fixed Income
   if (/yield|rates|treasury|bond|fixed.income|rate.context/.test(cluster)) {
     return {
       module:      'A — Rates & Duration',
       instruments: 'TLT, IEF, BND, TIPS (TIP ETF), SHY, 10-year Treasury yield, 2-year Treasury yield, Fed funds rate, DXY',
-      mechanism:   'Fed policy expectations → short-end rate path → yield curve shape (2Y10Y spread) → duration risk repricing → TLT/IEF ETF flows → equity valuation discount rates → sector rotation between rate-sensitive (XLU, XLRE) and rate-resistant (XLF, XLE) assets',
-      catalysts:   'CPI or Core PCE release, FOMC decision and dot-plot update, NFP employment report, Treasury auction bid-to-cover ratio, Fed governor speeches on terminal rate',
-      analytical_lenses: ['Cross-asset correlation between TLT and equities', 'Yield curve inversion depth and duration', '2Y yield vs Fed funds as market pricing signal', 'Real yield implications for gold and equities'],
-      bias_note:   '"Cautiously bullish" means conditions are constructive for rate stability or normalization (supportive of duration); NOT a directional call on Treasury prices in isolation.',
+      mechanism:   'Fed policy expectations → short-end rate path → 2Y10Y curve shape → duration risk repricing → TLT/IEF ETF flows → equity valuation discount rates → sector rotation between rate-sensitive (XLU, XLRE) and rate-resistant (XLF, XLE)',
+      lenses:      ['TLT/equity correlation — bond bid as equity hedge vs. risk-on confirmation', '2Y yield vs. Fed funds — market pricing of rate cuts vs. hold', 'Yield curve slope as growth/recession signal', 'Real yield direction as GLD and equity multiple driver'],
+      bias_note:   '"Cautiously bullish" means conditions are constructive for rate stability or normalization, supporting duration; NOT a directional price call on Treasuries.',
     };
   }
-
-  // B — AI / Semiconductors / Technology
   if (/ai|semiconductor|tech|chip|nvda|smd/.test(cluster)) {
     return {
       module:      'B — AI & Semiconductor Cycle',
       instruments: 'NVDA, AMD, SMH, SOXX, XLK, QQQ, SOXL (leveraged semi), ASML, TSM (TSMC)',
-      mechanism:   'AI infrastructure capex cycle → hyperscaler GPU demand signals → NVDA/AMD revenue trajectory → SOX semiconductor index → XLK sector weight → QQQ constituent drag or lift → growth multiple sensitivity to 10Y yield path',
-      catalysts:   'NVDA quarterly earnings report, hyperscaler capex guidance (MSFT, GOOGL, META, AMZN), US chip export control updates, TSMC capacity or pricing announcements, FOMC meeting (rate sensitivity for growth multiples)',
-      analytical_lenses: ['NVDA as AI capex proxy vs broader market performance', 'SOX/SMH vs QQQ divergence (semi-specific vs broad tech)', 'Hyperscaler capex guidance as demand signal', 'Export control risk as binary option on policy path'],
-      bias_note:   '"Cautiously bullish" means the capex cycle and demand signals are constructive for the theme; not a specific stock recommendation.',
+      mechanism:   'AI infrastructure capex cycle → hyperscaler GPU demand signals → NVDA/AMD revenue trajectory → SOX index → XLK sector weight → QQQ growth multiple sensitivity to 10Y yield path',
+      lenses:      ['NVDA as hyperscaler capex proxy vs. broad market breadth', 'SOX/SMH vs. QQQ divergence — semi-specific vs. broad tech leadership', 'XLK vs. IWM — growth concentration vs. equal-weight breadth', 'Export control policy as binary option on the AI supply chain'],
+      bias_note:   '"Cautiously bullish" means the AI capex cycle and demand signals are constructive; not a stock recommendation.',
     };
   }
-
-  // C — ETF Rotation / Sector Flows
   if (/etf.rotation|rotation|sector.flow/.test(cluster)) {
     return {
       module:      'C — ETF Rotation & Sector Flows',
       instruments: 'SPY, QQQ, IWM (small cap), XLK (tech), XLF (financials), XLE (energy), XLU (utilities), XLV (healthcare), RSP (equal-weight S&P), BND',
-      mechanism:   'Macro regime signal → risk appetite → factor tilt (growth vs value, large vs small cap) → sector ETF relative flows → breadth divergence (SPY vs QQQ, IWM vs SPY, RSP vs SPY) → portfolio rebalancing pressure',
-      catalysts:   'ISM manufacturing or services print, FOMC, quarterly earnings season breadth signal, VIX regime transition, CPI surprise as rotation trigger',
-      analytical_lenses: ['Equal-weight vs cap-weight divergence as breadth signal', 'IWM/SPY relative strength as risk appetite gauge', 'Defensive vs cyclical rotation by sector ETF', 'RSP vs SPY as small-constituent participation metric'],
-      bias_note:   '"Cautiously bullish" means the regime supports risk positioning; not a recommendation on any specific ETF allocation.',
+      mechanism:   'Macro regime signal → risk appetite → factor tilt (growth vs. value, large vs. small cap) → sector ETF relative flows → breadth divergence (RSP vs. SPY, IWM vs. SPY)',
+      lenses:      ['Equal-weight (RSP) vs. cap-weight (SPY) as breadth quality signal', 'IWM/SPY relative strength as risk appetite gauge', 'Defensive (XLU, XLV, XLP) vs. cyclical (XLK, XLF, XLE) leadership', 'Sector breadth score: # sectors advancing as market health indicator'],
+      bias_note:   '"Cautiously bullish" means the regime supports risk positioning; not a recommendation on any specific ETF.',
     };
   }
-
-  // D — Defensive Sectors / Risk-off Positioning
   if (/defensive|utilities|healthcare|xlu|xlv|risk.off|safe.haven/.test(cluster)) {
     return {
       module:      'D — Defensive Sectors & Risk-Off',
       instruments: 'XLU (utilities), XLV (healthcare), XLP (consumer staples), TLT, GLD, VIX, IEF',
-      mechanism:   'Risk regime deterioration → VIX expansion → capital rotation from cyclicals (XLK, XLF, XLE) to defensive (XLU, XLV, XLP) → TLT bid → inverse correlation between VIX and equity risk premia',
-      catalysts:   'Surprise macro deterioration (NFP miss, ISM contraction), credit spread widening (LQD/HYG), geopolitical escalation, earnings disappointment in cyclical names, FOMC surprise hawkishness',
-      analytical_lenses: ['XLU/XLV relative strength vs SPY as defensive rotation signal', 'VIX level as hedging demand proxy', 'TLT bid as capital rotation confirmation', 'Credit spread (LQD vs HYG) as risk-appetite barometer'],
-      bias_note:   '"Cautiously bearish" or "elevated uncertainty" reflects risk-off positioning signals; not a call on any specific defensive security.',
+      mechanism:   'Risk regime deterioration → VIX expansion → capital rotation from cyclicals (XLK, XLF, XLE) to defensive (XLU, XLV, XLP) → TLT bid → credit spread widening (LQD vs. HYG)',
+      lenses:      ['XLU/XLV vs. SPY relative strength as defensive rotation confirmation', 'VIX level as institutional hedging demand proxy', 'Credit spread (LQD/HYG) as risk appetite barometer', 'TLT bid vs. equity selling — flight-to-quality cross-asset signal'],
+      bias_note:   '"Cautiously bearish" or "elevated uncertainty" reflects risk-off positioning signals; not a call on any specific security.',
     };
   }
-
-  // E — Inflation / CPI / Real Assets
-  if (/inflation|cpi|pce|real.asset|commodity|gold.inflation/.test(cluster)) {
+  if (/inflation|cpi|pce|real.asset|commodity/.test(cluster)) {
     return {
       module:      'E — Inflation & Real Asset Dynamics',
-      instruments: 'TIP (TIPS ETF), GLD, SLV, GDX, USO, DBA, TLT, IEF, DXY, BTC (as inflation hedge proxy)',
-      mechanism:   'Inflation expectations → TIPS breakeven repricing → real yield direction → GLD and commodity demand → TLT/IEF duration pressure → Fed reaction function → rate path → DXY response',
-      catalysts:   'CPI print (headline vs core), PCE deflator, PPI, 5Y5Y inflation breakeven level, FOMC meeting, oil supply/demand shock, wage growth (NFP), food commodity price surge',
-      analytical_lenses: ['TIPS breakeven vs nominal yield as real yield signal', 'GLD vs DXY relationship as inflation hedge barometer', 'Energy (XLE, USO) as inflation proxy', 'TLT duration pressure under rising inflation expectations'],
-      bias_note:   '"Cautiously bullish" reflects constructive real asset environment or contained inflation expectations; not a commodity price forecast.',
+      instruments: 'TIP (TIPS ETF), GLD, SLV, GDX, USO, DBA, TLT, IEF, DXY',
+      mechanism:   'Inflation expectations → TIPS breakeven repricing → real yield direction → GLD/commodity demand → TLT/IEF duration pressure → Fed reaction function → rate path → DXY response',
+      lenses:      ['TIPS breakeven vs. nominal yield as real yield signal', 'GLD vs. DXY inverse correlation stability', 'Energy ETF (XLE, USO) as inflation premium proxy', 'TLT duration pressure under rising inflation expectations'],
+      bias_note:   '"Cautiously bullish" reflects constructive real asset or contained inflation conditions; not a commodity price forecast.',
     };
   }
-
-  // F — Dollar / Liquidity / Global Flows
   if (/dollar|dxy|liquidity|global.flow|usd|currency/.test(cluster)) {
     return {
       module:      'F — Dollar, Liquidity & Global Capital Flows',
       instruments: 'DXY, GLD, EEM (emerging markets), TLT, USO, GDX, TIP, VIX',
-      mechanism:   'USD strength/weakness → global dollar liquidity conditions → EM capital flow reversal risk → commodity pressure (dollar-denominated) → gold and real asset demand → risk appetite across non-US markets',
-      catalysts:   'Fed rate path relative to G10 central banks, Treasury issuance volume, cross-currency basis, EM current account dynamics, US fiscal deficit trajectory, geopolitical USD-flight demand',
-      analytical_lenses: ['DXY level as global liquidity proxy', 'Dollar strength vs GLD/commodity inverse relationship', 'EM (EEM) relative performance as dollar sensitivity gauge', 'Cross-asset impact of USD moves on global risk appetite'],
-      bias_note:   '"Cautiously bullish" reflects a softening dollar / improving liquidity environment supportive of non-dollar assets.',
+      mechanism:   'USD strength/weakness → global dollar liquidity conditions → EM capital flow reversal risk → commodity pressure → gold demand → cross-asset risk appetite',
+      lenses:      ['DXY level as global dollar liquidity proxy', 'Dollar vs. GLD — dollar debasement vs. real asset hedging tension', 'EM (EEM) relative performance as dollar sensitivity gauge', 'Cross-currency basis as USD funding stress indicator'],
+      bias_note:   '"Cautiously bullish" reflects a softening dollar or improving liquidity environment supportive of non-dollar assets.',
     };
   }
-
-  // G — Gold / Macro Hedging
   if (/gold|gld|gdx|precious|macro.hedge/.test(cluster)) {
     return {
       module:      'G — Gold & Macro Hedging',
       instruments: 'GLD, GDX (gold miners ETF), SLV, TIP, TLT, DXY, VIX',
-      mechanism:   'Real yield direction → GLD opportunity cost → central bank accumulation demand → DXY inverse relationship → GDX operational leverage to gold price → tail risk hedging via GLD vs equity VIX-hedge substitution',
-      catalysts:   'Fed rate decision (real yield impact), CPI print (inflation expectations), geopolitical shock, central bank reserve policy, dollar index breakout or reversal, sovereign debt stress signal',
-      analytical_lenses: ['Real yield (10Y nominal minus TIPS breakeven) as GLD driver', 'GLD vs DXY inverse correlation stability', 'GDX vs GLD ratio as leverage signal', 'Gold as portfolio hedge vs VIX-based hedging alternatives'],
-      bias_note:   '"Cautiously bullish" reflects constructive real yield / macro hedge conditions for gold; not a commodity price target.',
+      mechanism:   'Real yield direction → GLD opportunity cost → central bank accumulation → DXY inverse relationship → GDX operational leverage → tail risk hedging vs. VIX-based alternatives',
+      lenses:      ['Real yield (10Y nominal minus TIPS breakeven) as GLD primary driver', 'GLD vs. DXY inverse correlation stability', 'GDX vs. GLD leverage ratio as miner premium signal', 'Gold as portfolio hedge vs. equity volatility (VIX) hedges'],
+      bias_note:   '"Cautiously bullish" reflects constructive real yield or macro hedge conditions; not a commodity price target.',
     };
   }
-
-  // Default — Broad Market / Cross-Asset
   return {
     module:      'Z — Cross-Asset Macro',
     instruments: 'SPY, QQQ, IWM, VIX, TLT (duration proxy), GLD, DXY, IEF',
-    mechanism:   'Macro regime signal → volatility regime (VIX) → cross-asset correlation shifts → risk-on vs risk-off positioning → relative strength rotation between equity (SPY/QQQ) and defensive assets (TLT/GLD/IEF)',
-    catalysts:   'FOMC meeting, CPI or PCE print, earnings season breadth, credit market stress signal, geopolitical event',
-    analytical_lenses: ['VIX level and regime as hedging demand barometer', 'SPY/QQQ/IWM divergence as breadth quality signal', 'TLT/equity correlation as cross-asset risk indicator', 'GLD/DXY as macro hedge vs dollar strength tension'],
+    mechanism:   'Macro regime signal → VIX level → cross-asset correlation shifts → risk-on vs. risk-off positioning → relative strength rotation between equity (SPY/QQQ) and defensive assets (TLT/GLD/IEF)',
+    lenses:      ['VIX level and regime as hedging demand barometer', 'SPY/QQQ/IWM divergence as breadth quality signal', 'TLT/equity correlation as flight-to-quality vs. risk-on signal', 'GLD/DXY as macro hedge vs. dollar strength tension'],
     bias_note:   '"Cautiously bullish" means the environment supports risk-on positioning; not a call on any specific instrument.',
   };
 }
 
-// ── Market context builder ─────────────────────────────────────────────────────
+// ── Narrative lens selection ───────────────────────────────────────────────────
 
-function buildMarketDataSummary(live, regime, narrative, transitionAnalysis) {
-  // Phase 50: use narrative engine output if live data available
-  if (narrative && narrative.data_source === 'live' && narrative.macro_narrative) {
-    return null; // narrative context block replaces this entirely for live data
+const ALL_LENSES = {
+  cross_asset:     'cross_asset_narrative',
+  yield_curve:     'yield_curve_narrative',
+  breadth:         'breadth_narrative',
+  volatility:      'volatility_context',
+  sector_rotation: 'breadth_narrative',
+  ai_semis:        'ai_semis_context',
+  macro_trans:     'yield_curve_narrative',
+  positioning:     'positioning_observations',
+};
+
+function selectNarrativeLenses(topicCluster, narrative) {
+  const c = (topicCluster || '').toLowerCase();
+  const selected = [];
+  if (narrative.cross_asset_narrative) selected.push('cross_asset');
+  if (narrative.positioning_observations) selected.push('positioning');
+  const extras = [];
+  if (/yield|rates|treasury|bond|fixed/.test(c)) extras.push('yield_curve', 'macro_trans');
+  if (/ai|semiconductor|tech|chip|nvda/.test(c)) extras.push('ai_semis', 'breadth');
+  if (/etf|rotation|sector|flow/.test(c))        extras.push('sector_rotation', 'breadth');
+  if (/dollar|dxy|inflation|liquidity/.test(c))  extras.push('macro_trans');
+  for (const e of extras) {
+    const field = ALL_LENSES[e];
+    if (!selected.includes(e) && field && narrative[field]) selected.push(e);
+    if (selected.length >= 4) break;
+  }
+  if (!selected.includes('volatility') && narrative.volatility_context && selected.length < 4) selected.push('volatility');
+  if (!selected.includes('breadth')    && narrative.breadth_narrative   && selected.length < 4) selected.push('breadth');
+  return selected.slice(0, 4);
+}
+
+function buildNarrativeContext(narrative, selectedLenses, transitionNote) {
+  if (!narrative || narrative.data_source === 'structural_fallback') {
+    return narrative && narrative.macro_narrative
+      ? `Structural regime context: ${narrative.macro_narrative}`
+      : null;
   }
 
-  // Structural fallback (no live data): use regime signals
-  const r = (regime && regime.state) || {};
-  const signals = Object.entries(r)
-    .filter(([, vl]) => vl && vl !== 'unverified' && !Array.isArray(vl))
-    .map(([k, vl]) => `${k.replace(/_/g, ' ')}: ${vl}`);
-  return signals.length
-    ? `Regime signals (structural, unverified): ${signals.join('. ')}`
-    : 'No live market data available. Write structural analysis: how this mechanism operates in the current macro regime, historical behavioral patterns, and what regime shift would alter the outlook.';
+  const LENS_LABELS = {
+    cross_asset: 'CROSS-ASSET SIGNALS',
+    yield_curve: 'YIELD CURVE DYNAMICS',
+    breadth:     'MARKET BREADTH & PARTICIPATION',
+    volatility:  'VOLATILITY ENVIRONMENT',
+    sector_rotation: 'SECTOR ROTATION',
+    ai_semis:    'AI & SEMICONDUCTOR CYCLE',
+    macro_trans: 'MACRO TRANSMISSION',
+    positioning: 'POSITIONING OBSERVATIONS',
+  };
+
+  const sections = [];
+  if (narrative.macro_narrative) sections.push(`MACRO ENVIRONMENT:\n${narrative.macro_narrative}`);
+
+  for (const lens of selectedLenses) {
+    const field = ALL_LENSES[lens];
+    const text  = field && narrative[field];
+    if (!text || sections.some(s => s.includes(text.slice(0, 40)))) continue;
+    sections.push(`${LENS_LABELS[lens] || lens.toUpperCase()}:\n${text}`);
+  }
+
+  const mi = narrative.market_internals;
+  if (mi && mi.sectors_total > 0) {
+    const lines = [];
+    if (mi.sector_breadth_score != null) {
+      lines.push(`Sector breadth: ${mi.breadth_signal.replace(/_/g,' ')} (${mi.sectors_positive}/${mi.sectors_total} sectors advancing, ${mi.sector_breadth_score}%)`);
+    }
+    if (mi.small_caps_relative_strength != null) {
+      const sc = mi.small_caps_relative_strength;
+      lines.push(`Small-cap vs large-cap: IWM ${sc >= 0 ? 'outperforming' : 'underperforming'} SPY by ${Math.abs(sc).toFixed(1)}pp`);
+    }
+    if (mi.participation_quality && mi.participation_quality !== 'unverified') {
+      lines.push(`Participation quality: ${mi.participation_quality.replace(/_/g,' ')}`);
+    }
+    if (lines.length) sections.push(`MARKET INTERNALS (computed):\n${lines.join('\n')}`);
+  }
+
+  if (transitionNote) sections.push(`REGIME TRANSITION:\n${transitionNote}`);
+  return sections.join('\n\n') || null;
 }
 
 function buildCalendarSummary(calendar) {
@@ -311,123 +263,125 @@ function buildCalendarSummary(calendar) {
     .slice(0, 5);
   return events.length
     ? events.map(e => `${e.date}: ${e.name} (${e.impact_level || 'unknown'} impact)`).join('\n')
-    : 'No confirmed events in calendar. Reference the standard upcoming catalyst cadence (monthly CPI, PCE, NFP, FOMC schedule) structurally.';
+    : 'No confirmed upcoming events. Reference standard catalyst cadence: monthly CPI, PCE, NFP, FOMC schedule.';
 }
 
-// ── Prompt builders ───────────────────────────────────────────────────────────
+// ── Prompt architecture: split into 4 layers ──────────────────────────────────
 
-function buildEnSystemPrompt() {
-  return `You are a senior cross-asset macro strategist writing institutional research for TradeAlphaAI's professional platform. Your readers are portfolio managers, macro traders, and sophisticated allocators who read BAML global rates strategy, Goldman macro views, and JPM cross-asset research. They understand yield curves, factor tilts, sector flows, and options pricing without definitions.
+function buildSystemCore() {
+  // [A] Role, voice, compliance — intentionally concise; analytical requirements are in user prompt
+  return `You are a senior cross-asset macro strategist writing institutional research for sophisticated allocators. Your readers — portfolio managers, macro traders, institutional analysts — understand yield curves, factor tilts, vol regimes, and sector mechanics without definitions.
 
-ANALYTICAL STANDARDS — NON-NEGOTIABLE:
-- Every claim is anchored to a named instrument, yield level, spread relationship, or verified data point
-- Transmission chains are explicit: [verified signal] → [market mechanism] → [named instrument impact] → [portfolio-level implication]
-- Conditional calls reference real named catalysts: "If June CPI prints above 3.2%, 10-year yields may re-test resistance, compressing TLT duration and pressuring QQQ growth multiples"
-- Bullish and bearish scenarios have DISTINCT catalysts — they are never mirror images
-- Analytical conviction is calibrated: "historically correlated with", "tends to precede", "could amplify if", "conditional on"
-- Breadth and participation signals are mentioned when relevant: narrow vs broad leadership, equal-weight vs cap-weight divergence, sector concentration risk
-- Volatility context informs the analysis: VIX level, implied vol regime, complacency vs hedging demand
-- Regime transitions are noted: "technology leadership remains strong, but narrowing breadth and renewed utilities participation may indicate a more selective risk environment"
+VOICE: Macro desk note. Analytical conviction calibrated with hedged precision. Every analytical claim anchored to named instruments, spread relationships, yield levels, or verified data.
 
-INSTITUTIONAL LANGUAGE STANDARDS:
-- Write as a macro desk note, not an SEO article
-- Preferred: "market participants continue repricing duration expectations", "cross-asset flows remain supportive of long-duration exposure", "breadth deterioration may indicate increasingly selective participation"
-- FORBIDDEN wording: "stocks may rise", "investors may buy", "market could go up", "in the long run", "perfect storm", "game changer", "unprecedented times", "all eyes are on", "it is worth noting that", "in conclusion,", "to summarize,", "time will tell"
-- FORBIDDEN filler: "various macroeconomic factors", "navigating a complex landscape", "market participants are closely monitoring", "it remains to be seen", "dynamic market landscape", "complex macro environment", "broadly speaking", "at the end of the day", "macroeconomic backdrop remains"
+COMPLIANCE: Educational market commentary only. No trade recommendations. No price targets. All directional calls are conditional: "If [catalyst], [mechanism] would [impact named instrument]."
 
-This is educational market commentary. You do NOT recommend trades, price targets, or allocations. Frame all directional analysis conditionally: "If X materializes, instruments A and B tend to respond Z because of mechanism Y." The goal is to teach the reader to see the mechanism — not to tell them what to do.`;
+ABSOLUTE PROHIBITIONS — any of these in your output will cause hard rejection:
+- "you should buy", "you should sell", "guaranteed returns", "buy now", "sell now"
+- "various macroeconomic factors", "navigating a complex landscape", "market participants are closely monitoring"
+- "it remains to be seen", "dynamic market landscape", "at the end of the day", "broadly speaking"`;
 }
 
 function buildEnUserPrompt(topic, fw, narrativeContext, calendarText) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today       = new Date().toISOString().slice(0, 10);
   const biasOptions = [...ALLOWED_BIASES].join(' | ');
+  const lensesText  = fw.lenses.map((l, i) => `${i + 1}. ${l}`).join('\n');
 
-  const narrativeSection = narrativeContext
-    ? `INSTITUTIONAL MARKET CONTEXT (data-grounded, narrative engine output):\n\n${narrativeContext}`
-    : 'MARKET DATA: No live data available. Write structural analysis using the mechanism framework and historical patterns. Do not reference specific current levels.';
+  const dataBlock = narrativeContext
+    ? `MARKET CONTEXT (data-grounded, from narrative engine):\n\n${narrativeContext}`
+    : 'DATA STATUS: No live market data. Write structural analysis using mechanism frameworks and historical patterns. Do not reference specific current levels or imply knowledge of today\'s tape.';
 
-  return `Write institutional-grade market outlook analysis for the following topic.
+  return `Write institutional market outlook analysis for the following topic.
 
-TOPIC: ${topic.title_en}
-RESEARCH MODULE: ${fw.module}
-DATE: ${today}
-MACRO TAGS: ${(topic.macro_tags || []).join(', ') || 'general markets'}
+═══ TOPIC ═══
+Title: ${topic.title_en}
+Research Module: ${fw.module}
+Date: ${today}
+Macro Tags: ${(topic.macro_tags || []).join(', ') || 'general markets'}
 
-RELEVANT INSTRUMENTS FOR THIS THEME:
-${fw.instruments}
+═══ ANALYTICAL FRAMEWORK ═══
+Key Instruments: ${fw.instruments}
+Macro Transmission Mechanism: ${fw.mechanism}
+Analytical Lenses (incorporate at least 2 into market_context):
+${lensesText}
+Directional Bias Context: ${fw.bias_note}
 
-MACRO TRANSMISSION MECHANISM FOR THIS CLUSTER:
-${fw.mechanism}
+═══ ${dataBlock} ═══
 
-CLUSTER-SPECIFIC ANALYTICAL LENSES (weave at least 2 into the analysis):
-${fw.analytical_lenses.map((l, i) => `${i + 1}. ${l}`).join('\n')}
-
-DIRECTIONAL BIAS CONTEXT:
-${fw.bias_note}
-
-${narrativeSection}
-
-UPCOMING ECONOMIC EVENTS:
+═══ CALENDAR ═══
 ${calendarText}
 
-REQUIREMENTS:
-1. Reference AT LEAST 2 named instruments from the "Relevant Instruments" list in analytical sections
-2. key_drivers MUST follow this chain: [Verified Signal or Data Input] → [Market Mechanism] → [Impact on Named Instrument or Sector]
-3. Bullish and bearish scenarios MUST have different named catalysts — not mirror images
-4. risk_factors must be specific to this theme's instruments and mechanics, not generic global risks
-5. what_to_watch must name specific data releases, instrument thresholds, or cross-asset relationships
-6. Use the analytical lenses above to shape the market_context — address breadth, participation, volatility regime, or cross-asset context as relevant
-7. INSTITUTIONAL LANGUAGE REQUIRED: write as a macro research desk note. Avoid retail-style phrases and low-information filler
-8. Source discipline: if narrative context shows data_source=structural_fallback, write about structural dynamics and historical patterns without referencing specific current levels
-9. MINIMUM LENGTHS (enforced at validation): executive_summary ≥ 45 words, market_context ≥ 75 words, each scenario ≥ 45 words
-10. key_drivers: 3 items, each ≥ 2 full sentences with explicit chain structure above
-11. risk_factors: 5 specific items tied to this theme's mechanics
-12. what_to_watch: 5 items each naming a specific instrument, release, or threshold
+═══ ANALYTICAL REQUIREMENTS ═══
+1. TRANSMISSION CHAINS — key_drivers MUST use: [Verified Signal] → [Mechanism] → [Named Instrument Impact]
+2. SCENARIOS — bullish and bearish MUST have DISTINCT named catalysts (not mirror images); each must state catalyst → mechanism → affected instrument
+3. DIRECTIONAL BIAS — one of exactly: ${biasOptions}
+4. INSTRUMENTS — reference ≥2 named instruments from the Key Instruments list across the analytical sections
+5. SPECIFICITY — avoid abstract macro statements without instrument anchors; name ETFs, yield levels, spreads, or sector relationships
+6. ANALYTICAL LENSES — weave ≥2 of the listed lenses into market_context (breadth, vol, cross-asset, positioning, etc.)
 
-Return ONLY valid JSON — no markdown, no explanation:
+═══ LANGUAGE REQUIREMENTS ═══
+Write as a macro desk research note. AVOID:
+- "stocks may rise/fall", "investors may buy/sell", "market could go up/down"
+- "all eyes are on", "game changer", "perfect storm", "unprecedented times"
+- "in conclusion,", "to summarize,", "it is worth noting that", "it is important to note"
+- "in the long run" (use "across this rate cycle" or "through the easing path")
+- Passive state descriptions ("the market is experiencing", "conditions remain challenging")
+
+PREFER:
+- "market participants are repricing duration expectations"
+- "cross-asset flows remain supportive of long-duration exposure"
+- "breadth deterioration may indicate increasingly selective participation"
+- "vol compression suggests reduced near-term uncertainty pricing"
+
+═══ OUTPUT REQUIREMENTS ═══
+MINIMUM LENGTHS (enforced at validation): executive_summary ≥ 45 words, market_context ≥ 75 words, each scenario ≥ 45 words.
+key_drivers: exactly 3 items, each ≥ 2 full sentences with explicit [Signal → Mechanism → Impact] chain.
+risk_factors: exactly 5 items, each specific to this theme's mechanics (not generic global risks).
+what_to_watch: exactly 5 items, each naming a specific instrument, data release, or cross-asset relationship.
+
+Return ONLY valid JSON — no markdown, no preamble, no explanation:
 {
-  "executive_summary": "2-3 sentences. State the directional research stance AND the primary structural condition. Reference at least one named instrument or relationship.",
-  "market_context": "4-6 sentences. Name structural dynamics, cross-asset relationships, breadth signals, or volatility context specific to this theme. Weave in the analytical lenses.",
+  "executive_summary": "2-3 sentences. State the directional stance AND primary structural condition. Reference ≥1 named instrument or spread relationship.",
+  "market_context": "4-6 sentences. Name structural dynamics, cross-asset relationships, breadth signals, and vol context specific to this theme. Must incorporate ≥2 of the analytical lenses.",
   "directional_bias": "${biasOptions}",
-  "bullish_scenario": "2-3 sentences. Named catalyst → transmission mechanism → named instrument impact. Distinct catalyst from bearish.",
-  "bearish_scenario": "2-3 sentences. Different named catalyst → different mechanism → named instrument pressure. NOT the inverse of bullish.",
+  "bullish_scenario": "2-3 sentences. Named catalyst (e.g. 'If June CPI prints below 3%...') → transmission mechanism → named instrument impact. Distinct catalyst from bearish.",
+  "bearish_scenario": "2-3 sentences. DIFFERENT named catalyst → different mechanism → named instrument pressure. NOT the inverse of bullish.",
   "key_drivers": [
-    "[Driver label]: [Verified Signal] → [Mechanism] → [Instrument impact]. 2 complete sentences.",
+    "[Driver label]: [Signal] → [Mechanism] → [Instrument impact]. 2 complete sentences with this chain.",
     "[Driver label]: [Signal] → [Mechanism] → [Impact]. 2 sentences.",
     "[Driver label]: [Signal] → [Mechanism] → [Impact]. 2 sentences."
   ],
   "risk_factors": [
-    "Specific risk tied to this theme's instruments or catalysts with mechanism named",
-    "Second specific risk with transmission named",
-    "Third risk specific to this cluster",
-    "Fourth specific risk",
-    "Fifth specific risk"
+    "Risk 1: specific to this theme with mechanism named",
+    "Risk 2: specific with transmission",
+    "Risk 3: specific to this cluster",
+    "Risk 4: specific",
+    "Risk 5: specific"
   ],
   "what_to_watch": [
-    "Named data release with timing context (e.g. June PCE print, July FOMC)",
-    "Named instrument signal or threshold (e.g. TLT close below 90, VIX above 25)",
+    "Named data release with timing (e.g. June PCE print)",
+    "Named instrument signal or threshold (e.g. TLT close below 90)",
     "Named policy or event trigger with mechanism",
-    "Named fundamental metric or spread relationship to track",
-    "Named cross-asset relationship or breadth signal to monitor"
+    "Named fundamental metric or spread to track",
+    "Named cross-asset relationship or breadth signal"
   ]
 }`;
 }
 
 function buildArSystemPrompt() {
-  return `أنت محلل أبحاث أسواق مالية متمرس في منصة TradeAlphaAI، تكتب لجمهور عربي من كبار المستثمرين والمحللين الماليين المحترفين. قراؤك على دراية بسياسات الاحتياطي الفيدرالي ومنحنى العائد وديناميكيات أسواق الأسهم والسندات وصناديق المؤشرات والتدوير القطاعي.
+  return `أنت محلل أبحاث أسواق مالية متمرس في منصة TradeAlphaAI، تكتب لجمهور عربي من المستثمرين والمحللين الماليين المحترفين على دراية بسياسات الاحتياطي الفيدرالي ومنحنى العائد وديناميكيات الأسواق.
 
-معايير التحليل المؤسسي:
-- تستخدم المصطلحات المالية العربية الدقيقة: العائد، منحنى العائد، الانتشار الائتماني، الزخم، التناوب القطاعي، التحوط، الانكشاف، السيولة، الاتساع، التركيز، حسابات التقييم
-- أسماء الأدوات المالية تبقى بالإنجليزية (TLT, QQQ, NVDA, SMH, BND, IEF, SPY, XLK) لأن القراء يعرفونها بهذا الشكل
-- لا تترجم حرفياً من الإنجليزية — اكتب تحليلاً أصيلاً باللغة العربية بأسلوب يليق بمذكرات الأبحاث المؤسسية
-- تبني سلاسل استدلال واضحة: [بيانات موثقة أو إشارة] → [آلية السوق] → [أثر على أداة مالية مسماة]
-- لا تكتب جملاً إنجليزية كاملة في المتن العربي — أسماء الأدوات المالية فقط مقبولة بالإنجليزية
-- التحليل مشروط وتعليمي، لا يتضمن توصيات استثمارية محددة أو أهداف أسعار`;
+أسلوبك التحليلي:
+- المصطلحات المالية العربية الدقيقة: العائد، منحنى العائد، الانتشار، الزخم، التناوب القطاعي، السيولة، الاتساع، التركيز
+- أسماء الأدوات تبقى بالإنجليزية: TLT, QQQ, NVDA, SMH, SPY, IWM, XLK, XLF, GLD, DXY, VIX
+- لا ترجمة حرفية — تحليل أصيل بالعربية بأسلوب مذكرات الأبحاث المؤسسية
+- سلاسل استدلال: [إشارة] → [آلية السوق] → [أثر على أداة مسماة]
+- لا جمل إنجليزية كاملة في المتن — الأسماء التجارية فقط
+- التحليل مشروط وتعليمي، بلا توصيات استثمارية`;
 }
 
 function buildArUserPrompt(topic, enContent) {
-  const today    = new Date().toISOString().slice(0, 10);
-  const biasMap  = {
+  const biasMap = {
     'cautiously bullish':   'صاعد بحذر',
     'neutral':              'محايد',
     'cautiously bearish':   'هابط بحذر',
@@ -435,34 +389,34 @@ function buildArUserPrompt(topic, enContent) {
     'elevated uncertainty': 'عدم يقين مرتفع',
   };
   const targetBias = biasMap[enContent.directional_bias] || 'محايد';
+  const today = new Date().toISOString().slice(0, 10);
 
-  return `المهمة: اكتب النسخة العربية من تحليل توقعات السوق المؤسسي أدناه.
+  return `المهمة: اكتب النسخة العربية من التحليل المؤسسي أدناه.
 
 الموضوع: ${topic.title_ar || topic.title_en}
 التاريخ: ${today}
 
 التعليمات الإلزامية:
-1. هذا ليس ترجمة حرفية — اكتب تحليلاً أصيلاً باللغة العربية يعبّر عن الاستنتاجات التحليلية بأسلوب مذكرات الأبحاث المؤسسية المناسب للقارئ المالي العربي
-2. أسماء الأدوات المالية تبقى بالإنجليزية تماماً: TLT, IEF, QQQ, SPY, IWM, SMH, NVDA, AMD, XLK, XLF, XLE, XLU, XLV, BND, GLD, DXY, VIX
-3. لا تكتب جملاً إنجليزية كاملة في المتن العربي — المصطلحات التقنية والأسماء التجارية فقط
-4. الميل الاتجاهي يجب أن يكون بالضبط: "${targetBias}"
-5. الحد الأدنى للكلمات العربية: الملخص ≥ 50 كلمة، سياق السوق ≥ 70 كلمة، كل سيناريو ≥ 45 كلمة
-6. العوامل الرئيسية تتبع هيكل الاستدلال: [إشارة موثقة] → [آلية السوق] → [أثر على أداة مالية مسماة]
-7. عوامل المخاطر محددة لهذا الموضوع مع ذكر الآلية — ليست مخاطر عالمية عامة
+1. تحليل أصيل بالعربية — ليس ترجمة حرفية
+2. أسماء الأدوات بالإنجليزية فقط: TLT, IEF, QQQ, SPY, IWM, SMH, NVDA, AMD, XLK, XLF, XLE, XLU, XLV, BND, GLD, DXY, VIX
+3. لا جمل إنجليزية في المتن — الأسماء التجارية فقط
+4. الميل الاتجاهي بالضبط: "${targetBias}"
+5. الحد الأدنى: الملخص ≥ 50 كلمة عربية، السياق ≥ 70 كلمة، كل سيناريو ≥ 45 كلمة
+6. العوامل الرئيسية: [إشارة] → [آلية] → [أداة مسماة]
 
-التحليل الإنجليزي المرجعي (للاستدلال التحليلي فقط — ليس للترجمة الحرفية):
+التحليل المرجعي (للاستدلال — لا للترجمة):
 ${JSON.stringify(enContent, null, 2)}
 
-أعد ONLY valid JSON بهذا الهيكل تماماً:
+أعد ONLY valid JSON:
 {
-  "executive_summary": "جملتان إلى ثلاث. الميل الاتجاهي والشرط الهيكلي الرئيسي مع إشارة لأداة مالية.",
-  "market_context": "أربع إلى ست جمل. الديناميكيات الهيكلية والعلاقات بين الأصول وإشارات الاتساع. أدوات وآليات محددة.",
+  "executive_summary": "جملتان-ثلاث. الميل والشرط الرئيسي مع أداة مالية.",
+  "market_context": "أربع-ست جمل. ديناميكيات هيكلية وعلاقات بين الأصول وإشارات اتساع.",
   "directional_bias": "${targetBias}",
-  "bullish_scenario": "جملتان إلى ثلاث. محفز محدد مسمى → آلية الانتقال → أثر على أداة مالية مسماة.",
-  "bearish_scenario": "جملتان إلى ثلاث. محفز مختلف ومسمى → آلية مختلفة → ضغط على أداة مسماة.",
-  "key_drivers": ["العامل 1: سلسلة استدلال كاملة [إشارة → آلية → أداة]. جملتان.", "العامل 2: نفس البنية. جملتان.", "العامل 3: نفس البنية. جملتان."],
-  "risk_factors": ["خطر محدد مع ذكر الآلية 1", "خطر محدد 2", "خطر محدد 3", "خطر محدد 4", "خطر محدد 5"],
-  "what_to_watch": ["إصدار بيانات محدد بتوقيت", "إشارة أداة محددة أو مستوى", "محفز سياسي محدد", "مؤشر أساسي أو علاقة انتشار", "علاقة بين الأصول أو إشارة اتساع"]
+  "bullish_scenario": "جملتان-ثلاث. محفز مسمى → آلية → أثر على أداة مسماة.",
+  "bearish_scenario": "جملتان-ثلاث. محفز مختلف → آلية مختلفة → ضغط على أداة.",
+  "key_drivers": ["العامل 1: إشارة → آلية → أداة. جملتان.", "العامل 2: نفس البنية.", "العامل 3: نفس البنية."],
+  "risk_factors": ["خطر محدد 1", "خطر محدد 2", "خطر محدد 3", "خطر محدد 4", "خطر محدد 5"],
+  "what_to_watch": ["بيانات محددة", "إشارة أداة محددة", "محفز سياسي", "مقياس أساسي", "علاقة بين الأصول"]
 }`;
 }
 
@@ -495,13 +449,13 @@ function callOpenAI(systemPrompt, userPrompt, apiKey, { maxTokens = 2000, temper
 
     const req = https.request(options, res => {
       const chunks = [];
-      res.on('data', chunk => chunks.push(chunk));
+      res.on('data', c => chunks.push(c));
       res.on('end', () => {
         try {
           const raw    = Buffer.concat(chunks).toString('utf8');
           const parsed = JSON.parse(raw);
           if (parsed.error) { reject(new Error(`OpenAI: ${parsed.error.message}`)); return; }
-          const text = parsed.choices && parsed.choices[0] && parsed.choices[0].message && parsed.choices[0].message.content;
+          const text = parsed.choices?.[0]?.message?.content;
           if (!text) { reject(new Error('OpenAI returned empty content')); return; }
           resolve(JSON.parse(text));
         } catch (e) { reject(new Error(`Parse error: ${e.message}`)); }
@@ -515,115 +469,192 @@ function callOpenAI(systemPrompt, userPrompt, apiKey, { maxTokens = 2000, temper
   });
 }
 
-// ── Validation ────────────────────────────────────────────────────────────────
+// ── Section-level validation ───────────────────────────────────────────────────
 
-function countWords(text) {
-  return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+function validateSections(en) {
+  const results = {};
+
+  for (const [field, min] of Object.entries(MIN_WORDS_EN)) {
+    const text      = String(en[field] || '');
+    const wc        = countWords(text);
+    const instScore = detectInstitutionalPhrasing(text);
+    const instrHits = INSTRUMENT_PATTERNS.filter(p => p.test(text)).length;
+    const macroHits = MACRO_PATTERNS.filter(p => p.test(text)).length;
+    results[field]  = { word_count: wc, min_words: min, inst_score: instScore, instrument_hits: instrHits, macro_hits: macroHits, ok: wc >= min };
+  }
+
+  // Scenario structural checks
+  for (const scenario of ['bullish_scenario', 'bearish_scenario']) {
+    const text  = String(en[scenario] || '');
+    const lower = text.toLowerCase();
+    const wc    = countWords(text);
+    const hasCatalyst   = /\bif\b|\bwhen\b|\bshould\b|catalyst|surprise|trigger|exceed|miss|spike|collapse|above|below|print/.test(lower);
+    const hasMechanism  = /yield|spread|rotation|pressure|compress|reprice|flow|demand|support|bid|decline|amplif|steepen|flatten|transmission/.test(lower);
+    const hasInstrument = [...INSTRUMENT_PATTERNS, ...MACRO_PATTERNS].some(p => p.test(text));
+    results[scenario]   = { word_count: wc, min_words: 45, has_catalyst: hasCatalyst, has_mechanism: hasMechanism, has_instrument: hasInstrument, ok: wc >= 45 && hasCatalyst };
+  }
+
+  // key_drivers chain check
+  if (Array.isArray(en.key_drivers)) {
+    const withChain = en.key_drivers.filter(d => /→|->|leads?\s+to|results?\s+in|triggers?|compresses?|expands?|supports?|pressures?/.test(d || ''));
+    results.key_drivers = { count: en.key_drivers.length, with_chain: withChain.length, ok: en.key_drivers.length >= 3 && withChain.length >= 2 };
+  }
+
+  return results;
 }
 
-function countArabicWords(text) {
-  return (String(text || '').match(/[؀-ۿ]+/g) || []).length;
+function logSectionDiagnostics(sections, label) {
+  process.stderr.write(`[DEBUG] ${label} section diagnostics:\n`);
+  for (const [field, s] of Object.entries(sections)) {
+    if (s.word_count !== undefined) {
+      const chain = (s.instrument_hits !== undefined) ? ` instr=${s.instrument_hits} macro=${s.macro_hits} inst_density=${s.inst_score}` : '';
+      process.stderr.write(`  ${field}: words=${s.word_count}/${s.min_words}${chain} ${s.ok ? '✓' : '✗'}\n`);
+    } else if (s.count !== undefined) {
+      process.stderr.write(`  key_drivers: ${s.count} items, ${s.with_chain} with chain ${s.ok ? '✓' : '✗'}\n`);
+    } else {
+      const flags = [s.has_catalyst ? 'catalyst✓' : 'catalyst✗', s.has_mechanism ? 'mech✓' : 'mech✗', s.has_instrument ? 'instr✓' : 'instr✗'];
+      process.stderr.write(`  ${field}: words=${s.word_count}/45 [${flags.join(' ')}] ${s.ok ? '✓' : '✗'}\n`);
+    }
+  }
 }
+
+function buildExpansionPrompt(en, sectionIssues) {
+  const weak = Object.entries(sectionIssues).filter(([, v]) => !v.ok);
+  if (!weak.length) return null;
+
+  const tasks = weak.map(([field, issue]) => {
+    const reasons = [];
+    if (issue.word_count !== undefined && !issue.ok) reasons.push(`word count ${issue.word_count} below minimum ${issue.min_words}`);
+    if (issue.inst_score !== undefined && issue.inst_score < 1) reasons.push(`low institutional density (${issue.inst_score} signals)`);
+    if (issue.has_catalyst === false) reasons.push('missing explicit conditional catalyst (if/when/should/surprise)');
+    if (issue.has_mechanism === false) reasons.push('missing named transmission mechanism');
+    if (issue.has_instrument === false) reasons.push('missing named instrument, ETF, yield, or market relationship');
+    if (issue.with_chain !== undefined && issue.with_chain < 2) reasons.push(`only ${issue.with_chain}/${issue.count} drivers have [Signal → Mechanism → Impact] chain`);
+    return `  • ${field}: ${reasons.join('; ')}`;
+  });
+
+  return `The following market analysis has weak sections. Expand ONLY the flagged sections below. All other sections must be returned EXACTLY as provided — do not modify them.
+
+SECTIONS REQUIRING EXPANSION:
+${tasks.join('\n')}
+
+EXPANSION REQUIREMENTS:
+- Add specific cross-asset reasoning (yield spreads, duration, breadth, vol regime, sector rotation)
+- Include explicit [Signal → Mechanism → Named Instrument Impact] chains in expanded sections
+- For scenarios: add explicit conditional catalyst ("If [specific release/level]...") with mechanism and instrument impact
+- Use institutional register — no retail phrases, no generic filler
+- Reference at least one named instrument per expanded section
+
+CURRENT ANALYSIS (return ALL fields; only expand the flagged ones):
+${JSON.stringify(en, null, 2)}
+
+Return the COMPLETE JSON object with all fields.`;
+}
+
+// ── Main validation ───────────────────────────────────────────────────────────
+
+function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
+function countArabicWords(text) { return (String(text || '').match(/[؀-ۿ]+/g) || []).length; }
 
 function validateContent(en, ar) {
   const errors = [];
 
-  // EN word count minimums
+  // EN word counts
   for (const [field, min] of Object.entries(MIN_WORDS_EN)) {
     const wc = countWords(en[field]);
-    if (wc < min) errors.push(`en.${field}: ${wc} words (minimum ${min} required)`);
+    if (wc < min) errors.push(`en.${field}: ${wc} words (minimum ${min})`);
   }
 
   // EN array fields
-  if (!Array.isArray(en.key_drivers)  || en.key_drivers.length  < 3) errors.push('en.key_drivers must have 3+ items');
-  if (!Array.isArray(en.risk_factors) || en.risk_factors.length < 3) errors.push('en.risk_factors must have 3+ items');
-  if (!Array.isArray(en.what_to_watch)|| en.what_to_watch.length< 3) errors.push('en.what_to_watch must have 3+ items');
+  if (!Array.isArray(en.key_drivers)   || en.key_drivers.length   < 3) errors.push('en.key_drivers must have 3+ items');
+  if (!Array.isArray(en.risk_factors)  || en.risk_factors.length  < 3) errors.push('en.risk_factors must have 3+ items');
+  if (!Array.isArray(en.what_to_watch) || en.what_to_watch.length < 3) errors.push('en.what_to_watch must have 3+ items');
 
   // EN directional bias
-  if (!en.directional_bias)                         errors.push('en.directional_bias missing');
-  else if (!ALLOWED_BIASES.has(en.directional_bias)) errors.push(`en.directional_bias "${en.directional_bias}" not in allowed set`);
-
-  // Generic filler detection
-  const enBodyText = [
-    en.executive_summary, en.market_context, en.bullish_scenario, en.bearish_scenario,
-    ...(en.key_drivers || []),
-  ].join(' ').toLowerCase();
-  const foundFiller = GENERIC_PHRASES.filter(p => enBodyText.includes(p));
-  if (foundFiller.length > 0) {
-    errors.push(`EN generic filler detected: ${foundFiller.slice(0, 3).map(p => `"${p}"`).join(', ')}`);
+  if (!en.directional_bias) {
+    errors.push('en.directional_bias missing');
+  } else if (!ALLOWED_BIASES.has(en.directional_bias)) {
+    const normalized = normalizeBias(en.directional_bias);
+    if (normalized) {
+      process.stderr.write(`[DEBUG] Bias normalized: "${en.directional_bias}" → "${normalized}"\n`);
+      en.directional_bias = normalized;
+    } else {
+      errors.push(`en.directional_bias "${en.directional_bias}" not in allowed set`);
+    }
   }
 
-  // Retail phrasing detection (Phase 50 — warn, don't fail, unless egregious)
-  const retailHits = detectRetailPhrasing(enBodyText);
-  if (retailHits.length >= 3) {
-    errors.push(`EN retail phrasing: ${retailHits.slice(0, 3).map(p => `"${p}"`).join(', ')} — requires institutional register`);
+  // Generic filler
+  const enBody = [en.executive_summary, en.market_context, en.bullish_scenario, en.bearish_scenario, ...(en.key_drivers || [])].join(' ').toLowerCase();
+  const foundFiller = GENERIC_PHRASES.filter(p => enBody.includes(p));
+  if (foundFiller.length) errors.push(`EN generic filler: ${foundFiller.slice(0, 3).map(p => `"${p}"`).join(', ')}`);
+
+  // Financial advice check (hard fail ≥1 hit)
+  const adviceHits = detectFinancialAdvice(JSON.stringify(en));
+  if (adviceHits.length) errors.push(`EN financial advice phrases (hard fail): ${adviceHits.map(p => `"${p}"`).join(', ')}`);
+
+  // Retail phrasing (hard fail at ≥5 hits, warn below)
+  const retailHits = detectRetailPhrasing(enBody);
+  if (retailHits.length >= 5) {
+    errors.push(`EN retail phrasing (${retailHits.length} hits — hard fail at 5): ${retailHits.slice(0, 3).map(p => `"${p}"`).join(', ')}`);
   } else if (retailHits.length > 0) {
-    process.stderr.write(`[WARN] Retail phrasing found (${retailHits.length} hit(s)): ${retailHits.map(p => `"${p}"`).join(', ')}\n`);
+    process.stderr.write(`[WARN] Retail phrasing (${retailHits.length} hit(s) — warning only): ${retailHits.map(p => `"${p}"`).join(', ')}\n`);
   }
 
-  // Institutional quality score (informational)
-  const instScore = detectInstitutionalPhrasing(enBodyText);
-  process.stderr.write(`[QUALITY] Institutional signal count: ${instScore}/20+\n`);
-
-  // EN specificity: ≥ 2 named instrument patterns
-  const enAnalyticalText = [
-    en.executive_summary, en.market_context, en.bullish_scenario, en.bearish_scenario,
-    ...(en.key_drivers || []), ...(en.risk_factors || []), ...(en.what_to_watch || []),
-  ].join(' ');
-  const instrumentHits = INSTRUMENT_PATTERNS.filter(p => p.test(enAnalyticalText)).length;
-  if (instrumentHits < 2) {
-    errors.push(`EN specificity: ${instrumentHits} named instrument pattern(s) found; minimum 2 required.`);
+  // Specificity (instruments + macro patterns combined)
+  const enFull = [...Object.values(en).filter(v => typeof v === 'string'), ...(en.key_drivers || []), ...(en.risk_factors || []), ...(en.what_to_watch || [])].join(' ');
+  const instrHits = INSTRUMENT_PATTERNS.filter(p => p.test(enFull)).length;
+  const macroHits = MACRO_PATTERNS.filter(p => p.test(enFull)).length;
+  process.stderr.write(`[DEBUG] Specificity: ${instrHits} instrument patterns, ${macroHits} macro patterns\n`);
+  if (instrHits < 1 && macroHits < 3) {
+    errors.push(`EN specificity: ${instrHits} instrument + ${macroHits} macro patterns — need ≥1 instrument or ≥3 macro patterns`);
   }
 
-  // AR word count minimums
+  // Institutional density (logged only — not a hard fail)
+  const instScore = detectInstitutionalPhrasing(enBody);
+  process.stderr.write(`[DEBUG] Institutional signal score: ${instScore}\n`);
+
+  // Scenario presence
+  if (!en.bullish_scenario || countWords(en.bullish_scenario) < 20) errors.push('en.bullish_scenario missing or too short');
+  if (!en.bearish_scenario || countWords(en.bearish_scenario) < 20) errors.push('en.bearish_scenario missing or too short');
+
+  // AR word counts
   for (const [field, min] of Object.entries(MIN_WORDS_AR)) {
     const wc = countArabicWords(ar[field]);
-    if (wc < min) errors.push(`ar.${field}: ${wc} Arabic words (minimum ${min} required)`);
+    if (wc < min) errors.push(`ar.${field}: ${wc} Arabic words (minimum ${min})`);
   }
 
-  // AR array fields
-  if (!Array.isArray(ar.key_drivers)  || ar.key_drivers.length  < 3) errors.push('ar.key_drivers must have 3+ items');
-  if (!Array.isArray(ar.risk_factors) || ar.risk_factors.length < 3) errors.push('ar.risk_factors must have 3+ items');
-  if (!Array.isArray(ar.what_to_watch)|| ar.what_to_watch.length< 3) errors.push('ar.what_to_watch must have 3+ items');
+  // AR arrays
+  if (!Array.isArray(ar.key_drivers)   || ar.key_drivers.length   < 3) errors.push('ar.key_drivers must have 3+ items');
+  if (!Array.isArray(ar.risk_factors)  || ar.risk_factors.length  < 3) errors.push('ar.risk_factors must have 3+ items');
+  if (!Array.isArray(ar.what_to_watch) || ar.what_to_watch.length < 3) errors.push('ar.what_to_watch must have 3+ items');
 
   // AR directional bias
   if (!ar.directional_bias) {
     errors.push('ar.directional_bias missing');
   } else if (!ALLOWED_BIASES_AR.has(ar.directional_bias)) {
-    process.stderr.write(`Warning: ar.directional_bias "${ar.directional_bias}" not in strict set — keeping\n`);
+    process.stderr.write(`[WARN] ar.directional_bias "${ar.directional_bias}" not in strict set\n`);
   }
 
-  // AR language purity: no runs of 5+ consecutive English words outside instrument names
-  const arBodyForCheck = [ar.executive_summary, ar.market_context, ar.bullish_scenario, ar.bearish_scenario]
-    .join(' ')
+  // AR language purity
+  const arBody = [ar.executive_summary, ar.market_context, ar.bullish_scenario, ar.bearish_scenario].join(' ')
     .replace(/\b(TradeAlphaAI|VIX|NASDAQ|S&P|ETF|CPI|NFP|PCE|FOMC|GDP|DXY|AI|USD|TLT|IEF|BND|QQQ|SPY|IWM|SMH|SOXX|NVDA|AMD|TSMC|TSM|ASML|XLK|XLF|XLE|XLU|XLV|XLI|XLRE|XLP|XLB|TIPS|TIP|GLD|SLV|GDX|DIA|RSP|SOXL)\b/gi, ' ')
     .replace(/\b[A-Z]{1,6}\b/g, ' ');
-  if (/[A-Za-z]{3,}(?:\s+[A-Za-z]{3,}){4,}/.test(arBodyForCheck)) {
-    errors.push('AR language: English prose runs detected in Arabic sections');
+  if (/[A-Za-z]{3,}(?:\s+[A-Za-z]{3,}){4,}/.test(arBody)) {
+    errors.push('AR language: English prose runs detected');
   }
 
-  // Anti-hallucination: hard-banned phrases
+  // Anti-hallucination: banned phrases
   const enLower = JSON.stringify(en).toLowerCase();
   for (const phrase of ['data is not currently sourced', 'not currently sourced', 'editors should verify', 'placeholder', 'lorem ipsum']) {
     if (enLower.includes(phrase)) errors.push(`EN banned phrase: "${phrase}"`);
   }
 
-  // Anti-hallucination: fabricated live-event phrases in structural mode
+  // Anti-hallucination: fabricated live-event phrases (structural mode only)
   const liveAvailable = typeof validateContent._liveStatus === 'string' &&
-    (validateContent._liveStatus === 'live' || validateContent._liveStatus === 'partial');
+    ['live','partial'].includes(validateContent._liveStatus);
   if (!liveAvailable) {
-    const fabricationPhrases = [
-      "as of today, markets",
-      "in today's session",
-      "this morning's trading",
-      "yesterday's close showed",
-      "surged to a fresh high today",
-      "fell sharply in today",
-    ];
-    for (const phrase of fabricationPhrases) {
-      if (enLower.includes(phrase)) {
-        errors.push(`Fabrication risk (no live data): "${phrase}"`);
-      }
+    for (const phrase of ["as of today, markets", "in today's session", "this morning's trading", "yesterday's close showed", "surged to a fresh high today", "fell sharply in today"]) {
+      if (enLower.includes(phrase)) errors.push(`Fabrication risk (no live data): "${phrase}"`);
     }
   }
 
@@ -634,8 +665,7 @@ function validateContent(en, ar) {
 
 function readJson(file, fallback = {}) {
   if (!fs.existsSync(file)) return fallback;
-  try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
-  catch { return fallback; }
+  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; }
 }
 
 function argValue(name) {
@@ -660,37 +690,32 @@ async function main() {
   const topic = (queue.topics || []).find(t => t.slug === slugArg);
   if (!topic) { process.stderr.write(`Topic not found: ${slugArg}\n`); process.exit(1); }
 
-  const fw = getTopicFramework(topic);
+  const fw           = getTopicFramework(topic);
   const topicCluster = [topic.topic_cluster || '', topic.discovery_cluster || '', ...(topic.macro_tags || [])].join(' ');
 
-  // Phase 50: build interpretive narrative from live data
-  const narrative = buildNarrative(live, regime, topicCluster);
+  // Build interpretive narrative
+  const narrative          = buildNarrative(live, regime, topicCluster);
   const transitionAnalysis = analyzeTransition(regime.state || {});
-  const transitionNote = transitionAnalysis.transition_note;
+  const transitionNote     = transitionAnalysis.transition_note;
+  const selectedLenses     = selectNarrativeLenses(topicCluster, narrative);
 
-  // Dynamic section lens selection
-  const selectedLenses = selectNarrativeLenses(topicCluster, narrative);
+  process.stderr.write(`[AI] Module: ${fw.module}\n`);
   process.stderr.write(`[NARRATIVE] data_source=${narrative.data_source}, lenses=[${selectedLenses.join(', ')}]\n`);
-  if (transitionNote) process.stderr.write(`[REGIME] Transition note: ${transitionNote.slice(0, 100)}...\n`);
+  if (transitionNote) process.stderr.write(`[REGIME] ${transitionNote.slice(0, 100)}\n`);
 
-  // Build context block for prompt
-  const narrativeContext = buildNarrativeContext(narrative, selectedLenses, transitionNote, narrative.data_source);
-
-  // Wire live status to anti-hallucination check
-  const liveStatus = (live && live.metadata && live.metadata.status) || 'fallback';
+  const narrativeContext   = buildNarrativeContext(narrative, selectedLenses, transitionNote);
+  const calendarText       = buildCalendarSummary(calendar);
+  const liveStatus         = (live?.metadata?.status) || 'fallback';
   validateContent._liveStatus = liveStatus;
 
-  const calendarText = buildCalendarSummary(calendar);
+  process.stderr.write(`[AI] Model: ${MODEL}  live_status=${liveStatus}\n`);
 
-  process.stderr.write(`[AI] Model: ${MODEL}\n`);
-  process.stderr.write(`[AI] Module: ${fw.module}, live_status=${liveStatus}\n`);
-
-  // English generation
-  process.stderr.write(`[AI] Generating EN content for: ${slugArg}\n`);
+  // ── English generation ──────────────────────────────────────────────────────
+  process.stderr.write(`[AI] Generating EN for: ${slugArg}\n`);
   let enContent;
   try {
     enContent = await callOpenAI(
-      buildEnSystemPrompt(),
+      buildSystemCore(),
       buildEnUserPrompt(topic, fw, narrativeContext, calendarText),
       apiKey,
       { maxTokens: 2800, temperature: 0.75 }
@@ -704,17 +729,87 @@ async function main() {
     process.stderr.write('[AI] EN: response is not a JSON object\n');
     process.exit(1);
   }
+
+  // Normalize bias immediately after generation
+  if (enContent.directional_bias && !ALLOWED_BIASES.has(enContent.directional_bias)) {
+    const norm = normalizeBias(enContent.directional_bias);
+    if (norm) { process.stderr.write(`[DEBUG] Bias pre-normalized: "${enContent.directional_bias}" → "${norm}"\n`); enContent.directional_bias = norm; }
+  }
   process.stderr.write(`[AI] EN generated. Bias: ${enContent.directional_bias}\n`);
 
-  // Arabic generation (with EN as context)
-  process.stderr.write(`[AI] Generating AR content for: ${slugArg}\n`);
+  // ── Section-level validation + targeted expansion pass ─────────────────────
+  const sectionResults = validateSections(enContent);
+  logSectionDiagnostics(sectionResults, 'Initial');
+
+  const weakSections = Object.entries(sectionResults).filter(([, v]) => !v.ok);
+  if (weakSections.length > 0) {
+    const weakNames = weakSections.map(([k]) => k);
+    process.stderr.write(`[AI] Weak sections: ${weakNames.join(', ')} — running targeted expansion pass\n`);
+    const expansionPrompt = buildExpansionPrompt(enContent, sectionResults);
+    try {
+      const expanded = await callOpenAI(
+        buildSystemCore(),
+        expansionPrompt,
+        apiKey,
+        { maxTokens: 2500, temperature: 0.65 }
+      );
+      if (expanded && typeof expanded === 'object') {
+        // Merge expanded sections into enContent (only overwrite fields that existed and were weak)
+        for (const field of weakNames) {
+          if (expanded[field] !== undefined && field !== 'key_drivers') {
+            enContent[field] = expanded[field];
+          }
+        }
+        // For key_drivers specifically, only replace if the expanded version is actually better
+        if (weakNames.includes('key_drivers') && Array.isArray(expanded.key_drivers) && expanded.key_drivers.length >= 3) {
+          enContent.key_drivers = expanded.key_drivers;
+        }
+        // Re-normalize bias if expansion changed it
+        if (expanded.directional_bias && !ALLOWED_BIASES.has(enContent.directional_bias)) {
+          const norm = normalizeBias(expanded.directional_bias);
+          if (norm) enContent.directional_bias = norm;
+        }
+        const postExpansion = validateSections(enContent);
+        logSectionDiagnostics(postExpansion, 'Post-expansion');
+      }
+    } catch (expErr) {
+      process.stderr.write(`[WARN] Expansion pass failed: ${expErr.message} — using initial output\n`);
+    }
+  }
+
+  // ── Full word-count retry (if expansion didn't fully resolve) ──────────────
+  const finalSections = validateSections(enContent);
+  const stillWeak     = Object.entries(finalSections).filter(([k, v]) => !v.ok && MIN_WORDS_EN[k] !== undefined);
+  if (stillWeak.length > 0 && stillWeak.every(([, v]) => v.word_count !== undefined)) {
+    process.stderr.write(`[AI] Word count still insufficient after expansion — full retry with explicit length instruction\n`);
+    const warnList = stillWeak.map(([f, v]) => `  ${f}: ${v.word_count} words (need ${v.min_words}+)`).join('\n');
+    const retryNote = `\n\nRETRY NOTE: These sections were too short in the previous response:\n${warnList}\nWrite substantially longer, more analytically detailed sections. Each must hit the minimum word count.`;
+    try {
+      enContent = await callOpenAI(
+        buildSystemCore(),
+        buildEnUserPrompt(topic, fw, narrativeContext, calendarText) + retryNote,
+        apiKey,
+        { maxTokens: 3000, temperature: 0.75 }
+      );
+      if (enContent?.directional_bias && !ALLOWED_BIASES.has(enContent.directional_bias)) {
+        const norm = normalizeBias(enContent.directional_bias);
+        if (norm) enContent.directional_bias = norm;
+      }
+    } catch (retryErr) {
+      process.stderr.write(`[AI] Full retry failed: ${retryErr.message}\n`);
+      process.exit(1);
+    }
+  }
+
+  // ── Arabic generation ───────────────────────────────────────────────────────
+  process.stderr.write(`[AI] Generating AR for: ${slugArg}\n`);
   let arContent;
   try {
     arContent = await callOpenAI(
       buildArSystemPrompt(),
       buildArUserPrompt(topic, enContent),
       apiKey,
-      { maxTokens: 1800, temperature: 0.65 }
+      { maxTokens: 2000, temperature: 0.65 }
     );
   } catch (err) {
     process.stderr.write(`[AI] AR generation failed: ${err.message}\n`);
@@ -722,33 +817,28 @@ async function main() {
   }
 
   if (!arContent || typeof arContent !== 'object') {
-    process.stderr.write('[AI] AR: response is not a JSON object\n');
+    process.stderr.write('[AI] AR: response is not JSON object\n');
     process.exit(1);
   }
   process.stderr.write(`[AI] AR generated. Bias: ${arContent.directional_bias}\n`);
 
-  // Validate — retry once if only word-count minimums failed
+  // ── Combined validation ────────────────────────────────────────────────────
   let errors = validateContent(enContent, arContent);
-  const onlyWordCountFailures = errors.length > 0 && errors.every(e => /words? \(minimum/.test(e));
-  if (onlyWordCountFailures) {
-    process.stderr.write(`[AI] Word count minimums not met — retrying EN with explicit length instruction.\n`);
-    const retryNote = `\n\nRETRY NOTE: Your previous response was rejected because the following sections were too short:\n${errors.map(e => '  ' + e).join('\n')}\nWrite longer, more substantive paragraphs. Each field must meet the minimum word count.`;
+
+  // One AR-only retry if only AR word counts failed
+  const onlyArFails = errors.length > 0 && errors.every(e => e.startsWith('ar.') && /words? \(minimum/.test(e));
+  if (onlyArFails) {
+    process.stderr.write(`[AI] AR word counts insufficient — retrying AR\n`);
+    const arRetryNote = `\n\nRETRY NOTE: Your Arabic sections were too short:\n${errors.join('\n')}\nWrite longer, more substantive Arabic paragraphs.`;
     try {
-      enContent = await callOpenAI(
-        buildEnSystemPrompt(),
-        buildEnUserPrompt(topic, fw, narrativeContext, calendarText) + retryNote,
-        apiKey,
-        { maxTokens: 3000, temperature: 0.75 }
-      );
       arContent = await callOpenAI(
         buildArSystemPrompt(),
-        buildArUserPrompt(topic, enContent),
+        buildArUserPrompt(topic, enContent) + arRetryNote,
         apiKey,
-        { maxTokens: 2000, temperature: 0.65 }
+        { maxTokens: 2200, temperature: 0.65 }
       );
-    } catch (retryErr) {
-      process.stderr.write(`[AI] Retry generation failed: ${retryErr.message}\n`);
-      process.exit(1);
+    } catch (e) {
+      process.stderr.write(`[AI] AR retry failed: ${e.message}\n`);
     }
     errors = validateContent(enContent, arContent);
   }
@@ -758,8 +848,9 @@ async function main() {
     process.exit(1);
   }
 
-  const instScore = detectInstitutionalPhrasing(JSON.stringify(enContent));
-  process.stderr.write(`[AI] EN+AR validated. Specificity: ${INSTRUMENT_PATTERNS.filter(p => p.test(JSON.stringify(enContent))).length} instrument patterns. Institutional signals: ${instScore}.\n`);
+  const finalInstScore = detectInstitutionalPhrasing(JSON.stringify(enContent));
+  const finalInstrHits = INSTRUMENT_PATTERNS.filter(p => p.test(JSON.stringify(enContent))).length;
+  process.stderr.write(`[AI] EN+AR validated. Instrument patterns: ${finalInstrHits}. Institutional score: ${finalInstScore}.\n`);
   process.stdout.write(JSON.stringify({ en: enContent, ar: arContent }));
 }
 

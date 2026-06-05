@@ -102,6 +102,7 @@ function marketOutlookChecks(en, ar, enBody, arBody, combined) {
 }
 
 function checkSpecificity(enBody) {
+  // Named instrument patterns (ETFs, tickers, specific rates)
   const INSTRUMENTS = [
     /\b(TLT|IEF|SHY|AGG|BND|LQD|HYG|TIP|TIPS|SCHP|ZROZ|EDV)\b/,
     /\b(QQQ|SPY|IWM|DIA|VOO|VTI|RSP|SPLG)\b/,
@@ -111,11 +112,24 @@ function checkSpecificity(enBody) {
     /\b(GLD|SLV|GDX|USO|DBA)\b/,
     /\b\d+[- ]?[Yy](ear)?\s*(Treasury|yield|note|bond)\b/i,
     /\b(Fed\s+funds|federal\s+funds|FOMC\s+rate)\b/i,
-    /\b(yield\s+curve|2Y10Y|10Y2Y|inverted\s+curve|duration\s+risk)\b/i,
+    /\b(yield\s+curve|2Y10Y|10Y2Y|inverted\s+curve|duration\s+risk|duration.sensitive)\b/i,
     /\b(VIX|CBOE\s+volatility)\b/i,
     /\b(DXY|dollar\s+index)\b/i,
   ];
-  return INSTRUMENTS.filter(p => p.test(enBody)).length >= 2;
+  // Macro-analytical language patterns (institutional specificity without ticker names)
+  const MACRO_ANALYSIS = [
+    /\b(yield spread|basis point|curve steepen|curve flatten|curve normaliz|curve inversion)\b/i,
+    /\b(breadth|participation|concentration risk|equal.weight|cap.weight|narrow leadership)\b/i,
+    /\b(positioning|factor tilt|real yield|repricing|risk premium|net interest margin)\b/i,
+    /\b(implied vol|vol regime|volatility regime|vol compression|vol expansion|hedging demand)\b/i,
+    /\b(liquidity|risk appetite|credit spread|monetary transmission|rate.sensitive|terminal rate)\b/i,
+    /\b(sector rotation|defensive rotation|growth.value|cross.asset|macro hedge|macro transmission)\b/i,
+    /\b(transmission mechanism|transmission chain|policy path|rate path|monetary policy)\b/i,
+  ];
+  const instrHits = INSTRUMENTS.filter(p => p.test(enBody)).length;
+  const macroHits = MACRO_ANALYSIS.filter(p => p.test(enBody)).length;
+  // Pass if: ≥2 instrument patterns, OR ≥1 instrument + ≥2 macro patterns, OR ≥4 macro patterns (pure macro analysis)
+  return instrHits >= 2 || (instrHits >= 1 && macroHits >= 2) || macroHits >= 4;
 }
 
 function checkNoGenericFiller(enBody) {

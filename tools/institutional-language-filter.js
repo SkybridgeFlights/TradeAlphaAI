@@ -1,14 +1,36 @@
 'use strict';
 
-// Phase 50: Institutional Language Filter
-// Detects retail-style, low-information, and AI-filler phrasing.
-// Complements generate-ai-market-outlook-content.js validation.
+// Phase 50.1: Institutional Language Filter
+// Three tiers:
+//   FINANCIAL_ADVICE_PHRASES — hard fail on any 1 hit (explicit advice language)
+//   RETAIL_PHRASES           — hard fail at 5+ hits (soft warnings below)
+//   INSTITUTIONAL_SIGNALS    — positive scoring (higher = better)
 //
 // Usage (module):
-//   const { detectRetailPhrasing } = require('./institutional-language-filter');
-//   const hits = detectRetailPhrasing(text);   // returns string[] of matched phrases
+//   const { detectRetailPhrasing, detectFinancialAdvice } = require('./institutional-language-filter');
 
-// ── Retail / low-quality phrases ─────────────────────────────────────────────
+// ── Tier 1: Financial advice / promotional (hard fail, ≥1 hit) ──────────────
+
+const FINANCIAL_ADVICE_PHRASES = [
+  'you should buy',
+  'you should sell',
+  'you must buy',
+  'you must sell',
+  'guaranteed return',
+  'guaranteed profit',
+  'certain to rise',
+  'certain to fall',
+  'will definitely',
+  'no risk',
+  'risk-free investment',
+  'invest now',
+  'buy now',
+  'sell now',
+  'don\'t miss this',
+  'act now',
+];
+
+// ── Tier 2: Retail / low-quality phrases (hard fail at ≥5 hits) ──────────────
 
 const RETAIL_PHRASES = [
   // Undirected directional calls
@@ -74,14 +96,77 @@ const RETAIL_PHRASES = [
 
 const INSTITUTIONAL_ALTERNATIVES = {
   'stocks may rise':          'if [catalyst], equities could reprice higher via [mechanism]',
-  'all eyes are on':          'market participants are monitoring [specific release/event]',
-  'in conclusion,':           '[state the conclusion directly without preamble]',
-  'game changer':             '[describe the structural shift with mechanism]',
-  'in the long run':          '[reference specific policy horizon or Fed cycle phase]',
-  'perfect storm':            '[enumerate the specific concurrent pressures by name]',
+  'all eyes are on':          '[specific institution/release] will determine [mechanism]',
+  'in conclusion,':           '[state the analytical finding directly without preamble]',
+  'game changer':             '[describe the structural shift with mechanism and affected instruments]',
+  'in the long run':          '[reference specific policy horizon, Fed cycle phase, or dated event]',
+  'perfect storm':            '[enumerate the specific concurrent pressures by name and mechanism]',
 };
 
-// ── Detector ─────────────────────────────────────────────────────────────────
+// ── Tier 3: Institutional quality signals (positive scoring) ─────────────────
+
+const INSTITUTIONAL_SIGNALS = [
+  'transmission mechanism',
+  'transmission chain',
+  'duration risk',
+  'duration-sensitive',
+  'duration exposure',
+  'credit spread',
+  'yield curve',
+  'yield spread',
+  'basis points',
+  'rate-sensitive',
+  'rate sensitivity',
+  'risk premium',
+  'net interest margin',
+  'cross-asset',
+  'factor tilt',
+  'sector rotation',
+  'defensive rotation',
+  'terminal rate',
+  'real yield',
+  'implied vol',
+  'option-adjusted',
+  'convexity',
+  'carry',
+  'breadth deterioration',
+  'breadth signal',
+  'selective participation',
+  'broad participation',
+  'concentration risk',
+  'narrow leadership',
+  'repricing',
+  'normalizing',
+  'mean-revert',
+  'risk appetite',
+  'risk-on',
+  'risk-off',
+  'positioning',
+  'macro hedge',
+  'monetary transmission',
+  'monetary policy',
+  'policy path',
+  'curve steepening',
+  'curve flattening',
+  'vol regime',
+  'volatility regime',
+  'vol compression',
+  'vol expansion',
+  'equal-weight',
+  'cap-weight',
+  'relative strength',
+  'conditional on',
+  'historically correlated',
+  'tends to precede',
+];
+
+// ── Detectors ─────────────────────────────────────────────────────────────────
+
+function detectFinancialAdvice(text) {
+  if (!text || typeof text !== 'string') return [];
+  const lower = text.toLowerCase();
+  return FINANCIAL_ADVICE_PHRASES.filter(phrase => lower.includes(phrase.toLowerCase()));
+}
 
 function detectRetailPhrasing(text) {
   if (!text || typeof text !== 'string') return [];
@@ -92,35 +177,15 @@ function detectRetailPhrasing(text) {
 function detectInstitutionalPhrasing(text) {
   if (!text || typeof text !== 'string') return 0;
   const lower = text.toLowerCase();
-  const GOOD_SIGNALS = [
-    'transmission mechanism',
-    'duration risk',
-    'credit spread',
-    'yield curve',
-    'rate-sensitive',
-    'risk premium',
-    'net interest margin',
-    'cross-asset',
-    'factor tilt',
-    'sector rotation',
-    'terminal rate',
-    'real yield',
-    'implied vol',
-    'option-adjusted',
-    'convexity',
-    'carry',
-    'breadth deterioration',
-    'selective participation',
-    'repricing',
-    'normaliz',
-    'mean-revert',
-  ];
-  return GOOD_SIGNALS.filter(p => lower.includes(p)).length;
+  return INSTITUTIONAL_SIGNALS.filter(p => lower.includes(p)).length;
 }
 
 module.exports = {
+  FINANCIAL_ADVICE_PHRASES,
   RETAIL_PHRASES,
   INSTITUTIONAL_ALTERNATIVES,
+  INSTITUTIONAL_SIGNALS,
+  detectFinancialAdvice,
   detectRetailPhrasing,
   detectInstitutionalPhrasing,
 };
