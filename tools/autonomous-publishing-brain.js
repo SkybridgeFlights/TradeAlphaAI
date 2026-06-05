@@ -761,36 +761,154 @@ function executeAction(contentType, mode, dryRun, action) {
   };
 }
 
+// ── Draft artifact integrity ──────────────────────────────────────────────────
+
+const REQUIRED_DRAFT_FILES = {
+  editorial:        ['en.html', 'ar.html', 'metadata.json'],
+  'market-outlook': ['en.html', 'ar.html'],
+  'news-analysis':  ['en.html', 'ar.html'],
+};
+
+function ensureDraftArtifacts(contentType, slug) {
+  const dir      = path.join(ROOT, 'drafts', contentType, slug);
+  const required = REQUIRED_DRAFT_FILES[contentType] || ['en.html', 'ar.html'];
+  const missing  = [];
+  const checked  = [];
+  for (const file of required) {
+    const p = path.join(dir, file);
+    checked.push(path.join('drafts', contentType, slug, file));
+    if (!fs.existsSync(p)) missing.push(path.join('drafts', contentType, slug, file));
+  }
+  return { ok: missing.length === 0, missing, checked_paths: checked };
+}
+
+function cleanDraftDirectory(contentType, slug) {
+  const dir = path.join(ROOT, 'drafts', contentType, slug);
+  if (!fs.existsSync(dir)) return false;
+  try {
+    fs.rmSync(dir, { recursive: true, force: true });
+    console.log(`[brain] Removed stale draft directory: drafts/${contentType}/${slug}`);
+    return true;
+  } catch (e) {
+    console.log(`[brain] Warning: could not remove draft directory: ${e.message}`);
+    return false;
+  }
+}
+
+function markTopicManualRevision(contentType, slug, reason) {
+  const queueFile = contentType === 'market-outlook'
+    ? 'data/market-outlook-queue.json'
+    : contentType === 'news-analysis'
+      ? 'data/news-analysis-queue.json'
+      : 'data/editorial-topic-queue.json';
+  const queuePath = path.join(ROOT, queueFile);
+  try {
+    const queue = readJson(queuePath, { topics: [] });
+    const topic = (queue.topics || []).find(t => t.slug === slug);
+    if (topic) {
+      topic.status = 'manual_revision_required';
+      topic.review_status = 'pending';
+      topic.autonomous_review_status = 'manual_revision_required';
+      topic.autonomous_reviewed_at = new Date().toISOString();
+      topic.editor_notes = [
+        topic.editor_notes || '',
+        `Artifact integrity failure: ${reason}`
+      ].filter(Boolean).join(' ').trim();
+      queue.updated = TODAY;
+      writeJson(queuePath, queue);
+    }
+  } catch { /* best-effort */ }
+}
+
 function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
   let slug = action.topic;
   let generationResult = 'not required';
   let currentState = slug ? inferState(contentType, slug) : 'none';
 
+  // Artifact integrity tracking
+  let artifactCheckBefore     = null;
+  let artifactCheckAfterRepair= null;
+  let missingArtifacts        = [];
+  let artifactIntegrityResult = 'not_checked';
+
+  // Authority repair tracking
+  let authorityRepairAttempted = false;
+  let authorityRepairResult    = 'not_attempted';
+  let repairedOrphansCount     = 0;
+  let repairedLinksCount       = 0;
+  let reviewAfterRepair        = null;
+  let regenerationAfterRepair  = 'not_attempted';
+
   if (!slug) {
     return blockedExecution('no eligible topic selected for reviewed pipeline', currentState);
   }
 
+  // ── Generate initial draft if needed ────────────────────────────────────────
   if (!hasDraft(contentType, slug) && generateFn) {
     const generated = generateFn();
     generationResult = generated.status === 0 ? 'draft generated' : 'draft generation failed';
-    if (generated.status !== 0) return blockedExecution(generationResult, currentState, generated.status);
+    if (generated.status !== 0) {
+      // Clean up any partial directory the failed generator may have left
+      cleanDraftDirectory(contentType, slug);
+      markTopicManualRevision(contentType, slug, `initial generation failed: exit ${generated.status}`);
+      return blockedExecution(generationResult, currentState, generated.status);
+    }
   } else if (!hasDraft(contentType, slug) && !generateFn) {
     return blockedExecution('missing draft for review', currentState);
+  }
+
+  // ── Pre-review artifact integrity check ──────────────────────────────────────
+  artifactCheckBefore = ensureDraftArtifacts(contentType, slug);
+  if (!artifactCheckBefore.ok) {
+    missingArtifacts = artifactCheckBefore.missing;
+    console.log(`[brain] Artifact integrity failure before review: ${missingArtifacts.join(', ')}`);
+    if (generateFn) {
+      // Attempt to recover: clean directory + regenerate once
+      console.log(`[brain] Attempting recovery — cleaning partial draft and regenerating...`);
+      cleanDraftDirectory(contentType, slug);
+      const regenResult = generateFn();
+      const recheck = ensureDraftArtifacts(contentType, slug);
+      if (regenResult.status !== 0 || !recheck.ok) {
+        cleanDraftDirectory(contentType, slug);
+        const reason = `pre-review artifact check failed (${missingArtifacts.join(', ')}); recovery regeneration ${recheck.ok ? 'produced artifacts but generator exited non-zero' : 'did not produce required artifacts'}`;
+        markTopicManualRevision(contentType, slug, reason);
+        artifactIntegrityResult = 'recovery_failed';
+        return {
+          ...blockedExecution(reason, currentState),
+          draft_artifact_check_before_review:  'failed',
+          draft_artifact_check_after_repair:   'not_reached',
+          missing_artifacts:                   missingArtifacts,
+          regeneration_after_repair:           'attempted',
+          artifact_integrity_result:           'recovery_failed',
+        };
+      }
+      generationResult = 'draft regenerated for artifact recovery';
+      artifactIntegrityResult = 'recovered';
+      console.log(`[brain] Artifact recovery succeeded`);
+    } else {
+      cleanDraftDirectory(contentType, slug);
+      markTopicManualRevision(contentType, slug, `pre-review artifacts missing: ${missingArtifacts.join(', ')}`);
+      artifactIntegrityResult = 'missing_no_generator';
+      return {
+        ...blockedExecution(`draft artifacts missing: ${missingArtifacts.join(', ')}`, currentState),
+        draft_artifact_check_before_review:  'failed',
+        draft_artifact_check_after_repair:   'not_reached',
+        missing_artifacts:                   missingArtifacts,
+        regeneration_after_repair:           'not_possible',
+        artifact_integrity_result:           'missing_no_generator',
+      };
+    }
+  } else {
+    artifactIntegrityResult = 'ok';
   }
 
   // ── First review attempt ──────────────────────────────────────────────────
   let review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: true });
 
   // ── Authority repair cycle (once, for topology/linking failures only) ─────
-  let authorityRepairAttempted = false;
-  let authorityRepairResult    = 'not_attempted';
-  let repairedOrphansCount     = 0;
-  let repairedLinksCount       = 0;
-  let reviewAfterRepair        = null;
-
   if (!review.approved) {
     const failedChecks = review.failed_checks || [];
-    const hasRepairableFailure = failedChecks.some(c => TOPOLOGY_REPAIRABLE_CHECKS.has(c));
+    const hasRepairableFailure    = failedChecks.some(c => TOPOLOGY_REPAIRABLE_CHECKS.has(c));
     const hasNonRepairableFailure = failedChecks.some(c => !TOPOLOGY_REPAIRABLE_CHECKS.has(c));
 
     if (hasRepairableFailure && !hasNonRepairableFailure) {
@@ -805,84 +923,134 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
           maxLinkInjections:  10,
           quiet:              false,
         });
-        repairedOrphansCount = repairSummary.orphan_repairs || 0;
-        repairedLinksCount   = repairSummary.injected_links || 0;
+        repairedOrphansCount  = repairSummary.orphan_repairs || 0;
+        repairedLinksCount    = repairSummary.injected_links  || 0;
         authorityRepairResult = repairSummary.success ? 'completed' : 'completed_with_warnings';
 
-        // Re-generate draft to pick up fresh knowledge graph links.
-        // For non-overwrite profiles (editorial), remove the failing draft first so
-        // the generator creates a fresh one instead of skipping.
         if (generateFn) {
-          console.log(`[brain] Re-generating draft after repair cycle...`);
-          const draftDir = path.join(ROOT, 'drafts', contentType, slug);
-          if (!PROFILES_OVERWRITE[contentType] && fs.existsSync(draftDir)) {
-            const enFile = path.join(draftDir, 'en.html');
-            const arFile = path.join(draftDir, 'ar.html');
-            if (fs.existsSync(enFile)) fs.unlinkSync(enFile);
-            if (fs.existsSync(arFile)) fs.unlinkSync(arFile);
-            console.log(`[brain] Cleared existing draft for fresh regeneration`);
-          }
+          console.log(`[brain] Regenerating draft after repair cycle...`);
+          regenerationAfterRepair = 'attempted';
+
+          // DELETE the entire draft directory so no partial state can be left behind
+          cleanDraftDirectory(contentType, slug);
+
           const regenResult = generateFn();
-          if (regenResult.status !== 0) {
-            authorityRepairResult = 'regeneration_failed_after_repair';
+
+          // Verify artifacts exist regardless of exit code
+          const artifactRecheck = ensureDraftArtifacts(contentType, slug);
+          artifactCheckAfterRepair = artifactRecheck.ok ? 'passed' : 'failed';
+
+          if (regenResult.status !== 0 || !artifactRecheck.ok) {
+            // Regeneration failed or produced incomplete output — clean up and stop safely
+            missingArtifacts = artifactRecheck.missing;
+            cleanDraftDirectory(contentType, slug);
+            const reason = regenResult.status !== 0
+              ? `regeneration after repair exited ${regenResult.status}`
+              : `regeneration after repair missing artifacts: ${missingArtifacts.join(', ')}`;
+            markTopicManualRevision(contentType, slug, reason);
+            authorityRepairResult = `regeneration_failed: ${reason}`;
+            regenerationAfterRepair = 'failed';
+            artifactIntegrityResult = 'post_repair_regeneration_failed';
+            return {
+              generation_result:           generationResult,
+              publish_result:              `blocked: ${reason}`,
+              telegram_result:             telegramStatus(),
+              command_status:              0,
+              current_state:               review.current_state,
+              transition_path:             [...review.transition_path, 'manual_revision_required'],
+              regeneration_attempts:       review.regeneration_attempts,
+              review_result:               `failed: ${failedChecks.join(', ')}`,
+              approval_reason:             '',
+              publish_gate_result:         `blocked: ${reason}`,
+              authority_repair_attempted:  authorityRepairAttempted,
+              authority_repair_result:     authorityRepairResult,
+              repaired_orphans_count:      repairedOrphansCount,
+              repaired_links_count:        repairedLinksCount,
+              review_after_repair:         'not_reached',
+              publish_after_repair:        false,
+              draft_artifact_check_before_review:  artifactCheckBefore ? (artifactCheckBefore.ok ? 'passed' : 'failed') : 'not_checked',
+              draft_artifact_check_after_repair:   artifactCheckAfterRepair,
+              missing_artifacts:           missingArtifacts,
+              regeneration_after_repair:   regenerationAfterRepair,
+              artifact_integrity_result:   artifactIntegrityResult,
+            };
           }
+
+          regenerationAfterRepair = 'succeeded';
         }
 
-        // Second review after repair
+        // Second review after successful repair + regeneration
         console.log(`[brain] Re-running review after authority repair...`);
         review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: false });
         reviewAfterRepair = review.approved ? 'passed' : `failed: ${review.failed_checks.join(', ')}`;
+
       } catch (repairError) {
+        // If repair throws unexpectedly, clean up and stop safely
+        cleanDraftDirectory(contentType, slug);
+        markTopicManualRevision(contentType, slug, `repair cycle error: ${repairError.message}`);
         authorityRepairResult = `repair_error: ${repairError.message}`;
         reviewAfterRepair = 'not_reached';
+        regenerationAfterRepair = 'not_reached';
+        artifactIntegrityResult = 'repair_exception';
       }
     } else if (hasRepairableFailure && hasNonRepairableFailure) {
-      // Mixed failures: topology repairs won't fix content quality issues
       console.log(`[brain] Review failed with mixed checks (repairable + non-repairable): ${failedChecks.join(', ')}`);
-      console.log(`[brain] Skipping repair cycle — non-repairable failures require manual revision`);
+      console.log(`[brain] Skipping repair cycle — non-repairable failures present`);
       authorityRepairResult = 'skipped: non-repairable failures present';
     }
   }
 
+  const artifactCheckBeforeLabel = artifactCheckBefore ? (artifactCheckBefore.ok ? 'passed' : 'failed') : 'not_checked';
+
   if (!review.approved) {
     return {
-      generation_result:          generationResult,
-      publish_result:             `blocked: ${review.recommended_action}`,
-      telegram_result:            telegramStatus(),
-      command_status:             0,
-      current_state:              review.current_state,
-      transition_path:            review.transition_path,
-      regeneration_attempts:      review.regeneration_attempts,
-      review_result:              `failed: ${review.failed_checks.join(', ')}`,
-      approval_reason:            review.approval_reason || '',
-      publish_gate_result:        review.publish_gate_result,
-      authority_repair_attempted: authorityRepairAttempted,
-      authority_repair_result:    authorityRepairResult,
-      repaired_orphans_count:     repairedOrphansCount,
-      repaired_links_count:       repairedLinksCount,
-      review_after_repair:        reviewAfterRepair,
-      publish_after_repair:       false,
+      generation_result:           generationResult,
+      publish_result:              `blocked: ${review.recommended_action}`,
+      telegram_result:             telegramStatus(),
+      command_status:              0,
+      current_state:               review.current_state,
+      transition_path:             review.transition_path,
+      regeneration_attempts:       review.regeneration_attempts,
+      review_result:               `failed: ${review.failed_checks.join(', ')}`,
+      approval_reason:             review.approval_reason || '',
+      publish_gate_result:         review.publish_gate_result,
+      authority_repair_attempted:  authorityRepairAttempted,
+      authority_repair_result:     authorityRepairResult,
+      repaired_orphans_count:      repairedOrphansCount,
+      repaired_links_count:        repairedLinksCount,
+      review_after_repair:         reviewAfterRepair,
+      publish_after_repair:        false,
+      draft_artifact_check_before_review:  artifactCheckBeforeLabel,
+      draft_artifact_check_after_repair:   artifactCheckAfterRepair || 'not_reached',
+      missing_artifacts:           missingArtifacts,
+      regeneration_after_repair:   regenerationAfterRepair,
+      artifact_integrity_result:   artifactIntegrityResult,
     };
   }
 
   const publish = publishFn(slug);
   return {
-    generation_result:          generationResult,
-    publish_result:             publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
-    telegram_result:            telegramStatus(),
-    command_status:             publish.status,
-    current_state:              review.current_state,
-    transition_path:            [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
-    regeneration_attempts:      review.regeneration_attempts,
-    review_result:              'passed',
-    approval_reason:            review.approval_reason,
-    publish_gate_result:        publish.status === 0 ? 'approved' : 'blocked: publish command failed',
-    authority_repair_attempted: authorityRepairAttempted,
-    authority_repair_result:    authorityRepairResult,
-    repaired_orphans_count:     repairedOrphansCount,
-    repaired_links_count:       repairedLinksCount,
-    review_after_repair:        reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
-    publish_after_repair:       authorityRepairAttempted && publish.status === 0,
+    generation_result:           generationResult,
+    publish_result:              publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
+    telegram_result:             telegramStatus(),
+    command_status:              publish.status,
+    current_state:               review.current_state,
+    transition_path:             [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
+    regeneration_attempts:       review.regeneration_attempts,
+    review_result:               'passed',
+    approval_reason:             review.approval_reason,
+    publish_gate_result:         publish.status === 0 ? 'approved' : 'blocked: publish command failed',
+    authority_repair_attempted:  authorityRepairAttempted,
+    authority_repair_result:     authorityRepairResult,
+    repaired_orphans_count:      repairedOrphansCount,
+    repaired_links_count:        repairedLinksCount,
+    review_after_repair:         reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
+    publish_after_repair:        authorityRepairAttempted && publish.status === 0,
+    draft_artifact_check_before_review:  artifactCheckBeforeLabel,
+    draft_artifact_check_after_repair:   artifactCheckAfterRepair || 'not_needed',
+    missing_artifacts:           missingArtifacts,
+    regeneration_after_repair:   regenerationAfterRepair,
+    artifact_integrity_result:   artifactIntegrityResult,
   };
 }
 
@@ -1050,6 +1218,18 @@ function printDecisionReport(report) {
     console.log(`  review_after_repair:        ${report.review_after_repair}`);
     console.log(`  publish_after_repair:       ${report.publish_after_repair}`);
   }
+  if (report.artifact_integrity_result !== undefined) {
+    console.log('\n  DRAFT ARTIFACT INTEGRITY');
+    console.log('  ----------------------------------------------------');
+    console.log(`  artifact_integrity_result:           ${report.artifact_integrity_result}`);
+    console.log(`  draft_artifact_check_before_review:  ${report.draft_artifact_check_before_review}`);
+    console.log(`  draft_artifact_check_after_repair:   ${report.draft_artifact_check_after_repair}`);
+    console.log(`  regeneration_after_repair:           ${report.regeneration_after_repair}`);
+    if (report.missing_artifacts && report.missing_artifacts.length > 0) {
+      console.log(`  missing_artifacts:`);
+      report.missing_artifacts.forEach(f => console.log(`    - ${f}`));
+    }
+  }
   console.log('======================================================');
 }
 
@@ -1117,6 +1297,11 @@ function main() {
     repaired_links_count:       execution.repaired_links_count,
     review_after_repair:        execution.review_after_repair,
     publish_after_repair:       execution.publish_after_repair,
+    draft_artifact_check_before_review: execution.draft_artifact_check_before_review,
+    draft_artifact_check_after_repair:  execution.draft_artifact_check_after_repair,
+    missing_artifacts:          execution.missing_artifacts,
+    regeneration_after_repair:  execution.regeneration_after_repair,
+    artifact_integrity_result:  execution.artifact_integrity_result,
   };
   printDecisionReport(report);
   process.exit(execution.command_status);
