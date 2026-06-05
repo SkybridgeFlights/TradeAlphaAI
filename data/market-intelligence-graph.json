@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "updated_at": null,
+  "description": "Internal macro intelligence relationship graph for regimes, sectors, volatility, yields, breadth, participation, AI leadership, and macro events.",
+  "nodes": [
+    { "id": "regime:risk-on", "type": "regime", "label": "Risk-on regime" },
+    { "id": "regime:risk-off", "type": "regime", "label": "Risk-off regime" },
+    { "id": "regime:defensive-rotation", "type": "regime", "label": "Defensive rotation" },
+    { "id": "volatility:compression", "type": "volatility", "label": "Volatility compression" },
+    { "id": "volatility:expansion", "type": "volatility", "label": "Volatility expansion" },
+    { "id": "rates:duration-support", "type": "yields", "label": "Duration support" },
+    { "id": "rates:curve-inversion", "type": "yields", "label": "Yield-curve inversion" },
+    { "id": "breadth:improving", "type": "breadth", "label": "Improving breadth" },
+    { "id": "breadth:deteriorating", "type": "breadth", "label": "Breadth deterioration" },
+    { "id": "participation:selective", "type": "participation", "label": "Selective participation" },
+    { "id": "ai:leadership", "type": "ai_leadership", "label": "AI leadership" },
+    { "id": "ai:concentration", "type": "ai_leadership", "label": "AI concentration risk" },
+    { "id": "event:cpi", "type": "macro_event", "label": "CPI" },
+    { "id": "event:nfp", "type": "macro_event", "label": "NFP" },
+    { "id": "event:fomc", "type": "macro_event", "label": "FOMC" },
+    { "id": "event:pce", "type": "macro_event", "label": "PCE" },
+    { "id": "event:gdp", "type": "macro_event", "label": "GDP" },
+    { "id": "sector:defensive", "type": "sector", "label": "Defensive sectors" },
+    { "id": "sector:cyclical", "type": "sector", "label": "Cyclical sectors" },
+    { "id": "sector:growth", "type": "sector", "label": "Growth sectors" }
+  ],
+  "edges": [
+    { "from": "volatility:compression", "to": "regime:risk-on", "relationship": "can_support", "confidence": 58 },
+    { "from": "volatility:expansion", "to": "regime:risk-off", "relationship": "can_pressure", "confidence": 72 },
+    { "from": "breadth:improving", "to": "regime:risk-on", "relationship": "confirms", "confidence": 76 },
+    { "from": "breadth:deteriorating", "to": "participation:selective", "relationship": "signals", "confidence": 80 },
+    { "from": "participation:selective", "to": "ai:concentration", "relationship": "raises_risk_of", "confidence": 74 },
+    { "from": "ai:leadership", "to": "sector:growth", "relationship": "supports", "confidence": 69 },
+    { "from": "ai:concentration", "to": "breadth:deteriorating", "relationship": "can_mask", "confidence": 66 },
+    { "from": "rates:duration-support", "to": "sector:growth", "relationship": "supports_via_discount_rates", "confidence": 70 },
+    { "from": "rates:curve-inversion", "to": "sector:cyclical", "relationship": "can_pressure", "confidence": 68 },
+    { "from": "sector:defensive", "to": "regime:defensive-rotation", "relationship": "confirms", "confidence": 77 },
+    { "from": "event:cpi", "to": "rates:duration-support", "relationship": "can_reprice", "confidence": 65 },
+    { "from": "event:fomc", "to": "rates:curve-inversion", "relationship": "can_reprice_policy_path", "confidence": 68 },
+    { "from": "event:nfp", "to": "sector:cyclical", "relationship": "can_shift_growth_expectations", "confidence": 60 },
+    { "from": "event:pce", "to": "volatility:expansion", "relationship": "can_trigger", "confidence": 58 },
+    { "from": "event:gdp", "to": "regime:risk-on", "relationship": "can_confirm_or_challenge", "confidence": 55 }
+  ],
+  "bounded_policy": {
+    "max_nodes": 120,
+    "max_edges": 240,
+    "no_external_api_calls": true
+  }
+}

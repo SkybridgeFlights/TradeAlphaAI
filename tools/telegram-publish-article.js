@@ -8,6 +8,7 @@ const { readMemory, buildSnapshot } = require('./macro-intelligence-core');
 const { detectNarrativeDrift } = require('./detect-narrative-drift');
 const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
+const { generateMarketAlerts } = require('./generate-market-alerts');
 
 const ROOT = path.resolve(__dirname, '..');
 const EDITORIAL_QUEUE = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -117,6 +118,8 @@ function formatPost(topic, locale) {
     if (liveRegimeLine) lines.push('', liveRegimeLine);
     const evolution = buildTelegramEvolutionBlock(topic, ar);
     if (evolution.length) lines.push('', ...evolution);
+    const advanced = buildAdvancedTelegramIntelligence(topic, ar);
+    if (advanced.length) lines.push('', ...advanced);
     lines.push('', disclaimer, '', url, '', hashtags(topic, locale));
     return { locale, text: lines.join('\n') };
   }
@@ -125,6 +128,27 @@ function formatPost(topic, locale) {
     locale,
     text: `${categoryEmoji(topic)} ${title}\n\n${summary}\n\n${url}\n\n${hashtags(topic, locale)}`
   };
+}
+
+function buildAdvancedTelegramIntelligence(topic, ar) {
+  if (process.env.TELEGRAM_INTELLIGENCE !== 'advanced') return [];
+  try {
+    const current = buildSnapshot({ slug: topic.slug, topic });
+    const alerts = generateMarketAlerts(current);
+    const primary = (alerts.alerts || [])[0];
+    if (!primary) return [];
+    return ar
+      ? [
+          `Briefing alert: ${truncate(primary.type.replace(/_/g, ' '), 80)}`,
+          `Macro shift: ${truncate(primary.commentary, 120)}`
+        ]
+      : [
+          `Briefing alert: ${truncate(primary.type.replace(/_/g, ' '), 90)}`,
+          `Macro shift summary: ${truncate(primary.commentary, 135)}`
+        ];
+  } catch (_) {
+    return [];
+  }
 }
 
 function buildTelegramEvolutionBlock(topic, ar) {

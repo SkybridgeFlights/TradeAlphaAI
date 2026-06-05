@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Market Intelligence Dashboard | TradeAlphaAI Internal</title>
+  <link rel="stylesheet" href="./market-intelligence.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">TradeAlphaAI Internal</p>
+      <h1>Market Intelligence Command Layer</h1>
+    </div>
+    <div class="status-block">
+      <span id="data-status">Loading</span>
+      <time id="updated-at">--</time>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid metrics" aria-label="Current regime metrics">
+      <article><span>Macro Regime</span><strong id="macro-regime">--</strong></article>
+      <article><span>Risk Regime</span><strong id="risk-regime">--</strong></article>
+      <article><span>Volatility</span><strong id="vol-regime">--</strong></article>
+      <article><span>Yield Curve</span><strong id="yield-curve">--</strong></article>
+      <article><span>Breadth Quality</span><strong id="breadth-quality">--</strong></article>
+      <article><span>Concentration</span><strong id="concentration-score">--</strong></article>
+      <article><span>AI Participation</span><strong id="ai-participation">--</strong></article>
+      <article><span>Defensive Rotation</span><strong id="defensive-rotation">--</strong></article>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Divergence Alerts</h2>
+          <span id="divergence-count">0</span>
+        </div>
+        <ul id="divergence-list" class="list"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Narrative Drift</h2>
+          <span id="drift-score">--</span>
+        </div>
+        <p id="drift-summary" class="copy">--</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Regime Sequence</h2>
+          <span id="sequence-confidence">--</span>
+        </div>
+        <p id="sequence-note" class="copy">--</p>
+        <dl class="kv">
+          <dt>Persistence</dt><dd id="sequence-persistence">--</dd>
+          <dt>Maturity</dt><dd id="sequence-maturity">--</dd>
+        </dl>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Sector Leadership</h2>
+          <span id="sector-count">--</span>
+        </div>
+        <ul id="sector-list" class="chips"></ul>
+      </div>
+    </section>
+
+    <section class="panel graph-panel">
+      <div class="panel-head">
+        <h2>Intelligence Graph</h2>
+        <span id="graph-count">--</span>
+      </div>
+      <div id="graph-list" class="graph-list"></div>
+    </section>
+  </main>
+
+  <script src="./market-intelligence.js"></script>
+</body>
+</html>
