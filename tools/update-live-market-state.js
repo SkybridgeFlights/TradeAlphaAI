@@ -41,10 +41,12 @@ const FRED_SERIES = [
 ];
 
 // ── Finnhub symbol → state field ─────────────────────────────────────────────
+// NOTE: DIA is excluded intentionally. DIA ETF price (~$400-$520) ≠ DJIA index level (~40,000+).
+// Storing DIA price as 'dowjones' would fail the [1000,200000] safety bounds check.
+// Dow Jones index is left null until a reliable index-level source is wired.
 const PRICE_MAP = {
   'SPY':  'sp500',
   'QQQ':  'nasdaq',
-  'DIA':  'dowjones',
   'IWM':  'russell2000',
   'GLD':  'gold',
   'TLT':  'tlt',
@@ -303,16 +305,30 @@ async function fetchAndUpdate() {
     ({ value, change_pct: changePct != null ? changePct : null,
        source_url: sourceUrl, source_name: sourceName, fetched_at: fetchedAt });
 
-  // FRED fields
+  // FRED fields — bounds-check every value before storing
   for (const series of FRED_SERIES) {
     const val = fredData[series.id];
-    if (val != null) collected[series.field] = mkEntry(val, null, series.url, 'FRED', fredAt);
+    if (val != null) {
+      const bounds = NUMERIC_BOUNDS[series.field];
+      if (bounds && (val < bounds[0] || val > bounds[1])) {
+        console.warn(`[BOUNDS] Skipping ${series.field}: ${val} outside [${bounds[0]},${bounds[1]}]`);
+        continue;
+      }
+      collected[series.field] = mkEntry(val, null, series.url, 'FRED', fredAt);
+    }
   }
 
-  // Finnhub equity prices
+  // Finnhub equity prices — bounds-check every value before storing
   for (const [symbol, field] of Object.entries(PRICE_MAP)) {
     const q = priceData[symbol];
-    if (q) collected[field] = mkEntry(q.price, q.changePct, FINNHUB_SOURCE, 'Finnhub', priceAt);
+    if (q) {
+      const bounds = NUMERIC_BOUNDS[field];
+      if (bounds && (q.price < bounds[0] || q.price > bounds[1])) {
+        console.warn(`[BOUNDS] Skipping ${field} (${symbol}): ${q.price} outside [${bounds[0]},${bounds[1]}]`);
+        continue;
+      }
+      collected[field] = mkEntry(q.price, q.changePct, FINNHUB_SOURCE, 'Finnhub', priceAt);
+    }
   }
 
   // Sector ETFs (nested object)
@@ -418,8 +434,8 @@ async function fetchAndUpdate() {
       etf_flow_themes:        (regime.sector_leadership || []).map(s => `${s} leading`),
     },
     sources: [
-      ...(fredAt  ? [{ name: 'FRED',    fetched_at: fredAt  }] : []),
-      ...(priceAt ? [{ name: 'Finnhub', fetched_at: priceAt }] : []),
+      ...(fredAt  ? [{ name: 'FRED',    url: 'https://fred.stlouisfed.org/', fetched_at: fredAt  }] : []),
+      ...(priceAt ? [{ name: 'Finnhub', url: 'https://finnhub.io/',          fetched_at: priceAt }] : []),
     ],
   };
   fs.writeFileSync(REGIME_PATH, JSON.stringify(regimeOutput, null, 2) + '\n', 'utf8');
@@ -477,32 +493,33 @@ function computeRegime(data) {
   const xlvChg = se.XLV && se.XLV.change_pct;
   const spread  = (us10y != null && us2y != null) ? us10y - us2y : null;
 
+  // All values must match the allowed sets in update-market-regime.js
   const volatility_regime = vixVal == null ? 'unverified'
-    : vixVal < 15 ? 'low' : vixVal < 20 ? 'moderate' : vixVal < 30 ? 'elevated' : 'stress';
+    : vixVal < 15 ? 'low' : vixVal < 20 ? 'normal' : vixVal < 30 ? 'elevated' : 'high';
 
   const rates_trend = spread == null ? 'unverified'
-    : spread < -0.5 ? 'inverted' : spread < 0 ? 'inverted_mild'
-    : spread > 1.0  ? 'steepening' : 'normalizing';
+    : spread < -0.5 ? 'falling' : spread < 0 ? 'mixed'
+    : spread > 1.0  ? 'rising' : 'stable';
 
   const risk_regime = vixVal == null ? 'unverified'
     : (vixVal < 18 && (spyChg == null || spyChg >= -0.5)) ? 'risk-on'
-    : vixVal > 25 ? 'risk-off' : 'mixed';
+    : vixVal > 25 ? 'risk-off' : 'neutral';
 
   const ai_sector_momentum = (qqqChg == null && xlkChg == null) ? 'unverified'
-    : ((qqqChg || 0) > 1.0 || (xlkChg || 0) > 1.5) ? 'bullish'
-    : ((qqqChg || 0) < -1.0 || (xlkChg || 0) < -1.5) ? 'bearish' : 'neutral';
+    : ((qqqChg || 0) > 1.0 || (xlkChg || 0) > 1.5) ? 'positive'
+    : ((qqqChg || 0) < -1.0 || (xlkChg || 0) < -1.5) ? 'negative' : 'neutral';
 
   const semiconductor_strength = nvdaChg == null ? 'unverified'
-    : nvdaChg > 2.0 ? 'strong' : nvdaChg > 0.5 ? 'moderate' : nvdaChg < -2.0 ? 'weak' : 'neutral';
+    : nvdaChg > 2.0 ? 'strong' : nvdaChg < -2.0 ? 'weak' : 'neutral';
 
   const defAvg = (xluChg != null && xlvChg != null) ? (xluChg + xlvChg) / 2 : (xluChg ?? xlvChg ?? null);
   const defensive_rotation = defAvg == null ? 'unverified'
-    : defAvg > (spyChg || 0) + 0.5 ? 'active'
-    : defAvg < (spyChg || 0) - 0.5 ? 'fading' : 'neutral';
+    : defAvg > (spyChg || 0) + 0.5 ? 'present'
+    : defAvg < (spyChg || 0) - 0.5 ? 'absent' : 'mixed';
 
   const growth_value_bias = (qqqChg == null || spyChg == null) ? 'unverified'
-    : qqqChg - spyChg > 0.5 ? 'growth_leading'
-    : qqqChg - spyChg < -0.5 ? 'value_leading' : 'balanced';
+    : qqqChg - spyChg > 0.5 ? 'growth'
+    : qqqChg - spyChg < -0.5 ? 'value' : 'balanced';
 
   // Sector ranking
   const sectorRanks = Object.entries(se)
@@ -544,7 +561,7 @@ function buildMacroSummary(fields, sectorEtfs, regime, spreadObj) {
   }
 
   const eqParts = [];
-  for (const [sym, field] of [['SPY','sp500'],['QQQ','nasdaq'],['IWM','russell2000'],['DIA','dowjones']]) {
+  for (const [sym, field] of [['SPY','sp500'],['QQQ','nasdaq'],['IWM','russell2000']]) {
     const f = fields[field];
     if (f && f.value != null && f.change_pct != null) {
       eqParts.push(`${sym} ${f.change_pct >= 0 ? '+' : ''}${f.change_pct.toFixed(2)}%`);
