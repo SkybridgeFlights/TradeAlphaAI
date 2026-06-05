@@ -84,9 +84,33 @@ function formatPost(topic, locale) {
       ? '⚠️ هذا تعليق تعليمي فقط. ليس نصيحة استثمارية.'
       : '⚠️ Educational commentary only. Not investment advice.';
 
+    // Live regime context line (only when live data is available)
+    const liveMarket = readLiveMarketState();
+    const liveRegimeLine = (() => {
+      if (!liveMarket.metadata || liveMarket.metadata.status !== 'live') return null;
+      const r = liveMarket.computed_regime || {};
+      const mr = r.market_regime;
+      const vixLevel = liveMarket.vix && liveMarket.vix.value;
+      if (!mr || mr === 'mixed' || mr === 'unverified') return null;
+      const regimeLabel = {
+        growth_momentum: ar ? 'زخم النمو' : 'Growth momentum',
+        defensive_rotation: ar ? 'تناوب دفاعي' : 'Defensive rotation',
+        'risk-on': ar ? 'شهية المخاطرة' : 'Risk-on',
+        'risk-off': ar ? 'تجنب المخاطر' : 'Risk-off',
+        rates_pressure: ar ? 'ضغط معدلات الفائدة' : 'Rates pressure',
+        volatility_spike: ar ? 'ارتفاع التقلب' : 'Volatility spike',
+      }[mr] || mr;
+      const vixNote = typeof vixLevel === 'number'
+        ? (ar ? ` · VIX ${vixLevel.toFixed(1)}` : ` · VIX ${vixLevel.toFixed(1)}`) : '';
+      return ar
+        ? `📡 نظام السوق: ${regimeLabel}${vixNote}`
+        : `📡 Market regime: ${regimeLabel}${vixNote}`;
+    })();
+
     const label = ar ? 'تعليق سوقي تعليمي' : 'Educational Market Outlook';
     const lines = [`${toneEmoji} ${label}`, title, '', summary];
     if (biasBadge) lines.push('', biasBadge);
+    if (liveRegimeLine) lines.push('', liveRegimeLine);
     lines.push('', disclaimer, '', url, '', hashtags(topic, locale));
     return { locale, text: lines.join('\n') };
   }
@@ -175,13 +199,24 @@ function hashtags(topic, locale) {
     const vix = market.vix && market.vix.value;
     if (typeof vix === 'number' && vix > 30) tags.push('#MarketStress');
     else if (typeof vix === 'number' && vix > 20) tags.push('#HighVolatility');
-    const aiMom = market.ai_sector_momentum && market.ai_sector_momentum.value;
+    // v2.0 computed_regime signals
+    const regime = market.computed_regime || {};
+    const mr = regime.market_regime;
+    if (mr === 'growth_momentum') tags.push('#GrowthMomentum');
+    else if (mr === 'defensive_rotation') tags.push('#DefensiveRotation');
+    else if (mr === 'risk-on') tags.push('#RiskOn');
+    else if (mr === 'risk-off') tags.push('#RiskOff');
+    else if (mr === 'rates_pressure') tags.push('#RatesPressure');
+    // AI/semiconductor momentum
+    const aiMom = regime.ai_sector_momentum || (market.ai_sector_momentum && market.ai_sector_momentum.value);
     if (aiMom === 'bullish') tags.push('#AIRally');
     else if (aiMom === 'bearish') tags.push('#TechPressure');
-    const semiMom = market.semiconductor_momentum && market.semiconductor_momentum.value;
-    if (semiMom === 'bullish' && !tags.includes('#AIRally') && !tags.includes('#Semiconductors')) tags.push('#SemiRally');
-    const volatility = market.volatility_state && market.volatility_state.value;
-    if (volatility === 'elevated' && !tags.some((t) => t.includes('Volatility') || t.includes('Stress'))) tags.push('#MarketVolatility');
+    const semiStr = regime.semiconductor_strength;
+    if (semiStr === 'strong' && !tags.includes('#AIRally') && !tags.includes('#Semiconductors')) tags.push('#SemiRally');
+    // VIX-based fallback
+    const volRegime = regime.volatility_regime;
+    if ((volRegime === 'elevated' || volRegime === 'stress') &&
+        !tags.some(t => t.includes('Volatility') || t.includes('Stress'))) tags.push('#MarketVolatility');
   }
 
   tags.push(locale === 'ar' ? '#استثمار' : '#Investing');

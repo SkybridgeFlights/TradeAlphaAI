@@ -107,18 +107,47 @@ function getTopicFramework(topic) {
 // ── Market context builders ───────────────────────────────────────────────────
 
 function buildMarketDataSummary(live, regime) {
-  if (live && live.metadata && live.metadata.status === 'live') {
+  const liveStatus = live && live.metadata && live.metadata.status;
+
+  if (liveStatus === 'live' || liveStatus === 'partial') {
+    // v2.0: pre-built narrative string (preferred)
+    if (live.macro_summary) {
+      const prefix = liveStatus === 'live' ? 'Live market conditions' : 'Partial market data';
+      const fedNote = live.fed_expectations ? `\nFed context: ${live.fed_expectations}` : '';
+      const spreadNote = live.yield_spread_2y10y && live.yield_spread_2y10y.spread_bps != null
+        ? ` | 2Y/10Y spread: ${live.yield_spread_2y10y.spread_bps >= 0 ? '+' : ''}${live.yield_spread_2y10y.spread_bps}bps (${(live.yield_spread_2y10y.spread_regime || '').replace(/_/g, ' ')})`
+        : '';
+      const regimeNote = live.computed_regime && live.computed_regime.market_regime
+        ? `\nMarket regime: ${live.computed_regime.market_regime}`
+        : '';
+      return `${prefix}: ${live.macro_summary}${spreadNote}${fedNote}${regimeNote}`;
+    }
+
+    // v1.0 compatibility: build from flat fields
     const parts = [];
-    for (const key of ['sp500', 'nasdaq', 'vix', 'us10y_yield', 'dxy', 'gold']) {
+    for (const key of ['sp500','nasdaq','vix','us10y_yield','us2y_yield','dxy','gold']) {
       const e = live[key];
-      if (e && e.value != null) parts.push(`${key.toUpperCase().replace('_', ' ')}: ${e.value}`);
+      if (e && e.value != null) {
+        const pct = e.change_pct != null
+          ? ` (${e.change_pct >= 0 ? '+' : ''}${e.change_pct.toFixed(2)}%)` : '';
+        parts.push(`${key.replace(/_/g,' ').toUpperCase()}: ${e.value}${pct}`);
+      }
     }
-    for (const key of ['ai_sector_momentum', 'semiconductor_momentum', 'market_regime', 'risk_state', 'volatility_state']) {
-      const e = live[key];
-      if (e && e.value && e.value !== 'unverified') parts.push(`${key.replace(/_/g, ' ')}: ${e.value}`);
+    if (live.yield_spread_2y10y && live.yield_spread_2y10y.spread_bps != null) {
+      parts.push(`2Y/10Y spread: ${live.yield_spread_2y10y.spread_bps}bps (${(live.yield_spread_2y10y.spread_regime || '').replace(/_/g,' ')})`);
     }
-    if (parts.length) return parts.join('; ');
+    for (const key of ['ai_sector_momentum','market_regime','volatility_regime']) {
+      const r = live.computed_regime || {};
+      const v = r[key];
+      if (v && v !== 'unverified') parts.push(`${key.replace(/_/g,' ')}: ${v}`);
+    }
+    if (live.sector_leadership && live.sector_leadership.length) {
+      parts.push(`sector leaders: ${live.sector_leadership.join(', ')}`);
+    }
+    if (parts.length) return `Live market conditions: ${parts.join('; ')}`;
   }
+
+  // Structural fallback
   const r = (regime && regime.state) || {};
   const signals = Object.entries(r)
     .filter(([, v]) => v && v !== 'unverified' && !Array.isArray(v))
@@ -395,10 +424,29 @@ function validateContent(en, ar) {
     errors.push('AR language: English prose runs detected in Arabic sections — Arabic text must not contain English sentences');
   }
 
-  // Anti-hallucination: banned phrases
+  // Anti-hallucination: hard-banned phrases
   const enLower = JSON.stringify(en).toLowerCase();
   for (const phrase of ['data is not currently sourced', 'not currently sourced', 'editors should verify', 'placeholder', 'lorem ipsum']) {
     if (enLower.includes(phrase)) errors.push(`EN banned phrase: "${phrase}"`);
+  }
+
+  // Anti-hallucination: fabricated live-event phrases (only in structural/fallback mode)
+  const liveAvailable = typeof validateContent._liveStatus === 'string' &&
+    (validateContent._liveStatus === 'live' || validateContent._liveStatus === 'partial');
+  if (!liveAvailable) {
+    const fabricationPhrases = [
+      "as of today, markets",
+      "in today's session",
+      "this morning's trading",
+      "yesterday's close showed",
+      "surged to a fresh high today",
+      "fell sharply in today",
+    ];
+    for (const phrase of fabricationPhrases) {
+      if (enLower.includes(phrase)) {
+        errors.push(`Fabrication risk (no live data injected): "${phrase}" implies specific current event knowledge`);
+      }
+    }
   }
 
   return errors;
@@ -437,6 +485,8 @@ async function main() {
   const fw           = getTopicFramework(topic);
   const marketData   = buildMarketDataSummary(live, regime);
   const calendarText = buildCalendarSummary(calendar);
+  // Wire live status to anti-hallucination check
+  validateContent._liveStatus = (live && live.metadata && live.metadata.status) || 'fallback';
 
   process.stderr.write(`[AI] Model: ${MODEL}\n`);
 

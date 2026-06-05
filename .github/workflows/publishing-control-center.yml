@@ -142,6 +142,23 @@ jobs:
       # the git commit step can simply stage all expected output paths.
       # ══════════════════════════════════════════════════════════════════════════
 
+      - name: "[full_pipeline] Refresh live market state"
+        if: env.MODE == 'full_pipeline'
+        continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: |
+          if [ -n "$FRED_API_KEY" ] || [ -n "$FINNHUB_API_KEY" ]; then
+            echo "[market-state] Refreshing live market data before generation..."
+            node tools/update-live-market-state.js --fetch --write && \
+              echo "[market-state] Live market state updated successfully." || \
+              echo "[market-state] Market data refresh failed — pipeline will continue in structural mode."
+          else
+            echo "[market-state] No API keys set (FRED_API_KEY, FINNHUB_API_KEY) — skipping live data refresh."
+          fi
+          node tools/update-live-market-state.js --validate-only || true
+
       - name: "[full_pipeline] Run complete market outlook pipeline"
         id: full-pipeline
         if: env.MODE == 'full_pipeline'
