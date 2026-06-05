@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { scoreCandidates, scoreTopic, hasRealSources } = require('./score-autonomous-topic');
+const { reviewDraft, hasDraft } = require('./autonomous-review-engine');
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -371,7 +372,7 @@ function actionFor(contentType, status, mode, manualTopic) {
   }
 
   if (mode === 'full_pipeline') {
-    const topic = section.publishable_slug || section.draft_candidate || section.approved_waiting_slug || section.next_eligible;
+    const topic = section.publishable_slug || section.approved_waiting_slug || section.draft_candidate || section.next_eligible;
     if (!topic) {
       if (contentType === 'editorial' || contentType === 'market-outlook') {
         return {
@@ -523,11 +524,22 @@ function telegramStatus() {
 
 function executeAction(contentType, mode, dryRun, action) {
   if (mode === 'status' || mode === 'dry_run' || dryRun) {
+    const reviewPreview = mode === 'full_pipeline' && action.topic && hasDraft(contentType, action.topic)
+      ? reviewDraft({ contentType, slug: action.topic, dryRun: true, allowRegeneration: true })
+      : null;
     return {
       generation_result: 'not executed in dry run/status mode',
-      publish_result: 'not executed in dry run/status mode',
+      publish_result: reviewPreview && !reviewPreview.approved
+        ? `dry-run blocked: ${reviewPreview.recommended_action}`
+        : 'not executed in dry run/status mode',
       telegram_result: telegramStatus(),
-      command_status: 0
+      command_status: 0,
+      current_state: reviewPreview ? reviewPreview.current_state : (action.topic ? inferState(contentType, action.topic) : 'none'),
+      transition_path: reviewPreview ? reviewPreview.transition_path : (action.topic ? dryRunTransitionPreview(contentType, action.topic, action.next_action) : []),
+      regeneration_attempts: reviewPreview ? reviewPreview.regeneration_attempts : 0,
+      review_result: reviewPreview ? (reviewPreview.approved ? 'passed (dry run)' : `failed (dry run): ${reviewPreview.failed_checks.join(', ')}`) : 'not executed in dry run/status mode',
+      approval_reason: reviewPreview ? reviewPreview.approval_reason : 'dry run only',
+      publish_gate_result: reviewPreview ? reviewPreview.publish_gate_result : 'not evaluated'
     };
   }
 
@@ -536,7 +548,13 @@ function executeAction(contentType, mode, dryRun, action) {
       generation_result: 'skipped',
       publish_result: `blocked: ${action.stop_reason}`,
       telegram_result: telegramStatus(),
-      command_status: 0
+      command_status: 0,
+      current_state: 'blocked',
+      transition_path: ['blocked'],
+      regeneration_attempts: 0,
+      review_result: 'skipped',
+      approval_reason: '',
+      publish_gate_result: `blocked: ${action.stop_reason}`
     };
   }
 
@@ -553,13 +571,11 @@ function executeAction(contentType, mode, dryRun, action) {
       }
     }
     if (mode === 'full_pipeline') {
-      const result = runNode('tools/run-full-market-outlook-pipeline.js', [], { inherit: true });
-      return {
-        generation_result: result.status === 0 ? 'market outlook full pipeline completed' : 'market outlook full pipeline failed',
-        publish_result: result.status === 0 ? 'handled by market outlook pipeline' : 'blocked',
-        telegram_result: telegramStatus(),
-        command_status: result.status
-      };
+      return executeReviewedPipeline(contentType, action, () => runNode('tools/generate-market-outlook-draft.js', action.topic ? [`--slug=${action.topic}`] : [], { inherit: true }), () => {
+        const args = ['--execute', '--require-publishable', '--force-date'];
+        if (action.topic) args.push(`--slug=${action.topic}`);
+        return runNode('tools/publish-market-outlook.js', args, { inherit: true });
+      });
     }
     if (mode === 'generate_only') {
       const result = runNode('tools/generate-market-outlook-draft.js', [], { inherit: true });
@@ -567,19 +583,21 @@ function executeAction(contentType, mode, dryRun, action) {
         generation_result: result.status === 0 ? 'draft generator completed' : 'draft generator failed',
         publish_result: 'not requested',
         telegram_result: telegramStatus(),
-        command_status: result.status
+        command_status: result.status,
+        current_state: action.topic ? inferState(contentType, action.topic) : 'draft',
+        transition_path: ['planned', 'draft', 'in_review'],
+        regeneration_attempts: 0,
+        review_result: 'not requested',
+        approval_reason: '',
+        publish_gate_result: 'not requested'
       };
     }
     if (mode === 'publish_ready') {
-      const args = ['--execute', '--require-publishable'];
-      if (action.topic) args.push(`--slug=${action.topic}`);
-      const result = runNode('tools/publish-market-outlook.js', args, { inherit: true });
-      return {
-        generation_result: 'not requested',
-        publish_result: result.status === 0 ? 'market outlook published' : 'market outlook publish failed',
-        telegram_result: telegramStatus(),
-        command_status: result.status
-      };
+      return executeReviewedPipeline(contentType, action, null, () => {
+        const args = ['--execute', '--require-publishable', '--force-date'];
+        if (action.topic) args.push(`--slug=${action.topic}`);
+        return runNode('tools/publish-market-outlook.js', args, { inherit: true });
+      });
     }
   }
 
@@ -601,39 +619,21 @@ function executeAction(contentType, mode, dryRun, action) {
         generation_result: result.status === 0 ? 'editorial draft generator completed' : 'editorial draft generator failed',
         publish_result: 'not requested',
         telegram_result: telegramStatus(),
-        command_status: result.status
+        command_status: result.status,
+        current_state: action.topic ? inferState(contentType, action.topic) : 'draft',
+        transition_path: ['planned', 'draft', 'in_review'],
+        regeneration_attempts: 0,
+        review_result: 'not requested',
+        approval_reason: '',
+        publish_gate_result: 'not requested'
       };
     }
     if (mode === 'publish_ready' || mode === 'full_pipeline') {
-      if (mode === 'full_pipeline' && !action.topic) {
-        const generated = runNode('tools/generate-ai-editorial-draft.js', [], { inherit: true });
-        if (generated.status !== 0) {
-          return {
-            generation_result: 'editorial draft generator failed',
-            publish_result: 'blocked',
-            telegram_result: telegramStatus(),
-            command_status: generated.status
-          };
-        }
-      }
-      const publishSlug = action.topic;
-      if (!publishSlug) {
-        return {
-          generation_result: mode === 'full_pipeline' ? 'no publishable slug after generation' : 'not requested',
-          publish_result: 'blocked: no approved editorial article ready',
-          telegram_result: telegramStatus(),
-          command_status: 0
-        };
-      }
-      const args = [`--slug=${publishSlug}`, '--execute'];
-      if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) args.push('--telegram-send');
-      const result = runNode('tools/publish-reviewed-article.js', args, { inherit: true });
-      return {
-        generation_result: mode === 'full_pipeline' ? 'generation step skipped or already satisfied' : 'not requested',
-        publish_result: result.status === 0 ? 'editorial article published' : 'editorial publish failed',
-        telegram_result: telegramStatus(),
-        command_status: result.status
-      };
+      return executeReviewedPipeline(contentType, action, mode === 'full_pipeline' ? () => runNode('tools/generate-ai-editorial-draft.js', [], { inherit: true }) : null, (slug) => {
+        const args = [`--slug=${slug}`, '--execute'];
+        if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) args.push('--telegram-send');
+        return runNode('tools/publish-reviewed-article.js', args, { inherit: true });
+      });
     }
   }
 
@@ -644,14 +644,26 @@ function executeAction(contentType, mode, dryRun, action) {
         generation_result: result.status === 0 ? 'news analysis draft generator completed' : 'news analysis draft generator failed',
         publish_result: 'not published: news analysis remains manual-review and source-gated',
         telegram_result: telegramStatus(),
-        command_status: result.status
+        command_status: result.status,
+        current_state: action.topic ? inferState(contentType, action.topic) : 'source_gated',
+        transition_path: ['source_backed', 'draft', 'in_review'],
+        regeneration_attempts: 0,
+        review_result: 'source-gated manual publish path',
+        approval_reason: '',
+        publish_gate_result: 'blocked: no autonomous news publisher enabled'
       };
     }
     return {
       generation_result: 'not requested',
       publish_result: 'blocked: no autonomous news publisher is enabled',
       telegram_result: telegramStatus(),
-      command_status: 0
+      command_status: 0,
+      current_state: action.topic ? inferState(contentType, action.topic) : 'source_gated',
+      transition_path: ['source_gated'],
+      regeneration_attempts: 0,
+      review_result: 'not requested',
+      approval_reason: '',
+      publish_gate_result: 'blocked: no autonomous news publisher enabled'
     };
   }
 
@@ -659,8 +671,110 @@ function executeAction(contentType, mode, dryRun, action) {
     generation_result: 'skipped',
     publish_result: 'blocked: unsupported execution path',
     telegram_result: telegramStatus(),
-    command_status: 1
+    command_status: 1,
+    current_state: 'unknown',
+    transition_path: [],
+    regeneration_attempts: 0,
+    review_result: 'not requested',
+    approval_reason: '',
+    publish_gate_result: 'blocked'
   };
+}
+
+function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
+  let slug = action.topic;
+  let generationResult = 'not required';
+  let currentState = slug ? inferState(contentType, slug) : 'none';
+
+  if (!slug) {
+    return blockedExecution('no eligible topic selected for reviewed pipeline', currentState);
+  }
+
+  if (!hasDraft(contentType, slug) && generateFn) {
+    const generated = generateFn();
+    generationResult = generated.status === 0 ? 'draft generated' : 'draft generation failed';
+    if (generated.status !== 0) return blockedExecution(generationResult, currentState, generated.status);
+  } else if (!hasDraft(contentType, slug) && !generateFn) {
+    return blockedExecution('missing draft for review', currentState);
+  }
+
+  const review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: true });
+  if (!review.approved) {
+    return {
+      generation_result: generationResult,
+      publish_result: `blocked: ${review.recommended_action}`,
+      telegram_result: telegramStatus(),
+      command_status: 0,
+      current_state: review.current_state,
+      transition_path: review.transition_path,
+      regeneration_attempts: review.regeneration_attempts,
+      review_result: `failed: ${review.failed_checks.join(', ')}`,
+      approval_reason: review.approval_reason || '',
+      publish_gate_result: review.publish_gate_result
+    };
+  }
+
+  const publish = publishFn(slug);
+  return {
+    generation_result: generationResult,
+    publish_result: publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
+    telegram_result: telegramStatus(),
+    command_status: publish.status,
+    current_state: review.current_state,
+    transition_path: [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
+    regeneration_attempts: review.regeneration_attempts,
+    review_result: 'passed',
+    approval_reason: review.approval_reason,
+    publish_gate_result: publish.status === 0 ? 'approved' : 'blocked: publish command failed'
+  };
+}
+
+function blockedExecution(reason, currentState = 'unknown', status = 0) {
+  return {
+    generation_result: reason,
+    publish_result: `blocked: ${reason}`,
+    telegram_result: telegramStatus(),
+    command_status: status,
+    current_state: currentState,
+    transition_path: [currentState, 'manual_revision_required'].filter(Boolean),
+    regeneration_attempts: 0,
+    review_result: 'not approved',
+    approval_reason: '',
+    publish_gate_result: `blocked: ${reason}`
+  };
+}
+
+function queueFor(contentType) {
+  const file = contentType === 'market-outlook'
+    ? 'data/market-outlook-queue.json'
+    : contentType === 'news-analysis'
+      ? 'data/news-analysis-queue.json'
+      : 'data/editorial-topic-queue.json';
+  return readJson(path.join(ROOT, file), { topics: [] });
+}
+
+function inferState(contentType, slug) {
+  const topic = (queueFor(contentType).topics || []).find((item) => item.slug === slug);
+  if (!topic) return 'unknown';
+  if (topic.status === 'published') return 'published';
+  if (topic.review_status === 'approved') return 'approved';
+  return topic.status || 'planned';
+}
+
+function dryRunTransitionPreview(contentType, slug, nextAction) {
+  const state = inferState(contentType, slug);
+  if (nextAction === 'full_pipeline') {
+    if (state === 'approved') return ['approved', 'published'];
+    if (hasDraft(contentType, slug)) return uniquePath([state, 'in_review', 'reviewed', 'approved', 'published']);
+    return uniquePath([state, 'draft', 'in_review', 'reviewed', 'approved', 'published']);
+  }
+  if (nextAction === 'publish_ready') return [state, 'published'];
+  if (nextAction === 'generate_only') return uniquePath([state, 'draft', 'in_review']);
+  return [state];
+}
+
+function uniquePath(items) {
+  return items.filter((item, index) => item && (index === 0 || item !== items[index - 1]));
 }
 
 function printStatus(status) {
@@ -722,6 +836,12 @@ function printDecisionReport(report) {
   console.log(`  market_intelligence:       ${report.market_intelligence}`);
   console.log(`  duplicate_cooldown_result: ${report.duplicate_cooldown_result}`);
   console.log(`  quality_score:             ${report.quality_score}`);
+  console.log(`  current_state:             ${report.current_state}`);
+  console.log(`  transition_path:           ${report.transition_path}`);
+  console.log(`  regeneration_attempts:     ${report.regeneration_attempts}`);
+  console.log(`  review_result:             ${report.review_result}`);
+  console.log(`  approval_reason:           ${report.approval_reason || 'none'}`);
+  console.log(`  publish_gate_result:       ${report.publish_gate_result}`);
   console.log(`  next_action:               ${report.next_action}`);
   console.log(`  stop_reason:               ${report.stop_reason || 'none'}`);
   console.log(`  generation_result:         ${report.generation_result}`);
@@ -776,6 +896,12 @@ function main() {
     market_intelligence: `state_available=${mi.state_available}; signals=${mi.active_signal_count}; divergences=${mi.active_divergence_count}; memory=${mi.memory_snapshots}`,
     duplicate_cooldown_result: action.duplicate_cooldown_result,
     quality_score: compactQuality(action.quality_score),
+    current_state: execution.current_state || (action.topic ? inferState(selected, action.topic) : 'none'),
+    transition_path: (execution.transition_path || []).join(' -> '),
+    regeneration_attempts: execution.regeneration_attempts || 0,
+    review_result: execution.review_result || 'not requested',
+    approval_reason: execution.approval_reason || '',
+    publish_gate_result: execution.publish_gate_result || 'not evaluated',
     next_action: action.next_action,
     stop_reason: action.stop_reason,
     generation_result: execution.generation_result,

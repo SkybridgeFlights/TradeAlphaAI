@@ -45,13 +45,27 @@ console.log('Would refresh: article registry, search index, SEO sitemaps, and in
 
 if (!execute) process.exit(0);
 
-if (fs.existsSync(publicEn) || fs.existsSync(publicAr)) fail('Refusing to overwrite existing public article files.');
+const existingPublicFiles = [publicEn, publicAr].filter(fs.existsSync);
+if (existingPublicFiles.length) {
+  const enMatches = fs.existsSync(publicEn) && fs.readFileSync(publicEn, 'utf8') === enHtml;
+  const arMatches = fs.existsSync(publicAr) && fs.readFileSync(publicAr, 'utf8') === arHtml;
+  if (!enMatches || !arMatches) fail('Refusing to overwrite existing public article files.');
+  console.log('Existing public article files match reviewed drafts; resuming publish finalization.');
+}
 
 // ── 1. Copy handcrafted drafts to public locations ────────────────────────────
-fs.copyFileSync(draftEn, publicEn);
-fs.copyFileSync(draftAr, publicAr);
-console.log(`Copied: ${relative(publicEn)}`);
-console.log(`Copied: ${relative(publicAr)}`);
+if (!fs.existsSync(publicEn)) {
+  fs.copyFileSync(draftEn, publicEn);
+  console.log(`Copied: ${relative(publicEn)}`);
+} else {
+  console.log(`Already present: ${relative(publicEn)}`);
+}
+if (!fs.existsSync(publicAr)) {
+  fs.copyFileSync(draftAr, publicAr);
+  console.log(`Copied: ${relative(publicAr)}`);
+} else {
+  console.log(`Already present: ${relative(publicAr)}`);
+}
 
 // ── 2. Generate en/insights/<slug>.html ───────────────────────────────────────
 // Identical to insights/<slug>.html but with absolute asset paths so that
