@@ -629,6 +629,11 @@ function tryGetAiContent(slug) {
 }
 
 function attemptAutoApproval(topicItem, slugValue) {
+  const metadata = readJson(path.join(OUT_DIR, slugValue, 'metadata.json'), {});
+  if (metadata.ai_generated !== true) {
+    console.log(`${slugValue}: auto-approval blocked because draft is structural fallback or metadata is missing ai_generated=true.`);
+    return false;
+  }
   const result = spawnSync(process.execPath, [path.join(__dirname, 'score-generated-content.js'), `--slug=${slugValue}`, '--type=market_outlook', '--min-score=96'], { cwd: ROOT, encoding: 'utf8' });
   if (result.status !== 0 || !result.stdout) {
     if (result.stderr) console.log(result.stderr.trim());
@@ -637,7 +642,7 @@ function attemptAutoApproval(topicItem, slugValue) {
   const report = JSON.parse(result.stdout);
   const entry = (report.results || []).find((item) => item.slug === slugValue);
   if (!entry || entry.quality_score < 96) return false;
-  const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality', 'has_directional_bias', 'has_scenarios', 'specificity', 'no_generic_filler'];
+  const required = ['language_purity', 'public_placeholder_risk', 'semantic_depth', 'layout_quality', 'has_directional_bias', 'has_scenarios', 'scenario_structure', 'institutional_density', 'specificity', 'no_generic_filler'];
   if (required.some((name) => entry.checks[name] !== true)) return false;
   const today = new Date().toISOString().slice(0, 10);
   if (topicItem.status !== 'published') topicItem.status = 'reviewed';

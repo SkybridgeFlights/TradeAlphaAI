@@ -26,7 +26,15 @@ const REGIME_PATH   = path.join(ROOT, 'data', 'market-regime-state.json');
 const LIVE_PATH     = path.join(ROOT, 'data', 'live-market-state.json');
 
 const ALLOWED_BIASES = new Set([
-  'cautiously bullish', 'neutral', 'cautiously bearish', 'mixed / range-bound', 'elevated uncertainty',
+  'cautiously bullish',
+  'cautiously bearish',
+  'neutral',
+  'neutral-to-constructive',
+  'selective risk-on',
+  'defensive',
+  'risk-off stabilization',
+  'elevated uncertainty',
+  'mixed / range-bound',
 ]);
 const ALLOWED_BIASES_AR = new Set(['صاعد بحذر', 'محايد', 'هابط بحذر', 'مختلط', 'عدم يقين مرتفع']);
 
@@ -70,12 +78,13 @@ const INSTRUMENT_PATTERNS = [
 
 // Macro-analytical patterns (institutional language specificity — counted alongside instruments)
 const MACRO_PATTERNS = [
-  /\b(yield spread|basis point|curve steepen|curve flatten|curve normaliz|curve inversion)\b/i,
+  /\b(yield curve|yield spread|basis point|curve steepen|curve flatten|curve normaliz|curve inversion)\b/i,
+  /\b(duration|duration risk|duration exposure|duration-sensitive)\b/i,
   /\b(breadth|participation|concentration risk|equal.weight|cap.weight|narrow leadership)\b/i,
-  /\b(real yield|risk premium|net interest margin|repricing|factor tilt)\b/i,
+  /\b(real yield|risk premium|net interest margin|repricing|factor tilt|positioning)\b/i,
   /\b(implied vol|vol regime|volatility regime|vol compression|vol expansion|hedging demand)\b/i,
   /\b(liquidity|risk appetite|credit spread|monetary transmission|rate.sensitive|terminal rate)\b/i,
-  /\b(sector rotation|defensive rotation|cross.asset|macro hedge|macro transmission)\b/i,
+  /\b(sector rotation|defensive rotation|cross.asset|macro hedge|macro transmission|transmission mechanism)\b/i,
   /\b(transmission mechanism|transmission chain|policy path|rate path)\b/i,
 ];
 
@@ -83,8 +92,12 @@ const MACRO_PATTERNS = [
 
 function normalizeBias(bias) {
   const b = (bias || '').toLowerCase().trim();
+  if (/neutral[\s-]*to[\s-]*constructive/.test(b))                   return 'neutral-to-constructive';
+  if (/selective.*risk.on|risk.on.*selective/.test(b))               return 'selective risk-on';
+  if (/risk.off.*stabil|stabil.*risk.off/.test(b))                   return 'risk-off stabilization';
+  if (/defensive|defence|defense/.test(b))                           return 'defensive';
   if (/cautious.*bull|construct|positive|risk.on/.test(b))           return 'cautiously bullish';
-  if (/cautious.*bear|cautious.*neg|cautious.*risk.off/.test(b))     return 'cautiously bearish';
+  if (/cautious.*bear|cautious.*neg|cautious.*risk.off|risk.off/.test(b)) return 'cautiously bearish';
   if (/elevat.*uncertain|high.*uncertain|uncertain|caution/.test(b)) return 'elevated uncertainty';
   if (/mixed|range.bound|neutral.to|no.clear|conflicted/.test(b))    return 'mixed / range-bound';
   if (/neutral|balanced|flat/.test(b))                               return 'neutral';
@@ -282,7 +295,79 @@ ABSOLUTE PROHIBITIONS — any of these in your output will cause hard rejection:
 - "it remains to be seen", "dynamic market landscape", "at the end of the day", "broadly speaking"`;
 }
 
+function buildMarketContextLayer(topic, fw, narrativeContext, calendarText) {
+  const today = new Date().toISOString().slice(0, 10);
+  const lensesText = fw.lenses.map((l, i) => `${i + 1}. ${l}`).join('\n');
+  const dataBlock = narrativeContext
+    ? `Narrative engine context:\n${narrativeContext}`
+    : 'Data status: no live market data. Use structural mechanism analysis and do not imply knowledge of today\'s tape.';
+
+  return `market_context
+Topic: ${topic.title_en}
+Research module: ${fw.module}
+Date: ${today}
+Macro tags: ${(topic.macro_tags || []).join(', ') || 'general markets'}
+Key instruments: ${fw.instruments}
+Macro transmission mechanism: ${fw.mechanism}
+Analytical lenses:
+${lensesText}
+Directional bias context: ${fw.bias_note}
+${dataBlock}
+Calendar:
+${calendarText}`;
+}
+
+function buildAnalyticalRequirementsLayer() {
+  const biasOptions = [...ALLOWED_BIASES].join(' | ');
+  return `analytical_requirements
+1. key_drivers must use: [Verified Signal] -> [Mechanism] -> [Named Instrument Impact].
+2. bullish_scenario and bearish_scenario must be distinct and each must include catalyst, transmission mechanism, affected instruments, and market implication.
+3. directional_bias must be one of exactly: ${biasOptions}.
+4. Reference at least two named instruments across the analytical sections.
+5. Specificity can be ticker/instrument based or macro institutional: yield curve, duration, breadth, participation, liquidity, volatility regime, risk appetite, positioning, sector rotation, or transmission mechanism.
+6. Each analytical section must contain institutional signal density; avoid generic market structure prose.
+7. executive_summary must state the normalized directional stance and the structural condition behind it.`;
+}
+
+function buildFormattingRequirementsLayer() {
+  const biasOptions = [...ALLOWED_BIASES].join(' | ');
+  return `formatting_requirements
+Minimum lengths: executive_summary >= 45 words, market_context >= 75 words, bullish_scenario >= 45 words, bearish_scenario >= 45 words.
+key_drivers: exactly 3 items, each at least 2 full sentences with [Signal -> Mechanism -> Impact].
+risk_factors: exactly 5 items, each specific to this theme's mechanics.
+what_to_watch: exactly 5 items, each naming a specific instrument, data release, or cross-asset relationship.
+Avoid retail phrases, promotional language, financial advice, generic filler, and broad unsupported claims.
+Return only valid JSON with this shape:
+{
+  "executive_summary": "2-3 sentences with stance, condition, and named instrument or spread relationship.",
+  "market_context": "4-6 sentences with structural dynamics, cross-asset relationships, breadth, volatility regime, and at least two analytical lenses.",
+  "directional_bias": "${biasOptions}",
+  "bullish_scenario": "Named catalyst -> transmission mechanism -> affected instruments -> market implication.",
+  "bearish_scenario": "Different named catalyst -> different mechanism -> affected instruments -> market implication.",
+  "key_drivers": ["Driver 1", "Driver 2", "Driver 3"],
+  "risk_factors": ["Risk 1", "Risk 2", "Risk 3", "Risk 4", "Risk 5"],
+  "what_to_watch": ["Signal 1", "Signal 2", "Signal 3", "Signal 4", "Signal 5"]
+}`;
+}
+
 function buildEnUserPrompt(topic, fw, narrativeContext, calendarText) {
+  const promptLayers = {
+    system_core: 'provided in system message',
+    market_context: buildMarketContextLayer(topic, fw, narrativeContext, calendarText),
+    analytical_requirements: buildAnalyticalRequirementsLayer(),
+    formatting_requirements: buildFormattingRequirementsLayer(),
+  };
+
+  return `Write institutional market outlook analysis for the following topic.
+
+${promptLayers.market_context}
+
+${promptLayers.analytical_requirements}
+
+${promptLayers.formatting_requirements}`;
+}
+
+function buildLegacyEnUserPrompt(topic, fw, narrativeContext, calendarText) {
   const today       = new Date().toISOString().slice(0, 10);
   const biasOptions = [...ALLOWED_BIASES].join(' | ');
   const lensesText  = fw.lenses.map((l, i) => `${i + 1}. ${l}`).join('\n');
@@ -473,6 +558,7 @@ function callOpenAI(systemPrompt, userPrompt, apiKey, { maxTokens = 2000, temper
 
 function validateSections(en) {
   const results = {};
+  const normalizedBias = normalizeBias(en.directional_bias) || en.directional_bias;
 
   for (const [field, min] of Object.entries(MIN_WORDS_EN)) {
     const text      = String(en[field] || '');
@@ -480,7 +566,20 @@ function validateSections(en) {
     const instScore = detectInstitutionalPhrasing(text);
     const instrHits = INSTRUMENT_PATTERNS.filter(p => p.test(text)).length;
     const macroHits = MACRO_PATTERNS.filter(p => p.test(text)).length;
-    results[field]  = { word_count: wc, min_words: min, inst_score: instScore, instrument_hits: instrHits, macro_hits: macroHits, ok: wc >= min };
+    const specificityHits = instrHits + macroHits;
+    const hasBias = field === 'executive_summary'
+      ? /\b(cautiously bullish|cautiously bearish|neutral-to-constructive|selective risk-on|defensive|risk-off stabilization|elevated uncertainty|mixed|range-bound|neutral|constructive|risk-on|risk-off)\b/i.test(text)
+      : true;
+    results[field]  = {
+      word_count: wc,
+      min_words: min,
+      inst_score: instScore,
+      instrument_hits: instrHits,
+      macro_hits: macroHits,
+      specificity_hits: specificityHits,
+      has_directional_bias: hasBias,
+      ok: wc >= min && instScore >= 1 && specificityHits >= 1 && hasBias
+    };
   }
 
   // Scenario structural checks
@@ -489,16 +588,51 @@ function validateSections(en) {
     const lower = text.toLowerCase();
     const wc    = countWords(text);
     const hasCatalyst   = /\bif\b|\bwhen\b|\bshould\b|catalyst|surprise|trigger|exceed|miss|spike|collapse|above|below|print/.test(lower);
-    const hasMechanism  = /yield|spread|rotation|pressure|compress|reprice|flow|demand|support|bid|decline|amplif|steepen|flatten|transmission/.test(lower);
+    const hasMechanism  = /transmission|mechanism|yield|spread|rotation|pressure|compress|reprice|flow|liquidity|duration|breadth|participation|positioning|risk appetite|steepen|flatten/.test(lower);
     const hasInstrument = [...INSTRUMENT_PATTERNS, ...MACRO_PATTERNS].some(p => p.test(text));
-    results[scenario]   = { word_count: wc, min_words: 45, has_catalyst: hasCatalyst, has_mechanism: hasMechanism, has_instrument: hasInstrument, ok: wc >= 45 && hasCatalyst };
+    const hasImplication = /implies|implication|would|could|pressure|support|reprice|tighten|widen|rotate|flows?|risk-on|risk-off|defensive|constructive/.test(lower);
+    const instScore = detectInstitutionalPhrasing(text);
+    const instrHits = INSTRUMENT_PATTERNS.filter(p => p.test(text)).length;
+    const macroHits = MACRO_PATTERNS.filter(p => p.test(text)).length;
+    results[scenario]   = {
+      word_count: wc,
+      min_words: 45,
+      inst_score: instScore,
+      instrument_hits: instrHits,
+      macro_hits: macroHits,
+      specificity_hits: instrHits + macroHits,
+      has_catalyst: hasCatalyst,
+      has_mechanism: hasMechanism,
+      has_instrument: hasInstrument,
+      has_market_implication: hasImplication,
+      scenario_detected: hasCatalyst && hasMechanism && hasInstrument && hasImplication,
+      ok: wc >= 45 && instScore >= 1 && hasCatalyst && hasMechanism && hasInstrument && hasImplication
+    };
   }
 
   // key_drivers chain check
   if (Array.isArray(en.key_drivers)) {
     const withChain = en.key_drivers.filter(d => /→|->|leads?\s+to|results?\s+in|triggers?|compresses?|expands?|supports?|pressures?/.test(d || ''));
-    results.key_drivers = { count: en.key_drivers.length, with_chain: withChain.length, ok: en.key_drivers.length >= 3 && withChain.length >= 2 };
+    const combined = en.key_drivers.join(' ');
+    const instScore = detectInstitutionalPhrasing(combined);
+    const instrHits = INSTRUMENT_PATTERNS.filter(p => p.test(combined)).length;
+    const macroHits = MACRO_PATTERNS.filter(p => p.test(combined)).length;
+    results.key_drivers = {
+      count: en.key_drivers.length,
+      with_chain: withChain.length,
+      inst_score: instScore,
+      instrument_hits: instrHits,
+      macro_hits: macroHits,
+      specificity_hits: instrHits + macroHits,
+      ok: en.key_drivers.length >= 3 && withChain.length >= 2 && instScore >= 1 && (instrHits + macroHits) >= 2
+    };
   }
+
+  results.directional_bias = {
+    value: en.directional_bias || '',
+    normalized: normalizedBias || null,
+    ok: Boolean(normalizedBias && ALLOWED_BIASES.has(normalizedBias))
+  };
 
   return results;
 }
@@ -553,6 +687,63 @@ Return the COMPLETE JSON object with all fields.`;
 
 // ── Main validation ───────────────────────────────────────────────────────────
 
+function logSectionDiagnostics(sections, label) {
+  process.stderr.write(`[DEBUG] ${label} section diagnostics:\n`);
+  for (const [field, s] of Object.entries(sections)) {
+    if (s.value !== undefined) {
+      process.stderr.write(`  ${field}: value="${s.value}" normalized="${s.normalized || ''}" ${s.ok ? 'ok' : 'fail'}\n`);
+    } else if (s.count !== undefined) {
+      process.stderr.write(`  ${field}: items=${s.count} chains=${s.with_chain} instr=${s.instrument_hits} macro=${s.macro_hits} specificity=${s.specificity_hits} inst_density=${s.inst_score} ${s.ok ? 'ok' : 'fail'}\n`);
+    } else if (s.word_count !== undefined) {
+      const quality = `instr=${s.instrument_hits || 0} macro=${s.macro_hits || 0} specificity=${s.specificity_hits || 0} inst_density=${s.inst_score || 0}`;
+      const scenario = s.scenario_detected !== undefined
+        ? ` catalyst=${s.has_catalyst ? 'yes' : 'no'} mechanism=${s.has_mechanism ? 'yes' : 'no'} instrument=${s.has_instrument ? 'yes' : 'no'} implication=${s.has_market_implication ? 'yes' : 'no'} scenario=${s.scenario_detected ? 'yes' : 'no'}`
+        : '';
+      const bias = s.has_directional_bias !== undefined ? ` bias=${s.has_directional_bias ? 'yes' : 'no'}` : '';
+      process.stderr.write(`  ${field}: words=${s.word_count}/${s.min_words} ${quality}${scenario}${bias} ${s.ok ? 'ok' : 'fail'}\n`);
+    } else {
+      process.stderr.write(`  ${field}: ${JSON.stringify(s)}\n`);
+    }
+  }
+}
+
+function buildExpansionPrompt(en, sectionIssues) {
+  const weak = Object.entries(sectionIssues).filter(([, v]) => !v.ok);
+  if (!weak.length) return null;
+
+  const tasks = weak.map(([field, issue]) => {
+    const reasons = [];
+    if (issue.word_count !== undefined && issue.word_count < issue.min_words) reasons.push(`word count ${issue.word_count} below minimum ${issue.min_words}`);
+    if (issue.inst_score !== undefined && issue.inst_score < 1) reasons.push(`low institutional density (${issue.inst_score} signals)`);
+    if (issue.specificity_hits !== undefined && issue.specificity_hits < 1) reasons.push('missing specificity hits');
+    if (issue.has_directional_bias === false) reasons.push('missing directional bias language');
+    if (issue.has_catalyst === false) reasons.push('missing catalyst');
+    if (issue.has_mechanism === false) reasons.push('missing transmission mechanism');
+    if (issue.has_instrument === false) reasons.push('missing affected instrument');
+    if (issue.has_market_implication === false) reasons.push('missing market implication');
+    if (issue.with_chain !== undefined && issue.with_chain < 2) reasons.push(`only ${issue.with_chain}/${issue.count} drivers have signal-mechanism-impact chains`);
+    if (issue.value !== undefined && !issue.ok) reasons.push(`directional bias not accepted (${issue.value})`);
+    return `  - ${field}: ${reasons.join('; ') || 'failed section validation'}`;
+  });
+
+  return `The following market analysis has weak sections. Expand ONLY the flagged sections below. Return all fields, but preserve unflagged fields exactly.
+
+SECTIONS REQUIRING EXPANSION:
+${tasks.join('\n')}
+
+EXPANSION REQUIREMENTS:
+- Add institutional macro specificity: yield curve, duration, breadth, participation, liquidity, volatility regime, risk appetite, positioning, sector rotation, or transmission mechanism.
+- Include explicit [Signal -> Mechanism -> Named Instrument Impact] chains in expanded sections.
+- For scenarios, include catalyst, transmission mechanism, affected instruments, and market implication.
+- Use institutional register. Do not use retail phrases, promotional language, financial advice, or generic filler.
+- Reference at least one named instrument or institutional macro pattern in every expanded section.
+
+CURRENT ANALYSIS:
+${JSON.stringify(en, null, 2)}
+
+Return the COMPLETE JSON object with all fields.`;
+}
+
 function countWords(text) { return String(text || '').trim().split(/\s+/).filter(Boolean).length; }
 function countArabicWords(text) { return (String(text || '').match(/[؀-ۿ]+/g) || []).length; }
 
@@ -581,6 +772,12 @@ function validateContent(en, ar) {
     } else {
       errors.push(`en.directional_bias "${en.directional_bias}" not in allowed set`);
     }
+  }
+
+  const finalSectionResults = validateSections(en);
+  logSectionDiagnostics(finalSectionResults, 'Final validation');
+  for (const [field, result] of Object.entries(finalSectionResults)) {
+    if (!result.ok) errors.push(`en.${field}: failed section validation`);
   }
 
   // Generic filler

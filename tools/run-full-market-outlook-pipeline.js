@@ -169,6 +169,26 @@ function getScore(slug) {
   }
 }
 
+function getDraftMetadata(slug) {
+  return readJson(path.join(ROOT, 'drafts', 'market-outlook', slug, 'metadata.json'), {});
+}
+
+function marketOutlookHardGateFailures(entry) {
+  const required = [
+    'language_purity',
+    'public_placeholder_risk',
+    'semantic_depth',
+    'layout_quality',
+    'has_directional_bias',
+    'has_scenarios',
+    'scenario_structure',
+    'institutional_density',
+    'specificity',
+    'no_generic_filler',
+  ];
+  return required.filter((name) => entry.checks?.[name] !== true);
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // PIPELINE START
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -284,9 +304,18 @@ if (approvedTopic) {
       console.log(`  ${pass ? '✓' : '✗'} ${check}`);
     }
 
-    if (entry.quality_score < 85) {
+    const metadata = getDraftMetadata(eligible.slug);
+    if (metadata.ai_generated !== true) {
+      abort(SKIP.AUTO_APPROVAL_FAILED, 'Draft metadata is not ai_generated=true; structural fallback remains pending manual review.');
+    }
+
+    const hardGateFailures = marketOutlookHardGateFailures(entry);
+    if (entry.quality_score < 96) {
       abort(SKIP.SCORE_TOO_LOW,
-        `Score ${entry.quality_score}/100 < 85. Failed checks: ${failed.join(', ') || '(score too low)'}`);
+        `Score ${entry.quality_score}/100 < 96. Failed checks: ${failed.join(', ') || '(score too low)'}`);
+    }
+    if (hardGateFailures.length > 0) {
+      abort(SKIP.AUTO_APPROVAL_FAILED, `Failed market outlook hard gates: ${hardGateFailures.join(', ')}`);
     }
     if (failed.length > 0) {
       abort(SKIP.AUTO_APPROVAL_FAILED, `Failed checks: ${failed.join(', ')}`);
@@ -321,14 +350,22 @@ const scoreEntry = getScore(targetSlug);
 if (!scoreEntry) {
   abort(SKIP.SCORE_TOO_LOW, `Scorer returned no result for ${targetSlug}`);
 }
+const targetMetadata = getDraftMetadata(targetSlug);
+if (targetMetadata.ai_generated !== true) {
+  abort(SKIP.AUTO_APPROVAL_FAILED, 'Draft metadata is not ai_generated=true; refusing to publish structural fallback.');
+}
 console.log(`[SCORE] slug=${targetSlug}  score=${scoreEntry.quality_score}/100`);
 for (const [check, pass] of Object.entries(scoreEntry.checks)) {
   console.log(`  ${pass ? '✓' : '✗'} ${check}`);
 }
-if (scoreEntry.quality_score < 85) {
+const phase6HardGateFailures = marketOutlookHardGateFailures(scoreEntry);
+if (scoreEntry.quality_score < 96) {
   const failed = Object.entries(scoreEntry.checks).filter(([, v]) => !v).map(([k]) => k);
   abort(SKIP.SCORE_TOO_LOW,
-    `Score ${scoreEntry.quality_score}/100 < 85. Failed: ${failed.join(', ') || '(score too low)'}`);
+    `Score ${scoreEntry.quality_score}/100 < 96. Failed: ${failed.join(', ') || '(score too low)'}`);
+}
+if (phase6HardGateFailures.length > 0) {
+  abort(SKIP.AUTO_APPROVAL_FAILED, `Failed market outlook hard gates: ${phase6HardGateFailures.join(', ')}`);
 }
 console.log('  Quality gate passed. ✓\n');
 

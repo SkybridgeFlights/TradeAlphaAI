@@ -56,6 +56,8 @@ function scoreDraft(dir) {
     checks.layout_quality &&
     checks.has_directional_bias &&
     checks.has_scenarios &&
+    checks.scenario_structure &&
+    checks.institutional_density &&
     checks.specificity &&
     checks.no_generic_filler
   );
@@ -96,9 +98,56 @@ function marketOutlookChecks(en, ar, enBody, arBody, combined) {
     layout_quality: requiredSections.every((id) => en.includes(`id="${id}"`) && ar.includes(`id="${id}"`)),
     has_directional_bias: /(cautiously bullish|cautiously bearish|neutral|mixed|elevated uncertainty|directional bias|الميل الاتجاهي|صاعد بحذر|هابط بحذر|محايد)/i.test(combined),
     has_scenarios: /(bullish scenario|bearish scenario|السيناريو الصاعد|السيناريو الهابط)/i.test(combined),
+    has_directional_bias: checkDirectionalBias(combined),
+    scenario_structure: checkScenarioStructure(enBody),
+    institutional_density: checkInstitutionalDensity(enBody),
     specificity: checkSpecificity(enBody),
     no_generic_filler: checkNoGenericFiller(enBody),
   };
+}
+
+function checkDirectionalBias(text) {
+  return /(cautiously bullish|cautiously bearish|neutral-to-constructive|selective risk-on|defensive|risk-off stabilization|neutral|mixed\s*\/\s*range-bound|mixed|range-bound|elevated uncertainty|directional bias|صاعد بحذر|هابط بحذر|محايد|مختلط|عدم يقين مرتفع)/i.test(text);
+}
+
+function checkInstitutionalDensity(enBody) {
+  const signals = [
+    /\byield curve\b/i,
+    /\bduration\b/i,
+    /\bbreadth\b/i,
+    /\bparticipation\b/i,
+    /\bliquidity\b/i,
+    /\bvolatility regime\b|\bvol regime\b|\bimplied vol\b/i,
+    /\brisk appetite\b/i,
+    /\bpositioning\b/i,
+    /\bsector rotation\b/i,
+    /\btransmission mechanism\b|\btransmission chain\b|\bmonetary transmission\b/i,
+    /\bcredit spread\b|\byield spread\b|\bbasis points?\b/i,
+    /\brepricing\b|\brisk premium\b|\breal yield\b/i,
+  ];
+  return signals.filter((pattern) => pattern.test(enBody)).length >= 4;
+}
+
+function checkScenarioStructure(enBody) {
+  const bullish = extractScenario(enBody, 'bullish scenario', 'bearish scenario');
+  const bearish = extractScenario(enBody, 'bearish scenario', 'key drivers');
+  if (!bullish || !bearish) return false;
+  return [bullish, bearish].every((text) => {
+    const lower = text.toLowerCase();
+    const hasCatalyst = /\bif\b|\bwhen\b|\bshould\b|catalyst|trigger|surprise|above|below|print|miss|exceed/.test(lower);
+    const hasMechanism = /transmission|mechanism|yield|spread|rotation|liquidity|duration|breadth|participation|positioning|risk appetite|reprice|flow/.test(lower);
+    const hasInstrument = checkSpecificity(text);
+    const hasImplication = /implies|implication|would|could|pressure|support|reprice|tighten|widen|rotate|flows?|risk-on|risk-off|defensive|constructive/.test(lower);
+    return hasCatalyst && hasMechanism && hasInstrument && hasImplication;
+  });
+}
+
+function extractScenario(text, startLabel, endLabel) {
+  const lower = text.toLowerCase();
+  const start = lower.indexOf(startLabel);
+  if (start === -1) return '';
+  const end = lower.indexOf(endLabel, start + startLabel.length);
+  return text.slice(start, end === -1 ? start + 1200 : end);
 }
 
 function checkSpecificity(enBody) {
@@ -118,12 +167,13 @@ function checkSpecificity(enBody) {
   ];
   // Macro-analytical language patterns (institutional specificity without ticker names)
   const MACRO_ANALYSIS = [
-    /\b(yield spread|basis point|curve steepen|curve flatten|curve normaliz|curve inversion)\b/i,
+    /\b(yield curve|yield spread|basis point|curve steepen|curve flatten|curve normaliz|curve inversion)\b/i,
+    /\b(duration|duration risk|duration exposure|duration-sensitive)\b/i,
     /\b(breadth|participation|concentration risk|equal.weight|cap.weight|narrow leadership)\b/i,
     /\b(positioning|factor tilt|real yield|repricing|risk premium|net interest margin)\b/i,
     /\b(implied vol|vol regime|volatility regime|vol compression|vol expansion|hedging demand)\b/i,
     /\b(liquidity|risk appetite|credit spread|monetary transmission|rate.sensitive|terminal rate)\b/i,
-    /\b(sector rotation|defensive rotation|growth.value|cross.asset|macro hedge|macro transmission)\b/i,
+    /\b(sector rotation|defensive rotation|growth.value|cross.asset|macro hedge|macro transmission|transmission mechanism)\b/i,
     /\b(transmission mechanism|transmission chain|policy path|rate path|monetary policy)\b/i,
   ];
   const instrHits = INSTRUMENTS.filter(p => p.test(enBody)).length;
