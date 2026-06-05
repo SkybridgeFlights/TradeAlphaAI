@@ -709,11 +709,24 @@ function executeAction(contentType, mode, dryRun, action) {
       };
     }
     if (mode === 'publish_ready' || mode === 'full_pipeline') {
-      return executeReviewedPipeline(contentType, action, mode === 'full_pipeline' ? () => runNode('tools/generate-ai-editorial-draft.js', action.topic ? [`--slug=${action.topic}`] : [], { inherit: true }) : null, (slug) => {
-        const args = [`--slug=${slug}`, '--execute'];
-        if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) args.push('--telegram-send');
-        return runNode('tools/publish-reviewed-article.js', args, { inherit: true });
-      });
+      const editorialSlugArgs = action.topic ? [`--slug=${action.topic}`] : [];
+      return executeReviewedPipeline(
+        contentType,
+        action,
+        mode === 'full_pipeline'
+          ? () => runNode('tools/generate-ai-editorial-draft.js', editorialSlugArgs, { inherit: true })
+          : null,
+        (slug) => {
+          const args = [`--slug=${slug}`, '--execute'];
+          if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) args.push('--telegram-send');
+          return runNode('tools/publish-reviewed-article.js', args, { inherit: true });
+        },
+        // Repair regeneration fn: passes --repair-regeneration=true so the generator can
+        // regenerate a topic even if the review engine set it to manual_revision_required.
+        mode === 'full_pipeline' && action.topic
+          ? () => runNode('tools/generate-ai-editorial-draft.js', [...editorialSlugArgs, '--repair-regeneration=true'], { inherit: true })
+          : null
+      );
     }
   }
 
@@ -843,7 +856,11 @@ function invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug) {
   return { result, detectedSlug: detectedSlug || canonicalSlug, slugMismatch };
 }
 
-function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
+// repairGenerateFn: optional variant of generateFn that passes --repair-regeneration=true,
+// allowing generation even when the review engine has temporarily set the topic to
+// manual_revision_required. If omitted, falls back to generateFn for repair paths.
+function executeReviewedPipeline(contentType, action, generateFn, publishFn, repairGenerateFn = null) {
+  const effectiveRepairFn = repairGenerateFn || generateFn;
   let slug = action.topic;
   const canonicalSlug = slug;
   let generationResult = 'not required';
@@ -860,6 +877,10 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
   let slugIntegrityResult = 'not_checked';
   let slugMismatchAction  = 'none';
 
+  // Repair regeneration tracking
+  let repairRegenUsed              = false;
+  let repairRegenStatusOverride    = false;
+
   // Authority repair tracking
   let authorityRepairAttempted = false;
   let authorityRepairResult    = 'not_attempted';
@@ -874,10 +895,12 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
 
   function slugFields() {
     return {
-      canonical_slug:        canonicalSlug,
-      generated_slug:        generatedSlug || (generateFn ? 'not_generated' : 'no_generator'),
-      slug_integrity_result: slugIntegrityResult,
-      slug_mismatch_action:  slugMismatchAction,
+      canonical_slug:                   canonicalSlug,
+      generated_slug:                   generatedSlug || (generateFn ? 'not_generated' : 'no_generator'),
+      slug_integrity_result:            slugIntegrityResult,
+      slug_mismatch_action:             slugMismatchAction,
+      repair_regeneration_mode:         repairRegenUsed,
+      repair_regeneration_status_override: repairRegenStatusOverride,
     };
   }
 
@@ -931,8 +954,10 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
     if (generateFn) {
       console.log(`[brain] Attempting recovery — cleaning partial draft and regenerating...`);
       cleanDraftDirectory(contentType, slug);
+      repairRegenUsed = true;
+      if (repairGenerateFn) repairRegenStatusOverride = true;
       const { result: regenResult, detectedSlug: recoverySlug, slugMismatch: recoveryMismatch } =
-        invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug);
+        invokeGeneratorWithSlugCheck(effectiveRepairFn, contentType, canonicalSlug);
       generatedSlug = recoverySlug;
       if (regenResult.status === 0 && recoveryMismatch) {
         slugIntegrityResult = 'mismatch';
@@ -1018,12 +1043,14 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn) {
         if (generateFn) {
           console.log(`[brain] Regenerating draft after repair cycle...`);
           regenerationAfterRepair = 'attempted';
+          repairRegenUsed = true;
+          if (repairGenerateFn) repairRegenStatusOverride = true;
 
           // DELETE the entire draft directory so no partial state can be left behind
           cleanDraftDirectory(contentType, slug);
 
           const { result: regenResult, detectedSlug: repairSlug, slugMismatch: repairMismatch } =
-            invokeGeneratorWithSlugCheck(generateFn, contentType, canonicalSlug);
+            invokeGeneratorWithSlugCheck(effectiveRepairFn, contentType, canonicalSlug);
           generatedSlug = repairSlug;
 
           if (regenResult.status === 0 && repairMismatch) {
@@ -1333,11 +1360,13 @@ function printDecisionReport(report) {
   if (report.slug_integrity_result !== undefined) {
     console.log('\n  SLUG INTEGRITY');
     console.log('  ----------------------------------------------------');
-    console.log(`  canonical_slug:        ${report.canonical_slug}`);
-    console.log(`  generated_slug:        ${report.generated_slug}`);
-    console.log(`  slug_integrity_result: ${report.slug_integrity_result}`);
+    console.log(`  canonical_slug:                      ${report.canonical_slug}`);
+    console.log(`  generated_slug:                      ${report.generated_slug}`);
+    console.log(`  slug_integrity_result:               ${report.slug_integrity_result}`);
+    console.log(`  repair_regeneration_mode:            ${report.repair_regeneration_mode}`);
+    console.log(`  repair_regeneration_status_override: ${report.repair_regeneration_status_override}`);
     if (report.slug_mismatch_action && report.slug_mismatch_action !== 'none') {
-      console.log(`  slug_mismatch_action:  ${report.slug_mismatch_action}`);
+      console.log(`  slug_mismatch_action:                ${report.slug_mismatch_action}`);
     }
   }
   if (report.artifact_integrity_result !== undefined) {
@@ -1424,10 +1453,12 @@ function main() {
     missing_artifacts:          execution.missing_artifacts,
     regeneration_after_repair:  execution.regeneration_after_repair,
     artifact_integrity_result:  execution.artifact_integrity_result,
-    canonical_slug:             execution.canonical_slug,
-    generated_slug:             execution.generated_slug,
-    slug_integrity_result:      execution.slug_integrity_result,
-    slug_mismatch_action:       execution.slug_mismatch_action,
+    canonical_slug:                      execution.canonical_slug,
+    generated_slug:                      execution.generated_slug,
+    slug_integrity_result:               execution.slug_integrity_result,
+    slug_mismatch_action:                execution.slug_mismatch_action,
+    repair_regeneration_mode:            execution.repair_regeneration_mode,
+    repair_regeneration_status_override: execution.repair_regeneration_status_override,
   };
   printDecisionReport(report);
   process.exit(execution.command_status);

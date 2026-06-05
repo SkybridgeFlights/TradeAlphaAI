@@ -14,18 +14,27 @@ const SITE_URL = 'https://tradealphaai.com';
 const slugArg = process.argv.find(a => a.startsWith('--slug='));
 const targetSlug = slugArg ? slugArg.slice('--slug='.length).trim() : null;
 
+// --repair-regeneration=true allows regenerating a topic that the review engine
+// temporarily set to manual_revision_required during a failed pipeline run.
+// ONLY valid when combined with --slug. Must not broaden normal generation behavior.
+const isRepairRegen = targetSlug && process.argv.includes('--repair-regeneration=true');
+
 const queue = readJson(QUEUE_PATH);
 const topics = Array.isArray(queue.topics) ? queue.topics : [];
 
-// When targeting a specific slug, accept broader statuses — the brain may have already
-// advanced the topic to in_review during an earlier generation pass.
+// Normal slug-targeted statuses: topic may be in_review/approved/reviewed from a prior pass.
 const SLUG_TARGETED_STATUSES = new Set(['draft', 'planned', 'queued', 'in_review', 'approved', 'reviewed']);
+// Repair-regeneration also accepts manual_revision_required — a transient state set by the
+// review engine during THIS pipeline run. After successful generation the status is
+// restored to in_review by the normal generator lifecycle code below.
+const REPAIR_REGEN_STATUSES = new Set([...SLUG_TARGETED_STATUSES, 'manual_revision_required']);
 
 let topic;
 if (targetSlug) {
   topic = topics.find(t => t.slug === targetSlug);
   if (!topic) fail(`--slug=${targetSlug}: topic not found in editorial queue`);
-  if (!SLUG_TARGETED_STATUSES.has(topic.status)) {
+  const eligibleStatuses = isRepairRegen ? REPAIR_REGEN_STATUSES : SLUG_TARGETED_STATUSES;
+  if (!eligibleStatuses.has(topic.status)) {
     fail(`--slug=${targetSlug}: topic status '${topic.status}' is not eligible for generation`);
   }
 } else {
@@ -52,11 +61,15 @@ fs.writeFileSync(path.join(draftDir, 'en.html'), renderArticle(normalized, 'en')
 fs.writeFileSync(path.join(draftDir, 'ar.html'), renderArticle(normalized, 'ar'), 'utf8');
 fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized), null, 2) + '\n', 'utf8');
 
+const prevStatus = topic.status;
 topic.status = 'in_review';
 topic.review_status = 'pending';
 topic.revision_count = 0;
 topic.last_reviewed = null;
 queue.updated = new Date().toISOString().slice(0, 10);
+if (isRepairRegen && prevStatus === 'manual_revision_required') {
+  console.log(`${topic.slug}: repair regeneration restored status: manual_revision_required -> in_review`);
+}
 fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 
 console.log(`Generated AI-assisted editorial draft: ${relative(draftDir)}`);
