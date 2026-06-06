@@ -1,8 +1,20 @@
 {
   "version": "2.0",
-  "created_at": "2026-06-06T22:06:11.319Z",
-  "target_slug": "portfolio-risk-research-for-beginners",
+  "created_at": "2026-06-06T22:19:05.303Z",
+  "target_slug": "international-etf-research-basics",
   "failures_detected": [
+    {
+      "check": "macro_transmission_depth",
+      "description": "Insufficient transmission chain — found 1/2 required pattern matches",
+      "repair_action": "rebuild_macro_transmission_section",
+      "severity": "warning"
+    },
+    {
+      "check": "comparative_depth",
+      "description": "Insufficient comparative depth — found 1/2 required pattern matches",
+      "repair_action": "rebuild_comparison_section",
+      "severity": "warning"
+    },
     {
       "check": "probability_reasoning",
       "description": "Insufficient probability reasoning — found 0/1 required pattern matches",
@@ -11,17 +23,45 @@
     },
     {
       "check": "evidence_linkage",
-      "description": "Insufficient evidence linkage — found 1/2 required pattern matches",
+      "description": "Insufficient evidence linkage — found 0/2 required pattern matches",
       "repair_action": "rebuild_evidence_linkage_section",
-      "severity": "warning"
+      "severity": "critical"
+    },
+    {
+      "check": "comparative_depth",
+      "description": "ETF article missing editorial-comparison-table — structural comparison inadequate",
+      "repair_action": "rebuild_comparison_section",
+      "severity": "critical"
     }
   ],
   "generic_phrase_violations": [],
-  "critical_failures": 1,
-  "requires_ai_repair": false,
-  "auto_repair_insufficient": false,
-  "deterministic_repair_available": true,
+  "critical_failures": 3,
+  "requires_ai_repair": true,
+  "auto_repair_insufficient": true,
+  "deterministic_repair_available": false,
   "context_injections": [
+    {
+      "type": "transmission_context",
+      "context": {
+        "regime_note": "Transmission chain dynamics apply within the current macro context.",
+        "relevant_chains": []
+      },
+      "instruction": "Add cross-asset transmission chain analysis — explain WHY assets react to macro events, not just THAT they do."
+    },
+    {
+      "type": "etf_comparison_context",
+      "context": {
+        "etf_profiles": [
+          {
+            "ticker": "XLV",
+            "full_name": "Health Care Select Sector SPDR Fund",
+            "institutional_interpretation": "XLV is a tactical defensive allocation tool. The key analytical distinction is between its pharmaceutical and managed care sub-sectors — pharma (GLP-1 drug cycle, patent cliffs) is growth-like while managed care (UNH, CVS) is quasi-utility. Investors treating XLV as a monolithic defensive are missing the intra-sector dispersion that drives performance during earnings seasons.",
+            "comparison_note": "XLV vs VHT: XLV's concentration in top 10 holdings (~52%) vs VHT's broader 500+ holdings creates materially different single-stock risk profiles. XLV's large-cap bias means lower pharmaceutical development risk but higher managed care regulatory exposure."
+          }
+        ]
+      },
+      "instruction": "Upgrade ETF comparisons to institutional depth: allocation structure, rate sensitivity, concentration risk, regime behavior."
+    },
     {
       "type": "rate_path_context",
       "context": {
@@ -33,7 +73,7 @@
       "instruction": "Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions."
     }
   ],
-  "ai_repair_prompt": "INSTITUTIONAL DEPTH REPAIR REQUEST: portfolio-risk-research-for-beginners\n\nDETECTED FAILURES:\n- probability_reasoning: Insufficient probability reasoning — found 0/1 required pattern matches\n- evidence_linkage: Insufficient evidence linkage — found 1/2 required pattern matches\n\nGENERIC PHRASE VIOLATIONS:\nNone\n\nCONTEXT AVAILABLE:\n- rate_path_context: Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions.\n\nREPAIR REQUIREMENTS:\n1. Every macro claim must explain the mechanism, not just the direction\n2. Cross-asset transmission chains must explain WHY, not just THAT\n3. ETF comparisons must cover: allocation structure, rate sensitivity, concentration risk, scenario behavior\n4. Generic phrases must be replaced with evidence-grounded, specific language\n5. Probability framing must be conditional: \"IF X, THEN Y is likely because of Z\"\n6. Bond ETF articles must cover: duration risk, yield curve, Fed path, real yields, credit spreads,\n   Treasury vs aggregate, short vs long duration, TLT/IEF/SHY/BND comparison, inflation sensitivity,\n   recession vs soft-landing scenarios, liquidity, income vs price-return tradeoff\n\nQUALITY STANDARD: Institutional research desk quality. Not SEO blog. Not generic finance content.",
-  "repair_priority": "medium",
+  "ai_repair_prompt": "INSTITUTIONAL DEPTH REPAIR REQUEST: international-etf-research-basics\n\nDETECTED FAILURES:\n- macro_transmission_depth: Insufficient transmission chain — found 1/2 required pattern matches\n- comparative_depth: Insufficient comparative depth — found 1/2 required pattern matches\n- probability_reasoning: Insufficient probability reasoning — found 0/1 required pattern matches\n- evidence_linkage: Insufficient evidence linkage — found 0/2 required pattern matches\n- comparative_depth: ETF article missing editorial-comparison-table — structural comparison inadequate\n\nGENERIC PHRASE VIOLATIONS:\nNone\n\nCONTEXT AVAILABLE:\n- transmission_context: Add cross-asset transmission chain analysis — explain WHY assets react to macro events, not just THAT they do.\n- etf_comparison_context: Upgrade ETF comparisons to institutional depth: allocation structure, rate sensitivity, concentration risk, regime behavior.\n- rate_path_context: Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions.\n\nREPAIR REQUIREMENTS:\n1. Every macro claim must explain the mechanism, not just the direction\n2. Cross-asset transmission chains must explain WHY, not just THAT\n3. ETF comparisons must cover: allocation structure, rate sensitivity, concentration risk, scenario behavior\n4. Generic phrases must be replaced with evidence-grounded, specific language\n5. Probability framing must be conditional: \"IF X, THEN Y is likely because of Z\"\n6. Bond ETF articles must cover: duration risk, yield curve, Fed path, real yields, credit spreads,\n   Treasury vs aggregate, short vs long duration, TLT/IEF/SHY/BND comparison, inflation sensitivity,\n   recession vs soft-landing scenarios, liquidity, income vs price-return tradeoff\n\nQUALITY STANDARD: Institutional research desk quality. Not SEO blog. Not generic finance content.",
+  "repair_priority": "high",
   "next_action": "run_with_execute_write_flag"
 }
