@@ -96,11 +96,15 @@ function writeDegradationState(result) {
 }
 
 function deduplicate(events) {
-  const seen = new Set();
+  const seenId  = new Set();
+  const seenKey = new Set();
   return events.filter((event) => {
-    const key = `${event.type}|${event.country}|${event.event_time}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
+    if (seenId.has(event.id)) return false;
+    seenId.add(event.id);
+    const title = String(event.event_name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    const key = `${title}|${event.country}|${String(event.event_time || '').slice(0, 16)}`;
+    if (seenKey.has(key)) return false;
+    seenKey.add(key);
     return true;
   });
 }

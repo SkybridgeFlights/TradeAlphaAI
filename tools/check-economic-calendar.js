@@ -71,13 +71,50 @@ if (!fs.existsSync(CALENDAR_PATH)) {
     } else {
       console.log(`[calendar] ${cal.events.length} event(s) in calendar`);
       const highCount = cal.events.filter((e) => e.importance === 'high').length;
-      const pending = cal.events.filter((e) => e.status === 'scheduled').length;
-      console.log(`[calendar]   high-impact: ${highCount}, pending: ${pending}`);
+      const pending   = cal.events.filter((e) => e.status === 'confirmed').length;
+      console.log(`[calendar]   high-impact: ${highCount}, confirmed: ${pending}`);
 
-      // Validate each event has required fields
-      const badEvents = cal.events.filter((e) => !e.event_name || !e.event_time || !e.country || !e.importance);
-      if (badEvents.length) {
-        failures.push(`${badEvents.length} event(s) missing required fields (event_name, event_time, country, importance)`);
+      const VALID_STATUSES = new Set(['confirmed', 'tentative', 'cancelled']);
+      const seenId  = new Set();
+      const seenKey = new Set();
+
+      for (const e of cal.events) {
+        const label = `event:${e.id || '<no-id>'}`;
+
+        // Required fields
+        if (!e.event_name) failures.push(`${label}: missing event_name (title)`);
+        if (!e.country)    failures.push(`${label}: missing country`);
+        if (!e.importance) failures.push(`${label}: missing importance`);
+
+        // Timestamp validity
+        if (!e.event_time || Number.isNaN(Date.parse(e.event_time))) {
+          failures.push(`${label}: invalid or missing event_time`);
+        }
+
+        // Normalized status — only confirmed | tentative | cancelled allowed
+        if (!VALID_STATUSES.has(e.status)) {
+          failures.push(`${label}: status "${e.status}" is not normalized — expected confirmed|tentative|cancelled`);
+        }
+
+        // Unique ID
+        if (!e.id) {
+          failures.push(`${label}: missing id`);
+        } else if (seenId.has(e.id)) {
+          failures.push(`${label}: duplicate id "${e.id}"`);
+        } else {
+          seenId.add(e.id);
+        }
+
+        // Content deduplication — normalized title + country + 16-char timestamp prefix
+        if (e.event_name && e.country && e.event_time) {
+          const title = String(e.event_name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const dupKey = `${title}|${e.country}|${String(e.event_time).slice(0, 16)}`;
+          if (seenKey.has(dupKey)) {
+            failures.push(`${label}: duplicate content (same title+country+timestamp)`);
+          } else {
+            seenKey.add(dupKey);
+          }
+        }
       }
     }
   }

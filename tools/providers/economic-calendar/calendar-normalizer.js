@@ -13,12 +13,14 @@ function normalizeProviderEvent(event, provider) {
   const eventTime = normalizeDateTime(event.event_time || event.time || event.date, event.timezone);
   const type = normalizeType(event.type || eventName);
   const importance = normalizeImportance(event.importance || event.impact || event.impact_level);
+  const country = normalizeCountry(event.country);
+  const status = normalizeStatus(event.status);
   const out = {
-    id: event.id || slugify(`${eventTime}-${eventName}-${provider.name}`),
+    id: buildEventId(eventName, country, eventTime, provider.name),
     event_name: eventName,
     name: eventName,
     type,
-    country: normalizeCountry(event.country),
+    country,
     importance,
     impact_level: importance,
     forecast: numberOrNull(event.forecast ?? event.estimate),
@@ -29,7 +31,7 @@ function normalizeProviderEvent(event, provider) {
     date: String(eventTime || '').slice(0, 10),
     timezone: event.timezone || 'UTC',
     time_precision: event.time_precision || 'date_time',
-    status: event.status || (event.actual == null ? 'scheduled' : 'released'),
+    status,
     market_expectation: event.market_expectation || null,
     historical_asset_sensitivity: event.historical_asset_sensitivity || defaultSensitivity(type),
     pre_event_regime: event.pre_event_regime || null,
@@ -65,6 +67,21 @@ function validateEvent(event) {
   if (!event.source_name) return 'missing source_name';
   if (!event.fetched_at || Number.isNaN(Date.parse(event.fetched_at))) return 'invalid fetched_at';
   return '';
+}
+
+function normalizeStatus(value) {
+  const text = String(value || '').toLowerCase().trim();
+  if (!text || ['scheduled', 'expected', 'live', 'actual', 'released'].includes(text)) return 'confirmed';
+  if (text === 'preliminary') return 'tentative';
+  if (text === 'cancelled') return 'cancelled';
+  return 'confirmed';
+}
+
+function buildEventId(eventName, country, eventTime, providerName) {
+  const ts = String(eventTime || '').slice(0, 19).replace(/[^0-9T]/g, '');
+  const slug = slugify(eventName).slice(0, 60);
+  const cty = String(country || 'XX').toLowerCase();
+  return `economic-calendar::${providerName}::${cty}::${slug}::${ts}`;
 }
 
 function normalizeType(value) {
@@ -134,8 +151,10 @@ function clean(value) {
 module.exports = {
   ALLOWED_IMPORTANCE,
   ALLOWED_TYPES,
+  buildEventId,
   normalizeManualEvent,
   normalizeProviderEvent,
+  normalizeStatus,
   normalizeType,
   validateEvent
 };

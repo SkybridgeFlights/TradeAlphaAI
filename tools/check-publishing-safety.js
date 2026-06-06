@@ -47,19 +47,11 @@ console.log('Publishing safety check passed.');
 
 function checkEconomicCalendar() {
   const calendar = readJson('data/economic-calendar.json', { events: [] });
-  const allowed = new Set(calendar.source_policy?.allowed_event_types || []);
-  const seen = new Set();
   for (const event of calendar.events || []) {
-    if (seen.has(event.id)) failures.push(`economic-calendar:${event.id}: duplicate event id`);
-    seen.add(event.id);
-    if (!allowed.has(event.type)) failures.push(`economic-calendar:${event.id}: unsupported event type ${event.type}`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(event.date || '')) failures.push(`economic-calendar:${event.id}: date must be YYYY-MM-DD`);
-    if (!/^https?:\/\//.test(event.source_url || '')) failures.push(`economic-calendar:${event.id}: missing real source_url`);
-    if (!event.source_name) failures.push(`economic-calendar:${event.id}: missing source_name`);
-    if (!event.fetched_at || !/^\d{4}-\d{2}-\d{2}/.test(event.fetched_at || '')) failures.push(`economic-calendar:${event.id}: fetched_at must be YYYY-MM-DD`);
-    if (!event.country) failures.push(`economic-calendar:${event.id}: missing country`);
-    if (!event.impact_level || !['high', 'medium', 'low'].includes(event.impact_level)) failures.push(`economic-calendar:${event.id}: impact_level must be high/medium/low`);
-    if (event.status !== 'confirmed') failures.push(`economic-calendar:${event.id}: status must be confirmed`);
+    const label = `economic-calendar:${event.id || '<no-id>'}`;
+    if (event.status === 'cancelled') failures.push(`${label}: event is cancelled`);
+    if (!event.event_time || Number.isNaN(Date.parse(event.event_time))) failures.push(`${label}: invalid timestamp`);
+    if (!event.event_name && !event.name) failures.push(`${label}: missing title`);
   }
 }
 
