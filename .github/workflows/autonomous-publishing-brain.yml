@@ -134,6 +134,7 @@ jobs:
           npm run check:indexing
           npm run check:social-meta
           npm run check:responsive
+          npm run check:global-header
 
       - name: Rebuild knowledge graph (ensure graph is current before brain run)
         run: |
@@ -190,6 +191,7 @@ jobs:
         run: |
           npm run check:macro-intelligence
           npm run check:responsive
+          npm run check:global-header
           npm run check:bilingual-structure
           npm run check:editorial
           npm run check:language-purity
@@ -228,7 +230,8 @@ jobs:
           node tools/update-market-outlook-publication.js
           node tools/update-homepage-featured.js --write
           node tools/generate-system-status.js
-          echo "[status] Homepage and system status updated."
+          node tools/apply-global-header.js
+          echo "[status] Homepage, system status, and global header updated."
 
       - name: Validate generated changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}

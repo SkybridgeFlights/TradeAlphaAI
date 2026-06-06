@@ -148,9 +148,19 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+const { renderGlobalHeader, globalHeaderHead, globalHeaderScripts } = require('./render-global-header');
+
+function renderSiteHeaderCompat(options = {}) {
+  return renderGlobalHeader({
+    locale: options.locale,
+    activePage: options.active || options.activePage || '',
+    basePath: options.basePath || ''
+  });
+}
+
 module.exports = {
   globalLayoutHead,
   globalLayoutScripts,
   renderSiteFooter,
-  renderSiteHeader
+  renderSiteHeader: renderSiteHeaderCompat
 };

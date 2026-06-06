@@ -21,6 +21,7 @@
   <meta name="twitter:title" content="مقارنة META و GOOGL — أسهم | TradeAlphaAI" />
   <meta name="twitter:description" content="مقارنة تعليمية بين META و GOOGL: الأداء والقطاع والمخاطر والمحتوى البحثي من TradeAlphaAI. للأغراض التعليمية فقط." />
   <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/landing.css" />
   <link rel="stylesheet" href="/css/market/market-portal.css" />
@@ -64,24 +65,54 @@
 </head>
 <body class="market-page localized-page localized-ar">
   <!-- generated:market-comparison key=meta-googl -->
-  <div class="topbar">
-    <div class="wrap topbar-inner">
-      <a class="brand" href="/ar/index.html">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span class="brand-copy"><strong>TradeAlpha AI</strong><span>منصة أبحاث السوق</span></span>
-      </a>
-      <div class="top-actions">
-        <nav class="nav-group" aria-label="التنقل الرئيسي">
-          <a href="/ar/index.html" class="nav-link">الرئيسية</a>
-          <a href="/ar/stocks.html" class="nav-link">أبحاث الأسهم العالمية</a>
-          <a href="/ar/etfs.html" class="nav-link">محلل الصناديق</a>
+  <!-- GLOBAL_HEADER_START -->
+<div class="topbar" data-global-header data-locale="ar" data-active-section="stocks">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/ar/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>TradeAlpha AI</strong>
+        <span>منصّة التداول وأبحاث السوق</span>
+      </span>
+    </a>
+
+    <div class="top-actions">
+      <nav class="nav-group" aria-label="التنقل الرئيسي">
+        <a href="/ar/" class="nav-link">الرئيسية</a>
+          <a href="/ar/stocks.html" class="nav-link is-active" aria-current="page">بحث الأسهم العالمي</a>
+          <a href="/ar/etfs.html" class="nav-link">محلل صناديق المؤشرات</a>
           <a href="/ar/ai-stock-screener.html" class="nav-link">ماسح السوق</a>
+          <div class="nav-menu">
+            <a href="/ar/rankings.html" class="nav-link nav-menu-trigger">أفضل الاختيارات<span class="nav-badge">رائج</span></a>
+            <div class="nav-dropdown">
+              <a href="/ar/rankings.html#top-stocks">أفضل 10 أسهم حالياً</a>
+              <a href="/ar/rankings.html#top-ai-stocks">أفضل أسهم الذكاء الاصطناعي</a>
+              <a href="/ar/rankings.html#top-semiconductors">أفضل أسهم أشباه الموصلات</a>
+              <a href="/ar/rankings.html#top-growth-stocks">أفضل أسهم النمو</a>
+              <a href="/ar/rankings.html#top-dividend-etfs">أفضل صناديق توزيعات الأرباح</a>
+              <a href="/ar/rankings.html#top-etfs">أفضل صناديق المؤشرات لعام 2026</a>
+            </div>
+          </div>
           <a href="/ar/insights/" class="nav-link">المقالات</a>
+          <a href="/ar/market-outlook/" class="nav-link">توقعات السوق</a>
+          <a href="/ar/economic-calendar/" class="nav-link">التقويم الاقتصادي</a>
           <a href="/ar/methodology.html" class="nav-link">المنهجية</a>
-        </nav>
+      </nav>
+      <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">إشارات مجانية</a>
+      <div class="locale-links" aria-label="اختيار اللغة">
+        <a class="lang-switch" data-locale-route="ar" href="/ar/stocks.html">العربية</a>
+        <a class="lang-switch" data-locale-route="en" href="/stocks.html">English</a>
       </div>
+      <button class="mobile-menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobile-nav-drawer">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
     </div>
   </div>
+</div>
+<!-- GLOBAL_HEADER_END -->
+
   <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="/ar/index.html">الرئيسية</a><span>/</span><a href="/ar/rankings.html">التصنيفات</a><span>/</span><span>مقارنة META و GOOGL</span></nav>
@@ -171,5 +202,6 @@
     import { trackRecentlyViewed } from "/js/market/recently-viewed.js";
     trackRecentlyViewed({ title: document.title, url: location.pathname, type: "comparison" });
   </script>
+  <script src="/js/mobile-nav.js" defer></script>
 </body>
 </html>

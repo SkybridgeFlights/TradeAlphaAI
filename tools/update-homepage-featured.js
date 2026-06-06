@@ -11,6 +11,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const { resolveUrl, resolveOutlookUrls } = require('./resolve-existing-url');
 
 const ROOT         = path.resolve(__dirname, '..');
 const REGISTRY     = path.join(ROOT, 'data', 'insights', 'article-registry.json');
@@ -151,32 +152,34 @@ function buildEnOutlookCards(topics, latestDaily, latestWeekly) {
   const cards = [];
 
   if (latestDaily) {
-    const date = latestDaily.replace('.html', '');
+    const date    = latestDaily.replace('.html', '');
+    const dailyHref = resolveUrl(`/market-outlook/daily/${latestDaily}`, '/market-outlook/');
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">Daily Outlook — ${date}</span>\n` +
       `              <h3>Daily Market Commentary</h3>\n` +
       `              <p class="market-copy">Macro event reaction, sector context, and institutional regime snapshot for ${date}. Educational only.</p>\n` +
-      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/daily/${latestDaily}">Read Daily Outlook</a></div>\n` +
+      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="${dailyHref}">Read Daily Outlook</a></div>\n` +
       `            </article>`
     );
   }
 
   if (latestWeekly) {
-    const week = latestWeekly.replace('.html', '');
+    const week       = latestWeekly.replace('.html', '');
+    const weeklyHref = resolveUrl(`/market-outlook/weekly/${latestWeekly}`, '/market-outlook/');
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">Weekly Outlook — ${week}</span>\n` +
       `              <h3>Weekly Scenario Framework</h3>\n` +
       `              <p class="market-copy">Institutional scenario analysis, event calendar, and cross-asset transmission context for ${week}. Educational only.</p>\n` +
-      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/weekly/${latestWeekly}">Read Weekly Outlook</a></div>\n` +
+      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="${weeklyHref}">Read Weekly Outlook</a></div>\n` +
       `            </article>`
     );
   }
 
   for (const t of topics.slice(0, 3 - cards.length)) {
     const title = t.title_en || t.title || t.slug;
-    const url   = `/market-outlook/${t.slug}.html`;
+    const { en: url } = resolveOutlookUrls(t.slug);
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">Market Outlook</span>\n` +
@@ -203,32 +206,34 @@ function buildArOutlookCards(topics, latestDaily, latestWeekly) {
   const cards = [];
 
   if (latestDaily) {
-    const date = latestDaily.replace('.html', '');
+    const date    = latestDaily.replace('.html', '');
+    const dailyHref = resolveUrl(`/market-outlook/daily/${latestDaily}`, '/market-outlook/');
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">التوقعات اليومية — ${date}</span>\n` +
       `              <h3>التعليق اليومي على السوق</h3>\n` +
       `              <p class="market-copy" lang="ar" dir="rtl">لقطة مؤسسية للنظام الكلي وسياق القطاع ليوم ${date}. للأغراض التعليمية فقط.</p>\n` +
-      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/daily/${latestDaily}">اقرأ التوقعات اليومية</a></div>\n` +
+      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="${dailyHref}">اقرأ التوقعات اليومية</a></div>\n` +
       `            </article>`
     );
   }
 
   if (latestWeekly) {
-    const week = latestWeekly.replace('.html', '');
+    const week       = latestWeekly.replace('.html', '');
+    const weeklyHref = resolveUrl(`/market-outlook/weekly/${latestWeekly}`, '/market-outlook/');
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">التوقعات الأسبوعية — ${week}</span>\n` +
       `              <h3>إطار السيناريو الأسبوعي</h3>\n` +
       `              <p class="market-copy" lang="ar" dir="rtl">تحليل السيناريو المؤسسي وسياق نقل الأصول المتقاطعة لأسبوع ${week}. للأغراض التعليمية فقط.</p>\n` +
-      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/weekly/${latestWeekly}">اقرأ التوقعات الأسبوعية</a></div>\n` +
+      `              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="${weeklyHref}">اقرأ التوقعات الأسبوعية</a></div>\n` +
       `            </article>`
     );
   }
 
   for (const t of topics.slice(0, 3 - cards.length)) {
     const title = t.title_ar || t.title_en || t.title || t.slug;
-    const url   = `/ar/market-outlook/${t.slug}.html`;
+    const { ar: url } = resolveOutlookUrls(t.slug);
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">توقعات السوق</span>\n` +
