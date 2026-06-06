@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { ensureProductionEditorialLayout, hasProductionEditorialLayout } = require('./editorial-layout-renderer');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -29,11 +30,11 @@ const draftAr = path.join(draftDir, 'ar.html');
 
 if (!fs.existsSync(draftEn)) fail(`Missing reviewed EN draft: ${relative(draftEn)}`);
 if (!fs.existsSync(draftAr)) fail(`Missing reviewed AR draft: ${relative(draftAr)}`);
-if (!hasRequiredArticleParts(fs.readFileSync(draftEn, 'utf8'), false)) fail(`${relative(draftEn)} is missing required article metadata/schema/discovery`);
-if (!hasRequiredArticleParts(fs.readFileSync(draftAr, 'utf8'), true)) fail(`${relative(draftAr)} is missing required Arabic article metadata/schema/discovery`);
+if (!hasRequiredArticleParts(fs.readFileSync(draftEn, 'utf8'), false)) fail(`${relative(draftEn)} is missing required article metadata/schema/discovery/layout`);
+if (!hasRequiredArticleParts(fs.readFileSync(draftAr, 'utf8'), true)) fail(`${relative(draftAr)} is missing required Arabic article metadata/schema/discovery/layout`);
 
-const enHtml = fs.readFileSync(draftEn, 'utf8');
-const arHtml = fs.readFileSync(draftAr, 'utf8');
+const enHtml = ensureProductionEditorialLayout(fs.readFileSync(draftEn, 'utf8'), topic, 'en');
+const arHtml = ensureProductionEditorialLayout(fs.readFileSync(draftAr, 'utf8'), topic, 'ar');
 
 console.log(execute ? 'EXECUTE mode requested.' : 'DRY_RUN active. No files will be published.');
 console.log(`Publish repository root: ${ROOT}`);
@@ -215,6 +216,7 @@ function hasRequiredArticleParts(html, ar) {
   if (!/<script type="application\/ld\+json">[\s\S]*"Article"[\s\S]*<\/script>/.test(html)) return false;
   if (!/<script type="application\/ld\+json">[\s\S]*"FAQPage"[\s\S]*<\/script>/.test(html)) return false;
   if (!/id="related-research"/.test(html) || !/id="continue-learning"/.test(html)) return false;
+  if (!hasProductionEditorialLayout(html, ar)) return false;
   if (ar && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) return false;
   return true;
 }

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { ensureProductionEditorialLayout } = require('./editorial-layout-renderer');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -57,8 +58,8 @@ if (fs.existsSync(path.join(draftDir, 'en.html')) || fs.existsSync(path.join(dra
 fs.mkdirSync(draftDir, { recursive: true });
 
 const normalized = normalizeTopic(topic);
-fs.writeFileSync(path.join(draftDir, 'en.html'), renderArticle(normalized, 'en'), 'utf8');
-fs.writeFileSync(path.join(draftDir, 'ar.html'), renderArticle(normalized, 'ar'), 'utf8');
+fs.writeFileSync(path.join(draftDir, 'en.html'), ensureProductionEditorialLayout(renderArticle(normalized, 'en'), normalized, 'en'), 'utf8');
+fs.writeFileSync(path.join(draftDir, 'ar.html'), ensureProductionEditorialLayout(renderArticle(normalized, 'ar'), normalized, 'ar'), 'utf8');
 fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized), null, 2) + '\n', 'utf8');
 
 const prevStatus = topic.status;
