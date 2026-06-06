@@ -1,0 +1,622 @@
+/*
+ * TradeAlphaAI — Global Responsive Layer
+ * Phase 61: Mobile Quality Hardening
+ *
+ * Load order: after styles.css, landing.css, market-portal.css
+ * so overrides apply cleanly.
+ *
+ * Breakpoints:
+ *   1024px  tablet landscape
+ *    768px  tablet portrait / iPad
+ *    480px  mobile
+ *    360px  small mobile
+ */
+
+/* ── 1. Global base fixes ─────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+img, video, embed, object, iframe, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+pre, code {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+a {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── 2. Container normalization ───────────────────────────────────────────── */
+
+.wrap,
+.market-shell .wrap {
+  width: 100%;
+  max-width: min(1200px, 100%);
+  padding-inline: clamp(12px, 4vw, 28px);
+  margin-inline: auto;
+}
+
+/* ── 3. Table scroll containers ───────────────────────────────────────────── */
+
+/* Generic utility class — add to any table wrapper */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+/* Calendar tables */
+.calendar-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.calendar-table {
+  min-width: 520px;
+}
+
+/* Editorial comparison tables — already wrapped but min-width tightened */
+.editorial-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* ── 4. Responsive grid utilities ─────────────────────────────────────────── */
+
+/* Phase 60.1 — reaction grid */
+.reaction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Phase 60.2 — outlook / scenario grids */
+.outlook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Market grid (articles listing) */
+.market-grid.three {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* ── 5. Fluid typography ──────────────────────────────────────────────────── */
+
+h1 { font-size: clamp(1.45rem, 4.5vw, 2.5rem); }
+h2 { font-size: clamp(1.2rem, 3.2vw, 1.75rem); }
+h3 { font-size: clamp(1rem, 2.5vw, 1.35rem); }
+
+/* Hero headings — allow them to scale but don't exceed their natural size */
+.market-hero h1,
+.market-hero-panel h1,
+.insight-hero-card h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  line-height: 1.25;
+}
+
+/* ── 6. Article content safety ────────────────────────────────────────────── */
+
+.insight-article-body,
+.market-article,
+article {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.insight-article-body pre,
+.market-article pre,
+article pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* ── 7. Breadcrumbs ───────────────────────────────────────────────────────── */
+
+.breadcrumb {
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* ── 8. Impact / surprise badges on mobile ───────────────────────────────── */
+
+.impact-badge,
+.surprise-hot,
+.surprise-soft,
+.surprise-neutral {
+  white-space: nowrap;
+  max-width: 100%;
+  display: inline-block;
+}
+
+/* ── 9. Buttons / CTAs ────────────────────────────────────────────────────── */
+
+.market-btn,
+.header-signal-cta {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.market-actions {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ── 10. Topbar nav overflow prevention ──────────────────────────────────── */
+
+.nav-group {
+  flex-wrap: wrap;
+}
+
+/* ── 11. Outlook / calendar cards ─────────────────────────────────────────── */
+
+.outlook-card,
+.reaction-card,
+.scenario-card {
+  min-width: 0; /* prevent grid blowout */
+  overflow: hidden;
+}
+
+.outlook-card h3,
+.reaction-card h3,
+.scenario-card h3 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── 12. RTL global adjustments ───────────────────────────────────────────── */
+
+[dir="rtl"] .reaction-card ul,
+[dir="rtl"] .scenario-card ul {
+  padding-right: 1.2rem;
+  padding-left: 0;
+}
+
+[dir="rtl"] .cal-num {
+  text-align: left;
+}
+
+[dir="rtl"] .calendar-table th,
+[dir="rtl"] .calendar-table td {
+  text-align: right;
+}
+
+[dir="rtl"] .narrative-callout {
+  border-left: none;
+  border-right: 4px solid var(--accent, #3b82f6);
+}
+
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+/* BREAKPOINT: 1024px — tablet landscape                                       */
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+
+@media (max-width: 1024px) {
+  /* insight layout: collapse sidebar below article on tablet */
+  .insight-layout {
+    display: block;
+  }
+
+  .insight-sidebar {
+    display: none;
+  }
+
+  /* Market outlook hero: shrink padding */
+  .market-hero-panel {
+    padding: 1.5rem;
+  }
+
+  /* Grid columns: 3→2 */
+  .reaction-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  /* Outlook grid: allow narrower cards */
+  .outlook-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+/* BREAKPOINT: 768px — tablet portrait                                          */
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+
+@media (max-width: 768px) {
+  /* ── Layout ── */
+  .insight-layout,
+  .market-two-col {
+    display: block !important;
+  }
+
+  .insight-sidebar {
+    display: none !important;
+  }
+
+  /* ── Typography ── */
+  h1 { font-size: clamp(1.3rem, 5.5vw, 1.9rem); }
+  h2 { font-size: clamp(1.1rem, 4vw, 1.45rem); }
+  h3 { font-size: clamp(0.95rem, 3.5vw, 1.2rem); }
+
+  body { font-size: 0.95rem; }
+
+  /* ── Containers ── */
+  .wrap,
+  .market-shell .wrap {
+    padding-inline: clamp(10px, 3.5vw, 20px);
+  }
+
+  /* ── Article tables ── */
+  .editorial-comparison-table {
+    min-width: 640px;
+    font-size: 0.78rem;
+  }
+
+  /* ── Calendar tables ── */
+  .calendar-table {
+    min-width: 460px;
+    font-size: 0.8rem;
+  }
+
+  .calendar-table th,
+  .calendar-table td {
+    padding: 0.4rem 0.55rem;
+  }
+
+  /* ── Grids: all → single column ── */
+  .reaction-grid,
+  .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .outlook-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-grid.three {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  /* ── Cards ── */
+  .reaction-card,
+  .outlook-card,
+  .scenario-card,
+  .market-card {
+    width: 100%;
+  }
+
+  /* ── Hero sections ── */
+  .market-hero {
+    padding: 1.25rem 0;
+  }
+
+  .market-hero-panel {
+    padding: 1rem;
+  }
+
+  .market-hero h1 {
+    font-size: clamp(1.3rem, 5.5vw, 1.85rem);
+  }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb {
+    font-size: 0.8rem;
+  }
+
+  /* ── Market sections ── */
+  .market-section {
+    margin-top: 1.5rem;
+  }
+
+  .section-heading {
+    font-size: clamp(1.05rem, 3.5vw, 1.35rem);
+  }
+
+  /* ── Scenario grid (horizontal scroll instead of stack) ── */
+  .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── Nav: hide overflow links on tablet ── */
+  .nav-group .nav-link {
+    font-size: 0.85rem;
+  }
+
+  /* ── Outlook cards ── */
+  .outlook-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  /* ── Footer nav ── */
+  .footer-nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* ── RTL tablet ── */
+  [dir="rtl"] .market-hero-panel {
+    text-align: right;
+  }
+
+  [dir="rtl"] .reaction-card ul {
+    padding-right: 1rem;
+    padding-left: 0;
+  }
+}
+
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+/* BREAKPOINT: 480px — mobile                                                   */
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+
+@media (max-width: 480px) {
+  /* ── Base ── */
+  body { font-size: 0.9rem; line-height: 1.65; }
+
+  h1 { font-size: clamp(1.2rem, 6vw, 1.6rem); }
+  h2 { font-size: clamp(1rem, 5vw, 1.25rem); }
+  h3 { font-size: clamp(0.9rem, 4.5vw, 1.1rem); }
+
+  /* ── Containers ── */
+  .wrap,
+  .market-shell .wrap {
+    padding-inline: 10px;
+  }
+
+  /* ── Hero ── */
+  .market-hero-panel {
+    padding: 0.75rem;
+  }
+
+  .market-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .market-btn {
+    text-align: center;
+  }
+
+  /* ── Article header ── */
+  .insight-hero-card {
+    padding: 1rem;
+  }
+
+  .insight-hero-card h1 {
+    font-size: clamp(1.15rem, 6vw, 1.5rem);
+  }
+
+  /* ── Tables ── */
+  .editorial-comparison-table {
+    min-width: 520px;
+    font-size: 0.72rem;
+  }
+
+  .calendar-table {
+    min-width: 400px;
+    font-size: 0.75rem;
+  }
+
+  .cal-narrative {
+    max-width: 220px;
+  }
+
+  /* ── Calendar section headings ── */
+  .section-heading {
+    font-size: 1rem;
+  }
+
+  /* ── Event cards on mobile ── */
+  .outlook-card {
+    padding: 0.85rem 1rem;
+  }
+
+  .outlook-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .outlook-body p {
+    font-size: 0.82rem;
+  }
+
+  .reaction-card {
+    padding: 0.85rem 1rem;
+  }
+
+  .reaction-card h3 {
+    font-size: 0.92rem;
+  }
+
+  .reaction-card ul {
+    font-size: 0.8rem;
+  }
+
+  /* ── Scenario section ── */
+  .scenario-card {
+    padding: 0.85rem 1rem;
+  }
+
+  .scenario-desc,
+  .scenario-confirm {
+    font-size: 0.78rem;
+  }
+
+  /* ── Impact badges ── */
+  .impact-badge {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  /* ── Disclaimer ── */
+  .disclaimer-box {
+    padding: 1rem;
+  }
+
+  .disclaimer-box p {
+    font-size: 0.78rem;
+  }
+
+  /* ── Filter chips ── */
+  .market-outlook-index-tools {
+    gap: 0.35rem;
+  }
+
+  .market-filter-chip {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+  }
+
+  /* ── Topbar ── */
+  .topbar-inner {
+    padding: 0 10px;
+  }
+
+  /* ── Language switcher ── */
+  .locale-links {
+    gap: 0.3rem;
+  }
+
+  /* ── RTL mobile ── */
+  [dir="rtl"] .outlook-card-header {
+    align-items: flex-end;
+  }
+
+  [dir="rtl"] .market-actions {
+    align-items: stretch;
+  }
+
+  [dir="rtl"] .asset-tags {
+    justify-content: flex-end;
+  }
+}
+
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+/* BREAKPOINT: 360px — small mobile                                             */
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+
+@media (max-width: 360px) {
+  /* ── Extra-small body ── */
+  body { font-size: 0.875rem; }
+
+  h1 { font-size: 1.15rem; }
+  h2 { font-size: 1rem; }
+  h3 { font-size: 0.92rem; }
+
+  .wrap,
+  .market-shell .wrap {
+    padding-inline: 8px;
+  }
+
+  .insight-hero-card h1,
+  .market-hero h1 {
+    font-size: 1.15rem;
+  }
+
+  /* ── Compact calendar ── */
+  .calendar-table {
+    font-size: 0.7rem;
+    min-width: 360px;
+  }
+
+  .calendar-table th,
+  .calendar-table td {
+    padding: 0.3rem 0.4rem;
+  }
+
+  /* ── Topbar brand ── */
+  .brand-copy span:not(strong) {
+    display: none;
+  }
+
+  /* ── Very small nav ── */
+  .nav-group .nav-link {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.4rem;
+  }
+
+  /* ── Minimal cards ── */
+  .outlook-card,
+  .reaction-card {
+    padding: 0.7rem 0.85rem;
+  }
+}
+
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+/* RTL-SPECIFIC global rules (direction: rtl; always applies)                   */
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+
+/* Ensure tables with LTR content inside RTL pages don't flip columns */
+[dir="rtl"] .calendar-table,
+[dir="rtl"] .editorial-comparison-table {
+  direction: rtl;
+}
+
+/* Number cells stay LTR inside RTL table */
+[dir="rtl"] .cal-num {
+  direction: ltr;
+  text-align: right;
+}
+
+/* Breadcrumb separators flip for RTL */
+[dir="rtl"] .breadcrumb {
+  direction: rtl;
+}
+
+/* Card grid RTL — auto-fill doesn't need RTL treatment but text-align does */
+[dir="rtl"] .reaction-card,
+[dir="rtl"] .outlook-card,
+[dir="rtl"] .scenario-card {
+  text-align: right;
+}
+
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+/* Print safety                                                                  */
+/* ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── */
+
+@media print {
+  .topbar,
+  .mobile-menu-toggle,
+  .locale-links,
+  .insight-sidebar,
+  .market-actions {
+    display: none !important;
+  }
+
+  body {
+    font-size: 11pt;
+    overflow-x: visible;
+  }
+
+  .editorial-table-wrap,
+  .calendar-table-wrap {
+    overflow-x: visible;
+  }
+}

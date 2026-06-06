@@ -211,6 +211,7 @@ function render(topic, locale, intel, aiContent = null) {
   <link rel="stylesheet" href="${pathPrefix}styles.css" />
   <link rel="stylesheet" href="${pathPrefix}landing.css" />
   <link rel="stylesheet" href="${pathPrefix}css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
 <body class="market-page">

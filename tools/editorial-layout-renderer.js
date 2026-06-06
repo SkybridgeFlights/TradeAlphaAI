@@ -107,6 +107,7 @@ function normalizeHead(head, { topic, title, description, ar }) {
   for (const href of [`${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`]) {
     if (!out.includes(href)) out += `\n  <link rel="stylesheet" href="${href}" />`;
   }
+  if (!out.includes('/css/responsive.css')) out += '\n  <link rel="stylesheet" href="/css/responsive.css" />';
   return out;
 }
 

@@ -42,7 +42,9 @@
     "news-analysis:check-sources": "node tools/ingest-news-sources.js --validate-only",
     "news-analysis:generate-draft": "node tools/generate-news-analysis-draft.js",
     "calendar:update": "node tools/update-economic-calendar.js",
+    "calendar:fetch": "node tools/update-economic-calendar.js --fetch --write",
     "calendar:check": "node tools/check-upcoming-market-events.js",
+    "check:economic-calendar": "node tools/check-economic-calendar.js",
     "market-regime:update": "node tools/update-market-regime.js",
     "market-state:update": "node tools/update-live-market-state.js",
     "market-state:check": "node tools/update-live-market-state.js --validate-only",
@@ -74,6 +76,15 @@
     "authority:full": "npm run authority:plan && npm run authority:repair-orphans && npm run authority:rebalance && npm run authority:roadmap",
     "authority:repair-cycle": "node tools/run-authority-repair-cycle.js",
     "authority:repair-cycle:dry": "node tools/run-authority-repair-cycle.js --dry-run",
-    "check:telegram-config": "node tools/check-telegram-config.js"
+    "check:telegram-config": "node tools/check-telegram-config.js",
+    "macro:reaction-memory": "node tools/build-event-reaction-memory.js --write",
+    "macro:narrative": "node tools/generate-macro-narrative.js --write",
+    "macro:daily-outlook": "node tools/generate-daily-market-outlook.js --write",
+    "macro:weekly-outlook": "node tools/generate-daily-market-outlook.js --mode=weekly --write",
+    "macro:telegram:preview": "node tools/send-macro-telegram.js --type=preview",
+    "macro:telegram:release": "node tools/send-macro-telegram.js --type=release",
+    "macro:telegram:briefing": "node tools/send-macro-telegram.js --type=briefing",
+    "check:macro-intelligence": "node tools/check-macro-intelligence.js",
+    "check:responsive": "node tools/check-responsive-layout.js"
   }
 }
