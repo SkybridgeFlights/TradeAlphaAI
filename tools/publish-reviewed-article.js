@@ -36,6 +36,8 @@ const enHtml = fs.readFileSync(draftEn, 'utf8');
 const arHtml = fs.readFileSync(draftAr, 'utf8');
 
 console.log(execute ? 'EXECUTE mode requested.' : 'DRY_RUN active. No files will be published.');
+console.log(`Publish repository root: ${ROOT}`);
+console.log(`Publish process cwd: ${process.cwd()}`);
 console.log(`Would publish ${relative(draftEn)} -> ${relative(publicEn)}`);
 console.log(`Would publish ${relative(draftAr)} -> ${relative(publicAr)}`);
 console.log(`Would create ${relative(enLocalePath)}`);
@@ -72,6 +74,11 @@ if (!fs.existsSync(publicAr)) {
 // the en/insights/ depth resolves CSS/JS correctly.
 generateEnLocalizedPage(slug, enHtml);
 console.log(`Created: ${relative(enLocalePath)}`);
+
+for (const output of [publicEn, publicAr, enLocalePath]) {
+  if (!fs.existsSync(output)) fail(`Publish output missing after write: ${relative(output)}`);
+  console.log(`Verified publish output in repo: ${relative(output)}`);
+}
 
 // ── 3. Generate ar-insight-content/<slug>.json ────────────────────────────────
 // Required by checkArabicInsightBodies and generate-localized-pages.js.

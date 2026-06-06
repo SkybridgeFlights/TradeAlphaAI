@@ -135,9 +135,15 @@ jobs:
           echo "======================================================"
           echo "  Publishing git diagnostics before commit"
           echo "======================================================"
-          echo "--- pwd ---"
           pwd
-          echo "--- branch ---"
+          git status --short
+          git diff --stat
+          git ls-files insights/healthcare-etf-research-guide.html
+          git ls-files ar/insights/healthcare-etf-research-guide.html
+          git ls-files en/insights/healthcare-etf-research-guide.html
+          ls -la insights/healthcare-etf-research-guide.html || true
+          ls -la ar/insights/healthcare-etf-research-guide.html || true
+          ls -la en/insights/healthcare-etf-research-guide.html || true
           git rev-parse --abbrev-ref HEAD
           echo "--- ref context ---"
           echo "GITHUB_REF=${GITHUB_REF}"
@@ -170,14 +176,46 @@ jobs:
             drafts/editorial/healthcare-etf-research-guide/en.html || true
           echo "======================================================"
 
+      - name: Verify published files exist in checkout
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          missing=0
+          for file in \
+            insights/healthcare-etf-research-guide.html \
+            ar/insights/healthcare-etf-research-guide.html \
+            en/insights/healthcare-etf-research-guide.html
+          do
+            if [ ! -f "$file" ]; then
+              echo "Missing expected published file in repo working tree: $file"
+              missing=1
+            else
+              echo "Found published file in repo working tree: $file"
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Publish command did not leave expected files inside the checked-out repository."
+            exit 1
+          fi
+
       - name: Commit publishing changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
         run: |
           git config user.name "tradealphaai-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data drafts insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook sitemap*.xml search-index.json article-registry.json 2>/dev/null || true
+          git add insights ar/insights en/insights data sitemap*.xml search-index*.json article-registry*.json
+          git add drafts market-outlook ar/market-outlook en/market-outlook
+          git add -f \
+            insights/healthcare-etf-research-guide.html \
+            ar/insights/healthcare-etf-research-guide.html \
+            en/insights/healthcare-etf-research-guide.html
+          echo "--- git status after staging ---"
+          git status --short
+          echo "--- staged diff after staging ---"
+          git diff --cached --stat
           if git diff --cached --quiet; then
-            echo "No publishing changes to commit."
+            echo "Publish workflow produced files, but git has no staged changes after explicit git add."
+            echo "This usually means the generated files are byte-for-byte identical to HEAD or were not written in this checkout."
+            exit 1
           else
             git commit -m "Autonomous publishing update [full_pipeline]"
             git push origin "${GITHUB_REF_NAME}"
