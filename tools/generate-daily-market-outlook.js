@@ -102,13 +102,13 @@ function outputPage(html, filePath, label) {
 
 function validateOutlookPage(html) {
   const checks = [
-    ['full_html_document', /<!doctype html>[\s\S]*<\/html>/i],
-    ['global_layout', /css\/global-layout\.css/],
-    ['site_header', /data-global-header="homepage"/],
-    ['site_footer', /class="[^"]*\bsite-footer\b/],
-    ['market_regime', /regime/i],
-    ['rate_context', /rate|yield/i],
-    ['transmission_context', /transmission|cross-asset|reaction map/i],
+    ['full_html_document',    /<!doctype html>[\s\S]*<\/html>/i],
+    ['global_layout',         /css\/global-layout\.css|css\/global-header\.css/],
+    ['site_header',           /data-global-header|GLOBAL_HEADER_START/],
+    ['site_footer',           /class="[^"]*\bsite-footer\b/],
+    ['market_regime',         /regime/i],
+    ['rate_context',          /rate|yield/i],
+    ['transmission_context',  /transmission|cross-asset|reaction map/i],
     ['educational_disclaimer', /not investment advice/i]
   ];
   return checks.filter(([, pattern]) => !pattern.test(html)).map(([name]) => name);
@@ -160,11 +160,10 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${esc(title)} | TradeAlphaAI" />
   <meta name="twitter:description" content="${esc(description)}" />
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../landing.css" />
-  <link rel="stylesheet" href="../../css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/market/market-portal.css" />
   ${buildJsonLd(title, description, today, slug)}
 </head>
 <body class="market-page">
@@ -256,11 +255,10 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${esc(title)} | TradeAlphaAI" />
   <meta name="twitter:description" content="${esc(description)}" />
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../landing.css" />
-  <link rel="stylesheet" href="../../css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/market/market-portal.css" />
   ${buildJsonLd(title, description, new Date().toISOString().slice(0, 10), `weekly-${weekSlug}`)}
 </head>
 <body class="market-page">
