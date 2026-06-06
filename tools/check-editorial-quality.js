@@ -81,6 +81,7 @@ function checkDraftIfPresent(topic) {
     if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي/.test(html)) failures.push(`${rel}: missing educational disclaimer`);
     if (locale === 'ar' && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) failures.push(`${rel}: missing Arabic RTL markers`);
     if (forbiddenClaims(stripHtml(html))) failures.push(`${rel}: forbidden promotional or advice wording found`);
+    if (locale === 'en' && /data-editorial-intelligence="v1"/.test(html)) checkInstitutionalEditorial(html, rel);
   }
   const metadata = path.join(dir, 'metadata.json');
   if (fs.existsSync(metadata)) {
@@ -91,6 +92,42 @@ function checkDraftIfPresent(topic) {
     if (topic.status === 'in_review' && data.public_site_updated !== false) failures.push(`${rel}: public_site_updated must be false for generated drafts`);
     if (!Array.isArray(data.languages) || !data.languages.includes('en') || !data.languages.includes('ar')) failures.push(`${rel}: missing bilingual language metadata`);
   }
+}
+
+function checkInstitutionalEditorial(html, rel) {
+  const text = stripHtml(html);
+  const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map((match) => stripHtml(match[1]))
+    .filter((paragraph) => paragraph.split(/\s+/).length >= 18);
+  const bullets = (html.match(/<li\b/gi) || []).length;
+  const transitions = (html.match(/class="editorial-transition"/g) || []).length;
+  const analytical = text.split(/[.!?]+/).filter((sentence) =>
+    sentence.split(/\s+/).length >= 12 &&
+    /(because|while|however|risk|valuation|concentration|volatility|liquidity|rates|earnings|holdings|expense ratio)/i.test(sentence)
+  ).length;
+  const openings = text.split(/[.!?]+/)
+    .map((sentence) => sentence.trim().toLowerCase().split(/\s+/).slice(0, 3).join(' '))
+    .filter((opening) => opening.split(/\s+/).length >= 2);
+  const openingDiversity = openings.length ? new Set(openings).size / openings.length : 0;
+  const genericPhrases = (text.match(/it is important to note|investors should consider|can help investors|offers exposure to/gi) || []).length;
+  const semanticGroups = [
+    /(pharmaceutical|biotech|managed care|medical device|subindustry|sector mechanics)/i,
+    /(diversification|holdings count|market-cap weighted)/i,
+    /(interest rates|defensive rotation|macro|risk appetite)/i,
+    /(valuation|cash flow|earnings expectations|risk premium)/i,
+    /(concentration|top-ten|largest holdings|mega-cap)/i,
+    /(volatility|drawdown|standard deviation)/i,
+    /(liquidity|bid-ask spread|trading volume)/i,
+    /(portfolio construction|research process|research question|benchmark)/i
+  ];
+
+  if (transitions < 6) failures.push(`${rel}: low narrative continuity`);
+  if (analytical < 32) failures.push(`${rel}: low analytical density`);
+  if (!semanticGroups.every((pattern) => pattern.test(text))) failures.push(`${rel}: low institutional semantic depth`);
+  if (openingDiversity < 0.72) failures.push(`${rel}: repetitive sentence openings`);
+  if (genericPhrases > 2) failures.push(`${rel}: repetitive generic editorial phrasing`);
+  if (bullets >= paragraphs.length) failures.push(`${rel}: excessive bullet dependency`);
+  if (/\bETF(s)?\b/i.test(text) && !/class="editorial-comparison-table"/.test(html)) failures.push(`${rel}: shallow ETF comparison coverage`);
 }
 
 function checkPublishedTopic(topic) {

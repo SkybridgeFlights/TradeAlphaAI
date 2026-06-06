@@ -2,7 +2,7 @@
 
 const SITE_URL = 'https://www.tradealphaai.com';
 
-function renderLongFormEditorial(topic, locale = 'en') {
+function renderLongFormEditorial(topic, locale = 'en', context = {}) {
   const ar = locale === 'ar';
   const title = ar ? topic.title_ar : topic.title_en;
   const description = ar ? topic.description_ar : topic.description_en;
@@ -51,9 +51,12 @@ ${JSON.stringify(breadcrumbSchema(topic, ar), null, 2)}
         <h1>${escapeHtml(title)}</h1>
         <p class="market-lead">${escapeHtml(description)}</p>
       </header>
-${sections.map(renderSection).join('\n')}
+      <div data-editorial-intelligence="v1" data-editorial-angle="${escapeHtml(context.selected_angle || 'research-framework')}" hidden></div>
+${sections.map((section, index) => renderSection(section, index, ar)).join('\n')}
+${renderEditorialContext(context, ar)}
       <section id="related-research">
-        <h2>${ar ? 'أبحاث مرتبطة' : 'Related research'}</h2>
+        <h2>${ar ? 'مسار بحث مرتبط' : 'A related research path'}</h2>
+        <p>${ar ? 'يمكن للقراء الذين يقارنون القطاعات الدفاعية الانتقال من تحليل الصندوق إلى منهجية بناء المؤشر ثم إلى سلوك القطاع مقابل السوق الواسع.' : 'Readers comparing defensive sectors can extend the analysis from the fund itself to index construction, diversification mechanics, and the behavior of sector ETFs relative to the broad market.'}</p>
         <ul>
           <li><a href="${ar ? '/ar' : ''}/etfs/xlv.html">${ar ? 'صفحة بحث صندوق XLV' : 'XLV ETF research page'}</a></li>
           <li><a href="${ar ? '/ar' : ''}/insights/defensive-investing-explained.html">${ar ? 'شرح الاستثمار الدفاعي' : 'Defensive investing explained'}</a></li>
@@ -61,7 +64,8 @@ ${sections.map(renderSection).join('\n')}
         </ul>
       </section>
       <section id="continue-learning">
-        <h2>${ar ? 'تابع التعلم' : 'Continue learning'}</h2>
+        <h2>${ar ? 'الخطوة التالية في البحث' : 'The next research step'}</h2>
+        <p>${ar ? 'بعد فهم الاختلاف بين XLV وVHT وIYH، تساعد هذه القراءات على فصل أثر الرسوم والسيولة والتركيز عن الرأي العام في قطاع الرعاية الصحية.' : 'After separating XLV, VHT, and IYH by index design, these guides help distinguish the effects of fees, liquidity, and concentration from a broad opinion about healthcare.'}</p>
         <ul>
           <li><a href="${ar ? '/ar' : ''}/insights/etf-research-methodology.html">${ar ? 'منهجية بحث صناديق المؤشرات' : 'ETF research methodology'}</a></li>
           <li><a href="${ar ? '/ar' : ''}/insights/etf-risk-comparison-guide.html">${ar ? 'دليل مقارنة مخاطر صناديق المؤشرات' : 'ETF risk comparison guide'}</a></li>
@@ -81,11 +85,78 @@ ${faqBlocks(ar)}
 </html>`;
 }
 
-function renderSection(section) {
+function renderSection(section, index, ar) {
   return `      <section id="${section.id}">
+${index > 0 ? `        <p class="editorial-transition">${escapeHtml(section.transition || defaultTransition(index, ar))}</p>\n` : ''}
         <h2>${escapeHtml(section.heading)}</h2>
 ${section.paragraphs.map((p) => `        <p>${escapeHtml(p)}</p>`).join('\n')}
+${section.id === 'xlv-vht-iyh-comparison' ? renderHealthcareComparisonTable(ar) : ''}
+${section.id === 'macro-and-policy-sensitivity' ? renderEducationalCallout(ar) : ''}
       </section>`;
+}
+
+function defaultTransition(index, ar) {
+  const en = [
+    'That distinction matters because sector labels can conceal very different economic exposures.',
+    'Once the defensive case is clear, index construction becomes the next source of differentiation.',
+    'The fund-level comparison is only useful when it is connected to the businesses underneath the index.',
+    'Those subindustry differences also explain why the macro backdrop does not affect every healthcare fund equally.',
+    'With the transmission channels established, the comparison can move from labels to measurable portfolio characteristics.',
+    'The same framework also clarifies the environments in which defensive exposure can disappoint.',
+    'Taken together, these mechanics support a research process rather than a directional conclusion.'
+  ];
+  const arText = [
+    'هذا التمييز مهم لأن اسم القطاع قد يخفي تعرضات اقتصادية مختلفة.',
+    'بعد توضيح الطابع الدفاعي يصبح بناء المؤشر مصدر الاختلاف التالي.',
+    'لا تكتمل مقارنة الصناديق من دون ربطها بأعمال الشركات داخل المؤشر.',
+    'وتفسر اختلافات الصناعات الفرعية أيضا لماذا لا يؤثر السياق الكلي بالطريقة نفسها في كل صندوق.',
+    'بعد تحديد قنوات الانتقال يمكن الانتقال من التسميات إلى خصائص المحفظة القابلة للمقارنة.',
+    'ويوضح الإطار نفسه البيئات التي قد يتأخر فيها التعرض الدفاعي.',
+    'تدعم هذه الآليات مجتمعة عملية بحث ولا تقدم استنتاجا اتجاهيا.'
+  ];
+  return (ar ? arText : en)[Math.min(index - 1, 6)];
+}
+
+function renderEditorialContext(context, ar) {
+  const label = context.evidence_status === 'verified'
+    ? (ar ? 'سياق السوق الموثق' : 'Verified market context')
+    : (ar ? 'منهج السياق' : 'Context discipline');
+  const text = context.evidence_status === 'verified'
+    ? (ar ? 'تم استخدام بيانات سوق محلية موثقة لصياغة التحليل الكلي مع الحفاظ على الطابع التعليمي.' : 'Verified local market-state fields informed the macro discussion while the conclusions remain conditional and educational.')
+    : (ar ? 'لم تكن بيانات النظام اللحظية موثقة، لذلك يستخدم التحليل سيناريوهات مشروطة للفائدة والتقلب والدوران بدلا من عرض حالة سوق غير مؤكدة كحقيقة.' : 'Live regime fields were not verified, so rates, volatility, and defensive rotation are discussed conditionally rather than presented as current facts.');
+  return `      <aside class="editorial-note market-context-note" data-context-status="${escapeHtml(context.evidence_status || 'conditional')}">
+        <strong>${label}</strong>
+        <p>${text}</p>
+      </aside>`;
+}
+
+function renderHealthcareComparisonTable(ar) {
+  const rows = ar ? [
+    ['XLV', '0.08%', 'نحو 59', 'شركات الرعاية الصحية في S&P 500', 'مرتفع بسبب عدد أقل من الشركات الكبرى', 'دفاعي نسبيا مع مخاطر تركيز', 'عميقة عادة'],
+    ['VHT', '0.09%', 'نحو 398', 'سوق أمريكي واسع متعدد الأحجام', 'أقل من XLV مع بقاء وزن الشركات الكبرى مهما', 'أوسع وقد يتأثر أكثر بالشركات الأصغر', 'مرتفعة'],
+    ['IYH', '0.38%', 'نحو 102', 'مؤشر رعاية صحية أمريكي مقيد الأوزان', 'متوسط إلى مرتفع', 'بين التعرض الكبير الواسع والمركز', 'مرتفعة']
+  ] : [
+    ['XLV', '0.08%', 'about 59', 'S&P 500 healthcare sleeve', 'High; fewer mega-cap constituents', 'Relatively defensive, with concentration risk', 'Typically deepest'],
+    ['VHT', '0.09%', 'about 398', 'Broad U.S. all-cap healthcare', 'Lower than XLV, though mega-caps still matter', 'Broader; more small- and mid-cap sensitivity', 'High'],
+    ['IYH', '0.38%', 'about 102', 'Capped U.S. healthcare index', 'Moderate to high', 'Between broad and concentrated sector exposure', 'High']
+  ];
+  const headers = ar
+    ? ['الصندوق', 'نسبة المصروفات', 'عدد الحيازات التقريبي', 'أسلوب التركيز', 'تأثير أكبر الحيازات', 'نمط التقلب المعتاد', 'السيولة']
+    : ['ETF', 'Expense ratio', 'Approx. holdings', 'Concentration style', 'Top-holdings influence', 'Typical volatility profile', 'Liquidity profile'];
+  return `        <div class="editorial-table-wrap" role="region" aria-label="${ar ? 'مقارنة صناديق الرعاية الصحية' : 'Healthcare ETF comparison'}" tabindex="0">
+          <table class="editorial-comparison-table">
+            <thead><tr>${headers.map((item) => `<th>${item}</th>`).join('')}</tr></thead>
+            <tbody>${rows.map((row) => `<tr>${row.map((item) => `<td>${item}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+        <p class="editorial-data-note">${ar ? 'بيانات الرسوم والحيازات تقريبية وتعكس مواد الجهات المصدرة المتاحة في مايو 2026؛ تتغير الحيازات ويجب مراجعة النشرة الحالية.' : 'Expense ratios and approximate holdings reflect issuer materials available in May 2026. Holdings change; verify current specifications with'} <a href="https://www.ssga.com/mainfund/xlv" rel="nofollow noopener">${ar ? 'State Street' : 'State Street'}</a>, <a href="https://investor.vanguard.com/investment-products/etfs/profile/vht" rel="nofollow noopener">${ar ? 'Vanguard' : 'Vanguard'}</a>, ${ar ? 'و' : 'and'} <a href="https://www.ishares.com/us/products/239511/IYH" rel="nofollow noopener">${ar ? 'iShares' : 'iShares'}</a>.</p>`;
+}
+
+function renderEducationalCallout(ar) {
+  return `        <aside class="editorial-callout">
+          <strong>${ar ? 'ملاحظة بحثية' : 'Research note'}</strong>
+          <p>${ar ? 'الدفاعية ليست صفة ثابتة للصندوق. فهي نتيجة لتفاعل مزيج الصناعات وجودة الأرباح والتقييم والسيولة مع نظام السوق.' : 'Defensiveness is not a permanent ETF attribute. It emerges from the interaction between industry mix, earnings quality, valuation, liquidity, and the prevailing market regime.'}</p>
+        </aside>`;
 }
 
 function healthcareEnglishSections() {
@@ -94,7 +165,7 @@ function healthcareEnglishSections() {
       id: 'what-healthcare-etfs-represent',
       heading: 'What healthcare ETFs represent',
       paragraphs: [
-        'Healthcare ETFs are baskets of public companies tied to medical services, drug development, insurance, equipment, biotechnology, diagnostics, and health-care facilities. They are often discussed as a single defensive sector, but the holdings inside the funds can behave very differently. A broad healthcare ETF may own mature pharmaceutical companies, managed-care insurers, medical-device manufacturers, hospital operators, life-science tool providers, and biotechnology firms at the same time. That mix means the sector is not simply a low-volatility substitute for the broad market; it is a collection of businesses with different earnings cycles, regulatory exposures, and innovation risks.',
+        'Healthcare ETFs often move to the center of portfolio discussions when growth expectations soften, volatility rises, or investors begin questioning how much earnings risk sits inside cyclical and high-duration assets. The attraction is understandable: large pharmaceutical, insurance, and medical-device companies can generate relatively stable revenue even when broader activity slows. Yet the defensive label can be misleading because the same fund may also contain biotechnology, hospital, and life-science businesses whose returns depend on financing conditions, regulation, clinical execution, and innovation cycles.',
         'The educational value of studying healthcare ETFs is that they show how sector exposure can be diversified and concentrated at the same time. A fund can hold dozens or hundreds of companies while still being driven by a small set of large pharmaceutical, insurance, or medical-device names. XLV, VHT, and IYH all provide healthcare exposure, but their index design, number of holdings, concentration, and cost structure can lead to different research conclusions. A useful analysis therefore begins with what the ETF actually owns, not with the assumption that every healthcare fund represents the same risk profile.'
       ]
     },

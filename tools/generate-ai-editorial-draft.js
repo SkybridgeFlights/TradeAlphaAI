@@ -5,6 +5,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { ensureProductionEditorialLayout } = require('./editorial-layout-renderer');
 const { renderLongFormEditorial } = require('./editorial-longform-renderer');
+const { buildEditorialContext, updateEditorialMemory } = require('./editorial-context-engine');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -59,9 +60,13 @@ if (fs.existsSync(path.join(draftDir, 'en.html')) || fs.existsSync(path.join(dra
 fs.mkdirSync(draftDir, { recursive: true });
 
 const normalized = normalizeTopic(topic);
-fs.writeFileSync(path.join(draftDir, 'en.html'), ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'en'), normalized, 'en'), 'utf8');
-fs.writeFileSync(path.join(draftDir, 'ar.html'), ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'ar'), normalized, 'ar'), 'utf8');
+const editorialContext = buildEditorialContext(normalized);
+const enHtml = ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'en', editorialContext), normalized, 'en');
+const arHtml = ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'ar', editorialContext), normalized, 'ar');
+fs.writeFileSync(path.join(draftDir, 'en.html'), enHtml, 'utf8');
+fs.writeFileSync(path.join(draftDir, 'ar.html'), arHtml, 'utf8');
 fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized), null, 2) + '\n', 'utf8');
+updateEditorialMemory(normalized, editorialContext, enHtml);
 
 const prevStatus = topic.status;
 topic.status = 'in_review';
@@ -75,6 +80,7 @@ if (isRepairRegen && prevStatus === 'manual_revision_required') {
 fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 
 console.log(`Generated AI-assisted editorial draft: ${relative(draftDir)}`);
+console.log(`Editorial angle: ${editorialContext.selected_angle}; market context: ${editorialContext.evidence_status}`);
 console.log(`${topic.slug}: status set to in_review; review_status set to pending`);
 console.log('Draft only. No public pages, sitemaps, search index, registry, or Telegram actions were updated.');
 
@@ -146,8 +152,12 @@ function normalizeTopic(topic) {
   const titleEn = cleanText(topic.title_en) || titleFromSlug(topic.slug);
   const titleAr = safeArabic(topic.title_ar) ? cleanText(topic.title_ar) : arabicTitleFallback(topic);
   const categoryAr = arabicCategory(topic.category);
-  const descriptionEn = `${titleEn} for evergreen market research. Learn how to evaluate exposure, risk, and related research without financial advice.`;
-  const descriptionAr = `${titleAr} ضمن بحث تعليمي دائم حول الأسواق، مع التركيز على المخاطر والتنويع والروابط البحثية ذات الصلة دون تقديم نصيحة مالية.`;
+  const descriptionEn = topic.slug === 'healthcare-etf-research-guide'
+    ? 'A research-led comparison of XLV, VHT, and IYH across index design, concentration, healthcare subindustries, liquidity, volatility, and macro sensitivity.'
+    : `Institutional educational research on ${titleEn.toLowerCase()}, including exposure mechanics, concentration, liquidity, macro sensitivity, and risk transmission.`;
+  const descriptionAr = topic.slug === 'healthcare-etf-research-guide'
+    ? 'مقارنة بحثية بين XLV وVHT وIYH تشمل بناء المؤشر والتركيز والصناعات الصحية والسيولة والتقلب والحساسية للاقتصاد الكلي.'
+    : `${titleAr} ضمن بحث تعليمي مؤسسي يشرح آليات التعرض والتركيز والسيولة والحساسية الكلية وانتقال المخاطر دون تقديم نصيحة مالية.`;
 
   return {
     ...topic,

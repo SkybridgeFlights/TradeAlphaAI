@@ -79,7 +79,13 @@ function scoreDraft(dir) {
     checks.editorial_paragraph_dominance &&
     checks.editorial_section_depth &&
     checks.editorial_no_skeleton_structure &&
-    checks.editorial_semantic_depth
+    checks.editorial_semantic_depth &&
+    checks.editorial_narrative_continuity &&
+    checks.editorial_analytical_density &&
+    checks.editorial_sentence_opening_diversity &&
+    checks.editorial_lexical_richness &&
+    checks.editorial_anti_generic_language &&
+    checks.editorial_comparison_depth
   );
   const requiredScore = type === 'market_outlook' ? 90 : type === 'editorial' ? 90 : 85;
   return {
@@ -111,7 +117,13 @@ function editorialLongFormChecks(en, ar, enBody, arBody, combined) {
     editorial_paragraph_dominance: bulletCount < enParagraphs.length,
     editorial_section_depth: enSections.length >= 7 && enSections.every((section) => wordCount(section.text) >= 120 && extractParagraphs(section.html).length >= 2),
     editorial_no_skeleton_structure: !looksLikeSkeleton(en, enArticleText, enParagraphs, bulletCount),
-    editorial_semantic_depth: Object.values(semantic).every(Boolean)
+    editorial_semantic_depth: Object.values(semantic).every(Boolean),
+    editorial_narrative_continuity: narrativeContinuity(en, enArticleText),
+    editorial_analytical_density: analyticalSentenceCount(enArticleText) / Math.max(sentenceCount(enArticleText), 1) >= 0.42,
+    editorial_sentence_opening_diversity: sentenceOpeningDiversity(enArticleText) >= 0.72,
+    editorial_lexical_richness: lexicalRichness(enArticleText) >= 0.24,
+    editorial_anti_generic_language: antiGenericLanguage(enArticleText),
+    editorial_comparison_depth: comparisonDepth(en, enArticleText)
   };
 }
 
@@ -172,12 +184,59 @@ function looksLikeSkeleton(html, text, paragraphs, bulletCount) {
 function editorialSemanticDepth(text) {
   return {
     sector_mechanics: /(pharmaceutical|biotech|managed care|insurance|medical device|hospital|subsector|industry|reimbursement|patent)/i.test(text),
-    risk_explanation: /(risk|volatility|drawdown|regulation|drug-pricing|reimbursement|patent cliff|clinical trial|innovation risk|earnings risk)/i.test(text),
-    etf_comparison: /\bXLV\b/i.test(text) && /\bVHT\b/i.test(text) && /\bIYH\b/i.test(text) && /(compare|difference|expense ratio|holdings|liquidity|concentration)/i.test(text),
+    diversification_mechanics: /(diversification|diversified|holdings count|broader universe|single-company risk|market-cap weighted)/i.test(text),
     macro_sensitivity: /(interest rates|rates|defensive rotation|risk appetite|macro|growth slows|volatility rises|duration|earnings stability)/i.test(text),
-    diversification_concentration: /(diversification|diversified|concentration|top-ten|holdings|market-cap weighted|position size|single-company)/i.test(text),
+    valuation_risk_framing: /(valuation|risk premium|earnings expectations|cash flow|drawdown|financing conditions)/i.test(text),
+    concentration_discussion: /(concentration|top-ten|largest holdings|mega-cap|position size|dominate)/i.test(text),
+    volatility_discussion: /(volatility|standard deviation|drawdown|risk-on|risk-off)/i.test(text),
+    liquidity_discussion: /(liquidity|bid-ask spread|trading volume|execution quality|assets under management)/i.test(text),
+    investor_use_case: /(research question|research process|portfolio construction|benchmark|use-case|exposure analysis|educational framework)/i.test(text),
     non_advisory_framing: /(educational|framework|not financial advice|does not constitute financial|not a recommendation|research process)/i.test(text)
   };
+}
+
+function narrativeContinuity(html, text) {
+  const transitionCount = (String(html || '').match(/class="editorial-transition"/g) || []).length;
+  const connectors = ['because', 'however', 'therefore', 'once', 'while', 'yet', 'that distinction', 'taken together', 'by contrast', 'in turn'];
+  const hits = connectors.filter((word) => text.toLowerCase().includes(word)).length;
+  return transitionCount >= 6 && hits >= 5;
+}
+
+function sentenceCount(text) {
+  return String(text || '').split(/[.!?]+/).map((item) => item.trim()).filter(Boolean).length;
+}
+
+function sentenceOpeningDiversity(text) {
+  const openings = String(text || '').split(/[.!?]+/)
+    .map((sentence) => sentence.trim().toLowerCase().split(/\s+/).slice(0, 3).join(' '))
+    .filter((opening) => opening.split(/\s+/).length >= 2);
+  return openings.length ? new Set(openings).size / openings.length : 0;
+}
+
+function lexicalRichness(text) {
+  const words = String(text || '').toLowerCase().match(/[a-z][a-z'-]{3,}/g) || [];
+  return words.length ? new Set(words).size / words.length : 0;
+}
+
+function antiGenericLanguage(text) {
+  const phrases = [
+    'it is important to note',
+    'investors should consider',
+    'can help investors',
+    'offers exposure to',
+    'in today\'s market',
+    'navigate the complex',
+    'in conclusion'
+  ];
+  const lower = text.toLowerCase();
+  return phrases.every((phrase) => (lower.match(new RegExp(escapeRegExp(phrase), 'g')) || []).length <= 1);
+}
+
+function comparisonDepth(html, text) {
+  const tickers = new Set((text.match(/\b[A-Z]{2,5}\b/g) || []).filter((ticker) => !['ETF', 'SPY', 'FAQ'].includes(ticker)));
+  if (!/\bETF(s)?\b/i.test(text) || tickers.size < 2) return true;
+  const headers = ['Expense ratio', 'Approx. holdings', 'Concentration style', 'Top-holdings influence', 'Typical volatility profile', 'Liquidity profile'];
+  return /class="editorial-comparison-table"/.test(html) && headers.every((header) => html.includes(header));
 }
 
 function marketOutlookChecks(en, ar, enBody, arBody, combined) {
@@ -450,4 +509,8 @@ function wordCount(text) {
 function argValue(name) {
   const match = process.argv.find((arg) => arg.startsWith(`${name}=`));
   return match ? match.slice(name.length + 1) : '';
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
