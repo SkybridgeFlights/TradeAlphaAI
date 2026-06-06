@@ -597,9 +597,19 @@ function runNpm(script) {
   return result.status == null ? 1 : result.status;
 }
 
+function resolveTelegramTarget() {
+  const chatId = (process.env.TELEGRAM_CHAT_ID || '').trim()
+    || (process.env.TELEGRAM_CHANNEL_ID || '').trim();
+  const source = (process.env.TELEGRAM_CHAT_ID || '').trim() ? 'CHAT_ID' : 'CHANNEL_ID';
+  return { chatId: chatId || null, source };
+}
+
 function telegramStatus() {
-  const configured = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
-  return configured ? 'configured' : 'skipped: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing';
+  const { chatId, source } = resolveTelegramTarget();
+  if (!process.env.TELEGRAM_BOT_TOKEN || !chatId) {
+    return 'skipped: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID/CHANNEL_ID missing';
+  }
+  return `configured (target_source=${source} value=${chatId.slice(0, 6)}***)`;
 }
 
 function executeAction(contentType, mode, dryRun, action) {
@@ -718,7 +728,8 @@ function executeAction(contentType, mode, dryRun, action) {
           : null,
         (slug) => {
           const args = [`--slug=${slug}`, '--execute'];
-          if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) args.push('--telegram-send');
+          const { chatId: _tgChatId } = resolveTelegramTarget();
+          if (process.env.TELEGRAM_BOT_TOKEN && _tgChatId) args.push('--telegram-send');
           return runNode('tools/publish-reviewed-article.js', args, { inherit: true });
         },
         // Repair regeneration fn: passes --repair-regeneration=true so the generator can

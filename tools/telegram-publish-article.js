@@ -43,8 +43,9 @@ if (dryRun) {
 }
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const chatId = process.env.TELEGRAM_CHANNEL_ID;
-if (!token || !chatId) fail('TELEGRAM_BOT_TOKEN and TELEGRAM_CHANNEL_ID are required when --send is used.');
+const { chatId, source: chatIdSource, masked: chatIdMasked } = resolveTelegramTarget();
+if (!token || !chatId) fail('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID (or TELEGRAM_CHANNEL_ID) are required when --send is used.');
+console.log(`[telegram] target resolved: source=${chatIdSource} value=${chatIdMasked}`);
 
 (async () => {
   for (const post of posts) {
@@ -375,6 +376,14 @@ function extractHtmlMeta(relPath, names) {
     }
   }
   return '';
+}
+
+function resolveTelegramTarget() {
+  const chatId = (process.env.TELEGRAM_CHAT_ID || '').trim()
+    || (process.env.TELEGRAM_CHANNEL_ID || '').trim();
+  const source = (process.env.TELEGRAM_CHAT_ID || '').trim() ? 'CHAT_ID' : 'CHANNEL_ID';
+  const masked = chatId ? chatId.slice(0, 6) + '***' : '(none)';
+  return { chatId: chatId || null, source, masked };
 }
 
 function readTextIfExists(relPath) {

@@ -97,7 +97,7 @@ run(NPM, ['run', 'check:social-meta']);
 if (telegram) {
   const args = ['tools/telegram-publish-article.js', `--slug=${slug}`, '--locale=both'];
   if (telegramSend) args.push('--send');
-  run(process.execPath, args);
+  runTelegram(process.execPath, args);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -215,6 +215,13 @@ function hasRequiredArticleParts(html, ar) {
 function run(command, args) {
   const result = spawnSync(command, args, { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' });
   if (result.status !== 0) process.exit(result.status || 1);
+}
+
+function runTelegram(command, args) {
+  const result = spawnSync(command, args, { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' });
+  if (result.status !== 0) {
+    console.warn(`[publish] Telegram delivery failed (exit ${result.status || 1}) — publish is complete, Telegram is non-fatal`);
+  }
 }
 
 function readJson(file) {
