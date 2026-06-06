@@ -129,6 +129,47 @@ jobs:
           npm run check:indexing
           npm run check:social-meta
 
+      - name: Diagnose publishing git state
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          echo "======================================================"
+          echo "  Publishing git diagnostics before commit"
+          echo "======================================================"
+          echo "--- pwd ---"
+          pwd
+          echo "--- branch ---"
+          git rev-parse --abbrev-ref HEAD
+          echo "--- ref context ---"
+          echo "GITHUB_REF=${GITHUB_REF}"
+          echo "GITHUB_REF_NAME=${GITHUB_REF_NAME}"
+          echo "GITHUB_SHA=${GITHUB_SHA}"
+          echo "--- git status --short ---"
+          git status --short
+          echo "--- git diff --stat ---"
+          git diff --stat
+          echo "--- git diff --cached --stat ---"
+          git diff --cached --stat
+          echo "--- healthcare insight files ---"
+          ls insights | grep healthcare || true
+          ls ar/insights | grep healthcare || true
+          ls en/insights | grep healthcare || true
+          echo "--- ignored publish outputs ---"
+          git check-ignore -v \
+            insights/healthcare-etf-research-guide.html \
+            ar/insights/healthcare-etf-research-guide.html \
+            en/insights/healthcare-etf-research-guide.html \
+            data/localization/ar-insight-content/healthcare-etf-research-guide.json \
+            sitemap-insights.xml \
+            data/search-index.json || true
+          echo "--- tracked healthcare outputs ---"
+          git ls-files \
+            insights/healthcare-etf-research-guide.html \
+            ar/insights/healthcare-etf-research-guide.html \
+            en/insights/healthcare-etf-research-guide.html \
+            data/localization/ar-insight-content/healthcare-etf-research-guide.json \
+            drafts/editorial/healthcare-etf-research-guide/en.html || true
+          echo "======================================================"
+
       - name: Commit publishing changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
         run: |
