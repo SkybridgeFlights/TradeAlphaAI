@@ -28,6 +28,7 @@ const LIVE_PATH     = path.join(ROOT, 'data', 'live-market-state.json');
 const REGIME_PATH   = path.join(ROOT, 'data', 'intelligence', 'market-regime.json');
 const EXPECT_PATH   = path.join(ROOT, 'data', 'market-expectations.json');
 const OUT_PATH      = path.join(ROOT, 'data', 'intelligence', 'macro-narrative.json');
+const DEGRADATION_PATH = path.join(ROOT, 'data', 'intelligence', 'provider-degradation.json');
 
 const WRITE = process.argv.includes('--write');
 
@@ -39,6 +40,11 @@ const GENERIC_PHRASES = [
 ];
 
 function main() {
+  const degradation = readJson(DEGRADATION_PATH, { fallback_mode: false });
+  if (degradation.fallback_mode) {
+    console.warn('[macro-narrative] Calendar provider degraded — running in limited macro intelligence mode');
+  }
+
   const calendar   = readJson(CAL_PATH,    { events: [] });
   const memory     = readJson(MEMORY_PATH, { event_reactions: [], historical_patterns: {} });
   const live       = readJson(LIVE_PATH,   { metadata: { status: 'fallback' } });

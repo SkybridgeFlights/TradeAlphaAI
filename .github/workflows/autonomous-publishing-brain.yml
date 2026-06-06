@@ -114,20 +114,25 @@ jobs:
           node tools/detect-orphan-pages.js --write
 
       - name: Fetch live economic calendar
+        continue-on-error: true
         run: |
           if [ -n "${FMP_API_KEY}" ]; then
-            node tools/update-economic-calendar.js --fetch --write
-            echo "[calendar] Live calendar updated."
+            node tools/update-economic-calendar.js --fetch --write || {
+              echo "[calendar] provider unavailable — entering degraded intelligence mode"
+              echo "[calendar] continuing pipeline with empty calendar dataset"
+            }
+            echo "[calendar] Calendar step complete (degraded mode may be active)."
           else
             echo "[calendar] FMP_API_KEY not configured — retaining the checked-in calendar."
           fi
-          node tools/build-market-expectations.js --write
-          node tools/build-cross-asset-reaction.js --write
+          node tools/build-market-expectations.js --write || echo "[calendar] build-market-expectations degraded — continuing"
+          node tools/build-cross-asset-reaction.js --write || echo "[calendar] build-cross-asset-reaction degraded — continuing"
 
       - name: Build macro reaction intelligence
+        continue-on-error: true
         run: |
-          node tools/build-event-reaction-memory.js --write
-          echo "[macro] Event reaction memory updated."
+          node tools/build-event-reaction-memory.js --write || echo "[macro] Event reaction memory degraded — continuing in limited macro intelligence mode"
+          echo "[macro] Event reaction memory step complete."
 
       - name: Build institutional depth intelligence
         run: |

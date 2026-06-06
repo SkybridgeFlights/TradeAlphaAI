@@ -21,6 +21,7 @@ const { analyzeEconomicSurprise } = require('./analyze-economic-surprise');
 
 const ROOT    = path.resolve(__dirname, '..');
 const CAL_PATH  = path.join(ROOT, 'data', 'economic-calendar.json');
+const DEGRADATION_PATH = path.join(ROOT, 'data', 'intelligence', 'provider-degradation.json');
 const OUT_PATH  = path.join(ROOT, 'data', 'intelligence', 'event-reaction-memory.json');
 const CACHE_DIR = path.join(ROOT, 'data', 'cache', 'market-data');
 
@@ -46,6 +47,11 @@ async function main() {
   const apiKey = (process.env.FMP_API_KEY || '').trim();
   if (!apiKey) {
     console.warn('[reaction-memory] FMP_API_KEY not set — reactions will be recorded without price data.');
+  }
+
+  const degradation = readJson(DEGRADATION_PATH, { fallback_mode: false });
+  if (degradation.fallback_mode) {
+    console.warn('[reaction-memory] Calendar provider degraded — running in limited macro intelligence mode');
   }
 
   const calendar = readJson(CAL_PATH, { events: [] });

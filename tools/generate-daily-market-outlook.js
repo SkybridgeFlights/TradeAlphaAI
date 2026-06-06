@@ -38,6 +38,7 @@ const REGIME_PATH   = path.join(ROOT, 'data', 'intelligence', 'market-regime.jso
 const RATE_PATH     = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelligence.json');
 const ETF_PATH      = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
 const TRANSMISSION_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-transmission.json');
+const DEGRADATION_PATH  = path.join(ROOT, 'data', 'intelligence', 'provider-degradation.json');
 const DAILY_DIR     = path.join(ROOT, 'market-outlook', 'daily');
 const WEEKLY_DIR    = path.join(ROOT, 'market-outlook', 'weekly');
 
@@ -47,6 +48,8 @@ const FORCE         = process.argv.includes('--force');
 const MODE          = argValue('--mode') || 'daily';
 
 const DISCLAIMER_EN = 'This is educational macro commentary only. It is not investment advice, a recommendation to buy or sell any asset, or a forecast. Past event reactions do not reliably predict future outcomes. Always consult a licensed financial professional before making investment decisions.';
+const DEGRADED_NOTICE_EN = 'Live macroeconomic event data was temporarily unavailable during generation. Market commentary may contain reduced event sensitivity coverage.';
+const DEGRADED_NOTICE_AR = 'تعذّر الوصول مؤقتًا إلى بيانات التقويم الاقتصادي المباشرة أثناء التوليد، لذلك قد تكون تغطية حساسية الأحداث الاقتصادية محدودة.';
 
 function main() {
   const calendar    = readJson(CAL_PATH,       { events: [] });
@@ -58,15 +61,18 @@ function main() {
   const ratePath    = readJson(RATE_PATH,      { fed_path: null, yield_curve: null });
   const etfFlow     = readJson(ETF_PATH,       { rotation_analysis: null, positioning_matrix: null });
   const transmission = readJson(TRANSMISSION_PATH, { transmission_library: {}, event_analyses: [], regime_transmission_note: null });
+  const degradation  = readJson(DEGRADATION_PATH, { fallback_mode: false });
+  const calendarDegraded = degradation.fallback_mode === true;
+  if (calendarDegraded) console.warn('[daily-outlook] Calendar provider degraded — generating with limited macro intelligence mode');
 
   const today    = new Date().toISOString().slice(0, 10);
   const weekSlug = weekLabel();
 
   if (MODE === 'weekly') {
-    const html = buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug, regime, ratePath, etfFlow, transmission);
+    const html = buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug, regime, ratePath, etfFlow, transmission, calendarDegraded);
     outputPage(html, path.join(WEEKLY_DIR, `${weekSlug}.html`), `Weekly macro outlook ${weekSlug}`);
   } else {
-    const html = buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission);
+    const html = buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission, calendarDegraded);
     outputPage(html, path.join(DAILY_DIR, `${today}.html`), `Daily macro briefing ${today}`);
   }
 }
@@ -89,7 +95,7 @@ function outputPage(html, filePath, label) {
 
 // ── Daily page builder ────────────────────────────────────────────────────────
 
-function buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission) {
+function buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission, calendarDegraded = false) {
   const events = calendar.events || [];
   const now    = Date.now();
 
@@ -166,6 +172,14 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
       ${etfFlow?.rotation_analysis?.key_spread ? buildRotationSection(etfFlow) : ''}
       ${buildReactionMapSection(transmission)}
 
+      ${calendarDegraded ? `<section class="market-section degraded-notice-section" role="note" aria-label="Data availability notice">
+        <div class="disclaimer-box" style="border-left:3px solid #f59e0b;background:rgba(245,158,11,0.06)">
+          <h3 style="color:#b45309">⚠ Limited Macro Intelligence Mode</h3>
+          <p>${esc(DEGRADED_NOTICE_EN)}</p>
+          <p lang="ar" dir="rtl" style="font-family:inherit;margin-top:0.5rem">${esc(DEGRADED_NOTICE_AR)}</p>
+        </div>
+      </section>` : ''}
+
       <section class="market-section disclaimer-section">
         <div class="disclaimer-box">
           <h3>Educational Research Disclaimer</h3>
@@ -181,7 +195,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
 
 // ── Weekly page builder ───────────────────────────────────────────────────────
 
-function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug, regime, ratePath, etfFlow, transmission) {
+function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug, regime, ratePath, etfFlow, transmission, calendarDegraded = false) {
   const events    = calendar.events || [];
   const now       = Date.now();
   const weekMs    = 7 * 86400000;
@@ -254,6 +268,14 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
       ${etfFlow?.rotation_analysis ? buildRotationSection(etfFlow) : ''}
       ${buildHistoricalSensitivitySection(patterns)}
       ${buildReactionMapSection(transmission)}
+
+      ${calendarDegraded ? `<section class="market-section degraded-notice-section" role="note" aria-label="Data availability notice">
+        <div class="disclaimer-box" style="border-left:3px solid #f59e0b;background:rgba(245,158,11,0.06)">
+          <h3 style="color:#b45309">⚠ Limited Macro Intelligence Mode</h3>
+          <p>${esc(DEGRADED_NOTICE_EN)}</p>
+          <p lang="ar" dir="rtl" style="font-family:inherit;margin-top:0.5rem">${esc(DEGRADED_NOTICE_AR)}</p>
+        </div>
+      </section>` : ''}
 
       <section class="market-section disclaimer-section">
         <div class="disclaimer-box">

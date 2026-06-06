@@ -5,10 +5,11 @@ const path = require('path');
 const https = require('https');
 const { analyzeEconomicSurprise } = require('./analyze-economic-surprise');
 
-const ROOT = path.resolve(__dirname, '..');
-const OUT = path.join(ROOT, 'data', 'economic-calendar.json');
-const CACHE = path.join(ROOT, 'data', 'cache', 'economic-calendar-cache.json');
-const HEALTH = path.join(ROOT, 'data', 'provider-health.json');
+const ROOT        = path.resolve(__dirname, '..');
+const OUT         = path.join(ROOT, 'data', 'economic-calendar.json');
+const CACHE       = path.join(ROOT, 'data', 'cache', 'economic-calendar-cache.json');
+const HEALTH      = path.join(ROOT, 'data', 'provider-health.json');
+const DEGRADATION = path.join(ROOT, 'data', 'intelligence', 'provider-degradation.json');
 const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 const sourcePath = argValue('--source');
@@ -36,14 +37,24 @@ async function main() {
   } else if (fetch) {
     const apiKey = (process.env.FMP_API_KEY || '').trim();
     if (!apiKey) {
-      console.error('[calendar] FMP_API_KEY is not set — cannot fetch live calendar data.');
-      process.exit(1);
+      console.warn('[calendar] FMP_API_KEY is not set — cannot fetch live calendar data.');
+      console.warn('[calendar] entering degraded intelligence mode');
+      events = writeDegradedMode('missing_api_key');
+      sourceLabel = 'fallback';
+    } else {
+      events = await fetchFromFmp(apiKey);
+      sourceLabel = events === null ? 'fallback' : 'fmp';
+      if (sourceLabel === 'fallback') events = [];
     }
-    events = await fetchFromFmp(apiKey);
-    sourceLabel = 'fmp';
   } else {
     console.log('No economic calendar source provided. Use --source=<json> [--write] or --fetch [--write].');
     process.exit(0);
+  }
+
+  // In fallback/degraded mode the calendar file was already written by writeDegradedMode()
+  if (sourceLabel === 'fallback') {
+    console.warn('[calendar] continuing pipeline with empty calendar dataset');
+    return;
   }
 
   const failures = events.filter((e) => e.error);
@@ -99,13 +110,17 @@ async function fetchFromFmp(apiKey) {
   try {
     raw = await httpGet(url);
   } catch (err) {
+    const reason = err.message.startsWith('HTTP ') ? err.message.replace('HTTP ', 'http_').toLowerCase() : 'network_error';
     updateProviderHealth('fmp', 'error', err.message);
     if (cached) {
       console.warn(`[calendar] FMP fetch failed (${err.message}); falling back to cached data (age: ${cacheAgeMinutes(cached)}m)`);
       return cached.events || [];
     }
-    console.error(`[calendar] FMP fetch failed and no cache available: ${err.message}`);
-    process.exit(1);
+    console.warn(`[calendar] provider unavailable (${err.message})`);
+    console.warn('[calendar] entering degraded intelligence mode');
+    console.warn('[calendar] continuing pipeline with empty calendar dataset');
+    writeDegradedMode(reason);
+    return null; // signals caller to use empty fallback
   }
 
   let data;
@@ -117,7 +132,11 @@ async function fetchFromFmp(apiKey) {
       console.warn('[calendar] FMP returned invalid JSON; falling back to cache.');
       return cached.events || [];
     }
-    process.exit(1);
+    console.warn('[calendar] provider unavailable (invalid JSON response)');
+    console.warn('[calendar] entering degraded intelligence mode');
+    console.warn('[calendar] continuing pipeline with empty calendar dataset');
+    writeDegradedMode('invalid_json');
+    return null;
   }
 
   if (!Array.isArray(data)) {
@@ -126,7 +145,11 @@ async function fetchFromFmp(apiKey) {
       console.warn('[calendar] Unexpected FMP response shape; falling back to cache.');
       return cached.events || [];
     }
-    process.exit(1);
+    console.warn(`[calendar] provider unavailable (unexpected response: ${typeof data})`);
+    console.warn('[calendar] entering degraded intelligence mode');
+    console.warn('[calendar] continuing pipeline with empty calendar dataset');
+    writeDegradedMode('unexpected_response');
+    return null;
   }
 
   const FMP_SOURCE_URL = 'https://financialmodelingprep.com/financial-statements-and-filings/economic-calendar';
@@ -258,6 +281,42 @@ function defaultSensitivity(type) {
   return ['Treasury yields', 'DXY', 'SPY', 'VIX'];
 }
 
+// ── Degraded mode ────────────────────────────────────────────────────────────
+
+function writeDegradedMode(reason) {
+  const now = new Date().toISOString();
+  // Write provider-degradation.json
+  try {
+    fs.mkdirSync(path.dirname(DEGRADATION), { recursive: true });
+    fs.writeFileSync(DEGRADATION, JSON.stringify({
+      calendar_provider: 'fmp',
+      status: 'degraded',
+      reason,
+      timestamp: now,
+      fallback_mode: true
+    }, null, 2) + '\n', 'utf8');
+  } catch (e) {
+    console.warn('[calendar] Could not write provider-degradation.json:', e.message);
+  }
+  // Write empty calendar fallback so downstream tools have a valid file
+  if (write) {
+    try {
+      fs.mkdirSync(path.dirname(OUT), { recursive: true });
+      fs.writeFileSync(OUT, JSON.stringify({
+        generated_at: now,
+        provider: 'fallback',
+        status: 'degraded',
+        events: []
+      }, null, 2) + '\n', 'utf8');
+      console.warn('[calendar] Wrote empty fallback calendar: data/economic-calendar.json');
+    } catch (e) {
+      console.warn('[calendar] Could not write fallback calendar:', e.message);
+    }
+  }
+  updateProviderHealth('fmp', 'degraded', reason);
+  return []; // empty events array for callers
+}
+
 // ── Cache helpers ─────────────────────────────────────────────────────────────
 
 function readCache() {
@@ -348,6 +407,8 @@ function dateString(offsetDays) {
 }
 
 main().catch((err) => {
-  console.error('[calendar] Fatal error:', err.message);
-  process.exit(1);
+  console.warn('[calendar] Unhandled error:', err.message);
+  console.warn('[calendar] entering degraded intelligence mode');
+  writeDegradedMode('unhandled_error');
+  process.exit(0); // never block the pipeline
 });
