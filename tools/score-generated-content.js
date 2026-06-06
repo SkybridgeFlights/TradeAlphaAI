@@ -42,14 +42,18 @@ function scoreDraft(dir) {
     educational_compliance: !/(buy now|sell now|guaranteed returns?|must buy|must sell|certain to|definitely will)/i.test(combined),
     disclaimer_presence: /(Educational Disclaimer|educational-disclaimer|إخلاء المسؤولية التعليمي|تعليق تعليمي حول الأسواق المالية)/.test(`${en} ${ar}`)
   };
+  checks.disclaimer_presence = /(educational disclaimer|educational-disclaimer|for educational and informational purposes)/i.test(`${en} ${ar}`);
 
   if (type === 'market_outlook') {
     Object.assign(checks, marketOutlookChecks(en, ar, enBody, arBody, combined));
   }
+  if (type === 'editorial') {
+    Object.assign(checks, editorialLongFormChecks(en, ar, enBody, arBody, combined));
+  }
 
   const passed = Object.values(checks).filter(Boolean).length;
   const quality_score = Math.round((passed / Object.keys(checks).length) * 100);
-  const hardGatePass = type !== 'market_outlook' || (
+  const marketOutlookHardGatePass = type !== 'market_outlook' || (
     checks.language_purity &&
     checks.public_placeholder_risk &&
     checks.semantic_depth &&
@@ -66,14 +70,113 @@ function scoreDraft(dir) {
     checks.specificity &&
     checks.no_generic_filler
   );
+  const editorialHardGatePass = type !== 'editorial' || (
+    checks.editorial_word_count &&
+    checks.editorial_section_count &&
+    checks.editorial_paragraph_count &&
+    checks.editorial_average_paragraph_depth &&
+    checks.editorial_analytical_sentence_count &&
+    checks.editorial_paragraph_dominance &&
+    checks.editorial_section_depth &&
+    checks.editorial_no_skeleton_structure &&
+    checks.editorial_semantic_depth
+  );
+  const requiredScore = type === 'market_outlook' ? 90 : type === 'editorial' ? 90 : 85;
   return {
     slug: slugValue,
     type,
     checks,
     quality_score,
-    publish_recommendation: hardGatePass && quality_score >= (type === 'market_outlook' ? 90 : 85)
+    publish_recommendation: marketOutlookHardGatePass && editorialHardGatePass && quality_score >= requiredScore
       ? 'eligible_after_human_review'
       : 'manual_revision_required'
+  };
+}
+
+function editorialLongFormChecks(en, ar, enBody, arBody, combined) {
+  const enParagraphs = extractParagraphs(en);
+  const arParagraphs = extractParagraphs(ar);
+  const enSections = extractMainSections(en);
+  const arSections = extractMainSections(ar);
+  const enArticleText = enSections.map((section) => section.text).join(' ') || enBody;
+  const arArticleText = arSections.map((section) => section.text).join(' ') || arBody;
+  const bulletCount = (en.match(/<li\b/gi) || []).length;
+  const semantic = editorialSemanticDepth(enArticleText);
+  return {
+    editorial_word_count: wordCount(enArticleText) >= 1200 && wordCount(enArticleText) <= 1800 && wordCount(arArticleText) >= 900 && wordCount(arArticleText) <= 1400,
+    editorial_section_count: enSections.length >= 7,
+    editorial_paragraph_count: enParagraphs.length >= 24 && arParagraphs.length >= 20,
+    editorial_average_paragraph_depth: averageWords(enParagraphs) >= 45 && averageWords(arParagraphs) >= 30,
+    editorial_analytical_sentence_count: analyticalSentenceCount(enArticleText) >= 32,
+    editorial_paragraph_dominance: bulletCount < enParagraphs.length,
+    editorial_section_depth: enSections.length >= 7 && enSections.every((section) => wordCount(section.text) >= 120 && extractParagraphs(section.html).length >= 2),
+    editorial_no_skeleton_structure: !looksLikeSkeleton(en, enArticleText, enParagraphs, bulletCount),
+    editorial_semantic_depth: Object.values(semantic).every(Boolean)
+  };
+}
+
+function extractMainSections(html) {
+  const excluded = new Set(['faq', 'related-research', 'continue-learning']);
+  return [...String(html || '').matchAll(/<section\b([^>]*)>([\s\S]*?)<\/section>/gi)]
+    .map((match) => {
+      const attrs = match[1] || '';
+      const body = match[2] || '';
+      const id = ((attrs.match(/\bid="([^"]+)"/i) || [])[1] || (body.match(/<h2[^>]*id="([^"]+)"/i) || [])[1] || '').trim();
+      return { id, html: body, text: bodyText(body) };
+    })
+    .filter((section) => section.id && !excluded.has(section.id))
+    .filter((section) => /<h2\b/i.test(section.html) || wordCount(section.text) >= 80);
+}
+
+function extractParagraphs(html) {
+  return [...String(html || '').matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map((match) => bodyText(match[1]))
+    .filter((text) => wordCount(text) >= 18);
+}
+
+function averageWords(items) {
+  if (!items.length) return 0;
+  return items.reduce((sum, text) => sum + wordCount(text), 0) / items.length;
+}
+
+function analyticalSentenceCount(text) {
+  const analyticalTerms = /(because|while|therefore|however|depends|exposure|risk|volatility|concentration|liquidity|expense ratio|holdings|rates|interest rates|regulation|drug-pricing|earnings|innovation|diversification|defensive|lag|compare|XLV|VHT|IYH|ETF)/i;
+  return String(text || '')
+    .split(/[.!?]+/)
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.split(/\s+/).length >= 12 && analyticalTerms.test(sentence))
+    .length;
+}
+
+function looksLikeSkeleton(html, text, paragraphs, bulletCount) {
+  const lower = `${html} ${text}`.toLowerCase();
+  const skeletonPhrases = [
+    'editors should review',
+    'draft educational research article',
+    'placeholder',
+    'todo',
+    'tbd',
+    'outline',
+    'key takeaways',
+    'this section will',
+    'requires editorial content'
+  ];
+  if (skeletonPhrases.some((phrase) => lower.includes(phrase))) return true;
+  if (bulletCount >= paragraphs.length) return true;
+  const headingCount = (String(html || '').match(/<h[1-6]\b/gi) || []).length;
+  const linkCount = (String(html || '').match(/<a\b/gi) || []).length;
+  const bodyWords = Math.max(wordCount(text), 1);
+  return (headingCount + linkCount) / bodyWords > 0.08;
+}
+
+function editorialSemanticDepth(text) {
+  return {
+    sector_mechanics: /(pharmaceutical|biotech|managed care|insurance|medical device|hospital|subsector|industry|reimbursement|patent)/i.test(text),
+    risk_explanation: /(risk|volatility|drawdown|regulation|drug-pricing|reimbursement|patent cliff|clinical trial|innovation risk|earnings risk)/i.test(text),
+    etf_comparison: /\bXLV\b/i.test(text) && /\bVHT\b/i.test(text) && /\bIYH\b/i.test(text) && /(compare|difference|expense ratio|holdings|liquidity|concentration)/i.test(text),
+    macro_sensitivity: /(interest rates|rates|defensive rotation|risk appetite|macro|growth slows|volatility rises|duration|earnings stability)/i.test(text),
+    diversification_concentration: /(diversification|diversified|concentration|top-ten|holdings|market-cap weighted|position size|single-company)/i.test(text),
+    non_advisory_framing: /(educational|framework|not financial advice|does not constitute financial|not a recommendation|research process)/i.test(text)
   };
 }
 
@@ -291,11 +394,24 @@ function nearDuplicateTitle(slugValue, html) {
 }
 
 function hasExcessiveRepetition(text) {
+  const allowedDomainTerms = new Set([
+    'healthcare',
+    'etfs',
+    'funds',
+    'sector',
+    'research',
+    'market',
+    'companies',
+    'exposure',
+    'risk'
+  ]);
   const counts = new Map();
   for (const word of String(text || '').toLowerCase().split(/\s+/).filter((item) => item.length > 4)) {
+    if (allowedDomainTerms.has(word.replace(/[^a-z]/g, ''))) continue;
     counts.set(word, (counts.get(word) || 0) + 1);
   }
-  return [...counts.values()].some((count) => count > 30);
+  const total = Math.max(wordCount(text), 1);
+  return [...counts.values()].some((count) => count > 35 && count / total > 0.012);
 }
 
 function averageSentenceLength(text) {

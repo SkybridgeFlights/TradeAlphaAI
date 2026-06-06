@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { ensureProductionEditorialLayout } = require('./editorial-layout-renderer');
+const { renderLongFormEditorial } = require('./editorial-longform-renderer');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -58,8 +59,8 @@ if (fs.existsSync(path.join(draftDir, 'en.html')) || fs.existsSync(path.join(dra
 fs.mkdirSync(draftDir, { recursive: true });
 
 const normalized = normalizeTopic(topic);
-fs.writeFileSync(path.join(draftDir, 'en.html'), ensureProductionEditorialLayout(renderArticle(normalized, 'en'), normalized, 'en'), 'utf8');
-fs.writeFileSync(path.join(draftDir, 'ar.html'), ensureProductionEditorialLayout(renderArticle(normalized, 'ar'), normalized, 'ar'), 'utf8');
+fs.writeFileSync(path.join(draftDir, 'en.html'), ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'en'), normalized, 'en'), 'utf8');
+fs.writeFileSync(path.join(draftDir, 'ar.html'), ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'ar'), normalized, 'ar'), 'utf8');
 fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized), null, 2) + '\n', 'utf8');
 
 const prevStatus = topic.status;
@@ -78,7 +79,7 @@ console.log(`${topic.slug}: status set to in_review; review_status set to pendin
 console.log('Draft only. No public pages, sitemaps, search index, registry, or Telegram actions were updated.');
 
 if (attemptAutoApproval(topic)) {
-  console.log(`${topic.slug}: AUTO-APPROVED — all 9 quality checks passed (score >= 85). status=reviewed, review_status=approved.`);
+  console.log(`${topic.slug}: AUTO-APPROVED - long-form editorial checks passed (score >= 90). status=reviewed, review_status=approved.`);
   console.log('The article is eligible for autonomous publishing on its target_publish_date.');
 } else {
   console.log(`${topic.slug}: requires manual editorial review. Queue status remains in_review/pending.`);
@@ -87,7 +88,7 @@ if (attemptAutoApproval(topic)) {
 function attemptAutoApproval(topic) {
   const result = spawnSync(
     process.execPath,
-    [path.join(__dirname, 'score-generated-content.js'), `--slug=${topic.slug}`, '--type=editorial'],
+    [path.join(__dirname, 'score-generated-content.js'), `--slug=${topic.slug}`, '--type=editorial', '--min-score=90'],
     { cwd: ROOT, encoding: 'utf8' }
   );
 
@@ -113,8 +114,8 @@ function attemptAutoApproval(topic) {
 
   console.log(`Quality score: ${entry.quality_score}/100`);
 
-  if (entry.quality_score < 85) {
-    console.log(`Auto-approval denied: score ${entry.quality_score} < 85. Manual review required.`);
+  if (entry.quality_score < 90) {
+    console.log(`Auto-approval denied: score ${entry.quality_score} < 90. Manual review required.`);
     logFailedChecks(entry.checks);
     return false;
   }

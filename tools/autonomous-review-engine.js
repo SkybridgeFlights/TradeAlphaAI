@@ -262,23 +262,17 @@ function hardGateFailures(contentType, scored) {
 
 function approveTopic(contentType, queuePath, queue, topic, scored, dryRun) {
   if (dryRun) return;
-  if (
-    topic.status === 'reviewed' &&
-    topic.review_status === 'approved' &&
-    scored.score >= PROFILES[contentType].minimum
-  ) {
-    return;
-  }
   topic.status = 'reviewed';
   topic.review_status = 'approved';
   topic.autonomous_review_status = 'approved';
   topic.autonomous_quality_score = scored.score;
+  topic.autonomous_failed_checks = [];
   topic.autonomous_reviewed_at = new Date().toISOString();
   topic.last_reviewed = TODAY;
-  topic.editor_notes = [
-    topic.editor_notes || '',
-    `Autonomous approval: score ${scored.score}/${PROFILES[contentType].minimum}; all hard checks passed.`
-  ].filter(Boolean).join(' ').trim();
+  const approvalNote = `Autonomous approval: score ${scored.score}/${PROFILES[contentType].minimum}; all hard checks passed.`;
+  if (!String(topic.editor_notes || '').includes(approvalNote)) {
+    topic.editor_notes = [topic.editor_notes || '', approvalNote].filter(Boolean).join(' ').trim();
+  }
   queue.updated = TODAY;
   writeJson(queuePath, queue);
 }

@@ -11,6 +11,7 @@ const slug = argValue('--slug');
 const execute = process.argv.includes('--execute');
 const telegram = process.argv.includes('--telegram-dry-run') || process.argv.includes('--telegram-send');
 const telegramSend = process.argv.includes('--telegram-send');
+const refreshExisting = process.argv.includes('--refresh-existing');
 
 if (!slug) fail('Usage: node tools/publish-reviewed-article.js --slug=<slug> [--execute] [--telegram-dry-run|--telegram-send]');
 
@@ -52,20 +53,24 @@ const existingPublicFiles = [publicEn, publicAr].filter(fs.existsSync);
 if (existingPublicFiles.length) {
   const enMatches = fs.existsSync(publicEn) && fs.readFileSync(publicEn, 'utf8') === enHtml;
   const arMatches = fs.existsSync(publicAr) && fs.readFileSync(publicAr, 'utf8') === arHtml;
-  if (!enMatches || !arMatches) fail('Refusing to overwrite existing public article files.');
-  console.log('Existing public article files match reviewed drafts; resuming publish finalization.');
+  if ((!enMatches || !arMatches) && !refreshExisting) fail('Refusing to overwrite existing public article files.');
+  if (!enMatches || !arMatches) {
+    console.log('Existing public article files differ from reviewed drafts; refresh-existing mode will republish them.');
+  } else {
+    console.log('Existing public article files match reviewed drafts; resuming publish finalization.');
+  }
 }
 
 // ── 1. Copy handcrafted drafts to public locations ────────────────────────────
-if (!fs.existsSync(publicEn)) {
-  fs.copyFileSync(draftEn, publicEn);
-  console.log(`Copied: ${relative(publicEn)}`);
+if (refreshExisting || !fs.existsSync(publicEn)) {
+  fs.writeFileSync(publicEn, enHtml, 'utf8');
+  console.log(`${refreshExisting ? 'Refreshed' : 'Copied'}: ${relative(publicEn)}`);
 } else {
   console.log(`Already present: ${relative(publicEn)}`);
 }
-if (!fs.existsSync(publicAr)) {
-  fs.copyFileSync(draftAr, publicAr);
-  console.log(`Copied: ${relative(publicAr)}`);
+if (refreshExisting || !fs.existsSync(publicAr)) {
+  fs.writeFileSync(publicAr, arHtml, 'utf8');
+  console.log(`${refreshExisting ? 'Refreshed' : 'Copied'}: ${relative(publicAr)}`);
 } else {
   console.log(`Already present: ${relative(publicAr)}`);
 }
