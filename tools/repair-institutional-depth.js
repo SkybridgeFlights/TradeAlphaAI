@@ -27,11 +27,12 @@ const ETF_PATH          = path.join(ROOT, 'data', 'intelligence', 'etf-flow-inte
 const RATE_PATH         = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelligence.json');
 const REPAIR_SPEC_PATH  = path.join(ROOT, 'data', 'intelligence', 'repair-spec.json');
 
-const WRITE   = process.argv.includes('--write');
-const EXECUTE = process.argv.includes('--execute');
-const RETRY   = process.argv.includes('--retry');
-const FORCE   = process.argv.includes('--force');
-const SLUG    = argValue('--slug') || null;
+const WRITE     = process.argv.includes('--write');
+const EXECUTE   = process.argv.includes('--execute');
+const RETRY     = process.argv.includes('--retry');
+const FORCE     = process.argv.includes('--force');
+const SYNC_PAIR = process.argv.includes('--sync-pair');
+const SLUG      = argValue('--slug') || null;
 
 const BOILERPLATE_MARKER = 'should be studied as an exposure framework rather than a trading instruction';
 
@@ -239,6 +240,30 @@ function main() {
       console.log('[repair] DRY RUN — add --write to apply repairs');
       const repairedText = stripHtml(repaired);
       console.log(`[repair] Repaired word count: ${repairedText.split(/\s+/).filter(Boolean).length}`);
+    }
+
+    // Sync bilingual pair structure after repair if requested
+    if (SYNC_PAIR && WRITE) {
+      console.log('[repair] --sync-pair: syncing bilingual structure...');
+      const syncResult = spawnSync('node', [
+        path.join(__dirname, 'sync-bilingual-article-structure.js'),
+        `--slug=${slug}`,
+        '--remove-orphans',
+        '--write'
+      ], { encoding: 'utf8', cwd: ROOT });
+      if (syncResult.stdout) process.stdout.write(syncResult.stdout);
+      if (syncResult.stderr) process.stderr.write(syncResult.stderr);
+
+      const checkResult = spawnSync('node', [
+        path.join(__dirname, 'check-bilingual-structure.js'),
+        `--slug=${slug}`,
+        '--drafts-only'
+      ], { encoding: 'utf8', cwd: ROOT });
+      if (checkResult.stdout) process.stdout.write(checkResult.stdout);
+      if (checkResult.stderr) process.stderr.write(checkResult.stderr);
+      if (checkResult.status !== 0) {
+        console.error('[repair] Bilingual structure still mismatched after sync — manual review required');
+      }
     }
 
     // Re-score and update status

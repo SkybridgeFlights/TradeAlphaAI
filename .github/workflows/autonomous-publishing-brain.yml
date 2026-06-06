@@ -97,6 +97,29 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Bilingual structural integrity check (preflight)
+        run: |
+          if ! node tools/check-bilingual-structure.js; then
+            echo "[bilingual] Mismatch detected — running auto-sync for affected slugs..."
+            node -e "
+              const fs = require('fs'), path = require('path');
+              const DRAFTS = 'drafts/editorial';
+              if (!fs.existsSync(DRAFTS)) process.exit(0);
+              const slugs = fs.readdirSync(DRAFTS).filter(d => fs.statSync(path.join(DRAFTS, d)).isDirectory());
+              for (const slug of slugs) {
+                const { spawnSync } = require('child_process');
+                const r = spawnSync('node', ['tools/check-bilingual-structure.js', '--slug=' + slug, '--drafts-only'], {encoding:'utf8'});
+                if (r.status !== 0) {
+                  console.log('[bilingual] Auto-syncing: ' + slug);
+                  spawnSync('node', ['tools/sync-bilingual-article-structure.js', '--slug=' + slug, '--remove-orphans', '--write'], {stdio:'inherit'});
+                }
+              }
+            "
+            echo "[bilingual] Re-validating after auto-sync..."
+            node tools/check-bilingual-structure.js
+          fi
+          echo "[bilingual] Bilingual structural integrity verified."
+
       - name: Preflight production gates
         run: |
           npm run check:editorial
@@ -160,6 +183,7 @@ jobs:
       - name: Validate intelligence and generated pages
         run: |
           npm run check:macro-intelligence
+          npm run check:bilingual-structure
           npm run check:editorial
           npm run check:language-purity
           npm run check:production
