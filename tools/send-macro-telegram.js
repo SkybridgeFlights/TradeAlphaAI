@@ -26,6 +26,7 @@ const REGIME_PATH   = path.join(ROOT, 'data', 'intelligence', 'market-regime.jso
 const RATE_PATH     = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelligence.json');
 const TRANSMISSION_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-transmission.json');
 const ETF_FLOW_PATH  = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
+const STATUS_PATH    = path.join(ROOT, 'data', 'intelligence', 'telegram-status.json');
 
 const TYPE     = argValue('--type') || 'briefing';
 const SEND     = process.argv.includes('--send');
@@ -49,6 +50,7 @@ const etfFlow   = readJson(ETF_FLOW_PATH,   { rotation_analysis: null });
 const message = buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow);
 if (!message) {
   console.log(`[macro-telegram] No content to send for type=${TYPE}`);
+  if (SEND) writeStatus(false, 'no_content');
   process.exit(0);
 }
 
@@ -67,11 +69,25 @@ if (!token || !chatId) fail('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID (or TELEGRA
 console.log(`[macro-telegram] target resolved: source=${chatIdSource} value=${masked}`);
 
 sendTelegram(token, chatId, message)
-  .then(() => console.log(`[macro-telegram] Sent ${TYPE} message (${message.length} chars)`))
+  .then(() => {
+    writeStatus(true, 'sent');
+    console.log(`[macro-telegram] Sent ${TYPE} message (${message.length} chars)`);
+  })
   .catch((err) => {
+    writeStatus(false, `send_failed: ${err.message}`);
     console.warn(`[macro-telegram] Send failed: ${err.message} — non-fatal`);
     process.exit(0);
   });
+
+function writeStatus(sent, result) {
+  fs.mkdirSync(path.dirname(STATUS_PATH), { recursive: true });
+  fs.writeFileSync(STATUS_PATH, `${JSON.stringify({
+    timestamp: new Date().toISOString(),
+    type: TYPE,
+    sent,
+    result
+  }, null, 2)}\n`, 'utf8');
+}
 
 // ── Message builders ──────────────────────────────────────────────────────────
 

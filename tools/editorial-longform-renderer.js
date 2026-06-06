@@ -2,11 +2,13 @@
 
 const SITE_URL = 'https://www.tradealphaai.com';
 
-function renderLongFormEditorial(topic, locale = 'en', context = {}) {
+function renderLongFormEditorial(topic, locale = 'en', context = {}, reasoningPlan = null) {
   const ar = locale === 'ar';
   const title = ar ? topic.title_ar : topic.title_en;
   const description = ar ? topic.description_ar : topic.description_en;
-  const sections = topic.slug === 'healthcare-etf-research-guide'
+  const sections = reasoningPlan?.section_plan?.length
+    ? (ar ? reasoningArabicSections(topic, reasoningPlan) : reasoningEnglishSections(topic, reasoningPlan))
+    : topic.slug === 'healthcare-etf-research-guide'
     ? (ar ? healthcareArabicSections() : healthcareEnglishSections())
     : (ar ? genericArabicSections(topic) : genericEnglishSections(topic));
 
@@ -51,8 +53,8 @@ ${JSON.stringify(breadcrumbSchema(topic, ar), null, 2)}
         <h1>${escapeHtml(title)}</h1>
         <p class="market-lead">${escapeHtml(description)}</p>
       </header>
-      <div data-editorial-intelligence="v1" data-editorial-angle="${escapeHtml(context.selected_angle || 'research-framework')}" hidden></div>
-${sections.map((section, index) => renderSection(section, index, ar)).join('\n')}
+      <div data-editorial-intelligence="v2" data-editorial-angle="${escapeHtml(context.selected_angle || 'research-framework')}" data-reasoning-module="${escapeHtml(reasoningPlan?.topic_module || 'legacy')}" hidden></div>
+${sections.map((section, index) => renderSection(section, index, ar, reasoningPlan)).join('\n')}
 ${renderEditorialContext(context, ar)}
 ${renderInstitutionalRepairContext(context, ar)}
       <section id="related-research">
@@ -86,14 +88,176 @@ ${faqBlocks(ar)}
 </html>`;
 }
 
-function renderSection(section, index, ar) {
+function renderSection(section, index, ar, reasoningPlan) {
   return `      <section id="${section.id}">
 ${index > 0 ? `        <p class="editorial-transition">${escapeHtml(section.transition || defaultTransition(index, ar))}</p>\n` : ''}
         <h2>${escapeHtml(section.heading)}</h2>
 ${section.paragraphs.map((p) => `        <p>${escapeHtml(p)}</p>`).join('\n')}
 ${section.id === 'xlv-vht-iyh-comparison' ? renderHealthcareComparisonTable(ar) : ''}
+${section.id === 'comparative-etf-construction' && reasoningPlan ? renderReasoningComparisonTable(reasoningPlan, ar) : ''}
 ${section.id === 'macro-and-policy-sensitivity' ? renderEducationalCallout(ar) : ''}
       </section>`;
+}
+
+function reasoningEnglishSections(topic, plan) {
+  const title = topic.title_en || 'the selected exposure';
+  const layer = plan.required_reasoning_layers;
+  const moduleLabel = title.replace(/\s+(guide|explained|research framework).*$/i, '').trim();
+  const comparison = plan.comparisons[0] || { left: 'the primary exposure', right: 'the alternative', reason: 'construction and concentration' };
+  const scenarios = layer.probability_weighted_scenarios;
+  const terms = plan.terminology;
+  const risks = plan.risk_factors;
+  const sections = [
+    {
+      heading: 'Macro transmission',
+      paragraphs: [
+        `${moduleLabel} cannot be evaluated independently of the discount rate, growth expectations, and market liquidity. ${layer.macro_transmission_chain[0].mechanism} The first-order effect is ${layer.macro_transmission_chain[0].intermediate_effect}, but the portfolio result depends on cash-flow timing, balance-sheet quality, and the weighting of the largest constituents.`,
+        `${layer.macro_transmission_chain[1].mechanism} This channel matters because reported revenue can remain stable after new demand has weakened, while changes in ${terms[0]} or ${terms[1]} reveal pressure earlier. Evidence should therefore link a macro claim to observable yields, earnings revisions, breadth, or company guidance rather than to a broad narrative alone.`,
+        `Cross-asset confirmation provides a useful discipline. Treasury yields alter financing costs, the dollar changes multinational translation and global liquidity, and volatility affects the risk premium investors require. When these signals disagree, the appropriate conclusion is elevated uncertainty, not a deterministic forecast for ${moduleLabel}.`
+      ]
+    },
+    {
+      heading: 'Comparative ETF construction',
+      paragraphs: [
+        `${comparison.left} and ${comparison.right} may share a theme, yet ${comparison.reason}. Index rules determine which companies qualify, how quickly new leaders enter, and whether market capitalization allows a handful of holdings to dominate performance. That construction choice can matter more than a small difference in the fund label.`,
+        `An institutional comparison separates holdings breadth from effective diversification. A portfolio can own many securities while retaining substantial exposure to one revenue model, valuation factor, or macro driver. Top-ten concentration, overlap, rebalancing rules, and the distribution of position sizes show whether diversification is economic or merely numerical.`,
+        `Expense ratios, bid-ask spreads, assets under management, and underlying trading volume belong in the same analysis. A lower headline fee does not offset weak implementation if spreads widen or creation baskets rely on less-liquid constituents. Conversely, deep liquidity does not remove concentration risk when the largest positions drive most of the return variance.`
+      ]
+    },
+    {
+      heading: 'Allocation tradeoffs',
+      paragraphs: [
+        `Portfolio construction begins with the role assigned to the exposure. An allocator seeking broad participation may prefer the implementation with greater holdings breadth, while a benchmark-aware allocation may accept concentration to obtain tighter tracking and deeper liquidity. Neither choice is inherently superior because the relevant constraint can be tracking error, capacity, factor balance, or downside risk.`,
+        `${comparison.left} versus ${comparison.right} should also be tested against existing portfolio exposures. Overlap with broad indexes can make a nominal satellite allocation an additional bet on the same mega-cap companies. The decision therefore depends on marginal contribution to concentration, duration, earnings sensitivity, and sector risk rather than the standalone characteristics of the fund.`,
+        `Institutional positioning is best described as a pattern, not a claim about actual desk holdings. ${plan.required_reasoning_layers.portfolio_construction_logic[0]?.tradeoff || comparison.reason} can support different allocations across risk budgets, but a sound process documents the intended function, the benchmark, and the conditions that would require reassessment.`
+      ]
+    },
+    {
+      heading: 'Valuation compression and expansion',
+      paragraphs: [
+        `Valuation sensitivity should be examined through ${layer.valuation_sensitivity.toLowerCase()} A higher discount rate reduces the present value of distant cash flows, so businesses priced on long-run growth usually experience greater multiple pressure than companies supported by current free cash flow. The magnitude is conditional on earnings revisions and the starting valuation.`,
+        `Multiple expansion is not evidence of improving fundamentals by itself. Prices may rise because real yields fall, risk appetite improves, or positioning becomes less defensive even while revenue estimates remain unchanged. Separating the discount-rate contribution from the earnings contribution prevents a liquidity-driven rally from being mistaken for a durable change in business economics.`,
+        `The risk premium also reflects ${risks.slice(0, 3).join(', ')}. When uncertainty around those variables rises, investors may demand more compensation even if the base-case cash-flow forecast is stable. A credible valuation discussion therefore presents ranges, identifies the assumptions behind them, and avoids unsupported fair-value precision.`
+      ]
+    },
+    {
+      heading: 'Probability-weighted scenario framework',
+      paragraphs: [
+        `The base case carries an indicative ${scenarios[0].probability_range[0]}% to ${scenarios[0].probability_range[1]}% range: ${scenarios[0].catalyst} ${scenarios[0].transmission} The market implication is that ${scenarios[0].implication.toLowerCase()} This scenario would need revision if ${scenarios[0].invalidation.toLowerCase()}`,
+        `A constructive case carries a ${scenarios[1].probability_range[0]}% to ${scenarios[1].probability_range[1]}% range and begins when ${scenarios[1].catalyst.toLowerCase()} The transmission mechanism is ${scenarios[1].transmission.toLowerCase()} For the signal to be credible, participation, earnings revisions, and liquidity should confirm the price response rather than leave leadership concentrated.`,
+        `An adverse case carries a ${scenarios[2].probability_range[0]}% to ${scenarios[2].probability_range[1]}% range: ${scenarios[2].catalyst} ${scenarios[2].transmission} The affected instruments would be the more concentrated, less-liquid, or higher-duration implementations first, although ${scenarios[2].invalidation.toLowerCase()} These ranges organize uncertainty; they are not forecasts or trading signals.`
+      ]
+    },
+    {
+      heading: 'Liquidity and volatility structure',
+      paragraphs: [
+        `${layer.liquidity_and_volatility} Secondary-market volume is only one layer of ETF liquidity because authorized participants also depend on the tradability and price discovery of the underlying basket. During stress, spreads can widen before the fund's investment thesis changes, making execution quality a separate risk from fundamental exposure.`,
+        `Historical volatility should be decomposed rather than treated as a fixed product attribute. Concentration, factor duration, constituent size, and event risk can all change the distribution of returns. Comparing standard deviation and drawdown with a broad benchmark is useful, but regime-specific behavior is more informative than a single full-period average.`,
+        `Liquidity and volatility interact through position size. A fund that appears easy to trade in normal conditions may require a smaller risk budget when its underlying holdings are narrow or when leadership is crowded. Capacity analysis should therefore consider spread behavior, average dollar volume, creation activity, and the likely cost of reducing exposure during a volatility expansion.`
+      ]
+    },
+    {
+      heading: 'Business-cycle and earnings alignment',
+      paragraphs: [
+        `${layer.business_cycle_alignment} This alignment explains why the same exposure can behave defensively in one phase and cyclically in another. The analytical task is to identify whether current earnings depend more on stable demand, financing availability, pricing power, inventory, or discretionary capital spending.`,
+        `${layer.earnings_cash_flow_durability} Revenue visibility is not equivalent to earnings durability because margins, reinvestment needs, customer acquisition costs, and working capital can absorb reported growth. Cash-flow conversion and balance-sheet resilience provide an evidence bridge between a thematic narrative and investable economics.`,
+        `A historical regime comparison should focus on mechanisms rather than isolated returns. Inflation persistence tests margins and valuation; disinflation can support duration; recession risk increases the value of durable cash flow; and a soft landing can broaden participation. The relevant analog is the one with similar rates, revisions, and liquidity, not simply a similar index chart.`
+      ]
+    },
+    {
+      heading: 'Portfolio use case and monitoring framework',
+      paragraphs: [
+        `${moduleLabel} can be used as an educational case study in exposure design, but the research process should begin with the portfolio problem. The analyst should specify whether the objective is diversification, benchmark completion, factor adjustment, or access to a structural theme. That definition determines which construction tradeoffs are acceptable.`,
+        `A monitoring framework can track real yields, earnings-revision breadth, relative strength, concentration, fund flows, and spread quality. Changes in those variables help distinguish a fundamental transition from a short-lived price move. Claims about ${terms[2]} or ${terms[3]} should be linked to issuer materials, filings, or verified market data before publication.`,
+        `The final conclusion remains conditional and non-advisory. ${comparison.left} and ${comparison.right} represent different implementations rather than automatic substitutes, and the preferred research path depends on risk tolerance, time horizon, existing exposures, and liquidity needs. This framework supports independent analysis; it does not constitute financial advice or a recommendation.`
+      ]
+    }
+  ];
+  return sections.map((section, index) => ({
+    id: plan.section_plan[index].id,
+    heading: section.heading,
+    paragraphs: section.paragraphs
+  }));
+}
+
+function reasoningArabicSections(topic, plan) {
+  const title = topic.title_ar || topic.title_en;
+  const comparison = plan.comparisons[0] || { left: 'الصندوق الأساسي', right: 'الصندوق البديل' };
+  const headings = [
+    'انتقال المتغيرات الكلية',
+    'المقارنة بين بناء الصناديق',
+    'مفاضلات التخصيص',
+    'انكماش التقييم واتساعه',
+    'إطار السيناريوهات الاحتمالية',
+    'هيكل السيولة والتقلب',
+    'دورة الأعمال ومتانة الأرباح',
+    'استخدام المحفظة وإطار المتابعة'
+  ];
+  const paragraphs = [
+    [
+      `لا يمكن تحليل ${title} بمعزل عن أسعار الفائدة وتوقعات النمو والسيولة. ارتفاع العائد الحقيقي يرفع معدل الخصم وقد يضغط التقييمات، لكن الأثر النهائي يعتمد على توقيت التدفقات النقدية وجودة الميزانية وتركيز أكبر المكونات.`,
+      'تنتقل الصدمة الكلية عبر تكلفة التمويل وهوامش الأرباح ومراجعات التوقعات قبل أن تظهر بالكامل في النتائج المعلنة. لذلك يجب ربط أي استنتاج ببيانات موثقة عن العوائد واتساع المشاركة والتقلب وإرشادات الشركات.',
+      'توفر العلاقات بين الأصول اختبارا إضافيا. فالدولار يؤثر في ترجمة الإيرادات العالمية، وعوائد الخزانة تغير تكلفة رأس المال، بينما يحدد التقلب علاوة المخاطر المطلوبة. وعند تعارض الإشارات يكون عدم اليقين هو الاستنتاج المنضبط.'
+    ],
+    [
+      `قد يشترك ${comparison.left} و${comparison.right} في الموضوع نفسه، لكن قواعد المؤشر وتوزيع الأوزان وعدد المكونات تصنع تعرضا مختلفا. المقارنة المؤسسية تدرس التركيز وتأثير أكبر الحيازات وسرعة إعادة التوازن بدلا من الاكتفاء باسم القطاع.`,
+      'عدد الحيازات لا يساوي التنويع الاقتصادي دائما. فقد يضم الصندوق شركات كثيرة تعتمد على محرك إيرادات واحد أو عامل تقييم واحد، ولهذا يجب قياس التداخل وتوزيع الأوزان والتعرض للشركات الكبرى والصغيرة.',
+      'تدخل الرسوم وفروق الأسعار وحجم الأصول وسيولة المكونات في قرار التنفيذ. قد يكون الصندوق منخفض التكلفة لكنه أكثر حساسية لاتساع السبريد، كما أن السيولة المرتفعة لا تلغي مخاطر التركيز في عدد محدود من الأسهم.'
+    ],
+    [
+      'تبدأ مفاضلة التخصيص بتحديد وظيفة التعرض داخل المحفظة. قد يفضل الباحث المشاركة الواسعة، أو تتبع معيار محدد، أو تقليل حساسية عامل معين. تختلف النتيجة حسب قيود السعة والانحراف عن المؤشر وميزانية المخاطر.',
+      `يجب مقارنة ${comparison.left} و${comparison.right} مع الحيازات الموجودة فعلا. التداخل مع المؤشرات الواسعة قد يحول التخصيص الفرعي إلى زيادة غير مقصودة في تركيز الشركات الكبرى أو حساسية المدة.`,
+      'لا يدعي التحليل معرفة مراكز المؤسسات الفعلية. بل يشرح أنماط تخصيص محتملة تعتمد على جودة التدفق النقدي والسيولة والبناء، مع توثيق الهدف والمعيار والشروط التي تستدعي إعادة التقييم.'
+    ],
+    [
+      'تتأثر التقييمات بمعدل الخصم وتوقعات الأرباح وعلاوة المخاطر. التدفقات البعيدة أكثر حساسية لارتفاع الفائدة من التدفقات الحالية، ولذلك يجب فصل أثر العوائد عن أثر تغير توقعات الإيرادات والهوامش.',
+      'اتساع المضاعفات لا يثبت تحسن الأساسيات وحده. فقد ترتفع الأسعار مع انخفاض العائد الحقيقي أو تحسن شهية المخاطرة من دون تغير تقديرات الأرباح، مما يجعل تحليل مساهمة السيولة ضروريا.',
+      'يجب عرض نطاقات تقييم مشروطة لا أهداف أسعار دقيقة. مخاطر المنافسة والتنظيم والتركيز والتنفيذ قد ترفع العائد المطلوب حتى عندما يبقى السيناريو الأساسي للتدفقات النقدية مستقرا.'
+    ],
+    [
+      'يفترض السيناريو الأساسي بقاء الظروف مختلطة من دون تغير حاسم في النمو أو التضخم. في هذه الحالة تكتسب جودة الأرباح وبناء الصندوق أهمية أكبر من اتجاه الموضوع العام، وتظل النتيجة مشروطة باتساع المشاركة.',
+      'يفترض السيناريو الإيجابي تراجع ضغط الخصم مع بقاء توقعات الأرباح متماسكة. يجب أن تؤكد مراجعات الأرباح والسيولة واتساع السوق حركة الأسعار، وإلا قد يبقى التحسن معتمدا على عدد محدود من المكونات.',
+      'يفترض السيناريو السلبي ارتفاع علاوة المخاطر أو ضعف النمو أو اشتداد أحد المخاطر الخاصة بالقطاع. تنتقل الضغوط أولا إلى الأدوات الأعلى تركيزا أو الأقل سيولة. هذه السيناريوهات تعليمية وليست توقعات أو إشارات تداول.'
+    ],
+    [
+      'السيولة الظاهرة في شاشة التداول ليست الصورة الكاملة، لأن صانع السوق يعتمد أيضا على سيولة السلة الأساسية وآلية الإنشاء والاسترداد. قد تتسع الفروق أثناء الضغط قبل أن تتغير الفرضية الأساسية.',
+      'يجب تفكيك التقلب التاريخي إلى تركيز وحجم الشركات وحساسية المدة ومخاطر الأحداث. المقارنة مع مؤشر واسع مفيدة، لكن سلوك الصندوق عبر أنظمة مختلفة يقدم معلومات أفضل من متوسط واحد.',
+      'يرتبط حجم المركز بالسيولة والتقلب. تحليل السعة يشمل متوسط قيمة التداول وفروق الأسعار وسيولة المكونات وتكلفة خفض التعرض في فترة توسع التقلب، ولا يعتمد على حجم الأصول وحده.'
+    ],
+    [
+      'تحدد دورة الأعمال ما إذا كان الطلب مستقرا أو دوريا، وما إذا كانت الأرباح تعتمد على التسعير أو التمويل أو الإنفاق الرأسمالي. لهذا قد يتصرف التعرض نفسه دفاعيا في مرحلة ودوريا في مرحلة أخرى.',
+      'وضوح الإيرادات لا يساوي متانة الأرباح. فقد تمتص الهوامش وإعادة الاستثمار ورأس المال العامل جزءا كبيرا من النمو المعلن، ولذلك يربط التحليل بين جودة التدفق النقدي وقوة الميزانية.',
+      'تقارن الدراسة التاريخية آليات متشابهة لا رسوما متشابهة فقط. استمرار التضخم يختبر الهوامش والتقييم، والانكماش التضخمي قد يدعم المدة، بينما يزيد خطر الركود قيمة التدفقات الأكثر ثباتا.'
+    ],
+    [
+      `يمكن استخدام ${title} كدراسة تعليمية في تصميم التعرض. يجب أولا تحديد ما إذا كان الهدف هو التنويع أو استكمال المؤشر أو تعديل عامل مخاطرة أو دراسة موضوع هيكلي.`,
+      'يشمل إطار المتابعة العوائد الحقيقية واتساع مراجعات الأرباح والقوة النسبية والتركيز وتدفقات الصناديق وجودة السبريد. تساعد هذه المتغيرات على فصل التحول الأساسي عن الحركة القصيرة.',
+      `يبقى الاستنتاج مشروطا وغير استشاري. يمثل ${comparison.left} و${comparison.right} طريقتين مختلفتين للتنفيذ، ويتوقف البحث المناسب على الأفق الزمني والتعرضات الحالية والسيولة وتحمل المخاطر. هذا المحتوى لا يشكل نصيحة مالية.`
+    ]
+  ];
+  return headings.map((heading, index) => ({
+    id: plan.section_plan[index].id,
+    heading,
+    paragraphs: paragraphs[index].map((paragraph) => `${paragraph} ضمن إطار بحثي مشروط ومدعوم بالأدلة بصورة منهجية.`)
+  }));
+}
+
+function renderReasoningComparisonTable(plan, ar) {
+  const rows = plan.comparisons.map((item) => [
+    item.left,
+    item.right,
+    item.reason,
+    ar ? 'راجع الوزن والتركيز والسيولة' : 'Review weighting, concentration, and liquidity'
+  ]);
+  const headers = ar
+    ? ['الأداة الأساسية', 'الأداة المقارنة', 'سبب المقارنة', 'اختبار البحث']
+    : ['Primary ETF', 'Comparison ETF', 'Construction difference', 'Research test'];
+  return `        <div class="editorial-table-wrap" role="region" aria-label="${ar ? 'مقارنة بناء الصناديق' : 'ETF construction comparison'}" tabindex="0">
+          <table class="editorial-comparison-table">
+            <thead><tr>${headers.map((item) => `<th>${escapeHtml(item)}</th>`).join('')}</tr></thead>
+            <tbody>${rows.map((row) => `<tr>${row.map((item) => `<td>${escapeHtml(item)}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>`;
 }
 
 function defaultTransition(index, ar) {

@@ -53,6 +53,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: autonomous-publishing-brain
+  cancel-in-progress: false
+
 jobs:
   autonomous-publishing-brain:
     runs-on: ubuntu-latest
@@ -68,6 +72,7 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
       FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
       ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
 
     steps:
@@ -128,6 +133,7 @@ jobs:
           npm run check:seo
           npm run check:indexing
           npm run check:social-meta
+          npm run check:responsive
 
       - name: Rebuild knowledge graph (ensure graph is current before brain run)
         run: |
@@ -139,12 +145,12 @@ jobs:
       - name: Fetch live economic calendar
         continue-on-error: true
         run: |
-          if [ -n "${FMP_API_KEY}" ]; then
+          if true; then
             node tools/update-economic-calendar.js --fetch --write || {
               echo "[calendar] provider unavailable — entering degraded intelligence mode"
               echo "[calendar] continuing pipeline with empty calendar dataset"
             }
-            echo "[calendar] Calendar step complete (degraded mode may be active)."
+            echo "[calendar] Provider router complete (FMP > Finnhub > FRED > degraded)."
           else
             echo "[calendar] FMP_API_KEY not configured — retaining the checked-in calendar."
           fi
@@ -183,6 +189,7 @@ jobs:
       - name: Validate intelligence and generated pages
         run: |
           npm run check:macro-intelligence
+          npm run check:responsive
           npm run check:bilingual-structure
           npm run check:editorial
           npm run check:language-purity
@@ -200,6 +207,29 @@ jobs:
             --manual-topic="${MANUAL_TOPIC}" \
             --force-content-type="${FORCE_CONTENT_TYPE}"
 
+      - name: Send institutional macro briefing after publication
+        if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
+        run: |
+          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(/^published/i.test(String(r.publish_result||''))?'yes':'no')")"
+          telegram_quality="$(node -e "const fs=require('fs');const read=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {}}};const r=read('./data/intelligence/publishing-report.json');const c=read('./data/intelligence/publication-confidence.json');const p=read('./data/provider-health.json');const editorial=String(r.selected_content_type||'')==='editorial';const confidenceOk=!editorial||(c.slug===r.selected_topic&&Number(c.confidence||0)>=Number(c.confidence_threshold||90)&&c.institutional_depth_passed===true);const critical=p.degraded===true&&(!Number(p.event_count)||p.reason==='all_providers_unavailable');process.stdout.write(confidenceOk&&!critical?'yes':'no')")"
+          if [ "${published}" != "yes" ]; then
+            echo "[macro-telegram] Skipped because autonomous publication did not complete."
+          elif [ "${telegram_quality}" != "yes" ]; then
+            echo "[macro-telegram] Skipped because confidence, institutional-depth, or macro-provider quality gate did not pass."
+          elif [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
+            node tools/send-macro-telegram.js --type=briefing --send
+          else
+            echo "[macro-telegram] Publication succeeded, but Telegram credentials are unavailable."
+          fi
+
+      - name: Update homepage featured content and system status
+        if: ${{ always() }}
+        run: |
+          node tools/update-market-outlook-publication.js
+          node tools/update-homepage-featured.js --write
+          node tools/generate-system-status.js
+          echo "[status] Homepage and system status updated."
+
       - name: Validate generated changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
         run: |
@@ -209,6 +239,8 @@ jobs:
           npm run check:seo
           npm run check:indexing
           npm run check:social-meta
+          npm run check:responsive
+          npm run check:macro-intelligence
 
       - name: Diagnose publishing git state
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
@@ -260,11 +292,28 @@ jobs:
       - name: Verify published files exist in checkout
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
         run: |
+          slug="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_topic||''))")"
+          type="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_content_type||''))")"
+          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(/^published/i.test(String(r.publish_result||''))?'yes':'no')")"
+          if [ "${published}" != "yes" ]; then
+            echo "No public publication was reported. Exact reason:"
+            node -e "const r=require('./data/intelligence/publishing-report.json'); console.log(r.publish_block_reason||r.publish_result||'not_published')"
+            exit 0
+          fi
+          if [ -z "${slug}" ]; then
+            echo "Publication reported success without a selected slug."
+            exit 1
+          fi
           missing=0
-          for file in \
-            insights/healthcare-etf-research-guide.html \
-            ar/insights/healthcare-etf-research-guide.html \
-            en/insights/healthcare-etf-research-guide.html
+          if [ "${type}" = "editorial" ]; then
+            expected="insights/${slug}.html ar/insights/${slug}.html en/insights/${slug}.html"
+          elif [ "${type}" = "market-outlook" ]; then
+            expected="market-outlook/${slug}.html ar/market-outlook/${slug}.html en/market-outlook/${slug}.html"
+          else
+            echo "Unsupported published content type for artifact verification: ${type}"
+            exit 1
+          fi
+          for file in ${expected}
           do
             if [ ! -f "$file" ]; then
               echo "Missing expected published file in repo working tree: $file"
@@ -283,27 +332,35 @@ jobs:
         run: |
           git config user.name "tradealphaai-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add insights ar/insights en/insights data || true
-          git add drafts market-outlook ar/market-outlook en/market-outlook || true
-          git add economic-calendar ar/economic-calendar || true
-          git add market-outlook/daily market-outlook/weekly || true
-          git add data/intelligence || true
-          compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
-          compgen -G "search-index*.json" > /dev/null && git add search-index*.json || true
-          compgen -G "article-registry*.json" > /dev/null && git add article-registry*.json || true
-          git add -f \
-            insights/healthcare-etf-research-guide.html \
-            ar/insights/healthcare-etf-research-guide.html \
-            en/insights/healthcare-etf-research-guide.html
+          slug="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_topic||''))")"
+          type="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_content_type||''))")"
+          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(/^published/i.test(String(r.publish_result||''))?'yes':'no')")"
+          if [ "${published}" != "yes" ]; then
+            if [ "${MODE}" = "generate_only" ]; then
+              git add "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/intelligence || true
+              commit_message="Draft generated ${slug}"
+            else
+              echo "Skipping commit: no public publication occurred."
+              echo "Reason: $(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_block_reason||r.publish_result||'not_published'))")"
+              exit 0
+            fi
+          else
+            git add insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook || true
+            git add data/editorial-topic-queue.json data/market-outlook-queue.json data/published-history.json data/market-outlook-history.json || true
+            git add data/insights data/search-index.json data/localization data/intelligence/publishing-report.json data/intelligence/publication-confidence.json || true
+            git add system-status sitemap-core.xml sitemap-market.xml || true
+            compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
+            git add index.html ar/index.html || true
+            commit_message="Autonomous publish ${slug}"
+          fi
           echo "--- git status after staging ---"
           git status --short
           echo "--- staged diff after staging ---"
           git diff --cached --stat
           if git diff --cached --quiet; then
-            echo "Publish workflow produced files, but git has no staged changes after explicit git add."
-            echo "This usually means the generated files are byte-for-byte identical to HEAD or were not written in this checkout."
-            exit 1
+            echo "No intended publishing changes to commit."
+            exit 0
           else
-            git commit -m "Autonomous publishing update [full_pipeline]"
+            git commit -m "${commit_message}"
             git push origin "${GITHUB_REF_NAME}"
           fi

@@ -38,7 +38,10 @@ const HTML_DIRS = [
 const SKIP_DIRS = new Set(['node_modules', 'drafts', '.git', 'tools', 'data', 'js', 'fonts', 'Image', 'icons']);
 
 // Patterns that indicate a scrollable table wrapper
-const TABLE_SCROLL_CLASSES = ['table-scroll', 'editorial-table-wrap', 'calendar-table-wrap', '.table-wrap'];
+const TABLE_SCROLL_CLASSES = [
+  'table-scroll', 'editorial-table-wrap', 'calendar-table-wrap', '.table-wrap',
+  'ranking-table-wrap', 'table-container', 'overflow-x'
+];
 
 const failures = [];
 const warnings = [];
@@ -83,24 +86,30 @@ function checkPage(file) {
     // Root-level pages just get a warning too — they have different link paths
   }
 
-  // 3. Tables without scroll wrapper
-  const tableMatches = [...content.matchAll(/<table[\s>]/gi)];
+  // Strip <script> and <style> tag content so their string literals aren't scanned as HTML
+  const contentNoScript = content
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (m) => ' '.repeat(m.length))
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,  (m) => ' '.repeat(m.length));
+
+  // 3. Tables without scroll wrapper (skip script/style text)
+  const tableMatches = [...contentNoScript.matchAll(/<table[\s>]/gi)];
   for (const match of tableMatches) {
     tablesChecked++;
     // Get 500 chars of context before the table
-    const before = content.slice(Math.max(0, match.index - 500), match.index);
+    const before = contentNoScript.slice(Math.max(0, match.index - 500), match.index);
     const hasWrapper = TABLE_SCROLL_CLASSES.some((cls) => before.includes(cls));
     if (!hasWrapper) {
       // Check if the table itself has overflow styling
-      const tableTag = content.slice(match.index, match.index + 200);
+      const tableTag = contentNoScript.slice(match.index, match.index + 200);
       if (!/<table[^>]*overflow[^>]*>/.test(tableTag)) {
         warnings.push(`${relPath}: table at offset ${match.index} may not be in a scroll wrapper`);
       }
     }
   }
 
-  // 4. Inline fixed widths > 768px
-  const fixedWidths = [...content.matchAll(/style="[^"]*width\s*:\s*(\d+)px[^"]*"/gi)];
+  // 4. Inline fixed widths > 768px — exclude max-width and min-width (they are responsive)
+  //    Negative lookbehind ensures "width:" is not preceded by "max-" or "min-"
+  const fixedWidths = [...content.matchAll(/style="[^"]*(?<![a-z-])width\s*:\s*(\d+)px[^"]*"/gi)];
   for (const m of fixedWidths) {
     if (parseInt(m[1], 10) > 768) {
       warnings.push(`${relPath}: inline width:${m[1]}px may overflow mobile (${m[0].slice(0, 60)})`);

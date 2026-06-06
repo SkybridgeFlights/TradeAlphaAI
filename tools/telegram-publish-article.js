@@ -13,7 +13,8 @@ const { buildMarketExpectations } = require('./build-market-expectations');
 
 const ROOT = path.resolve(__dirname, '..');
 const EDITORIAL_QUEUE = path.join(ROOT, 'data', 'editorial-topic-queue.json');
-const OUTLOOK_QUEUE = path.join(ROOT, 'data', 'market-outlook-queue.json');
+const OUTLOOK_QUEUE   = path.join(ROOT, 'data', 'market-outlook-queue.json');
+const TG_STATUS_PATH  = path.join(ROOT, 'data', 'intelligence', 'telegram-status.json');
 const slug = argValue('--slug');
 const localeArg = argValue('--locale') || 'both';
 const dryRun = !process.argv.includes('--send');
@@ -49,12 +50,72 @@ if (!token || !chatId) fail('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID (or TELEGRA
 console.log(`[telegram] target resolved: source=${chatIdSource} value=${chatIdMasked}`);
 
 (async () => {
+  const messageIds = [];
+  const { chatId: resolvedChatId, source: tgSource } = resolveTelegramTarget();
+  let tgTarget = resolvedChatId;
+  try {
+    const chatInfo = await apiCall(token, 'getChat', { chat_id: resolvedChatId });
+    tgTarget = chatInfo.title || chatInfo.username || chatInfo.type || resolvedChatId;
+  } catch (_) { /* getChat failure is non-fatal */ }
+
   for (const post of posts) {
     if (delayMs > 0) await wait(delayMs);
-    await sendTelegram(token, chatId, post.text);
-    console.log(`Sent Telegram post for ${topic.slug} (${post.locale}).`);
+    try {
+      const result = await sendTelegram(token, resolvedChatId, post.text);
+      const parsed = typeof result === 'string' ? JSON.parse(result) : result;
+      const msgId = parsed?.result?.message_id || parsed?.message_id || null;
+      if (msgId) messageIds.push(msgId);
+      console.log(`[telegram] Sent ${topic.slug} (${post.locale}) message_id=${msgId || '?'}`);
+    } catch (err) {
+      writeTelegramStatus(false, slug, tgTarget, null, err.message);
+      throw err;
+    }
   }
+  writeTelegramStatus(true, slug, tgTarget, messageIds[0] || null, null);
+  console.log(`[telegram] Delivery complete. slug=${slug} message_ids=[${messageIds.join(',')}]`);
 })().catch((error) => fail(error.message));
+
+function writeTelegramStatus(sent, tgSlug, target, messageId, errorReason) {
+  try {
+    fs.mkdirSync(path.dirname(TG_STATUS_PATH), { recursive: true });
+    fs.writeFileSync(TG_STATUS_PATH, JSON.stringify({
+      sent,
+      type: 'article',
+      slug: tgSlug,
+      telegram_target: target || null,
+      telegram_message_id: messageId || null,
+      telegram_error_reason: errorReason || null,
+      timestamp: new Date().toISOString()
+    }, null, 2) + '\n', 'utf8');
+  } catch (_) { /* non-fatal */ }
+}
+
+function apiCall(tokenValue, method, params) {
+  const body = JSON.stringify(params);
+  const options = {
+    hostname: 'api.telegram.org',
+    path: `/bot${tokenValue}/${method}`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body, 'utf8') }
+  };
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.setEncoding('utf8');
+      res.on('data', (c) => { data += c; });
+      res.on('end', () => {
+        let parsed;
+        try { parsed = JSON.parse(data); } catch { return reject(new Error(`Non-JSON response: ${data.slice(0, 120)}`)); }
+        if (!parsed.ok) return reject(new Error(`Telegram ${res.statusCode}: ${parsed.description || data.slice(0, 80)}`));
+        resolve(parsed.result);
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(15000, () => req.destroy(new Error('Telegram API timeout')));
+    req.write(body, 'utf8');
+    req.end();
+  });
+}
 
 function findTopic(slugValue) {
   const editorial = readJson(EDITORIAL_QUEUE, { topics: [] });
@@ -462,30 +523,7 @@ function escapeRegExp(value) {
 }
 
 function sendTelegram(tokenValue, chatIdValue, text) {
-  const body = JSON.stringify({ chat_id: chatIdValue, text, disable_web_page_preview: false });
-  const options = {
-    hostname: 'api.telegram.org',
-    path: `/bot${tokenValue}/sendMessage`,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Content-Length': Buffer.byteLength(body, 'utf8')
-    }
-  };
-  return new Promise((resolve, reject) => {
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) resolve(data);
-        else reject(new Error(`Telegram API failed with ${res.statusCode}: ${data}`));
-      });
-    });
-    req.on('error', reject);
-    req.write(body, 'utf8');
-    req.end();
-  });
+  return apiCall(tokenValue, 'sendMessage', { chat_id: chatIdValue, text, disable_web_page_preview: false });
 }
 
 function wait(ms) {

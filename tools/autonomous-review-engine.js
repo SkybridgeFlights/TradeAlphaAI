@@ -5,6 +5,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { hasRealSources } = require('./score-autonomous-topic');
 const { validateInternalLinks, checkClusterConnectivity, checkAnchorDiversity } = require('./internal-link-intelligence');
+const { assessPublicationConfidence } = require('./intelligence/publication-confidence-engine');
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -28,7 +29,14 @@ const PROFILES = {
       'internal_link_resolution',
       'hallucination_risk',
       'educational_compliance',
-      'disclaimer_presence'
+      'disclaimer_presence',
+      'institutional_reasoning_plan',
+      'causal_reasoning',
+      'evidence_linkage',
+      'comparative_analysis',
+      'scenario_framing',
+      'analytical_density',
+      'publication_confidence'
     ]
   },
   'market-outlook': {
@@ -191,6 +199,7 @@ function editorialPrepublishChecks(slug) {
   const ar = readFile(path.join(dir, 'ar.html'));
   const requiredEnCanonical = `https://www.tradealphaai.com/insights/${slug}.html`;
   const requiredArCanonical = `https://www.tradealphaai.com/ar/insights/${slug}.html`;
+  const confidence = assessPublicationConfidence({ slug, draftDir: dir, write: true });
   return {
     article_pair_contract:
       en.includes(`rel="canonical" href="${requiredEnCanonical}"`) &&
@@ -201,7 +210,14 @@ function editorialPrepublishChecks(slug) {
       ar.includes('BreadcrumbList') &&
       en.includes(`data-locale-route="ar" href="/ar/insights/${slug}.html"`) &&
       ar.includes(`data-locale-route="en" href="/insights/${slug}.html"`),
-    internal_link_resolution: internalLinksResolve(en) && internalLinksResolve(ar)
+    internal_link_resolution: internalLinksResolve(en) && internalLinksResolve(ar),
+    institutional_reasoning_plan: confidence.checks.reasoning_plan_present && confidence.checks.plan_consumed,
+    causal_reasoning: confidence.checks.causal_reasoning,
+    evidence_linkage: confidence.checks.evidence_linkage,
+    comparative_analysis: confidence.checks.comparative_analysis,
+    scenario_framing: confidence.checks.scenario_framing,
+    analytical_density: confidence.checks.analytical_density,
+    publication_confidence: confidence.confidence >= confidence.confidence_threshold && confidence.institutional_depth_passed
   };
 }
 

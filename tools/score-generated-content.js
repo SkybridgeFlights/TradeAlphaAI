@@ -91,7 +91,11 @@ function scoreDraft(dir) {
     checks.editorial_sentence_opening_diversity &&
     checks.editorial_lexical_richness &&
     checks.editorial_anti_generic_language &&
-    checks.editorial_comparison_depth
+    checks.editorial_comparison_depth &&
+    checks.editorial_causal_reasoning &&
+    checks.editorial_evidence_linkage &&
+    checks.editorial_scenario_framing &&
+    checks.editorial_plan_consumption
   );
   const requiredScore = type === 'market_outlook' ? 90 : type === 'editorial' ? 90 : 85;
   return {
@@ -129,7 +133,11 @@ function editorialLongFormChecks(en, ar, enBody, arBody, combined) {
     editorial_sentence_opening_diversity: sentenceOpeningDiversity(enArticleText) >= 0.72,
     editorial_lexical_richness: lexicalRichness(enArticleText) >= 0.24,
     editorial_anti_generic_language: antiGenericLanguage(enArticleText),
-    editorial_comparison_depth: comparisonDepth(en, enArticleText)
+    editorial_comparison_depth: comparisonDepth(en, enArticleText),
+    editorial_causal_reasoning: causalReasoning(enArticleText),
+    editorial_evidence_linkage: evidenceLinkage(enArticleText),
+    editorial_scenario_framing: scenarioFraming(enArticleText),
+    editorial_plan_consumption: /data-editorial-intelligence="v2"/.test(en) && /data-reasoning-module="[^"]+"/.test(en)
   };
 }
 
@@ -189,8 +197,8 @@ function looksLikeSkeleton(html, text, paragraphs, bulletCount) {
 
 function editorialSemanticDepth(text) {
   return {
-    sector_mechanics: /(pharmaceutical|biotech|managed care|insurance|medical device|hospital|subsector|industry|reimbursement|patent)/i.test(text),
-    diversification_mechanics: /(diversification|diversified|holdings count|broader universe|single-company risk|market-cap weighted)/i.test(text),
+    sector_mechanics: /(pharmaceutical|biotech|managed care|medical device|reimbursement|wafer|foundry|semiconductor|cloud|software|cybersecurity|endpoint|identity access|duration|yield curve|sector rotation|earnings breadth|industry|subsector)/i.test(text),
+    diversification_mechanics: /(diversification|diversified|holdings breadth|broader universe|single-company risk|market-cap|weighting|overlap|position sizes)/i.test(text),
     macro_sensitivity: /(interest rates|rates|defensive rotation|risk appetite|macro|growth slows|volatility rises|duration|earnings stability)/i.test(text),
     valuation_risk_framing: /(valuation|risk premium|earnings expectations|cash flow|drawdown|financing conditions)/i.test(text),
     concentration_discussion: /(concentration|top-ten|largest holdings|mega-cap|position size|dominate)/i.test(text),
@@ -235,14 +243,41 @@ function antiGenericLanguage(text) {
     'in conclusion'
   ];
   const lower = text.toLowerCase();
-  return phrases.every((phrase) => (lower.match(new RegExp(escapeRegExp(phrase), 'g')) || []).length <= 1);
+  const repeatedOpenings = String(text || '').split(/[.!?]+/)
+    .map((sentence) => sentence.trim().toLowerCase().split(/\s+/).slice(0, 4).join(' '))
+    .filter((opening) => opening.split(/\s+/).length >= 3)
+    .reduce((counts, opening) => counts.set(opening, (counts.get(opening) || 0) + 1), new Map());
+  const vagueClaims = (lower.match(/\b(markets remain uncertain|could go higher or lower|many factors to consider|depends on various factors|only time will tell)\b/g) || []).length;
+  return phrases.every((phrase) => (lower.match(new RegExp(escapeRegExp(phrase), 'g')) || []).length <= 1) &&
+    [...repeatedOpenings.values()].every((count) => count <= 2) &&
+    vagueClaims === 0;
 }
 
 function comparisonDepth(html, text) {
   const tickers = new Set((text.match(/\b[A-Z]{2,5}\b/g) || []).filter((ticker) => !['ETF', 'SPY', 'FAQ'].includes(ticker)));
   if (!/\bETF(s)?\b/i.test(text) || tickers.size < 2) return true;
-  const headers = ['Expense ratio', 'Approx. holdings', 'Concentration style', 'Top-holdings influence', 'Typical volatility profile', 'Liquidity profile'];
-  return /class="editorial-comparison-table"/.test(html) && headers.every((header) => html.includes(header));
+  const healthcareHeaders = ['Expense ratio', 'Approx. holdings', 'Concentration style', 'Top-holdings influence', 'Typical volatility profile', 'Liquidity profile'];
+  const reasoningHeaders = ['Primary ETF', 'Comparison ETF', 'Construction difference', 'Research test'];
+  return /class="editorial-comparison-table"/.test(html) &&
+    (healthcareHeaders.every((header) => html.includes(header)) || reasoningHeaders.every((header) => html.includes(header)));
+}
+
+function causalReasoning(text) {
+  const mechanisms = (String(text).match(/\b(because|therefore|depends on|transmission|first-order effect|as a result|in turn)\b/gi) || []).length;
+  const causalObjects = (String(text).match(/\b(discount rate|cash flow|earnings revisions|risk premium|financing costs|margin|liquidity|valuation)\b/gi) || []).length;
+  return mechanisms >= 8 && causalObjects >= 16;
+}
+
+function evidenceLinkage(text) {
+  return (String(text).match(/\b(evidence|observable|verified|issuer materials|filings|earnings revisions|company guidance|market data)\b/gi) || []).length >= 5;
+}
+
+function scenarioFraming(text) {
+  return /\bbase case\b/i.test(text) &&
+    /\bconstructive case\b/i.test(text) &&
+    /\badverse case\b/i.test(text) &&
+    (String(text).match(/\b\d{2}% to \d{2}%/g) || []).length >= 3 &&
+    /\binvalidat|would need revision|would challenge/i.test(text);
 }
 
 function marketOutlookChecks(en, ar, enBody, arBody, combined) {

@@ -209,11 +209,13 @@ function checkDraftTree(dir, type) {
       const rel = relative(file);
       const html = fs.readFileSync(file, 'utf8');
       const plain = stripHtml(html);
+      const articleMatch = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i);
+      const editorialPlain = stripHtml(articleMatch ? articleMatch[1] : html);
       if (/[\uFFFD]/.test(html) || /\?{3,}/.test(html)) failures.push(`${rel}: malformed UTF-8 or placeholder text`);
       if (name === 'ar.html' && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) failures.push(`${rel}: missing Arabic RTL marker`);
       if (forbiddenCertainty.test(plain)) failures.push(`${rel}: forbidden overconfident or advice language`);
       if (fabricatedStats.test(plain)) failures.push(`${rel}: fabricated-source wording found`);
-      if (excessiveBrand.test(plain)) failures.push(`${rel}: excessive TradeAlphaAI repetition`);
+      if (excessiveBrand.test(editorialPlain)) failures.push(`${rel}: excessive TradeAlphaAI repetition`);
       if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي|educational market commentary|تعليق تعليمي/.test(html)) {
         failures.push(`${rel}: missing educational disclaimer`);
       }

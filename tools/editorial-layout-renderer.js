@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
 
 const SITE_URL = 'https://www.tradealphaai.com';
 const ETF_FLOW_PATH = path.resolve(__dirname, '..', 'data', 'intelligence', 'etf-flow-intelligence.json');
@@ -16,6 +17,7 @@ function hasProductionEditorialLayout(html, ar = false) {
   return [
     /<body[^>]+class="[^"]*\bmarket-page\b/i,
     /class="[^"]*\btopbar\b[^"]*"/,
+    /data-global-header="homepage"/,
     /class="[^"]*\bmarket-shell\b[^"]*"/,
     /class="[^"]*\bwrap\b[^"]*"/,
     /class="[^"]*\binsight-hero-card\b[^"]*"/,
@@ -23,6 +25,7 @@ function hasProductionEditorialLayout(html, ar = false) {
     /class="[^"]*\binsight-article-body\b[^"]*"/,
     /class="[^"]*\binsight-sidebar\b[^"]*"/,
     /css\/market\/market-portal\.css/,
+    /css\/global-layout\.css/,
     /js\/language-router\.js/,
     /js\/mobile-nav\.js/,
     /data-locale-route="ar"|data-locale-route="en"/
@@ -53,7 +56,11 @@ function ensureProductionEditorialLayout(html, topic, locale) {
   const head = normalizeHead(existingHead, { topic, title, description, ar });
   const prefix = ar ? '../../' : '../';
   const canonicalPath = `${ar ? '/ar' : ''}/insights/${topic.slug}.html`;
-  const nav = renderNav(topic.slug, ar);
+  const nav = renderSiteHeader({
+    locale: ar ? 'ar' : 'en',
+    active: 'insights',
+    languageHref: ar ? `/insights/${topic.slug}.html` : `/ar/insights/${topic.slug}.html`
+  });
   const sidebar = renderSidebar(articleBody, topic, ar);
 
   return `<!doctype html>
@@ -81,6 +88,7 @@ ${normalizeArticleBody(articleBody, topic, ar)}
       </article>${sidebar}</div></section>
     </div>
   </main>
+  ${renderSiteFooter({ locale: ar ? 'ar' : 'en' })}
   <script>(function(){var bar=document.getElementById('read-progress');if(!bar)return;window.addEventListener('scroll',function(){var d=document.documentElement;var p=Math.min(d.scrollTop/(d.scrollHeight-d.clientHeight)||0,1);bar.style.width=(p*100).toFixed(1)+'%';},{passive:true});})();</script>
   <script src="${prefix}js/research-layer.js"></script>
   <script src="${prefix}js/language-router.js" defer></script>
@@ -117,6 +125,7 @@ function normalizeHead(head, { topic, title, description, ar }) {
     if (!out.includes(href)) out += `\n  <link rel="stylesheet" href="${href}" />`;
   }
   if (!out.includes('/css/responsive.css')) out += '\n  <link rel="stylesheet" href="/css/responsive.css" />';
+  if (!out.includes('/css/global-layout.css')) out += '\n  <link rel="stylesheet" href="/css/global-layout.css" />';
   return out;
 }
 

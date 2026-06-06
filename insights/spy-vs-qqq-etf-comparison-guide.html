@@ -80,12 +80,20 @@
 }
   </script>
   <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
 </head>
 <body class="market-page">
   <div class="insight-progress-bar" id="read-progress"></div>
-  <div class="topbar">
+  <div class="topbar" data-global-header="homepage" data-active-section="insights">
     <div class="wrap topbar-inner">
-      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlphaAI</strong><span>Research Platform</span></span></a>
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy">
+          <strong>TradeAlpha AI</strong>
+          <span>TRADING &amp; MARKET RESEARCH PLATFORM</span>
+        </span>
+      </a>
+
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
           <a href="/" class="nav-link">Home</a>
@@ -95,24 +103,33 @@
           <div class="nav-menu">
             <a href="/rankings.html" class="nav-link nav-menu-trigger">Top Picks<span class="nav-badge">Hot</span></a>
             <div class="nav-dropdown">
-              <a href="/rankings.html#top-broad-market-etfs">Best ETFs for 2026</a>
+              <a href="/rankings.html#top-stocks">Top 10 Stocks Right Now</a>
               <a href="/rankings.html#top-ai-stocks">Best AI Stocks</a>
+              <a href="/rankings.html#top-semiconductor-stocks">Best Semiconductor Stocks</a>
+              <a href="/rankings.html#top-growth-stocks">Best Growth Stocks</a>
               <a href="/rankings.html#top-dividend-etfs">Top Dividend ETFs</a>
+              <a href="/rankings.html#top-broad-market-etfs">Best ETFs for 2026</a>
             </div>
           </div>
-          <a href="/insights/" class="nav-link">Articles</a>
+          <a href="/insights/" class="nav-link is-active" aria-current="page">Articles</a>
+          <a href="/market-outlook/" class="nav-link">Market Outlook</a>
+          <a href="/economic-calendar/" class="nav-link">Economic Calendar</a>
           <a href="/methodology.html" class="nav-link">Methodology</a>
         </nav>
+        <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">Free Signals</a>
         <div class="locale-links" aria-label="Language">
           <a class="lang-switch" data-locale-route="ar" href="/ar/insights/spy-vs-qqq-etf-comparison-guide.html">Arabic</a>
-          <a class="lang-switch" data-locale-route="en" href="/insights/spy-vs-qqq-etf-comparison-guide.html">English</a>
+          <a class="lang-switch" data-locale-route="en" href="/insights/">English</a>
         </div>
         <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
-          <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
         </button>
       </div>
     </div>
   </div>
+
   <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/insights/">Articles</a><span>/</span><span>SPY vs QQQ ETF Comparison Guide</span></nav>

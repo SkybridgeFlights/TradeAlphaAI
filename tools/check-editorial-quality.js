@@ -84,7 +84,7 @@ function checkDraftIfPresent(topic) {
     if (forbiddenClaims(stripHtml(html))) failures.push(`${rel}: forbidden promotional or advice wording found`);
     // Manual-revision drafts remain blocked from approval and publishing. Every other
     // draft must satisfy the same institutional depth gates regardless of source.
-    if (locale === 'en' && requiresPublicationDepth && /data-editorial-intelligence="v1"/.test(html)) checkInstitutionalEditorial(html, rel);
+    if (locale === 'en' && requiresPublicationDepth && /data-editorial-intelligence="v(?:1|2)"/.test(html)) checkInstitutionalEditorial(html, rel);
   }
   const metadata = path.join(dir, 'metadata.json');
   if (fs.existsSync(metadata)) {
@@ -114,7 +114,7 @@ function checkInstitutionalEditorial(html, rel) {
   const openingDiversity = openings.length ? new Set(openings).size / openings.length : 0;
   const genericPhrases = (text.match(/it is important to note|investors should consider|can help investors|offers exposure to/gi) || []).length;
   const semanticGroups = [
-    /(pharmaceutical|biotech|managed care|medical device|subindustry|sector mechanics)/i,
+    /(pharmaceutical|biotech|managed care|medical device|semiconductor|wafer|foundry|cloud|software|cybersecurity|endpoint|duration|yield curve|sector rotation|earnings breadth|subindustry|sector mechanics)/i,
     /(diversification|holdings count|market-cap weighted)/i,
     /(interest rates|defensive rotation|macro|risk appetite)/i,
     /(valuation|cash flow|earnings expectations|risk premium)/i,

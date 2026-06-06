@@ -6,6 +6,7 @@ const { spawnSync } = require('child_process');
 const { ensureProductionEditorialLayout } = require('./editorial-layout-renderer');
 const { renderLongFormEditorial } = require('./editorial-longform-renderer');
 const { buildEditorialContext, updateEditorialMemory } = require('./editorial-context-engine');
+const { buildInstitutionalReasoningPlan } = require('./intelligence/institutional-reasoning-engine');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -61,11 +62,13 @@ fs.mkdirSync(draftDir, { recursive: true });
 
 const normalized = normalizeTopic(topic);
 const editorialContext = buildEditorialContext(normalized);
-const enHtml = ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'en', editorialContext), normalized, 'en');
-const arHtml = ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'ar', editorialContext), normalized, 'ar');
+const reasoningPlan = buildInstitutionalReasoningPlan(normalized, editorialContext, { write: true });
+const enHtml = ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'en', editorialContext, reasoningPlan), normalized, 'en');
+const arHtml = ensureProductionEditorialLayout(renderLongFormEditorial(normalized, 'ar', editorialContext, reasoningPlan), normalized, 'ar');
 fs.writeFileSync(path.join(draftDir, 'en.html'), enHtml, 'utf8');
 fs.writeFileSync(path.join(draftDir, 'ar.html'), arHtml, 'utf8');
-fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized), null, 2) + '\n', 'utf8');
+fs.writeFileSync(path.join(draftDir, 'reasoning-plan.json'), JSON.stringify(reasoningPlan, null, 2) + '\n', 'utf8');
+fs.writeFileSync(path.join(draftDir, 'metadata.json'), JSON.stringify(renderMetadata(normalized, reasoningPlan), null, 2) + '\n', 'utf8');
 updateEditorialMemory(normalized, editorialContext, enHtml);
 
 const prevStatus = topic.status;
@@ -81,6 +84,7 @@ fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
 
 console.log(`Generated AI-assisted editorial draft: ${relative(draftDir)}`);
 console.log(`Editorial angle: ${editorialContext.selected_angle}; market context: ${editorialContext.evidence_status}`);
+console.log(`Institutional reasoning module: ${reasoningPlan.topic_module}; planned sections: ${reasoningPlan.section_plan.length}`);
 console.log(`${topic.slug}: status set to in_review; review_status set to pending`);
 console.log('Draft only. No public pages, sitemaps, search index, registry, or Telegram actions were updated.');
 
@@ -277,10 +281,10 @@ ${renderFaqBlocks(ar)}
 `;
 }
 
-function renderMetadata(topic) {
+function renderMetadata(topic, reasoningPlan) {
   return {
     slug: topic.slug,
-    source: 'deterministic-template',
+    source: 'institutional-reasoning-engine',
     status: 'in_review',
     review_status: 'pending',
     generated_at: new Date().toISOString(),
@@ -293,7 +297,13 @@ function renderMetadata(topic) {
     review_required: true,
     auto_publish: false,
     telegram_ready: false,
-    public_site_updated: false
+    public_site_updated: false,
+    reasoning_plan: {
+      version: reasoningPlan.version,
+      topic_module: reasoningPlan.topic_module,
+      evidence_status: reasoningPlan.evidence_status,
+      section_archetypes: reasoningPlan.section_plan.map((section) => section.archetype)
+    }
   };
 }
 

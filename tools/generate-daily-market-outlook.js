@@ -27,6 +27,8 @@
 
 const fs   = require('fs');
 const path = require('path');
+const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
+const { updateOutlookPublication } = require('./update-market-outlook-publication');
 
 const ROOT          = path.resolve(__dirname, '..');
 const CAL_PATH      = path.join(ROOT, 'data', 'economic-calendar.json');
@@ -75,10 +77,15 @@ function main() {
     const html = buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission, calendarDegraded);
     outputPage(html, path.join(DAILY_DIR, `${today}.html`), `Daily macro briefing ${today}`);
   }
+  if (WRITE) updateOutlookPublication();
 }
 
 function outputPage(html, filePath, label) {
   const normalizedHtml = String(html || '').replace(/[ \t]+(?=\r?$)/gm, '');
+  const missing = validateOutlookPage(normalizedHtml);
+  if (missing.length) {
+    throw new Error(`[daily-outlook] Refusing output; required publication markers missing: ${missing.join(', ')}`);
+  }
   if (!WRITE) {
     console.log(`[daily-outlook] Dry run — would write ${path.relative(ROOT, filePath).replaceAll('\\', '/')}`);
     console.log(`[daily-outlook] ${label}: ${normalizedHtml.length} chars`);
@@ -91,6 +98,20 @@ function outputPage(html, filePath, label) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, normalizedHtml, 'utf8');
   console.log(`[daily-outlook] Wrote ${path.relative(ROOT, filePath).replaceAll('\\', '/')}`);
+}
+
+function validateOutlookPage(html) {
+  const checks = [
+    ['full_html_document', /<!doctype html>[\s\S]*<\/html>/i],
+    ['global_layout', /css\/global-layout\.css/],
+    ['site_header', /data-global-header="homepage"/],
+    ['site_footer', /class="[^"]*\bsite-footer\b/],
+    ['market_regime', /regime/i],
+    ['rate_context', /rate|yield/i],
+    ['transmission_context', /transmission|cross-asset|reaction map/i],
+    ['educational_disclaimer', /not investment advice/i]
+  ];
+  return checks.filter(([, pattern]) => !pattern.test(html)).map(([name]) => name);
 }
 
 // ── Daily page builder ────────────────────────────────────────────────────────
@@ -142,6 +163,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../landing.css" />
   <link rel="stylesheet" href="../../css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   ${buildJsonLd(title, description, today, slug)}
 </head>
@@ -189,6 +211,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
     </div>
   </main>
   ${buildFooter()}
+  <script src="/js/mobile-nav.js" defer></script>
 </body>
 </html>`;
 }
@@ -236,6 +259,7 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../landing.css" />
   <link rel="stylesheet" href="../../css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   ${buildJsonLd(title, description, new Date().toISOString().slice(0, 10), `weekly-${weekSlug}`)}
 </head>
@@ -286,6 +310,7 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
     </div>
   </main>
   ${buildFooter()}
+  <script src="/js/mobile-nav.js" defer></script>
 </body>
 </html>`;
 }
@@ -532,11 +557,15 @@ function buildJsonLd(title, description, date, slug) {
 // ── Nav / footer shared HTML ──────────────────────────────────────────────────
 
 function buildNavBar() {
-  return `<div class="topbar"><div class="wrap topbar-inner"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlphaAI</strong><span>Research Platform</span></span></a><div class="top-actions"><nav class="nav-group" aria-label="Primary"><a href="/" class="nav-link">Home</a><a href="/stocks.html" class="nav-link">Global Stock Research</a><a href="/etfs.html" class="nav-link">ETF Analyzer</a><a href="/rankings.html" class="nav-link">Rankings</a><a href="/insights/" class="nav-link">Articles</a><a href="/market-outlook/" class="nav-link">Market Outlook</a><a href="/economic-calendar/" class="nav-link">Economic Calendar</a><a href="/methodology.html" class="nav-link">Methodology</a></nav><div class="locale-links" aria-label="Language"><a class="lang-switch" data-locale-route="ar" href="/ar/market-outlook/">Arabic</a><a class="lang-switch active" data-locale-route="en" href="/market-outlook/">English</a></div></div></div></div>`;
+  return renderSiteHeader({
+    locale: 'en',
+    active: 'market-outlook',
+    languageHref: '/ar/market-outlook/'
+  });
 }
 
 function buildFooter() {
-  return `<footer class="site-footer"><div class="wrap footer-inner"><p>&copy; 2026 TradeAlphaAI. Educational research only. Not financial advice.</p><nav class="footer-nav" aria-label="Footer"><a href="/methodology.html">Methodology</a><a href="/economic-calendar/">Economic Calendar</a><a href="/market-outlook/">Market Outlook</a><a href="/insights/">Articles</a></nav></div></footer>`;
+  return renderSiteFooter({ locale: 'en' });
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

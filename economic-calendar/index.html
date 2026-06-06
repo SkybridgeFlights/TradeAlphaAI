@@ -28,26 +28,52 @@
   <link rel="stylesheet" href="../css/market/market-portal.css" />
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","name":"Economic Calendar | TradeAlphaAI","description":"High-impact macro events with cross-asset educational context — CPI, NFP, FOMC, GDP and more.","url":"https://www.tradealphaai.com/economic-calendar/","inLanguage":"en","publisher":{"@type":"Organization","name":"TradeAlphaAI","url":"https://www.tradealphaai.com"}},{"@type":"Dataset","name":"TradeAlphaAI Economic Calendar","description":"Scheduled and released economic events with cross-asset sensitivity and surprise analysis. Data sourced from Financial Modeling Prep.","url":"https://www.tradealphaai.com/economic-calendar/","license":"https://www.tradealphaai.com/methodology.html","creator":{"@type":"Organization","name":"TradeAlphaAI"},"distribution":[{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://www.tradealphaai.com/data/economic-calendar.json"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What events does the TradeAlphaAI economic calendar track?","acceptedAnswer":{"@type":"Answer","text":"The calendar tracks 17 event types including CPI, Core CPI, PCE, NFP, Unemployment Rate, FOMC Rate Decision, Fed Statement, Powell Speech, GDP, Retail Sales, ISM PMI, Jobless Claims, Treasury Auction, and ECB/BoJ/BoE rate decisions."}},{"@type":"Question","name":"How does a CPI surprise affect gold and Treasury yields?","acceptedAnswer":{"@type":"Answer","text":"A hotter-than-expected CPI typically causes Treasury yields to rise (hawkish repricing), which increases gold's opportunity cost and can pressure gold prices. A softer CPI may ease real-yield pressure and support gold. Confirmation requires the yield move to materialize, not just equity reactions."}},{"@type":"Question","name":"What assets should I watch after an NFP release?","acceptedAnswer":{"@type":"Answer","text":"After NFP, the key confirming assets are Treasury yields, DXY, SPY, IWM, and VIX. Strong NFP may reinforce higher-for-longer rate expectations (yields up, DXY firms, IWM lagging). Weak NFP may ease policy expectations (yields down, TLT rallies), but recession risk can simultaneously pressure equities."}},{"@type":"Question","name":"Is the TradeAlphaAI economic calendar financial advice?","acceptedAnswer":{"@type":"Answer","text":"No. The TradeAlphaAI Economic Calendar is educational research only. All cross-asset transmission chains, scenario frameworks, and historical sensitivity data are educational constructs. They do not constitute investment advice, trading recommendations, or predictions of future market behavior."}}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TradeAlphaAI","item":"https://www.tradealphaai.com/"},{"@type":"ListItem","position":2,"name":"Economic Calendar","item":"https://www.tradealphaai.com/economic-calendar/"}]}]}</script>
   <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
 </head>
 <body class="market-page">
-  <div class="topbar">
+  <div class="topbar" data-global-header="homepage" data-active-section="economic-calendar">
     <div class="wrap topbar-inner">
-      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlphaAI</strong><span>Research Platform</span></span></a>
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy">
+          <strong>TradeAlpha AI</strong>
+          <span>TRADING &amp; MARKET RESEARCH PLATFORM</span>
+        </span>
+      </a>
+
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
           <a href="/" class="nav-link">Home</a>
           <a href="/stocks.html" class="nav-link">Global Stock Research</a>
           <a href="/etfs.html" class="nav-link">ETF Analyzer</a>
-          <a href="/rankings.html" class="nav-link">Rankings</a>
+          <a href="/ai-stock-screener.html" class="nav-link">Market Screener</a>
+          <div class="nav-menu">
+            <a href="/rankings.html" class="nav-link nav-menu-trigger">Top Picks<span class="nav-badge">Hot</span></a>
+            <div class="nav-dropdown">
+              <a href="/rankings.html#top-stocks">Top 10 Stocks Right Now</a>
+              <a href="/rankings.html#top-ai-stocks">Best AI Stocks</a>
+              <a href="/rankings.html#top-semiconductor-stocks">Best Semiconductor Stocks</a>
+              <a href="/rankings.html#top-growth-stocks">Best Growth Stocks</a>
+              <a href="/rankings.html#top-dividend-etfs">Top Dividend ETFs</a>
+              <a href="/rankings.html#top-broad-market-etfs">Best ETFs for 2026</a>
+            </div>
+          </div>
           <a href="/insights/" class="nav-link">Articles</a>
           <a href="/market-outlook/" class="nav-link">Market Outlook</a>
-          <a href="/economic-calendar/" class="nav-link">Economic Calendar</a>
+          <a href="/economic-calendar/" class="nav-link is-active" aria-current="page">Economic Calendar</a>
           <a href="/methodology.html" class="nav-link">Methodology</a>
         </nav>
+        <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">Free Signals</a>
         <div class="locale-links" aria-label="Language">
           <a class="lang-switch" data-locale-route="ar" href="/ar/economic-calendar/">Arabic</a>
-          <a class="lang-switch active" data-locale-route="en" href="/economic-calendar/">English</a>
+          <a class="lang-switch" data-locale-route="en" href="/economic-calendar/">English</a>
         </div>
+        <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
       </div>
     </div>
   </div>
@@ -408,5 +434,6 @@
   .asset-tag { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px; background: var(--surface-3, #eff6ff); color: var(--text-link, #1d4ed8); font-size: 0.75rem; font-weight: 600; }
   .narrative-callout { background: var(--surface-2, #f0f4ff); border-left: 4px solid var(--accent, #3b82f6); border-radius: 4px; padding: 0.9rem 1.1rem; font-size: 0.88rem; color: var(--text-body, #333); line-height: 1.6; }
   </style>
+  <script src="/js/mobile-nav.js" defer></script>
 </body>
 </html>

@@ -5,12 +5,54 @@
   }
 
   ready(function () {
-    var header = document.querySelector(".topbar");
-    var toggle = document.querySelector(".mobile-menu-toggle");
-    var nav = document.querySelector(".nav-group");
-    if (!header || !toggle || !nav) return;
-
     var isArabic = document.documentElement.lang === "ar" || document.documentElement.dir === "rtl";
+    var header = document.querySelector(".site-header, .topbar");
+    if (!header) return;
+    header.classList.add("site-header", "topbar");
+    if (header.tagName !== "HEADER") header.setAttribute("role", "banner");
+
+    var nav = header.querySelector(".nav-group");
+    if (!nav) return;
+
+    var toggle = header.querySelector(".mobile-menu-toggle");
+    if (!toggle) {
+      toggle = document.createElement("button");
+      toggle.className = "mobile-menu-toggle";
+      toggle.type = "button";
+      toggle.setAttribute("aria-label", "Open menu");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-controls", "mobile-nav-drawer");
+      toggle.innerHTML = '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
+      (header.querySelector(".top-actions") || header).appendChild(toggle);
+    }
+
+    var currentPath = window.location.pathname.replace(/index\.html$/, "");
+    Array.prototype.forEach.call(nav.querySelectorAll("a[href]"), function (link) {
+      var href = link.getAttribute("href");
+      if (!href || href.charAt(0) !== "/") return;
+      var normalized = href.replace(/index\.html$/, "");
+      var exact = currentPath === normalized;
+      var section = normalized !== "/" && normalized !== "/ar/" && currentPath.indexOf(normalized) === 0;
+      if (exact || section) {
+        link.classList.add("is-active");
+        link.setAttribute("aria-current", "page");
+      }
+    });
+
+    Array.prototype.forEach.call(nav.querySelectorAll(".nav-menu-trigger"), function (trigger) {
+      trigger.addEventListener("click", function (event) {
+        if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          event.preventDefault();
+          var menu = trigger.closest(".nav-menu");
+          var opening = !menu.classList.contains("is-open");
+          Array.prototype.forEach.call(nav.querySelectorAll(".nav-menu.is-open"), function (openMenu) {
+            openMenu.classList.remove("is-open");
+          });
+          if (opening) menu.classList.add("is-open");
+        }
+      });
+    });
+
     var drawer = document.createElement("div");
     drawer.className = "mobile-nav-shell";
     drawer.id = "mobile-nav-drawer";

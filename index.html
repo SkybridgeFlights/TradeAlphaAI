@@ -86,21 +86,22 @@
     }
   </script>
   <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
 </head>
 <body data-page="home">
-  <div class="topbar">
+  <div class="topbar" data-global-header="homepage" data-active-section="home">
     <div class="wrap topbar-inner">
-      <a class="brand" href="#top">
+      <a class="brand" href="/">
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-copy">
           <strong>TradeAlpha AI</strong>
-          <span data-copy="brand.tagline">TRADING &amp; MARKET RESEARCH PLATFORM</span>
+          <span>TRADING &amp; MARKET RESEARCH PLATFORM</span>
         </span>
       </a>
 
       <div class="top-actions">
         <nav class="nav-group" aria-label="Primary">
-          <a href="/" class="nav-link">Home</a>
+          <a href="/" class="nav-link is-active" aria-current="page">Home</a>
           <a href="/stocks.html" class="nav-link">Global Stock Research</a>
           <a href="/etfs.html" class="nav-link">ETF Analyzer</a>
           <a href="/ai-stock-screener.html" class="nav-link">Market Screener</a>
@@ -457,25 +458,25 @@ a clear system, without unnecessary complexity or exaggerated claims.</p>
             <p>Educational market research designed for deeper reading across AI infrastructure, semiconductor cycles, ETF exposure, and portfolio risk context.</p>
           </div>
           <div class="editorial-grid">
-            <a class="editorial-feature" href="insights/ai-infrastructure-demand.html" data-featured-link>
-              <span class="insight-category-badge">AI Infrastructure</span>
-              <h3>AI Infrastructure Demand: GPUs, data centers, and the semiconductor supply chain</h3>
-              <p>Research context on GPU cluster buildout, hyperscaler capex, power demand, and supply-chain dependencies across the AI market stack.</p>
+            <a class="editorial-feature" href="/insights/international-etf-research-basics.html" data-featured-link>
+              <span class="insight-category-badge">ETF Education</span>
+              <h3>International ETF Research Basics: Regions, Currency, and Diversification</h3>
+              <p>Institutional educational research on international etf research basics: regions, currency, and diversification, including exposure mechanics, concentration,…</p>
               <span class="insight-card-cta">Read featured insight &rarr;</span>
             </a>
             <div class="editorial-stack">
-              <a class="editorial-card" href="insights/spy-vs-qqq-explained.html" data-featured-link>
-                <span class="insight-category-badge">ETF Education</span>
-                <h3>SPY vs QQQ explained</h3>
-                <p>Index methodology, concentration, sector exposure, and drawdown context for broad-market ETF research.</p>
+              <a class="editorial-card" href="/insights/portfolio-risk-research-for-beginners.html" data-featured-link>
+                <span class="insight-category-badge">Beginner Investing</span>
+                <h3>Portfolio Risk Research for Beginners: Beta, Drawdown, and Concentration</h3>
+                <p>Institutional educational research on portfolio risk research for beginners: beta, drawdown, and concentration,…</p>
               </a>
-              <a class="editorial-card" href="insights/semiconductor-cycle-risks.html" data-featured-link>
-                <span class="insight-category-badge">Semiconductors</span>
-                <h3>Semiconductor cycle risks</h3>
-                <p>Inventory corrections, capex dependencies, customer concentration, and valuation compression risk.</p>
+              <a class="editorial-card" href="/insights/bond-etfs-in-market-research.html" data-featured-link>
+                <span class="insight-category-badge">Educational Explainer</span>
+                <h3>Bond ETFs in Market Research: Duration, Yield, and Rate Sensitivity</h3>
+                <p>Institutional educational research on bond etfs in market research: duration, yield, and rate sensitivity, including…</p>
               </a>
             </div>
-          </div>
+</div>
         </div>
       </section>
 
@@ -501,12 +502,24 @@ a clear system, without unnecessary complexity or exaggerated claims.</p>
             <p>Educational commentary on macro events, sector themes, and current market conditions. Updated regularly. Not financial advice.</p>
           </div>
           <div id="homepage-outlook-cards" class="market-grid three">
-            <div class="market-panel" style="padding:1.5rem;text-align:center;grid-column:1/-1">
-              <p class="market-copy">Market outlook commentary is being prepared and will appear here. Check back soon.</p>
-              <div class="market-actions" style="justify-content:center;margin-top:1rem">
-                <a class="market-btn primary" href="/market-outlook/">View Market Outlook</a>
-              </div>
-            </div>
+            <article class="market-panel" style="padding:1.5rem">
+              <span class="market-card-kicker">Daily Outlook — 2026-06-06</span>
+              <h3>Daily Market Commentary</h3>
+              <p class="market-copy">Macro event reaction, sector context, and institutional regime snapshot for 2026-06-06. Educational only.</p>
+              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/daily/2026-06-06.html">Read Daily Outlook</a></div>
+            </article>
+            <article class="market-panel" style="padding:1.5rem">
+              <span class="market-card-kicker">Weekly Outlook — 2026-W24</span>
+              <h3>Weekly Scenario Framework</h3>
+              <p class="market-copy">Institutional scenario analysis, event calendar, and cross-asset transmission context for 2026-W24. Educational only.</p>
+              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/weekly/2026-W24.html">Read Weekly Outlook</a></div>
+            </article>
+            <article class="market-panel" style="padding:1.5rem">
+              <span class="market-card-kicker">Market Outlook</span>
+              <h3>Market Regime Context: Risk Signals and Educational Outlook Scenarios</h3>
+              <p class="market-copy">Educational macro commentary. Not financial advice.</p>
+              <div class="market-actions" style="margin-top:1rem"><a class="market-btn" href="/market-outlook/market-regime-2026-06-11.html">Read Outlook</a></div>
+            </article>
           </div>
         </div>
       </section>

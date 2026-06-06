@@ -154,12 +154,12 @@ if (fs.existsSync(CAL_PATH)) {
 // ── 4. Provider health ────────────────────────────────────────────────────────
 if (fs.existsSync(HEALTH_PATH)) {
   const health = JSON.parse(fs.readFileSync(HEALTH_PATH, 'utf8'));
-  const fmp = health.providers?.fmp;
-  if (fmp && fmp.status === 'error') {
-    warnings.push(`FMP provider health: last status=error (${fmp.last_error || 'unknown'})`);
+  if (health.degraded) {
+    warnings.push(`Macro provider router degraded: ${health.reason || 'unknown reason'}`);
   }
-  if (fmp) {
-    console.log(`[macro-intelligence] FMP provider: status=${fmp.status}, last_checked=${fmp.last_checked?.slice(0, 16) || 'never'}`);
+  console.log(`[macro-intelligence] Provider router: active=${health.provider || 'unknown'}, status=${health.status || 'unknown'}, fallback=${health.fallback_used === true}`);
+  for (const [name, state] of Object.entries(health.providers || {})) {
+    console.log(`[macro-intelligence] ${name}: status=${state.status}, endpoint=${state.endpoint || 'none'}, last_checked=${state.last_checked?.slice(0, 16) || 'never'}`);
   }
 }
 

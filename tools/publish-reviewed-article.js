@@ -4,14 +4,17 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { ensureProductionEditorialLayout, hasProductionEditorialLayout } = require('./editorial-layout-renderer');
+const { assessPublicationConfidence } = require('./intelligence/publication-confidence-engine');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
+const HISTORY_PATH = path.join(ROOT, 'data', 'published-history.json');
 const slug = argValue('--slug');
 const execute = process.argv.includes('--execute');
 const telegram = process.argv.includes('--telegram-dry-run') || process.argv.includes('--telegram-send');
 const telegramSend = process.argv.includes('--telegram-send');
 const refreshExisting = process.argv.includes('--refresh-existing');
+let telegramDelivered = false;
 
 if (!slug) fail('Usage: node tools/publish-reviewed-article.js --slug=<slug> [--execute] [--telegram-dry-run|--telegram-send]');
 
@@ -108,10 +111,48 @@ run(NPM, ['run', 'check:indexing']);
 run(NPM, ['run', 'check:social-meta']);
 
 if (telegram) {
-  const args = ['tools/telegram-publish-article.js', `--slug=${slug}`, '--locale=both'];
-  if (telegramSend) args.push('--send');
-  runTelegram(process.execPath, args);
+  const confidence = assessPublicationConfidence({ slug, draftDir, write: true });
+  const providerHealth = readJson(path.join(ROOT, 'data', 'provider-health.json'));
+  const criticallyDegraded = providerHealth.degraded === true &&
+    (!Number(providerHealth.event_count) || providerHealth.reason === 'all_providers_unavailable');
+  if (confidence.confidence < confidence.confidence_threshold || !confidence.institutional_depth_passed) {
+    console.warn(`Telegram skipped: publication confidence gate failed (${confidence.confidence}/${confidence.confidence_threshold}).`);
+  } else if (criticallyDegraded) {
+    console.warn(`Telegram skipped: macro mode critically degraded (${providerHealth.reason || 'provider unavailable'}).`);
+  } else {
+    const args = ['tools/telegram-publish-article.js', `--slug=${slug}`, '--locale=both'];
+    if (telegramSend) args.push('--send');
+    telegramDelivered = runTelegram(process.execPath, args);
+  }
 }
+
+// Finalize publication only after every public artifact and derived validation
+// has succeeded. This keeps the queue and publication history transactional.
+const publishedAt = new Date().toISOString();
+const publishDate = publishedAt.slice(0, 10);
+topic.status = 'published';
+topic.review_status = 'approved';
+topic.autonomous_review_status = 'published';
+topic.published_at = publishedAt;
+topic.publish_date = publishDate;
+topic.telegram_status = telegramDelivered ? 'posted' : 'skipped';
+queue.updated = publishDate;
+fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+
+const history = readJson(HISTORY_PATH, { version: '1.0', publications: [] });
+history.publications = Array.isArray(history.publications) ? history.publications : [];
+history.publications = history.publications.filter((entry) => entry.slug !== slug);
+history.publications.push({
+  slug,
+  publish_date: publishDate,
+  published_at: publishedAt,
+  workflow_run_id: process.env.GITHUB_RUN_ID || null,
+  languages: ['en', 'ar'],
+  content_type: 'editorial'
+});
+history.updated = publishDate;
+fs.writeFileSync(HISTORY_PATH, JSON.stringify(history, null, 2) + '\n', 'utf8');
+console.log(`Publication finalized: ${slug} status=published; history updated.`);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -235,7 +276,9 @@ function runTelegram(command, args) {
   const result = spawnSync(command, args, { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' });
   if (result.status !== 0) {
     console.warn(`[publish] Telegram delivery failed (exit ${result.status || 1}) — publish is complete, Telegram is non-fatal`);
+    return false;
   }
+  return true;
 }
 
 function readJson(file) {

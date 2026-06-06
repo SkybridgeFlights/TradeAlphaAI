@@ -10,6 +10,7 @@ const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 const { extractMarketSignals } = require('./extract-market-signals');
 const { recommendLinks } = require('./internal-link-intelligence');
+const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -175,7 +176,11 @@ function render(topic, locale, intel, aiContent = null) {
   const contextualCards = contextual.map((link) => `          <a class="market-context-link" href="${link.href}"><span>${escapeHtml(link.label)}</span><small>${escapeHtml(link.reason)}</small></a>`).join('\n');
   const takeawayCards = L.takeaways.map((item) => `          <article class="market-takeaway-card"><span>${escapeHtml(item.kicker)}</span><p>${escapeHtml(item.text)}</p></article>`).join('\n');
   const schema = buildSchemas({ title, summary, locale, canonical, enUrl, arUrl, updatedDate, topic, ar, L });
-  const nav = ar ? renderArNav(topic.slug) : renderEnNav(topic.slug);
+  const nav = renderSiteHeader({
+    locale: ar ? 'ar' : 'en',
+    active: 'market-outlook',
+    languageHref: ar ? `/market-outlook/${topic.slug}.html` : `/ar/market-outlook/${topic.slug}.html`
+  });
   const articleIntelligence = buildArticleIntelligence(topic, ar);
   const compSection = buildInstitutionalComparisonSection(topic, etfFlow, ar);
   const breadcrumb = ar
@@ -216,6 +221,7 @@ function render(topic, locale, intel, aiContent = null) {
   <link rel="stylesheet" href="${pathPrefix}styles.css" />
   <link rel="stylesheet" href="${pathPrefix}landing.css" />
   <link rel="stylesheet" href="${pathPrefix}css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
@@ -332,6 +338,7 @@ ${contextualCards}
       </div>
     </div>
   </main>
+  ${renderSiteFooter({ locale: ar ? 'ar' : 'en' })}
   <script src="${pathPrefix}js/language-router.js" defer></script>
   <script src="${pathPrefix}js/mobile-nav.js" defer></script>
   <script>

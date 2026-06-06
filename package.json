@@ -85,7 +85,7 @@
     "macro:telegram:release": "node tools/send-macro-telegram.js --type=release",
     "macro:telegram:briefing": "node tools/send-macro-telegram.js --type=briefing",
     "check:macro-intelligence": "node tools/check-macro-intelligence.js",
-    "check:responsive": "node tools/check-responsive-layout.js",
+    "check:responsive": "node tools/check-responsive-layout.js && node tools/check-global-header-parity.js",
     "regime:detect": "node tools/detect-market-regime.js --write",
     "macro:transmission": "node tools/build-cross-asset-transmission.js --write",
     "macro:etf-flow": "node tools/build-etf-flow-intelligence.js --write",

@@ -7,6 +7,7 @@ const { scoreCandidates, scoreTopic, hasRealSources } = require('./score-autonom
 const { reviewDraft, hasDraft, TOPOLOGY_REPAIRABLE_CHECKS, PROFILES } = require('./autonomous-review-engine');
 const { CLUSTER_DEFINITIONS } = require('./analyze-content-clusters');
 const { runRepairCycle } = require('./run-authority-repair-cycle');
+const { printFinalDecision, writePublishingReport } = require('./generate-publishing-report');
 
 // Cache overwrite flags per content type so we know if we need to force-clear drafts
 const PROFILES_OVERWRITE = Object.fromEntries(
@@ -623,6 +624,44 @@ function telegramStatus() {
   return `configured (target_source=${source} value=${chatId.slice(0, 6)}***)`;
 }
 
+function telegramQualityGate(slug) {
+  const confidence = readJson(path.join(ROOT, 'data', 'intelligence', 'publication-confidence.json'), {});
+  const provider = readJson(path.join(ROOT, 'data', 'provider-health.json'), {});
+  const criticallyDegraded = provider.degraded === true &&
+    (!Number(provider.event_count) || provider.reason === 'all_providers_unavailable');
+  if (confidence.slug !== slug) return { allowed: false, reason: 'publication confidence is missing or stale' };
+  if (Number(confidence.confidence || 0) < Number(confidence.confidence_threshold || 90)) {
+    return { allowed: false, reason: `publication confidence ${confidence.confidence || 0} is below threshold` };
+  }
+  if (!confidence.institutional_depth_passed) return { allowed: false, reason: 'institutional depth did not pass' };
+  if (criticallyDegraded) return { allowed: false, reason: `macro mode critically degraded: ${provider.reason || 'provider unavailable'}` };
+  return { allowed: true, reason: 'publication and intelligence quality gates passed' };
+}
+
+function expectedPublicPages(contentType, slug) {
+  if (contentType === 'editorial') {
+    return [
+      `insights/${slug}.html`,
+      `ar/insights/${slug}.html`,
+      `en/insights/${slug}.html`
+    ];
+  }
+  if (contentType === 'market-outlook') {
+    return [
+      `market-outlook/${slug}.html`,
+      `ar/market-outlook/${slug}.html`,
+      `en/market-outlook/${slug}.html`
+    ];
+  }
+  return [];
+}
+
+function verifyPublicPromotion(contentType, slug) {
+  const expected = expectedPublicPages(contentType, slug);
+  const missing = expected.filter((relative) => !fs.existsSync(path.join(ROOT, relative)));
+  return { expected, missing, ok: expected.length > 0 && missing.length === 0 };
+}
+
 function executeAction(contentType, mode, dryRun, action) {
   if (mode === 'status' || mode === 'dry_run' || dryRun) {
     const reviewPreview = mode === 'full_pipeline' && action.topic && hasDraft(contentType, action.topic)
@@ -740,7 +779,12 @@ function executeAction(contentType, mode, dryRun, action) {
         (slug) => {
           const args = [`--slug=${slug}`, '--execute'];
           const { chatId: _tgChatId } = resolveTelegramTarget();
-          if (process.env.TELEGRAM_BOT_TOKEN && _tgChatId) args.push('--telegram-send');
+          const telegramGate = telegramQualityGate(slug);
+          if (process.env.TELEGRAM_BOT_TOKEN && _tgChatId && telegramGate.allowed) {
+            args.push('--telegram-send');
+          } else if (!telegramGate.allowed) {
+            console.warn(`[brain] Telegram suppressed: ${telegramGate.reason}`);
+          }
           return runNode('tools/publish-reviewed-article.js', args, { inherit: true });
         },
         // Repair regeneration fn: passes --repair-regeneration=true so the generator can
@@ -1233,6 +1277,7 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
       transition_path:             review.transition_path,
       regeneration_attempts:       review.regeneration_attempts,
       review_result:               `failed: ${review.failed_checks.join(', ')}`,
+      quality_score:               review.score,
       approval_reason:             review.approval_reason || '',
       publish_gate_result:         review.publish_gate_result,
       authority_repair_attempted:    authorityRepairAttempted,
@@ -1252,6 +1297,24 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
   }
 
   const publish = publishFn(slug);
+  const promotion = publish.status === 0
+    ? verifyPublicPromotion(contentType, slug)
+    : { expected: expectedPublicPages(contentType, slug), missing: [], ok: false };
+  if (publish.status === 0 && !promotion.ok) {
+    const reason = `publish command succeeded but public promotion is incomplete: ${promotion.missing.join(', ') || 'no expected public pages configured'}`;
+    console.error(`[brain] ${reason}`);
+    return {
+      ...blockedExecution(reason, review.current_state, 1),
+      generation_result: generationResult,
+      quality_score: review.score,
+      transition_path: [...review.transition_path, 'publication_incomplete'],
+      expected_public_pages: promotion.expected,
+      missing_public_pages: promotion.missing,
+      telegram_result: 'no: not_published',
+      ...slugFields(),
+      ...artifactFields()
+    };
+  }
   return {
     generation_result:             generationResult,
     publish_result:                publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
@@ -1261,8 +1324,11 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
     transition_path:               [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
     regeneration_attempts:         review.regeneration_attempts,
     review_result:                 'passed',
+    quality_score:                 review.score,
     approval_reason:               review.approval_reason,
     publish_gate_result:           publish.status === 0 ? 'approved' : 'blocked: publish command failed',
+    expected_public_pages:         promotion.expected,
+    missing_public_pages:          promotion.missing,
     authority_repair_attempted:    authorityRepairAttempted,
     authority_repair_result:       authorityRepairResult,
     repaired_orphans_count:        repairedOrphansCount,
@@ -1284,7 +1350,7 @@ function blockedExecution(reason, currentState = 'unknown', status = 0) {
   return {
     generation_result: reason,
     publish_result: `blocked: ${reason}`,
-    telegram_result: telegramStatus(),
+    telegram_result: 'no: not_published',
     command_status: status,
     current_state: currentState,
     transition_path: [currentState, 'manual_revision_required'].filter(Boolean),
@@ -1480,6 +1546,13 @@ function printDecisionReport(report) {
   console.log('======================================================');
 }
 
+function finalizeDecision(report) {
+  printDecisionReport(report);
+  const persisted = writePublishingReport(report);
+  printFinalDecision(persisted);
+  return persisted;
+}
+
 function compactQuality(score) {
   if (!score) return 'none';
   return `${score.score}/${score.minimum} ${score.passed ? 'passed' : `blocked(${score.rejection_reasons.join(',') || 'threshold'})`}`;
@@ -1503,7 +1576,33 @@ function main() {
 
   const status = buildStatus();
   if (mode === 'status' || requestedType === 'all') printStatus(status);
-  if (mode === 'status' && requestedType === 'all') return;
+  if (mode === 'status' && requestedType === 'all') {
+    finalizeDecision({
+      selected_content_type: 'all',
+      selected_mode: mode,
+      dry_run: true,
+      selection_reason: 'status inspection requested',
+      candidate_scores: [],
+      topic: '',
+      source_availability: `news=${status.news_analysis.source_available ? 'available' : 'missing'}`,
+      market_intelligence: `state_available=${status.market_intelligence.state_available}; signals=${status.market_intelligence.active_signal_count}; divergences=${status.market_intelligence.active_divergence_count}; memory=${status.market_intelligence.memory_snapshots}`,
+      duplicate_cooldown_result: 'status only',
+      quality_score: 'none',
+      current_state: 'status',
+      transition_path: '',
+      regeneration_attempts: 0,
+      review_result: 'not requested',
+      approval_reason: '',
+      publish_gate_result: 'not evaluated',
+      next_action: 'inspect status output',
+      stop_reason: 'status_only',
+      generation_result: 'not requested',
+      publish_result: 'not requested',
+      telegram_result: telegramStatus(),
+      commit_result: 'not requested in status mode'
+    });
+    return;
+  }
 
   const decision = chooseContentType(status, requestedType, forceContentType);
   const selected = decision.selected;
@@ -1524,7 +1623,9 @@ function main() {
     source_availability: sourceAvailability,
     market_intelligence: `state_available=${mi.state_available}; signals=${mi.active_signal_count}; divergences=${mi.active_divergence_count}; memory=${mi.memory_snapshots}`,
     duplicate_cooldown_result: action.duplicate_cooldown_result,
-    quality_score: compactQuality(action.quality_score),
+    quality_score: Number.isFinite(execution.quality_score)
+      ? `${execution.quality_score}/${PROFILES[selected]?.minimum || 0} ${execution.review_result === 'passed' ? 'passed' : 'blocked'}`
+      : compactQuality(action.quality_score),
     current_state: execution.current_state || (action.topic ? inferState(selected, action.topic) : 'none'),
     transition_path: (execution.transition_path || []).join(' -> '),
     regeneration_attempts: execution.regeneration_attempts || 0,
@@ -1560,8 +1661,10 @@ function main() {
     targeted_links_added:                execution.targeted_links_added,
     targeted_pairs_added:                execution.targeted_pairs_added,
     targeted_repair_checks_fixed:        execution.targeted_repair_checks_fixed,
+    expected_public_pages:                execution.expected_public_pages,
+    missing_public_pages:                 execution.missing_public_pages,
   };
-  printDecisionReport(report);
+  finalizeDecision(report);
   process.exit(execution.command_status);
 }
 
