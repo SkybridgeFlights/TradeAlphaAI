@@ -68,7 +68,13 @@ function scoreDraft(dir) {
     checks.supported_directional_claims &&
     checks.narrative_originality &&
     checks.specificity &&
-    checks.no_generic_filler
+    checks.no_generic_filler &&
+    checks.economic_event_context &&
+    checks.market_expectations_framing &&
+    checks.expectation_reaction_logic &&
+    checks.probabilistic_language &&
+    checks.multi_asset_interaction &&
+    checks.macro_causal_reasoning
   );
   const editorialHardGatePass = type !== 'editorial' || (
     checks.editorial_word_count &&
@@ -274,7 +280,33 @@ function marketOutlookChecks(en, ar, enBody, arBody, combined) {
     narrative_originality: checkNarrativeOriginality(enBody),
     specificity: checkSpecificity(enBody),
     no_generic_filler: checkNoGenericFiller(enBody),
+    economic_event_context: /(CPI|PCE|NFP|FOMC|GDP|retail sales|ISM|jobless claims|economic calendar|data release|central bank decision)/i.test(enBody),
+    market_expectations_framing: /(markets? (?:are|is) pricing|market expectations?|consensus|forecast|terminal rate|rate cuts?|soft landing|recession risk|disinflation)/i.test(enBody),
+    expectation_reaction_logic: /(confirm|reject|validation|priced in|already pricing|surprise|actual|forecast|consensus)/i.test(enBody),
+    probabilistic_language: checkProbabilisticLanguage(enBody),
+    multi_asset_interaction: checkMultiAssetInteraction(enBody),
+    macro_causal_reasoning: checkMacroCausalReasoning(enBody),
   };
+}
+
+function checkProbabilisticLanguage(text) {
+  const conditional = (text.match(/\b(if|could|may|would|conditional|depending on|confirmation|unless|scenario)\b/gi) || []).length;
+  const deterministic = (text.match(/\b(will certainly|must rise|must fall|guaranteed|inevitably|always causes|cannot fail)\b/gi) || []).length;
+  return conditional >= 5 && deterministic === 0;
+}
+
+function checkMultiAssetInteraction(text) {
+  const groups = [
+    /\b(gold|GLD)\b/i, /\b(DXY|dollar)\b/i, /\b(Treasury|yield|TLT)\b/i,
+    /\b(SPY|equities)\b/i, /\b(QQQ|growth)\b/i, /\b(IWM|small caps)\b/i,
+    /\b(VIX|volatility)\b/i, /\b(oil|USO)\b/i, /\b(semiconductor|SMH|SOXX)\b/i
+  ];
+  return groups.filter((pattern) => pattern.test(text)).length >= 5;
+}
+
+function checkMacroCausalReasoning(text) {
+  const mechanisms = (text.match(/->|â†’|because|therefore|which (?:raises|reduces|supports|pressures)|transmission|repric|real yields?|financial conditions|discount rate/gi) || []).length;
+  return mechanisms >= 6;
 }
 
 function checkContinuityDepth(enBody) {

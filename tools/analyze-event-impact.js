@@ -4,6 +4,8 @@ const path = require('path');
 const { ROOT, readJson, appendSnapshot, buildSnapshot } = require('./macro-intelligence-core');
 const { detectNarrativeDrift } = require('./detect-narrative-drift');
 const { extractMarketSignals } = require('./extract-market-signals');
+const { buildCrossAssetReaction } = require('./build-cross-asset-reaction');
+const fs = require('fs');
 
 const eventType = (argValue('--event') || 'macro_event').toLowerCase();
 const preFile = argValue('--pre');
@@ -25,15 +27,27 @@ function analyzeEventImpact(options = {}) {
     narrative_shift: drift.notes,
     signal_response: signals.signals.slice(0, 4),
     commentary: buildCommentary(eventType, drift.notes, signals.primary_signal),
+    cross_asset_reaction: buildCrossAssetReaction(options.event || { type: eventType, event_name: eventType }),
     memory_updated: false
   };
 
   if (write) {
     const snapshot = { ...current, event_reaction: impact };
     appendSnapshot(snapshot);
+    appendEventMemory(impact);
     impact.memory_updated = true;
   }
   return impact;
+}
+
+function appendEventMemory(impact) {
+  const file = path.join(ROOT, 'data', 'event-reaction-memory.json');
+  const memory = readJson(file, { version: '1.0', max_entries: 180, entries: [] });
+  const entries = Array.isArray(memory.entries) ? memory.entries : [];
+  entries.push(impact);
+  memory.entries = entries.slice(-Number(memory.max_entries || 180));
+  memory.updated_at = new Date().toISOString();
+  fs.writeFileSync(file, JSON.stringify(memory, null, 2) + '\n', 'utf8');
 }
 
 function summarize(snapshot) {

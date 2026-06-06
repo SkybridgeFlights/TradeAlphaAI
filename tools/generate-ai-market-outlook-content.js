@@ -22,6 +22,8 @@ const { readMemory, buildSnapshot } = require('./macro-intelligence-core');
 const { detectNarrativeDrift } = require('./detect-narrative-drift');
 const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
+const { buildMarketExpectations } = require('./build-market-expectations');
+const { buildCrossAssetReaction } = require('./build-cross-asset-reaction');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -275,11 +277,11 @@ function buildNarrativeContext(narrative, selectedLenses, transitionNote) {
 function buildCalendarSummary(calendar) {
   const today  = new Date().toISOString().slice(0, 10);
   const events = ((calendar && calendar.events) || [])
-    .filter(e => e.date >= today && e.status === 'confirmed')
+    .filter(e => e.date >= today && ['confirmed', 'scheduled'].includes(e.status))
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5);
   return events.length
-    ? events.map(e => `${e.date}: ${e.name} (${e.impact_level || 'unknown'} impact)`).join('\n')
+    ? events.map(e => `${e.event_time || e.date}: ${e.event_name || e.name} (${e.importance || e.impact_level || 'unknown'} impact); forecast=${e.forecast ?? 'unavailable'}; previous=${e.previous ?? 'unavailable'}; expectation=${e.market_expectation || 'conditional policy-path focus'}`).join('\n')
     : 'No confirmed upcoming events. Reference standard catalyst cadence: monthly CPI, PCE, NFP, FOMC schedule.';
 }
 
@@ -332,6 +334,11 @@ function buildMarketContextLayer(topic, fw, narrativeContext, calendarText, cont
     ? `Narrative engine context:\n${narrativeContext}`
     : 'Data status: no live market data. Use structural mechanism analysis and do not imply knowledge of today\'s tape.';
 
+  const calendar = readJson(CALENDAR_PATH, { events: [] });
+  const expectations = buildMarketExpectations(calendar);
+  const released = [...(calendar.events || [])].reverse().find((event) => event.actual !== null && event.actual !== undefined);
+  const reaction = released ? buildCrossAssetReaction(released) : null;
+
   return `market_context
 Topic: ${topic.title_en}
 Research module: ${fw.module}
@@ -345,6 +352,10 @@ Directional bias context: ${fw.bias_note}
 ${dataBlock}
 Calendar:
 ${calendarText}
+Market expectations:
+${expectations.expectations.slice(0, 4).map((item) => `- ${item.event_name}: ${item.pricing_narrative}; confirmation assets: ${item.confirmation_assets.join(', ')}`).join('\n') || '- No sourced expectation is available; do not invent one.'}
+Latest sourced event reaction:
+${reaction ? `${reaction.surprise.reaction_interpretation}\n${reaction.transmission_chains.join('\n')}` : 'No released sourced event with actual and forecast values is available.'}
 ${continuityContext}`;
 }
 
@@ -357,6 +368,9 @@ function buildAnalyticalRequirementsLayer() {
 4. Reference at least two named instruments across the analytical sections.
 5. Specificity can be ticker/instrument based or macro institutional: yield curve, duration, breadth, participation, liquidity, volatility regime, risk appetite, positioning, sector rotation, or transmission mechanism.
 6. Each analytical section must contain institutional signal density; avoid generic market structure prose.
+7. Explain what markets appear to be pricing using sourced consensus or conditional policy-path language.
+8. Include economic-event relevance and explain whether cross-asset reactions would confirm or reject the expected transmission.
+9. Never state a deterministic asset reaction; use may, could, conditional, confirmation, or rejection framing.
 7. executive_summary must state the normalized directional stance and the structural condition behind it.
 8. Continuity must explain what changed, persisted, deteriorated, or improved versus the narrative memory window.
 9. Include at least one cross-asset divergence or confirmation and the transmission chain behind it.`;

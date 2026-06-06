@@ -54,6 +54,12 @@ const PROFILES = {
       'narrative_originality',
       'specificity',
       'no_generic_filler',
+      'economic_event_context',
+      'market_expectations_framing',
+      'expectation_reaction_logic',
+      'probabilistic_language',
+      'multi_asset_interaction',
+      'macro_causal_reasoning',
       'internal_link_resolution',
       'cluster_connectivity',
     ]

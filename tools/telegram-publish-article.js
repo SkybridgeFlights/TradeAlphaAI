@@ -9,6 +9,7 @@ const { detectNarrativeDrift } = require('./detect-narrative-drift');
 const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 const { generateMarketAlerts } = require('./generate-market-alerts');
+const { buildMarketExpectations } = require('./build-market-expectations');
 
 const ROOT = path.resolve(__dirname, '..');
 const EDITORIAL_QUEUE = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -115,6 +116,16 @@ function formatPost(topic, locale) {
 
     const label = ar ? 'تعليق سوقي تعليمي' : 'Educational Market Outlook';
     const lines = [`${toneEmoji} ${label}`, title, '', summary];
+    const expectations = buildMarketExpectations();
+    if (expectations.expectations[0]) {
+      const next = expectations.expectations[0];
+      lines.push('', ar
+        ? `Macro expectation: ${truncate(next.pricing_narrative, 145)}`
+        : `Macro expectation: ${truncate(next.pricing_narrative, 145)}`);
+      lines.push(ar
+        ? `Next event: ${next.event_name} · ${String(next.event_time).slice(0, 16)}`
+        : `Next high-impact event: ${next.event_name} · ${String(next.event_time).slice(0, 16)}`);
+    }
     if (biasBadge) lines.push('', biasBadge);
     if (liveRegimeLine) lines.push('', liveRegimeLine);
     const evolution = buildTelegramEvolutionBlock(topic, ar);

@@ -1,35 +1,33 @@
 {
-  "version": "1.0",
-  "updated": "2026-06-03",
+  "version": "2.0",
+  "updated_at": null,
   "source_policy": {
     "requires_real_sources": true,
     "manual_or_api_import_only": true,
+    "no_fabricated_values": true,
     "allowed_event_types": [
       "CPI",
       "Core CPI",
-      "FOMC",
-      "Fed Speech",
-      "GDP",
-      "Jobless Claims",
-      "Major Earnings Week",
-      "NFP",
       "PCE",
+      "Core PCE",
+      "NFP",
+      "Unemployment Rate",
+      "FOMC Rate Decision",
+      "Fed Statement",
+      "Powell Speech",
+      "GDP",
       "Retail Sales",
-      "Unemployment"
+      "ISM PMI",
+      "Jobless Claims",
+      "Treasury Auction",
+      "ECB Rate Decision",
+      "BoJ Rate Decision",
+      "BoE Rate Decision"
     ],
-    "required_event_fields": [
-      "event_name_or_name",
-      "event_date_or_date",
-      "country",
-      "impact_level",
-      "source_url",
+    "required_source_fields": [
       "source_name",
+      "source_url",
       "fetched_at"
-    ],
-    "allowed_impact_levels": [
-      "high",
-      "medium",
-      "low"
     ]
   },
   "events": []

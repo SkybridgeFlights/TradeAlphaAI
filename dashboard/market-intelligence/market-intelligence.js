@@ -1,9 +1,10 @@
 (async function init() {
-  const [live, memory, history, graph] = await Promise.all([
+  const [live, memory, history, graph, calendar] = await Promise.all([
     loadJson('../../data/live-market-state.json', {}),
     loadJson('../../data/narrative-memory.json', { snapshots: [] }),
     loadJson('../../data/market-regime-history.json', { snapshots: [] }),
-    loadJson('../../data/market-intelligence-graph.json', { nodes: [], edges: [] })
+    loadJson('../../data/market-intelligence-graph.json', { nodes: [], edges: [] }),
+    loadJson('../../data/economic-calendar.json', { events: [] })
   ]);
 
   const latest = memory.latest_snapshot || (memory.snapshots || []).slice(-1)[0] || {};
@@ -38,6 +39,17 @@
   setText('sector-count', String(sectors.length || 0));
 
   renderGraph(graph);
+  const upcoming = (calendar.events || []).filter((event) => Date.parse(event.event_time || event.date) >= Date.now()).slice(0, 6);
+  renderList('calendar-list', upcoming.map((event) => `${String(event.event_time || event.date).slice(0, 16)} · ${event.event_name || event.name} · ${event.importance || event.impact_level}`));
+  setText('calendar-count', upcoming.length);
+  setText('expectation-status', upcoming.length ? 'active' : 'limited');
+  setText('expectation-summary', upcoming[0]?.market_expectation || 'No sourced expectation is currently available.');
+  setText('rates-status', live.metadata?.status || 'unverified');
+  setText('rates-10y', live.us10y_yield?.value ?? '--');
+  setText('rates-2y', live.us2y_yield?.value ?? '--');
+  setText('rates-curve', live.yield_spread_2y10y?.spread_regime ?? '--');
+  setText('cross-asset-status', live.metadata?.status === 'live' ? 'observed' : 'scenario only');
+  setText('cross-asset-summary', live.metadata?.status === 'live' ? 'Monitor whether gold, DXY, and yields confirm the same policy-path interpretation.' : 'Verified reaction data is unavailable; cross-asset relationships remain conditional.');
 })();
 
 async function loadJson(url, fallback) {

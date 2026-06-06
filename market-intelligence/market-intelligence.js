@@ -1,8 +1,9 @@
 (async function initMarketIntelligence() {
-  const [live, memory, graph] = await Promise.all([
+  const [live, memory, graph, calendar] = await Promise.all([
     loadJson('../data/live-market-state.json', {}),
     loadJson('../data/narrative-memory.json', { snapshots: [] }),
-    loadJson('../data/market-intelligence-graph.json', { nodes: [], edges: [] })
+    loadJson('../data/market-intelligence-graph.json', { nodes: [], edges: [] }),
+    loadJson('../data/economic-calendar.json', { events: [] })
   ]);
 
   const latest = memory.latest_snapshot || (memory.snapshots || []).slice(-1)[0] || {};
@@ -23,7 +24,21 @@
   renderTimeline(memory.snapshots || []);
   renderSignals(signals);
   renderStructure(latest, internals, sequence, graph);
+  renderMacroCommand(live, calendar);
 })();
+
+function renderMacroCommand(live, calendar) {
+  const upcoming = (calendar.events || []).filter((event) => Date.parse(event.event_time || event.date) >= Date.now()).filter((event) => (event.importance || event.impact_level) === 'high').slice(0, 5);
+  document.getElementById('economic-calendar-panel').innerHTML = upcoming.length
+    ? upcoming.map((event) => `<article class="signal-item"><strong>${escapeHtml(event.event_name || event.name)}</strong><p>${escapeHtml(String(event.event_time || event.date).slice(0, 16))} · forecast ${escapeHtml(event.forecast ?? 'unavailable')} · previous ${escapeHtml(event.previous ?? 'unavailable')}</p></article>`).join('')
+    : '<p class="market-copy">No sourced high-impact events are currently loaded.</p>';
+  setText('market-expectations-panel', upcoming[0]?.market_expectation || 'No sourced market expectation is currently available.');
+  document.getElementById('macro-risk-monitor').innerHTML = upcoming.slice(0, 3).map((event) => `<article class="signal-item"><strong>${escapeHtml(event.event_name || event.name)}</strong><p>Watch Treasury yields, DXY, volatility, and equity breadth for confirmation or rejection.</p></article>`).join('') || '<p class="market-copy">Risk monitor is waiting for sourced events.</p>';
+  setText('inflation-rates-panel', live.metadata?.status === 'live' ? `10Y ${live.us10y_yield?.value ?? '--'} · 2Y ${live.us2y_yield?.value ?? '--'} · curve ${live.yield_spread_2y10y?.spread_regime ?? '--'}` : 'Live rate inputs are unverified; analysis remains scenario-based.');
+  const assets = [['Gold', live.gold], ['DXY', live.dxy], ['10Y yield', live.us10y_yield], ['S&P 500', live.sp500], ['NASDAQ', live.nasdaq], ['VIX', live.vix]];
+  document.getElementById('cross-asset-heatmap').innerHTML = assets.map(([name, item]) => `<article class="signal-item"><strong>${escapeHtml(name)}</strong><p>${item?.change_pct == null ? 'unverified' : `${item.change_pct > 0 ? '+' : ''}${item.change_pct}%`}</p></article>`).join('');
+  setText('gold-dollar-yields', live.metadata?.status === 'live' ? 'Use the joint direction of gold, DXY, and real-yield proxies to distinguish inflation hedging from liquidity stress.' : 'No verified joint reaction is available; avoid claiming a live correlation shift.');
+}
 
 async function loadJson(url, fallback) {
   try {
