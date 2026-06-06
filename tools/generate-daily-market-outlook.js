@@ -34,6 +34,10 @@ const MEMORY_PATH   = path.join(ROOT, 'data', 'intelligence', 'event-reaction-me
 const NARRATIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'macro-narrative.json');
 const LIVE_PATH     = path.join(ROOT, 'data', 'live-market-state.json');
 const EXPECT_PATH   = path.join(ROOT, 'data', 'market-expectations.json');
+const REGIME_PATH   = path.join(ROOT, 'data', 'intelligence', 'market-regime.json');
+const RATE_PATH     = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelligence.json');
+const ETF_PATH      = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
+const TRANSMISSION_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-transmission.json');
 const DAILY_DIR     = path.join(ROOT, 'market-outlook', 'daily');
 const WEEKLY_DIR    = path.join(ROOT, 'market-outlook', 'weekly');
 
@@ -50,23 +54,28 @@ function main() {
   const narrative   = readJson(NARRATIVE_PATH, { release_narratives: [], preview_narratives: [], active_themes: [] });
   const live        = readJson(LIVE_PATH,      { metadata: { status: 'fallback' } });
   const expectations = readJson(EXPECT_PATH,   { expectations: [] });
+  const regime      = readJson(REGIME_PATH,    { regime: null, regime_label: null, confidence: null });
+  const ratePath    = readJson(RATE_PATH,      { fed_path: null, yield_curve: null });
+  const etfFlow     = readJson(ETF_PATH,       { rotation_analysis: null, positioning_matrix: null });
+  const transmission = readJson(TRANSMISSION_PATH, { transmission_library: {}, event_analyses: [], regime_transmission_note: null });
 
   const today    = new Date().toISOString().slice(0, 10);
   const weekSlug = weekLabel();
 
   if (MODE === 'weekly') {
-    const html = buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug);
+    const html = buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug, regime, ratePath, etfFlow, transmission);
     outputPage(html, path.join(WEEKLY_DIR, `${weekSlug}.html`), `Weekly macro outlook ${weekSlug}`);
   } else {
-    const html = buildDailyPage(calendar, memory, narrative, live, expectations, today);
+    const html = buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission);
     outputPage(html, path.join(DAILY_DIR, `${today}.html`), `Daily macro briefing ${today}`);
   }
 }
 
 function outputPage(html, filePath, label) {
+  const normalizedHtml = String(html || '').replace(/[ \t]+(?=\r?$)/gm, '');
   if (!WRITE) {
     console.log(`[daily-outlook] Dry run — would write ${path.relative(ROOT, filePath).replaceAll('\\', '/')}`);
-    console.log(`[daily-outlook] ${label}: ${html.length} chars`);
+    console.log(`[daily-outlook] ${label}: ${normalizedHtml.length} chars`);
     return;
   }
   if (!FORCE && fs.existsSync(filePath)) {
@@ -74,13 +83,13 @@ function outputPage(html, filePath, label) {
     return;
   }
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, html, 'utf8');
+  fs.writeFileSync(filePath, normalizedHtml, 'utf8');
   console.log(`[daily-outlook] Wrote ${path.relative(ROOT, filePath).replaceAll('\\', '/')}`);
 }
 
 // ── Daily page builder ────────────────────────────────────────────────────────
 
-function buildDailyPage(calendar, memory, narrative, live, expectations, today) {
+function buildDailyPage(calendar, memory, narrative, live, expectations, today, regime, ratePath, etfFlow, transmission) {
   const events = calendar.events || [];
   const now    = Date.now();
 
@@ -147,11 +156,15 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today) 
 
       ${narrative.regime_narrative ? `<section class="market-section"><div class="narrative-callout">${esc(narrative.regime_narrative)}</div></section>` : ''}
 
+      ${regime?.regime ? buildRegimeSection(regime) : ''}
+      ${ratePath?.fed_path?.current_stance ? buildRatePathSection(ratePath) : ''}
+
       ${relNarratives.length ? buildReleasedSection(relNarratives, released) : ''}
       ${prevNarratives.length ? buildUpcomingSection(prevNarratives, upcoming) : ''}
       ${!relNarratives.length && !prevNarratives.length ? buildNoDataSection(upcoming, released) : ''}
 
-      ${buildReactionMapSection()}
+      ${etfFlow?.rotation_analysis?.key_spread ? buildRotationSection(etfFlow) : ''}
+      ${buildReactionMapSection(transmission)}
 
       <section class="market-section disclaimer-section">
         <div class="disclaimer-box">
@@ -168,7 +181,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today) 
 
 // ── Weekly page builder ───────────────────────────────────────────────────────
 
-function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug) {
+function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSlug, regime, ratePath, etfFlow, transmission) {
   const events    = calendar.events || [];
   const now       = Date.now();
   const weekMs    = 7 * 86400000;
@@ -232,11 +245,15 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
         ${weekEvents.length ? buildWeekEventTable(weekEvents, prevNarratives) : '<p class="calendar-empty">No high-impact events scheduled in the current calendar for this week.</p>'}
       </section>
 
+      ${regime?.regime ? buildRegimeSection(regime) : ''}
+      ${ratePath?.fed_path?.current_stance ? buildRatePathSection(ratePath) : ''}
+
       ${prevNarratives.length ? buildUpcomingSection(prevNarratives, weekEvents) : ''}
       ${relNarratives.length  ? buildReleasedSection(relNarratives, []) : ''}
 
+      ${etfFlow?.rotation_analysis ? buildRotationSection(etfFlow) : ''}
       ${buildHistoricalSensitivitySection(patterns)}
-      ${buildReactionMapSection()}
+      ${buildReactionMapSection(transmission)}
 
       <section class="market-section disclaimer-section">
         <div class="disclaimer-box">
@@ -347,45 +364,118 @@ function buildHistoricalSensitivitySection(patterns) {
   </section>`;
 }
 
-function buildReactionMapSection() {
+function buildRegimeSection(regime) {
+  if (!regime?.regime) return '';
+  const confidencePct = regime.confidence ? `${(regime.confidence * 100).toFixed(0)}%` : '';
+  const stabilityClass = regime.regime_stability === 'established' ? 'regime-established'
+    : regime.regime_stability === 'transitional' ? 'regime-transitional' : 'regime-contested';
+  const signals = (regime.supporting_signals || []).slice(0, 4);
+  const contra  = (regime.contradictory_signals || []).slice(0, 2);
+
+  const implCards = regime.implications ? Object.entries(regime.implications).map(([asset, text]) =>
+    `<div class="impl-card"><strong>${esc(asset.charAt(0).toUpperCase() + asset.slice(1))}</strong><p>${esc(text.slice(0, 200))}</p></div>`
+  ).join('') : '';
+
+  return `<section class="market-section" id="macro-regime">
+    <h2 class="section-heading">Macro Regime Intelligence</h2>
+    <div class="regime-panel ${stabilityClass}">
+      <div class="regime-header">
+        <span class="regime-label">${esc(regime.regime_label || regime.regime)}</span>
+        ${confidencePct ? `<span class="regime-confidence">Confidence: ${esc(confidencePct)}</span>` : ''}
+        ${regime.regime_stability ? `<span class="regime-stability">${esc(regime.regime_stability)}</span>` : ''}
+      </div>
+      ${regime.regime_summary ? `<p class="regime-summary">${esc(regime.regime_summary)}</p>` : ''}
+      <div class="regime-signals">
+        ${signals.length ? `<div class="signal-group"><strong>Supporting:</strong><ul>${signals.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>` : ''}
+        ${contra.length ? `<div class="signal-group signal-contra"><strong>Contradictory:</strong><ul>${contra.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>` : ''}
+      </div>
+      ${implCards ? `<div class="impl-grid">${implCards}</div>` : ''}
+    </div>
+  </section>`;
+}
+
+function buildRatePathSection(ratePath) {
+  if (!ratePath?.fed_path) return '';
+  const fp = ratePath.fed_path;
+  const yc = ratePath.yield_curve || {};
+
+  const scenarioRows = fp.probability_scenarios ? Object.entries(fp.probability_scenarios).map(([scenario, prob]) => {
+    const pct = Math.round((prob || 0) * 100);
+    return `<tr><td>${esc(scenario.replace(/_/g, ' '))}</td><td><div class="prob-bar"><div class="prob-fill" style="width:${pct}%"></div></div></td><td>${pct}%</td></tr>`;
+  }).join('') : '';
+
+  const durationItems = ratePath.duration_sensitivity ? Object.entries(ratePath.duration_sensitivity).slice(0, 6).map(([ticker, data]) =>
+    `<div class="dur-item"><span class="dur-ticker">${esc(ticker)}</span><span class="dur-sens">${esc(data.sensitivity || '')}</span><span class="dur-dir">${esc(data.direction?.replace(/_/g, ' ') || '')}</span></div>`
+  ).join('') : '';
+
+  return `<section class="market-section" id="rate-path">
+    <h2 class="section-heading">Fed Path &amp; Yield Curve Analysis</h2>
+    <div class="rate-path-grid">
+      <div class="rate-path-card">
+        <h3>Policy Stance</h3>
+        <p><strong>Current Stance:</strong> ${esc(fp.current_stance || '—')}</p>
+        <p><strong>Bias:</strong> ${esc((fp.bias || '').replace(/_/g, ' '))}</p>
+        ${fp.implied_path_narrative ? `<p class="rate-narrative">${esc(fp.implied_path_narrative)}</p>` : ''}
+        ${fp.policy_risk ? `<p class="rate-risk"><strong>Key Risk:</strong> ${esc(fp.policy_risk)}</p>` : ''}
+      </div>
+      <div class="rate-path-card">
+        <h3>Yield Curve</h3>
+        <p><strong>Shape:</strong> ${esc((yc.inferred_shape || '—').replace(/_/g, ' '))}</p>
+        <p><strong>Inversion:</strong> ${esc(yc.inversion_status || '—')}</p>
+        ${yc.curve_narrative ? `<p class="rate-narrative">${esc(yc.curve_narrative.slice(0, 300))}</p>` : ''}
+      </div>
+      ${scenarioRows ? `<div class="rate-path-card rate-path-scenarios"><h3>Probability Scenarios</h3><div class="table-scroll"><table class="prob-table"><tbody>${scenarioRows}</tbody></table></div></div>` : ''}
+    </div>
+    ${durationItems ? `<div class="duration-map"><h3>Duration Sensitivity Map</h3><div class="dur-grid">${durationItems}</div></div>` : ''}
+  </section>`;
+}
+
+function buildRotationSection(etfFlow) {
+  if (!etfFlow?.rotation_analysis) return '';
+  const ra = etfFlow.rotation_analysis;
+  const over  = (ra.outperformers || []).slice(0, 6);
+  const under = (ra.underperformers || []).slice(0, 6);
+
+  return `<section class="market-section" id="sector-rotation">
+    <h2 class="section-heading">Sector Rotation &amp; ETF Positioning</h2>
+    <p class="section-intro">${esc((ra.rotation_thesis || '').slice(0, 400))}</p>
+    <div class="rotation-grid">
+      ${over.length ? `<div class="rotation-card over"><h3>Regime Outperformers</h3><div class="ticker-list">${over.map((t) => `<span class="ticker-chip">${esc(t)}</span>`).join('')}</div></div>` : ''}
+      ${under.length ? `<div class="rotation-card under"><h3>Regime Underperformers</h3><div class="ticker-list">${under.map((t) => `<span class="ticker-chip ticker-chip-under">${esc(t)}</span>`).join('')}</div></div>` : ''}
+      ${ra.key_spread ? `<div class="rotation-card spread"><h3>Key Spread to Monitor</h3><p>${esc(ra.key_spread)}</p></div>` : ''}
+    </div>
+    ${etfFlow.positioning_matrix?.disclaimer ? `<p class="disclaimer-small">${esc(etfFlow.positioning_matrix.disclaimer)}</p>` : ''}
+  </section>`;
+}
+
+function buildReactionMapSection(transmission) {
+  const eventAnalyses = (transmission?.event_analyses || []).slice(0, 4);
+  const libraryEntries = Object.entries(transmission?.transmission_library || {}).slice(0, 4);
+  const cards = eventAnalyses.length
+    ? eventAnalyses.map((item) => buildTransmissionCard(item.event_name || item.event_type || 'Macro event', item))
+    : libraryEntries.map(([key, item]) => buildTransmissionCard(key.replace(/_/g, ' '), item));
+  const regimeNote = transmission?.regime_transmission_note
+    ? `<div class="narrative-callout">${esc(transmission.regime_transmission_note)}</div>`
+    : '';
+
   return `<section class="market-section" id="asset-reaction-map">
     <h2 class="section-heading">Cross-Asset Transmission Reference</h2>
     <p class="section-intro">These are educational scenario frameworks, not predictions. Confirmation requires yield, dollar, and breadth signals to align.</p>
-    <div class="reaction-grid">
-      <div class="reaction-card">
-        <h3>CPI / PCE (Inflation)</h3>
-        <ul>
-          <li>Hot print → yields ↑, DXY firms, TLT ↓, QQQ duration headwind, Gold mixed</li>
-          <li>Soft print → yields ↓, TLT ↑, QQQ relief, DXY softer, Gold benefits</li>
-          <li>Key: Treasury yield move confirms, not just equity reaction</li>
-        </ul>
-      </div>
-      <div class="reaction-card">
-        <h3>NFP / Unemployment (Labor)</h3>
-        <ul>
-          <li>Strong → hawkish re-pricing, IWM financing sensitivity, VIX may rise</li>
-          <li>Weak → dovish impulse, but recession risk concurrent</li>
-          <li>Key: IWM participation confirms risk-on vs recession-fear divergence</li>
-        </ul>
-      </div>
-      <div class="reaction-card">
-        <h3>FOMC / Central Banks</h3>
-        <ul>
-          <li>Hawkish surprise → DXY up, EM/Gold stress, TLT pressure</li>
-          <li>Dovish surprise → TLT, QQQ, Gold can all move constructively</li>
-          <li>Key: dot plot shifts and forward guidance carry more signal than the decision</li>
-        </ul>
-      </div>
-      <div class="reaction-card">
-        <h3>GDP / ISM / Retail Sales</h3>
-        <ul>
-          <li>Above consensus → cyclicals lead, IWM and financials benefit</li>
-          <li>Below consensus → bond proxies, Gold, defensive sectors respond</li>
-          <li>Key: ISM below 50 for 3+ months → recession-watch regime shift</li>
-        </ul>
-      </div>
-    </div>
+    ${regimeNote}
+    <div class="reaction-grid">${cards.join('')}</div>
   </section>`;
+}
+
+function buildTransmissionCard(label, item) {
+  const chain = (item.asset_chain || item.transmission_chain || []).slice(0, 4);
+  const mechanism = item.mechanism || item.transmission_mechanism || item.policy_transmission || '';
+  const confirmations = (item.confirmation_signals || []).slice(0, 3);
+  return `<div class="reaction-card">
+      <h3>${esc(label)}</h3>
+      ${mechanism ? `<p>${esc(String(mechanism).slice(0, 320))}</p>` : ''}
+      ${chain.length ? `<ul>${chain.map((step) => `<li><strong>${esc(step.asset || step.instrument || '')}</strong>: ${esc((step.direction || step.market_implication || '').replace(/_/g, ' '))}${step.reason ? ` because ${esc(step.reason)}` : ''}</li>`).join('')}</ul>` : ''}
+      ${confirmations.length ? `<p><small>Confirmation: ${confirmations.map(esc).join(' | ')}</small></p>` : ''}
+    </div>`;
 }
 
 // ── JSON-LD structured data ───────────────────────────────────────────────────

@@ -59,6 +59,7 @@ function checkDraftIfPresent(topic) {
   for (const file of files) {
     if (!fs.existsSync(path.join(dir, file))) failures.push(`${relative(dir)}: missing ${file}`);
   }
+  const requiresPublicationDepth = topic.status !== 'manual_revision_required';
   for (const locale of ['en', 'ar']) {
     const file = path.join(dir, `${locale}.html`);
     if (!fs.existsSync(file)) continue;
@@ -81,7 +82,9 @@ function checkDraftIfPresent(topic) {
     if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي/.test(html)) failures.push(`${rel}: missing educational disclaimer`);
     if (locale === 'ar' && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) failures.push(`${rel}: missing Arabic RTL markers`);
     if (forbiddenClaims(stripHtml(html))) failures.push(`${rel}: forbidden promotional or advice wording found`);
-    if (locale === 'en' && /data-editorial-intelligence="v1"/.test(html)) checkInstitutionalEditorial(html, rel);
+    // Manual-revision drafts remain blocked from approval and publishing. Every other
+    // draft must satisfy the same institutional depth gates regardless of source.
+    if (locale === 'en' && requiresPublicationDepth && /data-editorial-intelligence="v1"/.test(html)) checkInstitutionalEditorial(html, rel);
   }
   const metadata = path.join(dir, 'metadata.json');
   if (fs.existsSync(metadata)) {
@@ -103,7 +106,7 @@ function checkInstitutionalEditorial(html, rel) {
   const transitions = (html.match(/class="editorial-transition"/g) || []).length;
   const analytical = text.split(/[.!?]+/).filter((sentence) =>
     sentence.split(/\s+/).length >= 12 &&
-    /(because|while|however|risk|valuation|concentration|volatility|liquidity|rates|earnings|holdings|expense ratio)/i.test(sentence)
+    /(because|while|however|risk|valuation|concentration|volatility|liquidity|rates|earnings|holdings|expense ratio|transmission|regime|duration)/i.test(sentence)
   ).length;
   const openings = text.split(/[.!?]+/)
     .map((sentence) => sentence.trim().toLowerCase().split(/\s+/).slice(0, 3).join(' '))
@@ -128,6 +131,62 @@ function checkInstitutionalEditorial(html, rel) {
   if (genericPhrases > 2) failures.push(`${rel}: repetitive generic editorial phrasing`);
   if (bullets >= paragraphs.length) failures.push(`${rel}: excessive bullet dependency`);
   if (/\bETF(s)?\b/i.test(text) && !/class="editorial-comparison-table"/.test(html)) failures.push(`${rel}: shallow ETF comparison coverage`);
+
+  // ── Phase 62: Anti-Generic Hard Gates V2 ─────────────────────────────────────
+
+  // V2 gate: banned generic phrases (institutional quality requires evidence-grounded language)
+  checkGenericPhrasesV2(text, rel);
+
+  // V2 gate: macro transmission depth (must explain WHY, not just THAT)
+  const transmissionPatterns = [/transmission/i, /rate\s+channel/i, /policy\s+(channel|pathway|mechanism)/i, /repricing/i, /cross.asset/i, /discount\s+rate/i];
+  const transmissionHits = transmissionPatterns.filter((p) => p.test(text)).length;
+  if (transmissionHits < 2) failures.push(`${rel}: low macro_transmission_depth — article lacks cross-asset transmission reasoning`);
+
+  // V2 gate: comparative depth (ETF comparisons must address structure, not just direction)
+  if (/\bETF(s)?\b/i.test(text)) {
+    const comparativePatterns = [/concentration\s+risk|holdings\s+structure|allocation\s+implication|sector\s+tilt/i, /idiosyncratic|rate\s+sensitivity|duration\s+exposure/i, /compared\s+to|vs\.\s+[A-Z]{3}|relative\s+to/i, /mega.cap|financing\s+cost|dividend\s+yield\s+spread/i];
+    const compareHits = comparativePatterns.filter((p) => p.test(text)).length;
+    if (compareHits < 2) failures.push(`${rel}: shallow comparative_depth — ETF comparisons must address allocation structure, rate sensitivity, and concentration risk`);
+  }
+
+  // V2 gate: probability reasoning (conditional framing required, not absolute claims)
+  const probPatterns = [/probability|historically|in.*of.*\d+.*event/i, /if.*then|scenario/i, /conditioned on|subject to|depends on/i];
+  const probHits = probPatterns.filter((p) => p.test(text)).length;
+  if (probHits < 1) failures.push(`${rel}: missing probability_reasoning — article must use conditional scenario framing (if X, then Y) not absolute claims`);
+
+  // V2 gate: evidence linkage (claims must reference data, history, or mechanism)
+  const evidencePatterns = [/historical(ly)?|based on|evidence|data suggest|pattern/i, /\d+\s*(bp|basis points|%|percent)/i, /\d+\s*of\s*\d+|in.*case|N\s*=\s*\d+/i, /since\s+20\d\d|in\s+(20\d\d|the\s+\d{4}s)|as\s+of\s+20/i];
+  const evidenceHits = evidencePatterns.filter((p) => p.test(text)).length;
+  if (evidenceHits < 2) failures.push(`${rel}: insufficient evidence_linkage — analytical claims must be grounded in historical data, specific magnitudes, or mechanism description`);
+}
+
+function checkGenericPhrasesV2(text, rel) {
+  // Banned phrases unless immediately followed by specific evidence (within ~2 sentences)
+  const BANNED_PATTERNS = [
+    { pattern: /markets\s+are\s+watching/gi, label: 'markets are watching' },
+    { pattern: /uncertainty\s+remains/gi, label: 'uncertainty remains' },
+    { pattern: /investors\s+reacted/gi, label: 'investors reacted' },
+    { pattern: /mixed\s+signals/gi, label: 'mixed signals' },
+    { pattern: /market\s+sentiment/gi, label: 'market sentiment' },
+    { pattern: /economic\s+concerns/gi, label: 'economic concerns' },
+    { pattern: /heightened\s+uncertainty/gi, label: 'heightened uncertainty' },
+    { pattern: /volatility\s+spiked/gi, label: 'volatility spiked' },
+    { pattern: /market\s+participants/gi, label: 'market participants' }
+  ];
+
+  // Evidence anchors — if these appear within 120 chars of the banned phrase, the phrase is acceptable
+  const EVIDENCE_ANCHORS = /because|specifically|\d+%|\d+\s*bp|historically|relative to|compared to|in\s+\d{4}|since/i;
+
+  for (const { pattern, label } of BANNED_PATTERNS) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const context = text.slice(Math.max(0, match.index + match[0].length), match.index + match[0].length + 120);
+      if (!EVIDENCE_ANCHORS.test(context)) {
+        failures.push(`${rel}: anti_generic_gate_v2 — unsupported generic phrase: "${label}" without evidence anchoring`);
+        break; // One failure per pattern is sufficient
+      }
+    }
+  }
 }
 
 function checkPublishedTopic(topic) {

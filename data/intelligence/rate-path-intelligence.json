@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-06-06T11:38:50.743Z",
+  "data_quality": "derived",
+  "signal_sources": [
+    "Default: no strong directional signal — holding baseline"
+  ],
+  "yield_curve": {
+    "inferred_shape": "uncertain",
+    "inversion_status": "unknown",
+    "curve_narrative": "Insufficient signal clarity to diagnose the yield curve shape with confidence. The curve's behavior is the most important confirmation signal to watch — direction of 2Y yield movements relative to 10Y will reveal whether the market is pricing tightening, easing, or a growth transition.",
+    "historical_context": "Yield curve shape has been the most reliable leading economic indicator over the past 50 years, with every recession preceded by 2Y/10Y inversion. The current signal environment warrants careful monitoring of each Treasury auction and Fed communication.",
+    "confirmation_needed": [
+      "2Y Treasury yield direction relative to 10Y",
+      "DXY correlation to yield spread",
+      "Credit spread behavior (HYG/LQD vs TLT)"
+    ]
+  },
+  "fed_path": {
+    "current_stance": "neutral",
+    "bias": "data_dependent",
+    "probability_scenarios": {
+      "hold": 0.7,
+      "cut_25bp": 0.1,
+      "cut_50bp": 0,
+      "hike_25bp": 0.05
+    },
+    "key_drivers": [
+      "Default: no strong directional signal — holding baseline"
+    ],
+    "implied_path_narrative": "The macro signal environment does not provide a clear directional read on Fed policy — incoming data is mixed, and the Fed's reaction function is being re-calibrated. The most likely near-term outcome is a hold with language that preserves optionality in both directions.",
+    "policy_risk": "Risk: policy error in either direction given mixed signals. Data dependency creates high-frequency repricing events around each CPI, NFP, and FOMC meeting."
+  },
+  "duration_sensitivity": {
+    "QQQ": {
+      "sensitivity": "very_high",
+      "direction": "positive_on_rate_fall",
+      "mechanism": "Long-horizon growth cash flows discounted at higher rate reduces intrinsic value mechanically. A 50bp rate rise compresses QQQ intrinsic value by ~8-12% in a standard DCF framework."
+    },
+    "TLT": {
+      "sensitivity": "very_high_direct",
+      "direction": "tailwind",
+      "mechanism": "TLT has a duration of ~17-18 years. Direct price-yield relationship. 100bp rate rise = ~17% TLT price decline. The most direct rate exposure in the ETF universe."
+    },
+    "XLU": {
+      "sensitivity": "high",
+      "direction": "tailwind",
+      "mechanism": "Utilities are bond proxies — when Treasury yields rise, XLU dividend yield spread compresses, triggering capital rotation to bonds. Also carries significant debt load sensitive to financing costs."
+    },
+    "GLD": {
+      "sensitivity": "high_via_real_yield",
+      "direction": "tailwind_via_real_yield_fall",
+      "mechanism": "Gold has no yield. Rising real yields (nominal yield minus inflation breakeven) increase the opportunity cost of holding gold. DXY strength amplifies the headwind. Real yield > 2% historically creates structural gold headwind."
+    },
+    "XLF": {
+      "sensitivity": "positive_on_rate_rise",
+      "direction": "NIM_compression_short_term",
+      "mechanism": "Bank net interest margins expand when the yield curve steepens (long-end rises relative to short-end). A flat or inverted curve compresses NIM. Rate hikes without steepening can be neutral-to-negative for banks."
+    },
+    "IWM": {
+      "sensitivity": "high_via_debt_channel",
+      "direction": "positive_financing_relief",
+      "mechanism": "Unlike QQQ (equity duration), IWM's rate sensitivity is via the debt channel — small caps actually borrow at short-term rates. 100bp rate rise = 3-5% EPS headwind through higher interest expense on floating-rate debt."
+    },
+    "SOXX": {
+      "sensitivity": "high_dual_channel",
+      "direction": "double_tailwind",
+      "mechanism": "SOXX faces rate headwind through both equity duration (valuation) and enterprise capex cycle (AI infrastructure investment slows when cost of capital rises). The compounding of both channels makes SOXX the most rate-sensitive sector ETF."
+    },
+    "SPY": {
+      "sensitivity": "moderate",
+      "direction": "mixed",
+      "mechanism": "SPY's sector diversification creates partially offsetting rate sensitivities. XLF benefits from rate rises, XLU and XLK suffer. Net sensitivity is moderate-negative in tightening environments when XLF NIM gains are insufficient to offset growth stock compression."
+    }
+  },
+  "cross_asset_implications": {
+    "equities": "Mixed signal environment creates sector dispersion opportunity. Data-dependent Fed means each macro release is a high-volatility event. Cross-asset correlation structures are unstable.",
+    "rates": "Yield curve at an inflection point — monitoring the direction of 2Y-10Y spread movement is the primary directional signal.",
+    "gold": "Range-bound near-term. Real yield stability and dollar neutrality reduce gold's directional catalyst. Watch for breakouts driven by geopolitical events or policy surprises.",
+    "dollar": "DXY directionless without a clear rate differential signal. G10 relative policy divergence is the key driver to monitor.",
+    "volatility": "Elevated implied vol on major macro events (FOMC, CPI). VIX term structure reflects policy uncertainty premium. Options strategies that benefit from vol compression may face persistence of elevated pricing."
+  },
+  "monitoring_indicators": [
+    "2Y Treasury yield direction: Most sensitive near-term Fed expectations indicator",
+    "10Y Treasury yield: Long-run growth and inflation expectations composite",
+    "2Y/10Y spread: Inversion (negative) signals recession risk; steepening (positive) signals cycle transition",
+    "DXY trend: Rate differential proxy; confirms or contradicts yield signals",
+    "TIPS 5Y breakeven: Market inflation expectation; key input for real yield calculation (= nominal yield minus breakeven)",
+    "2Y Treasury 6-week rate of change: Speed and conviction of the rate relief move",
+    "TLT momentum: Confirms whether the easing expectation is being priced with conviction",
+    "GLD/USD correlation: In a genuine easing cycle, GLD should decouple positively from the rate move"
+  ],
+  "disclaimer": "Fed path probabilities and yield curve diagnostics are educational inferences from available macro signals, not market pricing or forecasts. Actual rate path will be determined by the FOMC based on evolving data."
+}

@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "created_at": "2026-06-06T11:41:42.034Z",
+  "target_slug": "bond-etfs-in-market-research",
+  "failures_detected": [
+    {
+      "check": "macro_transmission_depth",
+      "description": "Insufficient transmission chain — found 1/2 required pattern matches",
+      "repair_action": "inject_transmission_context",
+      "severity": "warning"
+    },
+    {
+      "check": "comparative_depth",
+      "description": "Insufficient comparative depth — found 1/2 required pattern matches",
+      "repair_action": "inject_etf_context",
+      "severity": "warning"
+    },
+    {
+      "check": "probability_reasoning",
+      "description": "Insufficient probability reasoning — found 0/1 required pattern matches",
+      "repair_action": "inject_scenario_framing",
+      "severity": "critical"
+    },
+    {
+      "check": "evidence_linkage",
+      "description": "Insufficient evidence linkage — found 0/2 required pattern matches",
+      "repair_action": "strengthen_evidence_anchoring",
+      "severity": "critical"
+    },
+    {
+      "check": "comparative_depth",
+      "description": "ETF topic article missing editorial-comparison-table — structural comparison inadequate",
+      "repair_action": "inject_comparison_table_prompt",
+      "severity": "critical"
+    }
+  ],
+  "generic_phrase_violations": [],
+  "critical_failures": 3,
+  "requires_ai_repair": true,
+  "auto_repair_insufficient": true,
+  "context_injections": [
+    {
+      "type": "transmission_context",
+      "context": {
+        "regime_note": "Transmission chain dynamics apply within the current macro context.",
+        "relevant_chains": []
+      },
+      "instruction": "Add cross-asset transmission chain analysis — explain WHY assets react to macro events, not just THAT they do."
+    },
+    {
+      "type": "etf_comparison_context",
+      "context": {
+        "etf_profiles": [
+          {
+            "ticker": "XLV",
+            "full_name": "Health Care Select Sector SPDR Fund",
+            "institutional_interpretation": "XLV is a tactical defensive allocation tool. The key analytical distinction is between its pharmaceutical and managed care sub-sectors — pharma (GLP-1 drug cycle, patent cliffs) is growth-like while managed care (UNH, CVS) is quasi-utility. Investors treating XLV as a monolithic defensive are missing the intra-sector dispersion that drives performance during earnings seasons.",
+            "comparison_note": "XLV vs VHT: XLV's concentration in top 10 holdings (~52%) vs VHT's broader 500+ holdings creates materially different single-stock risk profiles. XLV's large-cap bias means lower pharmaceutical development risk but higher managed care regulatory exposure."
+          }
+        ]
+      },
+      "instruction": "Upgrade ETF comparisons to institutional depth: include allocation implications, rate sensitivity, concentration risk, and sector rotation behavior for each compared ETF."
+    },
+    {
+      "type": "rate_path_context",
+      "context": {
+        "stance": "neutral",
+        "bias": "data_dependent",
+        "curve_shape": "uncertain",
+        "narrative": "The macro signal environment does not provide a clear directional read on Fed policy — incoming data is mixed, and the Fed's reaction function is being re-calibrated. The most likely near-term outcome is a hold with language that preserves optionality in both directions."
+      },
+      "instruction": "Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions."
+    }
+  ],
+  "ai_repair_prompt": "INSTITUTIONAL DEPTH REPAIR REQUEST FOR: bond-etfs-in-market-research\n\nDETECTED FAILURES:\n- macro_transmission_depth: Insufficient transmission chain — found 1/2 required pattern matches\n- comparative_depth: Insufficient comparative depth — found 1/2 required pattern matches\n- probability_reasoning: Insufficient probability reasoning — found 0/1 required pattern matches\n- evidence_linkage: Insufficient evidence linkage — found 0/2 required pattern matches\n- comparative_depth: ETF topic article missing editorial-comparison-table — structural comparison inadequate\n\nGENERIC PHRASE VIOLATIONS (replace with evidence-grounded language):\nNone\n\nCONTEXT AVAILABLE FOR REPAIR:\n- transmission_context: Add cross-asset transmission chain analysis — explain WHY assets react to macro events, not just THAT they do.\n- etf_comparison_context: Upgrade ETF comparisons to institutional depth: include allocation implications, rate sensitivity, concentration risk, and sector rotation behavior for each compared ETF.\n- rate_path_context: Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions.\n\nREPAIR REQUIREMENTS:\n1. Every macro claim must be grounded in a mechanism, not just a direction\n2. Cross-asset transmission chains must explain WHY, not just THAT\n3. ETF comparisons must address: allocation structure, rate sensitivity, concentration risk, sector rotation\n4. Generic phrases (\"markets are watching\", \"uncertainty remains\") must be replaced with specific, evidence-based language\n5. Probability language must be conditional: \"IF X, THEN Y is likely because of Z\"\n6. Analytical sentences (12+ words with causal language) must exceed bullet points in the article\n\nQUALITY STANDARD: Institutional research desk quality. Not SEO blog. Not generic finance content.",
+  "repair_priority": "high",
+  "next_action": "mark_for_brain_targeted_repair"
+}

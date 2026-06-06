@@ -9,6 +9,7 @@ function buildEditorialContext(topic) {
   const live = readJson(path.join(ROOT, 'data', 'live-market-state.json'));
   const regime = readJson(path.join(ROOT, 'data', 'market-regime-state.json'));
   const memory = readJson(path.join(ROOT, 'data', 'editorial-memory.json'));
+  const repairSpec = readJson(path.join(ROOT, 'data', 'intelligence', 'repair-spec.json'));
   const liveVerified = live.metadata?.status === 'live' && live.metadata?.data_quality !== 'none';
   const state = liveVerified ? (live.computed_regime || {}) : (regime.state || {});
   const verifiedSignals = liveVerified
@@ -28,7 +29,8 @@ function buildEditorialContext(topic) {
     recent_angles: (memory.entries || []).slice(-12).map((entry) => entry.angle).filter(Boolean),
     recent_structures: (memory.entries || []).slice(-12).map((entry) => entry.structure).filter(Boolean),
     selected_angle: selectAngle(topic, memory),
-    context_note: buildContextNote(topic, verifiedSignals, liveVerified)
+    context_note: buildContextNote(topic, verifiedSignals, liveVerified),
+    repair_spec: repairSpec.target_slug === topic.slug ? repairSpec : null
   };
 }
 

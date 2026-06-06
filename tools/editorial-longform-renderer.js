@@ -54,6 +54,7 @@ ${JSON.stringify(breadcrumbSchema(topic, ar), null, 2)}
       <div data-editorial-intelligence="v1" data-editorial-angle="${escapeHtml(context.selected_angle || 'research-framework')}" hidden></div>
 ${sections.map((section, index) => renderSection(section, index, ar)).join('\n')}
 ${renderEditorialContext(context, ar)}
+${renderInstitutionalRepairContext(context, ar)}
       <section id="related-research">
         <h2>${ar ? 'مسار بحث مرتبط' : 'A related research path'}</h2>
         <p>${ar ? 'يمكن للقراء الذين يقارنون القطاعات الدفاعية الانتقال من تحليل الصندوق إلى منهجية بناء المؤشر ثم إلى سلوك القطاع مقابل السوق الواسع.' : 'Readers comparing defensive sectors can extend the analysis from the fund itself to index construction, diversification mechanics, and the behavior of sector ETFs relative to the broad market.'}</p>
@@ -130,6 +131,37 @@ function renderEditorialContext(context, ar) {
       </aside>`;
 }
 
+function renderInstitutionalRepairContext(context, ar) {
+  if (ar || !context?.repair_spec?.context_injections?.length) return '';
+  const paragraphs = [];
+  for (const injection of context.repair_spec.context_injections) {
+    const data = injection.context || {};
+    if (injection.type === 'regime_context' && data.regime_summary) {
+      paragraphs.push(`Regime context: ${data.regime_summary} This context is used as a conditional analytical frame, and the article does not treat it as a recommendation or a deterministic forecast.`);
+    }
+    if (injection.type === 'transmission_context') {
+      for (const chain of data.relevant_chains || []) {
+        if (chain.mechanism) paragraphs.push(`Transmission mechanism (${chain.key}): ${chain.mechanism}`);
+      }
+    }
+    if (injection.type === 'etf_comparison_context') {
+      for (const profile of data.etf_profiles || []) {
+        const detail = [profile.institutional_interpretation, profile.comparison_note].filter(Boolean).join(' ');
+        if (detail) paragraphs.push(`${profile.ticker} comparison context: ${detail}`);
+      }
+    }
+    if (injection.type === 'rate_path_context' && data.narrative) {
+      paragraphs.push(`Rate-path scenario: ${data.narrative} The relevant conclusion depends on confirmation from the yield curve, liquidity conditions, and participation rather than the policy label alone.`);
+    }
+  }
+  if (!paragraphs.length) return '';
+  return `      <section id="institutional-repair-context">
+        <p class="editorial-transition">The next layer connects the educational framework to the specific transmission mechanisms identified during autonomous review.</p>
+        <h2>Institutional transmission and comparison context</h2>
+${paragraphs.slice(0, 6).map((paragraph) => `        <p>${escapeHtml(paragraph)}</p>`).join('\n')}
+      </section>`;
+}
+
 function renderHealthcareComparisonTable(ar) {
   const rows = ar ? [
     ['XLV', '0.08%', 'نحو 59', 'شركات الرعاية الصحية في S&P 500', 'مرتفع بسبب عدد أقل من الشركات الكبرى', 'دفاعي نسبيا مع مخاطر تركيز', 'عميقة عادة'],
@@ -174,7 +206,7 @@ function healthcareEnglishSections() {
       heading: 'Why healthcare can behave defensively',
       paragraphs: [
         'Healthcare is often described as defensive because demand for many medical products and services is less discretionary than demand for advertising, travel, luxury goods, or cyclical industrial equipment. People do not usually postpone essential prescriptions, insurance coverage, emergency care, or chronic-disease treatment simply because economic growth slows. That can make the earnings base of large pharmaceutical, managed-care, and medical-service companies appear more stable than sectors whose revenue depends heavily on consumer confidence or corporate capital spending.',
-        'Defensive behavior does not mean healthcare ETFs always rise when the market falls. It means the sector may sometimes decline less, attract relative rotation, or hold earnings expectations better when investors reduce exposure to more cyclical areas. During periods of weaker growth, falling risk appetite, or elevated volatility, portfolio managers may compare healthcare with utilities, consumer staples, and other sectors that have steadier demand patterns. In that environment, the transmission mechanism is usually earnings resilience: if analysts believe healthcare cash flows are less exposed to the slowdown, the sector can receive a relative valuation premium.'
+        'Defensive behavior does not mean healthcare ETFs always rise when the market falls. It means the sector may sometimes decline less, attract relative rotation, or hold earnings expectations better when investors reduce exposure to more cyclical areas. During periods of weaker growth, falling risk appetite, or elevated volatility, portfolio managers may compare healthcare with utilities, consumer staples, and other sectors that have steadier demand patterns. In that environment, the transmission mechanism is usually earnings resilience: if analysts believe healthcare cash flows are less exposed to the slowdown, the sector can receive a relative valuation premium. The cross-asset rate channel also matters because higher Treasury yields can trigger valuation repricing in biotech and other long-duration healthcare businesses even while mature pharmaceutical cash flows remain comparatively stable.'
       ]
     },
     {

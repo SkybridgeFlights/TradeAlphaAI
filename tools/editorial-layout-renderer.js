@@ -1,6 +1,15 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 const SITE_URL = 'https://www.tradealphaai.com';
+const ETF_FLOW_PATH = path.resolve(__dirname, '..', 'data', 'intelligence', 'etf-flow-intelligence.json');
+const ETF_KNOWN_TICKERS = new Set([
+  'SPY','QQQ','IWM','XLV','TLT','GLD','SOXX','DIA','XLE','XLF','XLU','XLP','UUP',
+  'VTI','IVV','AGG','LQD','HYG','XLK','XLY','XLB','XLRE','XLC','IEF','SHY',
+  'ARKK','SCHD','JEPI','JEPQ','VIG','VYM','BND','EEM','EFA','VEA','VWO'
+]);
 
 function hasProductionEditorialLayout(html, ar = false) {
   const text = String(html || '');
@@ -68,7 +77,7 @@ ${head}
         </div>
       </section>
       <section class="market-section"><div class="insight-layout"><article class="insight-article-body" data-editorial-draft="true" data-status="in_review">
-${normalizeArticleBody(articleBody)}
+${normalizeArticleBody(articleBody, topic, ar)}
       </article>${sidebar}</div></section>
     </div>
   </main>
@@ -132,12 +141,80 @@ function renderSidebar(articleBody, topic, ar) {
   return `<aside class="insight-sidebar"><div class="insight-toc"><h3>${ar ? 'المحتويات' : 'Contents'}</h3><ol>${headings || `<li><a href="#related-research">${ar ? 'أبحاث مرتبطة' : 'Related research'}</a></li>`}</ol></div><div class="market-panel" style="padding:20px;margin-top:20px"><span class="eyebrow" style="font-size:10px">${ar ? 'أبحاث مرتبطة' : 'Related Research'}</span><div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">${links}</div></div></aside>`;
 }
 
-function normalizeArticleBody(body) {
+function normalizeArticleBody(body, topic = {}, ar = false) {
   let out = String(body || '').trim();
   out = out.replace(/<p(?![^>]*class=)/g, '<p class="market-copy"');
   out = out.replace(/<ul(?![^>]*class=)/g, '<ul class="market-copy"');
   out = out.replace(/<footer[\s\S]*?<\/footer>/gi, (match) => `<div class="insight-disclaimer">${match.replace(/<\/?footer[^>]*>/gi, '')}</div>`);
+  if (!ar && !out.includes('institutional-comparison-block')) {
+    const explicit = (topic.related_etfs || [])
+      .map((ticker) => String(ticker).toUpperCase())
+      .filter((ticker) => ETF_KNOWN_TICKERS.has(ticker));
+    const etfs = [...new Set([...explicit, ...detectEtfMentions(out)])];
+    if (etfs.length >= 2) {
+      const panel = buildInstitutionalComparisonPanel(etfs, loadEtfProfiles());
+      if (panel) out += panel;
+    }
+  }
   return out || '<h2 id="research-framework">Research framework</h2><p class="market-copy">This educational research draft requires editorial content before publication.</p>';
+}
+
+function loadEtfProfiles() {
+  try { return JSON.parse(fs.readFileSync(ETF_FLOW_PATH, 'utf8')).etf_profiles || {}; } catch { return {}; }
+}
+
+function detectEtfMentions(body) {
+  return [...ETF_KNOWN_TICKERS]
+    .map((ticker) => ({ ticker, index: String(body || '').search(new RegExp(`\\b${ticker}\\b`)) }))
+    .filter((item) => item.index >= 0)
+    .sort((a, b) => a.index - b.index)
+    .map((item) => item.ticker);
+}
+
+function buildInstitutionalComparisonPanel(tickers, profiles) {
+  const pair = tickers.filter((t) => profiles[t]).slice(0, 2);
+  if (pair.length < 2) return '';
+  const [a, b] = pair;
+  const pA = profiles[a];
+  const pB = profiles[b];
+
+  const comparisonRow = (ticker, profile) => {
+    const characteristics = profile.characteristics || {};
+    const volatility = [characteristics.defensiveness, characteristics.cyclicality]
+      .filter(Boolean)
+      .join(' defensiveness / ') || 'Review historical volatility';
+    const concentration = [
+      profile.category?.replace(/_/g, ' '),
+      characteristics.mega_cap_concentration && `concentration: ${characteristics.mega_cap_concentration}`
+    ].filter(Boolean).join('; ');
+    const topInfluence = Number.isFinite(characteristics.top10_weight_est_pct)
+      ? `Top 10 approximately ${characteristics.top10_weight_est_pct}%`
+      : 'Review current holdings concentration';
+    return `<tr>
+      <td>${escapeHtml(ticker)}</td>
+      <td>${escapeHtml(profile.expense_ratio || 'Verify current issuer schedule')}</td>
+      <td>${escapeHtml(profile.approx_holdings || 'Varies with rebalancing')}</td>
+      <td>${escapeHtml(concentration || 'Review index methodology')}</td>
+      <td>${escapeHtml(topInfluence)}</td>
+      <td>${escapeHtml(volatility)}</td>
+      <td>${escapeHtml(characteristics.liquidity_tier || 'Review current trading conditions')}</td>
+    </tr>`;
+  };
+  const tableHtml = comparisonRow(a, pA) + comparisonRow(b, pB);
+
+  const noteA     = pA.institutional_interpretation ? `<p class="market-copy" style="margin:10px 0 0"><strong>${escapeHtml(a)}:</strong> ${escapeHtml(pA.institutional_interpretation)}</p>` : '';
+  const noteB     = pB.institutional_interpretation ? `<p class="market-copy" style="margin:8px 0 0"><strong>${escapeHtml(b)}:</strong> ${escapeHtml(pB.institutional_interpretation)}</p>` : '';
+  const rateTxA   = pA.rate_transmission ? `<p class="market-copy" style="margin:8px 0 0"><strong>${escapeHtml(a)} rate channel:</strong> ${escapeHtml(pA.rate_transmission)}</p>` : '';
+  const rateTxB   = pB.rate_transmission ? `<p class="market-copy" style="margin:8px 0 0"><strong>${escapeHtml(b)} rate channel:</strong> ${escapeHtml(pB.rate_transmission)}</p>` : '';
+  const compNote  = (pA.comparison_note || pB.comparison_note)
+    ? `<p class="market-copy" style="margin:12px 0 0;padding-top:10px;border-top:1px solid var(--border)"><strong>Structural comparison:</strong> ${escapeHtml(pA.comparison_note || pB.comparison_note || '')}</p>`
+    : '';
+
+  return `<div class="institutional-comparison-block market-panel" style="margin-top:2rem">
+  <span class="eyebrow" style="font-size:10px;letter-spacing:.08em;display:block;margin-bottom:10px">Institutional Comparison: ${escapeHtml(a)} vs ${escapeHtml(b)}</span>
+  <div class="editorial-table-wrap" style="overflow-x:auto"><table class="editorial-comparison-table" style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:2px solid var(--border)"><th>ETF</th><th>Expense ratio</th><th>Approx. holdings</th><th>Concentration style</th><th>Top-holdings influence</th><th>Typical volatility profile</th><th>Liquidity profile</th></tr></thead><tbody>${tableHtml}</tbody></table></div>
+  ${noteA}${noteB}${rateTxA}${rateTxB}${compNote}
+</div>`;
 }
 
 function extractRaw(text, pattern) {
@@ -176,5 +253,7 @@ function escapeRegExp(value) {
 
 module.exports = {
   ensureProductionEditorialLayout,
-  hasProductionEditorialLayout
+  hasProductionEditorialLayout,
+  buildInstitutionalComparisonPanel,
+  detectEtfMentions
 };

@@ -18,6 +18,17 @@ const TODAY = new Date().toISOString().slice(0, 10);
 const VALID_MODES = new Set(['status', 'dry_run', 'generate_only', 'publish_ready', 'full_pipeline']);
 const VALID_TYPES = new Set(['auto', 'editorial', 'market-outlook', 'news-analysis', 'all']);
 const DRAFT_STATUSES = new Set(['draft', 'planned', 'queued']);
+const INSTITUTIONAL_REPAIR_CHECKS = new Set([
+  'editorial_word_count',
+  'editorial_average_paragraph_depth',
+  'editorial_semantic_depth',
+  'editorial_narrative_continuity',
+  'editorial_analytical_density',
+  'editorial_comparison_coverage',
+  'editorial_sentence_opening_diversity',
+  'editorial_lexical_richness',
+  'score_below_90'
+]);
 
 function readJson(filePath, fallback = {}) {
   if (!fs.existsSync(filePath)) return fallback;
@@ -1033,6 +1044,38 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
 
   // ── First review attempt ──────────────────────────────────────────────────
   let review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: true });
+
+  // Build a targeted institutional repair specification before the single
+  // regeneration pass. A failed regeneration remains blocked for manual review.
+  if (!review.approved && contentType === 'editorial' && effectiveRepairFn) {
+    const failedChecks = review.failed_checks || [];
+    const institutionalFailure = failedChecks.some((check) => INSTITUTIONAL_REPAIR_CHECKS.has(check));
+    if (institutionalFailure) {
+      console.log(`[brain] Building institutional repair specification for ${slug}: ${failedChecks.join(', ')}`);
+      const repairSpec = runNode('tools/repair-institutional-depth.js', [`--slug=${slug}`, '--write'], { inherit: true });
+      if (repairSpec.status === 0) {
+        cleanDraftDirectory(contentType, slug);
+        repairRegenUsed = true;
+        if (repairGenerateFn) repairRegenStatusOverride = true;
+        const repairedGeneration = invokeGeneratorWithSlugCheck(effectiveRepairFn, contentType, canonicalSlug);
+        generatedSlug = repairedGeneration.detectedSlug;
+        if (repairedGeneration.result.status === 0 && !repairedGeneration.slugMismatch) {
+          const repairedArtifacts = ensureDraftArtifacts(contentType, slug);
+          artifactCheckAfterRepair = repairedArtifacts.ok ? 'passed' : 'failed';
+          if (repairedArtifacts.ok) {
+            generationResult = 'draft regenerated with institutional repair context';
+            review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: false });
+          } else {
+            missingArtifacts = repairedArtifacts.missing;
+            markTopicManualRevision(contentType, slug, `institutional repair regeneration missing artifacts: ${missingArtifacts.join(', ')}`);
+          }
+        } else {
+          cleanDraftDirectory(contentType, slug);
+          markTopicManualRevision(contentType, slug, 'institutional repair regeneration failed');
+        }
+      }
+    }
+  }
 
   // ── Authority repair cycle (once, for topology/linking failures only) ─────
   if (!review.approved) {

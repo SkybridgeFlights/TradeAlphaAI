@@ -17,6 +17,7 @@ const ECONOMIC_CALENDAR_PATH = path.join(ROOT, 'data', 'economic-calendar.json')
 const REGIME_PATH = path.join(ROOT, 'data', 'market-regime-state.json');
 const MEMORY_PATH = path.join(ROOT, 'data', 'topic-memory.json');
 const LIVE_MARKET_PATH = path.join(ROOT, 'data', 'live-market-state.json');
+const ETF_FLOW_PATH = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
 const OUT_DIR = path.join(ROOT, 'drafts', 'market-outlook');
 const SITE_URL = 'https://www.tradealphaai.com';
 const ELIGIBLE = new Set(['planned', 'draft']);
@@ -30,6 +31,7 @@ const calendar = readJson(ECONOMIC_CALENDAR_PATH, { events: [] });
 const regime = readJson(REGIME_PATH, {});
 const memory = readJson(MEMORY_PATH, { recent_topics: [] });
 const liveMarket = readJson(LIVE_MARKET_PATH, { metadata: { status: 'fallback' } });
+const etfFlow = readJson(ETF_FLOW_PATH, { etf_profiles: {}, regime_context: 'unknown' });
 
 const topic = slugArg
   ? (queue.topics || []).find((item) => item.slug === slugArg)
@@ -175,10 +177,11 @@ function render(topic, locale, intel, aiContent = null) {
   const schema = buildSchemas({ title, summary, locale, canonical, enUrl, arUrl, updatedDate, topic, ar, L });
   const nav = ar ? renderArNav(topic.slug) : renderEnNav(topic.slug);
   const articleIntelligence = buildArticleIntelligence(topic, ar);
+  const compSection = buildInstitutionalComparisonSection(topic, etfFlow, ar);
   const breadcrumb = ar
     ? `<nav class="breadcrumb"><a href="/ar/">الرئيسية</a><span>/</span><a href="/ar/market-outlook/">توقعات السوق</a><span>/</span><span>${escapeHtml(title)}</span></nav>`
     : `<nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/market-outlook/">Market Outlook</a><span>/</span><span>${escapeHtml(title)}</span></nav>`;
-  const sidebarLinks = [
+  const sidebarItems = [
     ['market-narrative', L.executiveSummary],
     ['intelligence-snapshot', L.intelligenceSnapshot],
     ['volatility-context', L.marketTone],
@@ -186,8 +189,10 @@ function render(topic, locale, intel, aiContent = null) {
     ['scenario-outlook', L.scenarioOutlook],
     ['risk-factors', L.riskFactorsTitle],
     ['watch-next', L.watchNextTitle],
+    ...(compSection ? [['institutional-comparison', ar ? 'مقارنة مؤسسية' : 'Institutional Comparison']] : []),
     ['related-research', L.relatedTitle]
-  ].map(([id, label]) => `            <a href="#${id}">${escapeHtml(label)}</a>`).join('\n');
+  ];
+  const sidebarLinks = sidebarItems.map(([id, label]) => `            <a href="#${id}">${escapeHtml(label)}</a>`).join('\n');
 
   return `<!doctype html>
 <html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}">
@@ -305,6 +310,7 @@ ${watchItems}
         </ul></div>
       </section>
 
+${compSection}
       <section class="market-section" id="related-research">
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.relatedTitle)}</span><h2>${escapeHtml(L.relatedTitle)}</h2></div>
         <div class="market-grid three">
@@ -386,6 +392,67 @@ ${tags.map((tag) => `            <span>${escapeHtml(cleanState(tag))}</span>`).j
   } catch (error) {
     return '';
   }
+}
+
+function buildInstitutionalComparisonSection(topicItem, etfFlowData, ar) {
+  const KNOWN = ['SPY','QQQ','IWM','XLV','TLT','GLD','SOXX','DIA','XLE','XLF','XLU','XLP','UUP'];
+  const explicit = [...(topicItem.related_etfs || []), ...(topicItem.affected_instruments || [])]
+    .map((value) => String(value).toUpperCase())
+    .filter((value) => KNOWN.includes(value));
+  const haystack = `${topicItem.slug || ''} ${topicItem.title_en || ''} ${(topicItem.macro_tags || []).join(' ')} ${topicItem.topic_cluster || ''}`.toUpperCase();
+  const inferred = KNOWN.filter((t) => new RegExp(`\\b${t}\\b`).test(haystack));
+  const mentioned = [...new Set([...explicit, ...inferred])];
+  if (mentioned.length < 2) return '';
+
+  const profiles = etfFlowData.etf_profiles || {};
+  const pair = mentioned.filter((t) => profiles[t]).slice(0, 2);
+  if (pair.length < 2) return '';
+
+  const [a, b] = pair;
+  const pA = profiles[a];
+  const pB = profiles[b];
+  if (!pA || !pB) return '';
+
+  const currentRegime = etfFlowData.regime_context || 'unknown';
+  const rpA = pA.regime_profile?.[currentRegime] || pA.regime_profile?.tightening_cycle || '';
+  const rpB = pB.regime_profile?.[currentRegime] || pB.regime_profile?.tightening_cycle || '';
+
+  const L = ar ? {
+    sectionTitle: 'مقارنة مؤسسية للصناديق',
+    intro: 'تحليل الخصائص الهيكلية وقناة المعدلات وسلوك الدوران القطاعي لكل صندوق في السياق الحالي.',
+    rateChannel: 'قناة المعدلات',
+    regimeContext: 'السياق الراهن',
+    structuralNote: 'مقارنة هيكلية',
+  } : {
+    sectionTitle: 'Institutional ETF Comparison',
+    intro: 'Structural characteristics, rate-channel transmission, and current regime positioning for each ETF.',
+    rateChannel: 'Rate channel',
+    regimeContext: 'Current regime view',
+    structuralNote: 'Structural comparison note',
+  };
+
+  const compNote = pA.comparison_note || pB.comparison_note || '';
+  const intA = pA.institutional_interpretation || '';
+  const intB = pB.institutional_interpretation || '';
+
+  return `      <section class="market-section" id="institutional-comparison">
+        <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.sectionTitle)}</span><h2>${escapeHtml(L.sectionTitle)}: ${escapeHtml(a)} vs ${escapeHtml(b)}</h2><p class="market-copy">${escapeHtml(L.intro)}</p></div>
+        <div class="market-grid two">
+          <article class="market-card">
+            <span class="market-card-kicker">${escapeHtml(a)}: ${escapeHtml(pA.full_name || a)}</span>
+            <p class="market-copy">${escapeHtml(intA)}</p>
+            <p class="market-copy"><strong>${escapeHtml(L.rateChannel)}:</strong> ${escapeHtml(pA.rate_transmission || '—')}</p>
+            <p class="market-copy"><strong>${escapeHtml(L.regimeContext)}:</strong> ${escapeHtml(rpA || '—')}</p>
+          </article>
+          <article class="market-card">
+            <span class="market-card-kicker">${escapeHtml(b)}: ${escapeHtml(pB.full_name || b)}</span>
+            <p class="market-copy">${escapeHtml(intB)}</p>
+            <p class="market-copy"><strong>${escapeHtml(L.rateChannel)}:</strong> ${escapeHtml(pB.rate_transmission || '—')}</p>
+            <p class="market-copy"><strong>${escapeHtml(L.regimeContext)}:</strong> ${escapeHtml(rpB || '—')}</p>
+          </article>
+        </div>
+        ${compNote ? `<div class="market-panel" style="margin-top:1rem"><p class="market-copy"><strong>${escapeHtml(L.structuralNote)}:</strong> ${escapeHtml(compNote)}</p></div>` : ''}
+      </section>`;
 }
 
 function cleanState(value) {

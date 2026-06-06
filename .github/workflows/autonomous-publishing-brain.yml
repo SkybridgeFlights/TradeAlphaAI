@@ -66,6 +66,9 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
 
     steps:
       - name: Log autonomous publishing context
@@ -109,6 +112,55 @@ jobs:
           node tools/build-article-pairs.js --write
           node tools/analyze-content-clusters.js --write
           node tools/detect-orphan-pages.js --write
+
+      - name: Fetch live economic calendar
+        run: |
+          if [ -n "${FMP_API_KEY}" ]; then
+            node tools/update-economic-calendar.js --fetch --write
+            echo "[calendar] Live calendar updated."
+          else
+            echo "[calendar] FMP_API_KEY not configured — retaining the checked-in calendar."
+          fi
+          node tools/build-market-expectations.js --write
+          node tools/build-cross-asset-reaction.js --write
+
+      - name: Build macro reaction intelligence
+        run: |
+          node tools/build-event-reaction-memory.js --write
+          echo "[macro] Event reaction memory updated."
+
+      - name: Build institutional depth intelligence
+        run: |
+          node tools/detect-market-regime.js --write
+          echo "[regime] Market regime detected and written."
+          node tools/build-cross-asset-transmission.js --write
+          echo "[transmission] Cross-asset transmission engine updated."
+          node tools/build-etf-flow-intelligence.js --write
+          echo "[etf-flow] ETF flow intelligence updated."
+          node tools/build-rate-path-intelligence.js --write
+          echo "[rate-path] Rate path intelligence updated."
+
+      - name: Generate macro narrative
+        run: |
+          node tools/generate-macro-narrative.js --write
+          echo "[macro] Institutional macro narrative updated."
+
+      - name: Generate market outlook pages
+        if: ${{ env.MODE == 'full_pipeline' || env.MODE == 'generate_only' }}
+        run: |
+          node tools/generate-daily-market-outlook.js --write
+          node tools/generate-daily-market-outlook.js --mode=weekly --write
+          echo "[outlook] Daily and weekly institutional outlook pages generated."
+
+      - name: Validate intelligence and generated pages
+        run: |
+          npm run check:macro-intelligence
+          npm run check:editorial
+          npm run check:language-purity
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
 
       - name: Run autonomous publishing brain
         run: |
@@ -204,6 +256,9 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add insights ar/insights en/insights data || true
           git add drafts market-outlook ar/market-outlook en/market-outlook || true
+          git add economic-calendar ar/economic-calendar || true
+          git add market-outlook/daily market-outlook/weekly || true
+          git add data/intelligence || true
           compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
           compgen -G "search-index*.json" > /dev/null && git add search-index*.json || true
           compgen -G "article-registry*.json" > /dev/null && git add article-registry*.json || true

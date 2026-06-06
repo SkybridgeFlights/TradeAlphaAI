@@ -1,0 +1,454 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-06-06T11:38:50.660Z",
+  "data_quality": "calendar_based",
+  "regime_context": "unverified",
+  "transmission_library": {
+    "CPI_hot": {
+      "trigger": "CPI or PCE prints above consensus estimate",
+      "primary_channel": "rate_repricing",
+      "mechanism": "An above-consensus CPI reading compresses the probability of near-term Fed rate cuts. Markets reprice the terminal rate higher — or delay the first cut — which flows through the short-end of the Treasury curve. The 2-year yield is particularly sensitive because it most directly prices near-term Fed expectations. This rise in real yields increases the discount rate applied to all future cash flows.",
+      "asset_chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_rises",
+          "reason": "Directly pricing near-term Fed expectations — hot CPI = delayed cuts = higher 2Y yield"
+        },
+        {
+          "asset": "10Y Treasury / TLT",
+          "direction": "yield_rises_price_falls",
+          "reason": "Rising short-end pulls long-end higher, though long-end also factors in growth and term premium"
+        },
+        {
+          "asset": "DXY (Dollar)",
+          "direction": "strengthens",
+          "reason": "Higher US rates attract capital inflows, increasing demand for dollars relative to lower-yielding currencies"
+        },
+        {
+          "asset": "GLD (Gold)",
+          "direction": "weakens",
+          "reason": "Gold has no yield — rising real yields raise its opportunity cost. DXY strength amplifies the headwind via commodity pricing mechanism"
+        },
+        {
+          "asset": "QQQ (Nasdaq)",
+          "direction": "headwind",
+          "reason": "Long-duration growth stocks are most sensitive to discount rate changes — a 25bp move in the risk-free rate compresses valuations of 2030+ cash flows materially"
+        },
+        {
+          "asset": "XLU (Utilities)",
+          "direction": "headwind",
+          "reason": "Utility stocks are bond proxies — when yields rise, the dividend yield spread compresses and capital rotates out"
+        },
+        {
+          "asset": "SPY (S&P 500)",
+          "direction": "mixed",
+          "reason": "Aggregate effect muted: financial sector (XLF) benefits from higher NIM, energy benefits from inflation persistence, growth suffers. Net depends on composition"
+        },
+        {
+          "asset": "IWM (Small Cap)",
+          "direction": "negative",
+          "reason": "Small caps carry more floating-rate debt — financing cost sensitivity is higher than mega-cap. Also more cyclically exposed to macro uncertainty"
+        }
+      ],
+      "policy_transmission": "The mechanism runs through the Fed reaction function: higher CPI → smaller rate-cut probability in FOMC dot plot → primary dealer repricing → Treasury auction dynamics → yield curve shift → equity discount rates repriced → corporate borrowing costs rise → financial conditions tighten.",
+      "positioning_effects": "Momentum strategies in long-duration assets (TLT, QQQ) unwind. Systematic trend followers flip short rates. Options markets see increased demand for TLT puts and interest rate floors. Risk-parity funds reduce duration allocation mechanically as bond vol rises.",
+      "confirmation_signals": [
+        "2Y Treasury yield rising >5bp",
+        "DXY spot advancing >0.3%",
+        "TIPS breakevens widening",
+        "TLT declining >0.5%"
+      ],
+      "duration_of_effect": "1-3 trading sessions before regime fully reprices",
+      "historical_reliability": "high",
+      "contraindications": [
+        "If CPI beat is in lagged components (shelter), market may discount it",
+        "If growth is already slowing, hawkish impulse muted by recession risk offset"
+      ]
+    },
+    "CPI_cool": {
+      "trigger": "CPI or PCE prints below consensus estimate",
+      "primary_channel": "rate_relief",
+      "mechanism": "A below-consensus inflation reading increases the probability that the Fed has achieved or is approaching its inflation target, potentially pulling forward the first rate cut. This eases the real-yield pressure that has been a headwind for duration-sensitive assets. The short-end of the Treasury curve leads the relief rally as rate-cut probabilities are repriced higher.",
+      "asset_chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_falls",
+          "reason": "Repricing closer easing — cut probability rises, compressing 2Y yield"
+        },
+        {
+          "asset": "TLT",
+          "direction": "price_rises",
+          "reason": "Relief from rate pressure — duration assets benefit from falling yield environment"
+        },
+        {
+          "asset": "DXY (Dollar)",
+          "direction": "weakens",
+          "reason": "Lower rate expectations reduce yield differential advantage vs other currencies"
+        },
+        {
+          "asset": "GLD (Gold)",
+          "direction": "benefits",
+          "reason": "Falling real yields reduce gold opportunity cost. DXY weakness provides additional support via inverse commodity pricing relationship"
+        },
+        {
+          "asset": "QQQ (Nasdaq)",
+          "direction": "benefits",
+          "reason": "Long-duration growth stocks re-rate as discount rate pressure eases. Forward multiples expand as terminal value assumptions improve"
+        },
+        {
+          "asset": "XLU (Utilities)",
+          "direction": "benefits",
+          "reason": "Dividend yield spread widens as Treasury yields fall — utilities become relatively attractive again"
+        },
+        {
+          "asset": "SPY",
+          "direction": "positive",
+          "reason": "Soft-landing narrative intact — inflation cooling without growth collapse supports broad equity exposure"
+        }
+      ],
+      "policy_transmission": "Soft CPI → higher probability of Fed cut → Treasury short-end rally → curve bull steepening → credit conditions ease → equity risk premium contracts → multiple expansion possible → financial conditions loosen.",
+      "positioning_effects": "Rate-short positions (TLT puts, 2Y short futures) face squeeze pressure. Long-duration bond positions see mark-to-market gains. Systematic trend followers begin reversing rate shorts if signal is sustained over multiple sessions.",
+      "confirmation_signals": [
+        "2Y Treasury yield falling >5bp",
+        "TLT advancing >0.5%",
+        "DXY declining >0.2%",
+        "Gold spot rising >0.3%",
+        "QQQ outperforming SPY"
+      ],
+      "duration_of_effect": "1-5 trading sessions; sustained if confirmed by sequential monthly data",
+      "historical_reliability": "high",
+      "contraindications": [
+        "If soft CPI is driven by base effects only, market may revert",
+        "If growth is also deteriorating, soft CPI triggers recession-risk concerns not just easing relief"
+      ]
+    },
+    "NFP_strong": {
+      "trigger": "Non-Farm Payrolls prints above consensus expectations",
+      "primary_channel": "hawkish_labor_repricing",
+      "mechanism": "A strong NFP reading reinforces the Fed's higher-for-longer framework. A tight labor market means wages are at risk of reacceleration, which complicates inflation normalization. The Fed's dual mandate means strong employment reduces urgency to ease. The market must reprice a later first cut and a higher terminal rate path.",
+      "asset_chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_rises",
+          "reason": "Strong labor data delays Fed easing expectations directly"
+        },
+        {
+          "asset": "DXY",
+          "direction": "strengthens",
+          "reason": "Hawkish re-pricing supports dollar via rate differential expansion"
+        },
+        {
+          "asset": "IWM (Small Cap)",
+          "direction": "mixed_sensitive",
+          "reason": "Small caps benefit from economic strength but are penalized by higher financing costs — net depends on which factor dominates"
+        },
+        {
+          "asset": "XLF (Financials)",
+          "direction": "benefits",
+          "reason": "Banks benefit from higher-for-longer rate environment — net interest margins expand with sustained elevated short rates"
+        },
+        {
+          "asset": "TLT",
+          "direction": "pressure",
+          "reason": "Rate-cut delay repricing presses long-end yields higher"
+        },
+        {
+          "asset": "GLD",
+          "direction": "headwind",
+          "reason": "Strong growth + hawkish Fed reduces haven demand and increases real yield pressure on gold"
+        },
+        {
+          "asset": "VIX",
+          "direction": "may_rise",
+          "reason": "Hawkish repricing introduces rate path uncertainty — implied vol often spikes on strong NFP even if equity direction is ambiguous"
+        }
+      ],
+      "policy_transmission": "Strong NFP → wage growth risk remains → Fed less urgency to cut → rate-cut probability repriced lower → short-end yield curve shifts higher → financial conditions remain tight → small business financing costs stay elevated.",
+      "positioning_effects": "Short-rate positions extended. Duration underweights maintained or increased. Long-vol positions see mixed results. IWM positioning becomes bifurcated between growth bulls and rate bears.",
+      "confirmation_signals": [
+        "2Y yield rising >8bp",
+        "DXY spot +0.3%",
+        "IWM underperforming SPY",
+        "Rate-cut probabilities falling in Fed funds futures"
+      ],
+      "duration_of_effect": "2-4 trading sessions",
+      "historical_reliability": "high",
+      "contraindications": [
+        "If prior months revised significantly lower, market may discount the headline beat",
+        "If wage growth disappoints despite headline beat, inflation concern is reduced"
+      ]
+    },
+    "NFP_weak": {
+      "trigger": "Non-Farm Payrolls prints below consensus expectations",
+      "primary_channel": "dual_response_risk",
+      "mechanism": "A weak NFP creates competing narratives simultaneously: (1) the dovish case — labor market slack increases, Fed has more room to cut; (2) the recession-risk case — growth is deteriorating, earnings estimates will face revision. The net market reaction depends on which narrative dominates, which is why weak NFP has historically been the most volatile macro release.",
+      "asset_chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_falls",
+          "reason": "Easing expectation pulled forward as labor market slack builds"
+        },
+        {
+          "asset": "TLT",
+          "direction": "rallies",
+          "reason": "Bond market bids on both easing expectations and flight-to-safety"
+        },
+        {
+          "asset": "GLD",
+          "direction": "benefits",
+          "reason": "Falling real yields and dollar weakness support gold — unless recession risk dominates, in which case gold is also bid as a safe haven"
+        },
+        {
+          "asset": "QQQ",
+          "direction": "depends",
+          "reason": "Easing scenario: QQQ benefits from lower discount rates. Recession scenario: QQQ pressured by earnings downgrades. First 30 minutes of reaction is frequently reversed."
+        },
+        {
+          "asset": "IWM",
+          "direction": "underperforms",
+          "reason": "Small caps are more cyclically sensitive — weak jobs leads to faster IWM de-rating regardless of the rate response"
+        },
+        {
+          "asset": "DXY",
+          "direction": "weakens",
+          "reason": "Rate-cut probability rising reduces dollar yield advantage"
+        },
+        {
+          "asset": "XLY (Consumer Discretionary)",
+          "direction": "pressure",
+          "reason": "Consumer spending expectations deteriorate with employment weakness"
+        }
+      ],
+      "policy_transmission": "Weak NFP → Fed dual mandate tilts toward employment → rate-cut probability increases → yield curve bull steepens → credit conditions ease (IF growth concern is secondary). If recession narrative wins: equity earnings downgrades → vol spikes → credit spreads widen → financial conditions tighten despite rate relief.",
+      "positioning_effects": "Short-vol positions face squeeze as realized vol spikes. Long-growth, short-defensives positions face reversal. Risk-parity funds forced to rebalance on correlation breakdown between stocks and bonds.",
+      "confirmation_signals": [
+        "IWM underperforming SPY by >0.5%",
+        "TLT advancing >0.5%",
+        "10Y yield falling >6bp",
+        "VIX rising despite equity rally (divergence signal)"
+      ],
+      "duration_of_effect": "3-7 trading sessions before market settles on dominant narrative",
+      "historical_reliability": "moderate — highly context-dependent",
+      "contraindications": [
+        "Seasonal factors (weather, strike effects) can produce misleading headlines",
+        "If unemployment rate also declines, labor market weakness less convincing"
+      ]
+    },
+    "FOMC_hawkish": {
+      "trigger": "FOMC delivers a hawkish surprise — dot plots revised higher, rate cuts delayed, or balance sheet concerns raised",
+      "primary_channel": "terminal_rate_repricing",
+      "mechanism": "The FOMC's power to move markets comes not from the meeting outcome (usually priced in advance) but from shifts in the dot plot, the statement language, and Chair Powell's press conference tone. A hawkish surprise typically involves either holding rates longer than priced, revising dots higher, or signaling slower QT tapering. The transmission runs through the terminal rate concept: if the terminal rate shifts up 25bp, every discounted future earnings stream faces a higher hurdle.",
+      "asset_chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_jumps",
+          "reason": "Most directly prices near-term Fed expectations — hawkish dot plot shift reprices entire short-end"
+        },
+        {
+          "asset": "TLT",
+          "direction": "significant_pressure",
+          "reason": "FOMC hawkish surprise historically among the largest single-session TLT movers"
+        },
+        {
+          "asset": "DXY",
+          "direction": "strong_advance",
+          "reason": "Terminal rate repricing widening vs other G10 central banks drives significant FX flows"
+        },
+        {
+          "asset": "GLD",
+          "direction": "significant_weakness",
+          "reason": "Triple headwind: rising real yields, strong dollar, reduced macro uncertainty for haven demand"
+        },
+        {
+          "asset": "QQQ",
+          "direction": "compression",
+          "reason": "Growth premium resets as terminal rate shifts higher — multiple compression mechanically results"
+        },
+        {
+          "asset": "EM (ETFs: EEM, VWO)",
+          "direction": "significant_pressure",
+          "reason": "Higher US rates drain EM capital flows, stronger dollar tightens EM USD-denominated debt servicing costs"
+        },
+        {
+          "asset": "XLF (Financials)",
+          "direction": "mixed_to_positive",
+          "reason": "Higher-for-longer supports NIM but inverted curve compresses banking profitability; net depends on curve shape"
+        }
+      ],
+      "policy_transmission": "Hawkish FOMC → terminal rate revision → 2Y-5Y yield shift → EM capital outflows → USD strength → DM equity multiple compression → corporate debt issuance costs rise → financial conditions tighten → credit spreads widen if extreme.",
+      "positioning_effects": "Risk-parity forced duration reduction. Long-TLT positions face mark-to-market losses. EM carry trades unwind. Long-gold positions see squeeze. VIX term structure steepens as uncertainty reprices.",
+      "confirmation_signals": [
+        "DXY advancing >0.5%",
+        "2Y Treasury yield +10bp",
+        "GLD declining >0.5%",
+        "EM ETFs underperforming SPY >1%"
+      ],
+      "duration_of_effect": "5-10 trading sessions for full repricing; terminal rate revision can persist for weeks",
+      "historical_reliability": "very_high",
+      "contraindications": [
+        "Chair walks back hawkish statement in subsequent speaking engagements",
+        "Macro data rapidly contradicts the hawkish signal (e.g., soft NFP within days)"
+      ]
+    },
+    "FOMC_dovish": {
+      "trigger": "FOMC signals earlier cuts, reduced terminal rate, or accelerated QT tapering",
+      "primary_channel": "easing_expectation_pull_forward",
+      "mechanism": "A dovish FOMC surprise loosens financial conditions across all channels simultaneously. The near-term cut probability increases, real yields fall, the dollar weakens, and duration assets rally. The key is whether the dovish signal is growth-supportive (soft landing) or recession-reactive (growth deterioration). The former is asset-constructive; the latter is more complex.",
+      "asset_chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_falls",
+          "reason": "Near-term cut probability increases directly"
+        },
+        {
+          "asset": "TLT",
+          "direction": "rallies",
+          "reason": "Duration assets reprice positively across the entire curve"
+        },
+        {
+          "asset": "DXY",
+          "direction": "weakens",
+          "reason": "Rate differential compression reduces dollar yield advantage"
+        },
+        {
+          "asset": "GLD",
+          "direction": "benefits",
+          "reason": "Falling real yields and dollar weakness provide dual support"
+        },
+        {
+          "asset": "QQQ",
+          "direction": "rally",
+          "reason": "Duration extension — long cash flows re-rate with lower discount rates"
+        },
+        {
+          "asset": "IWM",
+          "direction": "rally",
+          "reason": "Small caps benefit most from cheaper financing conditions — highest sensitivity to short-rate path"
+        },
+        {
+          "asset": "EM (EEM, VWO)",
+          "direction": "rally",
+          "reason": "Dollar weakness and lower US rates revive EM carry trade and reduce USD debt burden"
+        }
+      ],
+      "policy_transmission": "Dovish FOMC → rate-cut pull forward → short-end yield fall → financial conditions ease → equity risk premium contracts → credit spreads tight → corporate issuance re-opens → consumption and investment financing costs fall.",
+      "positioning_effects": "Short-rate positions (TLT puts, short futures) face covering pressure. Long-gold, long-TLT, long-QQQ positions see mark-to-market gains. Risk-parity funds mechanically add duration exposure.",
+      "confirmation_signals": [
+        "TLT advancing >1%",
+        "GLD advancing >0.5%",
+        "IWM outperforming SPY",
+        "DXY falling >0.3%"
+      ],
+      "duration_of_effect": "5-15 trading sessions",
+      "historical_reliability": "high",
+      "contraindications": [
+        "Dovish signal delivered alongside weak growth data can create mixed reaction",
+        "Market positioning already long duration reduces magnitude of rally"
+      ]
+    },
+    "GDP_above": {
+      "trigger": "GDP prints above consensus expectations",
+      "primary_channel": "soft_landing_confirmation",
+      "mechanism": "Above-consensus GDP strengthens the soft-landing narrative — growth is resilient despite the rate cycle, which supports earnings expectations and reduces the urgency for emergency easing. This is the most market-constructive macro scenario: growth strong enough to support earnings, but not so hot it reignites inflation.",
+      "asset_chain": [
+        {
+          "asset": "SPY / QQQ",
+          "direction": "positive",
+          "reason": "Earnings expectations supported by stronger-than-expected economic activity"
+        },
+        {
+          "asset": "IWM",
+          "direction": "outperforms",
+          "reason": "Small caps are most cyclically sensitive — strong growth narrows the financing headwind relative to revenue opportunity"
+        },
+        {
+          "asset": "XLF (Financials)",
+          "direction": "benefits",
+          "reason": "Loan demand, credit quality, and capital markets activity all improve in a stronger growth environment"
+        },
+        {
+          "asset": "TLT",
+          "direction": "mild_pressure",
+          "reason": "Strong growth may maintain or slightly elevate the long-end, though the Fed remains on hold"
+        },
+        {
+          "asset": "GLD",
+          "direction": "mixed",
+          "reason": "Strong growth reduces haven demand but doesn't dramatically move real yields — gold response typically muted"
+        },
+        {
+          "asset": "DXY",
+          "direction": "stable_to_stronger",
+          "reason": "US growth outperformance supports dollar relative to peers with weaker growth dynamics"
+        }
+      ],
+      "policy_transmission": "Strong GDP → earnings revision cycle positive → equity multiple expansion or stability → consumer confidence → further spending resilience → virtuous cycle if inflation remains contained.",
+      "positioning_effects": "Value and quality factor positioning maintained. Risk reduction strategies (VIX hedges) less urgent. IWM and cyclical sector positioning added on margin.",
+      "confirmation_signals": [
+        "IWM outperforming TLT by >1%",
+        "XLF and XLY advancing",
+        "VIX declining",
+        "Cyclical vs defensive ratio advancing"
+      ],
+      "duration_of_effect": "3-7 trading sessions",
+      "historical_reliability": "moderate_high",
+      "contraindications": [
+        "Growth beat driven purely by inventory build has less durable positive signal",
+        "If inflation data concurrent is also strong, GDP beat can tighten the Fed bind"
+      ]
+    },
+    "GDP_below": {
+      "trigger": "GDP prints below consensus expectations",
+      "primary_channel": "growth_risk_activation",
+      "mechanism": "Below-consensus GDP creates growth risk anxiety — particularly if the trend is sequential deterioration. Bond markets typically bid on recession expectations, but equity markets face a conflicting signal: growth deterioration hits earnings, but expected easing provides a multiple offset. The net direction in equities depends on how far growth is from recession and how quickly easing expectations build.",
+      "asset_chain": [
+        {
+          "asset": "TLT",
+          "direction": "rallies",
+          "reason": "Recession risk bid as investors position for Fed easing and flight to safety"
+        },
+        {
+          "asset": "GLD",
+          "direction": "benefits",
+          "reason": "Haven demand rises; if Fed expected to ease, real yield pressure also reduces"
+        },
+        {
+          "asset": "XLU / XLP",
+          "direction": "outperform",
+          "reason": "Defensive sectors reprice positively on growth deterioration"
+        },
+        {
+          "asset": "IWM",
+          "direction": "underperforms",
+          "reason": "Small caps face sharpest earnings downgrades in growth deterioration"
+        },
+        {
+          "asset": "XLE (Energy)",
+          "direction": "pressure",
+          "reason": "Lower growth expectations reduce energy demand assumptions"
+        },
+        {
+          "asset": "DXY",
+          "direction": "mixed",
+          "reason": "Recession narrative can reduce growth-based dollar support, but safe-haven flows can temporarily support USD"
+        }
+      ],
+      "policy_transmission": "Weak GDP → growth risk narrative → bonds bid → equity earnings estimates reduced → credit spreads widen → credit conditions effectively tighten despite rate expectations falling — creating a complex push-pull on financial conditions.",
+      "positioning_effects": "Cyclical longs reduced. Defensive sector allocation increased. Duration positions extended. Credit shorts or protection considered. Small cap underweight vs large cap.",
+      "confirmation_signals": [
+        "TLT advancing >0.5%",
+        "IWM underperforming SPY >0.8%",
+        "Defensive sectors (XLU, XLP) outperforming",
+        "VIX advancing >5%"
+      ],
+      "duration_of_effect": "5-10 trading sessions; persistent if trend is sequential",
+      "historical_reliability": "moderate",
+      "contraindications": [
+        "GDP revision later can reverse if inventory/one-time factors drove miss",
+        "Sector composition matters — services GDP miss less severe than manufacturing miss"
+      ]
+    }
+  },
+  "event_analyses": [],
+  "regime_transmission_note": "Transmission chain dynamics apply within the current macro context."
+}
