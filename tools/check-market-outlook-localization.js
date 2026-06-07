@@ -2,6 +2,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const {
+  findArabicEnglishRun,
+  normalizeArabicFinancialHtml,
+} = require('./arabic-financial-localization');
 
 const ROOT = path.resolve(__dirname, '..');
 const REGISTRY_PATH = path.join(ROOT, 'data', 'insights', 'article-registry.json');
@@ -11,12 +15,14 @@ const knownEnglishTitles = loadKnownEnglishTitles();
 const prohibitedPhrases = [
   'AI Inference vs Training',
   'Understanding the Two Phases',
+  'Capital Expenditure QoQ Final',
 ];
 const allowedEnglishTokens = [
   'TradeAlphaAI', 'TradeAlpha', 'AI', 'ETF', 'ETFs', 'GDP', 'CPI', 'PCE',
   'NFP', 'FOMC', 'VIX', 'DXY', 'USD', 'GPU', 'NASDAQ', 'English',
 ];
 
+runFinancialNormalizationRegression();
 for (const file of files) validateFile(file);
 
 if (failures.length) {
@@ -79,10 +85,17 @@ function validateFile(file) {
     }
   }
 
-  const normalized = stripAllowedTokens(body);
-  const englishRun = normalized.match(/\b[A-Za-z]{2,}(?:[\s:–—-]+[A-Za-z]{2,}){3,}\b/);
+  const englishRun = findArabicEnglishRun(html);
   if (englishRun) {
     failures.push(`${rel}: more than 3 consecutive English words: "${englishRun[0].slice(0, 120)}"`);
+  }
+}
+
+function runFinancialNormalizationRegression() {
+  const fixture = '<html lang="ar" dir="rtl"><body><p>Capital Expenditure QoQ Final</p></body></html>';
+  const normalized = normalizeArabicFinancialHtml(fixture);
+  if (/Capital Expenditure|QoQ|Final/i.test(normalized) || findArabicEnglishRun(normalized)) {
+    failures.push('financial normalization regression: "Capital Expenditure QoQ Final" was not localized');
   }
 }
 

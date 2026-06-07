@@ -12,6 +12,10 @@ const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence'
 const { extractMarketSignals } = require('./extract-market-signals');
 const { recommendLinks } = require('./internal-link-intelligence');
 const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
+const {
+  findArabicEnglishRun,
+  normalizeArabicFinancialHtml,
+} = require('./arabic-financial-localization');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -63,7 +67,9 @@ const aiContent = tryGetAiContent(topic.slug);
 const aiMode = aiContent !== null;
 
 const renderedEn = render(normalized, 'en', intelligence, aiContent, generationId);
-const renderedAr = render(normalized, 'ar', intelligence, aiContent, generationId);
+const renderedAr = normalizeArabicFinancialHtml(
+  render(normalized, 'ar', intelligence, aiContent, generationId)
+);
 assertArabicGenerationSafe(renderedAr, topic.slug);
 
 fs.mkdirSync(dir, { recursive: true });
@@ -1043,6 +1049,13 @@ function assertArabicGenerationSafe(html, slug) {
   if (match) {
     throw new Error(
       `[MARKET OUTLOOK LOCALIZATION] ${slug}: prohibited English fragment found in generated Arabic HTML: "${match[0]}"`
+    );
+  }
+  const englishRun = findArabicEnglishRun(html);
+  if (englishRun) {
+    throw new Error(
+      `[MARKET OUTLOOK LOCALIZATION] ${slug}: more than 3 consecutive English words remain after normalization: ` +
+      `"${englishRun[0].slice(0, 120)}"`
     );
   }
 }
