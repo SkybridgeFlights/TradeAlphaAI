@@ -27,16 +27,21 @@ const RATE_PATH     = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelli
 const TRANSMISSION_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-transmission.json');
 const ETF_FLOW_PATH  = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
 const STATUS_PATH    = path.join(ROOT, 'data', 'intelligence', 'telegram-status.json');
+const PUBLISHING_REPORT_PATH = argValue('--report')
+  ? path.resolve(ROOT, argValue('--report'))
+  : path.join(ROOT, 'data', 'intelligence', 'publishing-report.json');
+const EDITORIAL_QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
+const OUTLOOK_QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
 
-const TYPE     = argValue('--type') || 'briefing';
+const TYPE     = argValue('--type') || 'auto';
 const SEND     = process.argv.includes('--send');
 const EVENT_FILTER = (argValue('--event-type') || '').toLowerCase();
 const MAX_LENGTH = 4000; // Telegram message limit
 
 const DISCLAIMER = '⚠️ Educational commentary only. Not financial advice.';
 
-if (!['preview', 'release', 'weekly', 'briefing'].includes(TYPE)) {
-  fail(`Unknown --type: ${TYPE}. Use preview, release, weekly, or briefing.`);
+if (!['auto', 'publication', 'preview', 'release', 'weekly', 'briefing'].includes(TYPE)) {
+  fail(`Unknown --type: ${TYPE}. Use auto, publication, preview, release, weekly, or briefing.`);
 }
 
 const calendar  = readJson(CAL_PATH,       { events: [] });
@@ -46,10 +51,29 @@ const regime    = readJson(REGIME_PATH,    { regime: null, regime_label: null, c
 const ratePath  = readJson(RATE_PATH,      { fed_path: null });
 const transmission = readJson(TRANSMISSION_PATH, { regime_transmission_note: null, event_analyses: [] });
 const etfFlow   = readJson(ETF_FLOW_PATH,   { rotation_analysis: null });
+const publishingReport = readJson(PUBLISHING_REPORT_PATH, {});
 
-const message = buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow);
+const publication = publicationFromReport(publishingReport);
+const route = publication ? 'publication_announcement' : TYPE === 'auto' ? 'skip' : 'macro_briefing';
+const message = publication
+  ? buildPublicationAnnouncement(publication)
+  : TYPE === 'auto'
+    ? null
+    : buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow);
+
+if (publication) {
+  console.log('[TELEGRAM ROUTE]');
+  console.log('type=publication_announcement');
+  console.log(`slug=${publication.slug}`);
+  console.log(`url=${publication.url}`);
+} else if (route === 'macro_briefing') {
+  console.log(`[TELEGRAM ROUTE]\ntype=macro_briefing\nmode=${TYPE}`);
+} else {
+  console.log('[TELEGRAM ROUTE]\ntype=skip\nreason=no_publication_and_no_explicit_macro_mode');
+}
+
 if (!message) {
-  console.log(`[macro-telegram] No content to send for type=${TYPE}`);
+  console.log(`[macro-telegram] No content to send for route=${route}`);
   if (SEND) writeStatus(false, 'no_content');
   process.exit(0);
 }
@@ -99,6 +123,78 @@ function buildMessage(type, calendar, narrative, expect, regime, ratePath, trans
     case 'briefing':  return buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow);
     default:          return null;
   }
+}
+
+function publicationFromReport(report) {
+  const slug = String(report.selected_topic || '').trim();
+  const contentType = String(report.selected_content_type || report.content_type || '').trim();
+  const pages = Array.isArray(report.public_pages_created) ? report.public_pages_created : [];
+  if (report.published !== true || !slug || pages.length === 0) return null;
+  if (!['editorial', 'market-outlook'].includes(contentType)) return null;
+
+  const queuePath = contentType === 'editorial' ? EDITORIAL_QUEUE_PATH : OUTLOOK_QUEUE_PATH;
+  const queue = readJson(queuePath, { topics: [] });
+  const topic = (queue.topics || []).find((item) => item.slug === slug);
+  if (!topic) return null;
+
+  const base = contentType === 'editorial' ? 'insights' : 'market-outlook';
+  const publicSet = new Set(pages.map((page) => String(page).replaceAll('\\', '/')));
+  if (!publicSet.has(`${base}/${slug}.html`)) return null;
+
+  return {
+    slug,
+    contentType,
+    title: topic.title_en || topic.title || titleFromSlug(slug),
+    summary: topic.summary_en || topic.description_en || topic.summary || '',
+    url: `https://www.tradealphaai.com/${base}/${slug}.html`,
+    arUrl: publicSet.has(`ar/${base}/${slug}.html`)
+      ? `https://www.tradealphaai.com/ar/${base}/${slug}.html`
+      : null,
+    publishDate: topic.target_publish_date || topic.publish_date || topic.published_at || report.timestamp,
+  };
+}
+
+function buildPublicationAnnouncement(publication) {
+  const isOutlook = publication.contentType === 'market-outlook';
+  const heading = isOutlook
+    ? `📊 Market Outlook Published · ${formatPublishDate(publication.publishDate)}`
+    : '📘 New Research Published';
+  const tags = isOutlook
+    ? '#TradeAlphaAI #MarketOutlook #Macro'
+    : '#TradeAlphaAI #Investing #ETF';
+  const lines = [
+    heading,
+    '',
+    publication.title,
+    '',
+    twoLineSummary(publication.summary),
+    '',
+    'Read:',
+    publication.url,
+  ];
+  if (publication.arUrl) lines.push('', 'Arabic:', publication.arUrl);
+  lines.push('', tags);
+  return lines.join('\n').slice(0, MAX_LENGTH);
+}
+
+function twoLineSummary(value) {
+  const text = String(value || 'Institutional educational research with scenario-based context and risk framing.')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+  return sentences.slice(0, 2).map((sentence) => sentence.trim()).join('\n');
+}
+
+function formatPublishDate(value) {
+  const match = String(value || '').match(/\d{4}-\d{2}-\d{2}/);
+  return match ? match[0] : new Date().toISOString().slice(0, 10);
+}
+
+function titleFromSlug(slug) {
+  return String(slug || '')
+    .replace(/-\d{4}-\d{2}-\d{2}$/, '')
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function buildPreviewMessage(calendar, narrative, expect) {
@@ -298,7 +394,9 @@ function appendInstitutionalState(lines, transmission, etfFlow) {
 // ── Telegram sender ───────────────────────────────────────────────────────────
 
 function sendTelegram(token, chatId, text) {
-  const body = JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' });
+  const payload = { chat_id: chatId, text };
+  if (route === 'macro_briefing') payload.parse_mode = 'Markdown';
+  const body = JSON.stringify(payload);
   return new Promise((resolve, reject) => {
     const req = https.request({
       hostname: 'api.telegram.org',

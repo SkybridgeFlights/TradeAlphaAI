@@ -222,16 +222,16 @@ jobs:
         if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
         run: |
           published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
-          telegram_quality="$(node -e "const fs=require('fs');const read=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {}}};const r=read('./data/intelligence/publishing-report.json');const c=read('./data/intelligence/publication-confidence.json');const p=read('./data/provider-health.json');const editorial=String(r.selected_content_type||'')==='editorial';const confidenceOk=!editorial||(c.slug===r.selected_topic&&Number(c.confidence||0)>=Number(c.confidence_threshold||90)&&c.institutional_depth_passed===true);const critical=p.degraded===true&&(!Number(p.event_count)||p.reason==='all_providers_unavailable');process.stdout.write(confidenceOk&&!critical?'yes':'no')")"
+          telegram_quality="$(node -e "const fs=require('fs');const read=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {}}};const r=read('./data/intelligence/publishing-report.json');const c=read('./data/intelligence/publication-confidence.json');const editorial=String(r.selected_content_type||'')==='editorial';const confidenceOk=!editorial||(c.slug===r.selected_topic&&Number(c.confidence||0)>=Number(c.confidence_threshold||90)&&c.institutional_depth_passed===true);process.stdout.write(confidenceOk?'yes':'no')")"
           echo "[PUBLISH REPORT] published=${published} telegram_quality=${telegram_quality}"
           if [ "${published}" != "yes" ]; then
             echo "[macro-telegram] Skipped because autonomous publication did not complete."
           elif [ "${telegram_quality}" != "yes" ]; then
-            echo "[macro-telegram] Skipped because confidence, institutional-depth, or macro-provider quality gate did not pass."
+            echo "[publication-telegram] Skipped because confidence or institutional-depth quality gate did not pass."
           elif [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
-            node tools/send-macro-telegram.js --type=briefing --send
+            node tools/send-macro-telegram.js --type=publication --send
           else
-            echo "[macro-telegram] Publication succeeded, but Telegram credentials are unavailable."
+            echo "[publication-telegram] Publication succeeded, but Telegram credentials are unavailable."
           fi
 
       - name: Update homepage featured content and system status
