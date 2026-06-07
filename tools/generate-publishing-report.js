@@ -8,7 +8,7 @@ const OUTPUT = path.join(ROOT, 'data', 'intelligence', 'publishing-report.json')
 const TELEGRAM_STATUS = path.join(ROOT, 'data', 'intelligence', 'telegram-status.json');
 
 function buildPublishingReport(decision = {}) {
-  const topic = String(decision.topic || decision.selected_topic || '').trim();
+  const topic = String(decision.topic || decision.selected_topic || decision.canonical_slug || '').trim();
   const slug = extractSlug(topic);
   const publicPages = findPublicPages(slug);
   const drafts = findDrafts(slug);
@@ -67,6 +67,13 @@ function printFinalDecision(report) {
   console.log(`published=${published}`);
   console.log(`publish_result=${report.publish_result}`);
   console.log(`telegram_allowed=${telegramAllowed}`);
+  if (published || /^published/i.test(String(report.publish_result))) {
+    const slug = report.selected_topic || '';
+    console.log('\n[PUBLISH EXECUTION]');
+    console.log(`slug=${slug}`);
+    console.log(`result=${published ? 'success' : 'failed'}`);
+    console.log(`public_pages=${(report.public_pages_created || []).length}`);
+  }
 }
 
 function findPublicPages(slug) {

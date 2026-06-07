@@ -732,6 +732,9 @@ function executeAction(contentType, mode, dryRun, action) {
     let effectiveAction = action;
 
     if (action.next_action === 'generate_topic_then_draft' || action.next_action === 'generate_topic_then_full_pipeline') {
+      const queueBefore = readJson(path.join(ROOT, 'data', 'market-outlook-queue.json'), { topics: [] });
+      const beforeCount = (queueBefore.topics || []).length;
+
       const seeded = seedTopicIfNeeded(contentType);
       if (seeded.status !== 0) {
         return {
@@ -741,13 +744,22 @@ function executeAction(contentType, mode, dryRun, action) {
           command_status: seeded.status
         };
       }
-      // Re-read queue to pick up the newly seeded slug (action.topic was null at plan time)
+
+      // Force full queue reload from disk after seeding
       if (!effectiveAction.topic) {
+        const queueAfter = readJson(path.join(ROOT, 'data', 'market-outlook-queue.json'), { topics: [] });
+        const afterCount = (queueAfter.topics || []).length;
+        console.log(`[QUEUE REFRESH] before_count=${beforeCount} after_count=${afterCount}`);
+
         const freshStatus = inspectMarketOutlook();
         const freshSlug = freshStatus.publishable_slug || freshStatus.approved_waiting_slug || freshStatus.draft_candidate || freshStatus.next_eligible;
         if (freshSlug) {
+          const freshTopic = (queueAfter.topics || []).find((t) => t.slug === freshSlug);
+          console.log(`[TOPIC SELECTION] selected=${freshSlug} status=${freshTopic ? freshTopic.status : 'unknown'} reason=post_seed_queue_refresh`);
           console.log(`[MARKET OUTLOOK PROMOTION] topic=${freshSlug} previous_state=none next_state=planned promotion_reason=newly_seeded_topic_picked_up`);
           effectiveAction = { ...effectiveAction, topic: freshSlug };
+        } else {
+          console.log(`[TOPIC SELECTION] selected=none reason=no_eligible_topic_after_seeding`);
         }
       }
       if (!effectiveAction.topic) {
@@ -1702,7 +1714,7 @@ function main() {
     dry_run: dryRun,
     selection_reason: decision.reason,
     candidate_scores: decision.candidate_scores,
-    topic: action.topic,
+    topic: action.topic || execution.canonical_slug || null,
     source_availability: sourceAvailability,
     market_intelligence: `state_available=${mi.state_available}; signals=${mi.active_signal_count}; divergences=${mi.active_divergence_count}; memory=${mi.memory_snapshots}`,
     duplicate_cooldown_result: action.duplicate_cooldown_result,

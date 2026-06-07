@@ -197,13 +197,17 @@ console.log(`Market outlook topic seeder — ${today}`);
 console.log(`Queue has ${(queue.topics || []).length} existing topic(s).`);
 
 // Identify available publish slots within horizon
+// Any topic that is not cancelled/failed occupies its slot.
+// Published topics MUST be counted — omitting them causes re-seeding of already-occupied dates.
 const candidateDates = getPublishDates(today, HORIZON_DAYS);
-const occupiedDates  = new Set(
-  (queue.topics || [])
-    .filter((t) => ['planned', 'in_review', 'reviewed'].includes(t.status))
-    .map((t) => t.target_publish_date)
-    .filter(Boolean)
-);
+const OCCUPIED_STATUSES = new Set(['planned', 'in_review', 'pending', 'generated', 'reviewed', 'published']);
+const occupiedDates = new Set();
+for (const t of (queue.topics || [])) {
+  if (!t.target_publish_date) continue;
+  const counted = OCCUPIED_STATUSES.has(t.status);
+  console.log(`[QUEUE OCCUPANCY] date=${t.target_publish_date} slug=${t.slug} status=${t.status} counted=${counted ? 'yes' : 'no'}`);
+  if (counted) occupiedDates.add(t.target_publish_date);
+}
 const freeDates = candidateDates.filter((d) => !occupiedDates.has(d)).slice(0, MAX_SEED);
 
 console.log(`Occupied slots: ${occupiedDates.size} | Free slots: ${freeDates.length}`);
@@ -232,9 +236,15 @@ if (!assignments.length) {
 
 // Build topic objects and deduplicate against existing slugs
 const existingSlugs = new Set((queue.topics || []).map((t) => t.slug));
-const newTopics = assignments
-  .map(({ template, date }) => buildTopic(template, date))
-  .filter((t) => !existingSlugs.has(t.slug));
+const newTopics = [];
+for (const { template, date } of assignments) {
+  const topic = buildTopic(template, date);
+  if (existingSlugs.has(topic.slug)) {
+    console.log(`[SEEDER SKIP] slug=${topic.slug} reason=already_exists`);
+  } else {
+    newTopics.push(topic);
+  }
+}
 
 if (!newTopics.length) {
   console.log('All generated topics already exist in the queue. No changes made.');
@@ -318,12 +328,17 @@ function isInCooldown(template) {
     return true;
   }
 
-  // 2. Active topic with same cluster already in pipeline
-  const activeConflict = (queue.topics || []).some(
-    (t) => t.topic_cluster === template.topic_cluster && ['planned', 'in_review', 'reviewed'].includes(t.status)
-  );
+  // 2. Active topic with same cluster already in pipeline, or recently published within cooldown window
+  const activeConflict = (queue.topics || []).some((t) => {
+    if (t.topic_cluster !== template.topic_cluster) return false;
+    if (['planned', 'in_review', 'reviewed'].includes(t.status)) return true;
+    if (t.status === 'published') {
+      return daysSince(t.target_publish_date || t.last_reviewed || t.published_at) < clusterCooldown;
+    }
+    return false;
+  });
   if (activeConflict) {
-    console.log(`  [skip] ${template.key}: cluster "${template.topic_cluster}" already active in queue`);
+    console.log(`  [skip] ${template.key}: cluster "${template.topic_cluster}" already active or recently published (cooldown: ${clusterCooldown}d)`);
     return true;
   }
 

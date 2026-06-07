@@ -206,12 +206,14 @@ jobs:
 
       - name: Run autonomous publishing brain
         run: |
+          echo "[PUBLISH EXECUTION] brain starting mode=${MODE} content_type=${CONTENT_TYPE} dry_run=${DRY_RUN}"
           node tools/autonomous-publishing-brain.js \
             --mode="${MODE}" \
             --content-type="${CONTENT_TYPE}" \
             --dry-run="${DRY_RUN}" \
             --manual-topic="${MANUAL_TOPIC}" \
             --force-content-type="${FORCE_CONTENT_TYPE}"
+          echo "[PUBLISH EXECUTION] brain completed exit_code=$?"
 
       - name: Send institutional macro briefing after publication
         if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
