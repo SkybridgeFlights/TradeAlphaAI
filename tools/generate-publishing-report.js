@@ -16,9 +16,10 @@ function buildPublishingReport(decision = {}) {
   const stopReason = String(decision.stop_reason || '').trim();
   const blockReason = deriveBlockReason(decision, publishResult, stopReason);
   const telegram = readJson(TELEGRAM_STATUS, {});
-  // Authoritative publication signal: filesystem verification takes precedence
-  // over string matching so callers don't need to match publish_result text.
-  const published = publicPages.length > 0 || /^published/i.test(publishResult);
+  // Existing public files do not prove this run published them. The execution
+  // result is authoritative; filesystem checks only enumerate created pages.
+  const published = decision.publication_completed === true || /^published/i.test(publishResult);
+  const siteUpdate = decision.site_update === true;
 
   return {
     timestamp: new Date().toISOString(),
@@ -28,9 +29,13 @@ function buildPublishingReport(decision = {}) {
     generation_result: decision.generation_result || 'not requested',
     publish_result: publishResult,
     published,
+    site_update: siteUpdate,
+    commit_allowed: decision.commit_allowed === true,
+    fallback_attempts: Array.isArray(decision.fallback_attempts) ? decision.fallback_attempts : [],
+    site_update_results: Array.isArray(decision.site_update_results) ? decision.site_update_results : [],
     publish_block_reason: blockReason,
-    telegram_sent: telegram.sent === true || /\b(sent|published)\b/i.test(String(decision.telegram_result || '')),
-    public_pages_created: publicPages,
+    telegram_sent: published && (telegram.sent === true || /\b(sent|published)\b/i.test(String(decision.telegram_result || ''))),
+    public_pages_created: published ? publicPages : [],
     drafts_created: drafts,
     quality_score: parseQualityScore(decision.quality_score),
     approval_state: deriveApprovalState(decision, published),
@@ -52,7 +57,7 @@ function writePublishingReport(decision = {}) {
 function printFinalDecision(report) {
   const published = report.published === true;
   const generatedDraft = /draft/i.test(String(report.generation_result));
-  const mode = published ? 'published' : generatedDraft ? 'draft_only' : 'blocked';
+  const mode = published ? 'published' : report.site_update ? 'site_update_only' : generatedDraft ? 'draft_only' : 'blocked';
   const reason = published ? 'quality_and_publish_gates_passed' : normalizeReason(report.publish_block_reason || report.publish_result);
   const telegramAllowed = published ? 'yes' : 'no';
   console.log('\n[PUBLISH DECISION]');
@@ -63,6 +68,8 @@ function printFinalDecision(report) {
   console.log(`public_pages=${report.public_pages_created.length}`);
   console.log(`drafts=${report.drafts_created.length}`);
   console.log(`approval_state=${report.approval_state}`);
+  console.log(`site_update=${report.site_update ? 'yes' : 'no'}`);
+  console.log(`commit_allowed=${report.commit_allowed ? 'yes' : 'no'}`);
   console.log('\n[PUBLISH REPORT]');
   console.log(`published=${published}`);
   console.log(`publish_result=${report.publish_result}`);

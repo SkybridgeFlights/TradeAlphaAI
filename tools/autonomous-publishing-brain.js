@@ -1655,6 +1655,18 @@ function printDecisionReport(report) {
   console.log(`  publish_result:            ${report.publish_result}`);
   console.log(`  telegram_result:           ${report.telegram_result}`);
   console.log(`  commit_result:             ${report.commit_result}`);
+  console.log(`  site_update:               ${report.site_update ? 'yes' : 'no'}`);
+  console.log(`  commit_allowed:            ${report.commit_allowed ? 'yes' : 'no'}`);
+  if (Array.isArray(report.fallback_attempts) && report.fallback_attempts.length > 1) {
+    console.log('\n  FALLBACK CONTENT SELECTION');
+    console.log('  ----------------------------------------------------');
+    report.fallback_attempts.forEach((attempt, index) => {
+      console.log(`  attempt_${index + 1}: ${attempt.content_type} topic=${attempt.topic || 'none'} result=${attempt.result}`);
+    });
+  }
+  if (Array.isArray(report.site_update_results) && report.site_update_results.length) {
+    console.log(`  site_update_results:       ${report.site_update_results.map((item) => `${item.script}:${item.status}`).join(', ')}`);
+  }
   if (report.authority_repair_attempted !== undefined) {
     console.log('\n  AUTHORITY REPAIR CYCLE');
     console.log('  ----------------------------------------------------');
@@ -1713,6 +1725,83 @@ function compactQuality(score) {
   return `${score.score}/${score.minimum} ${score.passed ? 'passed' : `blocked(${score.rejection_reasons.join(',') || 'threshold'})`}`;
 }
 
+function isPublishedExecution(execution) {
+  return /^published\b/i.test(String(execution && execution.publish_result || ''));
+}
+
+function isSelectionFallbackReason(execution, action) {
+  const reason = [
+    execution && execution.generation_result,
+    execution && execution.publish_result,
+    execution && execution.publish_gate_result,
+    action && action.stop_reason,
+    action && action.duplicate_cooldown_result
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return [
+    /no_topics_seeded_all_clusters_in_cooldown_or_slots_full/,
+    /no_eligible_topic_after_seeding/,
+    /no[_ -]eligible[_ -]topic/,
+    /all clusters .*cooldown/,
+    /clusters?.*cooldown/,
+    /slots?.*full/,
+    /duplicate/,
+    /already published/,
+    /no autonomous news publisher/,
+    /source-gated manual/
+  ].some((pattern) => pattern.test(reason));
+}
+
+function fallbackTypes(selected, status) {
+  const chain = [selected];
+  if (selected !== 'editorial') chain.push('editorial');
+  if (status.news_analysis.source_available && selected !== 'news-analysis') chain.push('news-analysis');
+  return [...new Set(chain)];
+}
+
+function hasWorkingTreeChanges() {
+  const result = spawnSync('git', ['status', '--porcelain'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    windowsHide: true
+  });
+  return result.status === 0 && Boolean(String(result.stdout || '').trim());
+}
+
+function siteUpdateOnlyExecution(reason, attempts) {
+  const updates = [
+    ['tools/generate-dashboard-pages.js', []],
+    ['tools/update-content-feeds.js', []],
+    ['tools/update-market-intelligence-status.js', []],
+    ['tools/apply-global-header.js', []]
+  ].filter(([script]) => fs.existsSync(path.join(ROOT, script))).map(([script, args]) => {
+    const result = runNode(script, args, { inherit: true });
+    return { script, status: result.status };
+  });
+  const changed = hasWorkingTreeChanges();
+  console.log('[SITE UPDATE ONLY]');
+  console.log(`reason=${reason}`);
+  console.log(`updates=${updates.map((update) => `${update.script}:${update.status}`).join(',')}`);
+  console.log(`files_changed=${changed}`);
+  return {
+    generation_result: 'intelligence/dashboard/feed update retained',
+    publish_result: 'site_update_only: no article published',
+    telegram_result: 'no: not_published',
+    command_status: 0,
+    current_state: 'site_update_only',
+    transition_path: ['article_selection_exhausted', 'site_update_only'],
+    regeneration_attempts: 0,
+    review_result: 'no article approved for publication',
+    approval_reason: '',
+    publish_gate_result: `blocked: ${reason}`,
+    site_update: true,
+    commit_allowed: changed,
+    publication_completed: false,
+    fallback_attempts: attempts,
+    site_update_results: updates
+  };
+}
+
 function main() {
   const mode = normalizeMode(argValue('--mode', 'status'));
   const requestedType = normalizeType(argValue('--content-type', argValue('--content_type', 'auto')));
@@ -1760,9 +1849,53 @@ function main() {
   }
 
   const decision = chooseContentType(status, requestedType, forceContentType);
-  const selected = decision.selected;
-  const action = actionFor(selected, status, mode, manualTopic);
-  const execution = executeAction(selected, mode, dryRun, action);
+  let selected = decision.selected;
+  let action = actionFor(selected, status, mode, manualTopic);
+  let execution = executeAction(selected, mode, dryRun, action);
+  const fallbackAttempts = [{
+    content_type: selected,
+    topic: action.topic || null,
+    result: execution.publish_result
+  }];
+
+  const fallbackEnabled =
+    (requestedType === 'auto' || requestedType === 'all') &&
+    !forceContentType &&
+    !manualTopic &&
+    mode === 'full_pipeline' &&
+    !dryRun;
+
+  if (fallbackEnabled && !isPublishedExecution(execution)) {
+    const chain = fallbackTypes(selected, status);
+    let fallbackAllowed = isSelectionFallbackReason(execution, action);
+
+    for (const nextType of chain.slice(1)) {
+      if (!fallbackAllowed) break;
+      const reason = String(execution.generation_result || execution.publish_result || 'selection_blocked')
+        .replace(/^blocked:\s*/i, '');
+      console.log('[FALLBACK CONTENT SELECTION]');
+      console.log(`from=${selected}`);
+      console.log(`reason=${reason}`);
+      console.log(`to=${nextType}`);
+
+      selected = nextType;
+      action = actionFor(selected, buildStatus(), mode, '');
+      execution = executeAction(selected, mode, false, action);
+      fallbackAttempts.push({
+        content_type: selected,
+        topic: action.topic || execution.canonical_slug || null,
+        result: execution.publish_result
+      });
+      if (isPublishedExecution(execution)) break;
+      fallbackAllowed = isSelectionFallbackReason(execution, action);
+    }
+
+    if (!isPublishedExecution(execution)) {
+      const reason = String(execution.publish_gate_result || execution.publish_result || 'no publishable content')
+        .replace(/^blocked:\s*/i, '');
+      execution = siteUpdateOnlyExecution(reason, fallbackAttempts);
+    }
+  }
 
   const sourceAvailability = selected === 'news-analysis'
     ? `${status.news_analysis.source_available ? 'available' : 'missing'} (${status.news_analysis.source_backed_topics} source-backed topics, ${status.news_analysis.registered_sources} registry sources)`
@@ -1772,7 +1905,9 @@ function main() {
     selected_content_type: selected,
     selected_mode: mode,
     dry_run: dryRun,
-    selection_reason: decision.reason,
+    selection_reason: fallbackAttempts.length > 1
+      ? `${decision.reason}; fallback_chain=${fallbackAttempts.map((attempt) => attempt.content_type).join('->')}`
+      : decision.reason,
     candidate_scores: decision.candidate_scores,
     topic: action.topic || execution.canonical_slug || null,
     source_availability: sourceAvailability,
@@ -1818,6 +1953,11 @@ function main() {
     targeted_repair_checks_fixed:        execution.targeted_repair_checks_fixed,
     expected_public_pages:                execution.expected_public_pages,
     missing_public_pages:                 execution.missing_public_pages,
+    publication_completed:                execution.publication_completed ?? isPublishedExecution(execution),
+    site_update:                           execution.site_update === true,
+    commit_allowed:                        execution.commit_allowed === true,
+    fallback_attempts:                     execution.fallback_attempts || fallbackAttempts,
+    site_update_results:                   execution.site_update_results || [],
   };
   finalizeDecision(report);
   process.exit(execution.command_status);
@@ -1828,5 +1968,7 @@ if (require.main === module) main();
 module.exports = {
   buildStatus,
   chooseContentType,
-  actionFor
+  actionFor,
+  isSelectionFallbackReason,
+  fallbackTypes
 };

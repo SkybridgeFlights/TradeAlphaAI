@@ -366,11 +366,24 @@ jobs:
           slug="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_topic||''))")"
           type="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_content_type||''))")"
           published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
-          echo "[PUBLISH REPORT] published=${published} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
+          site_update="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.site_update===true?'yes':'no')")"
+          commit_allowed="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.commit_allowed===true?'yes':'no')")"
+          echo "[PUBLISH REPORT] published=${published} site_update=${site_update} commit_allowed=${commit_allowed} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
           if [ "${published}" != "yes" ]; then
             if [ "${MODE}" = "generate_only" ]; then
               git add "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/intelligence || true
               commit_message="Draft generated ${slug}"
+            elif [ "${site_update}" = "yes" ]; then
+              if [ "${commit_allowed}" != "yes" ]; then
+                echo "Skipping commit: site-update path produced no file changes."
+                exit 0
+              fi
+              git add data/intelligence data/feeds data/system-status || true
+              git add market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard || true
+              git add market-replay ar/market-replay system-status || true
+              git add index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html || true
+              compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
+              commit_message="Autonomous site intelligence update"
             else
               echo "Skipping commit: no public publication occurred."
               echo "Reason: $(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_block_reason||r.publish_result||'not_published'))")"
