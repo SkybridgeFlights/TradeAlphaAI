@@ -34,6 +34,8 @@ const draftAr = path.join(draftDir, 'ar.html');
 
 if (!fs.existsSync(draftEn)) fail(`Missing reviewed EN draft: ${relative(draftEn)}`);
 if (!fs.existsSync(draftAr)) fail(`Missing reviewed AR draft: ${relative(draftAr)}`);
+diagnoseArticleParts(fs.readFileSync(draftEn, 'utf8'), false, relative(draftEn));
+diagnoseArticleParts(fs.readFileSync(draftAr, 'utf8'), true, relative(draftAr));
 if (!hasRequiredArticleParts(fs.readFileSync(draftEn, 'utf8'), false)) fail(`${relative(draftEn)} is missing required article metadata/schema/discovery/layout`);
 if (!hasRequiredArticleParts(fs.readFileSync(draftAr, 'utf8'), true)) fail(`${relative(draftAr)} is missing required Arabic article metadata/schema/discovery/layout`);
 
@@ -265,6 +267,36 @@ function hasRequiredArticleParts(html, ar) {
   if (!hasProductionEditorialLayout(html, ar)) return false;
   if (ar && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) return false;
   return true;
+}
+
+function diagnoseArticleParts(html, ar, label) {
+  const p = (name, ok) => console.log(`[ARTICLE PUBLISH VALIDATION] ${ok ? 'PASS' : 'FAIL'} ${name}`);
+  console.log(`\n[ARTICLE PUBLISH VALIDATION] --- ${label} ---`);
+  p('robots index,follow',          /<meta name="robots" content="index,follow/.test(html));
+  p('canonical link',               /<link rel="canonical"/.test(html));
+  p('hreflang en',                  /<link rel="alternate" hreflang="en"/.test(html));
+  p('hreflang ar',                  /<link rel="alternate" hreflang="ar"/.test(html));
+  p('og:title',                     /<meta property="og:title"/.test(html));
+  p('twitter:card',                 /<meta name="twitter:card"/.test(html));
+  p('Article JSON-LD',              /<script type="application\/ld\+json">[\s\S]*"Article"[\s\S]*<\/script>/.test(html));
+  p('FAQPage JSON-LD',              /<script type="application\/ld\+json">[\s\S]*"FAQPage"[\s\S]*<\/script>/.test(html));
+  p('id=related-research',          /id="related-research"/.test(html));
+  p('id=continue-learning',         /id="continue-learning"/.test(html));
+  p('layout: body.market-page',     /<body[^>]+class="[^"]*\bmarket-page\b/i.test(html));
+  p('layout: .topbar',              /class="[^"]*\btopbar\b[^"]*"/.test(html));
+  p('layout: data-global-header',   /data-global-header="homepage"/.test(html));
+  p('layout: .market-shell',        /class="[^"]*\bmarket-shell\b[^"]*"/.test(html));
+  p('layout: .wrap',                /class="[^"]*\bwrap\b[^"]*"/.test(html));
+  p('layout: .insight-hero-card',   /class="[^"]*\binsight-hero-card\b[^"]*"/.test(html));
+  p('layout: .insight-layout',      /class="[^"]*\binsight-layout\b[^"]*"/.test(html));
+  p('layout: .insight-article-body',/class="[^"]*\binsight-article-body\b[^"]*"/.test(html));
+  p('layout: .insight-sidebar',     /class="[^"]*\binsight-sidebar\b[^"]*"/.test(html));
+  p('layout: market-portal.css',    /css\/market\/market-portal\.css/.test(html));
+  p('layout: global-layout.css',    /css\/global-layout\.css/.test(html));
+  p('layout: language-router.js',   /js\/language-router\.js/.test(html));
+  p('layout: mobile-nav.js',        /js\/mobile-nav\.js/.test(html));
+  p('layout: data-locale-route',    /data-locale-route="ar"|data-locale-route="en"/.test(html));
+  if (ar) p('html lang=ar dir=rtl', /<html[^>]+lang="ar"[^>]+dir="rtl"/i.test(html));
 }
 
 function run(command, args) {
