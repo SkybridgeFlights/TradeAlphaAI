@@ -129,6 +129,7 @@ jobs:
         run: |
           npm run check:economic-calendar
           npm run check:market-outlook-queue
+          npm run check:market-outlook-localization
           npm run check:editorial
           npm run check:language-purity
           npm run check:production
@@ -197,6 +198,7 @@ jobs:
           npm run check:bilingual-structure
           npm run check:economic-calendar
           npm run check:market-outlook-queue
+          npm run check:market-outlook-localization
           npm run check:editorial
           npm run check:language-purity
           npm run check:production
@@ -246,12 +248,19 @@ jobs:
         run: |
           npm run check:editorial
           npm run check:language-purity
+          npm run check:market-outlook-localization
           npm run check:production
           npm run check:seo
           npm run check:indexing
           npm run check:social-meta
           npm run check:responsive
           npm run check:macro-intelligence
+          echo "[FINAL LOCALIZATION ASSERTION]"
+          if grep -R -n -i "Understanding the Two Phases" drafts/ ar/market-outlook/ market-outlook/; then
+            echo "[LOCALIZATION FAIL] stale English phrase remains in generated artifacts."
+            exit 1
+          fi
+          echo "[FINAL LOCALIZATION ASSERTION] zero matches"
 
       - name: Diagnose publishing git state
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}

@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 const { generateIntelligence } = require('./generate-market-intelligence.js');
 const { appendSnapshot, buildSnapshot } = require('./macro-intelligence-core');
@@ -26,7 +27,6 @@ const DISCLAIMER_EN = 'This analysis is educational market commentary only. It i
 const DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
 
 const slugArg = argValue('--slug');
-const overwrite = process.argv.includes('--overwrite');
 const queue = readJson(QUEUE_PATH, { topics: [] });
 const calendar = readJson(ECONOMIC_CALENDAR_PATH, { events: [] });
 const regime = readJson(REGIME_PATH, {});
@@ -48,7 +48,11 @@ if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(topic.slug || '')) fail('Market outlook t
 const dir = path.join(OUT_DIR, topic.slug);
 const enDraft = path.join(dir, 'en.html');
 const arDraft = path.join(dir, 'ar.html');
-if (!overwrite && (fs.existsSync(enDraft) || fs.existsSync(arDraft))) fail(`${topic.slug}: draft already exists`);
+const generationId = new Date().toISOString();
+const sourceHash = generationSourceHash();
+
+cleanupStaleArtifacts(topic.slug);
+console.log(`[GENERATION SOURCE HASH] slug=${topic.slug} sha256=${sourceHash}`);
 
 const normalized = normalizeTopic(topic);
 const intelligence = generateIntelligence(liveMarket, calendar, regime, normalized.topic_cluster);
@@ -58,15 +62,21 @@ const intelligence = generateIntelligence(liveMarket, calendar, regime, normaliz
 const aiContent = tryGetAiContent(topic.slug);
 const aiMode = aiContent !== null;
 
+const renderedEn = render(normalized, 'en', intelligence, aiContent, generationId);
+const renderedAr = render(normalized, 'ar', intelligence, aiContent, generationId);
+assertArabicGenerationSafe(renderedAr, topic.slug);
+
 fs.mkdirSync(dir, { recursive: true });
-fs.writeFileSync(enDraft, render(normalized, 'en', intelligence, aiContent), 'utf8');
-fs.writeFileSync(arDraft, render(normalized, 'ar', intelligence, aiContent), 'utf8');
+fs.writeFileSync(enDraft, renderedEn, 'utf8');
+fs.writeFileSync(arDraft, renderedAr, 'utf8');
 fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   slug: topic.slug,
   content_type: 'market_outlook',
   status: 'in_review',
   review_status: 'pending',
-  generated_at: new Date().toISOString(),
+  generated_at: generationId,
+  data_generation_id: generationId,
+  generation_source_hash: sourceHash,
   quality_score_required: 90,
   ai_generated: aiMode,
   directional_bias: aiMode ? aiContent.en.directional_bias : null,
@@ -78,6 +88,8 @@ fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   public_site_updated: false,
   languages: ['en', 'ar']
 }, null, 2) + '\n', 'utf8');
+console.log(`[FINAL HTML HASH] locale=en slug=${topic.slug} sha256=${sha256(renderedEn)}`);
+console.log(`[FINAL HTML HASH] locale=ar slug=${topic.slug} sha256=${sha256(renderedAr)}`);
 
 // ── Validate generated artifacts (Fix 8) ─────────────────────────────────────
 // GLOBAL_HEADER_START is injected by apply-global-header.js on published pages.
@@ -125,7 +137,7 @@ if (aiMode) {
   attemptStructuralPromotion(topic, topic.slug, 'structural_generation_complete_no_ai_key');
 }
 
-function render(topic, locale, intel, aiContent = null) {
+function render(topic, locale, intel, aiContent = null, dataGenerationId = new Date().toISOString()) {
   const labelSets = getLabels();
   const ar = locale === 'ar';
   const title = ar ? topic.title_ar : topic.title_en;
@@ -177,7 +189,7 @@ function render(topic, locale, intel, aiContent = null) {
     : `<p class="market-copy"><strong>${escapeHtml(ar ? labelSets.ar.tone : labelSets.en.tone)}:</strong> ${escapeHtml(ar ? confidenceAr(intel.confidence.label) : intel.confidence.label)}</p>
           <p class="market-copy">${escapeHtml(ar ? n.volatility_interpretation.ar : n.volatility_interpretation.en)}</p>`;
   const L = ar ? labelSets.ar : labelSets.en;
-  const generatedAt = new Date().toISOString();
+  const generatedAt = dataGenerationId;
   const updatedDate = generatedAt.slice(0, 10);
   const readingMinutes = estimateReadingMinutes([
     title,
@@ -216,7 +228,7 @@ function render(topic, locale, intel, aiContent = null) {
   const sidebarLinks = sidebarItems.map(([id, label]) => `            <a href="#${id}">${escapeHtml(label)}</a>`).join('\n');
 
   return `<!doctype html>
-<html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}">
+<html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}" data-generation-id="${escapeHtml(dataGenerationId)}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -989,6 +1001,54 @@ function readJson(file, fallback) {
   } catch (error) {
     fail(`${path.relative(ROOT, file)}: ${error.message}`);
   }
+}
+
+function cleanupStaleArtifacts(slug) {
+  const targets = [
+    path.join(OUT_DIR, slug),
+    path.join(ROOT, 'ar', 'market-outlook', `${slug}.html`),
+    path.join(ROOT, 'en', 'market-outlook', `${slug}.html`),
+    path.join(ROOT, 'market-outlook', `${slug}.html`),
+  ];
+  const removed = [];
+
+  for (const target of targets) {
+    if (!fs.existsSync(target)) continue;
+    fs.rmSync(target, { recursive: true, force: true });
+    removed.push(path.relative(ROOT, target).replaceAll('\\', '/'));
+  }
+
+  console.log(`[STALE CLEANUP] slug=${slug} removed=${removed.length ? removed.join(',') : 'none'}`);
+}
+
+function generationSourceHash() {
+  const inputs = [
+    __filename,
+    path.join(ROOT, 'tools', 'internal-link-intelligence.js'),
+    path.join(ROOT, 'data', 'content-knowledge-graph.json'),
+    path.join(ROOT, 'data', 'insights', 'article-registry.json'),
+  ];
+  const hash = crypto.createHash('sha256');
+  for (const file of inputs) {
+    hash.update(path.relative(ROOT, file).replaceAll('\\', '/'));
+    hash.update('\0');
+    if (fs.existsSync(file)) hash.update(fs.readFileSync(file));
+    hash.update('\0');
+  }
+  return hash.digest('hex');
+}
+
+function assertArabicGenerationSafe(html, slug) {
+  const match = String(html || '').match(/Training|Understanding the Two Phases/i);
+  if (match) {
+    throw new Error(
+      `[MARKET OUTLOOK LOCALIZATION] ${slug}: prohibited English fragment found in generated Arabic HTML: "${match[0]}"`
+    );
+  }
+}
+
+function sha256(value) {
+  return crypto.createHash('sha256').update(String(value || ''), 'utf8').digest('hex');
 }
 
 function argValue(name) {

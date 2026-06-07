@@ -5,6 +5,25 @@ const path = require('path');
 
 const ROOT       = path.resolve(__dirname, '..');
 const GRAPH_PATH = path.join(ROOT, 'data', 'content-knowledge-graph.json');
+const ARTICLE_REGISTRY_PATH = path.join(ROOT, 'data', 'insights', 'article-registry.json');
+const ARTICLE_METADATA = loadArticleMetadata();
+const MARKET_OUTLOOK_PROHIBITED_LINK_TEXT = /Training|Understanding the Two Phases/i;
+
+function loadArticleMetadata() {
+  if (!fs.existsSync(ARTICLE_REGISTRY_PATH)) return new Map();
+  try {
+    const registry = JSON.parse(fs.readFileSync(ARTICLE_REGISTRY_PATH, 'utf8'));
+    return new Map((registry.articles || []).map((article) => [
+      article.slug,
+      {
+        title: article.languages?.en?.title || '',
+        title_ar: article.languages?.ar?.title || '',
+      },
+    ]));
+  } catch {
+    return new Map();
+  }
+}
 
 function loadGraph() {
   if (!fs.existsSync(GRAPH_PATH)) return null;
@@ -58,6 +77,7 @@ function recommendLinks(opts = {}) {
       if (excluded.has(n.id)) return false;
       if (!fileExists(n.id)) return false;
       if (n.type === 'article_ar' || n.type === 'market_outlook_ar') return false;
+      if (MARKET_OUTLOOK_PROHIBITED_LINK_TEXT.test(`${n.id || ''} ${n.slug || ''} ${n.title || ''}`)) return false;
       return true;
     })
     .map(n => {
@@ -174,14 +194,46 @@ function checkAnchorDiversity(html) {
 }
 
 function buildAnchor(node, locale) {
+  const localized = ARTICLE_METADATA.get(node.slug);
+  if (locale === 'ar') {
+    const registryTitle = cleanTitle(localized?.title_ar);
+    if (registryTitle) return normalizeArabicLabel(registryTitle, node);
+
+    if (node.type === 'etf') return normalizeArabicLabel(`صندوق ${node.slug.toUpperCase()}`, node);
+    if (node.type === 'stock') return normalizeArabicLabel(`بحث ${node.slug.toUpperCase()}`, node);
+
+    const graphFallback = cleanTitle(node.title) || node.slug.replace(/-/g, ' ');
+    return normalizeArabicLabel(graphFallback, node);
+  }
+
   if (node.type === 'etf')     return `${node.slug.toUpperCase()} ETF`;
   if (node.type === 'stock')   return `${node.slug.toUpperCase()} research`;
   if (node.type === 'compare') {
-    const t = node.title ? node.title.replace(/Compare\s*/i, '').replace(/\s*[-|].*$/, '').slice(0, 60) : node.slug.replace(/-/g, ' ');
+    const t = cleanTitle(localized?.title || node.title).replace(/Compare\s*/i, '').slice(0, 60) || node.slug.replace(/-/g, ' ');
     return t;
   }
-  const t = node.title ? node.title.replace(/\s*[-|].*$/, '').slice(0, 55) : node.slug.replace(/-/g, ' ');
-  return locale === 'ar' ? t : t;
+  return cleanTitle(localized?.title || node.title).slice(0, 55) || node.slug.replace(/-/g, ' ');
+}
+
+function cleanTitle(title) {
+  return String(title || '')
+    .replace(/\s*\|\s*TradeAlphaAI\s*$/i, '')
+    .trim();
+}
+
+function normalizeArabicLabel(label, node) {
+  const normalized = String(label || '').trim();
+  if (normalized && !/[A-Za-z]{4,}/.test(normalized)) return normalized;
+
+  console.warn(
+    `[internal-links] Arabic label localization fallback for ${node.slug || node.id || 'unknown'}: ` +
+    `${normalized || 'empty label'}`
+  );
+
+  if (node.type === 'market_outlook') return 'سياق سوقي ذو صلة';
+  if (node.type === 'compare') return 'مقارنة بحثية ذات صلة';
+  if (node.type === 'hub') return 'مركز أبحاث ذو صلة';
+  return 'بحث تعليمي ذو صلة';
 }
 
 function buildReason(node, shared, locale) {
