@@ -216,8 +216,9 @@ jobs:
       - name: Send institutional macro briefing after publication
         if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
         run: |
-          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(/^published/i.test(String(r.publish_result||''))?'yes':'no')")"
+          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
           telegram_quality="$(node -e "const fs=require('fs');const read=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {}}};const r=read('./data/intelligence/publishing-report.json');const c=read('./data/intelligence/publication-confidence.json');const p=read('./data/provider-health.json');const editorial=String(r.selected_content_type||'')==='editorial';const confidenceOk=!editorial||(c.slug===r.selected_topic&&Number(c.confidence||0)>=Number(c.confidence_threshold||90)&&c.institutional_depth_passed===true);const critical=p.degraded===true&&(!Number(p.event_count)||p.reason==='all_providers_unavailable');process.stdout.write(confidenceOk&&!critical?'yes':'no')")"
+          echo "[PUBLISH REPORT] published=${published} telegram_quality=${telegram_quality}"
           if [ "${published}" != "yes" ]; then
             echo "[macro-telegram] Skipped because autonomous publication did not complete."
           elif [ "${telegram_quality}" != "yes" ]; then
@@ -301,7 +302,8 @@ jobs:
         run: |
           slug="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_topic||''))")"
           type="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_content_type||''))")"
-          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(/^published/i.test(String(r.publish_result||''))?'yes':'no')")"
+          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
+          echo "[PUBLISH REPORT] published=${published} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
           if [ "${published}" != "yes" ]; then
             echo "No public publication was reported. Exact reason:"
             node -e "const r=require('./data/intelligence/publishing-report.json'); console.log(r.publish_block_reason||r.publish_result||'not_published')"
@@ -341,7 +343,8 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           slug="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_topic||''))")"
           type="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_content_type||''))")"
-          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(/^published/i.test(String(r.publish_result||''))?'yes':'no')")"
+          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
+          echo "[PUBLISH REPORT] published=${published} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
           if [ "${published}" != "yes" ]; then
             if [ "${MODE}" = "generate_only" ]; then
               git add "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/intelligence || true

@@ -16,6 +16,9 @@ function buildPublishingReport(decision = {}) {
   const stopReason = String(decision.stop_reason || '').trim();
   const blockReason = deriveBlockReason(decision, publishResult, stopReason);
   const telegram = readJson(TELEGRAM_STATUS, {});
+  // Authoritative publication signal: filesystem verification takes precedence
+  // over string matching so callers don't need to match publish_result text.
+  const published = publicPages.length > 0 || /^published/i.test(publishResult);
 
   return {
     timestamp: new Date().toISOString(),
@@ -24,12 +27,13 @@ function buildPublishingReport(decision = {}) {
     selected_content_type: decision.selected_content_type || 'unknown',
     generation_result: decision.generation_result || 'not requested',
     publish_result: publishResult,
+    published,
     publish_block_reason: blockReason,
     telegram_sent: telegram.sent === true || /\b(sent|published)\b/i.test(String(decision.telegram_result || '')),
     public_pages_created: publicPages,
     drafts_created: drafts,
     quality_score: parseQualityScore(decision.quality_score),
-    approval_state: deriveApprovalState(decision),
+    approval_state: deriveApprovalState(decision, published),
     cooldown_blocked: /cooldown/i.test(`${blockReason} ${decision.duplicate_cooldown_result || ''}`),
     manual_review_required: /manual[_ -]?revision|required manual|manual review/i.test(
       `${blockReason} ${decision.current_state || ''} ${decision.review_result || ''}`
@@ -46,10 +50,11 @@ function writePublishingReport(decision = {}) {
 }
 
 function printFinalDecision(report) {
-  const published = /^published/i.test(String(report.publish_result));
+  const published = report.published === true;
   const generatedDraft = /draft/i.test(String(report.generation_result));
   const mode = published ? 'published' : generatedDraft ? 'draft_only' : 'blocked';
   const reason = published ? 'quality_and_publish_gates_passed' : normalizeReason(report.publish_block_reason || report.publish_result);
+  const telegramAllowed = published ? 'yes' : 'no';
   console.log('\n[PUBLISH DECISION]');
   console.log(`mode=${mode}`);
   console.log(`reason=${reason}`);
@@ -58,6 +63,10 @@ function printFinalDecision(report) {
   console.log(`public_pages=${report.public_pages_created.length}`);
   console.log(`drafts=${report.drafts_created.length}`);
   console.log(`approval_state=${report.approval_state}`);
+  console.log('\n[PUBLISH REPORT]');
+  console.log(`published=${published}`);
+  console.log(`publish_result=${report.publish_result}`);
+  console.log(`telegram_allowed=${telegramAllowed}`);
 }
 
 function findPublicPages(slug) {
@@ -101,8 +110,8 @@ function deriveBlockReason(decision, publishResult, stopReason) {
   return normalizeReason(reason);
 }
 
-function deriveApprovalState(decision) {
-  if (/^published/i.test(String(decision.publish_result))) return 'published';
+function deriveApprovalState(decision, published = false) {
+  if (published || /^published/i.test(String(decision.publish_result))) return 'published';
   if (/manual[_ -]?revision/i.test(`${decision.publish_result || ''} ${decision.transition_path || ''}`)) return 'manual_revision_required';
   if (/approved/i.test(String(decision.publish_gate_result))) return 'approved';
   return decision.current_state || 'not_approved';
