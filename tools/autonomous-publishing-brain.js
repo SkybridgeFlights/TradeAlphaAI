@@ -604,10 +604,19 @@ function createEditorialTopic() {
 
 function seedTopicIfNeeded(contentType) {
   if (contentType === 'market-outlook') {
+    // Clear any stale seeder output before running
+    const seederOutputPath = path.join(ROOT, 'data', 'intelligence', 'seeder-last-run.json');
+    try { fs.unlinkSync(seederOutputPath); } catch { /* ok if missing */ }
+
     const result = runNode('tools/seed-market-outlook-topics.js', [], { inherit: true });
+
+    // Read machine-readable output written by seeder (slug of first new topic, count seeded)
+    const seederOutput = readJson(seederOutputPath, { slug: null, count: 0 });
     return {
-      status: result.status,
-      message: result.status === 0 ? 'Market outlook seeder completed.' : 'Market outlook seeder failed.'
+      status: result.status === null ? 1 : result.status,
+      message: result.status === 0 ? 'Market outlook seeder completed.' : `Market outlook seeder exited ${result.status}`,
+      slug: seederOutput.slug || null,
+      count: seederOutput.count || 0
     };
   }
   if (contentType === 'editorial') return createEditorialTopic();
@@ -734,6 +743,7 @@ function executeAction(contentType, mode, dryRun, action) {
     if (action.next_action === 'generate_topic_then_draft' || action.next_action === 'generate_topic_then_full_pipeline') {
       const queueBefore = readJson(path.join(ROOT, 'data', 'market-outlook-queue.json'), { topics: [] });
       const beforeCount = (queueBefore.topics || []).length;
+      const beforeSlugs = new Set((queueBefore.topics || []).map((t) => t.slug));
 
       const seeded = seedTopicIfNeeded(contentType);
       if (seeded.status !== 0) {
@@ -745,26 +755,48 @@ function executeAction(contentType, mode, dryRun, action) {
         };
       }
 
-      // Force full queue reload from disk after seeding
-      if (!effectiveAction.topic) {
-        const queueAfter = readJson(path.join(ROOT, 'data', 'market-outlook-queue.json'), { topics: [] });
-        const afterCount = (queueAfter.topics || []).length;
-        console.log(`[QUEUE REFRESH] before_count=${beforeCount} after_count=${afterCount}`);
+      // Force full queue reload from disk and compute new slugs added by seeder
+      const queueAfter = readJson(path.join(ROOT, 'data', 'market-outlook-queue.json'), { topics: [] });
+      const afterCount = (queueAfter.topics || []).length;
+      const newSlugs = (queueAfter.topics || [])
+        .filter((t) => !beforeSlugs.has(t.slug))
+        .map((t) => t.slug);
+      console.log(`[QUEUE REFRESH AFTER SEED] before_count=${beforeCount} after_count=${afterCount} new_slugs=${newSlugs.join(',') || 'none'}`);
 
+      // Hard assert: if seeder reported inserting topics but the slug is missing, surface the bug
+      if (seeded.count > 0 && !seeded.slug) {
+        console.error(`[BUG] Seeder reported count=${seeded.count} but returned no selected slug`);
+        throw new Error('[BUG] Seeder created topics but returned no selected slug — check seeder-last-run.json');
+      }
+
+      // Priority 1: use slug returned directly by seeder (most reliable)
+      if (!effectiveAction.topic && seeded.slug) {
+        console.log(`[TOPIC SELECTION] selected=${seeded.slug} status=planned reason=returned_by_seeder`);
+        effectiveAction = { ...effectiveAction, topic: seeded.slug };
+      }
+
+      // Priority 2: fallback — re-inspect queue for any eligible topic
+      if (!effectiveAction.topic) {
         const freshStatus = inspectMarketOutlook();
         const freshSlug = freshStatus.publishable_slug || freshStatus.approved_waiting_slug || freshStatus.draft_candidate || freshStatus.next_eligible;
         if (freshSlug) {
           const freshTopic = (queueAfter.topics || []).find((t) => t.slug === freshSlug);
-          console.log(`[TOPIC SELECTION] selected=${freshSlug} status=${freshTopic ? freshTopic.status : 'unknown'} reason=post_seed_queue_refresh`);
-          console.log(`[MARKET OUTLOOK PROMOTION] topic=${freshSlug} previous_state=none next_state=planned promotion_reason=newly_seeded_topic_picked_up`);
+          console.log(`[TOPIC SELECTION] selected=${freshSlug} status=${freshTopic ? freshTopic.status : 'unknown'} reason=queue_inspect_fallback`);
           effectiveAction = { ...effectiveAction, topic: freshSlug };
         } else {
           console.log(`[TOPIC SELECTION] selected=none reason=no_eligible_topic_after_seeding`);
         }
       }
+
+      // Hard assert: topic MUST be set before entering the pipeline
       if (!effectiveAction.topic) {
         throw new Error('[brain] market outlook topic missing after seeding — cannot proceed with pipeline');
       }
+    }
+
+    // Safety gate: generate_topic_then_full_pipeline MUST have a topic before entering pipeline
+    if (action.next_action === 'generate_topic_then_full_pipeline' && !effectiveAction.topic) {
+      throw new Error('[BUG] generate_topic_then_full_pipeline reached pipeline entry with no effectiveAction.topic');
     }
 
     if (mode === 'full_pipeline') {

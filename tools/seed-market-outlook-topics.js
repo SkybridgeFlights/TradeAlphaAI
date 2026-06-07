@@ -186,7 +186,15 @@ const TEMPLATES = [
   },
 ];
 
+// ── Slot date helper (defensive multi-field) ──────────────────────────────────
+// Topics may use any of these fields for their publish date. Check all.
+function getSlotDate(topic) {
+  return topic.publish_date || topic.target_publish_date || topic.date || topic.publishDate || null;
+}
+
 // ── Main execution ─────────────────────────────────────────────────────────────
+
+const debugMode = process.argv.includes('--debug');
 
 const queue    = readJson(QUEUE_PATH, { topics: [] });
 const calendar = readJson(CALENDAR_PATH, { events: [] });
@@ -196,24 +204,48 @@ const today    = new Date().toISOString().slice(0, 10);
 console.log(`Market outlook topic seeder — ${today}`);
 console.log(`Queue has ${(queue.topics || []).length} existing topic(s).`);
 
-// Identify available publish slots within horizon
-// Any topic that is not cancelled/failed occupies its slot.
-// Published topics MUST be counted — omitting them causes re-seeding of already-occupied dates.
-const candidateDates = getPublishDates(today, HORIZON_DAYS);
+// ── Step 1: Print raw topic fields for runtime debugging ──────────────────────
+for (const t of (queue.topics || [])) {
+  const slotDate = getSlotDate(t);
+  const counted = slotDate && ['planned', 'in_review', 'pending', 'generated', 'reviewed', 'published'].includes(t.status);
+  console.log(
+    `[QUEUE RAW TOPIC] slug=${t.slug} status=${t.status}` +
+    ` date=${t.date || 'n/a'} publish_date=${t.publish_date || 'n/a'}` +
+    ` target_publish_date=${t.target_publish_date || 'n/a'}` +
+    ` counted_occupied=${counted ? 'yes' : 'no'}`
+  );
+}
+
+// ── Step 2: Build occupied date set — ALL non-cancelled topics occupy their slot
 const OCCUPIED_STATUSES = new Set(['planned', 'in_review', 'pending', 'generated', 'reviewed', 'published']);
 const occupiedDates = new Set();
 for (const t of (queue.topics || [])) {
-  if (!t.target_publish_date) continue;
+  const slotDate = getSlotDate(t);
+  if (!slotDate) continue;
   const counted = OCCUPIED_STATUSES.has(t.status);
-  console.log(`[QUEUE OCCUPANCY] date=${t.target_publish_date} slug=${t.slug} status=${t.status} counted=${counted ? 'yes' : 'no'}`);
-  if (counted) occupiedDates.add(t.target_publish_date);
+  console.log(`[QUEUE OCCUPANCY] date=${slotDate} slug=${t.slug} status=${t.status} counted=${counted ? 'yes' : 'no'}`);
+  if (counted) occupiedDates.add(slotDate);
 }
+
+// ── Step 3: Hard assertion — published topics MUST be counted ─────────────────
+const publishedWithDates = (queue.topics || []).filter(
+  (t) => t.status === 'published' && getSlotDate(t)
+);
+if (publishedWithDates.length > 0 && occupiedDates.size === 0) {
+  console.error(`[BUG] ${publishedWithDates.length} published topic(s) with date fields exist but occupied count is 0`);
+  console.error(`[BUG] Published topics: ${publishedWithDates.map((t) => `${t.slug}(${getSlotDate(t)})`).join(', ')}`);
+  throw new Error('[BUG] Published market-outlook topics were not counted as occupied — check getSlotDate()');
+}
+
+// ── Step 4: Compute free publish slots ────────────────────────────────────────
+const candidateDates = getPublishDates(today, HORIZON_DAYS);
 const freeDates = candidateDates.filter((d) => !occupiedDates.has(d)).slice(0, MAX_SEED);
 
 console.log(`Occupied slots: ${occupiedDates.size} | Free slots: ${freeDates.length}`);
 
 if (!freeDates.length) {
   console.log(`No free publish slots in the next ${HORIZON_DAYS} days. All slots occupied.`);
+  writeSeederOutput(null, 0);
   process.exit(0);
 }
 
@@ -226,15 +258,16 @@ const upcomingEvents = (calendar.events || [])
 
 console.log(`Upcoming calendar events: ${upcomingEvents.length}`);
 
-// Select templates for each free date
+// Select templates for each free date (cluster+date dedup happens inside)
 const assignments = selectTemplates(freeDates, upcomingEvents);
 
 if (!assignments.length) {
   console.log('All eligible templates are in cooldown. No topics seeded this run.');
+  writeSeederOutput(null, 0);
   process.exit(0);
 }
 
-// Build topic objects and deduplicate against existing slugs
+// ── Step 5: Build topic objects, deduplicate against existing slugs ────────────
 const existingSlugs = new Set((queue.topics || []).map((t) => t.slug));
 const newTopics = [];
 for (const { template, date } of assignments) {
@@ -248,13 +281,17 @@ for (const { template, date } of assignments) {
 
 if (!newTopics.length) {
   console.log('All generated topics already exist in the queue. No changes made.');
+  writeSeederOutput(null, 0);
   process.exit(0);
 }
 
-// Persist to queue
+// ── Step 6: Persist to queue and write machine-readable output for brain ───────
 queue.topics  = [...(queue.topics || []), ...newTopics];
 queue.updated = today;
 fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+
+const selectedSlug = newTopics[0].slug;
+writeSeederOutput(selectedSlug, newTopics.length);
 
 console.log(`\nSeeded ${newTopics.length} topic(s) into data/market-outlook-queue.json:`);
 newTopics.forEach((t) => {
@@ -262,6 +299,22 @@ newTopics.forEach((t) => {
   console.log(`    cluster: ${t.topic_cluster}`);
   console.log(`    date:    ${t.target_publish_date}`);
 });
+console.log(`[SEEDER SELECTED] slug=${selectedSlug}`);
+
+// ── Machine-readable seeder output for brain ──────────────────────────────────
+function writeSeederOutput(slug, count) {
+  const outDir = path.join(ROOT, 'data', 'intelligence');
+  try {
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(outDir, 'seeder-last-run.json'),
+      JSON.stringify({ slug: slug || null, count: count || 0, seeded_at: today }, null, 2) + '\n',
+      'utf8'
+    );
+  } catch (e) {
+    console.warn(`[seeder] Could not write seeder-last-run.json: ${e.message}`);
+  }
+}
 
 // ── Template selection ─────────────────────────────────────────────────────────
 
@@ -274,16 +327,24 @@ function selectTemplates(freeDates, upcomingEvents) {
   for (const date of freeDates) {
     let assigned = false;
     for (const template of prioritized) {
-      if (usedKeys.has(template.key))        continue;
-      if (isInCooldown(template))            continue;
-      if (hasHeadlineSimilarity(template))   continue;
+      if (usedKeys.has(template.key)) continue;
+      if (isInCooldown(template))     continue;
+      if (hasHeadlineSimilarity(template)) continue;
+      // Never re-seed same cluster+date regardless of slug difference
+      const clusterDateConflict = (queue.topics || []).some(
+        (t) => t.topic_cluster === template.topic_cluster && getSlotDate(t) === date
+      );
+      if (clusterDateConflict) {
+        console.log(`  [skip] ${template.key}: cluster "${template.topic_cluster}" already exists for date ${date}`);
+        continue;
+      }
       usedKeys.add(template.key);
       assignments.push({ template, date });
       assigned = true;
       break;
     }
     if (!assigned) {
-      console.log(`  No eligible template for slot ${date} — all remaining templates in cooldown.`);
+      console.log(`  No eligible template for slot ${date} — all remaining templates in cooldown or already assigned.`);
     }
   }
 
@@ -328,12 +389,13 @@ function isInCooldown(template) {
     return true;
   }
 
-  // 2. Active topic with same cluster already in pipeline, or recently published within cooldown window
+  // 2. Active topic with same cluster in pipeline, or recently published within cooldown window
   const activeConflict = (queue.topics || []).some((t) => {
     if (t.topic_cluster !== template.topic_cluster) return false;
     if (['planned', 'in_review', 'reviewed'].includes(t.status)) return true;
     if (t.status === 'published') {
-      return daysSince(t.target_publish_date || t.last_reviewed || t.published_at) < clusterCooldown;
+      const refDate = getSlotDate(t) || t.last_reviewed || t.published_at;
+      return daysSince(refDate) < clusterCooldown;
     }
     return false;
   });
@@ -362,7 +424,7 @@ function isInCooldown(template) {
 function hasHeadlineSimilarity(template) {
   const recentTopics = (queue.topics || []).filter(
     (t) => ['reviewed', 'published'].includes(t.status) &&
-    daysSince(t.target_publish_date || t.last_reviewed) < COOLDOWN_DEFAULT
+    daysSince(getSlotDate(t) || t.last_reviewed) < COOLDOWN_DEFAULT
   );
   const aWords = normalize(template.title_en).split(' ').filter(Boolean);
   for (const recent of recentTopics) {
