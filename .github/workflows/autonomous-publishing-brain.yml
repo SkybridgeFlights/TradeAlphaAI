@@ -183,6 +183,11 @@ jobs:
           node tools/generate-macro-narrative.js --write
           echo "[macro] Institutional macro narrative updated."
 
+      - name: Build market intelligence context
+        run: |
+          node tools/build-market-intelligence-context.js --write || echo "[intelligence] Context build degraded — continuing"
+          echo "[intelligence] Market intelligence context step complete."
+
       - name: Generate market outlook pages
         if: ${{ env.MODE == 'full_pipeline' || env.MODE == 'generate_only' }}
         run: |
@@ -240,8 +245,10 @@ jobs:
           node tools/update-market-outlook-publication.js
           node tools/update-homepage-featured.js --write
           node tools/generate-system-status.js
+          node tools/update-content-feeds.js
+          node tools/update-market-intelligence-status.js || echo "[intelligence] Status widget update degraded — continuing"
           node tools/apply-global-header.js
-          echo "[status] Homepage, system status, and global header updated."
+          echo "[status] Homepage, system status, content feeds, and global header updated."
 
       - name: Validate generated changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
@@ -255,6 +262,9 @@ jobs:
           npm run check:social-meta
           npm run check:responsive
           npm run check:macro-intelligence
+          npm run check:content-feeds
+          npm run check:global-header-runtime
+          npm run check:intelligence-quality || echo "[intelligence-quality] Warning-level issues found — see above for details"
           echo "[FINAL LOCALIZATION ASSERTION]"
           if grep -R -n -i "Understanding the Two Phases" drafts/ ar/market-outlook/ market-outlook/; then
             echo "[LOCALIZATION FAIL] stale English phrase remains in generated artifacts."
@@ -370,6 +380,11 @@ jobs:
             git add insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook || true
             git add data/editorial-topic-queue.json data/market-outlook-queue.json data/published-history.json data/market-outlook-history.json || true
             git add data/insights data/search-index.json data/localization data/intelligence/publishing-report.json data/intelligence/publication-confidence.json || true
+            git add data/intelligence/market-intelligence-context.json || true
+            git add data/system-status/market-intelligence-status.json || true
+            git add data/feeds/ || true
+            git add data/narrative-memory.json || true
+            git add market-outlook/index.html ar/market-outlook/index.html || true
             git add system-status sitemap-core.xml sitemap-market.xml || true
             compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
             git add index.html ar/index.html || true
