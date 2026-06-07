@@ -1,24 +1,45 @@
 {
-  "timestamp": "2026-06-07T15:05:16.253Z",
+  "timestamp": "2026-06-07T19:07:59.356Z",
   "brain_mode": "full_pipeline",
-  "selected_topic": "jobless-claims-2026-06-18",
-  "selected_content_type": "market-outlook",
-  "generation_result": "draft generated",
-  "publish_result": "published after autonomous approval",
-  "published": true,
-  "publish_block_reason": "",
+  "selected_topic": null,
+  "selected_content_type": "editorial",
+  "generation_result": "intelligence/dashboard/feed update retained",
+  "publish_result": "site_update_only: no article published",
+  "published": false,
+  "site_update": true,
+  "commit_allowed": true,
+  "fallback_attempts": [
+    {
+      "content_type": "market-outlook",
+      "topic": null,
+      "result": "blocked: no_topics_seeded_all_clusters_in_cooldown_or_slots_full"
+    },
+    {
+      "content_type": "editorial",
+      "topic": null,
+      "result": "blocked: no eligible topic selected for reviewed pipeline"
+    }
+  ],
+  "site_update_results": [
+    {
+      "script": "tools/update-content-feeds.js",
+      "status": 0
+    },
+    {
+      "script": "tools/update-market-intelligence-status.js",
+      "status": 0
+    },
+    {
+      "script": "tools/apply-global-header.js",
+      "status": 0
+    }
+  ],
+  "publish_block_reason": "no_eligible_topic_selected_for_reviewed_pipeline",
   "telegram_sent": false,
-  "public_pages_created": [
-    "market-outlook/jobless-claims-2026-06-18.html",
-    "en/market-outlook/jobless-claims-2026-06-18.html",
-    "ar/market-outlook/jobless-claims-2026-06-18.html"
-  ],
-  "drafts_created": [
-    "drafts/market-outlook/jobless-claims-2026-06-18/en.html",
-    "drafts/market-outlook/jobless-claims-2026-06-18/ar.html"
-  ],
+  "public_pages_created": [],
+  "drafts_created": [],
   "quality_score": 90,
-  "approval_state": "published",
+  "approval_state": "site_update_only",
   "cooldown_blocked": false,
   "manual_review_required": false
 }
