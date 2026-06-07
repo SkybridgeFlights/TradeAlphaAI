@@ -30,7 +30,7 @@ writeUrlset("sitemap-insights.xml", insights, "weekly", () => "0.76");
 writeUrlset("sitemap-ar.xml", ar, "weekly", () => "0.80");
 
 // Compatibility sitemap kept for existing production checks and historical robots references.
-writeUrlset("sitemap-market.xml", unique(["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "methodology.html", ...stocks, ...etfs, ...hubs, ...comparisons, ...insights]), "weekly", () => "0.82");
+writeUrlset("sitemap-market.xml", ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "methodology.html", ...stocks, ...etfs, ...hubs, ...comparisons, ...insights], "weekly", () => "0.82");
 
 writeSitemapIndex("sitemap.xml", [
   "sitemap-core.xml",
@@ -65,7 +65,7 @@ function arUrls() {
 }
 
 function writeUrlset(file, rels, changefreq, priorityFn) {
-  const body = unique(rels).map((rel) => {
+  const body = dedupeByAbsoluteUrl(file, rels).map((rel) => {
     const url = relToUrl(rel);
     return `  <url>\n    <loc>${url}</loc>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priorityFn(rel)}</priority>\n  </url>`;
   }).join("\n");
@@ -73,7 +73,10 @@ function writeUrlset(file, rels, changefreq, priorityFn) {
 }
 
 function writeSitemapIndex(file, children) {
-  const body = children.map((child) => `  <sitemap>\n    <loc>${domain}/${child}</loc>\n  </sitemap>`).join("\n");
+  const body = dedupeAbsoluteUrls(file, children.map((child) => ({
+    value: child,
+    url: `${domain}/${child}`,
+  }))).map(({ value: child }) => `  <sitemap>\n    <loc>${domain}/${child}</loc>\n  </sitemap>`).join("\n");
   fs.writeFileSync(path.join(root, file), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</sitemapindex>\n`, "utf8");
 }
 
@@ -155,6 +158,27 @@ function existsDir(rel) {
 
 function unique(values) {
   return [...new Set(values.filter((value) => value !== null && value !== undefined))].sort((a, b) => relToUrl(a).localeCompare(relToUrl(b)));
+}
+
+function dedupeByAbsoluteUrl(sitemap, rels) {
+  const entries = rels
+    .filter((rel) => rel !== null && rel !== undefined)
+    .map((rel) => ({ value: rel, url: relToUrl(rel) }));
+  return dedupeAbsoluteUrls(sitemap, entries)
+    .map(({ value }) => value)
+    .sort((a, b) => relToUrl(a).localeCompare(relToUrl(b)));
+}
+
+function dedupeAbsoluteUrls(sitemap, entries) {
+  const seen = new Map();
+  for (const entry of entries) {
+    if (seen.has(entry.url)) {
+      console.log(`[SITEMAP DEDUPE]\nsitemap=${sitemap}\nurl=${entry.url}`);
+      continue;
+    }
+    seen.set(entry.url, entry);
+  }
+  return [...seen.values()];
 }
 
 function readJson(rel, fallback) {

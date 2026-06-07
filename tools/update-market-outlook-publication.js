@@ -81,6 +81,8 @@ ${END}`;
 function updateSitemap(pages) {
   if (!fs.existsSync(SITEMAP_PATH)) return;
   let xml = fs.readFileSync(SITEMAP_PATH, 'utf8');
+  const managedUrls = new Set(pages.map((page) => `${SITE_URL}${page.url}`));
+  xml = removeUrlEntries(xml, managedUrls, 'sitemap-market.xml');
   const entries = pages.map((page) => `  <url>
     <loc>${SITE_URL}${page.url}</loc>
     <lastmod>${page.lastmod}</lastmod>
@@ -89,8 +91,29 @@ function updateSitemap(pages) {
   </url>`).join('\n');
   const block = `${SITEMAP_START}\n${entries}\n${SITEMAP_END}`;
   xml = replaceOrInsert(xml, SITEMAP_START, SITEMAP_END, block, '</urlset>');
+  xml = dedupeUrlEntries(xml, 'sitemap-market.xml');
   fs.writeFileSync(SITEMAP_PATH, xml, 'utf8');
   console.log(`[outlook-publication] Updated sitemap-market.xml with ${pages.length} briefing URL(s)`);
+}
+
+function removeUrlEntries(xml, urls, sitemap) {
+  return String(xml || '').replace(/<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>\s*/g, (entry, url) => {
+    if (!urls.has(url)) return entry;
+    console.log(`[SITEMAP DEDUPE]\nsitemap=${sitemap}\nurl=${url}`);
+    return '';
+  });
+}
+
+function dedupeUrlEntries(xml, sitemap) {
+  const seen = new Set();
+  return String(xml || '').replace(/<url>\s*<loc>([^<]+)<\/loc>[\s\S]*?<\/url>\s*/g, (entry, url) => {
+    if (!seen.has(url)) {
+      seen.add(url);
+      return entry;
+    }
+    console.log(`[SITEMAP DEDUPE]\nsitemap=${sitemap}\nurl=${url}`);
+    return '';
+  });
 }
 
 function replaceOrInsert(text, start, end, block, marker) {
