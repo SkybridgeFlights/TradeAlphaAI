@@ -206,6 +206,7 @@ jobs:
 
       - name: Run autonomous publishing brain
         run: |
+          grep -n "skipRegenDueToRepair\|Skipping post-repair regeneration\|FINAL VALIDATION TARGET" tools/autonomous-publishing-brain.js || { echo "[PREFLIGHT FAIL] repair-ordering fix is missing from brain"; exit 1; }
           echo "[PUBLISH EXECUTION] brain starting mode=${MODE} content_type=${CONTENT_TYPE} dry_run=${DRY_RUN}"
           node tools/autonomous-publishing-brain.js \
             --mode="${MODE}" \

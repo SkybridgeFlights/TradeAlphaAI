@@ -1296,7 +1296,8 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
         targetedPairsAdded          = repairSummary.targeted_pairs_added      || 0;
         targetedRepairChecksFix     = repairSummary.targeted_repair_checks_fixed || [];
 
-        if (generateFn) {
+        const skipRegenDueToRepair = targetedRepairChecksFix.includes('article_pair_contract');
+        if (generateFn && !skipRegenDueToRepair) {
           console.log(`[brain] Regenerating draft after repair cycle...`);
           regenerationAfterRepair = 'attempted';
           repairRegenUsed = true;
@@ -1390,9 +1391,18 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
           }
 
           regenerationAfterRepair = 'succeeded';
+        } else if (skipRegenDueToRepair) {
+          regenerationAfterRepair = 'skipped_repair_sufficient';
+          console.log(`[brain] Skipping post-repair regeneration — article_pair_contract was directly fixed by repair cycle`);
         }
 
-        // Second review after successful repair + regeneration
+        // Second review — validate the exact files that were repaired (no regeneration)
+        const draftEnPath = path.join(ROOT, 'drafts', contentType, slug, 'en.html');
+        const draftArPath = path.join(ROOT, 'drafts', contentType, slug, 'ar.html');
+        console.log('[FINAL VALIDATION TARGET]');
+        console.log(`en_path=drafts/${contentType}/${slug}/en.html`);
+        console.log(`ar_path=drafts/${contentType}/${slug}/ar.html`);
+        console.log(`mtime=${fs.existsSync(draftEnPath) ? fs.statSync(draftEnPath).mtimeMs : 'missing'}`);
         console.log(`[brain] Re-running review after authority repair...`);
         review = reviewDraft({ contentType, slug, dryRun: false, allowRegeneration: false });
         reviewAfterRepair = review.approved ? 'passed' : `failed: ${review.failed_checks.join(', ')}`;
