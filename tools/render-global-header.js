@@ -73,8 +73,12 @@ ${MARKER_END}`;
   return html;
 }
 
+function globalHeaderStyles() {
+  return '<link rel="stylesheet" href="/css/global-header-canonical.css" />';
+}
+
 function globalHeaderHead() {
-  return '<link rel="stylesheet" href="/css/global-header.css" />';
+  return globalHeaderStyles();
 }
 
 function globalHeaderScripts() {
@@ -166,6 +170,7 @@ function escapeHtml(value) {
 
 module.exports = {
   renderGlobalHeader,
+  globalHeaderStyles,
   globalHeaderHead,
   globalHeaderScripts,
   MARKER_START,

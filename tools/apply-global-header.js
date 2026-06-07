@@ -13,7 +13,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { renderGlobalHeader, globalHeaderHead, globalHeaderScripts, MARKER_START, MARKER_END } = require('./render-global-header');
+const { renderGlobalHeader, globalHeaderStyles, globalHeaderScripts, MARKER_START, MARKER_END } = require('./render-global-header');
 
 const ROOT   = path.resolve(__dirname, '..');
 const DRY    = process.argv.includes('--dry-run');
@@ -48,24 +48,26 @@ const ROOTS = [
   'etfs',
   'ar/etfs',
   'compare',
-  'ar/compare'
+  'ar/compare',
+  // Phase 68: intelligence dashboards
+  'market-dashboard',
+  'ar/market-dashboard',
+  'macro-dashboard',
+  'ar/macro-dashboard',
+  'etf-dashboard',
+  'ar/etf-dashboard',
+  // Phase 69: market replay
+  'market-replay',
+  'ar/market-replay',
 ];
 
 let changed = 0;
 let skipped = 0;
 
-for (const target of ROOTS) {
-  const absolute = path.join(ROOT, target);
-  if (!fs.existsSync(absolute)) continue;
-  const stat = fs.statSync(absolute);
-  if (stat.isDirectory()) {
-    for (const file of walkHtml(absolute)) processFile(file);
-  } else {
-    processFile(absolute);
-  }
+if (require.main === module) {
+  for (const file of collectTargetFiles()) processFile(file);
+  console.log(`[global-header] ${DRY ? '[dry-run] ' : ''}Applied to ${changed} page(s), skipped ${skipped}.`);
 }
-
-console.log(`[global-header] ${DRY ? '[dry-run] ' : ''}Applied to ${changed} page(s), skipped ${skipped}.`);
 
 function processFile(file) {
   let html = fs.readFileSync(file, 'utf8');
@@ -95,20 +97,11 @@ function processFile(file) {
   }
 
   // Ensure global-header.css is linked
-  if (!newHtml.includes('/css/global-header.css')) {
-    const headLink = globalHeaderHead();
-    // Insert before first existing stylesheet link or before </head>
-    if (newHtml.includes('<link rel="stylesheet"')) {
-      newHtml = newHtml.replace('<link rel="stylesheet"', `${headLink}\n  <link rel="stylesheet"`);
-    } else {
-      newHtml = newHtml.replace('</head>', `  ${headLink}\n</head>`);
-    }
-  }
+  newHtml = removeAssetTags(newHtml, /\/?css\/global-header-canonical\.css(?:[?#][^"']*)?/i, 'link');
+  newHtml = newHtml.replace('</head>', `  ${globalHeaderStyles()}\n</head>`);
 
-  // Ensure mobile-nav.js is present
-  if (!newHtml.includes('js/mobile-nav.js')) {
-    newHtml = newHtml.replace('</body>', `  ${globalHeaderScripts()}\n</body>`);
-  }
+  newHtml = removeAssetTags(newHtml, /\/?js\/(?:global-header|mobile-nav)\.js(?:[?#][^"']*)?/i, 'script');
+  newHtml = newHtml.replace('</body>', `  ${globalHeaderScripts()}\n</body>`);
 
   if (html === newHtml) return; // No change
 
@@ -198,3 +191,30 @@ function walkHtml(dir) {
   }
   return files;
 }
+
+function collectTargetFiles() {
+  const files = new Set();
+  for (const target of ROOTS) {
+    const absolute = path.join(ROOT, target);
+    if (!fs.existsSync(absolute)) continue;
+    const stat = fs.statSync(absolute);
+    if (stat.isDirectory()) {
+      for (const file of walkHtml(absolute)) files.add(file);
+    } else {
+      files.add(absolute);
+    }
+  }
+  return [...files].sort();
+}
+
+function removeAssetTags(html, assetPattern, tagName) {
+  const tagPattern = tagName === 'link'
+    ? /^[ \t]*<link\b[^>]*>[ \t]*(?:\r?\n)?/gim
+    : /^[ \t]*<script\b[^>]*>[\s\S]*?<\/script>[ \t]*(?:\r?\n)?/gim;
+  return html.replace(tagPattern, (tag) => assetPattern.test(tag) ? '' : tag);
+}
+
+module.exports = {
+  ROOTS,
+  collectTargetFiles
+};

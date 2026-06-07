@@ -1,25 +1,42 @@
 (function () {
+  // Compatibility shim — functionally identical to global-header.js.
+  // The shared guard ensures only one runtime initializes, regardless of load order.
+  if (window.__TRADEALPHA_NAV_INIT__) {
+    return; // global-header.js already ran — nothing to do
+  }
+  window.__TRADEALPHA_NAV_INIT__ = true;
+
   function ready(fn) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn, { once: true });
     else fn();
   }
 
   ready(function () {
-    var isArabic = document.documentElement.lang === "ar" || document.documentElement.dir === "rtl";
-    var header = document.querySelector(".site-header, .topbar");
-    if (!header) return;
+    var page       = window.location.pathname;
+    var isArabic   = document.documentElement.lang === "ar" || document.documentElement.dir === "rtl";
+    var header     = document.querySelector(".site-header, .topbar");
+    var drawerExists = !!document.getElementById("mobile-nav-drawer");
+
+    if (!header) {
+      console.error("[GLOBAL HEADER FAILURE] header element not found on " + page);
+      return;
+    }
+
     header.classList.add("site-header", "topbar");
     if (header.tagName !== "HEADER") header.setAttribute("role", "banner");
 
     var nav = header.querySelector(".nav-group");
-    if (!nav) return;
+    if (!nav) {
+      console.error("[GLOBAL HEADER FAILURE] .nav-group not found on " + page);
+      return;
+    }
 
     var toggle = header.querySelector(".mobile-menu-toggle");
     if (!toggle) {
       toggle = document.createElement("button");
       toggle.className = "mobile-menu-toggle";
       toggle.type = "button";
-      toggle.setAttribute("aria-label", "Open menu");
+      toggle.setAttribute("aria-label", isArabic ? "فتح القائمة" : "Open menu");
       toggle.setAttribute("aria-expanded", "false");
       toggle.setAttribute("aria-controls", "mobile-nav-drawer");
       toggle.innerHTML = '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
@@ -31,7 +48,7 @@
       var href = link.getAttribute("href");
       if (!href || href.charAt(0) !== "/") return;
       var normalized = href.replace(/index\.html$/, "");
-      var exact = currentPath === normalized;
+      var exact   = currentPath === normalized;
       var section = normalized !== "/" && normalized !== "/ar/" && currentPath.indexOf(normalized) === 0;
       if (exact || section) {
         link.classList.add("is-active");
@@ -43,7 +60,7 @@
       trigger.addEventListener("click", function (event) {
         if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
           event.preventDefault();
-          var menu = trigger.closest(".nav-menu");
+          var menu    = trigger.closest(".nav-menu");
           var opening = !menu.classList.contains("is-open");
           Array.prototype.forEach.call(nav.querySelectorAll(".nav-menu.is-open"), function (openMenu) {
             openMenu.classList.remove("is-open");
@@ -53,14 +70,16 @@
       });
     });
 
+    console.log("[GLOBAL HEADER INIT] page=" + page + " drawer_found=" + drawerExists + " toggle_found=" + !!header.querySelector(".mobile-menu-toggle") + " duplicate_runtime=false locale=" + (isArabic ? "ar" : "en"));
+
     if (document.getElementById("mobile-nav-drawer")) return;
 
-    var drawer = document.createElement("div");
-    drawer.className = "mobile-nav-shell";
-    drawer.id = "mobile-nav-drawer";
-    drawer.hidden = true;
-    drawer.setAttribute("aria-hidden", "true");
-    drawer.setAttribute("dir", isArabic ? "rtl" : "ltr");
+    var shell = document.createElement("div");
+    shell.className = "mobile-nav-shell";
+    shell.id = "mobile-nav-drawer";
+    shell.hidden = true;
+    shell.setAttribute("aria-hidden", "true");
+    shell.setAttribute("dir", isArabic ? "rtl" : "ltr");
 
     var panel = document.createElement("div");
     panel.className = "mobile-nav-panel";
@@ -69,11 +88,11 @@
     panel.setAttribute("aria-label", isArabic ? "القائمة الرئيسية" : "Main menu");
 
     var closeLabel = isArabic ? "إغلاق القائمة" : "Close menu";
-    var menuLabel = isArabic ? "القائمة" : "Menu";
+    var menuLabel  = isArabic ? "القائمة" : "Menu";
     panel.innerHTML =
       '<div class="mobile-nav-head">' +
         '<span>' + menuLabel + '</span>' +
-        '<button class="mobile-nav-close" type="button" aria-label="' + closeLabel + '">&times;</button>' +
+        '<button class="mobile-nav-close" type="button" aria-label="' + closeLabel + '">×</button>' +
       '</div>' +
       '<nav class="mobile-nav-links" aria-label="' + menuLabel + '"></nav>';
 
@@ -87,41 +106,45 @@
     backdrop.type = "button";
     backdrop.setAttribute("aria-label", closeLabel);
 
-    drawer.appendChild(backdrop);
-    drawer.appendChild(panel);
-    document.body.appendChild(drawer);
+    shell.appendChild(backdrop);
+    shell.appendChild(panel);
+    document.body.appendChild(shell);
 
-    var close = panel.querySelector(".mobile-nav-close");
+    var closeBtn  = panel.querySelector(".mobile-nav-close");
     var lastFocus = null;
 
     function openDrawer() {
       lastFocus = document.activeElement;
-      drawer.hidden = false;
+      shell.hidden = false;
       requestAnimationFrame(function () {
+        shell.classList.add("is-open");
         document.body.classList.add("mobile-nav-open");
         toggle.setAttribute("aria-expanded", "true");
-        drawer.setAttribute("aria-hidden", "false");
-        close.focus();
+        shell.setAttribute("aria-hidden", "false");
+        closeBtn.focus();
+        console.log("[MOBILE DRAWER OPEN] page=" + page);
       });
     }
 
     function closeDrawer() {
+      shell.classList.remove("is-open");
       document.body.classList.remove("mobile-nav-open");
       toggle.setAttribute("aria-expanded", "false");
-      drawer.setAttribute("aria-hidden", "true");
+      shell.setAttribute("aria-hidden", "true");
       window.setTimeout(function () {
-        drawer.hidden = true;
+        shell.hidden = true;
         if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
-      }, 180);
+        console.log("[MOBILE DRAWER CLOSE] page=" + page);
+      }, 270);
     }
 
     toggle.addEventListener("click", function () {
       if (document.body.classList.contains("mobile-nav-open")) closeDrawer();
       else openDrawer();
     });
-    close.addEventListener("click", closeDrawer);
+    closeBtn.addEventListener("click", closeDrawer);
     backdrop.addEventListener("click", closeDrawer);
-    drawer.addEventListener("click", function (event) {
+    shell.addEventListener("click", function (event) {
       if (event.target.closest("a")) closeDrawer();
     });
     document.addEventListener("keydown", function (event) {

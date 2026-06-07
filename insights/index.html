@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="../css/market/market-portal.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
+  <link rel="stylesheet" href="/css/global-header-canonical.css" />
 </head>
 <body class="market-page">
   <!-- GLOBAL_HEADER_START -->
@@ -135,7 +136,6 @@
     </div>
   </main>
   <script src="../js/language-router.js" defer></script>
-  <script src="../js/mobile-nav.js" defer></script>
   <script src="../js/research-layer.js" defer></script>
   <script type="module">
     import { renderWatchlistStrip } from "/js/market/watchlist.js";
@@ -144,5 +144,6 @@
     renderRecentlyViewed("[data-recently-viewed-strip]");
   </script>
 <script>function insightFilter(btn,cat){document.querySelectorAll(".insight-filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.querySelectorAll("#insight-grid .market-card").forEach(c=>{c.style.display=(cat==="all"||c.dataset.category===cat)?"":"none";});}</script>
+  <script src="/js/global-header.js" defer></script>
 </body>
 </html>
