@@ -220,6 +220,13 @@ jobs:
           echo "======================================================"
           exit 1
 
+      - name: "[full_pipeline] Build market intelligence context"
+        if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
+        run: |
+          echo "--- Building market intelligence context ---"
+          node tools/build-market-intelligence-context.js --write || true
+          echo "--- Market intelligence context updated ---"
+
       - name: "[full_pipeline] Update content feeds and listing pages"
         if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
         run: |
@@ -228,12 +235,28 @@ jobs:
           node tools/apply-global-header.js
           echo "--- Content feeds updated ---"
 
+      - name: "[full_pipeline] Update homepage intelligence widgets"
+        if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
+        run: |
+          echo "--- Updating homepage intelligence widgets ---"
+          node tools/update-market-intelligence-status.js || true
+          echo "--- Homepage intelligence updated ---"
+
       - name: "[full_pipeline] Validate content feeds"
         if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
         run: |
           node tools/check-content-feeds.js
           node tools/check-global-header-runtime.js
           node tools/check-language-purity.js
+
+      - name: "[full_pipeline] Validate intelligence quality"
+        if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
+        env:
+          PIPELINE_SLUG: ${{ steps.detect-slug.outputs.pipeline_slug }}
+        run: |
+          echo "--- Checking market intelligence quality for: $PIPELINE_SLUG ---"
+          node tools/check-market-intelligence-quality.js --slug="$PIPELINE_SLUG" || true
+          echo "--- Intelligence quality check done ---"
 
       - name: "[full_pipeline] Commit and push published market outlook"
         if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
@@ -256,6 +279,11 @@ jobs:
           git add market-outlook/index.html || true
           git add ar/market-outlook/index.html || true
           git add data/feeds/ || true
+          git add data/narrative-memory.json || true
+          git add data/intelligence/market-intelligence-context.json || true
+          git add data/system-status/market-intelligence-status.json || true
+          git add index.html || true
+          git add ar/index.html || true
           git add sitemap*.xml || true
           git add robots.txt || true
 

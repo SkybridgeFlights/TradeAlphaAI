@@ -1,0 +1,426 @@
+/*
+ * TradeAlphaAI — Market Outlook Mobile Experience
+ * Phase 67: Mobile-first article rendering for market-outlook pages.
+ *
+ * Applies to: all .market-outlook-article pages
+ * Load order: after market-portal.css, before </body>
+ * Breakpoints: 768px tablet, 480px mobile, 360px small mobile
+ *
+ * Features:
+ *   - Reading progress bar
+ *   - Key takeaways box
+ *   - Collapsible long sections
+ *   - Narrower text blocks for reading comfort
+ *   - RTL-aware spacing for Arabic pages
+ *   - Telegram in-app browser compatibility
+ *   - Sticky mini progress indicator
+ */
+
+/* ── Reading progress bar ─────────────────────────────────────────────────── */
+
+.reading-progress {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+}
+
+.reading-progress span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6ee7d8, #4ade80, #6ee7d8);
+  background-size: 200% 100%;
+  transition: width 0.1s linear;
+  will-change: width;
+}
+
+[dir="rtl"] .reading-progress span {
+  margin-inline-start: auto;
+  background: linear-gradient(270deg, #6ee7d8, #4ade80, #6ee7d8);
+}
+
+/* ── Key takeaways box ────────────────────────────────────────────────────── */
+
+.market-key-takeaways {
+  background: linear-gradient(135deg, rgba(110, 231, 216, 0.07) 0%, rgba(74, 222, 128, 0.04) 100%);
+  border: 1px solid rgba(110, 231, 216, 0.22);
+  border-radius: var(--market-radius-md, 18px);
+  padding: clamp(16px, 3vw, 24px);
+  margin-block: clamp(20px, 4vw, 32px);
+}
+
+.market-key-takeaways .eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6ee7d8;
+  display: block;
+  margin-block-end: 10px;
+}
+
+.market-key-takeaways h2 {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  font-weight: 600;
+  color: var(--market-text, #f4f7f1);
+  margin-block-end: 12px;
+}
+
+.market-key-takeaways ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.market-key-takeaways li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: clamp(0.82rem, 2vw, 0.9rem);
+  line-height: 1.6;
+  color: var(--market-soft, #c9d2ca);
+}
+
+.market-key-takeaways li::before {
+  content: '';
+  display: inline-block;
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6ee7d8;
+  margin-block-start: 7px;
+}
+
+[dir="rtl"] .market-key-takeaways li::before {
+  margin-inline-end: 0;
+  margin-inline-start: 4px;
+}
+
+/* ── Collapsible sections ─────────────────────────────────────────────────── */
+
+.market-section[data-collapsible] .market-section-body {
+  overflow: hidden;
+  transition: max-height 0.32s ease, opacity 0.28s ease;
+  max-height: 9999px;
+  opacity: 1;
+}
+
+.market-section[data-collapsible].is-collapsed .market-section-body {
+  max-height: 0;
+  opacity: 0;
+}
+
+.market-section-collapse-toggle {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: var(--market-muted, #8d978f);
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  cursor: pointer;
+  margin-block-start: 8px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.market-section-collapse-toggle:hover {
+  color: #6ee7d8;
+  border-color: rgba(110, 231, 216, 0.3);
+}
+
+.market-section-collapse-toggle .toggle-icon {
+  display: inline-block;
+  transition: transform 0.28s ease;
+}
+
+.is-collapsed .market-section-collapse-toggle .toggle-icon {
+  transform: rotate(-180deg);
+}
+
+/* ── Article reading width ────────────────────────────────────────────────── */
+
+.market-outlook-article .market-section {
+  max-width: 720px;
+}
+
+.market-outlook-article .market-panel p,
+.market-outlook-article .market-panel li {
+  line-height: 1.78;
+  font-size: clamp(0.88rem, 2.2vw, 0.97rem);
+}
+
+/* Prevent overly wide scenario boxes on wide screens */
+.market-scenario-box {
+  max-width: 680px;
+}
+
+/* ── Scenario box readability ─────────────────────────────────────────────── */
+
+.market-scenario-box {
+  border-radius: var(--market-radius-md, 18px);
+  padding: clamp(16px, 3vw, 22px);
+  margin-block: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.market-scenario-box h4 {
+  font-size: clamp(0.82rem, 2vw, 0.9rem);
+  font-weight: 600;
+  margin-block-end: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.market-scenario-box p {
+  font-size: clamp(0.82rem, 2vw, 0.88rem);
+  line-height: 1.7;
+  color: var(--market-soft, #c9d2ca);
+  margin: 0;
+}
+
+/* ── Mobile: 768px and below ─────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .market-section-collapse-toggle {
+    display: inline-flex;
+  }
+
+  /* Sidebar collapses on mobile */
+  .market-outlook-sidebar {
+    display: none;
+  }
+
+  .market-outlook-layout {
+    display: block;
+  }
+
+  /* Tighter headings on mobile */
+  .market-outlook-article h2 {
+    font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+  }
+
+  .market-outlook-article h3 {
+    font-size: clamp(0.95rem, 4vw, 1.1rem);
+  }
+
+  /* Card grid stacks */
+  .market-grid.three,
+  .market-grid.two {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Takeaway cards stack */
+  .market-takeaway-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Panel padding reduction */
+  .market-panel {
+    padding: clamp(14px, 4vw, 18px);
+  }
+
+  .market-section {
+    margin-block: 18px;
+  }
+
+  /* Article meta wraps cleanly */
+  .market-article-meta {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.78rem;
+  }
+
+  /* Hero section */
+  .market-hero-panel {
+    padding: clamp(16px, 4vw, 20px);
+  }
+
+  .market-lead {
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    line-height: 1.7;
+  }
+
+  /* Intelligence snapshot card */
+  .market-intelligence-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Signal tags wrap */
+  .market-signal-tags {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .market-filter-chip,
+  .market-tone-badge {
+    font-size: 0.72rem;
+    padding: 3px 9px;
+  }
+}
+
+/* ── Mobile: 480px and below ─────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  /* Reduce section spacing */
+  .market-section {
+    margin-block: 14px;
+  }
+
+  /* Market hero tighter */
+  .market-hero {
+    padding-block: clamp(10px, 3vw, 16px);
+  }
+
+  h1.market-h1,
+  .market-hero h1 {
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
+    line-height: 1.3;
+  }
+
+  /* Table: force scroll container */
+  .market-panel table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  /* Remove box shadows on small screens */
+  .market-panel,
+  .market-card {
+    box-shadow: none;
+  }
+
+  /* Breadcrumb compact */
+  .breadcrumb {
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+}
+
+/* ── Arabic RTL spacing ───────────────────────────────────────────────────── */
+
+[dir="rtl"] .market-outlook-article .market-section {
+  text-align: right;
+}
+
+[dir="rtl"] .market-key-takeaways ul {
+  padding-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+[dir="rtl"] .market-anchor-nav a {
+  text-align: right;
+  padding-inline-end: 8px;
+  padding-inline-start: 0;
+}
+
+[dir="rtl"] .market-scenario-box {
+  text-align: right;
+}
+
+/* Improved Arabic text rendering */
+[dir="rtl"] .market-panel p,
+[dir="rtl"] .market-panel li {
+  line-height: 1.85;
+  letter-spacing: 0;
+  word-spacing: 0.03em;
+}
+
+/* ── Telegram in-app browser ─────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  /* Telegram WebView doesn't support backdrop-filter well */
+  .market-panel,
+  .market-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Ensure tappable targets are large enough */
+  .market-card-link,
+  .market-btn,
+  a.nav-link {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Progress bar thicker for mobile visibility */
+  .reading-progress {
+    height: 4px;
+  }
+}
+
+/* ── Bullet spacing ───────────────────────────────────────────────────────── */
+
+.market-panel ul,
+.market-panel ol {
+  padding-inline-start: clamp(16px, 4vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-block: 10px;
+}
+
+.market-panel li {
+  padding-inline-start: 4px;
+}
+
+[dir="rtl"] .market-panel ul,
+[dir="rtl"] .market-panel ol {
+  padding-inline-start: 0;
+  padding-inline-end: clamp(16px, 4vw, 24px);
+}
+
+/* ── Sticky mini progress ─────────────────────────────────────────────────── */
+
+.reading-progress-mini {
+  display: none;
+  position: sticky;
+  top: calc(var(--global-header-height, 68px) + 4px);
+  z-index: 90;
+  background: rgba(7, 15, 27, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 6px clamp(12px, 4vw, 28px);
+  font-size: 0.72rem;
+  color: var(--market-muted, #8d978f);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 768px) {
+  .reading-progress-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .reading-progress-mini .mini-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .reading-progress-mini .mini-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #6ee7d8;
+    border-radius: 99px;
+    transition: width 0.15s linear;
+  }
+}

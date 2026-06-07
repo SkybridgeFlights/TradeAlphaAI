@@ -12,6 +12,7 @@ const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence'
 const { extractMarketSignals } = require('./extract-market-signals');
 const { recommendLinks } = require('./internal-link-intelligence');
 const { cleanArabicMarketCopy } = require('./clean-arabic-market-copy');
+const { humanizeArabicMarketContent } = require('./humanize-arabic-market-content');
 const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
 const {
   findArabicEnglishRun,
@@ -68,9 +69,9 @@ const aiContent = tryGetAiContent(topic.slug);
 const aiMode = aiContent !== null;
 
 const renderedEn = render(normalized, 'en', intelligence, aiContent, generationId);
-const renderedAr = cleanArabicMarketCopy(normalizeArabicFinancialHtml(
+const renderedAr = humanizeArabicMarketContent(cleanArabicMarketCopy(normalizeArabicFinancialHtml(
   render(normalized, 'ar', intelligence, aiContent, generationId)
-));
+)));
 assertArabicGenerationSafe(renderedAr, topic.slug);
 
 fs.mkdirSync(dir, { recursive: true });
@@ -259,6 +260,7 @@ function render(topic, locale, intel, aiContent = null, dataGenerationId = new D
   <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/market-outlook-mobile.css" />
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
 <body class="market-page" data-generation-id="${escapeHtml(dataGenerationId)}">
@@ -377,19 +379,7 @@ ${contextualCards}
   ${renderSiteFooter({ locale: ar ? 'ar' : 'en' })}
   <script src="${pathPrefix}js/language-router.js" defer></script>
   <script src="${pathPrefix}js/global-header.js" defer></script>
-  <script>
-(function(){
-  var bar = document.querySelector('.reading-progress span');
-  if (!bar) return;
-  function updateProgress(){
-    var doc = document.documentElement;
-    var max = Math.max(1, doc.scrollHeight - doc.clientHeight);
-    bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, doc.scrollTop / max)) + ')';
-  }
-  updateProgress();
-  window.addEventListener('scroll', updateProgress, { passive: true });
-})();
-  </script>
+  <script src="/js/market-outlook-mobile.js" defer></script>
 </body>
 </html>
 `;
