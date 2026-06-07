@@ -390,7 +390,7 @@ function buildArticleIntelligence(topic, ar) {
     const sequence = buildRegimeSequence(current, memoryBefore);
     const divergence = detectCrossAssetDivergence(current);
     const signals = extractMarketSignals(current, memoryBefore).signals.slice(0, 5);
-    const tags = signals.length ? signals.map((signal) => signal.signal) : [ar ? 'مراقبة أساسية' : 'baseline monitoring'];
+    const tags = signals.length ? signals.map((signal) => ar ? cleanStateAr(signal.signal) : signal.signal) : [ar ? 'مراقبة أساسية' : 'baseline monitoring'];
     const stateCards = [
       [L.riskRegime, current.dominant_risk_regime],
       [L.volatilityRegime, current.volatility_environment],
@@ -401,15 +401,15 @@ function buildArticleIntelligence(topic, ar) {
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.intelligenceSnapshot)}</span><h2>${escapeHtml(L.intelligenceSnapshot)}</h2><p class="market-copy">${escapeHtml(L.intelligenceIntro)}</p></div>
         <div class="article-intelligence-panel">
           <div class="article-intel-grid">
-${stateCards.map(([label, value]) => `            <article class="article-intel-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(cleanState(value))}</strong><small>${escapeHtml(L.confidence)}: ${escapeHtml(confidenceFor(value))}</small></article>`).join('\n')}
+${stateCards.map(([label, value]) => `            <article class="article-intel-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(ar ? cleanStateAr(value) : cleanState(value))}</strong><small>${escapeHtml(L.confidence)}: ${escapeHtml(ar ? confidenceForAr(value) : confidenceFor(value))}</small></article>`).join('\n')}
           </div>
           <div class="article-signal-tags" aria-label="${escapeHtml(L.activeSignals)}">
-${tags.map((tag) => `            <span>${escapeHtml(cleanState(tag))}</span>`).join('\n')}
+${tags.map((tag) => `            <span>${escapeHtml(ar ? tag : cleanState(tag))}</span>`).join('\n')}
           </div>
           <div class="article-intel-notes">
-            <p><strong>${escapeHtml(L.continuitySummary)}:</strong> ${escapeHtml(drift.notes[0] || L.baselineContinuity)}</p>
-            <p><strong>${escapeHtml(L.divergenceContext)}:</strong> ${escapeHtml(`${divergence.primary_tension.signal}: ${divergence.primary_tension.commentary}`)}</p>
-            <p><strong>${escapeHtml(L.relatedSequence)}:</strong> ${escapeHtml(`${sequence.primary_sequence.pattern} (${sequence.primary_sequence.transition_maturity}, confidence ${sequence.primary_sequence.sequence_confidence})`)}</p>
+            <p><strong>${escapeHtml(L.continuitySummary)}:</strong> ${escapeHtml(ar ? L.baselineContinuity : (drift.notes[0] || L.baselineContinuity))}</p>
+            <p><strong>${escapeHtml(L.divergenceContext)}:</strong> ${escapeHtml(ar ? cleanStateAr(divergence.primary_tension.signal) : `${divergence.primary_tension.signal}: ${divergence.primary_tension.commentary}`)}</p>
+            <p><strong>${escapeHtml(L.relatedSequence)}:</strong> ${escapeHtml(ar ? `${cleanStateAr(sequence.primary_sequence.pattern)} (${cleanStateAr(sequence.primary_sequence.transition_maturity)}, ${L.confidence}: ${cleanStateAr(sequence.primary_sequence.sequence_confidence)})` : `${sequence.primary_sequence.pattern} (${sequence.primary_sequence.transition_maturity}, confidence ${sequence.primary_sequence.sequence_confidence})`)}</p>
           </div>
         </div>
       </section>`;
@@ -484,10 +484,43 @@ function cleanState(value) {
   return String(value).replace(/_/g, ' ');
 }
 
+function cleanStateAr(value) {
+  if (value === null || value === undefined || value === '') return 'غير محدد';
+  const map = {
+    risk_off: 'تجنب المخاطر', risk_on: 'إقبال على المخاطر', neutral: 'محايد',
+    elevated: 'مرتفع', low: 'منخفض', normal: 'طبيعي', high: 'عالٍ',
+    moderate: 'معتدل', mixed: 'متباين', tightening: 'تشديدي', easing: 'تيسيري',
+    transitioning: 'انتقالي', established: 'مستقر', contested: 'متنازع عليه',
+    improving: 'متحسن', deteriorating: 'متراجع', stable: 'مستقر',
+    defensive: 'دفاعي', growth: 'نمو', value: 'قيمة', unverified: 'غير محدد',
+    tightening_cycle: 'دورة تشديدية', easing_cycle: 'دورة تيسيرية',
+    risk_off_elevated_vix: 'تجنب المخاطر مع ارتفاع VIX',
+    regime_persistence: 'استمرار النظام', unknown: 'غير محدد',
+    strong: 'قوي', weak: 'ضعيف', narrow: 'ضيق', broad: 'واسع',
+    positive: 'إيجابي', negative: 'سلبي', rising: 'صاعد', falling: 'هابط', flat: 'مستقر',
+    early: 'مبكر', mature: 'ناضج', late: 'متأخر',
+    high_confidence: 'ثقة عالية', medium_confidence: 'ثقة متوسطة', low_confidence: 'ثقة منخفضة',
+    baseline_monitoring: 'مراقبة أساسية', signal_divergence: 'تباعد الإشارات',
+    volatility_spike: 'ارتفاع التقلب', defensive_rotation: 'تناوب دفاعي',
+    growth_momentum: 'زخم نمو', disinflation: 'تباطؤ تضخمي',
+    stagflation_risk: 'مخاطر ركود تضخمي', recession_risk: 'مخاطر ركود'
+  };
+  const raw = String(value);
+  const key = raw.toLowerCase().trim();
+  const underKey = raw.replace(/\s+/g, '_').toLowerCase();
+  return map[key] || map[underKey] || 'غير محدد';
+}
+
 function confidenceFor(value) {
   if (!value || value === 'unverified') return 'low';
   if (String(value).includes('mixed')) return 'medium';
   return 'medium-high';
+}
+
+function confidenceForAr(value) {
+  if (!value || value === null || value === undefined || value === '') return 'منخفضة';
+  if (String(value).includes('mixed') || String(value).includes('متباين')) return 'متوسطة';
+  return 'متوسطة إلى مرتفعة';
 }
 
 function updateNarrativeMemory(topicItem, aiContentValue) {
@@ -701,7 +734,19 @@ function getLabels() {
       'تواصل الاحتياطي الفيدرالي وتوقعات أسعار الفائدة.',
       'اتساع المشاركة عبر قطاعات التكنولوجيا والقطاعات الدفاعية والدورية.',
       'التناوب بين صناديق السوق الواسع والنمو والدخل والتعرضات الدفاعية.'
-    ]
+    ],
+    intelligenceSnapshot: 'لقطة استخباراتية للسوق',
+    intelligenceIntro: 'ترتبط هذه المقالة بطبقة الاستخبارات الكلية: ذاكرة النظام والإشارات النشطة وفحوصات التباعد وتحليل التسلسل.',
+    riskRegime: 'نظام المخاطر',
+    volatilityRegime: 'نظام التقلب',
+    breadthCondition: 'اتساع السوق',
+    concentrationRisk: 'مخاطر التركز',
+    confidence: 'الثقة',
+    activeSignals: 'إشارات نشطة',
+    continuitySummary: 'استمرارية السرد',
+    divergenceContext: 'سياق التباعد',
+    relatedSequence: 'التسلسل الكلي المرتبط',
+    baselineContinuity: 'يضع هذا سياقاً أساسياً للمقارنة السردية المستقبلية.'
   }
   };
 }

@@ -90,7 +90,11 @@ function checkFile(file, locale) {
   if (locale === 'ar') {
     if (!/<html[^>]+lang="ar"[^>]+dir="rtl"/i.test(html)) failures.push(`${rel}: Arabic page missing lang=ar dir=rtl`);
     const cleaned = stripAllowedEnglish(body);
-    if (/[A-Za-z]{3,}(?:\s+[A-Za-z]{3,}){4,}/.test(cleaned)) failures.push(`${rel}: AR page contains full English sentence in visible body`);
+    const enMatch = cleaned.match(/[A-Za-z]{3,}(?:\s+[A-Za-z]{3,}){4,}/);
+    if (enMatch) {
+      const snippet = enMatch[0].slice(0, 80);
+      failures.push(`${rel}: AR page contains English sentence fragments — "${snippet}"`);
+    }
   }
 }
 
