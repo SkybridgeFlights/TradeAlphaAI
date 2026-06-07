@@ -104,7 +104,14 @@ function checkPage(rel) {
     if (!html.includes('hreflang="en"')) failures.push(`${rel}: missing en hreflang`);
   }
   if (rel.startsWith("ar/") && !/<html lang="ar" dir="rtl">/i.test(html)) failures.push(`${rel}: missing Arabic RTL html attributes`);
-  if (/<script type="application\/ld\+json">[\s\S]*?&quot;[\s\S]*?<\/script>/i.test(html)) failures.push(`${rel}: JSON-LD appears HTML-escaped`);
+  for (const ldMatch of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)) {
+    const content = ldMatch[1];
+    if (/&quot;|&amp;|&lt;|&gt;/.test(content)) {
+      const snippet = content.trim().slice(0, 150).replace(/\s+/g, ' ');
+      failures.push(`${rel}: JSON-LD appears HTML-escaped — snippet: ${snippet}`);
+      break;
+    }
+  }
 }
 
 function checkComparePage(rel, isAr) {
