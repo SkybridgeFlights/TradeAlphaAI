@@ -763,7 +763,7 @@ function executeAction(contentType, mode, dryRun, action) {
         .map((t) => t.slug);
       console.log(`[QUEUE REFRESH AFTER SEED] before_count=${beforeCount} after_count=${afterCount} new_slugs=${newSlugs.join(',') || 'none'}`);
 
-      // Hard assert: if seeder reported inserting topics but the slug is missing, surface the bug
+      // [BUG] assertion: seeder reported inserting topics but returned no slug
       if (seeded.count > 0 && !seeded.slug) {
         console.error(`[BUG] Seeder reported count=${seeded.count} but returned no selected slug`);
         throw new Error('[BUG] Seeder created topics but returned no selected slug — check seeder-last-run.json');
@@ -788,13 +788,31 @@ function executeAction(contentType, mode, dryRun, action) {
         }
       }
 
-      // Hard assert: topic MUST be set before entering the pipeline
+      // No topic found after seeding
       if (!effectiveAction.topic) {
-        throw new Error('[brain] market outlook topic missing after seeding — cannot proceed with pipeline');
+        if (seeded.count > 0) {
+          // Seeder created topics but we lost the slug — this is a [BUG]
+          throw new Error(`[BUG] Seeder created ${seeded.count} topics but effectiveAction.topic is still null`);
+        }
+        // seeded.count === 0 means all clusters are in cooldown or all slots are occupied — expected
+        const blockReason = 'no_topics_seeded_all_clusters_in_cooldown_or_slots_full';
+        console.log(`[QUEUE SEEDING] result=blocked reason=${blockReason}`);
+        return {
+          generation_result: blockReason,
+          publish_result: `blocked: ${blockReason}`,
+          telegram_result: telegramStatus(),
+          command_status: 0,
+          current_state: blockReason,
+          transition_path: [blockReason],
+          regeneration_attempts: 0,
+          review_result: 'not requested',
+          approval_reason: '',
+          publish_gate_result: `blocked: ${blockReason}`
+        };
       }
     }
 
-    // Safety gate: generate_topic_then_full_pipeline MUST have a topic before entering pipeline
+    // Safety gate: generate_topic_then_full_pipeline MUST have a topic set at this point
     if (action.next_action === 'generate_topic_then_full_pipeline' && !effectiveAction.topic) {
       throw new Error('[BUG] generate_topic_then_full_pipeline reached pipeline entry with no effectiveAction.topic');
     }
