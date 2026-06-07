@@ -59,7 +59,8 @@ function ensureProductionEditorialLayout(html, topic, locale) {
   const nav = renderSiteHeader({
     locale: ar ? 'ar' : 'en',
     active: 'insights',
-    languageHref: ar ? `/insights/${topic.slug}.html` : `/ar/insights/${topic.slug}.html`
+    arabicHref: `/ar/insights/${topic.slug}.html`,
+    englishHref: `/insights/${topic.slug}.html`
   });
   const sidebar = renderSidebar(articleBody, topic, ar);
 

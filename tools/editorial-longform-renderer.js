@@ -296,32 +296,44 @@ function renderEditorialContext(context, ar) {
 }
 
 function renderInstitutionalRepairContext(context, ar) {
-  if (ar || !context?.repair_spec?.context_injections?.length) return '';
+  if (!context?.repair_spec?.context_injections?.length) return '';
   const paragraphs = [];
   for (const injection of context.repair_spec.context_injections) {
     const data = injection.context || {};
     if (injection.type === 'regime_context' && data.regime_summary) {
-      paragraphs.push(`Regime context: ${data.regime_summary} This context is used as a conditional analytical frame, and the article does not treat it as a recommendation or a deterministic forecast.`);
+      paragraphs.push(ar
+        ? `سياق النظام: ${data.regime_summary} يُستخدم هذا السياق كإطار تحليلي مشروط، ولا تعتبر المقالة هذا توصية أو توقعاً حتمياً.`
+        : `Regime context: ${data.regime_summary} This context is used as a conditional analytical frame, and the article does not treat it as a recommendation or a deterministic forecast.`);
     }
     if (injection.type === 'transmission_context') {
       for (const chain of data.relevant_chains || []) {
-        if (chain.mechanism) paragraphs.push(`Transmission mechanism (${chain.key}): ${chain.mechanism}`);
+        if (chain.mechanism) paragraphs.push(ar
+          ? `آلية الإرسال (${chain.key}): ${chain.mechanism}`
+          : `Transmission mechanism (${chain.key}): ${chain.mechanism}`);
       }
     }
     if (injection.type === 'etf_comparison_context') {
       for (const profile of data.etf_profiles || []) {
         const detail = [profile.institutional_interpretation, profile.comparison_note].filter(Boolean).join(' ');
-        if (detail) paragraphs.push(`${profile.ticker} comparison context: ${detail}`);
+        if (detail) paragraphs.push(ar
+          ? `سياق مقارنة ${profile.ticker}: ${detail}`
+          : `${profile.ticker} comparison context: ${detail}`);
       }
     }
     if (injection.type === 'rate_path_context' && data.narrative) {
-      paragraphs.push(`Rate-path scenario: ${data.narrative} The relevant conclusion depends on confirmation from the yield curve, liquidity conditions, and participation rather than the policy label alone.`);
+      paragraphs.push(ar
+        ? `سيناريو مسار الفائدة: ${data.narrative} يعتمد الاستنتاج ذو الصلة على التأكيد من منحنى العائد وظروف السيولة والمشاركة بدلاً من مجرد التسمية السياسية.`
+        : `Rate-path scenario: ${data.narrative} The relevant conclusion depends on confirmation from the yield curve, liquidity conditions, and participation rather than the policy label alone.`);
     }
   }
   if (!paragraphs.length) return '';
+  const transition = ar
+    ? 'تربط الطبقة التالية الإطار التعليمي بآليات الإرسال المحددة التي تم تحديدها خلال المراجعة المستقلة.'
+    : 'The next layer connects the educational framework to the specific transmission mechanisms identified during autonomous review.';
+  const heading = ar ? 'سياق الإرسال المؤسسي والمقارنة' : 'Institutional transmission and comparison context';
   return `      <section id="institutional-repair-context">
-        <p class="editorial-transition">The next layer connects the educational framework to the specific transmission mechanisms identified during autonomous review.</p>
-        <h2>Institutional transmission and comparison context</h2>
+        <p class="editorial-transition">${transition}</p>
+        <h2>${heading}</h2>
 ${paragraphs.slice(0, 6).map((paragraph) => `        <p>${escapeHtml(paragraph)}</p>`).join('\n')}
       </section>`;
 }

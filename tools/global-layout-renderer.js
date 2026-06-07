@@ -154,7 +154,9 @@ function renderSiteHeaderCompat(options = {}) {
   return renderGlobalHeader({
     locale: options.locale,
     activePage: options.active || options.activePage || '',
-    basePath: options.basePath || ''
+    basePath: options.basePath || '',
+    arabicHref: options.arabicHref,
+    englishHref: options.englishHref
   });
 }
 
