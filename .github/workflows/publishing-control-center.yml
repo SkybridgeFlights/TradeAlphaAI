@@ -220,6 +220,21 @@ jobs:
           echo "======================================================"
           exit 1
 
+      - name: "[full_pipeline] Update content feeds and listing pages"
+        if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
+        run: |
+          echo "--- Updating content feeds and listing pages ---"
+          node tools/update-content-feeds.js
+          node tools/apply-global-header.js
+          echo "--- Content feeds updated ---"
+
+      - name: "[full_pipeline] Validate content feeds"
+        if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
+        run: |
+          node tools/check-content-feeds.js
+          node tools/check-global-header-runtime.js
+          node tools/check-language-purity.js
+
       - name: "[full_pipeline] Commit and push published market outlook"
         if: env.MODE == 'full_pipeline' && env.DRY_RUN != 'true' && steps.detect-slug.outputs.pipeline_slug != ''
         env:
@@ -238,6 +253,9 @@ jobs:
           git add data/market-outlook-queue.json
           git add data/market-outlook-history.json
           git add data/market-outlook-published.json
+          git add market-outlook/index.html || true
+          git add ar/market-outlook/index.html || true
+          git add data/feeds/ || true
           git add sitemap*.xml || true
           git add robots.txt || true
 

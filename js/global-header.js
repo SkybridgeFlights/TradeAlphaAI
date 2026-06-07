@@ -19,7 +19,7 @@
       toggle = document.createElement("button");
       toggle.className = "mobile-menu-toggle";
       toggle.type = "button";
-      toggle.setAttribute("aria-label", "Open menu");
+      toggle.setAttribute("aria-label", isArabic ? "فتح القائمة" : "Open menu");
       toggle.setAttribute("aria-expanded", "false");
       toggle.setAttribute("aria-controls", "mobile-nav-drawer");
       toggle.innerHTML = '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';

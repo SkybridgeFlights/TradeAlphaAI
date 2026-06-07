@@ -78,7 +78,7 @@ function globalHeaderHead() {
 }
 
 function globalHeaderScripts() {
-  return '<script src="/js/mobile-nav.js" defer></script>';
+  return '<script src="/js/global-header.js" defer></script>';
 }
 
 function englishLinks() {

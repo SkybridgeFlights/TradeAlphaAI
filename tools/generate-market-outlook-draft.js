@@ -11,6 +11,7 @@ const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 const { extractMarketSignals } = require('./extract-market-signals');
 const { recommendLinks } = require('./internal-link-intelligence');
+const { cleanArabicMarketCopy } = require('./clean-arabic-market-copy');
 const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
 const {
   findArabicEnglishRun,
@@ -67,9 +68,9 @@ const aiContent = tryGetAiContent(topic.slug);
 const aiMode = aiContent !== null;
 
 const renderedEn = render(normalized, 'en', intelligence, aiContent, generationId);
-const renderedAr = normalizeArabicFinancialHtml(
+const renderedAr = cleanArabicMarketCopy(normalizeArabicFinancialHtml(
   render(normalized, 'ar', intelligence, aiContent, generationId)
-);
+));
 assertArabicGenerationSafe(renderedAr, topic.slug);
 
 fs.mkdirSync(dir, { recursive: true });
@@ -375,7 +376,7 @@ ${contextualCards}
   </main>
   ${renderSiteFooter({ locale: ar ? 'ar' : 'en' })}
   <script src="${pathPrefix}js/language-router.js" defer></script>
-  <script src="${pathPrefix}js/mobile-nav.js" defer></script>
+  <script src="${pathPrefix}js/global-header.js" defer></script>
   <script>
 (function(){
   var bar = document.querySelector('.reading-progress span');
@@ -753,8 +754,8 @@ function getLabels() {
       'اتساع المشاركة عبر قطاعات التكنولوجيا والقطاعات الدفاعية والدورية.',
       'التناوب بين صناديق السوق الواسع والنمو والدخل والتعرضات الدفاعية.'
     ],
-    intelligenceSnapshot: 'لقطة استخباراتية للسوق',
-    intelligenceIntro: 'ترتبط هذه المقالة بطبقة الاستخبارات الكلية: ذاكرة النظام والإشارات النشطة وفحوصات التباعد وتحليل التسلسل.',
+    intelligenceSnapshot: 'نظرة تحليلية للسوق',
+    intelligenceIntro: 'يرتبط هذا التقرير بإطار التحليل الكلي: ذاكرة النظام والإشارات النشطة وفحوصات التباين وتحليل التسلسل.',
     riskRegime: 'نظام المخاطر',
     volatilityRegime: 'نظام التقلب',
     breadthCondition: 'اتساع السوق',
