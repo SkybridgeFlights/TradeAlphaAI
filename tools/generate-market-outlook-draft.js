@@ -228,7 +228,7 @@ function render(topic, locale, intel, aiContent = null, dataGenerationId = new D
   const sidebarLinks = sidebarItems.map(([id, label]) => `            <a href="#${id}">${escapeHtml(label)}</a>`).join('\n');
 
   return `<!doctype html>
-<html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}" data-generation-id="${escapeHtml(dataGenerationId)}">
+<html lang="${ar ? 'ar' : 'en'}" dir="${ar ? 'rtl' : 'ltr'}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -254,7 +254,7 @@ function render(topic, locale, intel, aiContent = null, dataGenerationId = new D
   <link rel="stylesheet" href="/css/responsive.css" />
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
-<body class="market-page">
+<body class="market-page" data-generation-id="${escapeHtml(dataGenerationId)}">
   <div class="reading-progress" aria-hidden="true"><span></span></div>
   ${nav}
   <main class="market-shell">

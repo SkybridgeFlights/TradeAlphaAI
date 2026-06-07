@@ -16,7 +16,9 @@ const stocks = htmlFiles("stocks").map(toRel);
 const etfs = htmlFiles("etfs").map(toRel);
 const hubs = (marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists);
 const comparisons = htmlFiles("compare").map(toRel);
-const marketOutlook = htmlFiles("market-outlook").map(toRel);
+// Market outlook publishing includes top-level research plus daily/weekly
+// subdirectories, so sitemap discovery must recurse through the full tree.
+const marketOutlook = htmlFilesRecursive("market-outlook").map(toRel);
 const insights = ["insights/"].filter(existsDir).concat(htmlFiles("insights").filter((rel) => !rel.endsWith("/index.html")).map(toRel), marketOutlook);
 const ar = arUrls();
 
@@ -51,7 +53,10 @@ function arUrls() {
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
   for (const dir of ["stocks", "etfs", "compare", "insights", "market-outlook"]) {
-    for (const file of htmlFiles(path.join("ar", dir))) {
+    const files = dir === "market-outlook"
+      ? htmlFilesRecursive(path.join("ar", dir))
+      : htmlFiles(path.join("ar", dir));
+    for (const file of files) {
       if (file.endsWith("/index.html") && dir === "insights") continue;
       out.push(toRel(file));
     }
@@ -106,6 +111,24 @@ function htmlFiles(dir) {
     .filter((name) => name.endsWith(".html"))
     .map((name) => path.join(dir, name).replaceAll("\\", "/"))
     .filter((rel) => !isNoindex(rel));
+}
+
+function htmlFilesRecursive(dir) {
+  const absolute = path.join(root, dir);
+  if (!fs.existsSync(absolute)) return [];
+  const found = [];
+  const visit = (current) => {
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const full = path.join(current, entry.name);
+      if (entry.isDirectory()) visit(full);
+      else if (entry.isFile() && entry.name.endsWith(".html")) {
+        const rel = path.relative(root, full).replaceAll("\\", "/");
+        if (!isNoindex(rel)) found.push(rel);
+      }
+    }
+  };
+  visit(absolute);
+  return found;
 }
 
 function isNoindex(rel) {
