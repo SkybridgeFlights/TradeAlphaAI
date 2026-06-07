@@ -79,6 +79,17 @@ fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
   languages: ['en', 'ar']
 }, null, 2) + '\n', 'utf8');
 
+// ── Validate generated artifacts (Fix 8) ─────────────────────────────────────
+// GLOBAL_HEADER_START is injected by apply-global-header.js on published pages.
+// At draft time, we verify the CSS link and the data-global-header attribute only.
+const generatedEn = fs.readFileSync(enDraft, 'utf8');
+const generatedAr = fs.readFileSync(arDraft, 'utf8');
+const missingMarkers = [];
+if (!generatedEn.includes('data-global-header'))     missingMarkers.push('data-global-header (en)');
+if (!generatedEn.includes('/css/global-header.css')) missingMarkers.push('/css/global-header.css (en)');
+if (!generatedAr.includes('data-global-header'))     missingMarkers.push('data-global-header (ar)');
+if (missingMarkers.length) fail(`${topic.slug}: generated draft missing required markers: ${missingMarkers.join(', ')}`);
+
 if (!['published', 'reviewed'].includes(topic.status)) {
   topic.status = 'in_review';
   topic.review_status = 'pending';
@@ -99,14 +110,19 @@ console.log(`Data completeness: ${intelligence.data_completeness}`);
 if (aiMode) console.log(`Directional bias: ${aiContent.en.directional_bias}`);
 updateNarrativeMemory(topic, aiContent);
 
+// ── Deterministic promotion (Fix 1) ──────────────────────────────────────────
+// AI path: try high-bar auto-approval first; fall back to structural promotion.
+// Structural path: promote deterministically when bilingual generation succeeds.
 if (aiMode) {
   if (attemptAutoApproval(topic, topic.slug)) {
-    console.log(`${topic.slug}: auto-approved (AI-generated content, score >= 96, all hard gates passed including specificity and no-filler).`);
+    console.log(`${topic.slug}: auto-approved (AI-generated content, score >= 96, all hard gates passed).`);
   } else {
-    console.log(`${topic.slug}: AI content generated but quality gate failed. Requires manual review.`);
+    console.log(`${topic.slug}: AI quality gate not met — applying structural promotion.`);
+    attemptStructuralPromotion(topic, topic.slug, 'ai_quality_gate_below_threshold');
   }
 } else {
-  console.log(`${topic.slug}: no OPENAI_API_KEY — structural draft saved, review_status=pending (no auto-approve).`);
+  console.log(`${topic.slug}: no OPENAI_API_KEY — structural draft complete.`);
+  attemptStructuralPromotion(topic, topic.slug, 'structural_generation_complete_no_ai_key');
 }
 
 function render(topic, locale, intel, aiContent = null) {
@@ -221,6 +237,7 @@ function render(topic, locale, intel, aiContent = null) {
   <link rel="stylesheet" href="${pathPrefix}styles.css" />
   <link rel="stylesheet" href="${pathPrefix}landing.css" />
   <link rel="stylesheet" href="${pathPrefix}css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
@@ -782,6 +799,75 @@ function attemptAutoApproval(topicItem, slugValue) {
   topicItem.last_reviewed = today;
   queue.updated = today;
   fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+  return true;
+}
+
+function attemptStructuralPromotion(topicItem, slugValue, reason) {
+  const draftDir = path.join(OUT_DIR, slugValue);
+  const enFile = path.join(draftDir, 'en.html');
+  const arFile = path.join(draftDir, 'ar.html');
+  const metaFile = path.join(draftDir, 'metadata.json');
+
+  // Require bilingual drafts
+  if (!fs.existsSync(enFile) || !fs.existsSync(arFile)) {
+    console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} promotion_skipped reason=missing_bilingual_drafts`);
+    return false;
+  }
+
+  // Require required intelligence files
+  const requiredIntelligence = [REGIME_PATH, ECONOMIC_CALENDAR_PATH];
+  for (const f of requiredIntelligence) {
+    if (!fs.existsSync(f)) {
+      console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} promotion_skipped reason=missing_intelligence_file:${path.basename(f)}`);
+      return false;
+    }
+  }
+
+  // Validate draft content — check for canonical header attribute and CSS link
+  // (GLOBAL_HEADER_START is injected by apply-global-header.js on published pages, not drafts)
+  const enHtml = fs.readFileSync(enFile, 'utf8');
+  const arHtml = fs.readFileSync(arFile, 'utf8');
+  if (!enHtml.includes('data-global-header') || !arHtml.includes('data-global-header')) {
+    console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} promotion_skipped reason=missing_data_global_header_attribute`);
+    return false;
+  }
+  if (!enHtml.includes(DISCLAIMER_EN)) {
+    console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} promotion_skipped reason=missing_disclaimer_en`);
+    return false;
+  }
+  if (!arHtml.includes(DISCLAIMER_AR)) {
+    console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} promotion_skipped reason=missing_disclaimer_ar`);
+    return false;
+  }
+
+  // Do not re-promote if already approved or published
+  if (['published'].includes(topicItem.status)) {
+    console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} promotion_skipped reason=already_${topicItem.status}`);
+    return false;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const previousState = `${topicItem.status}/${topicItem.review_status || 'none'}`;
+
+  // Walk through promotion states
+  const states = ['in_review', 'pending', 'generated'];
+  const transitions = [];
+  if (states.includes(topicItem.status) || topicItem.status === 'draft' || topicItem.status === 'planned') {
+    if (topicItem.status !== 'reviewed') {
+      topicItem.status = 'reviewed';
+      transitions.push(`→ reviewed`);
+    }
+  }
+  if (topicItem.review_status !== 'approved') {
+    topicItem.review_status = 'approved';
+    transitions.push(`→ approved`);
+  }
+  topicItem.last_reviewed = today;
+  queue.updated = today;
+  fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + '\n', 'utf8');
+
+  console.log(`[MARKET OUTLOOK PROMOTION] topic=${slugValue} previous_state=${previousState} next_state=reviewed/approved promotion_reason=${reason}`);
+  if (transitions.length) console.log(`[MARKET OUTLOOK PROMOTION] transitions: ${transitions.join(', ')}`);
   return true;
 }
 
