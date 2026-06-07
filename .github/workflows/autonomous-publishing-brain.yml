@@ -363,6 +363,30 @@ jobs:
         run: |
           git config user.name "tradealphaai-bot"
           git config user.email "actions@users.noreply.github.com"
+          stage_paths() {
+            for path in "$@"; do
+              if [ -e "$path" ]; then
+                git add -- "$path"
+                echo "[staging] added: $path"
+              else
+                echo "[staging] skipped missing path: $path"
+              fi
+            done
+          }
+          stage_glob() {
+            pattern="$1"
+            found=0
+            for path in $pattern; do
+              if [ -e "$path" ]; then
+                git add -- "$path"
+                echo "[staging] added: $path"
+                found=1
+              fi
+            done
+            if [ "$found" -eq 0 ]; then
+              echo "[staging] skipped missing path: $pattern"
+            fi
+          }
           slug="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_topic||''))")"
           type="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.selected_content_type||''))")"
           published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
@@ -371,18 +395,18 @@ jobs:
           echo "[PUBLISH REPORT] published=${published} site_update=${site_update} commit_allowed=${commit_allowed} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
           if [ "${published}" != "yes" ]; then
             if [ "${MODE}" = "generate_only" ]; then
-              git add "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/intelligence || true
+              stage_paths "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/intelligence
               commit_message="Draft generated ${slug}"
             elif [ "${site_update}" = "yes" ]; then
               if [ "${commit_allowed}" != "yes" ]; then
                 echo "Skipping commit: site-update path produced no file changes."
                 exit 0
               fi
-              git add data/intelligence data/feeds data/system-status || true
-              git add market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard || true
-              git add market-replay ar/market-replay system-status || true
-              git add index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html || true
-              compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
+              stage_paths data/intelligence data/feeds data/system-status
+              stage_paths market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard
+              stage_paths market-replay ar/market-replay system-status
+              stage_paths index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html
+              stage_glob "sitemap*.xml"
               commit_message="Autonomous site intelligence update"
             else
               echo "Skipping commit: no public publication occurred."
@@ -390,17 +414,15 @@ jobs:
               exit 0
             fi
           else
-            git add insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook || true
-            git add data/editorial-topic-queue.json data/market-outlook-queue.json data/published-history.json data/market-outlook-history.json || true
-            git add data/insights data/search-index.json data/localization data/intelligence/publishing-report.json data/intelligence/publication-confidence.json || true
-            git add data/intelligence/market-intelligence-context.json || true
-            git add data/system-status/market-intelligence-status.json || true
-            git add data/feeds/ || true
-            git add data/narrative-memory.json || true
-            git add market-outlook/index.html ar/market-outlook/index.html || true
-            git add system-status sitemap-core.xml sitemap-market.xml || true
-            compgen -G "sitemap*.xml" > /dev/null && git add sitemap*.xml || true
-            git add index.html ar/index.html || true
+            stage_paths insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook
+            stage_paths data/editorial-topic-queue.json data/market-outlook-queue.json data/published-history.json data/market-outlook-history.json
+            stage_paths data/insights data/search-index.json data/localization data/intelligence/publishing-report.json data/intelligence/publication-confidence.json
+            stage_paths data/intelligence/market-intelligence-context.json data/system-status/market-intelligence-status.json
+            stage_paths data/feeds data/narrative-memory.json
+            stage_paths market-outlook/index.html ar/market-outlook/index.html
+            stage_paths system-status sitemap-core.xml sitemap-market.xml
+            stage_paths index.html ar/index.html
+            stage_glob "sitemap*.xml"
             commit_message="Autonomous publish ${slug}"
           fi
           echo "--- git status after staging ---"
