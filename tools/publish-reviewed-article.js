@@ -41,6 +41,8 @@ if (!hasRequiredArticleParts(fs.readFileSync(draftAr, 'utf8'), true)) fail(`${re
 
 const enHtml = ensureProductionEditorialLayout(fs.readFileSync(draftEn, 'utf8'), topic, 'en');
 const arHtml = ensureProductionEditorialLayout(fs.readFileSync(draftAr, 'utf8'), topic, 'ar');
+assertProductionLayout(enHtml, false, relative(draftEn));
+assertProductionLayout(arHtml, true, relative(draftAr));
 
 console.log(execute ? 'EXECUTE mode requested.' : 'DRY_RUN active. No files will be published.');
 console.log(`Publish repository root: ${ROOT}`);
@@ -264,7 +266,6 @@ function hasRequiredArticleParts(html, ar) {
   if (!/<script type="application\/ld\+json">[\s\S]*"Article"[\s\S]*<\/script>/.test(html)) return false;
   if (!/<script type="application\/ld\+json">[\s\S]*"FAQPage"[\s\S]*<\/script>/.test(html)) return false;
   if (!/id="related-research"/.test(html) || !/id="continue-learning"/.test(html)) return false;
-  if (!hasProductionEditorialLayout(html, ar)) return false;
   if (ar && !/<html[^>]+lang="ar"[^>]+dir="rtl"/.test(html)) return false;
   return true;
 }
@@ -297,6 +298,31 @@ function diagnoseArticleParts(html, ar, label) {
   p('layout: mobile-nav.js',        /js\/mobile-nav\.js/.test(html));
   p('layout: data-locale-route',    /data-locale-route="ar"|data-locale-route="en"/.test(html));
   if (ar) p('html lang=ar dir=rtl', /<html[^>]+lang="ar"[^>]+dir="rtl"/i.test(html));
+}
+
+function assertProductionLayout(html, ar, label) {
+  const conditions = [
+    ['body.market-page',      /<body[^>]+class="[^"]*\bmarket-page\b/i],
+    ['.topbar',               /class="[^"]*\btopbar\b[^"]*"/],
+    ['data-global-header',    /data-global-header/],
+    ['.market-shell',         /class="[^"]*\bmarket-shell\b[^"]*"/],
+    ['.wrap',                 /class="[^"]*\bwrap\b[^"]*"/],
+    ['.insight-hero-card',    /class="[^"]*\binsight-hero-card\b[^"]*"/],
+    ['.insight-layout',       /class="[^"]*\binsight-layout\b[^"]*"/],
+    ['.insight-article-body', /class="[^"]*\binsight-article-body\b[^"]*"/],
+    ['.insight-sidebar',      /class="[^"]*\binsight-sidebar\b[^"]*"/],
+    ['market-portal.css',     /css\/market\/market-portal\.css/],
+    ['global-layout.css',     /css\/global-layout\.css/],
+    ['language-router.js',    /js\/language-router\.js/],
+    ['mobile-nav.js',         /js\/mobile-nav\.js/],
+    ['data-locale-route',     /data-locale-route="ar"|data-locale-route="en"/],
+  ];
+  for (const [name, pattern] of conditions) {
+    if (!pattern.test(html)) fail(`${label}: production layout wrapping failed — missing ${name}`);
+  }
+  if (ar && !/<html[^>]+lang="ar"[^>]+dir="rtl"/i.test(html)) {
+    fail(`${label}: production layout wrapping failed — missing html lang=ar dir=rtl`);
+  }
 }
 
 function run(command, args) {
