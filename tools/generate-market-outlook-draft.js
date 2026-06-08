@@ -18,6 +18,7 @@ const {
   findArabicEnglishRun,
   normalizeArabicFinancialHtml,
 } = require('./arabic-financial-localization');
+const { suppressExcessTickersInHtml } = require('./market-outlook-post-processor');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -31,6 +32,7 @@ const SITE_URL = 'https://www.tradealphaai.com';
 const ELIGIBLE = new Set(['planned', 'draft']);
 const DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market conditions can change rapidly and uncertainty remains present.';
 const DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
+
 
 const slugArg = argValue('--slug');
 const queue = readJson(QUEUE_PATH, { topics: [] });
@@ -68,10 +70,12 @@ const intelligence = generateIntelligence(liveMarket, calendar, regime, normaliz
 const aiContent = tryGetAiContent(topic.slug);
 const aiMode = aiContent !== null;
 
-const renderedEn = render(normalized, 'en', intelligence, aiContent, generationId);
-const renderedAr = humanizeArabicMarketContent(cleanArabicMarketCopy(normalizeArabicFinancialHtml(
-  render(normalized, 'ar', intelligence, aiContent, generationId)
-)));
+const renderedEn = suppressExcessTickersInHtml(
+  render(normalized, 'en', intelligence, aiContent, generationId), 'en');
+const renderedAr = suppressExcessTickersInHtml(
+  humanizeArabicMarketContent(cleanArabicMarketCopy(normalizeArabicFinancialHtml(
+    render(normalized, 'ar', intelligence, aiContent, generationId)
+  ))), 'ar');
 assertArabicGenerationSafe(renderedAr, topic.slug);
 
 fs.mkdirSync(dir, { recursive: true });
@@ -219,6 +223,7 @@ function render(topic, locale, intel, aiContent = null, dataGenerationId = new D
   });
   const articleIntelligence = buildArticleIntelligence(topic, ar);
   const compSection = buildInstitutionalComparisonSection(topic, etfFlow, ar);
+  const historySection = buildHistoricalComparisonSection(ar);
   const breadcrumb = ar
     ? `<nav class="breadcrumb"><a href="/ar/">الرئيسية</a><span>/</span><a href="/ar/market-outlook/">توقعات السوق</a><span>/</span><span>${escapeHtml(title)}</span></nav>`
     : `<nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/market-outlook/">Market Outlook</a><span>/</span><span>${escapeHtml(title)}</span></nav>`;
@@ -231,6 +236,7 @@ function render(topic, locale, intel, aiContent = null, dataGenerationId = new D
     ['risk-factors', L.riskFactorsTitle],
     ['watch-next', L.watchNextTitle],
     ...(compSection ? [['institutional-comparison', ar ? 'مقارنة مؤسسية' : 'Institutional Comparison']] : []),
+    ...(historySection ? [['historical-comparison', ar ? 'السياق التاريخي' : 'Historical Context']] : []),
     ['related-research', L.relatedTitle]
   ];
   const sidebarLinks = sidebarItems.map(([id, label]) => `            <a href="#${id}">${escapeHtml(label)}</a>`).join('\n');
@@ -355,6 +361,7 @@ ${watchItems}
       </section>
 
 ${compSection}
+${historySection}
       <section class="market-section" id="related-research">
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.relatedTitle)}</span><h2>${escapeHtml(L.relatedTitle)}</h2></div>
         <div class="market-grid three">
@@ -368,7 +375,6 @@ ${contextualCards}
       <section class="market-section" id="footer-disclaimer">
         <div class="market-panel">
           <span class="eyebrow">${escapeHtml(L.educationalDisclaimer)}</span>
-          <p class="market-copy educational-disclaimer">${escapeHtml(disclaimer)}</p>
           <p class="market-copy">${escapeHtml(L.footerNote)}</p>
         </div>
       </section>
@@ -486,6 +492,120 @@ function buildInstitutionalComparisonSection(topicItem, etfFlowData, ar) {
         </div>
         ${compNote ? `<div class="market-panel" style="margin-top:1rem"><p class="market-copy"><strong>${escapeHtml(L.structuralNote)}:</strong> ${escapeHtml(compNote)}</p></div>` : ''}
       </section>`;
+}
+
+function buildHistoricalComparisonSection(ar) {
+  try {
+    const HISTORY_PATH     = path.join(ROOT, 'data', 'intelligence', 'historical-memory.json');
+    const CONTINUITY_PATH  = path.join(ROOT, 'data', 'intelligence', 'narrative-continuity.json');
+    const history    = readJson(HISTORY_PATH, null);
+    const continuity = readJson(CONTINUITY_PATH, null);
+
+    if (!history || !Array.isArray(history.snapshots) || history.snapshots.length < 2) return '';
+    if (!continuity || continuity.status === 'insufficient_data') return '';
+
+    const snaps    = history.snapshots;
+    const latest   = snaps[snaps.length - 1];
+    const previous = snaps[snaps.length - 2];
+    const summary  = continuity.summary || {};
+    const confTrend = continuity.confidence_trend || {};
+
+    // Only render when confidence is sufficient
+    const minConf = 40;
+    if ((latest.confidence || 0) < minConf) return '';
+
+    const L = ar ? {
+      sectionTitle:      'السياق التاريخي',
+      intro:             'مقارنة النظام السوقي الحالي بآخر لقطة مسجلة لرصد التغيرات والاستمرارية.',
+      prevSnapshot:      'اللقطة السابقة',
+      currentSnapshot:   'اللقطة الحالية',
+      marketTone:        'نبرة السوق',
+      volatility:        'التذبذب',
+      ratePath:          'مسار الفائدة',
+      confidence:        'الثقة',
+      narrativePersist:  'استمرارية الرواية',
+      regimeStability:   'استقرار النظام',
+      confTrend:         'اتجاه الثقة',
+      replayLink:        'عرض تاريخ السوق الكامل',
+      changed:           'تغيّر',
+      unchanged:         'بدون تغيير',
+      insufficientNote:  'ثقة الاستمرارية التاريخية غير كافية',
+    } : {
+      sectionTitle:      'Historical Context',
+      intro:             'Comparison of current market regime with the previous recorded snapshot to identify shifts and continuity.',
+      prevSnapshot:      'Previous snapshot',
+      currentSnapshot:   'Current snapshot',
+      marketTone:        'Market tone',
+      volatility:        'Volatility',
+      ratePath:          'Rate path',
+      confidence:        'Confidence',
+      narrativePersist:  'Narrative persistence',
+      regimeStability:   'Regime stability',
+      confTrend:         'Confidence trend',
+      replayLink:        'View full market history',
+      changed:           'changed',
+      unchanged:         'unchanged',
+      insufficientNote:  'Historical continuity confidence insufficient',
+    };
+
+    function fmt(v) { return escapeHtml(String(v || 'unknown').replace(/_/g, ' ')); }
+    function changed(a, b) { return a !== b && b !== 'unknown' && b !== 'uncertain'; }
+
+    const toneChanged  = changed(previous.market_tone,       latest.market_tone);
+    const volChanged   = changed(previous.volatility_state,  latest.volatility_state);
+    const rateChanged  = changed(previous.rate_path,         latest.rate_path);
+
+    const rows = [
+      [L.marketTone,  fmt(previous.market_tone),      fmt(latest.market_tone),      toneChanged],
+      [L.volatility,  fmt(previous.volatility_state), fmt(latest.volatility_state), volChanged],
+      [L.ratePath,    fmt(previous.rate_path),         fmt(latest.rate_path),        rateChanged],
+    ];
+
+    const tableRows = rows.map(([label, prev, curr, didChange]) =>
+      `            <tr>
+              <td>${escapeHtml(label)}</td>
+              <td>${prev}</td>
+              <td>${curr}${didChange ? ` <span class="hist-changed-badge">${escapeHtml(L.changed)}</span>` : ''}</td>
+            </tr>`
+    ).join('\n');
+
+    const headlineText = ar
+      ? (summary.headline_ar || `استقرار النظام: ${summary.regime_stability || 'غير محدد'}`)
+      : (summary.headline_en || `Regime stability: ${summary.regime_stability || 'unknown'}`);
+
+    const persistInsights = (continuity.insights || [])
+      .filter((i) => i.type === 'narrative_persistence')
+      .slice(0, 2);
+    const persistHtml = persistInsights.map((i) =>
+      `<li class="market-copy">${escapeHtml(ar ? (i.reason_ar || i.reason_en) : i.reason_en)}</li>`
+    ).join('');
+
+    return `      <section class="market-section" id="historical-comparison">
+        <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.sectionTitle)}</span><h2>${escapeHtml(L.sectionTitle)}</h2><p class="market-copy">${escapeHtml(L.intro)}</p></div>
+        <div class="market-panel">
+          <p class="market-copy"><strong>${escapeHtml(headlineText)}</strong></p>
+          <table class="hist-compare-table" aria-label="${escapeHtml(L.sectionTitle)}">
+            <thead><tr><th></th><th>${escapeHtml(L.prevSnapshot)} (${escapeHtml(previous.date)})</th><th>${escapeHtml(L.currentSnapshot)} (${escapeHtml(latest.date)})</th></tr></thead>
+            <tbody>
+${tableRows}
+              <tr>
+                <td>${escapeHtml(L.confidence)}</td>
+                <td>${previous.confidence || 0}%</td>
+                <td>${latest.confidence || 0}%${(latest.confidence || 0) > (previous.confidence || 0) ? ' ↑' : (latest.confidence || 0) < (previous.confidence || 0) ? ' ↓' : ''}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="hist-continuity-row">
+            <span><strong>${escapeHtml(L.regimeStability)}:</strong> ${fmt(summary.regime_stability)}</span>
+            <span><strong>${escapeHtml(L.confTrend)}:</strong> ${fmt(confTrend.direction)}</span>
+          </div>
+          ${persistHtml ? `<ul class="hist-persist-list">${persistHtml}</ul>` : ''}
+          <p class="market-copy" style="margin-top:0.75rem"><a href="${ar ? '/ar/market-replay/' : '/market-replay/'}">${escapeHtml(L.replayLink)}</a></p>
+        </div>
+      </section>`;
+  } catch {
+    return '';
+  }
 }
 
 function cleanState(value) {
