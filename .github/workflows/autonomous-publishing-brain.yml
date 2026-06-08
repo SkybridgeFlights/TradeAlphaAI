@@ -370,6 +370,7 @@ jobs:
           npm run check:continuous-intelligence || echo "[continuous-intelligence] Warning-level issues — see above"
           npm run check:queue-reconciliation || echo "[queue-reconciliation] Warning-level issues — see above"
           npm run check:telegram-ledger || echo "[telegram-ledger] Warning-level issues — see above"
+          npm run check:no-orphan-public-files || echo "[orphan-public-files] Orphan files detected — cleanup step will remove before commit"
           echo "[FINAL LOCALIZATION ASSERTION]"
           if grep -R -n -i "Understanding the Two Phases" drafts/ ar/market-outlook/ market-outlook/; then
             echo "[LOCALIZATION FAIL] stale English phrase remains in generated artifacts."
@@ -465,6 +466,12 @@ jobs:
             exit 1
           fi
 
+      - name: Cleanup orphan public article files
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          node tools/cleanup-orphan-public-files.js --execute
+          echo "[cleanup] Orphan public article file cleanup complete."
+
       - name: Commit publishing changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
         run: |
@@ -519,6 +526,7 @@ jobs:
               stage_paths data/continuous-intelligence-queue.json data/continuous-intelligence-history.json
               stage_paths market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard
               stage_paths market-replay ar/market-replay intelligence ar/intelligence en/intelligence system-status
+              stage_paths market-outlook/daily market-outlook/weekly ar/market-outlook/daily ar/market-outlook/weekly
               stage_paths index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html
               stage_paths js/visual-intelligence.js js/market-replay.js css/visual-intelligence.css
               stage_glob "sitemap*.xml"
