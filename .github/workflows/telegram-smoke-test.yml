@@ -1,0 +1,59 @@
+name: Telegram Smoke Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-smoke-test
+  cancel-in-progress: false
+
+jobs:
+  telegram-smoke-test:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Telegram delivery preflight
+        run: npm run check:telegram-delivery-preflight
+
+      - name: Show smoke test result
+        if: always()
+        run: |
+          if [ -f data/telegram-smoke-test.json ]; then
+            echo "=== Telegram smoke test result ==="
+            cat data/telegram-smoke-test.json
+          else
+            echo "data/telegram-smoke-test.json was not created"
+          fi
+
+      - name: Commit smoke test result
+        if: success()
+        run: |
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/telegram-smoke-test.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Telegram smoke test passed"
+            git push origin "${GITHUB_REF_NAME}"
+          else
+            echo "No change to data/telegram-smoke-test.json — skipping commit"
+          fi

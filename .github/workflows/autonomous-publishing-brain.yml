@@ -279,8 +279,21 @@ jobs:
             node -e "const fs=require('fs'),p='data/system-status/intelligence-health.json';fs.mkdirSync(require('path').dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify({status:'ok',severity:'OK',reasons:[],issues_by_severity:{INFO:0,WARN:0,ERROR:0,CRITICAL:0},generated_at:new Date().toISOString()},null,2)+'\n','utf8')" || true
           fi
 
+      - name: Telegram secrets preflight
+        if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          if [ "${published}" = "yes" ]; then
+            echo "[TELEGRAM PREFLIGHT] published=true — verifying secrets before delivery..."
+            npm run check:telegram-secrets
+          else
+            echo "[TELEGRAM PREFLIGHT] published=false — skipping secrets check"
+          fi
+
       - name: Send Telegram delivery (primary)
         if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
+        continue-on-error: true
         run: |
           published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
           slug="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(String(r.selected_topic||''))}catch{process.stdout.write('')}")"

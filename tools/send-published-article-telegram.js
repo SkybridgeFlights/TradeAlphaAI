@@ -15,26 +15,29 @@ function arg(flag) {
   return m ? m.slice(flag.length + 3) : null;
 }
 
+const SMOKE_TEST = process.argv.includes('--smoke-test');
 const SLUG         = arg('slug');
 const CONTENT_TYPE = arg('content-type');
 const SOURCE       = arg('source') || 'primary';
-const DRY_RUN      = !process.argv.includes('--send');
+const DRY_RUN      = !SMOKE_TEST && (process.argv.includes('--dry-run') || !process.argv.includes('--send'));
 
 // ── Validation ───────────────────────────────────────────────────────────────
 
 const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence'];
 
-if (!SLUG) {
-  console.error('[TELEGRAM DELIVERY] --slug is required');
-  process.exit(1);
-}
-if (!CONTENT_TYPE || !SUPPORTED_TYPES.includes(CONTENT_TYPE)) {
-  console.error(`[TELEGRAM DELIVERY] --content-type must be one of: ${SUPPORTED_TYPES.join(', ')}`);
-  process.exit(1);
-}
-if (!['primary', 'recovery'].includes(SOURCE)) {
-  console.error('[TELEGRAM DELIVERY] --source must be primary or recovery');
-  process.exit(1);
+if (!SMOKE_TEST) {
+  if (!SLUG) {
+    console.error('[TELEGRAM DELIVERY] --slug is required');
+    process.exit(1);
+  }
+  if (!CONTENT_TYPE || !SUPPORTED_TYPES.includes(CONTENT_TYPE)) {
+    console.error(`[TELEGRAM DELIVERY] --content-type must be one of: ${SUPPORTED_TYPES.join(', ')}`);
+    process.exit(1);
+  }
+  if (!['primary', 'recovery'].includes(SOURCE)) {
+    console.error('[TELEGRAM DELIVERY] --source must be primary or recovery');
+    process.exit(1);
+  }
 }
 
 // ── Ledger ───────────────────────────────────────────────────────────────────
@@ -292,6 +295,7 @@ async function main() {
     message_id: null,
     source: SOURCE,
     status: 'failed',
+    reason: null,
   };
 
   try {
@@ -300,11 +304,14 @@ async function main() {
       entry.message_id = result.message_id;
       entry.sent_at    = new Date().toISOString();
       entry.status     = 'sent';
+      entry.reason     = null;
       console.log(`[TELEGRAM DELIVERY] sent — message_id=${result.message_id}`);
     } else {
+      entry.reason = 'no_message_id';
       console.error('[TELEGRAM DELIVERY] send returned no message_id — marking failed');
     }
   } catch (err) {
+    entry.reason = err.message;
     console.error(`[TELEGRAM DELIVERY] send error: ${err.message}`);
   }
 
@@ -314,7 +321,52 @@ async function main() {
   if (entry.status !== 'sent') process.exit(1);
 }
 
-main().catch(err => {
+// ── Smoke test ───────────────────────────────────────────────────────────────
+
+async function runSmokeTest() {
+  const token  = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHANNEL_ID || process.env.TELEGRAM_CHAT_ID;
+
+  if (!token || !chatId) {
+    console.error('[TELEGRAM SMOKE TEST] credentials unavailable — set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID/TELEGRAM_CHANNEL_ID');
+    process.exit(1);
+  }
+
+  const timestamp = new Date().toISOString();
+  const text = `✅ TradeAlphaAI Telegram delivery test passed · ${timestamp}`;
+
+  console.log('[TELEGRAM SMOKE TEST] sending test message...');
+  let result;
+  try {
+    result = await sendTelegram(text);
+  } catch (err) {
+    console.error(`[TELEGRAM SMOKE TEST] FAIL: ${err.message}`);
+    process.exit(1);
+  }
+
+  if (!result || !result.message_id) {
+    console.error('[TELEGRAM SMOKE TEST] FAIL: no message_id returned');
+    process.exit(1);
+  }
+
+  const smokeResult = {
+    status: 'ok',
+    message_id: result.message_id,
+    timestamp,
+    tested_at: new Date().toISOString(),
+  };
+
+  const smokePath = path.join(ROOT, 'data', 'telegram-smoke-test.json');
+  fs.writeFileSync(smokePath, JSON.stringify(smokeResult, null, 2) + '\n', 'utf8');
+
+  console.log(`[TELEGRAM SMOKE TEST] PASS — message_id=${result.message_id}`);
+  console.log('[TELEGRAM SMOKE TEST] result written to data/telegram-smoke-test.json');
+}
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+const _runner = SMOKE_TEST ? runSmokeTest() : main();
+_runner.catch(err => {
   console.error(`[TELEGRAM DELIVERY] fatal: ${err.message}`);
   process.exit(1);
 });
