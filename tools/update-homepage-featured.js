@@ -9,9 +9,10 @@
 //   node tools/update-homepage-featured.js          → dry run (print diff)
 //   node tools/update-homepage-featured.js --write  → apply changes
 
-const fs   = require('fs');
-const path = require('path');
-const { resolveUrl, resolveOutlookUrls } = require('./resolve-existing-url');
+const fs             = require('fs');
+const path           = require('path');
+const { execSync }   = require('child_process');
+const { resolveUrl, resolveFirstExisting, resolveOutlookUrls } = require('./resolve-existing-url');
 
 const ROOT         = path.resolve(__dirname, '..');
 const REGISTRY     = path.join(ROOT, 'data', 'insights', 'article-registry.json');
@@ -206,8 +207,11 @@ function buildArOutlookCards(topics, latestDaily, latestWeekly) {
   const cards = [];
 
   if (latestDaily) {
-    const date    = latestDaily.replace('.html', '');
-    const dailyHref = resolveUrl(`/market-outlook/daily/${latestDaily}`, '/market-outlook/');
+    const date     = latestDaily.replace('.html', '');
+    const dailyHref = resolveFirstExisting([
+      `/ar/market-outlook/daily/${latestDaily}`,
+      `/market-outlook/daily/${latestDaily}`,
+    ], '/ar/market-outlook/');
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">التوقعات اليومية — ${date}</span>\n` +
@@ -220,7 +224,10 @@ function buildArOutlookCards(topics, latestDaily, latestWeekly) {
 
   if (latestWeekly) {
     const week       = latestWeekly.replace('.html', '');
-    const weeklyHref = resolveUrl(`/market-outlook/weekly/${latestWeekly}`, '/market-outlook/');
+    const weeklyHref = resolveFirstExisting([
+      `/ar/market-outlook/weekly/${latestWeekly}`,
+      `/market-outlook/weekly/${latestWeekly}`,
+    ], '/ar/market-outlook/');
     cards.push(
       `<article class="market-panel" style="padding:1.5rem">\n` +
       `              <span class="market-card-kicker">التوقعات الأسبوعية — ${week}</span>\n` +
@@ -299,7 +306,21 @@ function replaceDiv(html, openAttrPattern, newContent, label) {
 
 function latestFile(dir, pattern) {
   if (!fs.existsSync(dir)) return null;
-  const files = fs.readdirSync(dir).filter((f) => pattern.test(f)).sort();
+  // Only consider files committed to git to prevent linking to CI-generated
+  // files that are not staged/committed (which would produce broken links in
+  // the next fresh checkout).
+  let candidates;
+  try {
+    const relDir = path.relative(ROOT, dir).replace(/\\/g, '/');
+    candidates = execSync(`git ls-files -- "${relDir}"`, {
+      cwd: ROOT,
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).toString().split('\n').filter(Boolean).map(f => path.basename(f));
+  } catch {
+    // git unavailable (e.g. local dev without git) — fall back to disk listing
+    candidates = fs.readdirSync(dir);
+  }
+  const files = candidates.filter((f) => pattern.test(f)).sort();
   return files.length ? files[files.length - 1] : null;
 }
 
