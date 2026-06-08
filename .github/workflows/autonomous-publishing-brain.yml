@@ -279,30 +279,38 @@ jobs:
             node -e "const fs=require('fs'),p='data/system-status/intelligence-health.json';fs.mkdirSync(require('path').dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify({status:'ok',severity:'OK',reasons:[],issues_by_severity:{INFO:0,WARN:0,ERROR:0,CRITICAL:0},generated_at:new Date().toISOString()},null,2)+'\n','utf8')" || true
           fi
 
-      - name: Send institutional macro briefing after publication
+      - name: Send Telegram delivery (primary)
         if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
         run: |
-          health_status="$(node -e "try{const h=JSON.parse(require('fs').readFileSync('data/system-status/intelligence-health.json','utf8'));process.stdout.write(h.status||'ok')}catch{process.stdout.write('ok')}" 2>/dev/null || echo 'ok')"
-          echo "[macro-telegram] Intelligence health: ${health_status}"
-          if [ "$health_status" = "critical" ]; then
-            echo "[macro-telegram] BLOCKED — CRITICAL intelligence quality issue. Article will not be distributed via Telegram."
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(String(r.selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(String(r.selected_content_type||''))}catch{process.stdout.write('')}")"
+          pages="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(String((r.public_pages_created||[]).length))}catch{process.stdout.write('0')}")"
+          echo "[TELEGRAM DELIVERY] published=${published} slug=${slug} type=${type} pages=${pages}"
+          if [ "${published}" != "yes" ]; then
+            echo "[TELEGRAM DELIVERY] skipped — published=false"
             exit 0
           fi
-          published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
-          telegram_quality="$(node -e "const fs=require('fs');const read=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {}}};const r=read('./data/intelligence/publishing-report.json');const c=read('./data/intelligence/publication-confidence.json');const editorial=String(r.selected_content_type||'')==='editorial';const confidenceOk=!editorial||(c.slug===r.selected_topic&&Number(c.confidence||0)>=Number(c.confidence_threshold||90)&&c.institutional_depth_passed===true);process.stdout.write(confidenceOk?'yes':'no')")"
-          echo "[PUBLISH REPORT] published=${published} telegram_quality=${telegram_quality}"
-          if [ "${published}" != "yes" ]; then
-            echo "[macro-telegram] Skipped because autonomous publication did not complete."
-          elif [ "${telegram_quality}" != "yes" ]; then
-            echo "[publication-telegram] Skipped because confidence or institutional-depth quality gate did not pass."
-          elif [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
-            quality_note_arg=""
-            if [ "$health_status" = "degraded" ]; then
-              quality_note_arg="--quality-note=quality degraded"
-            fi
-            node tools/send-macro-telegram.js --type=publication --send ${quality_note_arg}
+          if [ -z "${slug}" ] || [ -z "${type}" ]; then
+            echo "[TELEGRAM DELIVERY] skipped — slug or content_type missing from publishing report"
+            exit 0
+          fi
+          if [ "${type}" = "site_update_only" ]; then
+            echo "[TELEGRAM DELIVERY] skipped — site_update_only is not distributed"
+            exit 0
+          fi
+          if [ "${pages}" = "0" ]; then
+            echo "[TELEGRAM DELIVERY] skipped — public_pages_created is empty"
+            exit 0
+          fi
+          if [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
+            node tools/send-published-article-telegram.js \
+              --slug="${slug}" \
+              --content-type="${type}" \
+              --source=primary \
+              --send
           else
-            echo "[publication-telegram] Publication succeeded, but Telegram credentials are unavailable."
+            echo "[TELEGRAM DELIVERY] credentials unavailable — skipping primary delivery"
           fi
 
       - name: Update homepage featured content and system status
@@ -360,6 +368,7 @@ jobs:
           npm run check:historical-intelligence || echo "[historical-intelligence] Warning-level issues — see above"
           npm run check:continuous-intelligence || echo "[continuous-intelligence] Warning-level issues — see above"
           npm run check:queue-reconciliation || echo "[queue-reconciliation] Warning-level issues — see above"
+          npm run check:telegram-ledger || echo "[telegram-ledger] Warning-level issues — see above"
           echo "[FINAL LOCALIZATION ASSERTION]"
           if grep -R -n -i "Understanding the Two Phases" drafts/ ar/market-outlook/ market-outlook/; then
             echo "[LOCALIZATION FAIL] stale English phrase remains in generated artifacts."
@@ -532,6 +541,7 @@ jobs:
             stage_paths data/intelligence/historical-memory.json data/intelligence/narrative-continuity.json
             stage_paths data/system-status/market-intelligence-status.json data/system-status/intelligence-health.json
             stage_paths logs/intelligence-quality-history.json data/feeds data/narrative-memory.json
+            stage_paths data/telegram-delivery-ledger.json
             stage_paths market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html system-status
             stage_paths sitemap-core.xml sitemap-market.xml index.html ar/index.html
             stage_glob "sitemap*.xml"

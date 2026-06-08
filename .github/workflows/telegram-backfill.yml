@@ -1,0 +1,71 @@
+name: Telegram Delivery Backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — scan and report without sending'
+        required: false
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+        default: 'true'
+  schedule:
+    # Weekly on Monday at 09:00 UTC — catches any missed deliveries from the prior week
+    - cron: '0 9 * * 1'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate ledger before backfill
+        run: npm run check:telegram-ledger
+
+      - name: Run Telegram backfill
+        run: |
+          if [ "${DRY_RUN}" = "true" ]; then
+            node tools/telegram-backfill.js --dry-run
+          else
+            node tools/telegram-backfill.js
+          fi
+
+      - name: Validate ledger after backfill
+        run: npm run check:telegram-ledger
+
+      - name: Commit updated ledger
+        if: ${{ env.DRY_RUN == 'false' }}
+        run: |
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/telegram-delivery-ledger.json
+          if git diff --cached --quiet; then
+            echo "[backfill] No ledger changes to commit."
+          else
+            git commit -m "Telegram backfill: update delivery ledger"
+            git push origin "${GITHUB_REF_NAME}"
+          fi
