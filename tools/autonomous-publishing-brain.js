@@ -17,7 +17,7 @@ const PROFILES_OVERWRITE = Object.fromEntries(
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
 const VALID_MODES = new Set(['status', 'dry_run', 'generate_only', 'publish_ready', 'full_pipeline']);
-const VALID_TYPES = new Set(['auto', 'editorial', 'market-outlook', 'news-analysis', 'all']);
+const VALID_TYPES = new Set(['auto', 'editorial', 'market-outlook', 'news-analysis', 'continuous-intelligence', 'all']);
 const DRAFT_STATUSES = new Set(['draft', 'planned', 'queued', 'in_review', 'pending', 'generated']);
 // NOTE: 'reviewed' intentionally excluded — reviewed/approved topics surface via
 // isPublishable()/isApprovedAnyDate() and adding it shifts editorial draft_candidate.
@@ -103,8 +103,9 @@ function slugify(text) {
 }
 
 function queuePathFor(contentType) {
-  if (contentType === 'market-outlook') return path.join(ROOT, 'data', 'market-outlook-queue.json');
-  if (contentType === 'editorial')      return path.join(ROOT, 'data', 'editorial-topic-queue.json');
+  if (contentType === 'market-outlook')          return path.join(ROOT, 'data', 'market-outlook-queue.json');
+  if (contentType === 'editorial')               return path.join(ROOT, 'data', 'editorial-topic-queue.json');
+  if (contentType === 'continuous-intelligence') return path.join(ROOT, 'data', 'continuous-intelligence-queue.json');
   return path.join(ROOT, 'data', 'news-analysis-queue.json');
 }
 
@@ -229,6 +230,60 @@ function inspectMarketOutlook() {
   };
 }
 
+function inspectContinuousIntelligence() {
+  const queuePath  = path.join(ROOT, 'data', 'continuous-intelligence-queue.json');
+  const histPath   = path.join(ROOT, 'data', 'continuous-intelligence-history.json');
+  const regimePath = path.join(ROOT, 'data', 'intelligence', 'regime-engine-v2.json');
+  const contPath   = path.join(ROOT, 'data', 'intelligence', 'narrative-continuity.json');
+
+  const queue      = readJson(queuePath, { topics: [] });
+  const history    = readJson(histPath,  { publications: [] });
+  const regimeV2   = readJson(regimePath, null);
+  const continuity = readJson(contPath, null);
+
+  const topics = queue.topics || [];
+  const CI_DRAFT_STATUSES = new Set(['planned', 'queued', 'draft', 'in_review', 'pending', 'generated']);
+  const published = topics.filter(t => t.status === 'published');
+  const draftCandidate = topics.find(t => CI_DRAFT_STATUSES.has(t.status));
+
+  // Intelligence signal strength: >= 1 planned topic means a signal was detected
+  const hasSignal = Boolean(draftCandidate);
+  const signalCount = topics.filter(t => CI_DRAFT_STATUSES.has(t.status)).length;
+
+  // Confidence from best candidate
+  const bestConf = draftCandidate ? (draftCandidate.confidence || 0) : 0;
+
+  // Check continuity has material signal
+  const hasContinuitySignal = continuity && continuity.status !== 'insufficient_data' &&
+    Array.isArray(continuity.insights) && continuity.insights.length > 0;
+
+  // Last publication date
+  const pubs = history.publications || [];
+  const lastPub = pubs[0] || null;
+
+  const publishable = Boolean(draftCandidate && bestConf >= 40);
+
+  return {
+    content_type: 'continuous-intelligence',
+    queue_path: 'data/continuous-intelligence-queue.json',
+    total: topics.length,
+    published_count: published.length,
+    signal_count: signalCount,
+    has_signal: hasSignal,
+    has_continuity_signal: hasContinuitySignal,
+    confidence: bestConf,
+    publishable,
+    draft_candidate: draftCandidate ? draftCandidate.slug : null,
+    last_published: lastPub ? lastPub.slug : null,
+    last_publish_date: lastPub ? lastPub.publish_date : null,
+    days_since_publish: lastPub ? daysSince(lastPub.publish_date) : null,
+    freshness_state: hasSignal
+      ? `${signalCount} continuous intelligence candidate(s) available`
+      : 'no continuous intelligence signal detected',
+    regime_data_available: Boolean(regimeV2),
+  };
+}
+
 function inspectNewsAnalysis() {
   const queue = readJson(path.join(ROOT, 'data', 'news-analysis-queue.json'), { topics: [] });
   const registry = readJson(path.join(ROOT, 'data', 'news-source-registry.json'), { sources: [] });
@@ -350,6 +405,7 @@ function buildStatus() {
     today: TODAY,
     editorial: inspectEditorial(),
     market_outlook: inspectMarketOutlook(),
+    continuous_intelligence: inspectContinuousIntelligence(),
     news_analysis: inspectNewsAnalysis(),
     market_intelligence: inspectMarketIntelligence(),
     cluster_health: inspectClusterHealth(),
@@ -367,19 +423,52 @@ function chooseContentType(status, requestedType, forceContentType) {
     };
   }
 
+  // ── Intelligence-First Router ─────────────────────────────────────────────
+  // Route 1: Event-driven market outlook
+  // Route 2: Continuous intelligence (when Route 1 blocked)
+  // Route 3: Editorial
+  // Route 4: Site intelligence update only (handled in fallback loop)
+
+  const routeLog = [];
+
+  // Route 1: Market outlook
+  const marketOutlookReady = Boolean(
+    status.market_outlook.publishable_slug ||
+    status.market_outlook.draft_candidate ||
+    status.market_outlook.approved_waiting_slug
+  );
+  const marketOutlookReason = marketOutlookReady
+    ? 'market-outlook has eligible topic'
+    : 'market-outlook blocked (no eligible topic or all clusters in cooldown)';
+  routeLog.push(`route_1=event_outlook ${marketOutlookReady ? 'available' : 'blocked'} reason=${marketOutlookReason}`);
+
+  // Route 2: Continuous intelligence
+  const ci = status.continuous_intelligence || {};
+  const ciReady = Boolean(ci.publishable && ci.draft_candidate);
+  const ciReason = ciReady
+    ? `continuous-intelligence has publishable candidate (conf=${ci.confidence}%)`
+    : !ci.has_signal
+      ? 'continuous-intelligence: no signal detected in queue'
+      : `continuous-intelligence: ${ci.draft_candidate ? `candidate exists but conf=${ci.confidence}% below threshold` : 'no planned topic in queue'}`;
+  routeLog.push(`route_2=continuous_intelligence ${ciReady ? 'available' : 'blocked'} reason=${ciReason}`);
+
+  // Route 3: Editorial
+  const editorialReady = Boolean(
+    status.editorial.publishable_slug ||
+    status.editorial.draft_candidate ||
+    status.editorial.approved_waiting_slug
+  );
+  const editorialReason = editorialReady
+    ? 'editorial queue has eligible topic'
+    : 'editorial queue has no eligible topic';
+  routeLog.push(`route_3=editorial ${editorialReady ? 'available' : 'blocked'} reason=${editorialReason}`);
+
+  // Print intelligence router log
+  console.log('[INTELLIGENCE ROUTER]');
+  for (const line of routeLog) console.log(line);
+
+  // Score-based selection (maintains original scoring logic but inserts CI as route 2)
   const candidates = [];
-  const editorialScore =
-    (status.editorial.publishable_slug ? 50 : 0) +
-    (status.editorial.draft_candidate ? 22 : 0) +
-    Math.min(20, (status.editorial.days_since_publish == null ? 10 : status.editorial.days_since_publish) * 4) +
-    (status.editorial.topic_score && status.editorial.topic_score.passed ? 12 : 0);
-  candidates.push({
-    type: 'editorial',
-    score: editorialScore,
-    reason: status.editorial.publishable_slug
-      ? 'approved editorial article is ready'
-      : 'editorial queue has eligible educational coverage'
-  });
 
   const clusterBonus = status.cluster_health && status.cluster_health.available
     ? Math.min(8, status.cluster_health.weak_clusters * 2)
@@ -395,10 +484,27 @@ function chooseContentType(status, requestedType, forceContentType) {
     (status.market_intelligence.state_available ? 8 : 0) +
     clusterBonus +
     authorityBonus;
+  candidates.push({ type: 'market-outlook', score: marketScore, reason: marketOutlookReason });
+
+  // Continuous intelligence score: activates when market-outlook is blocked and signal exists
+  const ciScore = ciReady
+    ? 38 + Math.min(20, (ci.confidence || 0) / 2) + (ci.has_continuity_signal ? 8 : 0)
+    : 0;
   candidates.push({
-    type: 'market-outlook',
-    score: marketScore,
-    reason: 'market intelligence state can support an institutional outlook'
+    type: 'continuous-intelligence',
+    score: ciScore,
+    reason: ciReason,
+  });
+
+  const editorialScore =
+    (status.editorial.publishable_slug ? 50 : 0) +
+    (status.editorial.draft_candidate ? 22 : 0) +
+    Math.min(20, (status.editorial.days_since_publish == null ? 10 : status.editorial.days_since_publish) * 4) +
+    (status.editorial.topic_score && status.editorial.topic_score.passed ? 12 : 0);
+  candidates.push({
+    type: 'editorial',
+    score: editorialScore,
+    reason: editorialReason,
   });
 
   const newsScore = status.news_analysis.source_available
@@ -414,10 +520,13 @@ function chooseContentType(status, requestedType, forceContentType) {
 
   candidates.sort((a, b) => b.score - a.score);
   const selected = candidates[0];
+
+  console.log(`final_route=${selected.type} score=${selected.score}`);
+
   return {
     selected: selected.type,
     reason: `${selected.reason}; decision_score=${selected.score}`,
-    candidate_scores: candidates
+    candidate_scores: candidates,
   };
 }
 
@@ -426,7 +535,9 @@ function actionFor(contentType, status, mode, manualTopic) {
     ? status.market_outlook
     : contentType === 'news-analysis'
       ? status.news_analysis
-      : status.editorial;
+      : contentType === 'continuous-intelligence'
+        ? status.continuous_intelligence
+        : status.editorial;
 
   if (manualTopic) {
     const candidate = {
@@ -692,6 +803,13 @@ function expectedPublicPages(contentType, slug) {
       `en/market-outlook/${slug}.html`
     ];
   }
+  if (contentType === 'continuous-intelligence') {
+    return [
+      `intelligence/${slug}.html`,
+      `en/intelligence/${slug}.html`,
+      `ar/intelligence/${slug}.html`
+    ];
+  }
   return [];
 }
 
@@ -903,6 +1021,109 @@ function executeAction(contentType, mode, dryRun, action) {
     }
   }
 
+  if (contentType === 'continuous-intelligence') {
+    if (mode === 'full_pipeline') {
+      const slug = action.topic;
+
+      // Step 1: generate topic if queue is empty
+      const generateTopicResult = runNode('tools/generate-continuous-intelligence-topic.js', ['--write'], { inherit: true });
+      if (generateTopicResult.status !== 0) {
+        return {
+          generation_result: 'continuous-intelligence topic generation failed',
+          publish_result: 'blocked: topic generation failed',
+          telegram_result: telegramStatus(),
+          command_status: generateTopicResult.status,
+          current_state: 'topic_generation_failed',
+          transition_path: ['topic_generation_failed'],
+          regeneration_attempts: 0,
+          review_result: 'not requested',
+          approval_reason: '',
+          publish_gate_result: 'blocked: topic generation failed',
+        };
+      }
+
+      // Re-read queue after generation
+      const freshQueue = readJson(queuePathFor('continuous-intelligence'), { topics: [] });
+      const freshTopic = slug
+        ? (freshQueue.topics || []).find(t => t.slug === slug)
+        : (freshQueue.topics || []).find(t => ['planned', 'queued', 'draft', 'in_review', 'pending', 'generated'].includes(t.status));
+
+      if (!freshTopic) {
+        const reason = 'no continuous-intelligence candidate available after topic generation';
+        console.log(`[CI ROUTER] ${reason}`);
+        return {
+          generation_result: reason,
+          publish_result: `blocked: ${reason}`,
+          telegram_result: telegramStatus(),
+          command_status: 0,
+          current_state: 'no_ci_candidate',
+          transition_path: ['no_ci_candidate'],
+          regeneration_attempts: 0,
+          review_result: 'not requested',
+          approval_reason: '',
+          publish_gate_result: `blocked: ${reason}`,
+        };
+      }
+
+      const ciSlug = freshTopic.slug;
+      console.log(`[CI ROUTER] Selected: ${ciSlug} (family=${freshTopic.family} conf=${freshTopic.confidence})`);
+
+      return executeReviewedPipeline(
+        contentType,
+        { ...action, topic: ciSlug },
+        () => runNode('tools/generate-continuous-intelligence-article.js', [`--slug=${ciSlug}`], { inherit: true }),
+        (s) => {
+          const args = [`--slug=${s}`, '--execute'];
+          return runNode('tools/publish-continuous-intelligence.js', args, { inherit: true });
+        }
+      );
+    }
+
+    if (mode === 'generate_only') {
+      const slug = action.topic;
+      if (!slug) {
+        return {
+          generation_result: 'no topic selected',
+          publish_result: 'not requested',
+          telegram_result: telegramStatus(),
+          command_status: 0,
+          current_state: 'none',
+          transition_path: ['planned'],
+          regeneration_attempts: 0,
+          review_result: 'not requested',
+          approval_reason: '',
+          publish_gate_result: 'not requested',
+        };
+      }
+      const result = runNode('tools/generate-continuous-intelligence-article.js', [`--slug=${slug}`], { inherit: true });
+      return {
+        generation_result: result.status === 0 ? 'CI article draft generated' : 'CI article generation failed',
+        publish_result: 'not requested',
+        telegram_result: telegramStatus(),
+        command_status: result.status,
+        current_state: 'in_review',
+        transition_path: ['planned', 'in_review'],
+        regeneration_attempts: 0,
+        review_result: 'not requested',
+        approval_reason: '',
+        publish_gate_result: 'not requested',
+      };
+    }
+
+    return {
+      generation_result: 'not requested',
+      publish_result: 'skipped: continuous-intelligence requires full_pipeline mode',
+      telegram_result: telegramStatus(),
+      command_status: 0,
+      current_state: action.topic ? 'planned' : 'none',
+      transition_path: [],
+      regeneration_attempts: 0,
+      review_result: 'not requested',
+      approval_reason: '',
+      publish_gate_result: 'not evaluated in this mode',
+    };
+  }
+
   if (contentType === 'news-analysis') {
     if (mode === 'generate_only' || mode === 'full_pipeline') {
       const result = runNode('tools/generate-news-analysis-draft.js', [], { inherit: true });
@@ -950,9 +1171,10 @@ function executeAction(contentType, mode, dryRun, action) {
 // ── Draft artifact integrity ──────────────────────────────────────────────────
 
 const REQUIRED_DRAFT_FILES = {
-  editorial:        ['en.html', 'ar.html', 'metadata.json'],
-  'market-outlook': ['en.html', 'ar.html'],
-  'news-analysis':  ['en.html', 'ar.html'],
+  editorial:                ['en.html', 'ar.html', 'metadata.json'],
+  'market-outlook':         ['en.html', 'ar.html'],
+  'news-analysis':          ['en.html', 'ar.html'],
+  'continuous-intelligence':['en.html', 'ar.html', 'metadata.json'],
 };
 
 function ensureDraftArtifacts(contentType, slug) {
@@ -986,7 +1208,9 @@ function markTopicManualRevision(contentType, slug, reason) {
     ? 'data/market-outlook-queue.json'
     : contentType === 'news-analysis'
       ? 'data/news-analysis-queue.json'
-      : 'data/editorial-topic-queue.json';
+      : contentType === 'continuous-intelligence'
+        ? 'data/continuous-intelligence-queue.json'
+        : 'data/editorial-topic-queue.json';
   const queuePath = path.join(ROOT, queueFile);
   try {
     const queue = readJson(queuePath, { topics: [] });
@@ -1470,18 +1694,21 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
       ...artifactFields()
     };
   }
+  const publishSucceeded = publish.status === 0;
   return {
     generation_result:             generationResult,
-    publish_result:                publish.status === 0 ? 'published after autonomous approval' : 'publish failed after autonomous approval',
+    publish_result:                publishSucceeded ? 'published after autonomous approval' : 'publish failed after autonomous approval',
+    publication_completed:         publishSucceeded,
+    commit_allowed:                publishSucceeded,
     telegram_result:               telegramStatus(),
     command_status:                publish.status,
     current_state:                 review.current_state,
-    transition_path:               [...review.transition_path, ...(publish.status === 0 ? ['published'] : [])],
+    transition_path:               [...review.transition_path, ...(publishSucceeded ? ['published'] : [])],
     regeneration_attempts:         review.regeneration_attempts,
     review_result:                 'passed',
     quality_score:                 review.score,
     approval_reason:               review.approval_reason,
-    publish_gate_result:           publish.status === 0 ? 'approved' : 'blocked: publish command failed',
+    publish_gate_result:           publishSucceeded ? 'approved' : 'blocked: publish command failed',
     expected_public_pages:         promotion.expected,
     missing_public_pages:          promotion.missing,
     authority_repair_attempted:    authorityRepairAttempted,
@@ -1489,7 +1716,7 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
     repaired_orphans_count:        repairedOrphansCount,
     repaired_links_count:          repairedLinksCount,
     review_after_repair:           reviewAfterRepair || (authorityRepairAttempted ? 'passed' : 'not_attempted'),
-    publish_after_repair:          authorityRepairAttempted && publish.status === 0,
+    publish_after_repair:          authorityRepairAttempted && publishSucceeded,
     targeted_repair_attempted:     targetedRepairAttempted,
     targeted_repair_result:        targetedRepairResult,
     targeted_links_added:          targetedLinksAdded,
@@ -1521,7 +1748,9 @@ function queueFor(contentType) {
     ? 'data/market-outlook-queue.json'
     : contentType === 'news-analysis'
       ? 'data/news-analysis-queue.json'
-      : 'data/editorial-topic-queue.json';
+      : contentType === 'continuous-intelligence'
+        ? 'data/continuous-intelligence-queue.json'
+        : 'data/editorial-topic-queue.json';
   return readJson(path.join(ROOT, file), { topics: [] });
 }
 
@@ -1531,6 +1760,11 @@ function inferState(contentType, slug) {
   if (topic.status === 'published') return 'published';
   if (topic.review_status === 'approved') return 'approved';
   return topic.status || 'planned';
+}
+
+function hasCIDraft(slug) {
+  const dir = path.join(ROOT, 'drafts', 'continuous-intelligence', slug);
+  return fs.existsSync(path.join(dir, 'en.html')) && fs.existsSync(path.join(dir, 'ar.html'));
 }
 
 function dryRunTransitionPreview(contentType, slug, nextAction) {
@@ -1558,6 +1792,17 @@ function printStatus(status) {
   printContentStatus(status.editorial);
   printContentStatus(status.market_outlook);
   printContentStatus(status.news_analysis);
+  const ciS = status.continuous_intelligence || {};
+  console.log('\n  CONTINUOUS INTELLIGENCE');
+  console.log('  ----------------------------------------------------');
+  console.log(`  has_signal:                ${ciS.has_signal}`);
+  console.log(`  signal_count:              ${ciS.signal_count}`);
+  console.log(`  draft_candidate:           ${ciS.draft_candidate || 'none'}`);
+  console.log(`  confidence:                ${ciS.confidence || 0}%`);
+  console.log(`  publishable:               ${ciS.publishable}`);
+  console.log(`  freshness:                 ${ciS.freshness_state || 'n/a'}`);
+  console.log(`  last_published:            ${ciS.last_published || 'none'}`);
+
   console.log('\n  MARKET INTELLIGENCE');
   console.log('  ----------------------------------------------------');
   console.log(`  live_market_status:        ${status.market_intelligence.live_market_status}`);
@@ -1748,12 +1993,18 @@ function isSelectionFallbackReason(execution, action) {
     /duplicate/,
     /already published/,
     /no autonomous news publisher/,
-    /source-gated manual/
+    /source-gated manual/,
+    /no continuous.intelligence candidate/,
+    /no[_ ]ci[_ ]candidate/,
+    /continuous.intelligence.*blocked/,
   ].some((pattern) => pattern.test(reason));
 }
 
 function fallbackTypes(selected, status) {
+  // Canonical intelligence-first fallback chain:
+  // market-outlook → continuous-intelligence → editorial → (news-analysis if sources available)
   const chain = [selected];
+  if (selected !== 'continuous-intelligence') chain.push('continuous-intelligence');
   if (selected !== 'editorial') chain.push('editorial');
   if (status.news_analysis.source_available && selected !== 'news-analysis') chain.push('news-analysis');
   return [...new Set(chain)];

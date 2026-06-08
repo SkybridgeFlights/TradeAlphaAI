@@ -86,6 +86,20 @@ const PROFILES = {
       'educational_compliance',
       'disclaimer_presence'
     ]
+  },
+  'continuous-intelligence': {
+    queue: 'data/continuous-intelligence-queue.json',
+    draftDir: 'drafts/continuous-intelligence',
+    scoreType: 'continuous_intelligence',
+    minimum: 60,
+    generator: ['tools/generate-continuous-intelligence-article.js'],
+    overwrite: true,
+    hardChecks: [
+      'language_purity',
+      'disclaimer_presence',
+      'ar_purity',
+      'no_fabricated_data'
+    ]
   }
 };
 
@@ -135,8 +149,32 @@ function draftPath(contentType, slug) {
   return path.join(ROOT, PROFILES[contentType].draftDir, slug);
 }
 
+function scoreCIDraft(slug) {
+  const dir = draftPath('continuous-intelligence', slug);
+  const en = readFile(path.join(dir, 'en.html'));
+  const ar = readFile(path.join(dir, 'ar.html'));
+  const ADVICE_PATTERNS = [/buy\s+now/i, /sell\s+now/i, /guaranteed\s+return/i, /price\s+target/i, /must\s+buy/i, /must\s+sell/i];
+  const FABRICATED_PATTERNS = [/live\s+price[:\s]/i, /real-time\s+quote/i, /current\s+bid[:\s]/i, /as\s+of\s+\d{2}:\d{2}/i];
+  const EN_SECTION_HEADINGS = [/Executive Summary/i, /Evidence Map/i, /Scenario Framework/i, /What to Monitor/i];
+  const checks = {
+    language_purity:    !ADVICE_PATTERNS.some(p => p.test(en) || p.test(ar)),
+    disclaimer_presence: /(educational disclaimer|for educational|not investment advice)/i.test(`${en} ${ar}`),
+    ar_purity:          !EN_SECTION_HEADINGS.some(p => p.test(ar)),
+    no_fabricated_data: !FABRICATED_PATTERNS.some(p => p.test(en) || p.test(ar)),
+    bilingual_parity:   en.length > 500 && ar.length > 500,
+  };
+  const failed = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+  return {
+    score: Math.round((Object.keys(checks).length - failed.length) / Object.keys(checks).length * 100),
+    failed_checks: failed,
+    checks,
+    review_summary: `Continuous intelligence structural review: ${failed.length} check(s) failed.`
+  };
+}
+
 function scoreDraft(contentType, slug) {
   if (contentType === 'news-analysis') return scoreNewsDraft(slug);
+  if (contentType === 'continuous-intelligence') return scoreCIDraft(slug);
   const profile = PROFILES[contentType];
   const result = spawnSync(process.execPath, [
     path.join(ROOT, 'tools/score-generated-content.js'),

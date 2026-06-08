@@ -91,7 +91,10 @@ function findPublicPages(slug) {
     `ar/insights/${slug}.html`,
     `market-outlook/${slug}.html`,
     `en/market-outlook/${slug}.html`,
-    `ar/market-outlook/${slug}.html`
+    `ar/market-outlook/${slug}.html`,
+    `intelligence/${slug}.html`,
+    `en/intelligence/${slug}.html`,
+    `ar/intelligence/${slug}.html`,
   ].filter((relative) => fs.existsSync(path.join(ROOT, relative)));
 }
 

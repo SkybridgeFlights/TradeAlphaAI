@@ -1,0 +1,259 @@
+{
+  "schema_version": "1.0",
+  "updated": "2026-06-08",
+  "services": [
+    {
+      "name": "EA_CADDY",
+      "enabled": true,
+      "required": true,
+      "working_dir": "C:\\EA_AI",
+      "command": "caddy run --config Caddyfile",
+      "window_title": "EA_CADDY",
+      "pid_file": "runtime/pids/ea_caddy.pid",
+      "log_file": "runtime/logs/ea_caddy.log",
+      "health_check": {
+        "type": "port",
+        "target": "443"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "EA_API",
+      "enabled": true,
+      "required": true,
+      "working_dir": "C:\\EA_AI\\api",
+      "command": "node server.js",
+      "window_title": "EA_API",
+      "pid_file": "runtime/pids/ea_api.pid",
+      "log_file": "runtime/logs/ea_api.log",
+      "health_check": {
+        "type": "http",
+        "target": "http://localhost:3000/health"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "EA_WRITER",
+      "enabled": true,
+      "required": true,
+      "working_dir": "C:\\EA_AI\\writer",
+      "command": "python writer_service.py",
+      "window_title": "EA_WRITER",
+      "pid_file": "runtime/pids/ea_writer.pid",
+      "log_file": "runtime/logs/ea_writer.log",
+      "health_check": {
+        "type": "http",
+        "target": "http://localhost:3001/health"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "EA_LIVE_TRADER",
+      "enabled": true,
+      "required": true,
+      "working_dir": "C:\\EA_AI\\trader",
+      "command": "python live_trader.py",
+      "window_title": "EA_LIVE_TRADER",
+      "pid_file": "runtime/pids/ea_live_trader.pid",
+      "log_file": "runtime/logs/ea_live_trader.log",
+      "health_check": {
+        "type": "process",
+        "target": "live_trader.py"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 3
+      }
+    },
+    {
+      "name": "EA_TRADE_API",
+      "enabled": true,
+      "required": true,
+      "working_dir": "C:\\EA_AI\\trade-api",
+      "command": "node trade_api.js",
+      "window_title": "EA_TRADE_API",
+      "pid_file": "runtime/pids/ea_trade_api.pid",
+      "log_file": "runtime/logs/ea_trade_api.log",
+      "health_check": {
+        "type": "http",
+        "target": "http://localhost:3002/health"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "EA_ADMIN_BOT",
+      "enabled": true,
+      "required": false,
+      "working_dir": "C:\\EA_AI\\bots",
+      "command": "python admin_bot.py",
+      "window_title": "EA_ADMIN_BOT",
+      "pid_file": "runtime/pids/ea_admin_bot.pid",
+      "log_file": "runtime/logs/ea_admin_bot.log",
+      "health_check": {
+        "type": "process",
+        "target": "admin_bot.py"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "EA_CUSTOMER_BOT",
+      "enabled": true,
+      "required": false,
+      "working_dir": "C:\\EA_AI\\bots",
+      "command": "python customer_bot.py",
+      "window_title": "EA_CUSTOMER_BOT",
+      "pid_file": "runtime/pids/ea_customer_bot.pid",
+      "log_file": "runtime/logs/ea_customer_bot.log",
+      "health_check": {
+        "type": "process",
+        "target": "customer_bot.py"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "SIGNALS_BOT",
+      "enabled": true,
+      "required": false,
+      "working_dir": "C:\\EA_AI\\bots",
+      "command": "python signals_bot.py",
+      "window_title": "SIGNALS_BOT",
+      "pid_file": "runtime/pids/signals_bot.pid",
+      "log_file": "runtime/logs/signals_bot.log",
+      "health_check": {
+        "type": "process",
+        "target": "signals_bot.py"
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    },
+    {
+      "name": "EA_SYNC",
+      "enabled": true,
+      "required": true,
+      "working_dir": "C:\\EA_AI\\sync",
+      "command": "python sync_loop.py",
+      "window_title": "EA_SYNC",
+      "pid_file": "runtime/pids/ea_sync.pid",
+      "log_file": "runtime/logs/ea_sync.log",
+      "health_check": {
+        "type": "log",
+        "target": "runtime/logs/ea_sync.log",
+        "max_age_seconds": 300
+      },
+      "restart_policy": {
+        "enabled": true,
+        "max_restarts_per_hour": 5
+      }
+    }
+  ],
+  "optional_services": [
+    {
+      "name": "unicorn",
+      "enabled": false,
+      "required": false,
+      "command": "python unicorn.py",
+      "window_title": "EA_UNICORN",
+      "pid_file": "runtime/pids/unicorn.pid",
+      "log_file": "runtime/logs/unicorn.log",
+      "health_check": { "type": "process", "target": "unicorn.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    },
+    {
+      "name": "core",
+      "enabled": false,
+      "required": false,
+      "command": "python core.py",
+      "window_title": "EA_CORE",
+      "pid_file": "runtime/pids/core.pid",
+      "log_file": "runtime/logs/core.log",
+      "health_check": { "type": "process", "target": "core.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    },
+    {
+      "name": "bridge",
+      "enabled": false,
+      "required": false,
+      "command": "python bridge.py",
+      "window_title": "EA_BRIDGE",
+      "pid_file": "runtime/pids/bridge.pid",
+      "log_file": "runtime/logs/bridge.log",
+      "health_check": { "type": "process", "target": "bridge.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    },
+    {
+      "name": "mt5",
+      "enabled": false,
+      "required": false,
+      "command": "python mt5_connector.py",
+      "window_title": "EA_MT5",
+      "pid_file": "runtime/pids/mt5.pid",
+      "log_file": "runtime/logs/mt5.log",
+      "health_check": { "type": "process", "target": "mt5_connector.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 3 }
+    },
+    {
+      "name": "scheduler",
+      "enabled": false,
+      "required": false,
+      "command": "python scheduler.py",
+      "window_title": "EA_SCHEDULER",
+      "pid_file": "runtime/pids/scheduler.pid",
+      "log_file": "runtime/logs/scheduler.log",
+      "health_check": { "type": "process", "target": "scheduler.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    },
+    {
+      "name": "watchdog",
+      "enabled": false,
+      "required": false,
+      "command": "python watchdog.py",
+      "window_title": "EA_WATCHDOG",
+      "pid_file": "runtime/pids/watchdog.pid",
+      "log_file": "runtime/logs/watchdog.log",
+      "health_check": { "type": "process", "target": "watchdog.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    },
+    {
+      "name": "licensing",
+      "enabled": false,
+      "required": false,
+      "command": "python licensing.py",
+      "window_title": "EA_LICENSING",
+      "pid_file": "runtime/pids/licensing.pid",
+      "log_file": "runtime/logs/licensing.log",
+      "health_check": { "type": "process", "target": "licensing.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    },
+    {
+      "name": "support_bot",
+      "enabled": false,
+      "required": false,
+      "command": "python support_bot.py",
+      "window_title": "EA_SUPPORT_BOT",
+      "pid_file": "runtime/pids/support_bot.pid",
+      "log_file": "runtime/logs/support_bot.log",
+      "health_check": { "type": "process", "target": "support_bot.py" },
+      "restart_policy": { "enabled": true, "max_restarts_per_hour": 5 }
+    }
+  ]
+}

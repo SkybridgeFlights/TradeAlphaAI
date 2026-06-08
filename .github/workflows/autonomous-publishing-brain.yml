@@ -22,6 +22,7 @@ on:
           - auto
           - editorial
           - market-outlook
+          - continuous-intelligence
           - news-analysis
           - all
         default: auto
@@ -125,12 +126,33 @@ jobs:
           fi
           echo "[bilingual] Bilingual structural integrity verified."
 
+      - name: Acquire publishing lock
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          run_id="${{ github.run_id }}"
+          node -e "
+            const { acquire } = require('./tools/publishing-lock');
+            const result = acquire({ run_id: '${run_id}', actor: 'github-actions', mode: '${MODE}' });
+            if (!result.ok) {
+              console.error('[lock] BLOCKED: ' + result.error);
+              process.exit(1);
+            }
+          "
+          echo "[lock] Publishing lock acquired for run_id=${run_id}"
+
+      - name: Build run snapshot
+        run: |
+          node tools/build-run-snapshot.js "${MODE}" "${CONTENT_TYPE}"
+          echo "[run-snapshot] Pre-decision snapshot written."
+
       - name: Preflight production gates
         run: |
           npm run check:economic-calendar
           npm run check:market-outlook-queue
           npm run check:market-outlook-localization
           npm run check:editorial
+          npm run check:continuous-intelligence
+          npm run check:queue-reconciliation
           npm run check:language-purity
           npm run check:production
           npm run check:seo
@@ -188,6 +210,26 @@ jobs:
           node tools/build-market-intelligence-context.js --write || echo "[intelligence] Context build degraded — continuing"
           echo "[intelligence] Market intelligence context step complete."
 
+      - name: Build regime engine v2 and visual data
+        run: |
+          node tools/build-regime-engine-v2.js --write || echo "[regime-v2] Build degraded — continuing"
+          node tools/build-historical-intelligence-memory.js --write || echo "[historical-memory] Build degraded — continuing"
+          node tools/build-narrative-continuity-engine.js --write || echo "[narrative-continuity] Build degraded — continuing"
+          node tools/build-visual-intelligence-data.js --write || echo "[visual-data] Build degraded — continuing"
+          echo "[phase68/69] Regime engine v2, historical memory, continuity, and visual intelligence data built."
+
+      - name: Generate continuous intelligence topic candidates
+        continue-on-error: true
+        run: |
+          node tools/generate-continuous-intelligence-topic.js --write || echo "[ci-topic] Topic generation degraded — continuing"
+          echo "[ci-topic] Continuous intelligence topic generation complete."
+
+      - name: Generate dashboard pages
+        run: |
+          node tools/generate-dashboard-pages.js || echo "[dashboards] Generation degraded — continuing"
+          node tools/apply-global-header.js || echo "[header] Apply degraded — continuing"
+          echo "[phase68] Dashboard pages generated and global header applied."
+
       - name: Generate market outlook pages
         if: ${{ env.MODE == 'full_pipeline' || env.MODE == 'generate_only' }}
         run: |
@@ -223,9 +265,27 @@ jobs:
             --force-content-type="${FORCE_CONTENT_TYPE}"
           echo "[PUBLISH EXECUTION] brain completed exit_code=$?"
 
+      - name: "[brain] Pre-distribution intelligence quality gate"
+        if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
+        run: |
+          slug="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(String(r.selected_topic||''))}catch{process.stdout.write('')}" 2>/dev/null || true)"
+          if [ -n "$slug" ]; then
+            echo "[quality-gate] Checking article quality for: $slug"
+            node tools/check-market-intelligence-quality.js --slug="$slug" || echo "[quality-gate] Issues found — see above. CRITICAL will block distribution."
+          else
+            echo "[quality-gate] No published slug — writing baseline health."
+            node -e "const fs=require('fs'),p='data/system-status/intelligence-health.json';fs.mkdirSync(require('path').dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify({status:'ok',severity:'OK',reasons:[],issues_by_severity:{INFO:0,WARN:0,ERROR:0,CRITICAL:0},generated_at:new Date().toISOString()},null,2)+'\n','utf8')" || true
+          fi
+
       - name: Send institutional macro briefing after publication
         if: ${{ env.DRY_RUN == 'false' && env.MODE == 'full_pipeline' }}
         run: |
+          health_status="$(node -e "try{const h=JSON.parse(require('fs').readFileSync('data/system-status/intelligence-health.json','utf8'));process.stdout.write(h.status||'ok')}catch{process.stdout.write('ok')}" 2>/dev/null || echo 'ok')"
+          echo "[macro-telegram] Intelligence health: ${health_status}"
+          if [ "$health_status" = "critical" ]; then
+            echo "[macro-telegram] BLOCKED — CRITICAL intelligence quality issue. Article will not be distributed via Telegram."
+            exit 0
+          fi
           published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
           telegram_quality="$(node -e "const fs=require('fs');const read=(p)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return {}}};const r=read('./data/intelligence/publishing-report.json');const c=read('./data/intelligence/publication-confidence.json');const editorial=String(r.selected_content_type||'')==='editorial';const confidenceOk=!editorial||(c.slug===r.selected_topic&&Number(c.confidence||0)>=Number(c.confidence_threshold||90)&&c.institutional_depth_passed===true);process.stdout.write(confidenceOk?'yes':'no')")"
           echo "[PUBLISH REPORT] published=${published} telegram_quality=${telegram_quality}"
@@ -234,7 +294,11 @@ jobs:
           elif [ "${telegram_quality}" != "yes" ]; then
             echo "[publication-telegram] Skipped because confidence or institutional-depth quality gate did not pass."
           elif [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
-            node tools/send-macro-telegram.js --type=publication --send
+            quality_note_arg=""
+            if [ "$health_status" = "degraded" ]; then
+              quality_note_arg="--quality-note=quality degraded"
+            fi
+            node tools/send-macro-telegram.js --type=publication --send ${quality_note_arg}
           else
             echo "[publication-telegram] Publication succeeded, but Telegram credentials are unavailable."
           fi
@@ -250,6 +314,30 @@ jobs:
           node tools/apply-global-header.js
           echo "[status] Homepage, system status, content feeds, and global header updated."
 
+      - name: Update publishing state machine history
+        if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        continue-on-error: true
+        run: |
+          node -e "
+            const { tryTransition } = require('./tools/publishing-state-machine');
+            const fs = require('fs');
+            let report = {};
+            try { report = JSON.parse(fs.readFileSync('data/intelligence/publishing-report.json', 'utf8')); } catch {}
+            const slug = report.selected_topic || '';
+            const type = report.selected_content_type || 'unknown';
+            const published = report.published === true;
+            const siteUpdate = report.site_update === true;
+            const run_id = '${GITHUB_RUN_ID:-unknown}';
+            if (published && slug) {
+              tryTransition({ from: 'approved', to: 'published', content_type: type, slug, reason: 'autonomous-publish', run_id });
+            } else if (siteUpdate) {
+              tryTransition({ from: 'blocked', to: 'site_update_only', content_type: type, slug: slug || 'site', reason: 'no-publish-site-update', run_id });
+            } else if (slug) {
+              tryTransition({ from: 'planned', to: 'draft', content_type: type, slug, reason: 'draft-generated-or-blocked', run_id });
+            }
+          " || echo "[state-machine] State history update degraded — continuing"
+          echo "[state-machine] Publishing state history updated."
+
       - name: Validate generated changes
         if: ${{ env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
         run: |
@@ -264,7 +352,11 @@ jobs:
           npm run check:macro-intelligence
           npm run check:content-feeds
           npm run check:global-header-runtime
-          npm run check:intelligence-quality || echo "[intelligence-quality] Warning-level issues found — see above for details"
+          npm run check:intelligence-quality
+          npm run check:visual-intelligence || echo "[visual-intelligence] Warning-level issues — see above"
+          npm run check:historical-intelligence || echo "[historical-intelligence] Warning-level issues — see above"
+          npm run check:continuous-intelligence || echo "[continuous-intelligence] Warning-level issues — see above"
+          npm run check:queue-reconciliation || echo "[queue-reconciliation] Warning-level issues — see above"
           echo "[FINAL LOCALIZATION ASSERTION]"
           if grep -R -n -i "Understanding the Two Phases" drafts/ ar/market-outlook/ market-outlook/; then
             echo "[LOCALIZATION FAIL] stale English phrase remains in generated artifacts."
@@ -340,6 +432,8 @@ jobs:
             expected="insights/${slug}.html ar/insights/${slug}.html en/insights/${slug}.html"
           elif [ "${type}" = "market-outlook" ]; then
             expected="market-outlook/${slug}.html ar/market-outlook/${slug}.html en/market-outlook/${slug}.html"
+          elif [ "${type}" = "continuous-intelligence" ]; then
+            expected="intelligence/${slug}.html en/intelligence/${slug}.html ar/intelligence/${slug}.html"
           else
             echo "Unsupported published content type for artifact verification: ${type}"
             exit 1
@@ -392,20 +486,28 @@ jobs:
           published="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.published===true?'yes':'no')")"
           site_update="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.site_update===true?'yes':'no')")"
           commit_allowed="$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(r.commit_allowed===true?'yes':'no')")"
-          echo "[PUBLISH REPORT] published=${published} site_update=${site_update} commit_allowed=${commit_allowed} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
+          health_status="$(node -e "try{const h=JSON.parse(require('fs').readFileSync('data/system-status/intelligence-health.json','utf8'));process.stdout.write(h.status||'ok')}catch{process.stdout.write('ok')}" 2>/dev/null || echo 'ok')"
+          echo "[PUBLISH REPORT] published=${published} site_update=${site_update} commit_allowed=${commit_allowed} health=${health_status} publish_result=$(node -e "const r=require('./data/intelligence/publishing-report.json'); process.stdout.write(String(r.publish_result||''))")"
+          if [ "$health_status" = "critical" ] && [ "${published}" = "yes" ]; then
+            echo "[commit] BLOCKED — CRITICAL intelligence quality. Article generated but NOT committed to main."
+            echo "[commit] Fix quality issues and re-run, or manually review and commit."
+            exit 0
+          fi
           if [ "${published}" != "yes" ]; then
             if [ "${MODE}" = "generate_only" ]; then
-              stage_paths "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/intelligence
+              stage_paths "drafts/${type}/${slug}" data/editorial-topic-queue.json data/market-outlook-queue.json data/continuous-intelligence-queue.json data/intelligence
               commit_message="Draft generated ${slug}"
             elif [ "${site_update}" = "yes" ]; then
               if [ "${commit_allowed}" != "yes" ]; then
                 echo "Skipping commit: site-update path produced no file changes."
                 exit 0
               fi
-              stage_paths data/intelligence data/feeds data/system-status
+              stage_paths data/intelligence data/visual data/feeds data/system-status
+              stage_paths data/continuous-intelligence-queue.json data/continuous-intelligence-history.json
               stage_paths market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard
-              stage_paths market-replay ar/market-replay system-status
-              stage_paths index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html
+              stage_paths market-replay ar/market-replay intelligence ar/intelligence en/intelligence system-status
+              stage_paths index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html
+              stage_paths js/visual-intelligence.js js/market-replay.js css/visual-intelligence.css
               stage_glob "sitemap*.xml"
               commit_message="Autonomous site intelligence update"
             else
@@ -415,13 +517,20 @@ jobs:
             fi
           else
             stage_paths insights ar/insights en/insights market-outlook ar/market-outlook en/market-outlook
+            stage_paths intelligence ar/intelligence en/intelligence
             stage_paths data/editorial-topic-queue.json data/market-outlook-queue.json data/published-history.json data/market-outlook-history.json
+            stage_paths data/continuous-intelligence-queue.json data/continuous-intelligence-history.json
+            stage_paths data/intelligence/publishing-state-history.json data/intelligence/run-snapshot.json data/intelligence/publication-transaction.json
             stage_paths data/insights data/search-index.json data/localization data/intelligence/publishing-report.json data/intelligence/publication-confidence.json
-            stage_paths data/intelligence/market-intelligence-context.json data/system-status/market-intelligence-status.json
-            stage_paths data/feeds data/narrative-memory.json
-            stage_paths market-outlook/index.html ar/market-outlook/index.html
-            stage_paths system-status sitemap-core.xml sitemap-market.xml
-            stage_paths index.html ar/index.html
+            stage_paths data/intelligence/market-intelligence-context.json data/intelligence/regime-engine-v2.json data/visual
+            stage_paths market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard
+            stage_paths js/visual-intelligence.js css/visual-intelligence.css js/market-replay.js
+            stage_paths market-replay ar/market-replay
+            stage_paths data/intelligence/historical-memory.json data/intelligence/narrative-continuity.json
+            stage_paths data/system-status/market-intelligence-status.json data/system-status/intelligence-health.json
+            stage_paths logs/intelligence-quality-history.json data/feeds data/narrative-memory.json
+            stage_paths market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html system-status
+            stage_paths sitemap-core.xml sitemap-market.xml index.html ar/index.html
             stage_glob "sitemap*.xml"
             commit_message="Autonomous publish ${slug}"
           fi
@@ -436,3 +545,13 @@ jobs:
             git commit -m "${commit_message}"
             git push origin "${GITHUB_REF_NAME}"
           fi
+
+      - name: Release publishing lock
+        if: ${{ always() && env.DRY_RUN == 'false' && env.MODE != 'status' && env.MODE != 'dry_run' }}
+        run: |
+          run_id="${{ github.run_id }}"
+          node -e "
+            const { release } = require('./tools/publishing-lock');
+            release({ run_id: '${run_id}' });
+          " || echo "[lock] Lock release degraded — may need manual force-release"
+          echo "[lock] Publishing lock released for run_id=${run_id}"
