@@ -28,6 +28,8 @@ const ALL_PAGES = [
   ...INSIGHT_PAGES,
 ].filter((rel) => rel !== 'index' && exists(rel));
 
+checkDrawerLocaleImpl();
+
 for (const rel of ALL_PAGES) {
   checkPage(rel);
 }
@@ -69,12 +71,12 @@ function checkPage(rel) {
   const hasGlobalHeaderJs = /global-header\.js/i.test(html);
   const hasMobileNavJs    = /mobile-nav\.js/i.test(html);
 
-  if (!hasGlobalHeaderJs && !hasMobileNavJs) {
-    failures.push(`${rel}: neither global-header.js nor mobile-nav.js script found`);
+  if (!hasGlobalHeaderJs) {
+    failures.push(`${rel}: global-header.js script not found`);
   }
 
-  if (hasGlobalHeaderJs && hasMobileNavJs) {
-    warnings.push(`${rel}: both global-header.js and mobile-nav.js are loaded — risk of double-init`);
+  if (hasMobileNavJs) {
+    failures.push(`${rel}: mobile-nav.js must not be loaded on a canonical page`);
   }
 
   if (!/global-header\.css/i.test(html)) {
@@ -107,6 +109,18 @@ function checkLocaleSwitcher(rel, html) {
 
   const switcherCount = (html.match(/class="locale-links"/g) || []).length;
   if (switcherCount > 1) failures.push(`${rel}: duplicate .locale-links (${switcherCount} found)`);
+}
+
+function checkDrawerLocaleImpl() {
+  const jsPath = path.join(ROOT, 'js', 'global-header.js');
+  if (!fs.existsSync(jsPath)) {
+    failures.push('js/global-header.js: file missing');
+    return;
+  }
+  const src = fs.readFileSync(jsPath, 'utf8');
+  if (!src.includes('mobile-locale-switcher')) {
+    failures.push('js/global-header.js: missing mobile-locale-switcher drawer implementation');
+  }
 }
 
 function checkNoDuplicateMobileNav() {

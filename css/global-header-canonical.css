@@ -434,6 +434,38 @@ body.mobile-nav-open { overflow: hidden; }
 .mobile-nav-links a:focus-visible { background: rgba(110, 231, 216, 0.08); }
 .mobile-nav-links a.is-active     { color: rgba(216, 177, 90, 0.9); }
 
+/* ── Mobile drawer locale switcher ──────────────────────────────────────── */
+.mobile-locale-switcher {
+  display: flex;
+  padding: 8px 12px 4px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  margin-top: 6px;
+}
+
+.mobile-locale-switcher .lang-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(110, 231, 216, 0.2);
+  background: rgba(110, 231, 216, 0.06);
+  color: rgba(110, 231, 216, 0.9);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 140ms ease;
+  letter-spacing: 0.01em;
+}
+
+.mobile-locale-switcher .lang-switch:hover,
+.mobile-locale-switcher .lang-switch:focus-visible {
+  background: rgba(110, 231, 216, 0.12);
+  color: #d8b15a;
+}
+
 /* ── RTL overrides ────────────────────────────────────────────────────────── */
 [dir="rtl"] .brand              { flex-direction: row-reverse; }
 [dir="rtl"] .top-actions,
@@ -447,6 +479,11 @@ body.mobile-nav-open { overflow: hidden; }
   .nav-dropdown        { display: none; }
 }
 
+/* ── Responsive: ≤768px — drawer locale switcher always visible ──────────── */
+@media (max-width: 768px) {
+  .mobile-locale-switcher { display: flex; }
+}
+
 /* ── Responsive: ≤640px — tighten spacing, hide secondary elements ────────── */
 @media (max-width: 640px) {
   :root {
@@ -456,12 +493,8 @@ body.mobile-nav-open { overflow: hidden; }
   .topbar-inner,
   .site-header-inner     { gap: 8px; }
   .brand-copy span,
+  .locale-links,
   .header-signal-cta     { display: none; }
-  /* Language switcher: compact on mobile, show only the switch-target language */
-  .locale-links                                                   { padding: 2px 4px; }
-  .locale-links .lang-switch                                      { padding: 0 8px; }
-  .topbar[data-locale="en"] .lang-switch[data-locale-route="en"],
-  .topbar[data-locale="ar"] .lang-switch[data-locale-route="ar"] { display: none; }
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */

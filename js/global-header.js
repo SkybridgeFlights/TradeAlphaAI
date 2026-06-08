@@ -106,6 +106,17 @@
       links.appendChild(link.cloneNode(true));
     });
 
+    // Language switcher: clone the opposite-language link into the drawer
+    var localeEl    = header.querySelector(".locale-links");
+    var targetRoute = isArabic ? "en" : "ar";
+    var switchLink  = localeEl && localeEl.querySelector('[data-locale-route="' + targetRoute + '"]');
+    if (switchLink) {
+      var mobileSwitcher = document.createElement("div");
+      mobileSwitcher.className = "mobile-locale-switcher";
+      mobileSwitcher.appendChild(switchLink.cloneNode(true));
+      links.appendChild(mobileSwitcher);
+    }
+
     var backdrop = document.createElement("button");
     backdrop.className = "mobile-nav-backdrop";
     backdrop.type = "button";
