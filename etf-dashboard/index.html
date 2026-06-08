@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <title>ETF Dashboard — TradeAlphaAI</title>
+  <meta name="description" content="ETF intelligence dashboard: sector ETF trends, relationship map, flow signals, and rotation context.">
+  <meta property="og:title" content="ETF Dashboard — TradeAlphaAI">
+  <meta property="og:description" content="ETF intelligence dashboard: sector ETF trends, relationship map, flow signals, and rotation context.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.tradealphaai.com/etf-dashboard/">
+  <link rel="canonical" href="https://www.tradealphaai.com/etf-dashboard/">
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/etf-dashboard/">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../landing.css">
+  <link rel="stylesheet" href="/css/global-header.css">
+  <link rel="stylesheet" href="/css/global-layout.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/visual-intelligence.css">
+  <script>window.DASHBOARD_TYPE="etf-dashboard";window.DASHBOARD_LOCALE="en";</script>
+  <link rel="stylesheet" href="/css/global-header-canonical.css" />
+</head>
+<body class="dashboard-page">
+  <div class="reading-progress"><span></span></div>
+<!-- GLOBAL_HEADER_START -->
+<div class="topbar" data-global-header data-locale="en" data-active-section="">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>TradeAlpha AI</strong>
+        <span>TRADING &amp; MARKET RESEARCH PLATFORM</span>
+      </span>
+    </a>
+
+    <div class="top-actions">
+      <nav class="nav-group" aria-label="Primary">
+        <a href="/" class="nav-link">Home</a>
+          <a href="/stocks.html" class="nav-link">Global Stock Research</a>
+          <a href="/etfs.html" class="nav-link">ETF Analyzer</a>
+          <a href="/ai-stock-screener.html" class="nav-link">Market Screener</a>
+          <div class="nav-menu">
+            <a href="/rankings.html" class="nav-link nav-menu-trigger">Top Picks<span class="nav-badge">Hot</span></a>
+            <div class="nav-dropdown">
+              <a href="/rankings.html#top-stocks">Top 10 Stocks Right Now</a>
+              <a href="/rankings.html#top-ai-stocks">Best AI Stocks</a>
+              <a href="/rankings.html#top-semiconductor-stocks">Best Semiconductor Stocks</a>
+              <a href="/rankings.html#top-growth-stocks">Best Growth Stocks</a>
+              <a href="/rankings.html#top-dividend-etfs">Top Dividend ETFs</a>
+              <a href="/rankings.html#top-broad-market-etfs">Best ETFs for 2026</a>
+            </div>
+          </div>
+          <a href="/insights/" class="nav-link">Articles</a>
+          <a href="/market-outlook/" class="nav-link">Market Outlook</a>
+          <a href="/economic-calendar/" class="nav-link">Economic Calendar</a>
+          <a href="/methodology.html" class="nav-link">Methodology</a>
+      </nav>
+      <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">Free Signals</a>
+      <div class="locale-links" aria-label="Language">
+        <a class="lang-switch" data-locale-route="ar" href="/ar/">Arabic</a>
+        <a class="lang-switch" data-locale-route="en" href="/">English</a>
+      </div>
+      <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- GLOBAL_HEADER_END -->
+
+  <main class="dashboard-shell" id="main-content">
+    <div class="dashboard-hero">
+      <div class="section-panel">
+        <span class="eyebrow">ETF Intelligence</span>
+        <h1 class="dashboard-title">ETF Dashboard</h1>
+        <p class="dashboard-subtitle" id="dashboard-headline">Loading intelligence data...</p>
+        <div class="dashboard-meta" id="dashboard-meta">
+          <span class="data-quality-badge" data-quality="loading">Loading</span>
+          <span class="data-freshness" id="data-freshness"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Market Regime Gauge -->
+    <section class="dashboard-section" id="section-regime" aria-label="Market Regime Gauge">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">Regime Analysis</span>
+          <h2>Market Regime Gauge</h2>
+          <p class="market-copy">Comprehensive classification of the prevailing macro regime across seven dimensions. Educational only.</p>
+        </div>
+        <div class="regime-gauge-grid" id="regime-gauge-grid" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Cross-Asset Impact Map -->
+    <section class="dashboard-section" id="section-cross-asset" aria-label="Cross-Asset Impact Map">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">Cross-Asset</span>
+          <h2>Cross-Asset Impact Map</h2>
+          <p class="market-copy">Key asset trends and macro shock transmission chains.</p>
+        </div>
+        <div class="cross-asset-grid" id="cross-asset-grid" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+        <div class="transmission-chains" id="transmission-chains">
+          <h3 class="sub-heading">Transmission Chains</h3>
+          <div class="chain-list" id="chain-list">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Sector Rotation View -->
+    <section class="dashboard-section" id="section-sectors" aria-label="Sector Rotation View">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">Sector Rotation</span>
+          <h2>Sector Rotation View</h2>
+          <p class="market-copy">Sector participation and momentum signals derived from institutional flow indicators.</p>
+        </div>
+        <div class="sector-heatmap" id="sector-heatmap" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Yield Curve Context -->
+    <section class="dashboard-section" id="section-yield-curve" aria-label="Yield Curve Context">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">Yield Curve &amp; Rates</span>
+          <h2>Yield Curve Context</h2>
+          <p class="market-copy">Yield curve shape, Fed rate path expectations, and duration sensitivity.</p>
+        </div>
+        <div class="yield-curve-layout" id="yield-curve-layout">
+          <div class="yield-state-card" id="yield-state-card">Loading...</div>
+          <div class="fed-path-card" id="fed-path-card">Loading...</div>
+          <div class="duration-sensitivity-card" id="duration-sensitivity-card">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Volatility State -->
+    <section class="dashboard-section" id="section-volatility" aria-label="Volatility State">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">Volatility Regime</span>
+          <h2>Volatility State</h2>
+          <p class="market-copy">VIX level, current volatility regime, and historical context.</p>
+        </div>
+        <div class="volatility-layout" id="volatility-layout">
+          <div class="vix-gauge-container" id="vix-gauge-container">Loading...</div>
+          <div class="vol-regime-detail" id="vol-regime-detail">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: ETF Relationship Map -->
+    <section class="dashboard-section" id="section-etf-map" aria-label="ETF Relationship Map">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">ETF Relationships</span>
+          <h2>ETF Relationship Map</h2>
+          <p class="market-copy">Structural relationships between key ETFs, flow signals, and rotation context.</p>
+        </div>
+        <div class="etf-grid" id="etf-grid" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="Loading">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+        <div class="etf-relationships" id="etf-relationships">
+          <h3 class="sub-heading">Key Relationships</h3>
+          <div class="relationship-list" id="relationship-list">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Latest Market Outlook -->
+    <section class="dashboard-section" id="section-outlook-links" aria-label="Latest Market Outlook">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">Research Reports</span>
+          <h2>Latest Market Outlook</h2>
+        </div>
+        <div class="outlook-links" id="outlook-links">Loading...</div>
+        <div class="view-all-link">
+          <a href="/market-outlook/" class="btn-secondary">
+            View All Reports
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational disclaimer -->
+    <section class="dashboard-section section-tight">
+      <div class="section-panel">
+        <p class="disclaimer-text">
+          <strong>Legal Notice:</strong>
+          Educational and informational content only. Not financial or investment advice. Past performance does not predict future results.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/visual-intelligence.js" defer></script>
+  <script src="/js/global-header.js" defer></script>
+</body>
+</html>

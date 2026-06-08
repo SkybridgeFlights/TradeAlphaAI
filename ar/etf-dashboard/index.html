@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <title>لوحة تحكم الصناديق — TradeAlphaAI</title>
+  <meta name="description" content="لوحة تحكم صناديق الاستثمار المتداولة: اتجاهات صناديق القطاعات، خريطة العلاقات، إشارات التدفق، وسياق الدوران.">
+  <meta property="og:title" content="لوحة تحكم الصناديق — TradeAlphaAI">
+  <meta property="og:description" content="لوحة تحكم صناديق الاستثمار المتداولة: اتجاهات صناديق القطاعات، خريطة العلاقات، إشارات التدفق، وسياق الدوران.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.tradealphaai.com/ar/etf-dashboard/">
+  <link rel="canonical" href="https://www.tradealphaai.com/ar/etf-dashboard/">
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/etf-dashboard/">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../landing.css">
+  <link rel="stylesheet" href="/css/global-header.css">
+  <link rel="stylesheet" href="/css/global-layout.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/visual-intelligence.css">
+  <script>window.DASHBOARD_TYPE="etf-dashboard";window.DASHBOARD_LOCALE="ar";</script>
+  <link rel="stylesheet" href="/css/global-header-canonical.css" />
+</head>
+<body class="dashboard-page">
+  <div class="reading-progress"><span></span></div>
+<!-- GLOBAL_HEADER_START -->
+<div class="topbar" data-global-header data-locale="ar" data-active-section="">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/ar/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>TradeAlpha AI</strong>
+        <span>منصّة التداول وأبحاث السوق</span>
+      </span>
+    </a>
+
+    <div class="top-actions">
+      <nav class="nav-group" aria-label="التنقل الرئيسي">
+        <a href="/ar/" class="nav-link">الرئيسية</a>
+          <a href="/ar/stocks.html" class="nav-link">بحث الأسهم العالمي</a>
+          <a href="/ar/etfs.html" class="nav-link">محلل صناديق المؤشرات</a>
+          <a href="/ar/ai-stock-screener.html" class="nav-link">ماسح السوق</a>
+          <div class="nav-menu">
+            <a href="/ar/rankings.html" class="nav-link nav-menu-trigger">أفضل الاختيارات<span class="nav-badge">رائج</span></a>
+            <div class="nav-dropdown">
+              <a href="/ar/rankings.html#top-stocks">أفضل 10 أسهم حالياً</a>
+              <a href="/ar/rankings.html#top-ai-stocks">أفضل أسهم الذكاء الاصطناعي</a>
+              <a href="/ar/rankings.html#top-semiconductors">أفضل أسهم أشباه الموصلات</a>
+              <a href="/ar/rankings.html#top-growth-stocks">أفضل أسهم النمو</a>
+              <a href="/ar/rankings.html#top-dividend-etfs">أفضل صناديق توزيعات الأرباح</a>
+              <a href="/ar/rankings.html#top-etfs">أفضل صناديق المؤشرات لعام 2026</a>
+            </div>
+          </div>
+          <a href="/ar/insights/" class="nav-link">المقالات</a>
+          <a href="/ar/market-outlook/" class="nav-link">توقعات السوق</a>
+          <a href="/ar/economic-calendar/" class="nav-link">التقويم الاقتصادي</a>
+          <a href="/ar/methodology.html" class="nav-link">المنهجية</a>
+      </nav>
+      <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">إشارات مجانية</a>
+      <div class="locale-links" aria-label="اختيار اللغة">
+        <a class="lang-switch" data-locale-route="ar" href="/ar/">العربية</a>
+        <a class="lang-switch" data-locale-route="en" href="/">English</a>
+      </div>
+      <button class="mobile-menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobile-nav-drawer">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- GLOBAL_HEADER_END -->
+
+  <main class="dashboard-shell" id="main-content">
+    <div class="dashboard-hero">
+      <div class="section-panel">
+        <span class="eyebrow">ذكاء الصناديق</span>
+        <h1 class="dashboard-title">لوحة تحكم الصناديق</h1>
+        <p class="dashboard-subtitle" id="dashboard-headline">جارٍ تحميل بيانات الذكاء...</p>
+        <div class="dashboard-meta" id="dashboard-meta">
+          <span class="data-quality-badge" data-quality="loading">جاري التحميل</span>
+          <span class="data-freshness" id="data-freshness"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Market Regime Gauge -->
+    <section class="dashboard-section" id="section-regime" aria-label="مقياس نظام السوق">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">تحليل النظام</span>
+          <h2>مقياس نظام السوق</h2>
+          <p class="market-copy">تصنيف شامل للنظام الكلي السائد عبر سبعة أبعاد. للأغراض التعليمية فقط.</p>
+        </div>
+        <div class="regime-gauge-grid" id="regime-gauge-grid" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Cross-Asset Impact Map -->
+    <section class="dashboard-section" id="section-cross-asset" aria-label="خريطة تأثير الأصول المتقاطعة">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">الأصول المتقاطعة</span>
+          <h2>خريطة الأصول والتأثيرات</h2>
+          <p class="market-copy">اتجاهات الأصول الرئيسية وسلاسل انتقال الصدمات الكلية.</p>
+        </div>
+        <div class="cross-asset-grid" id="cross-asset-grid" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+        <div class="transmission-chains" id="transmission-chains">
+          <h3 class="sub-heading">سلاسل الانتقال</h3>
+          <div class="chain-list" id="chain-list">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Sector Rotation View -->
+    <section class="dashboard-section" id="section-sectors" aria-label="دوران القطاعات">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">دوران القطاعات</span>
+          <h2>خريطة دوران القطاعات</h2>
+          <p class="market-copy">مشاركة القطاعات ومؤشرات الزخم المستخرجة من إشارات الأموال المؤسسية.</p>
+        </div>
+        <div class="sector-heatmap" id="sector-heatmap" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Yield Curve Context -->
+    <section class="dashboard-section" id="section-yield-curve" aria-label="سياق منحنى العائد">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">منحنى العائد والفائدة</span>
+          <h2>سياق منحنى العائد</h2>
+          <p class="market-copy">شكل منحنى العائد وتوقعات مسار الفائدة وحساسية المدة.</p>
+        </div>
+        <div class="yield-curve-layout" id="yield-curve-layout">
+          <div class="yield-state-card" id="yield-state-card">جارٍ التحميل...</div>
+          <div class="fed-path-card" id="fed-path-card">جارٍ التحميل...</div>
+          <div class="duration-sensitivity-card" id="duration-sensitivity-card">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Volatility State -->
+    <section class="dashboard-section" id="section-volatility" aria-label="حالة التقلب">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">نظام التقلب</span>
+          <h2>لوحة حالة التقلب</h2>
+          <p class="market-copy">مستوى VIX ونظام التقلب الحالي والسياق التاريخي.</p>
+        </div>
+        <div class="volatility-layout" id="volatility-layout">
+          <div class="vix-gauge-container" id="vix-gauge-container">جارٍ التحميل...</div>
+          <div class="vol-regime-detail" id="vol-regime-detail">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: ETF Relationship Map -->
+    <section class="dashboard-section" id="section-etf-map" aria-label="خريطة علاقات الصناديق">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">علاقات الصناديق</span>
+          <h2>خريطة علاقات صناديق الاستثمار المتداولة</h2>
+          <p class="market-copy">العلاقات الهيكلية بين الصناديق الرئيسية وإشارات التدفق وسياق الدوران.</p>
+        </div>
+        <div class="etf-grid" id="etf-grid" role="list">
+          <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+      <div class="vi-card vi-card--loading" role="listitem" aria-label="جارٍ التحميل">
+        <span class="vi-card__skeleton"></span>
+      </div>
+        </div>
+        <div class="etf-relationships" id="etf-relationships">
+          <h3 class="sub-heading">العلاقات الرئيسية</h3>
+          <div class="relationship-list" id="relationship-list">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Latest Market Outlook -->
+    <section class="dashboard-section" id="section-outlook-links" aria-label="أحدث تقارير توقعات السوق">
+      <div class="section-panel">
+        <div class="section-head">
+          <span class="eyebrow">تقارير الأبحاث</span>
+          <h2>أحدث تقارير توقعات السوق</h2>
+        </div>
+        <div class="outlook-links" id="outlook-links">جارٍ التحميل...</div>
+        <div class="view-all-link">
+          <a href="/ar/market-outlook/" class="btn-secondary">
+            عرض جميع التقارير
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational disclaimer -->
+    <section class="dashboard-section section-tight">
+      <div class="section-panel">
+        <p class="disclaimer-text">
+          <strong>إشعار قانوني:</strong>
+          محتوى تعليمي ومعلوماتي فقط. ليست نصيحة مالية أو استثمارية. الأداء السابق لا يتنبأ بالنتائج المستقبلية.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/visual-intelligence.js" defer></script>
+  <script src="/js/global-header.js" defer></script>
+</body>
+</html>
