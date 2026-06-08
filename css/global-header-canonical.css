@@ -456,8 +456,12 @@ body.mobile-nav-open { overflow: hidden; }
   .topbar-inner,
   .site-header-inner     { gap: 8px; }
   .brand-copy span,
-  .locale-links,
   .header-signal-cta     { display: none; }
+  /* Language switcher: compact on mobile, show only the switch-target language */
+  .locale-links                                                   { padding: 2px 4px; }
+  .locale-links .lang-switch                                      { padding: 0 8px; }
+  .topbar[data-locale="en"] .lang-switch[data-locale-route="en"],
+  .topbar[data-locale="ar"] .lang-switch[data-locale-route="ar"] { display: none; }
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */

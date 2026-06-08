@@ -80,6 +80,33 @@ function checkPage(rel) {
   if (!/global-header\.css/i.test(html)) {
     failures.push(`${rel}: global-header.css not linked`);
   }
+
+  checkLocaleSwitcher(rel, html);
+}
+
+function checkLocaleSwitcher(rel, html) {
+  const isAr = rel.startsWith('ar/');
+
+  if (!/<div[^>]+class="locale-links"/i.test(html)) {
+    failures.push(`${rel}: missing .locale-links (mobile language switcher absent)`);
+    return;
+  }
+
+  if (!/data-locale-route="ar"/i.test(html)) failures.push(`${rel}: missing data-locale-route="ar" link`);
+  if (!/data-locale-route="en"/i.test(html)) failures.push(`${rel}: missing data-locale-route="en" link`);
+
+  const localeMatch = html.match(/data-locale="([^"]+)"/i);
+  const locale = localeMatch ? localeMatch[1] : null;
+  if (!locale) {
+    failures.push(`${rel}: missing data-locale attribute on header`);
+  } else if (isAr && locale !== 'ar') {
+    failures.push(`${rel}: AR page has data-locale="${locale}" (expected "ar")`);
+  } else if (!isAr && locale !== 'en') {
+    failures.push(`${rel}: EN page has data-locale="${locale}" (expected "en")`);
+  }
+
+  const switcherCount = (html.match(/class="locale-links"/g) || []).length;
+  if (switcherCount > 1) failures.push(`${rel}: duplicate .locale-links (${switcherCount} found)`);
 }
 
 function checkNoDuplicateMobileNav() {
