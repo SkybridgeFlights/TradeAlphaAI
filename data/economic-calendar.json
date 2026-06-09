@@ -1,6 +1,66 @@
 {
-  "generated_at": "2026-06-06T22:19:02.279Z",
-  "provider": "fallback",
-  "status": "degraded",
+  "version": "2.0",
+  "updated_at": "2026-06-09T04:18:38.345Z",
+  "source": "degraded",
+  "provider_metadata": {
+    "endpoint": null,
+    "fallback_used": true,
+    "cache_used": false,
+    "attempts": [
+      {
+        "provider": "fmp",
+        "status": "unavailable",
+        "endpoint": "https://financialmodelingprep.com/stable/economic-calendar",
+        "reason": "missing_api_key",
+        "event_count": 0,
+        "last_checked": "2026-06-09T04:18:38.343Z"
+      },
+      {
+        "provider": "finnhub",
+        "status": "unavailable",
+        "endpoint": "https://finnhub.io/api/v1/calendar/economic",
+        "reason": "missing_api_key",
+        "event_count": 0,
+        "last_checked": "2026-06-09T04:18:38.343Z"
+      },
+      {
+        "provider": "fred",
+        "status": "unavailable",
+        "endpoint": "https://api.stlouisfed.org/fred/releases/dates",
+        "reason": "missing_api_key",
+        "event_count": 0,
+        "last_checked": "2026-06-09T04:18:38.343Z"
+      }
+    ]
+  },
+  "source_policy": {
+    "requires_real_sources": true,
+    "manual_or_api_import_only": true,
+    "no_fabricated_values": true,
+    "allowed_event_types": [
+      "CPI",
+      "Core CPI",
+      "PCE",
+      "Core PCE",
+      "NFP",
+      "Unemployment Rate",
+      "FOMC Rate Decision",
+      "Fed Statement",
+      "Powell Speech",
+      "GDP",
+      "Retail Sales",
+      "ISM PMI",
+      "Jobless Claims",
+      "Treasury Auction",
+      "ECB Rate Decision",
+      "BoJ Rate Decision",
+      "BoE Rate Decision"
+    ],
+    "required_source_fields": [
+      "source_name",
+      "source_url",
+      "fetched_at"
+    ]
+  },
   "events": []
 }

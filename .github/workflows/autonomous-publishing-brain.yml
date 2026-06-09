@@ -145,6 +145,14 @@ jobs:
           node tools/build-run-snapshot.js "${MODE}" "${CONTENT_TYPE}"
           echo "[run-snapshot] Pre-decision snapshot written."
 
+      - name: Fetch economic calendar data
+        continue-on-error: true
+        run: |
+          node tools/fetch-economic-calendar.js --write || {
+            echo "[calendar] fetch failed — preflight will validate against existing cache"
+          }
+          echo "[calendar] economic calendar fetch step complete"
+
       - name: Preflight production gates
         run: |
           npm run check:economic-calendar

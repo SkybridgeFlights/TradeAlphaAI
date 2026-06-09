@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/global-header-canonical.css" />
+  <link rel="stylesheet" href="/css/economic-calendar.css" />
 </head>
 <body class="market-page">
   <!-- GLOBAL_HEADER_START -->
@@ -94,6 +95,40 @@
             <a class="market-btn primary" href="/ar/market-outlook/">قراءة آخر التوقعات</a>
             <a class="market-btn" href="/ar/methodology.html">منهجية البحث</a>
           </div>
+        </div>
+      </section>
+
+      <!-- التقويم التفاعلي المباشر -->
+      <section class="market-section" id="live-calendar">
+        <h2 class="section-heading">تصفّح الأحداث الاقتصادية</h2>
+        <p class="section-intro">تنقّل عبر التواريخ لاستعراض الأحداث الاقتصادية المجدولة والمُصدَرة مع القيم الفعلية والتوقعات والسابقة. انقر على أي صف للاطلاع على السياق.</p>
+
+        <div class="ec-controls">
+          <div class="ec-date-nav" role="group" aria-label="التنقل بين التواريخ">
+            <button class="ec-btn-nav" id="ec-prev" aria-label="الفترة السابقة">&#8250;</button>
+            <button class="ec-btn-quick" id="ec-today">اليوم</button>
+            <button class="ec-btn-quick" id="ec-tomorrow">غداً</button>
+            <button class="ec-btn-quick" id="ec-week">هذا الأسبوع</button>
+            <input type="date" id="ec-date-picker" class="ec-date-input" aria-label="اختر تاريخاً" />
+            <button class="ec-btn-nav" id="ec-next" aria-label="الفترة التالية">&#8249;</button>
+          </div>
+          <div class="ec-filters" role="group" aria-label="تصفية الأحداث">
+            <select id="ec-filter-impact" class="ec-select" aria-label="تصفية حسب التأثير">
+              <option value="">كل التأثيرات</option>
+              <option value="high">مرتفع</option>
+              <option value="medium">متوسط</option>
+              <option value="low">منخفض</option>
+            </select>
+            <select id="ec-filter-country" class="ec-select" aria-label="تصفية حسب الدولة">
+              <option value="">كل الدول</option>
+            </select>
+            <input type="search" id="ec-search" class="ec-search" placeholder="ابحث عن أحداث…" aria-label="البحث باسم الحدث" />
+          </div>
+        </div>
+
+        <div class="ec-status-bar" id="ec-status" aria-live="polite"></div>
+        <div id="ec-table-wrap" class="ec-table-wrap">
+          <p class="calendar-loading">جارٍ تحميل التقويم&hellip;</p>
         </div>
       </section>
 
@@ -355,6 +390,7 @@
   .disclaimer-box h3 { margin: 0 0 0.6rem; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted, #666); }
   .disclaimer-box p { margin: 0; font-size: 0.82rem; color: var(--text-muted, #666); line-height: 1.8; }
   </style>
+  <script src="/js/economic-calendar.js" defer></script>
   <script src="/js/global-header.js" defer></script>
 </body>
 </html>

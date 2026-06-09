@@ -27,6 +27,12 @@ if (fs.existsSync(EN_PAGE)) {
     failures.push('EN page: missing hreflang ar alternate');
   if (!/\/data\/economic-calendar\.json/.test(en))
     failures.push('EN page: does not reference /data/economic-calendar.json');
+  if (!(/\/css\/economic-calendar\.css/.test(en)))
+    failures.push('EN page: missing <link> to /css/economic-calendar.css');
+  if (!(/\/js\/economic-calendar\.js/.test(en)))
+    failures.push('EN page: missing <script> for /js/economic-calendar.js');
+  if (!(/id="live-calendar"/.test(en)))
+    failures.push('EN page: missing id="live-calendar" interactive section');
 }
 
 if (fs.existsSync(AR_PAGE)) {
@@ -39,6 +45,12 @@ if (fs.existsSync(AR_PAGE)) {
     failures.push('AR page: missing og:locale ar_AR');
   if (!/<link rel="alternate" hreflang="en"/.test(ar))
     failures.push('AR page: missing hreflang en alternate');
+  if (!(/\/css\/economic-calendar\.css/.test(ar)))
+    failures.push('AR page: missing <link> to /css/economic-calendar.css');
+  if (!(/\/js\/economic-calendar\.js/.test(ar)))
+    failures.push('AR page: missing <script> for /js/economic-calendar.js');
+  if (!(/id="live-calendar"/.test(ar)))
+    failures.push('AR page: missing id="live-calendar" interactive section');
 }
 
 // ── 2. Calendar data file ─────────────────────────────────────────────────────

@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/global-header-canonical.css" />
+  <link rel="stylesheet" href="/css/economic-calendar.css" />
 </head>
 <body class="market-page">
   <!-- GLOBAL_HEADER_START -->
@@ -95,6 +96,40 @@
             <a class="market-btn primary" href="/market-outlook/">Read latest outlook</a>
             <a class="market-btn" href="/methodology.html">Research methodology</a>
           </div>
+        </div>
+      </section>
+
+      <!-- Interactive live calendar -->
+      <section class="market-section" id="live-calendar">
+        <h2 class="section-heading">Browse Economic Events</h2>
+        <p class="section-intro">Navigate by date to see scheduled and released economic events with actual, forecast, and previous values. Click any row for cross-asset context.</p>
+
+        <div class="ec-controls">
+          <div class="ec-date-nav" role="group" aria-label="Date navigation">
+            <button class="ec-btn-nav" id="ec-prev" aria-label="Previous period">&#8249;</button>
+            <button class="ec-btn-quick" id="ec-today">Today</button>
+            <button class="ec-btn-quick" id="ec-tomorrow">Tomorrow</button>
+            <button class="ec-btn-quick" id="ec-week">This Week</button>
+            <input type="date" id="ec-date-picker" class="ec-date-input" aria-label="Jump to date" />
+            <button class="ec-btn-nav" id="ec-next" aria-label="Next period">&#8250;</button>
+          </div>
+          <div class="ec-filters" role="group" aria-label="Event filters">
+            <select id="ec-filter-impact" class="ec-select" aria-label="Filter by impact">
+              <option value="">All Impact</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <select id="ec-filter-country" class="ec-select" aria-label="Filter by country">
+              <option value="">All Countries</option>
+            </select>
+            <input type="search" id="ec-search" class="ec-search" placeholder="Search events…" aria-label="Search events by name" />
+          </div>
+        </div>
+
+        <div class="ec-status-bar" id="ec-status" aria-live="polite"></div>
+        <div id="ec-table-wrap" class="ec-table-wrap">
+          <p class="calendar-loading">Loading calendar&hellip;</p>
         </div>
       </section>
 
@@ -438,6 +473,7 @@
   .asset-tag { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px; background: var(--surface-3, #eff6ff); color: var(--text-link, #1d4ed8); font-size: 0.75rem; font-weight: 600; }
   .narrative-callout { background: var(--surface-2, #f0f4ff); border-left: 4px solid var(--accent, #3b82f6); border-radius: 4px; padding: 0.9rem 1.1rem; font-size: 0.88rem; color: var(--text-body, #333); line-height: 1.6; }
   </style>
+  <script src="/js/economic-calendar.js" defer></script>
   <script src="/js/global-header.js" defer></script>
 </body>
 </html>
