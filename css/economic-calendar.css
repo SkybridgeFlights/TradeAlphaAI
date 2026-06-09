@@ -480,3 +480,115 @@ tr.ec-detail-row td {
 [dir="rtl"] .ec-col-num         { text-align: left; }
 [dir="rtl"] .ec-detail-inner    { direction: rtl; }
 [dir="rtl"] .ec-card-num-cell   { text-align: center; }
+
+/* ── Holiday badge ───────────────────────────────────────────────────────── */
+
+.ec-badge-holiday {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--market-muted, #8d978f);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+/* ── Refresh button ──────────────────────────────────────────────────────── */
+
+.ec-btn-refresh {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--market-soft, #c9d2ca);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+  margin-inline-start: auto;
+}
+
+.ec-btn-refresh:hover:not(:disabled),
+.ec-btn-refresh:focus-visible {
+  background: rgba(216, 177, 90, 0.11);
+  border-color: rgba(216, 177, 90, 0.38);
+  color: var(--market-gold, #d8b15a);
+  outline: none;
+}
+
+.ec-btn-refresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Date group headers (week view) ──────────────────────────────────────── */
+
+.ec-date-group-row { pointer-events: none; }
+
+.ec-date-group-cell {
+  padding: 0.55rem 0.85rem 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--market-gold, #d8b15a);
+  background: rgba(216, 177, 90, 0.04);
+  border-bottom: 1px solid rgba(216, 177, 90, 0.14);
+}
+
+.ec-date-group-header {
+  padding: 0.5rem 0.9rem 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--market-gold, #d8b15a);
+  border-bottom: 1px solid rgba(216, 177, 90, 0.14);
+  margin-top: 0.4rem;
+}
+
+/* ── Intelligence detail panel ───────────────────────────────────────────── */
+
+.ec-detail-intelligence {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 0.55rem;
+  margin-top: 0.2rem;
+}
+
+.ec-detail-intelligence dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.35rem 1.2rem;
+}
+
+.ec-surprise-hot    { color: var(--market-red,   #ff7878); font-weight: 600; }
+.ec-surprise-soft   { color: var(--market-green, #7dff8c); font-weight: 600; }
+.ec-surprise-inline { color: var(--market-soft,  #c9d2ca); }
+
+/* ── Empty state hint ────────────────────────────────────────────────────── */
+
+.ec-empty-hint {
+  font-size: 0.79rem;
+  color: var(--market-muted, #8d978f);
+  margin-top: 0.35rem;
+}
+
+/* ── Calendar loading paragraph ──────────────────────────────────────────── */
+
+.calendar-loading {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--market-muted, #8d978f);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
+/* ── Mobile additions ────────────────────────────────────────────────────── */
+
+@media (max-width: 639px) {
+  .ec-date-group-header { margin-top: 0.6rem; }
+  .ec-btn-refresh       { margin-inline-start: 0; }
+}

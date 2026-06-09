@@ -65,9 +65,15 @@ if (!fs.existsSync(CALENDAR_PATH)) {
   }
 
   if (cal) {
-    if (cal.version !== '2.0') warnings.push(`data/economic-calendar.json: expected version 2.0, found ${cal.version}`);
+    if (cal.version !== '2.0' && cal.schema_version !== '2.0' && cal.schema_version !== '2.1') {
+      warnings.push(`data/economic-calendar.json: expected schema_version 2.0 or 2.1, found ${cal.version || cal.schema_version}`);
+    }
     if (cal.source === undefined || cal.source === null) warnings.push('data/economic-calendar.json: missing source field');
     if (cal.provider_metadata !== undefined && typeof cal.provider_metadata !== 'object') failures.push('data/economic-calendar.json: provider_metadata must be an object');
+    // Schema 2.1: providers map
+    if ((cal.schema_version === '2.1') && cal.providers !== undefined && typeof cal.providers !== 'object') {
+      failures.push('data/economic-calendar.json: schema 2.1 providers field must be an object');
+    }
 
     if (!cal.updated_at) {
       warnings.push('data/economic-calendar.json: updated_at is null — calendar has never been fetched');
@@ -183,7 +189,20 @@ if (fs.existsSync(sitemapPath)) {
   if (!sitemap.includes('/ar/economic-calendar/')) warnings.push('sitemap-core.xml: missing /ar/economic-calendar/ entry');
 }
 
-// ── 6. Serverless endpoint ────────────────────────────────────────────────────
+// ── 6. HTML: new UI elements ──────────────────────────────────────────────────
+for (const [page, file] of [['EN', EN_PAGE], ['AR', AR_PAGE]]) {
+  if (fs.existsSync(file)) {
+    const html = fs.readFileSync(file, 'utf8');
+    if (!html.includes('id="ec-next-week"'))
+      warnings.push(`${page} page: missing id="ec-next-week" — Next Week button not present`);
+    if (!html.includes('id="ec-refresh"'))
+      warnings.push(`${page} page: missing id="ec-refresh" — Refresh button not present`);
+    if (!html.includes('value="holiday"'))
+      warnings.push(`${page} page: holiday option missing from impact filter`);
+  }
+}
+
+// ── 7. Serverless endpoint ────────────────────────────────────────────────────
 const FUNCTION_PATH = path.join(ROOT, 'netlify', 'functions', 'economic-calendar.js');
 if (!fs.existsSync(FUNCTION_PATH)) {
   failures.push('netlify/functions/economic-calendar.js does not exist — serverless endpoint missing');
@@ -207,6 +226,20 @@ if (fs.existsSync(FRONTEND_JS)) {
       break;
     }
   }
+}
+
+// ── 8. Logic tests ────────────────────────────────────────────────────────────
+const TEST_PATH = path.join(ROOT, 'tools', 'test-economic-calendar-logic.js');
+if (fs.existsSync(TEST_PATH)) {
+  const { execSync } = require('child_process');
+  try {
+    execSync(`node "${TEST_PATH}"`, { stdio: ['ignore', 'inherit', 'inherit'] });
+    console.log('[calendar] logic tests: passed');
+  } catch (_) {
+    failures.push('tools/test-economic-calendar-logic.js: logic tests failed — run manually for details');
+  }
+} else {
+  warnings.push('tools/test-economic-calendar-logic.js does not exist — logic tests missing');
 }
 
 // ── Report ────────────────────────────────────────────────────────────────────
