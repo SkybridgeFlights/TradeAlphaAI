@@ -25,7 +25,7 @@
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
       allImpact: 'كل التأثيرات', allCountries: 'كل الدول', search: 'ابحث عن أحداث…',
-      colTime: 'الوقت (محلي)', colCountry: 'الدولة', colEvent: 'الحدث',
+      colTime: 'الوقت المحلي', colCountry: 'الدولة / العملة', colEvent: 'الحدث',
       colImpact: 'التأثير', colActual: 'الفعلي', colForecast: 'التوقع', colPrevious: 'السابق',
       noEvents: 'لا توجد أحداث لهذه الفترة.',
       noEventsHint: 'جرّب نطاقاً زمنياً مختلفاً أو تحقق من حالة المزود.',
@@ -146,10 +146,10 @@
 
   function numVal(n, unit) {
     if (n === null || n === undefined || n === '') return '—';
-    return esc(String(n)) + (unit ? ' ' + esc(unit) : '');
+    return esc(String(n)) + (unit ? ' ' + esc(unit) : '');
   }
 
-  // ── Country / currency / flag ─────────────────────────────────────────────
+  // ── Country / currency ────────────────────────────────────────────────────
   var FLAG = { US: '🇺🇸', EU: '🇪🇺', GB: '🇬🇧',
                JP: '🇯🇵', CN: '🇨🇳', DE: '🇩🇪',
                FR: '🇫🇷', CA: '🇨🇦', AU: '🇦🇺',
@@ -159,9 +159,48 @@
 
   function countryCurrency(country) {
     var c   = String(country || '').toUpperCase();
-    var ccy = CCY[c] ? c + '·' + CCY[c] : (c || '—');
-    var flag = FLAG[c] || '';
-    return flag ? flag + ' ' + ccy : ccy;
+    var ccy = CCY[c];
+    return ccy ? c + ' · ' + ccy : (c || '—');
+  }
+
+  // ── Arabic event name translations ────────────────────────────────────────
+  var AR_EVENTS = [
+    { p: /\bunemployment\s+rate\b/i,               ar: 'معدل البطالة' },
+    { p: /\binflation\s+rate\s+mom\b/i,            ar: 'معدل التضخم الشهري' },
+    { p: /\binflation\s+rate\s+yoy\b/i,            ar: 'معدل التضخم السنوي' },
+    { p: /\binflation\s+rate\b/i,                  ar: 'معدل التضخم' },
+    { p: /\bconsumer\s+confidence\b/i,             ar: 'ثقة المستهلك' },
+    { p: /\bbusiness\s+confidence\b/i,             ar: 'ثقة الأعمال' },
+    { p: /\bconstruction\s+pmi\b/i,                ar: 'مؤشر مديري مشتريات البناء' },
+    { p: /\bservices?\s+pmi\b/i,                   ar: 'مؤشر مديري مشتريات الخدمات' },
+    { p: /\bmanufacturing\s+pmi\b/i,               ar: 'مؤشر مديري مشتريات التصنيع' },
+    { p: /\bbalance\s+of\s+trade\b/i,              ar: 'الميزان التجاري' },
+    { p: /\btrade\s+balance\b/i,                   ar: 'الميزان التجاري' },
+    { p: /\bexports?\b/i,                          ar: 'الصادرات' },
+    { p: /\bimports?\b/i,                          ar: 'الواردات' },
+    { p: /\bexisting\s+home\s+sales\b/i,           ar: 'مبيعات المنازل القائمة' },
+    { p: /\bfed\s+(?:chair(?:man)?)\s+speech\b/i, ar: 'خطاب رئيس الاحتياطي الفيدرالي' },
+    { p: /\bfed\s+speech\b/i,                      ar: 'خطاب الاحتياطي الفيدرالي' },
+    { p: /\binitial\s+jobless\s+claims\b/i,        ar: 'طلبات إعانة البطالة الأولية' },
+    { p: /\bjobless\s+claims\b/i,                  ar: 'طلبات إعانة البطالة' },
+    { p: /\bcore\s+cpi\b/i,                        ar: 'مؤشر أسعار المستهلك الأساسي' },
+    { p: /\bcpi\b/i,                               ar: 'مؤشر أسعار المستهلك' },
+    { p: /\bgdp\b/i,                               ar: 'الناتج المحلي الإجمالي' },
+    { p: /\bretail\s+sales\b/i,                    ar: 'مبيعات التجزئة' },
+    { p: /\bcore\s+pce\b/i,                        ar: 'نفقات الاستهلاك الشخصي الأساسية' },
+    { p: /\bpce\b/i,                               ar: 'نفقات الاستهلاك الشخصي' },
+    { p: /\binterest\s+rate\s+decision\b/i,        ar: 'قرار أسعار الفائدة' },
+    { p: /\bfomc\b/i,                              ar: 'لجنة السوق المفتوحة الفيدرالية' },
+    { p: /\bnonfarm\s+payrolls?\b/i,               ar: 'الرواتب غير الزراعية' },
+  ];
+
+  function translateEventName(name, locale) {
+    if (locale !== 'ar') return name;
+    var s = String(name || '');
+    for (var i = 0; i < AR_EVENTS.length; i++) {
+      if (AR_EVENTS[i].p.test(s)) return AR_EVENTS[i].ar;
+    }
+    return s;
   }
 
   // ── Filtering ─────────────────────────────────────────────────────────────
@@ -305,17 +344,20 @@
           else if (dir === 'softer_or_weaker' || sur.direction === 'below') actualCls += ' ec-val-soft';
           else actualCls += ' ec-val-set';
         }
+        var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
+        var evtSub    = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
+        var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + '</td>';
+        var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
+        var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
+        var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
+        var tdActual  = '<td class="' + actualCls + '">' + numVal(e.actual,   e.unit) + '</td>';
+        var tdFcast   = '<td class="ec-col-num">'         + numVal(e.forecast, e.unit) + '</td>';
+        var tdPrev    = '<td class="ec-col-num">'         + numVal(e.previous, e.unit) + '</td>';
+        var cells     = isRTL
+          ? tdPrev + tdFcast + tdActual + tdImpact + tdEvent + tdCountry + tdTime
+          : tdTime + tdCountry + tdEvent + tdImpact + tdActual + tdFcast + tdPrev;
         tbody += '<tr class="ec-row" data-ec-i="' + rowIdx + '" tabindex="0" role="button" aria-expanded="false">' +
-          '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + '</td>' +
-          '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>' +
-          '<td class="ec-col-event"><strong>' + esc(e.event_name || '—') + '</strong>' +
-            (e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '') +
-          '</td>' +
-          '<td>' + badgeHtml(e.importance) + '</td>' +
-          '<td class="' + actualCls + '">' + numVal(e.actual,   e.unit) + '</td>' +
-          '<td class="ec-col-num">'         + numVal(e.forecast, e.unit) + '</td>' +
-          '<td class="ec-col-num">'         + numVal(e.previous, e.unit) + '</td>' +
-          '</tr>';
+          cells + '</tr>';
         rowIdx++;
       });
     });
@@ -344,7 +386,7 @@
         parts.push(
           '<div class="ec-card" data-ec-i="' + cardIdx + '" tabindex="0" role="button" aria-expanded="false">' +
           '<div class="ec-card-header">' +
-            '<div class="ec-card-event"><strong>' + esc(e.event_name || '—') + '</strong>' +
+            '<div class="ec-card-event"><strong>' + esc(translateEventName(e.event_name || '—', lang)) + '</strong>' +
               '<small>' + esc(countryCurrency(e.country)) + '</small></div>' +
             badgeHtml(e.importance) +
           '</div>' +
@@ -468,7 +510,7 @@
     }
 
     var countText = (eventCount !== undefined)
-      ? ' \xB7 ' + eventCount + ' ' + L.labelEvents
+      ? ' \xB7 ' + eventCount + ' ' + L.labelEvents
       : '';
 
     elStatus.textContent = L.labelSrc + ': ' + srcLabel + updLabel + provText + countText;
