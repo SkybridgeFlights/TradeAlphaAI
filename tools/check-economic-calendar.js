@@ -203,22 +203,36 @@ for (const [page, file] of [['EN', EN_PAGE], ['AR', AR_PAGE]]) {
 }
 
 // ── 7. Serverless endpoint ────────────────────────────────────────────────────
-const FUNCTION_PATH = path.join(ROOT, 'netlify', 'functions', 'economic-calendar.js');
-if (!fs.existsSync(FUNCTION_PATH)) {
-  failures.push('netlify/functions/economic-calendar.js does not exist — serverless endpoint missing');
+// Vercel is primary hosting — api/economic-calendar.js is required (FAIL)
+const VERCEL_FN_PATH  = path.join(ROOT, 'api', 'economic-calendar.js');
+const NETLIFY_FN_PATH = path.join(ROOT, 'netlify', 'functions', 'economic-calendar.js');
+
+if (!fs.existsSync(VERCEL_FN_PATH)) {
+  failures.push('api/economic-calendar.js does not exist — Vercel primary endpoint missing');
 } else {
-  const fnSrc = fs.readFileSync(FUNCTION_PATH, 'utf8');
-  if (!/exports\.handler/.test(fnSrc))
-    failures.push('netlify/functions/economic-calendar.js: missing exports.handler — not a valid Netlify function');
-  if (!/fmp-provider/.test(fnSrc) && !/finnhub-provider/.test(fnSrc) && !/fred-provider/.test(fnSrc))
-    failures.push('netlify/functions/economic-calendar.js: does not import any provider — endpoint is empty');
+  const vercelSrc = fs.readFileSync(VERCEL_FN_PATH, 'utf8');
+  if (!/module\.exports/.test(vercelSrc))
+    failures.push('api/economic-calendar.js: missing module.exports — not a valid Vercel function');
+  if (!/fmp-provider/.test(vercelSrc) && !/finnhub-provider/.test(vercelSrc) && !/fred-provider/.test(vercelSrc))
+    failures.push('api/economic-calendar.js: does not import any provider — endpoint is empty');
+}
+
+// Netlify function is optional compatibility fallback (WARN only)
+if (!fs.existsSync(NETLIFY_FN_PATH)) {
+  warnings.push('netlify/functions/economic-calendar.js does not exist — Netlify fallback missing (optional)');
+} else {
+  const netlifyFnSrc = fs.readFileSync(NETLIFY_FN_PATH, 'utf8');
+  if (!/exports\.handler/.test(netlifyFnSrc))
+    warnings.push('netlify/functions/economic-calendar.js: missing exports.handler — not a valid Netlify function (optional)');
 }
 
 const FRONTEND_JS = path.join(ROOT, 'js', 'economic-calendar.js');
 if (fs.existsSync(FRONTEND_JS)) {
   const jsSrc = fs.readFileSync(FRONTEND_JS, 'utf8');
+  if (!jsSrc.includes('/api/economic-calendar'))
+    failures.push('js/economic-calendar.js: does not reference /api/economic-calendar — Vercel primary endpoint missing from frontend');
   if (!jsSrc.includes('/.netlify/functions/economic-calendar'))
-    failures.push('js/economic-calendar.js: does not reference /.netlify/functions/economic-calendar live endpoint');
+    warnings.push('js/economic-calendar.js: does not reference /.netlify/functions/economic-calendar — Netlify fallback missing from frontend (optional)');
   const secretPatterns = [/_API_KEY\s*=/, /FINNHUB_API_KEY/, /FMP_API_KEY/, /FRED_API_KEY/, /OPENAI_API_KEY/];
   for (const pattern of secretPatterns) {
     if (pattern.test(jsSrc)) {

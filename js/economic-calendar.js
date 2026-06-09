@@ -535,7 +535,7 @@
     });
   }
 
-  function liveUrl() {
+  function endpointQuery() {
     var from, to;
     if (viewMode === 'week') {
       from = weekStart(selectedDate);
@@ -544,7 +544,7 @@
       from = addDays(selectedDate, -1);
       to   = addDays(selectedDate, 7);
     }
-    return '/.netlify/functions/economic-calendar?from=' + from + '&to=' + to;
+    return '?from=' + from + '&to=' + to;
   }
 
   // ── Load data ─────────────────────────────────────────────────────────────
@@ -554,8 +554,10 @@
     elTableWrap.innerHTML = '<p class="calendar-loading">' + esc(L.loading) + '</p>';
     if (elRefresh) { elRefresh.disabled = true; elRefresh.setAttribute('aria-busy', 'true'); }
 
+    var qs = endpointQuery();
     var usedFallback = false;
-    fetchJson(liveUrl())
+    fetchJson('/api/economic-calendar' + qs)
+      .catch(function () { return fetchJson('/.netlify/functions/economic-calendar' + qs); })
       .catch(function () {
         usedFallback = true;
         return fetchJson('/data/economic-calendar.json');
