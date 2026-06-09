@@ -147,6 +147,10 @@ jobs:
 
       - name: Fetch economic calendar data
         continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: |
           node tools/fetch-economic-calendar.js --write || {
             echo "[calendar] fetch failed — preflight will validate against existing cache"
@@ -179,6 +183,10 @@ jobs:
 
       - name: Fetch live economic calendar
         continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: |
           node tools/fetch-economic-calendar.js --write || {
             echo "[calendar] provider unavailable — retaining existing calendar data"

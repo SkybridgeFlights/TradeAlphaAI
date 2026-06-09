@@ -7,7 +7,11 @@ const ENDPOINT = 'https://financialmodelingprep.com/stable/economic-calendar';
 const SOURCE_URL = 'https://site.financialmodelingprep.com/developer/docs/stable/economics-calendar';
 
 async function fetchCalendar(context) {
-  const apiKey = String(context.env.FMP_API_KEY || '').trim();
+  const apiKey = String(
+    context.env.FMP_API_KEY ||
+    context.env.FINANCIAL_MODELING_PREP_API_KEY ||
+    ''
+  ).trim();
   if (!apiKey) throw providerError('missing_api_key');
   const url = `${ENDPOINT}?from=${context.from}&to=${context.to}&apikey=${encodeURIComponent(apiKey)}`;
   console.log(`[FMP_PROVIDER] endpoint=${ENDPOINT} range=${context.from}..${context.to}`);

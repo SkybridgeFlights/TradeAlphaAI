@@ -18,6 +18,21 @@ async function fetchEconomicCalendar(options = {}) {
     env: options.env || process.env
   };
   const attempts = [];
+
+  // Key-presence diagnostics — never log values
+  const keyChecks = [
+    ['FMP_API_KEY', 'FINANCIAL_MODELING_PREP_API_KEY'],
+    ['FINNHUB_API_KEY'],
+    ['FRED_API_KEY'],
+  ];
+  for (const [primary, alias] of keyChecks) {
+    const present = !!(
+      String(context.env[primary] || '').trim() ||
+      (alias && String(context.env[alias] || '').trim())
+    );
+    console.log(`[calendar-env] ${primary}=${present ? 'present' : 'missing'}`);
+  }
+
   console.log(`[PROVIDER_ROUTER] starting priority=fmp>finnhub>fred range=${context.from}..${context.to}`);
 
   for (const provider of PROVIDERS) {
