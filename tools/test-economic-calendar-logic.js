@@ -396,6 +396,182 @@ cloned.push({ event_name: 'Extra' });
 expect('clone mutation does not affect original', original.length, 2);
 expect('cloned array is independent',             cloned.length,   3);
 
+// ── Provider completeness scoring ─────────────────────────────────────────────
+console.log('[logic] completeness scoring');
+function countWith(events, field) {
+  return events.filter(function (e) { return e[field] !== null && e[field] !== undefined; }).length;
+}
+function completenessScore(events) {
+  if (!events.length) return 0;
+  return Math.round((countWith(events, 'actual') + countWith(events, 'forecast') + countWith(events, 'previous')) / (events.length * 3) * 100);
+}
+var richEvents = [
+  { actual: 3.2, forecast: 3.0, previous: 3.1 },
+  { actual: 2.8, forecast: 2.9, previous: 2.7 },
+];
+var sparseEvents = [
+  { actual: null, forecast: 3.0, previous: null },
+  { actual: null, forecast: null, previous: null },
+];
+var emptyEvents = [];
+expect('fully populated → 100%',     completenessScore(richEvents),   100);
+expect('sparse → partial score',     completenessScore(sparseEvents),  17); // 1 of 6 fields = 16.7 → 17
+expect('empty pool → 0',             completenessScore(emptyEvents),    0);
+expect('countWith actual, 1 of 2',   countWith(sparseEvents, 'actual'), 0);
+expect('countWith forecast, 1 of 2', countWith(sparseEvents, 'forecast'), 1);
+
+// ── Richness-based merge preference ──────────────────────────────────────────
+console.log('[logic] richness-based merge preference');
+function richness(e) {
+  return (e.actual   !== null && e.actual   !== undefined ? 2 : 0)
+       + (e.forecast !== null && e.forecast !== undefined ? 2 : 0)
+       + (e.previous !== null && e.previous !== undefined ? 1 : 0);
+}
+var MERGE_RANK = { te: 0, fmp: 1, finnhub: 2, fred: 3 };
+function simulateMergeGroup(group) {
+  if (group.length === 1) return group[0];
+  var sorted = group.slice().sort(function (a, b) {
+    var rankA = MERGE_RANK[a.provider] !== undefined ? MERGE_RANK[a.provider] : 9;
+    var rankB = MERGE_RANK[b.provider] !== undefined ? MERGE_RANK[b.provider] : 9;
+    if (rankA !== rankB) return rankA - rankB;
+    return richness(b) - richness(a);
+  });
+  var base = Object.assign({}, sorted[0]);
+  for (var i = 1; i < sorted.length; i++) {
+    var other = sorted[i];
+    if (other.provider === 'fred') continue; // FRED is schedule-only
+    if (base.actual   === null && other.actual   !== null) base.actual   = other.actual;
+    if (base.forecast === null && other.forecast !== null) base.forecast = other.forecast;
+    if (base.previous === null && other.previous !== null) base.previous = other.previous;
+  }
+  return base;
+}
+// FMP has actual=null; Finnhub has actual=3.2 → Finnhub's value should fill in
+var fmpRecord     = { provider: 'fmp',     actual: null, forecast: 3.0, previous: 3.1 };
+var finnhubRecord = { provider: 'finnhub', actual: 3.2,  forecast: null, previous: null };
+var merged = simulateMergeGroup([fmpRecord, finnhubRecord]);
+expect('merged base is FMP (higher rank)',        merged.provider,  'fmp');
+expect('FMP actual=null filled from Finnhub',     merged.actual,    3.2);
+expect('FMP forecast kept (not overwritten)',      merged.forecast,  3.0);
+expect('FMP previous kept',                       merged.previous,  3.1);
+
+// TE should win as base over FMP (rank 0 vs 1)
+var teRecord  = { provider: 'te',  actual: 3.3, forecast: 3.1, previous: 3.0 };
+var fmpRecord2 = { provider: 'fmp', actual: null, forecast: 3.0, previous: 3.1 };
+var merged2 = simulateMergeGroup([fmpRecord2, teRecord]);
+expect('TE is base (rank 0 < fmp rank 1)', merged2.provider, 'te');
+expect('TE actual kept',                   merged2.actual,   3.3);
+
+// Within same rank, richer record wins as base
+var fmpRich  = { provider: 'fmp', actual: 3.2, forecast: 3.0, previous: 3.1 };
+var fmpPoor  = { provider: 'fmp', actual: null, forecast: null, previous: null };
+var merged3  = simulateMergeGroup([fmpPoor, fmpRich]);
+// fmpPoor is first in the array, but fmpRich is richer → fmpRich should be base
+expect('richer FMP record wins as base (same rank)',  merged3.actual,   3.2);
+
+// ── FRED cannot overwrite FMP/Finnhub actual/forecast/previous ────────────────
+console.log('[logic] FRED schedule-only guard');
+var fredRecord  = { provider: 'fred',    actual: null, forecast: null, previous: null };
+var fmpRich2    = { provider: 'fmp',     actual: 3.5,  forecast: 3.3,  previous: 3.2 };
+var mergedFred  = simulateMergeGroup([fmpRich2, fredRecord]);
+expect('FRED does not overwrite FMP actual',    mergedFred.actual,   3.5);
+expect('FRED does not overwrite FMP forecast',  mergedFred.forecast, 3.3);
+expect('FRED does not overwrite FMP previous',  mergedFred.previous, 3.2);
+// Even if FRED hypothetically had values (defensive guard test)
+var fredFake    = { provider: 'fred', actual: 99, forecast: 99, previous: 99 };
+var fmpLow      = { provider: 'fmp',  actual: null, forecast: null, previous: null };
+var mergedFake  = simulateMergeGroup([fmpLow, fredFake]);
+expect('FRED hypothetical values blocked from filling FMP nulls', mergedFake.actual, null);
+
+// ── Refresh interval selection ────────────────────────────────────────────────
+console.log('[logic] adaptive refresh interval');
+var REFRESH_NORMAL_MS  = 5 * 60 * 1000;
+var REFRESH_ACTIVE_MS  = 30 * 1000;
+var REFRESH_WINDOW_MS  = 30 * 60 * 1000;
+function simulateGetRefreshInterval(events, now) {
+  var hasHighImpactSoon = events.some(function (e) {
+    if (e.importance !== 'high') return false;
+    var t = Date.parse(e.event_time);
+    if (isNaN(t)) return false;
+    var diff = t - now;
+    return diff > -REFRESH_WINDOW_MS && diff < REFRESH_WINDOW_MS;
+  });
+  return hasHighImpactSoon ? REFRESH_ACTIVE_MS : REFRESH_NORMAL_MS;
+}
+var now = Date.now();
+var highSoon    = { importance: 'high',   event_time: new Date(now + 10 * 60 * 1000).toISOString() }; // +10 min
+var highFar     = { importance: 'high',   event_time: new Date(now + 60 * 60 * 1000).toISOString() }; // +60 min
+var mediumSoon  = { importance: 'medium', event_time: new Date(now + 10 * 60 * 1000).toISOString() }; // +10 min (medium)
+var highRecent  = { importance: 'high',   event_time: new Date(now - 10 * 60 * 1000).toISOString() }; // -10 min
+var highOld     = { importance: 'high',   event_time: new Date(now - 60 * 60 * 1000).toISOString() }; // -60 min
+expect('high event +10min → 30s interval',  simulateGetRefreshInterval([highSoon],   now), REFRESH_ACTIVE_MS);
+expect('high event +60min → 5min interval', simulateGetRefreshInterval([highFar],    now), REFRESH_NORMAL_MS);
+expect('medium event +10min → 5min',        simulateGetRefreshInterval([mediumSoon], now), REFRESH_NORMAL_MS);
+expect('high event -10min → 30s (releasing)', simulateGetRefreshInterval([highRecent], now), REFRESH_ACTIVE_MS);
+expect('high event -60min → 5min (old)',    simulateGetRefreshInterval([highOld],    now), REFRESH_NORMAL_MS);
+expect('no events → 5min interval',         simulateGetRefreshInterval([],           now), REFRESH_NORMAL_MS);
+
+// ── Document hidden pause simulation ─────────────────────────────────────────
+console.log('[logic] visibility-based pause simulation');
+(function () {
+  var timerActive = true;
+  function clearTimer() { timerActive = false; }
+  function scheduleRefresh(isHidden, events, now) {
+    if (isHidden) { clearTimer(); return 'paused'; }
+    var interval = simulateGetRefreshInterval(events, now);
+    return 'scheduled-' + (interval === REFRESH_ACTIVE_MS ? '30s' : '5min');
+  }
+  expect('hidden=true → paused',      scheduleRefresh(true,  [], now),           'paused');
+  expect('hidden=false → 5min',       scheduleRefresh(false, [], now),            'scheduled-5min');
+  expect('hidden=false high soon → 30s', scheduleRefresh(false, [highSoon], now), 'scheduled-30s');
+  expect('timer cleared on hidden',   timerActive, false);
+})();
+
+// ── Freshness status logic ────────────────────────────────────────────────────
+console.log('[logic] freshness status');
+function simulateFreshnessStatus(e, nowOverride) {
+  var _now = nowOverride || Date.now();
+  if (!e.event_time || e.importance === 'holiday') return null;
+  var t = Date.parse(e.event_time);
+  if (isNaN(t)) return null;
+  var diff = t - _now;
+  var hasActual = e.actual !== null && e.actual !== undefined;
+  if (hasActual) return 'released';
+  if (diff > 0 && diff <= REFRESH_WINDOW_MS) return 'due-soon';
+  if (diff <= 0 && diff > -REFRESH_WINDOW_MS) return 'releasing';
+  return null;
+}
+var testNow  = Date.now();
+var evtReleased  = { event_time: new Date(testNow - 5 * 60000).toISOString(), actual: 3.2,  importance: 'high' };
+var evtDueSoon   = { event_time: new Date(testNow + 15 * 60000).toISOString(), actual: null, importance: 'high' };
+var evtReleasing = { event_time: new Date(testNow - 5 * 60000).toISOString(),  actual: null, importance: 'high' };
+var evtUpcoming  = { event_time: new Date(testNow + 2 * 60 * 60000).toISOString(), actual: null, importance: 'medium' };
+var evtHoliday   = { event_time: new Date(testNow + 5 * 60000).toISOString(), actual: null, importance: 'holiday' };
+expect('released event → released',       simulateFreshnessStatus(evtReleased,  testNow), 'released');
+expect('future <30m, no actual → due-soon', simulateFreshnessStatus(evtDueSoon, testNow), 'due-soon');
+expect('past <30m, no actual → releasing',  simulateFreshnessStatus(evtReleasing, testNow), 'releasing');
+expect('future >30m → null (upcoming, no badge)', simulateFreshnessStatus(evtUpcoming, testNow), null);
+expect('holiday → null (no badge)',         simulateFreshnessStatus(evtHoliday, testNow),  null);
+expect('no event_time → null',              simulateFreshnessStatus({ importance: 'high' }, testNow), null);
+
+// ── Trading Economics country mapping ─────────────────────────────────────────
+console.log('[logic] TE country mapping');
+var TE_COUNTRY_MAP = {
+  'United States': 'US', 'Euro Area': 'EU', 'United Kingdom': 'GB',
+  'Japan': 'JP', 'China': 'CN', 'Germany': 'DE', 'France': 'FR',
+  'Canada': 'CA', 'Australia': 'AU', 'New Zealand': 'NZ',
+  'Switzerland': 'CH', 'Italy': 'IT',
+};
+function teCountry(name) {
+  return TE_COUNTRY_MAP[name] || (name ? String(name).slice(0, 2).toUpperCase() : null);
+}
+expect('United States → US',  teCountry('United States'), 'US');
+expect('Euro Area → EU',      teCountry('Euro Area'),     'EU');
+expect('United Kingdom → GB', teCountry('United Kingdom'), 'GB');
+expect('Japan → JP',          teCountry('Japan'),          'JP');
+expect('Unknown → 2-char',    teCountry('Brazil'),         'BR');
+expect('null/empty → null',   teCountry(''),               null);
+
 // ── Report ─────────────────────────────────────────────────────────────────────
 console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
 if (fail > 0) process.exit(1);

@@ -489,6 +489,27 @@ tr.ec-detail-row td {
   border: 1px solid rgba(148, 163, 184, 0.22);
 }
 
+/* ── Freshness badges ────────────────────────────────────────────────────── */
+/* Subtle inline labels: due-soon / releasing / released.                     */
+/* Intentionally smaller and lighter than impact badges.                      */
+
+.ec-freshness {
+  display: inline-block;
+  padding: 0.08rem 0.32rem;
+  border-radius: 3px;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-inline-start: 0.3rem;
+  vertical-align: middle;
+}
+
+.ec-freshness-due-soon  { background: rgba(216,177,90,0.12);  color: var(--market-gold,  #d8b15a); border: 1px solid rgba(216,177,90,0.25);  }
+.ec-freshness-releasing { background: rgba(255,160,80,0.11);  color: #e8a040;                      border: 1px solid rgba(255,160,80,0.24);  }
+.ec-freshness-released  { background: rgba(125,255,140,0.09); color: var(--market-green, #7dff8c); border: 1px solid rgba(125,255,140,0.2); }
+
 /* ── Refresh button ──────────────────────────────────────────────────────── */
 
 .ec-btn-refresh {

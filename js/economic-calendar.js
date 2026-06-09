@@ -22,6 +22,9 @@
       detailSurpriseAbove: 'Above forecast', detailSurpriseBelow: 'Below forecast',
       detailSurpriseInline: 'In line with forecast',
       disclaimer: 'Economic calendar information only. Not financial advice.',
+      dueSoon:   'Due Soon',
+      releasing: 'Releasing',
+      released:  'Released',
     },
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
@@ -42,6 +45,9 @@
       detailSurpriseAbove: 'أعلى من التوقع', detailSurpriseBelow: 'أقل من التوقع',
       detailSurpriseInline: 'مطابق للتوقع',
       disclaimer: 'معلومات التقويم الاقتصادي فقط. لا تمثل نصيحة مالية.',
+      dueSoon:   'قريباً',
+      releasing: 'يُصدر الآن',
+      released:  'صدر',
     }
   };
 
@@ -92,12 +98,14 @@
   var searchText    = '';
 
   // Request lifecycle — latest-request-wins with AbortController
-  var activeController = null; // AbortController for the in-flight fetch
-  var requestSeq       = 0;    // Monotonically increasing; .then() guards against stale responses
+  var activeController = null;
+  var requestSeq       = 0;
 
-  // Periodic refresh (5 min) — resets on every manual navigation
-  var REFRESH_INTERVAL_MS = 5 * 60 * 1000;
-  var refreshTimer        = null;
+  // Refresh intervals
+  var REFRESH_NORMAL_MS = 5 * 60 * 1000; // 5 min  — default background refresh
+  var REFRESH_ACTIVE_MS = 30 * 1000;     // 30 sec — when a high-impact event is imminent
+  var REFRESH_WINDOW_MS = 30 * 60 * 1000; // ±30 min window for "due soon" detection
+  var refreshTimer      = null;
 
   // Enable production diagnostics by appending ?ec_debug to the URL
   var EC_DEBUG = typeof window !== 'undefined' && window.location &&
@@ -106,8 +114,6 @@
   // ── Date utilities ────────────────────────────────────────────────────────
   function todayStr() { return new Date().toISOString().slice(0, 10); }
 
-  // All date arithmetic uses UTC so results are timezone-independent.
-  // T00:00:00 (no Z) + toISOString() causes off-by-one in UTC+ zones.
   function addDays(d, n) {
     var dt = new Date(d + 'T00:00:00Z');
     dt.setUTCDate(dt.getUTCDate() + n);
@@ -122,7 +128,6 @@
 
   function weekEnd(d) { return addDays(weekStart(d), 6); }
 
-  // Robustly extract YYYY-MM-DD from any ISO-like event timestamp.
   function eventDate(e) {
     var raw = String(e.event_time || e.date || '');
     return raw.length >= 10 ? raw.slice(0, 10) : '';
@@ -131,7 +136,7 @@
   function fmtTime(dtStr) {
     if (!dtStr) return '—';
     try {
-      if (/T00:00:00Z$/.test(dtStr)) return '—'; // FRED all-day events
+      if (/T00:00:00Z$/.test(dtStr)) return '—';
       var d = new Date(dtStr);
       if (isNaN(d.valueOf())) return String(dtStr).slice(11, 16);
       return d.toLocaleTimeString(lang === 'ar' ? 'ar-SA' : 'en-US', {
@@ -219,6 +224,29 @@
     return s;
   }
 
+  // ── Freshness status ──────────────────────────────────────────────────────
+  // Returns: 'due-soon' | 'releasing' | 'released' | null
+  // 'upcoming' (far future) intentionally returns null — no badge needed.
+  function freshnessStatus(e) {
+    if (!e.event_time || e.importance === 'holiday') return null;
+    var t = Date.parse(e.event_time);
+    if (isNaN(t)) return null;
+    var diff = t - Date.now(); // positive = future, negative = past
+    var hasActual = e.actual !== null && e.actual !== undefined;
+    if (hasActual) return 'released';
+    if (diff > 0 && diff <= REFRESH_WINDOW_MS) return 'due-soon';
+    if (diff <= 0 && diff > -REFRESH_WINDOW_MS) return 'releasing';
+    return null;
+  }
+
+  function freshnessHtml(e) {
+    var s = freshnessStatus(e);
+    if (!s) return '';
+    var label = L[s === 'due-soon' ? 'dueSoon' : s] || s;
+    return '<span class="ec-freshness ec-freshness-' + s + '" aria-label="' + esc(label) + '">'
+         + esc(label) + '</span>';
+  }
+
   // ── Filtering ─────────────────────────────────────────────────────────────
   function eventsForPeriod() {
     var from, to;
@@ -282,7 +310,6 @@
       if (desc.why)  html += '<dt>' + esc(L.detailWhy)  + '</dt><dd>' + esc(desc.why)  + '</dd>';
       var sur         = intel.surprise;
       var hasForecast = e.forecast !== null && e.forecast !== undefined;
-      // Only show surprise when actual released AND forecast was available to compare against
       if (sur && sur.available && hasForecast && sur.direction !== 'unknown') {
         var sLabel = sur.direction === 'above' ? L.detailSurpriseAbove
                    : sur.direction === 'below' ? L.detailSurpriseBelow
@@ -308,13 +335,11 @@
       var tags = assets.map(function (a) {
         return '<span class="ec-asset-tag">' + esc(a) + '</span>';
       }).join('');
-
       var isHoliday = e.importance === 'holiday';
       var html = '<dt>' + esc(L.detailCountry)  + '</dt><dd>' + esc(countryCurrency(e.country)) + '</dd>';
       html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
       html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
       html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.previous, e.unit)) + '</dd>';
-
       var out = '<dl>' + html + '</dl>';
       out += intelligenceHtml(e);
       if (tags && !isHoliday) {
@@ -329,9 +354,6 @@
   }
 
   // ── Date grouping ─────────────────────────────────────────────────────────
-  // Events with no parseable date are placed in an 'unknown' bucket so they
-  // never silently disappear. (eventsForPeriod already excludes them, but this
-  // guards against any future caller.)
   function groupByDate(events) {
     var groups  = [];
     var lastKey = null;
@@ -339,10 +361,7 @@
       var e = events[i];
       var d;
       try { d = eventDate(e) || 'unknown'; } catch (_) { d = 'unknown'; }
-      if (d !== lastKey) {
-        groups.push({ date: d, events: [] });
-        lastKey = d;
-      }
+      if (d !== lastKey) { groups.push({ date: d, events: [] }); lastKey = d; }
       groups[groups.length - 1].events.push(e);
     }
     return groups;
@@ -367,7 +386,6 @@
     var tbody       = '';
     var rowIdx      = 0;
     var rowsSkipped = 0;
-    // Safe clone of events for grouping — prevents mutation side-effects
     var groups = viewMode === 'week' ? groupByDate(events.slice()) : [{ date: null, events: events.slice() }];
 
     groups.forEach(function (group) {
@@ -376,7 +394,6 @@
               +  esc(fmtDateGroupLabel(group.date)) + '</td></tr>';
       }
       group.events.forEach(function (e) {
-        // Per-row try/catch: one bad event skips that row, rest of table is unaffected
         try {
           var intel       = e.intelligence || {};
           var sur         = intel.surprise  || {};
@@ -384,7 +401,6 @@
           var released    = !isHoliday && e.actual   !== null && e.actual   !== undefined;
           var hasForecast = !isHoliday && e.forecast !== null && e.forecast !== undefined;
 
-          // Surprise coloring only when actual AND forecast are both available
           var actualCls = 'ec-col-num';
           if (released && hasForecast) {
             var dir = e.surprise_direction || (sur.direction === 'above' ? 'hotter_or_stronger'
@@ -402,7 +418,8 @@
 
           var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
           var evtSub    = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
-          var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + '</td>';
+          // Freshness badge in time cell
+          var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + freshnessHtml(e) + '</td>';
           var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
           var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
           var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
@@ -427,17 +444,17 @@
     }
 
     return {
-      html: '<table class="ec-table"><thead><tr>' + ths + '</tr></thead><tbody>' + tbody + '</tbody></table>',
-      cols:         cols,
-      rendered:     rowIdx,
-      skipped:      rowsSkipped,
-      groupCount:   groups.length,
+      html:       '<table class="ec-table"><thead><tr>' + ths + '</tr></thead><tbody>' + tbody + '</tbody></table>',
+      cols:       cols,
+      rendered:   rowIdx,
+      skipped:    rowsSkipped,
+      groupCount: groups.length,
     };
   }
 
   // ── Card build (mobile) ───────────────────────────────────────────────────
   function buildCards(events) {
-    var parts       = [];
+    var parts        = [];
     var cardsSkipped = 0;
     var groups = viewMode === 'week' ? groupByDate(events.slice()) : [{ date: null, events: events.slice() }];
     var cardIdx = 0;
@@ -464,7 +481,8 @@
                 '<small>' + esc(countryCurrency(e.country)) + '</small></div>' +
               badgeHtml(e.importance) +
             '</div>' +
-            '<div class="ec-card-time">' + esc(fmtTime(e.event_time)) + '</div>' +
+            // Freshness badge in time row
+            '<div class="ec-card-time">' + esc(fmtTime(e.event_time)) + freshnessHtml(e) + '</div>' +
             '<div class="ec-card-nums">' +
               '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colActual)   + '</span><span class="ec-card-num-val">' + dispActual   + '</span></div>' +
               '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colForecast) + '</span><span class="ec-card-num-val">' + dispForecast + '</span></div>' +
@@ -511,28 +529,26 @@
         '<p class="ec-empty-hint">' + esc(L.noEventsHint) + '</p>' +
         '</div>';
       if (EC_DEBUG) {
-        console.log('[ec] render — empty state | fetched:', allEvents.length,
+        console.log('[ec] render — empty | fetched:', allEvents.length,
                     'filtered:', events.length, 'mode:', viewMode, 'date:', selectedDate);
       }
       return;
     }
 
-    // Outer try/catch: if build functions throw, fall back to empty-state rather than leaving a blank wrapper
     var tbl, cardsHtml;
     try {
       tbl = buildTable(events);
     } catch (tblErr) {
-      if (EC_DEBUG) console.error('[ec] buildTable fatal error:', tblErr);
+      if (EC_DEBUG) console.error('[ec] buildTable fatal:', tblErr);
       tbl = { html: '', cols: 7, rendered: 0, skipped: events.length, groupCount: 0 };
     }
     try {
       cardsHtml = buildCards(events);
     } catch (cardErr) {
-      if (EC_DEBUG) console.error('[ec] buildCards fatal error:', cardErr);
+      if (EC_DEBUG) console.error('[ec] buildCards fatal:', cardErr);
       cardsHtml = '<div class="ec-cards"></div>';
     }
 
-    // Both table and cards are empty only when every event was malformed
     if (!tbl.html && cardsHtml === '<div class="ec-cards"></div>') {
       elTableWrap.innerHTML =
         '<div class="ec-empty-state"><strong>' + esc(label) + '</strong>' +
@@ -578,8 +594,8 @@
 
   function toggleRow(row, cols, events) {
     try {
-      var idx      = Number(row.getAttribute('data-ec-i'));
-      var e        = events[idx];
+      var idx  = Number(row.getAttribute('data-ec-i'));
+      var e    = events[idx];
       if (!e) return;
       var expanded = row.classList.contains('ec-row-expanded');
       var next     = row.nextElementSibling;
@@ -606,13 +622,13 @@
     if (!elStatus) return;
     var src    = calMeta.source || calMeta.provider || '';
     var upd    = calMeta.updated_at || '';
-    var isLive = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred');
+    var isLive = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred' || src === 'te');
     var cls    = isLive ? 'ec-status-live' : src === 'cache' ? 'ec-status-cache' : 'ec-status-degraded';
     elStatus.className = 'ec-status-bar ' + cls;
 
-    var srcLabel = src === 'degraded'   ? L.srcDegraded
-                 : src === 'cache'       ? L.srcCache
-                 : isLive                ? (L.srcLive + (src !== 'live' ? ' (' + src + ')' : ''))
+    var srcLabel = src === 'degraded' ? L.srcDegraded
+                 : src === 'cache'    ? L.srcCache
+                 : isLive             ? (L.srcLive + (src !== 'live' ? ' (' + src + ')' : ''))
                  : L.srcCache;
 
     var updLabel = upd ? ' \xB7 ' + L.labelUpdated + ': ' + new Date(upd).toLocaleString(
@@ -622,7 +638,6 @@
     var provText = '';
     if (calMeta.providers && typeof calMeta.providers === 'object') {
       var okProviders = Object.keys(calMeta.providers).filter(function (k) {
-        // Null-safe: provider entry might be null if provider config is incomplete
         return calMeta.providers[k] && calMeta.providers[k].status === 'ok';
       });
       if (okProviders.length) provText = ' \xB7 ' + okProviders.join('+');
@@ -660,12 +675,36 @@
   }
 
   // ── Refresh lifecycle ─────────────────────────────────────────────────────
+  // Adaptive interval: 30 sec when a high-impact event is within ±30 min of now;
+  // 5 min otherwise. Pauses when document is hidden; resumes on visibility.
+  function getRefreshInterval() {
+    var now  = Date.now();
+    var from, to;
+    if (viewMode === 'week') { from = weekStart(selectedDate); to = weekEnd(selectedDate); }
+    else { from = to = selectedDate; }
+    var hasHighImpactSoon = allEvents.some(function (e) {
+      if (e.importance !== 'high') return false;
+      var d = eventDate(e);
+      if (!d || d < from || d > to) return false;
+      var t = Date.parse(e.event_time);
+      if (isNaN(t)) return false;
+      var diff = t - now;
+      return diff > -REFRESH_WINDOW_MS && diff < REFRESH_WINDOW_MS;
+    });
+    return hasHighImpactSoon ? REFRESH_ACTIVE_MS : REFRESH_NORMAL_MS;
+  }
+
   function scheduleRefresh() {
     if (refreshTimer) clearTimeout(refreshTimer);
+    if (typeof document !== 'undefined' && document.hidden) return; // paused while hidden
+    var interval = getRefreshInterval();
     refreshTimer = setTimeout(function () {
       refreshTimer = null;
       load();
-    }, REFRESH_INTERVAL_MS);
+    }, interval);
+    if (EC_DEBUG) {
+      console.log('[ec] scheduleRefresh — next in', Math.round(interval / 1000) + 's');
+    }
   }
 
   // ── Bind controls ─────────────────────────────────────────────────────────
@@ -700,21 +739,13 @@
   }
 
   // ── Load data ─────────────────────────────────────────────────────────────
-  // Request lifecycle:
-  //   1. Abort any in-flight fetch via AbortController
-  //   2. Increment requestSeq so .then()/.catch() guards discard stale responses
-  //   3. Capture seq at call time — .then() checks seq === requestSeq before committing
-  //   4. Reset refresh timer so periodic refresh doesn't stack with manual navigation
   function load() {
-    // Cancel any in-flight request
     if (activeController) {
       try { activeController.abort(); } catch (_) {}
       activeController = null;
     }
 
-    var seq = ++requestSeq;
-
-    // Create AbortController (supported in all modern browsers; polyfill not needed)
+    var seq        = ++requestSeq;
     var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
     activeController = controller;
     var signal = controller ? controller.signal : undefined;
@@ -722,15 +753,14 @@
     elTableWrap.innerHTML = '<p class="calendar-loading">' + esc(L.loading) + '</p>';
     if (elRefresh) { elRefresh.disabled = true; elRefresh.setAttribute('aria-busy', 'true'); }
 
-    // Reset periodic refresh so it counts from this load
     scheduleRefresh();
 
-    var qs       = endpointQuery();
+    var qs         = endpointQuery();
     var fetchStart = EC_DEBUG ? Date.now() : 0;
 
     if (EC_DEBUG) {
-      console.log('[ec] load — seq:', seq, '| mode:', viewMode, '| date:', selectedDate,
-                  '| query:', qs);
+      console.log('[ec] load — seq:', seq, '| mode:', viewMode,
+                  '| date:', selectedDate, '| query:', qs);
     }
 
     function fetchOne(url) {
@@ -754,9 +784,8 @@
         return fetchOne('/data/economic-calendar.json');
       })
       .then(function (data) {
-        // Stale-response guard: discard if a newer request is already in flight
         if (seq !== requestSeq) {
-          if (EC_DEBUG) console.log('[ec] discarding stale response (seq=' + seq + ', current=' + requestSeq + ')');
+          if (EC_DEBUG) console.log('[ec] discarding stale response (seq=' + seq + ')');
           return;
         }
         activeController = null;
@@ -766,7 +795,6 @@
         if (usedFallback && calMeta.source !== 'degraded') {
           calMeta = Object.assign({}, calMeta, { source: 'cache' });
         }
-        // Safe clone — prevents external mutation of the response array
         allEvents = Array.isArray(data && data.events) ? data.events.slice() : [];
 
         if (EC_DEBUG) {
@@ -776,22 +804,27 @@
           if (calMeta.providers && typeof calMeta.providers === 'object') {
             Object.keys(calMeta.providers).forEach(function (k) {
               var p = calMeta.providers[k];
-              if (p) console.log('[ec] provider', k, '— status:', p.status,
-                                 'raw:', p.raw, 'normalized:', p.normalized);
+              if (p && p.status === 'ok') {
+                console.log('[ec] provider', k,
+                            '— normalized:', p.normalized,
+                            '| completeness:', p.completeness_score + '%',
+                            '| actual:', p.with_actual,
+                            '| forecast:', p.with_forecast);
+              }
             });
           }
         }
 
         populateCountries();
         render();
+        // Re-schedule with the correct interval now that allEvents is populated
+        scheduleRefresh();
       })
       .catch(function (err) {
-        // AbortError means a newer load() superseded this one — new request will render
         if (err && err.name === 'AbortError') {
           if (EC_DEBUG) console.log('[ec] fetch aborted (seq=' + seq + ')');
           return;
         }
-        // Stale error: another request already handled the UI
         if (seq !== requestSeq) return;
 
         activeController = null;
@@ -802,18 +835,32 @@
           '<div class="ec-empty-state"><strong>' + esc(L.srcDegraded) + '</strong>' +
           '<p>' + esc(L.noEvents) + '</p></div>';
         if (elStatus) {
-          elStatus.className = 'ec-status-bar ec-status-degraded';
-          elStatus.textContent = L.srcDegraded;
+          elStatus.className    = 'ec-status-bar ec-status-degraded';
+          elStatus.textContent  = L.srcDegraded;
         }
       });
   }
 
-  // Day mode uses ?date= (exact day); week mode uses ?from=&to=
   function endpointQuery() {
     if (viewMode === 'week') {
       return '?from=' + weekStart(selectedDate) + '&to=' + weekEnd(selectedDate);
     }
     return '?date=' + selectedDate;
+  }
+
+  // ── Visibility-based pause/resume ─────────────────────────────────────────
+  // Pause background refresh when the tab is hidden; immediately reload when
+  // it becomes visible again (data may be stale after a long background period).
+  if (typeof document !== 'undefined' && 'hidden' in document) {
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        if (refreshTimer) { clearTimeout(refreshTimer); refreshTimer = null; }
+        if (EC_DEBUG) console.log('[ec] tab hidden — refresh paused');
+      } else {
+        if (EC_DEBUG) console.log('[ec] tab visible — reloading');
+        load();
+      }
+    });
   }
 
   bindControls();
