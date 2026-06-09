@@ -135,6 +135,117 @@ if (fs.existsSync(FRONTEND_JS)) {
   console.error('  FAIL: js/economic-calendar.js not found');
 }
 
+// ── UTC date arithmetic ───────────────────────────────────────────────────────
+console.log('[logic] UTC date arithmetic');
+function addDaysUTC(d, n) {
+  var dt = new Date(d + 'T00:00:00Z');
+  dt.setUTCDate(dt.getUTCDate() + n);
+  return dt.toISOString().slice(0, 10);
+}
+function weekStartUTC(d) {
+  var dt = new Date(d + 'T00:00:00Z');
+  dt.setUTCDate(dt.getUTCDate() - dt.getUTCDay());
+  return dt.toISOString().slice(0, 10);
+}
+// addDays must not shift the date for any timezone offset (including UTC+14)
+expect('addDays +0 is same date',            addDaysUTC('2026-06-09', 0),  '2026-06-09');
+expect('addDays +1 is next day',             addDaysUTC('2026-06-09', 1),  '2026-06-10');
+expect('addDays +1 month boundary',          addDaysUTC('2026-06-30', 1),  '2026-07-01');
+expect('addDays -1 is previous day',         addDaysUTC('2026-06-09', -1), '2026-06-08');
+expect('addDays -1 month boundary',          addDaysUTC('2026-06-01', -1), '2026-05-31');
+expect('weekStart on Sunday',                weekStartUTC('2026-06-07'),   '2026-06-07');
+expect('weekStart on Wednesday',             weekStartUTC('2026-06-10'),   '2026-06-07');
+expect('weekStart on Saturday',              weekStartUTC('2026-06-13'),   '2026-06-07');
+expect('weekStart crosses month boundary',   weekStartUTC('2026-06-01'),   '2026-05-31');
+
+// ── eventDate extraction ──────────────────────────────────────────────────────
+console.log('[logic] eventDate extraction');
+function eventDate(e) {
+  var raw = String(e.event_time || e.date || '');
+  return raw.length >= 10 ? raw.slice(0, 10) : '';
+}
+expect('ISO timestamp → date',               eventDate({ event_time: '2026-06-10T13:30:00Z' }), '2026-06-10');
+expect('date-only string',                   eventDate({ date: '2026-06-10' }),                  '2026-06-10');
+expect('event_time preferred over date',     eventDate({ event_time: '2026-06-10T00:00:00Z', date: '2026-06-11' }), '2026-06-10');
+expect('missing fields → empty string',      eventDate({}),                                       '');
+expect('short date-like value → empty',      eventDate({ date: '2026' }),                          '');
+
+// ── numVal edge cases ─────────────────────────────────────────────────────────
+console.log('[logic] numVal edge cases');
+function numVal(n, unit) {
+  if (n === null || n === undefined || n === '') return '—';
+  return String(n) + (unit ? ' ' + String(unit) : '');
+}
+expect('null → dash',                numVal(null),               '—');
+expect('undefined → dash',           numVal(undefined),          '—');
+expect('empty string → dash',        numVal(''),                 '—');
+expect('zero is valid',              numVal(0),                  '0');
+expect('number with unit',           numVal(3.2, '%'),           '3.2 %');
+expect('number without unit',        numVal(3.2),                '3.2');
+
+// ── Date-based filtering simulation ──────────────────────────────────────────
+console.log('[logic] date filtering (today vs tomorrow)');
+var POOL = [
+  { event_time: '2026-06-09T10:00:00Z', event_name: 'CPI', country: 'US', importance: 'high' },
+  { event_time: '2026-06-09T14:00:00Z', event_name: 'PPI', country: 'US', importance: 'medium' },
+  { event_time: '2026-06-10T09:00:00Z', event_name: 'NFP', country: 'US', importance: 'high' },
+];
+function filterByDay(pool, day) {
+  return pool.filter(function (e) { return eventDate(e) === day; });
+}
+expect('Today June 9 → 2 events',    filterByDay(POOL, '2026-06-09').length, 2);
+expect('Tomorrow June 10 → 1 event', filterByDay(POOL, '2026-06-10').length, 1);
+expect('June 11 → 0 events',         filterByDay(POOL, '2026-06-11').length, 0);
+expect('Today and tomorrow are disjoint',
+  filterByDay(POOL, '2026-06-09').some(function(e) { return filterByDay(POOL, '2026-06-10').includes(e); }), false);
+
+// ── Holiday event detection ───────────────────────────────────────────────────
+console.log('[logic] holiday detection');
+var holidayEvent = { event_time: '2026-07-04T00:00:00Z', event_name: 'Independence Day', country: 'US', importance: 'holiday', actual: null, forecast: null, previous: null };
+var normalEvent  = { event_time: '2026-06-10T13:30:00Z', event_name: 'CPI MoM', country: 'US', importance: 'high', actual: 3.2, forecast: 3.0, previous: 3.1 };
+expect('holiday importance detected', holidayEvent.importance === 'holiday', true);
+expect('normal event not holiday',    normalEvent.importance === 'holiday',  false);
+// Holiday → numeric display must be suppressed
+function dispActual(e) {
+  var isHoliday = e.importance === 'holiday';
+  if (isHoliday) return '—';
+  return numVal(e.actual, e.unit);
+}
+expect('holiday actual → dash',  dispActual(holidayEvent), '—');
+expect('normal actual → value',  dispActual(normalEvent),  '3.2');
+
+// ── Surprise suppression when no forecast ─────────────────────────────────────
+console.log('[logic] surprise suppression without forecast');
+function shouldColorSurprise(e) {
+  var isHoliday   = e.importance === 'holiday';
+  var released    = !isHoliday && e.actual   !== null && e.actual   !== undefined;
+  var hasForecast = !isHoliday && e.forecast !== null && e.forecast !== undefined;
+  return released && hasForecast;
+}
+var eventBothActualAndForecast = { importance: 'medium', actual: 3.2, forecast: 3.0 };
+var eventActualNoForecast      = { importance: 'medium', actual: 3.2, forecast: null };
+var eventNoActual              = { importance: 'medium', actual: null, forecast: 3.0 };
+var eventHoliday               = { importance: 'holiday', actual: null, forecast: null };
+expect('actual+forecast → color surprise', shouldColorSurprise(eventBothActualAndForecast), true);
+expect('actual no forecast → no color',    shouldColorSurprise(eventActualNoForecast),      false);
+expect('no actual → no color',             shouldColorSurprise(eventNoActual),               false);
+expect('holiday → never color',            shouldColorSurprise(eventHoliday),                false);
+
+// ── updateStatus count display logic ─────────────────────────────────────────
+console.log('[logic] updateStatus count formatting');
+function fmtCount(fetchedCount, visibleCount) {
+  if (visibleCount !== undefined && fetchedCount !== undefined && fetchedCount !== visibleCount) {
+    return fetchedCount + ' fetched · ' + visibleCount + ' shown';
+  } else if (visibleCount !== undefined) {
+    return visibleCount + ' events';
+  }
+  return '';
+}
+expect('equal counts → events label',    fmtCount(16, 16),  '16 events');
+expect('filtered → fetched+shown label', fmtCount(118, 16), '118 fetched · 16 shown');
+expect('zero visible',                   fmtCount(118, 0),  '118 fetched · 0 shown');
+expect('both zero',                      fmtCount(0, 0),    '0 events');
+
 // ── Report ─────────────────────────────────────────────────────────────────────
 console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
 if (fail > 0) process.exit(1);

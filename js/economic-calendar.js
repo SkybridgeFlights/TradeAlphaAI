@@ -13,7 +13,8 @@
       loading: 'Loading calendar…',
       high: 'High', medium: 'Medium', low: 'Low', holiday: 'Holiday',
       srcLive: 'Live data', srcCache: 'Cached data', srcDegraded: 'Provider unavailable',
-      labelSrc: 'Source', labelUpdated: 'Updated', labelEvents: 'events',
+      labelSrc: 'Source', labelUpdated: 'Updated',
+      labelEvents: 'events', labelFetched: 'fetched', labelShown: 'shown',
       detailCountry: 'Country / Currency',
       detailActual: 'Actual', detailForecast: 'Forecast', detailPrevious: 'Previous',
       detailAssets: 'Asset sensitivity',
@@ -32,7 +33,8 @@
       loading: 'جارٍ التحميل…',
       high: 'مرتفع', medium: 'متوسط', low: 'منخفض', holiday: 'عطلة',
       srcLive: 'بيانات حية', srcCache: 'بيانات مخزنة', srcDegraded: 'المزود غير متاح',
-      labelSrc: 'المصدر', labelUpdated: 'آخر تحديث', labelEvents: 'أحداث',
+      labelSrc: 'المصدر', labelUpdated: 'آخر تحديث',
+      labelEvents: 'أحداث', labelFetched: 'مجلوبة', labelShown: 'ظاهرة',
       detailCountry: 'الدولة / العملة',
       detailActual: 'الفعلي', detailForecast: 'التوقع', detailPrevious: 'السابق',
       detailAssets: 'حساسية الأصول',
@@ -90,22 +92,35 @@
   var searchText    = '';
   var isLoading     = false;
 
+  // Enable debug logging by adding ?ec_debug to the URL
+  var EC_DEBUG = typeof window !== 'undefined' && window.location &&
+                 window.location.search.indexOf('ec_debug') !== -1;
+
   // ── Date utilities ────────────────────────────────────────────────────────
   function todayStr() { return new Date().toISOString().slice(0, 10); }
 
+  // All date arithmetic uses UTC so results are timezone-independent.
+  // Using 'T00:00:00' (no Z) with toISOString() causes off-by-one in UTC+ zones.
   function addDays(d, n) {
-    var dt = new Date(d + 'T00:00:00');
-    dt.setDate(dt.getDate() + n);
+    var dt = new Date(d + 'T00:00:00Z');
+    dt.setUTCDate(dt.getUTCDate() + n);
     return dt.toISOString().slice(0, 10);
   }
 
   function weekStart(d) {
-    var dt = new Date(d + 'T00:00:00');
-    dt.setDate(dt.getDate() - dt.getDay());
+    var dt = new Date(d + 'T00:00:00Z');
+    dt.setUTCDate(dt.getUTCDate() - dt.getUTCDay());
     return dt.toISOString().slice(0, 10);
   }
 
   function weekEnd(d) { return addDays(weekStart(d), 6); }
+
+  // Robustly extract YYYY-MM-DD from any ISO-like event timestamp.
+  // Always uses the UTC date portion — never a locale-formatted string.
+  function eventDate(e) {
+    var raw = String(e.event_time || e.date || '');
+    return raw.length >= 10 ? raw.slice(0, 10) : '';
+  }
 
   function fmtTime(dtStr) {
     if (!dtStr) return '—';
@@ -208,8 +223,15 @@
     var from, to;
     if (viewMode === 'week') { from = weekStart(selectedDate); to = weekEnd(selectedDate); }
     else { from = to = selectedDate; }
+
+    if (EC_DEBUG) {
+      console.log('[ec] filter — mode:', viewMode, 'selectedDate:', selectedDate,
+                  'from:', from, 'to:', to, 'pool:', allEvents.length);
+    }
+
     return allEvents.filter(function (e) {
-      var d = String(e.event_time || e.date || '').slice(0, 10);
+      var d = eventDate(e);
+      if (!d) return false;
       if (d < from || d > to) return false;
       if (filterImpact  && e.importance !== filterImpact)  return false;
       if (filterCountry && e.country    !== filterCountry) return false;
@@ -249,14 +271,18 @@
   function intelligenceHtml(e) {
     var intel = e.intelligence;
     if (!intel || !intel.category) return '';
+    // Holidays have no numeric fields — skip intelligence panel
+    if (e.importance === 'holiday') return '';
     var catKey  = intel.category;
     var catData = CAT_DESC[catKey] || CAT_DESC.other;
     var desc    = catData[lang] || catData.en;
     var html    = '';
     if (desc.what) html += '<dt>' + esc(L.detailWhat) + '</dt><dd>' + esc(desc.what) + '</dd>';
     if (desc.why)  html += '<dt>' + esc(L.detailWhy)  + '</dt><dd>' + esc(desc.why)  + '</dd>';
-    var sur = intel.surprise;
-    if (sur && sur.available && sur.direction !== 'unknown') {
+    var sur         = intel.surprise;
+    var hasForecast = e.forecast !== null && e.forecast !== undefined;
+    // Only show surprise when actual released AND forecast was available to compare against
+    if (sur && sur.available && hasForecast && sur.direction !== 'unknown') {
       var sLabel = sur.direction === 'above' ? L.detailSurpriseAbove
                  : sur.direction === 'below' ? L.detailSurpriseBelow
                  : L.detailSurpriseInline;
@@ -280,14 +306,15 @@
       return '<span class="ec-asset-tag">' + esc(a) + '</span>';
     }).join('');
 
+    var isHoliday = e.importance === 'holiday';
     var html = '<dt>' + esc(L.detailCountry)  + '</dt><dd>' + esc(countryCurrency(e.country)) + '</dd>';
-    html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + numVal(e.actual,   e.unit) + '</dd>';
-    html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + numVal(e.forecast, e.unit) + '</dd>';
-    html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + numVal(e.previous, e.unit) + '</dd>';
+    html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
+    html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
+    html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.previous, e.unit)) + '</dd>';
 
     var out = '<dl>' + html + '</dl>';
     out += intelligenceHtml(e);
-    if (tags) {
+    if (tags && !isHoliday) {
       out += '<div class="ec-detail-assets">'
           +  '<dt>' + esc(L.detailAssets) + '</dt>'
           +  '<div class="ec-asset-tags">' + tags + '</div>'
@@ -302,7 +329,7 @@
     var groups = [];
     var lastDate = null;
     events.forEach(function (e) {
-      var d = String(e.event_time || e.date || '').slice(0, 10);
+      var d = eventDate(e);
       if (d !== lastDate) { groups.push({ date: d, events: [] }); lastDate = d; }
       groups[groups.length - 1].events.push(e);
     });
@@ -334,25 +361,38 @@
               +  esc(fmtDateGroupLabel(group.date)) + '</td></tr>';
       }
       group.events.forEach(function (e) {
-        var intel      = e.intelligence || {};
-        var sur        = intel.surprise  || {};
-        var released   = e.actual !== null && e.actual !== undefined;
-        var actualCls  = 'ec-col-num';
-        if (released) {
-          var dir = e.surprise_direction || (sur.direction === 'above' ? 'hotter_or_stronger' : sur.direction === 'below' ? 'softer_or_weaker' : '');
+        var intel       = e.intelligence || {};
+        var sur         = intel.surprise  || {};
+        var isHoliday   = e.importance === 'holiday';
+        var released    = !isHoliday && e.actual   !== null && e.actual   !== undefined;
+        var hasForecast = !isHoliday && e.forecast !== null && e.forecast !== undefined;
+
+        // Surprise coloring only when actual released AND forecast was available to compare
+        var actualCls = 'ec-col-num';
+        if (released && hasForecast) {
+          var dir = e.surprise_direction || (sur.direction === 'above' ? 'hotter_or_stronger'
+                                           : sur.direction === 'below' ? 'softer_or_weaker' : '');
           if (dir === 'hotter_or_stronger' || sur.direction === 'above') actualCls += ' ec-val-hot';
           else if (dir === 'softer_or_weaker' || sur.direction === 'below') actualCls += ' ec-val-soft';
           else actualCls += ' ec-val-set';
+        } else if (released) {
+          actualCls += ' ec-val-set';
         }
+
+        // Suppress numeric fields for holiday / all-day events
+        var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
+        var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
+        var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
+
         var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
         var evtSub    = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
         var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + '</td>';
         var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
         var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
         var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
-        var tdActual  = '<td class="' + actualCls + '">' + numVal(e.actual,   e.unit) + '</td>';
-        var tdFcast   = '<td class="ec-col-num">'         + numVal(e.forecast, e.unit) + '</td>';
-        var tdPrev    = '<td class="ec-col-num">'         + numVal(e.previous, e.unit) + '</td>';
+        var tdActual  = '<td class="' + actualCls + '">' + dispActual   + '</td>';
+        var tdFcast   = '<td class="ec-col-num">'         + dispForecast + '</td>';
+        var tdPrev    = '<td class="ec-col-num">'         + dispPrevious + '</td>';
         var cells     = isRTL
           ? tdPrev + tdFcast + tdActual + tdImpact + tdEvent + tdCountry + tdTime
           : tdTime + tdCountry + tdEvent + tdImpact + tdActual + tdFcast + tdPrev;
@@ -378,11 +418,16 @@
         parts.push('<div class="ec-date-group-header">' + esc(fmtDateGroupLabel(group.date)) + '</div>');
       }
       group.events.forEach(function (e) {
-        var assets = Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity :
-                     (e.intelligence && Array.isArray(e.intelligence.market_sensitivity) ? e.intelligence.market_sensitivity : []);
+        var isHoliday = e.importance === 'holiday';
+        var assets = isHoliday ? [] :
+                     (Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity :
+                     (e.intelligence && Array.isArray(e.intelligence.market_sensitivity) ? e.intelligence.market_sensitivity : []));
         var tags = assets.map(function (a) {
           return '<span class="ec-asset-tag">' + esc(a) + '</span>';
         }).join('');
+        var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
+        var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
+        var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
         parts.push(
           '<div class="ec-card" data-ec-i="' + cardIdx + '" tabindex="0" role="button" aria-expanded="false">' +
           '<div class="ec-card-header">' +
@@ -392,9 +437,9 @@
           '</div>' +
           '<div class="ec-card-time">' + esc(fmtTime(e.event_time)) + '</div>' +
           '<div class="ec-card-nums">' +
-            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colActual)   + '</span><span class="ec-card-num-val">' + numVal(e.actual,   e.unit) + '</span></div>' +
-            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colForecast) + '</span><span class="ec-card-num-val">' + numVal(e.forecast, e.unit) + '</span></div>' +
-            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colPrevious) + '</span><span class="ec-card-num-val">' + numVal(e.previous, e.unit) + '</span></div>' +
+            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colActual)   + '</span><span class="ec-card-num-val">' + dispActual   + '</span></div>' +
+            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colForecast) + '</span><span class="ec-card-num-val">' + dispForecast + '</span></div>' +
+            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colPrevious) + '</span><span class="ec-card-num-val">' + dispPrevious + '</span></div>' +
           '</div>' +
           '<div class="ec-card-detail">' +
             intelligenceHtml(e) +
@@ -419,8 +464,12 @@
       ? fmtDateLabel(weekStart(selectedDate)) + ' – ' + fmtDateLabel(weekEnd(selectedDate))
       : fmtDateLabel(selectedDate);
 
-    // Update status with event count before rendering content
-    updateStatus(events.length);
+    if (EC_DEBUG) {
+      console.log('[ec] render — fetchedEvents:', allEvents.length, 'visibleEvents:', events.length);
+    }
+
+    // Pass both total-fetched and visible counts to status bar
+    updateStatus(allEvents.length, events.length);
 
     if (!events.length) {
       elTableWrap.innerHTML =
@@ -481,7 +530,9 @@
   }
 
   // ── Status bar ────────────────────────────────────────────────────────────
-  function updateStatus(eventCount) {
+  // fetchedCount: total events returned by API for the queried period
+  // visibleCount: events shown after client-side filters (impact/country/search)
+  function updateStatus(fetchedCount, visibleCount) {
     if (!elStatus) return;
     var src  = calMeta.source || calMeta.provider || '';
     var upd  = calMeta.updated_at || '';
@@ -498,7 +549,6 @@
       lang === 'ar' ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }
     ) : '';
 
-    // Provider status summary from schema 2.1
     var provText = '';
     if (calMeta.providers && typeof calMeta.providers === 'object') {
       var okProviders = Object.keys(calMeta.providers).filter(function (k) {
@@ -509,9 +559,13 @@
       }
     }
 
-    var countText = (eventCount !== undefined)
-      ? ' \xB7 ' + eventCount + ' ' + L.labelEvents
-      : '';
+    // Show "118 fetched · 16 shown" when filters are active; otherwise just "16 events"
+    var countText = '';
+    if (visibleCount !== undefined && fetchedCount !== undefined && fetchedCount !== visibleCount) {
+      countText = ' \xB7 ' + fetchedCount + ' ' + L.labelFetched + ' \xB7 ' + visibleCount + ' ' + L.labelShown;
+    } else if (visibleCount !== undefined) {
+      countText = ' \xB7 ' + visibleCount + ' ' + L.labelEvents;
+    }
 
     elStatus.textContent = L.labelSrc + ': ' + srcLabel + updLabel + provText + countText;
   }
@@ -577,16 +631,12 @@
     });
   }
 
+  // Day mode uses ?date= (exact day); week mode uses ?from=&to=
   function endpointQuery() {
-    var from, to;
     if (viewMode === 'week') {
-      from = weekStart(selectedDate);
-      to   = weekEnd(selectedDate);
-    } else {
-      from = addDays(selectedDate, -1);
-      to   = addDays(selectedDate, 7);
+      return '?from=' + weekStart(selectedDate) + '&to=' + weekEnd(selectedDate);
     }
-    return '?from=' + from + '&to=' + to;
+    return '?date=' + selectedDate;
   }
 
   // ── Load data ─────────────────────────────────────────────────────────────
@@ -597,6 +647,13 @@
     if (elRefresh) { elRefresh.disabled = true; elRefresh.setAttribute('aria-busy', 'true'); }
 
     var qs = endpointQuery();
+    if (EC_DEBUG) {
+      console.log('[ec] load — selectedMode:', viewMode, 'selectedDate:', selectedDate,
+                  'selectedFrom:', viewMode === 'week' ? weekStart(selectedDate) : selectedDate,
+                  'selectedTo:', viewMode === 'week' ? weekEnd(selectedDate) : selectedDate,
+                  'query:', qs);
+    }
+
     var usedFallback = false;
     fetchJson('/api/economic-calendar' + qs)
       .catch(function () { return fetchJson('/.netlify/functions/economic-calendar' + qs); })
@@ -612,6 +669,9 @@
           calMeta = Object.assign({}, calMeta, { source: 'cache' });
         }
         allEvents = Array.isArray(data.events) ? data.events : [];
+        if (EC_DEBUG) {
+          console.log('[ec] fetched — fetchedEvents:', allEvents.length, 'source:', calMeta.source);
+        }
         populateCountries();
         render();
       })
