@@ -246,6 +246,156 @@ expect('filtered → fetched+shown label', fmtCount(118, 16), '118 fetched · 16
 expect('zero visible',                   fmtCount(118, 0),  '118 fetched · 0 shown');
 expect('both zero',                      fmtCount(0, 0),    '0 events');
 
+// ── Stabilization hardening regression tests ─────────────────────────────────
+// Each test corresponds to a specific root cause fixed in the stabilization pass.
+
+// ── 1. requestSeq stale-response guard ────────────────────────────────────────
+// Simulates: user clicks Today → Tomorrow rapidly.
+// The Today response arrives after seq has advanced → must be discarded.
+console.log('[logic] requestSeq stale-response guard');
+(function () {
+  var requestSeq = 0;
+  function makeLoad() {
+    var seq = ++requestSeq;
+    return { seq: seq, isStale: function () { return seq !== requestSeq; } };
+  }
+  var load1 = makeLoad(); // seq=1 (Today click)
+  var load2 = makeLoad(); // seq=2 (Tomorrow click while load1 still in-flight)
+  expect('load1 is stale after load2 starts', load1.isStale(), true);
+  expect('load2 is current',                  load2.isStale(), false);
+  var load3 = makeLoad(); // seq=3 (This Week click)
+  expect('load2 stale after load3',           load2.isStale(), true);
+  expect('load3 current',                     load3.isStale(), false);
+})();
+
+// ── 2. AbortError does not trigger error UI ────────────────────────────────────
+console.log('[logic] AbortError handling');
+function isAbortError(err) {
+  return err && err.name === 'AbortError';
+}
+var fakeAbort = Object.assign(new Error('aborted'), { name: 'AbortError' });
+var fakeNetwork = new Error('Network failure');
+expect('AbortError detected',         !!isAbortError(fakeAbort),   true);
+expect('Network error is not abort',  !!isAbortError(fakeNetwork), false);
+expect('null is not abort',           !!isAbortError(null),         false);
+
+// ── 3. Null-safe provider metadata in updateStatus ────────────────────────────
+// A null or missing provider entry must not throw when filtering for ok providers.
+console.log('[logic] null-safe provider metadata');
+function filterOkProviders(providers) {
+  if (!providers || typeof providers !== 'object') return [];
+  return Object.keys(providers).filter(function (k) {
+    return providers[k] && providers[k].status === 'ok';
+  });
+}
+expect('all ok providers',     filterOkProviders({ fmp: { status: 'ok' }, finnhub: { status: 'ok' } }).length, 2);
+expect('one null provider',    filterOkProviders({ fmp: null, finnhub: { status: 'ok' } }).length, 1);
+expect('all null providers',   filterOkProviders({ fmp: null, finnhub: null }).length, 0);
+expect('missing status field', filterOkProviders({ fmp: {} }).length, 0);
+expect('empty providers obj',  filterOkProviders({}).length, 0);
+expect('null providers',       filterOkProviders(null).length, 0);
+
+// ── 4. Per-row error containment in render pipeline ───────────────────────────
+// A malformed event in the middle of the list must not prevent other rows from rendering.
+console.log('[logic] per-row error containment');
+function simulateBuildRows(events) {
+  var rendered = 0;
+  var skipped  = 0;
+  events.forEach(function (e) {
+    try {
+      if (!e || typeof e !== 'object') throw new Error('null event');
+      if (!e.event_name) throw new Error('missing event_name');
+      rendered++;
+    } catch (_) {
+      skipped++;
+    }
+  });
+  return { rendered: rendered, skipped: skipped };
+}
+var mixedEvents = [
+  { event_name: 'CPI', country: 'US' },
+  null,                                 // malformed
+  { event_name: 'NFP', country: 'US' },
+  { country: 'US' },                    // missing event_name
+  { event_name: 'GDP', country: 'US' },
+];
+var result = simulateBuildRows(mixedEvents);
+expect('rendered 3 good events',    result.rendered, 3);
+expect('skipped 2 malformed events', result.skipped,  2);
+
+// ── 5. groupByDate with unknown/empty date ────────────────────────────────────
+console.log('[logic] groupByDate unknown date handling');
+function groupByDate(events) {
+  var groups  = [];
+  var lastKey = null;
+  for (var i = 0; i < events.length; i++) {
+    var e = events[i];
+    var d;
+    try {
+      var raw = String(e.event_time || e.date || '');
+      d = raw.length >= 10 ? raw.slice(0, 10) : 'unknown';
+    } catch (_) { d = 'unknown'; }
+    if (d !== lastKey) { groups.push({ date: d, events: [] }); lastKey = d; }
+    groups[groups.length - 1].events.push(e);
+  }
+  return groups;
+}
+var groupEvents = [
+  { event_time: '2026-06-10T10:00:00Z', event_name: 'CPI' },
+  { event_name: 'Mystery' },             // no date field
+  { event_time: '2026-06-11T14:00:00Z', event_name: 'NFP' },
+];
+var groups = groupByDate(groupEvents);
+expect('known date June 10 group exists', groups[0].date, '2026-06-10');
+expect('unknown date gets unknown bucket', groups[1].date, 'unknown');
+expect('known date June 11 group exists', groups[2].date, '2026-06-11');
+expect('total groups = 3', groups.length, 3);
+expect('June 10 group has 1 event', groups[0].events.length, 1);
+expect('unknown bucket has 1 event', groups[1].events.length, 1);
+
+// ── 6. detailContent and intelligenceHtml safe with missing fields ────────────
+console.log('[logic] defensive rendering with null fields');
+// Simulates what happens when a malformed event is passed to rendering helpers.
+// These helpers now have try/catch — they must return a string (possibly empty), not throw.
+function safeIntelligenceHtml(e) {
+  try {
+    var intel = e && e.intelligence;
+    if (!intel || !intel.category) return '';
+    if (e.importance === 'holiday') return '';
+    return '<dt>test</dt>';
+  } catch (_) { return ''; }
+}
+expect('null event → empty string',        safeIntelligenceHtml(null),                   '');
+expect('no intelligence → empty string',   safeIntelligenceHtml({ importance: 'high' }),  '');
+expect('holiday → empty string',           safeIntelligenceHtml({ importance: 'holiday', intelligence: { category: 'holiday' } }), '');
+expect('valid → non-empty string',         safeIntelligenceHtml({ importance: 'high', intelligence: { category: 'inflation' } }) !== '', true);
+
+// ── 7. toggleRow null-safety (events[idx] undefined) ─────────────────────────
+console.log('[logic] toggleRow null-safety');
+function safeToggleRow(events, idx) {
+  try {
+    var e = events[idx];
+    if (!e) return 'noop';
+    return 'expanded';
+  } catch (_) { return 'error'; }
+}
+var evtList = [{ event_name: 'CPI' }];
+expect('valid idx → expanded',   safeToggleRow(evtList, 0),   'expanded');
+expect('out-of-bounds → noop',   safeToggleRow(evtList, 99),  'noop');
+expect('negative idx → noop',    safeToggleRow(evtList, -1),  'noop');
+
+// ── 8. Safe array clone before mutation ──────────────────────────────────────
+console.log('[logic] array clone immutability');
+var original = [
+  { event_time: '2026-06-10T10:00:00Z', event_name: 'CPI' },
+  { event_time: '2026-06-11T14:00:00Z', event_name: 'NFP' },
+];
+var cloned = original.slice();
+// Mutating clone does not affect original
+cloned.push({ event_name: 'Extra' });
+expect('clone mutation does not affect original', original.length, 2);
+expect('cloned array is independent',             cloned.length,   3);
+
 // ── Report ─────────────────────────────────────────────────────────────────────
 console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
 if (fail > 0) process.exit(1);

@@ -90,9 +90,16 @@
   var filterImpact  = '';
   var filterCountry = '';
   var searchText    = '';
-  var isLoading     = false;
 
-  // Enable debug logging by adding ?ec_debug to the URL
+  // Request lifecycle — latest-request-wins with AbortController
+  var activeController = null; // AbortController for the in-flight fetch
+  var requestSeq       = 0;    // Monotonically increasing; .then() guards against stale responses
+
+  // Periodic refresh (5 min) — resets on every manual navigation
+  var REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+  var refreshTimer        = null;
+
+  // Enable production diagnostics by appending ?ec_debug to the URL
   var EC_DEBUG = typeof window !== 'undefined' && window.location &&
                  window.location.search.indexOf('ec_debug') !== -1;
 
@@ -100,7 +107,7 @@
   function todayStr() { return new Date().toISOString().slice(0, 10); }
 
   // All date arithmetic uses UTC so results are timezone-independent.
-  // Using 'T00:00:00' (no Z) with toISOString() causes off-by-one in UTC+ zones.
+  // T00:00:00 (no Z) + toISOString() causes off-by-one in UTC+ zones.
   function addDays(d, n) {
     var dt = new Date(d + 'T00:00:00Z');
     dt.setUTCDate(dt.getUTCDate() + n);
@@ -116,7 +123,6 @@
   function weekEnd(d) { return addDays(weekStart(d), 6); }
 
   // Robustly extract YYYY-MM-DD from any ISO-like event timestamp.
-  // Always uses the UTC date portion — never a locale-formatted string.
   function eventDate(e) {
     var raw = String(e.event_time || e.date || '');
     return raw.length >= 10 ? raw.slice(0, 10) : '';
@@ -125,8 +131,7 @@
   function fmtTime(dtStr) {
     if (!dtStr) return '—';
     try {
-      // All-day / date-only events from FRED — no local time to show
-      if (/T00:00:00Z$/.test(dtStr)) return '—';
+      if (/T00:00:00Z$/.test(dtStr)) return '—'; // FRED all-day events
       var d = new Date(dtStr);
       if (isNaN(d.valueOf())) return String(dtStr).slice(11, 16);
       return d.toLocaleTimeString(lang === 'ar' ? 'ar-SA' : 'en-US', {
@@ -165,17 +170,13 @@
   }
 
   // ── Country / currency ────────────────────────────────────────────────────
-  var FLAG = { US: '🇺🇸', EU: '🇪🇺', GB: '🇬🇧',
-               JP: '🇯🇵', CN: '🇨🇳', DE: '🇩🇪',
-               FR: '🇫🇷', CA: '🇨🇦', AU: '🇦🇺',
-               NZ: '🇳🇿', CH: '🇨🇭', IT: '🇮🇹' };
-  var CCY  = { US: 'USD', EU: 'EUR', GB: 'GBP', JP: 'JPY', CN: 'CNY', DE: 'EUR',
-               FR: 'EUR', IT: 'EUR', CA: 'CAD', AU: 'AUD', NZ: 'NZD', CH: 'CHF' };
+  var CCY = { US: 'USD', EU: 'EUR', GB: 'GBP', JP: 'JPY', CN: 'CNY', DE: 'EUR',
+              FR: 'EUR', IT: 'EUR', CA: 'CAD', AU: 'AUD', NZ: 'NZD', CH: 'CHF' };
 
   function countryCurrency(country) {
     var c   = String(country || '').toUpperCase();
     var ccy = CCY[c];
-    return ccy ? c + ' · ' + ccy : (c || '—');
+    return ccy ? c + ' \xB7 ' + ccy : (c || '—');
   }
 
   // ── Arabic event name translations ────────────────────────────────────────
@@ -225,7 +226,7 @@
     else { from = to = selectedDate; }
 
     if (EC_DEBUG) {
-      console.log('[ec] filter — mode:', viewMode, 'selectedDate:', selectedDate,
+      console.log('[ec] filter — mode:', viewMode, 'date:', selectedDate,
                   'from:', from, 'to:', to, 'pool:', allEvents.length);
     }
 
@@ -237,7 +238,7 @@
       if (filterCountry && e.country    !== filterCountry) return false;
       if (searchText) {
         var nm = String(e.event_name || '').toLowerCase();
-        if (!nm.includes(searchText.toLowerCase())) return false;
+        if (nm.indexOf(searchText.toLowerCase()) === -1) return false;
       }
       return true;
     });
@@ -269,70 +270,81 @@
 
   // ── Intelligence panel ────────────────────────────────────────────────────
   function intelligenceHtml(e) {
-    var intel = e.intelligence;
-    if (!intel || !intel.category) return '';
-    // Holidays have no numeric fields — skip intelligence panel
-    if (e.importance === 'holiday') return '';
-    var catKey  = intel.category;
-    var catData = CAT_DESC[catKey] || CAT_DESC.other;
-    var desc    = catData[lang] || catData.en;
-    var html    = '';
-    if (desc.what) html += '<dt>' + esc(L.detailWhat) + '</dt><dd>' + esc(desc.what) + '</dd>';
-    if (desc.why)  html += '<dt>' + esc(L.detailWhy)  + '</dt><dd>' + esc(desc.why)  + '</dd>';
-    var sur         = intel.surprise;
-    var hasForecast = e.forecast !== null && e.forecast !== undefined;
-    // Only show surprise when actual released AND forecast was available to compare against
-    if (sur && sur.available && hasForecast && sur.direction !== 'unknown') {
-      var sLabel = sur.direction === 'above' ? L.detailSurpriseAbove
-                 : sur.direction === 'below' ? L.detailSurpriseBelow
-                 : L.detailSurpriseInline;
-      var sCls   = sur.direction === 'above' ? 'ec-surprise-hot'
-                 : sur.direction === 'below' ? 'ec-surprise-soft'
-                 : 'ec-surprise-inline';
-      html += '<dt>Surprise</dt><dd class="' + sCls + '">' + esc(sLabel) +
-              ' <small>(' + esc(sur.magnitude || '') + ')</small></dd>';
-    }
-    if (!html) return '';
-    return '<div class="ec-detail-intelligence"><dl>' + html + '</dl></div>';
+    try {
+      var intel = e.intelligence;
+      if (!intel || !intel.category) return '';
+      if (e.importance === 'holiday') return '';
+      var catKey  = intel.category;
+      var catData = CAT_DESC[catKey] || CAT_DESC.other;
+      var desc    = catData[lang] || catData.en;
+      var html    = '';
+      if (desc.what) html += '<dt>' + esc(L.detailWhat) + '</dt><dd>' + esc(desc.what) + '</dd>';
+      if (desc.why)  html += '<dt>' + esc(L.detailWhy)  + '</dt><dd>' + esc(desc.why)  + '</dd>';
+      var sur         = intel.surprise;
+      var hasForecast = e.forecast !== null && e.forecast !== undefined;
+      // Only show surprise when actual released AND forecast was available to compare against
+      if (sur && sur.available && hasForecast && sur.direction !== 'unknown') {
+        var sLabel = sur.direction === 'above' ? L.detailSurpriseAbove
+                   : sur.direction === 'below' ? L.detailSurpriseBelow
+                   : L.detailSurpriseInline;
+        var sCls   = sur.direction === 'above' ? 'ec-surprise-hot'
+                   : sur.direction === 'below' ? 'ec-surprise-soft'
+                   : 'ec-surprise-inline';
+        html += '<dt>Surprise</dt><dd class="' + sCls + '">' + esc(sLabel) +
+                ' <small>(' + esc(sur.magnitude || '') + ')</small></dd>';
+      }
+      if (!html) return '';
+      return '<div class="ec-detail-intelligence"><dl>' + html + '</dl></div>';
+    } catch (_) { return ''; }
   }
 
   // ── Detail panel content ──────────────────────────────────────────────────
   function detailContent(e) {
-    var assets = Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity : [];
-    if (!assets.length && e.intelligence && Array.isArray(e.intelligence.market_sensitivity)) {
-      assets = e.intelligence.market_sensitivity;
-    }
-    var tags = assets.map(function (a) {
-      return '<span class="ec-asset-tag">' + esc(a) + '</span>';
-    }).join('');
+    try {
+      var assets = Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity : [];
+      if (!assets.length && e.intelligence && Array.isArray(e.intelligence.market_sensitivity)) {
+        assets = e.intelligence.market_sensitivity;
+      }
+      var tags = assets.map(function (a) {
+        return '<span class="ec-asset-tag">' + esc(a) + '</span>';
+      }).join('');
 
-    var isHoliday = e.importance === 'holiday';
-    var html = '<dt>' + esc(L.detailCountry)  + '</dt><dd>' + esc(countryCurrency(e.country)) + '</dd>';
-    html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
-    html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
-    html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.previous, e.unit)) + '</dd>';
+      var isHoliday = e.importance === 'holiday';
+      var html = '<dt>' + esc(L.detailCountry)  + '</dt><dd>' + esc(countryCurrency(e.country)) + '</dd>';
+      html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
+      html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
+      html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.previous, e.unit)) + '</dd>';
 
-    var out = '<dl>' + html + '</dl>';
-    out += intelligenceHtml(e);
-    if (tags && !isHoliday) {
-      out += '<div class="ec-detail-assets">'
-          +  '<dt>' + esc(L.detailAssets) + '</dt>'
-          +  '<div class="ec-asset-tags">' + tags + '</div>'
-          +  '</div>';
-    }
-    out += '<p class="ec-detail-disclaimer">' + esc(L.disclaimer) + '</p>';
-    return out;
+      var out = '<dl>' + html + '</dl>';
+      out += intelligenceHtml(e);
+      if (tags && !isHoliday) {
+        out += '<div class="ec-detail-assets">'
+            +  '<dt>' + esc(L.detailAssets) + '</dt>'
+            +  '<div class="ec-asset-tags">' + tags + '</div>'
+            +  '</div>';
+      }
+      out += '<p class="ec-detail-disclaimer">' + esc(L.disclaimer) + '</p>';
+      return out;
+    } catch (_) { return '<p class="ec-detail-disclaimer">' + esc(L.disclaimer) + '</p>'; }
   }
 
   // ── Date grouping ─────────────────────────────────────────────────────────
+  // Events with no parseable date are placed in an 'unknown' bucket so they
+  // never silently disappear. (eventsForPeriod already excludes them, but this
+  // guards against any future caller.)
   function groupByDate(events) {
-    var groups = [];
-    var lastDate = null;
-    events.forEach(function (e) {
-      var d = eventDate(e);
-      if (d !== lastDate) { groups.push({ date: d, events: [] }); lastDate = d; }
+    var groups  = [];
+    var lastKey = null;
+    for (var i = 0; i < events.length; i++) {
+      var e = events[i];
+      var d;
+      try { d = eventDate(e) || 'unknown'; } catch (_) { d = 'unknown'; }
+      if (d !== lastKey) {
+        groups.push({ date: d, events: [] });
+        lastKey = d;
+      }
       groups[groups.length - 1].events.push(e);
-    });
+    }
     return groups;
   }
 
@@ -352,105 +364,131 @@
             '<th>' + L.colPrevious + '</th>';
     }
 
-    var tbody  = '';
-    var rowIdx = 0;
-    var groups = viewMode === 'week' ? groupByDate(events) : [{ date: null, events: events }];
+    var tbody       = '';
+    var rowIdx      = 0;
+    var rowsSkipped = 0;
+    // Safe clone of events for grouping — prevents mutation side-effects
+    var groups = viewMode === 'week' ? groupByDate(events.slice()) : [{ date: null, events: events.slice() }];
+
     groups.forEach(function (group) {
-      if (viewMode === 'week' && group.date) {
+      if (viewMode === 'week' && group.date && group.date !== 'unknown') {
         tbody += '<tr class="ec-date-group-row"><td colspan="' + cols + '" class="ec-date-group-cell">'
               +  esc(fmtDateGroupLabel(group.date)) + '</td></tr>';
       }
       group.events.forEach(function (e) {
-        var intel       = e.intelligence || {};
-        var sur         = intel.surprise  || {};
-        var isHoliday   = e.importance === 'holiday';
-        var released    = !isHoliday && e.actual   !== null && e.actual   !== undefined;
-        var hasForecast = !isHoliday && e.forecast !== null && e.forecast !== undefined;
+        // Per-row try/catch: one bad event skips that row, rest of table is unaffected
+        try {
+          var intel       = e.intelligence || {};
+          var sur         = intel.surprise  || {};
+          var isHoliday   = e.importance === 'holiday';
+          var released    = !isHoliday && e.actual   !== null && e.actual   !== undefined;
+          var hasForecast = !isHoliday && e.forecast !== null && e.forecast !== undefined;
 
-        // Surprise coloring only when actual released AND forecast was available to compare
-        var actualCls = 'ec-col-num';
-        if (released && hasForecast) {
-          var dir = e.surprise_direction || (sur.direction === 'above' ? 'hotter_or_stronger'
-                                           : sur.direction === 'below' ? 'softer_or_weaker' : '');
-          if (dir === 'hotter_or_stronger' || sur.direction === 'above') actualCls += ' ec-val-hot';
-          else if (dir === 'softer_or_weaker' || sur.direction === 'below') actualCls += ' ec-val-soft';
-          else actualCls += ' ec-val-set';
-        } else if (released) {
-          actualCls += ' ec-val-set';
+          // Surprise coloring only when actual AND forecast are both available
+          var actualCls = 'ec-col-num';
+          if (released && hasForecast) {
+            var dir = e.surprise_direction || (sur.direction === 'above' ? 'hotter_or_stronger'
+                                             : sur.direction === 'below' ? 'softer_or_weaker' : '');
+            if (dir === 'hotter_or_stronger' || sur.direction === 'above') actualCls += ' ec-val-hot';
+            else if (dir === 'softer_or_weaker' || sur.direction === 'below') actualCls += ' ec-val-soft';
+            else actualCls += ' ec-val-set';
+          } else if (released) {
+            actualCls += ' ec-val-set';
+          }
+
+          var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
+          var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
+          var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
+
+          var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
+          var evtSub    = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
+          var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + '</td>';
+          var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
+          var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
+          var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
+          var tdActual  = '<td class="' + actualCls + '">' + dispActual   + '</td>';
+          var tdFcast   = '<td class="ec-col-num">'         + dispForecast + '</td>';
+          var tdPrev    = '<td class="ec-col-num">'         + dispPrevious + '</td>';
+          var cells     = isRTL
+            ? tdPrev + tdFcast + tdActual + tdImpact + tdEvent + tdCountry + tdTime
+            : tdTime + tdCountry + tdEvent + tdImpact + tdActual + tdFcast + tdPrev;
+          tbody += '<tr class="ec-row" data-ec-i="' + rowIdx + '" tabindex="0" role="button" aria-expanded="false">'
+                +  cells + '</tr>';
+          rowIdx++;
+        } catch (rowErr) {
+          rowsSkipped++;
+          if (EC_DEBUG) console.error('[ec] buildTable row error (idx=' + rowIdx + '):', rowErr);
         }
-
-        // Suppress numeric fields for holiday / all-day events
-        var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
-        var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
-        var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
-
-        var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
-        var evtSub    = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
-        var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + '</td>';
-        var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
-        var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
-        var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
-        var tdActual  = '<td class="' + actualCls + '">' + dispActual   + '</td>';
-        var tdFcast   = '<td class="ec-col-num">'         + dispForecast + '</td>';
-        var tdPrev    = '<td class="ec-col-num">'         + dispPrevious + '</td>';
-        var cells     = isRTL
-          ? tdPrev + tdFcast + tdActual + tdImpact + tdEvent + tdCountry + tdTime
-          : tdTime + tdCountry + tdEvent + tdImpact + tdActual + tdFcast + tdPrev;
-        tbody += '<tr class="ec-row" data-ec-i="' + rowIdx + '" tabindex="0" role="button" aria-expanded="false">' +
-          cells + '</tr>';
-        rowIdx++;
       });
     });
 
+    if (EC_DEBUG && rowsSkipped > 0) {
+      console.warn('[ec] buildTable — skipped', rowsSkipped, 'malformed rows');
+    }
+
     return {
       html: '<table class="ec-table"><thead><tr>' + ths + '</tr></thead><tbody>' + tbody + '</tbody></table>',
-      cols: cols,
+      cols:         cols,
+      rendered:     rowIdx,
+      skipped:      rowsSkipped,
+      groupCount:   groups.length,
     };
   }
 
   // ── Card build (mobile) ───────────────────────────────────────────────────
   function buildCards(events) {
-    var parts  = [];
-    var groups = viewMode === 'week' ? groupByDate(events) : [{ date: null, events: events }];
+    var parts       = [];
+    var cardsSkipped = 0;
+    var groups = viewMode === 'week' ? groupByDate(events.slice()) : [{ date: null, events: events.slice() }];
     var cardIdx = 0;
     groups.forEach(function (group) {
-      if (viewMode === 'week' && group.date) {
+      if (viewMode === 'week' && group.date && group.date !== 'unknown') {
         parts.push('<div class="ec-date-group-header">' + esc(fmtDateGroupLabel(group.date)) + '</div>');
       }
       group.events.forEach(function (e) {
-        var isHoliday = e.importance === 'holiday';
-        var assets = isHoliday ? [] :
-                     (Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity :
-                     (e.intelligence && Array.isArray(e.intelligence.market_sensitivity) ? e.intelligence.market_sensitivity : []));
-        var tags = assets.map(function (a) {
-          return '<span class="ec-asset-tag">' + esc(a) + '</span>';
-        }).join('');
-        var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
-        var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
-        var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
-        parts.push(
-          '<div class="ec-card" data-ec-i="' + cardIdx + '" tabindex="0" role="button" aria-expanded="false">' +
-          '<div class="ec-card-header">' +
-            '<div class="ec-card-event"><strong>' + esc(translateEventName(e.event_name || '—', lang)) + '</strong>' +
-              '<small>' + esc(countryCurrency(e.country)) + '</small></div>' +
-            badgeHtml(e.importance) +
-          '</div>' +
-          '<div class="ec-card-time">' + esc(fmtTime(e.event_time)) + '</div>' +
-          '<div class="ec-card-nums">' +
-            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colActual)   + '</span><span class="ec-card-num-val">' + dispActual   + '</span></div>' +
-            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colForecast) + '</span><span class="ec-card-num-val">' + dispForecast + '</span></div>' +
-            '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colPrevious) + '</span><span class="ec-card-num-val">' + dispPrevious + '</span></div>' +
-          '</div>' +
-          '<div class="ec-card-detail">' +
-            intelligenceHtml(e) +
-            (tags ? '<div class="ec-card-assets">' + tags + '</div>' : '') +
-            '<p class="ec-card-disclaimer">' + esc(L.disclaimer) + '</p>' +
-          '</div>' +
-          '</div>'
-        );
-        cardIdx++;
+        try {
+          var isHoliday = e.importance === 'holiday';
+          var assets = isHoliday ? [] :
+                       (Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity :
+                       (e.intelligence && Array.isArray(e.intelligence.market_sensitivity) ? e.intelligence.market_sensitivity : []));
+          var tags = assets.map(function (a) {
+            return '<span class="ec-asset-tag">' + esc(a) + '</span>';
+          }).join('');
+          var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
+          var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
+          var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
+          parts.push(
+            '<div class="ec-card" data-ec-i="' + cardIdx + '" tabindex="0" role="button" aria-expanded="false">' +
+            '<div class="ec-card-header">' +
+              '<div class="ec-card-event"><strong>' + esc(translateEventName(e.event_name || '—', lang)) + '</strong>' +
+                '<small>' + esc(countryCurrency(e.country)) + '</small></div>' +
+              badgeHtml(e.importance) +
+            '</div>' +
+            '<div class="ec-card-time">' + esc(fmtTime(e.event_time)) + '</div>' +
+            '<div class="ec-card-nums">' +
+              '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colActual)   + '</span><span class="ec-card-num-val">' + dispActual   + '</span></div>' +
+              '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colForecast) + '</span><span class="ec-card-num-val">' + dispForecast + '</span></div>' +
+              '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colPrevious) + '</span><span class="ec-card-num-val">' + dispPrevious + '</span></div>' +
+            '</div>' +
+            '<div class="ec-card-detail">' +
+              intelligenceHtml(e) +
+              (tags ? '<div class="ec-card-assets">' + tags + '</div>' : '') +
+              '<p class="ec-card-disclaimer">' + esc(L.disclaimer) + '</p>' +
+            '</div>' +
+            '</div>'
+          );
+          cardIdx++;
+        } catch (cardErr) {
+          cardsSkipped++;
+          if (EC_DEBUG) console.error('[ec] buildCards card error (idx=' + cardIdx + '):', cardErr);
+        }
       });
     });
+
+    if (EC_DEBUG && cardsSkipped > 0) {
+      console.warn('[ec] buildCards — skipped', cardsSkipped, 'malformed cards');
+    }
+
     return '<div class="ec-cards">' + parts.join('') + '</div>';
   }
 
@@ -464,11 +502,6 @@
       ? fmtDateLabel(weekStart(selectedDate)) + ' – ' + fmtDateLabel(weekEnd(selectedDate))
       : fmtDateLabel(selectedDate);
 
-    if (EC_DEBUG) {
-      console.log('[ec] render — fetchedEvents:', allEvents.length, 'visibleEvents:', events.length);
-    }
-
-    // Pass both total-fetched and visible counts to status bar
     updateStatus(allEvents.length, events.length);
 
     if (!events.length) {
@@ -477,13 +510,49 @@
         '<p>' + esc(L.noEvents) + '</p>' +
         '<p class="ec-empty-hint">' + esc(L.noEventsHint) + '</p>' +
         '</div>';
+      if (EC_DEBUG) {
+        console.log('[ec] render — empty state | fetched:', allEvents.length,
+                    'filtered:', events.length, 'mode:', viewMode, 'date:', selectedDate);
+      }
       return;
     }
 
-    var tbl   = buildTable(events);
-    var cards = buildCards(events);
-    elTableWrap.innerHTML = tbl.html + cards;
-    attachListeners(tbl.cols, events);
+    // Outer try/catch: if build functions throw, fall back to empty-state rather than leaving a blank wrapper
+    var tbl, cardsHtml;
+    try {
+      tbl = buildTable(events);
+    } catch (tblErr) {
+      if (EC_DEBUG) console.error('[ec] buildTable fatal error:', tblErr);
+      tbl = { html: '', cols: 7, rendered: 0, skipped: events.length, groupCount: 0 };
+    }
+    try {
+      cardsHtml = buildCards(events);
+    } catch (cardErr) {
+      if (EC_DEBUG) console.error('[ec] buildCards fatal error:', cardErr);
+      cardsHtml = '<div class="ec-cards"></div>';
+    }
+
+    // Both table and cards are empty only when every event was malformed
+    if (!tbl.html && cardsHtml === '<div class="ec-cards"></div>') {
+      elTableWrap.innerHTML =
+        '<div class="ec-empty-state"><strong>' + esc(label) + '</strong>' +
+        '<p>' + esc(L.noEvents) + '</p>' +
+        '<p class="ec-empty-hint">' + esc(L.noEventsHint) + '</p>' +
+        '</div>';
+    } else {
+      elTableWrap.innerHTML = tbl.html + cardsHtml;
+      attachListeners(tbl.cols, events);
+    }
+
+    if (EC_DEBUG) {
+      console.log('[ec] render — fetched:', allEvents.length,
+                  '| filtered:', events.length,
+                  '| hidden:', (allEvents.length - events.length),
+                  '| groups:', (tbl.groupCount || 0),
+                  '| rendered:', (tbl.rendered || 0),
+                  '| skipped:', (tbl.skipped || 0),
+                  '| mode:', viewMode, '| date:', selectedDate);
+    }
   }
 
   // ── Row expand (desktop) ──────────────────────────────────────────────────
@@ -508,34 +577,35 @@
   }
 
   function toggleRow(row, cols, events) {
-    var idx      = Number(row.getAttribute('data-ec-i'));
-    var e        = events[idx];
-    var expanded = row.classList.contains('ec-row-expanded');
-    var next     = row.nextElementSibling;
-    if (next && next.classList.contains('ec-detail-row')) next.remove();
-    if (!expanded) {
-      row.classList.add('ec-row-expanded');
-      row.setAttribute('aria-expanded', 'true');
-      var tr = document.createElement('tr');
-      tr.className = 'ec-detail-row';
-      var td = document.createElement('td');
-      td.colSpan = cols;
-      td.innerHTML = '<div class="ec-detail-inner">' + detailContent(e) + '</div>';
-      tr.appendChild(td);
-      row.parentNode.insertBefore(tr, row.nextSibling);
-    } else {
-      row.classList.remove('ec-row-expanded');
-      row.setAttribute('aria-expanded', 'false');
-    }
+    try {
+      var idx      = Number(row.getAttribute('data-ec-i'));
+      var e        = events[idx];
+      if (!e) return;
+      var expanded = row.classList.contains('ec-row-expanded');
+      var next     = row.nextElementSibling;
+      if (next && next.classList.contains('ec-detail-row')) next.remove();
+      if (!expanded) {
+        row.classList.add('ec-row-expanded');
+        row.setAttribute('aria-expanded', 'true');
+        var tr = document.createElement('tr');
+        tr.className = 'ec-detail-row';
+        var td = document.createElement('td');
+        td.colSpan = cols;
+        td.innerHTML = '<div class="ec-detail-inner">' + detailContent(e) + '</div>';
+        tr.appendChild(td);
+        row.parentNode.insertBefore(tr, row.nextSibling);
+      } else {
+        row.classList.remove('ec-row-expanded');
+        row.setAttribute('aria-expanded', 'false');
+      }
+    } catch (_) {}
   }
 
   // ── Status bar ────────────────────────────────────────────────────────────
-  // fetchedCount: total events returned by API for the queried period
-  // visibleCount: events shown after client-side filters (impact/country/search)
   function updateStatus(fetchedCount, visibleCount) {
     if (!elStatus) return;
-    var src  = calMeta.source || calMeta.provider || '';
-    var upd  = calMeta.updated_at || '';
+    var src    = calMeta.source || calMeta.provider || '';
+    var upd    = calMeta.updated_at || '';
     var isLive = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred');
     var cls    = isLive ? 'ec-status-live' : src === 'cache' ? 'ec-status-cache' : 'ec-status-degraded';
     elStatus.className = 'ec-status-bar ' + cls;
@@ -552,14 +622,12 @@
     var provText = '';
     if (calMeta.providers && typeof calMeta.providers === 'object') {
       var okProviders = Object.keys(calMeta.providers).filter(function (k) {
-        return calMeta.providers[k].status === 'ok';
+        // Null-safe: provider entry might be null if provider config is incomplete
+        return calMeta.providers[k] && calMeta.providers[k].status === 'ok';
       });
-      if (okProviders.length) {
-        provText = ' \xB7 ' + okProviders.join('+');
-      }
+      if (okProviders.length) provText = ' \xB7 ' + okProviders.join('+');
     }
 
-    // Show "118 fetched · 16 shown" when filters are active; otherwise just "16 events"
     var countText = '';
     if (visibleCount !== undefined && fetchedCount !== undefined && fetchedCount !== visibleCount) {
       countText = ' \xB7 ' + fetchedCount + ' ' + L.labelFetched + ' \xB7 ' + visibleCount + ' ' + L.labelShown;
@@ -591,6 +659,15 @@
     }
   }
 
+  // ── Refresh lifecycle ─────────────────────────────────────────────────────
+  function scheduleRefresh() {
+    if (refreshTimer) clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(function () {
+      refreshTimer = null;
+      load();
+    }, REFRESH_INTERVAL_MS);
+  }
+
   // ── Bind controls ─────────────────────────────────────────────────────────
   function bindControls() {
     if (elPrev) elPrev.addEventListener('click', function () {
@@ -610,7 +687,6 @@
         if (this.value) { viewMode = 'day'; selectedDate = this.value; load(); }
       });
     }
-    // Filters are client-side only — no reload needed
     if (elFilterImpact)  elFilterImpact.addEventListener('change',  function () { filterImpact  = this.value; render(); });
     if (elFilterCountry) elFilterCountry.addEventListener('change', function () { filterCountry = this.value; render(); });
     if (elSearch) {
@@ -623,61 +699,105 @@
     }
   }
 
-  // ── Fetch helpers ─────────────────────────────────────────────────────────
-  function fetchJson(url) {
-    return fetch(url).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    });
-  }
-
-  // Day mode uses ?date= (exact day); week mode uses ?from=&to=
-  function endpointQuery() {
-    if (viewMode === 'week') {
-      return '?from=' + weekStart(selectedDate) + '&to=' + weekEnd(selectedDate);
-    }
-    return '?date=' + selectedDate;
-  }
-
   // ── Load data ─────────────────────────────────────────────────────────────
+  // Request lifecycle:
+  //   1. Abort any in-flight fetch via AbortController
+  //   2. Increment requestSeq so .then()/.catch() guards discard stale responses
+  //   3. Capture seq at call time — .then() checks seq === requestSeq before committing
+  //   4. Reset refresh timer so periodic refresh doesn't stack with manual navigation
   function load() {
-    if (isLoading) return;
-    isLoading = true;
+    // Cancel any in-flight request
+    if (activeController) {
+      try { activeController.abort(); } catch (_) {}
+      activeController = null;
+    }
+
+    var seq = ++requestSeq;
+
+    // Create AbortController (supported in all modern browsers; polyfill not needed)
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    activeController = controller;
+    var signal = controller ? controller.signal : undefined;
+
     elTableWrap.innerHTML = '<p class="calendar-loading">' + esc(L.loading) + '</p>';
     if (elRefresh) { elRefresh.disabled = true; elRefresh.setAttribute('aria-busy', 'true'); }
 
-    var qs = endpointQuery();
+    // Reset periodic refresh so it counts from this load
+    scheduleRefresh();
+
+    var qs       = endpointQuery();
+    var fetchStart = EC_DEBUG ? Date.now() : 0;
+
     if (EC_DEBUG) {
-      console.log('[ec] load — selectedMode:', viewMode, 'selectedDate:', selectedDate,
-                  'selectedFrom:', viewMode === 'week' ? weekStart(selectedDate) : selectedDate,
-                  'selectedTo:', viewMode === 'week' ? weekEnd(selectedDate) : selectedDate,
-                  'query:', qs);
+      console.log('[ec] load — seq:', seq, '| mode:', viewMode, '| date:', selectedDate,
+                  '| query:', qs);
+    }
+
+    function fetchOne(url) {
+      var opts = signal ? { signal: signal } : {};
+      return fetch(url, opts).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
     }
 
     var usedFallback = false;
-    fetchJson('/api/economic-calendar' + qs)
-      .catch(function () { return fetchJson('/.netlify/functions/economic-calendar' + qs); })
-      .catch(function () {
+
+    fetchOne('/api/economic-calendar' + qs)
+      .catch(function (err) {
+        if (err && err.name === 'AbortError') throw err;
+        return fetchOne('/.netlify/functions/economic-calendar' + qs);
+      })
+      .catch(function (err) {
+        if (err && err.name === 'AbortError') throw err;
         usedFallback = true;
-        return fetchJson('/data/economic-calendar.json');
+        return fetchOne('/data/economic-calendar.json');
       })
       .then(function (data) {
-        isLoading = false;
+        // Stale-response guard: discard if a newer request is already in flight
+        if (seq !== requestSeq) {
+          if (EC_DEBUG) console.log('[ec] discarding stale response (seq=' + seq + ', current=' + requestSeq + ')');
+          return;
+        }
+        activeController = null;
         if (elRefresh) { elRefresh.disabled = false; elRefresh.removeAttribute('aria-busy'); }
-        calMeta = data;
+
+        calMeta = data || {};
         if (usedFallback && calMeta.source !== 'degraded') {
           calMeta = Object.assign({}, calMeta, { source: 'cache' });
         }
-        allEvents = Array.isArray(data.events) ? data.events : [];
+        // Safe clone — prevents external mutation of the response array
+        allEvents = Array.isArray(data && data.events) ? data.events.slice() : [];
+
         if (EC_DEBUG) {
-          console.log('[ec] fetched — fetchedEvents:', allEvents.length, 'source:', calMeta.source);
+          var elapsed = Date.now() - fetchStart;
+          console.log('[ec] fetched — seq:', seq, '| events:', allEvents.length,
+                      '| source:', calMeta.source, '| elapsed:', elapsed + 'ms');
+          if (calMeta.providers && typeof calMeta.providers === 'object') {
+            Object.keys(calMeta.providers).forEach(function (k) {
+              var p = calMeta.providers[k];
+              if (p) console.log('[ec] provider', k, '— status:', p.status,
+                                 'raw:', p.raw, 'normalized:', p.normalized);
+            });
+          }
         }
+
         populateCountries();
         render();
       })
-      .catch(function () {
-        isLoading = false;
+      .catch(function (err) {
+        // AbortError means a newer load() superseded this one — new request will render
+        if (err && err.name === 'AbortError') {
+          if (EC_DEBUG) console.log('[ec] fetch aborted (seq=' + seq + ')');
+          return;
+        }
+        // Stale error: another request already handled the UI
+        if (seq !== requestSeq) return;
+
+        activeController = null;
         if (elRefresh) { elRefresh.disabled = false; elRefresh.removeAttribute('aria-busy'); }
+        if (EC_DEBUG) console.error('[ec] fetch failed (seq=' + seq + '):', err);
+
         elTableWrap.innerHTML =
           '<div class="ec-empty-state"><strong>' + esc(L.srcDegraded) + '</strong>' +
           '<p>' + esc(L.noEvents) + '</p></div>';
@@ -686,6 +806,14 @@
           elStatus.textContent = L.srcDegraded;
         }
       });
+  }
+
+  // Day mode uses ?date= (exact day); week mode uses ?from=&to=
+  function endpointQuery() {
+    if (viewMode === 'week') {
+      return '?from=' + weekStart(selectedDate) + '&to=' + weekEnd(selectedDate);
+    }
+    return '?date=' + selectedDate;
   }
 
   bindControls();
