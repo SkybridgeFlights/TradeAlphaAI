@@ -392,12 +392,32 @@
   }
 
   // ── Load data ─────────────────────────────────────────────────────────────
+  function fetchJson(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
+  function liveUrl() {
+    var from = addDays(todayStr(), -1);
+    var to   = addDays(todayStr(), 14);
+    return '/.netlify/functions/economic-calendar?from=' + from + '&to=' + to;
+  }
+
   function load() {
     elTableWrap.innerHTML = '<p class="calendar-loading">' + esc(L.loading) + '</p>';
-    fetch('/data/economic-calendar.json')
-      .then(function (r) { return r.json(); })
+    var usedFallback = false;
+    fetchJson(liveUrl())
+      .catch(function () {
+        usedFallback = true;
+        return fetchJson('/data/economic-calendar.json');
+      })
       .then(function (data) {
-        calMeta   = data;
+        calMeta = data;
+        if (usedFallback && calMeta.source !== 'degraded') {
+          calMeta = Object.assign({}, calMeta, { source: 'cache' });
+        }
         allEvents = Array.isArray(data.events) ? data.events : [];
         populateCountries();
         updateStatus();

@@ -183,6 +183,32 @@ if (fs.existsSync(sitemapPath)) {
   if (!sitemap.includes('/ar/economic-calendar/')) warnings.push('sitemap-core.xml: missing /ar/economic-calendar/ entry');
 }
 
+// ── 6. Serverless endpoint ────────────────────────────────────────────────────
+const FUNCTION_PATH = path.join(ROOT, 'netlify', 'functions', 'economic-calendar.js');
+if (!fs.existsSync(FUNCTION_PATH)) {
+  failures.push('netlify/functions/economic-calendar.js does not exist — serverless endpoint missing');
+} else {
+  const fnSrc = fs.readFileSync(FUNCTION_PATH, 'utf8');
+  if (!/exports\.handler/.test(fnSrc))
+    failures.push('netlify/functions/economic-calendar.js: missing exports.handler — not a valid Netlify function');
+  if (!/fmp-provider/.test(fnSrc) && !/finnhub-provider/.test(fnSrc) && !/fred-provider/.test(fnSrc))
+    failures.push('netlify/functions/economic-calendar.js: does not import any provider — endpoint is empty');
+}
+
+const FRONTEND_JS = path.join(ROOT, 'js', 'economic-calendar.js');
+if (fs.existsSync(FRONTEND_JS)) {
+  const jsSrc = fs.readFileSync(FRONTEND_JS, 'utf8');
+  if (!jsSrc.includes('/.netlify/functions/economic-calendar'))
+    failures.push('js/economic-calendar.js: does not reference /.netlify/functions/economic-calendar live endpoint');
+  const secretPatterns = [/_API_KEY\s*=/, /FINNHUB_API_KEY/, /FMP_API_KEY/, /FRED_API_KEY/, /OPENAI_API_KEY/];
+  for (const pattern of secretPatterns) {
+    if (pattern.test(jsSrc)) {
+      failures.push('js/economic-calendar.js: contains API key reference — secrets must not appear in frontend JS');
+      break;
+    }
+  }
+}
+
 // ── Report ────────────────────────────────────────────────────────────────────
 if (warnings.length) {
   warnings.forEach((w) => console.warn(`[calendar] WARN: ${w}`));
