@@ -52,19 +52,33 @@ function deduplicate(events) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
+  const from = dateStr(-1);
+  const to   = dateStr(14);
+  console.log(`[calendar:fetch] target range=${from}..${to}`);
+
   let result;
   try {
-    result = await fetchEconomicCalendar({
-      from: dateStr(-1),
-      to:   dateStr(14),
-      env:  process.env,
-    });
+    result = await fetchEconomicCalendar({ from, to, env: process.env });
   } catch (err) {
     console.warn(`[calendar:fetch] provider router error: ${sanitize(err.message)}`);
     result = { provider: 'degraded', events: [], fallbackUsed: true, attempts: [] };
   }
 
-  const valid = deduplicate((result.events || []).filter(e => !e.error));
+  const rawCount        = result.rawCount       || (result.events || []).length;
+  const normalizedCount = (result.events || []).length;
+  const validEvents     = (result.events || []).filter(e => !e.error);
+  const rejectedCount   = normalizedCount - validEvents.length;
+  console.log(`[calendar:fetch] provider=${result.provider} raw=${rawCount} normalized=${normalizedCount} valid=${validEvents.length} rejected=${rejectedCount}`);
+  if (rejectedCount > 0) {
+    const reasons = {};
+    (result.events || []).filter(e => e.error).forEach(e => {
+      const key = (e.error || 'unknown').slice(0, 60);
+      reasons[key] = (reasons[key] || 0) + 1;
+    });
+    Object.entries(reasons).forEach(([r, n]) => console.log(`[calendar:fetch]   rejected reason: ${r} (×${n})`));
+  }
+
+  const valid = deduplicate(validEvents);
 
   // If no live data, retain existing file rather than overwriting with empty data.
   if (!valid.length) {

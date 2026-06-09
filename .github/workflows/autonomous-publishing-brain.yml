@@ -180,15 +180,10 @@ jobs:
       - name: Fetch live economic calendar
         continue-on-error: true
         run: |
-          if true; then
-            node tools/update-economic-calendar.js --fetch --write || {
-              echo "[calendar] provider unavailable — entering degraded intelligence mode"
-              echo "[calendar] continuing pipeline with empty calendar dataset"
-            }
-            echo "[calendar] Provider router complete (FMP > Finnhub > FRED > degraded)."
-          else
-            echo "[calendar] FMP_API_KEY not configured — retaining the checked-in calendar."
-          fi
+          node tools/fetch-economic-calendar.js --write || {
+            echo "[calendar] provider unavailable — retaining existing calendar data"
+          }
+          echo "[calendar] Provider router complete (FMP > Finnhub > FRED > stale-cache > degraded)."
           node tools/build-market-expectations.js --write || echo "[calendar] build-market-expectations degraded — continuing"
           node tools/build-cross-asset-reaction.js --write || echo "[calendar] build-cross-asset-reaction degraded — continuing"
 

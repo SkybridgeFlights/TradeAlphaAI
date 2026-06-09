@@ -23,20 +23,50 @@ async function main() {
     const input = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
     events = (Array.isArray(input.events) ? input.events : []).map(normalizeManualEvent);
   } else if (fetch) {
-    const routed = await fetchEconomicCalendar({
-      from: dateString(-1),
-      to: dateString(14),
-      env: process.env
-    });
+    const from = dateString(-1);
+    const to   = dateString(14);
+    console.log(`[calendar] fetch range=${from}..${to}`);
+    const routed = await fetchEconomicCalendar({ from, to, env: process.env });
+    const rawCount        = routed.rawCount       || (routed.events || []).length;
+    const normalizedCount = (routed.events || []).length;
+    const validCount      = (routed.events || []).filter((e) => !e.error).length;
+    const rejectedCount   = normalizedCount - validCount;
+    console.log(`[calendar] provider=${routed.provider} raw=${rawCount} normalized=${normalizedCount} valid=${validCount} rejected=${rejectedCount}`);
+    if (rejectedCount > 0) {
+      const reasons = {};
+      (routed.events || []).filter((e) => e.error).forEach((e) => {
+        const key = (e.error || 'unknown').slice(0, 60);
+        reasons[key] = (reasons[key] || 0) + 1;
+      });
+      Object.entries(reasons).forEach(([r, n]) => console.log(`[calendar]   rejected reason: ${r} (×${n})`));
+    }
     events = routed.events || [];
     source = routed.provider;
     providerMetadata = {
-      endpoint: routed.endpoint || null,
+      endpoint:      routed.endpoint    || null,
       fallback_used: routed.fallbackUsed === true,
-      cache_used: routed.cacheUsed === true,
-      attempts: routed.attempts || []
+      cache_used:    routed.cacheUsed   === true,
+      attempts:      routed.attempts    || []
     };
     writeDegradationState(routed);
+
+    // Stale-data preservation: never overwrite a working calendar with empty/degraded output
+    const validEvents = deduplicate(events.filter((e) => !e.error));
+    if (!validEvents.length) {
+      const existing = readExisting();
+      if (existing) {
+        const ageH = existing.updated_at
+          ? Math.round((Date.now() - Date.parse(existing.updated_at)) / 3600000)
+          : null;
+        console.log(
+          `[calendar] providers unavailable — retaining existing data` +
+          ` (${existing.events.length} events, source=${existing.source || 'cache'}` +
+          (ageH !== null ? `, age=${ageH}h` : '') + ')'
+        );
+        return;
+      }
+      console.warn('[calendar] no live data and no valid cache — writing empty calendar');
+    }
   } else {
     console.log('No economic calendar source provided. Use --source=<json> [--write] or --fetch [--write].');
     return;
@@ -107,6 +137,13 @@ function deduplicate(events) {
     seenKey.add(key);
     return true;
   });
+}
+
+function readExisting() {
+  try {
+    const data = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+    return Array.isArray(data.events) && data.events.length > 0 ? data : null;
+  } catch { return null; }
 }
 
 function argValue(name) {

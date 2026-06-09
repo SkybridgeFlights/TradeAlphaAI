@@ -66,6 +66,8 @@ if (!fs.existsSync(CALENDAR_PATH)) {
 
   if (cal) {
     if (cal.version !== '2.0') warnings.push(`data/economic-calendar.json: expected version 2.0, found ${cal.version}`);
+    if (cal.source === undefined || cal.source === null) warnings.push('data/economic-calendar.json: missing source field');
+    if (cal.provider_metadata !== undefined && typeof cal.provider_metadata !== 'object') failures.push('data/economic-calendar.json: provider_metadata must be an object');
 
     if (!cal.updated_at) {
       warnings.push('data/economic-calendar.json: updated_at is null — calendar has never been fetched');
@@ -79,12 +81,23 @@ if (!fs.existsSync(CALENDAR_PATH)) {
     }
 
     if (!Array.isArray(cal.events)) {
-      failures.push('data/economic-calendar.json: events must be an array');
+      failures.push('data/economic-calendar.json: events must be an array (got ' + typeof cal.events + ')');
     } else {
-      console.log(`[calendar] ${cal.events.length} event(s) in calendar`);
+      const meta = cal.provider_metadata || {};
+      console.log(`[calendar] ${cal.events.length} event(s) in calendar (source=${cal.source || 'unknown'}, cache_used=${meta.cache_used || false}, fallback_used=${meta.fallback_used || false})`);
+      if (cal.events.length === 0) {
+        if (cal.source === 'degraded' && !meta.cache_used) {
+          warnings.push(
+            'data/economic-calendar.json: empty calendar — all providers failed and no stale cache exists. ' +
+            'Set FMP_API_KEY, FINNHUB_API_KEY, or FRED_API_KEY in GitHub Secrets, then run: npm run fetch:economic-calendar'
+          );
+        } else {
+          warnings.push('data/economic-calendar.json: 0 events (source=' + (cal.source || 'unknown') + ')');
+        }
+      }
       const highCount = cal.events.filter((e) => e.importance === 'high').length;
       const pending   = cal.events.filter((e) => e.status === 'confirmed').length;
-      console.log(`[calendar]   high-impact: ${highCount}, confirmed: ${pending}`);
+      if (cal.events.length > 0) console.log(`[calendar]   high-impact: ${highCount}, confirmed: ${pending}`);
 
       const VALID_STATUSES = new Set(['confirmed', 'tentative', 'cancelled']);
       const seenId  = new Set();

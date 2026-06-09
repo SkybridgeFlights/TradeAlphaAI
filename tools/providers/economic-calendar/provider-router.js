@@ -24,7 +24,18 @@ async function fetchEconomicCalendar(options = {}) {
     const name = providerName(provider);
     try {
       const result = await provider.fetchCalendar(context);
-      const valid = result.events.filter((event) => !event.error);
+      const allEvents   = result.events || [];
+      const valid       = allEvents.filter((event) => !event.error);
+      const rejected    = allEvents.length - valid.length;
+      console.log(`[PROVIDER_ROUTER] ${name} raw=${result.rawCount || allEvents.length} normalized=${allEvents.length} valid=${valid.length} rejected=${rejected}`);
+      if (rejected > 0) {
+        const reasons = {};
+        allEvents.filter((e) => e.error).forEach((e) => {
+          const key = (e.error || 'unknown').slice(0, 60);
+          reasons[key] = (reasons[key] || 0) + 1;
+        });
+        Object.entries(reasons).slice(0, 8).forEach(([r, n]) => console.log(`[PROVIDER_ROUTER]   ${name} rejected: ${r} (×${n})`));
+      }
       if (!valid.length) throw providerFailure(name, result.endpoint, 'no_supported_events');
       attempts.push(healthAttempt(name, 'ok', result.endpoint, '', valid.length));
       const routed = { ...result, events: valid, fallbackUsed: name !== 'fmp', attempts };
