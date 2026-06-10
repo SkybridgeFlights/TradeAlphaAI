@@ -1041,7 +1041,7 @@
     elStatus.className = 'ec-status-bar ' + cls;
 
     var srcLabel = src === 'degraded'        ? L.srcDegraded
-                 : isSchedule               ? (lang === 'ar' ? 'جدول تقديري' : 'Schedule estimate')
+                 : isSchedule               ? (lang === 'ar' ? 'جدول اقتصادي تقديري' : 'Estimated macro schedule')
                  : isCached                 ? L.srcCache
                  : isLive                   ? (L.srcLive + (src !== 'live' ? ' (' + src + ')' : ''))
                  : L.srcCache;

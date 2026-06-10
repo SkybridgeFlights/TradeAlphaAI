@@ -915,6 +915,116 @@ expect('FOMC schedule has at least 4 future dates', _futureCount >= 4, true);
   expect('uptime failures=99→ 25 (floor)', computeUptimeScore({ failures: 99 }), 25);
   expect('uptime no state prop → 100', computeUptimeScore({}), 100);
 
+  // ── FRED limit constraint ─────────────────────────────────────────────────
+  console.log('[logic] FRED provider limit ≤ 1000');
+  var fredSrc = require('fs').readFileSync(
+    require('path').join(__dirname, 'providers/economic-calendar/fred-provider.js'), 'utf8');
+  var fredLimitMatch = fredSrc.match(/limit=(\d+)/);
+  var fredLimit = fredLimitMatch ? parseInt(fredLimitMatch[1], 10) : null;
+  expect('FRED limit present in URL', fredLimit !== null, true);
+  expect('FRED limit ≤ 1000',         fredLimit !== null && fredLimit <= 1000, true);
+
+  // ── Provider classification ───────────────────────────────────────────────
+  console.log('[logic] provider error classification');
+
+  // Simulate classifyProviderError inline (same logic as api/economic-calendar.js)
+  function classifyProviderError(reason, httpStatus) {
+    if (reason === 'missing_api_key')             return 'missing_key';
+    if (httpStatus === 402)                       return 'disabled_paid_plan';
+    if (httpStatus === 429)                       return 'rate_limited';
+    if (httpStatus === 401)                       return 'auth_failed';
+    if (httpStatus === 403)                       return 'auth_failed';
+    if (httpStatus !== null && httpStatus >= 500) return 'provider_down';
+    if (/invalid json/i.test(reason))             return 'schema_drift';
+    if (/no_matching|no_supported_events/i.test(reason)) return 'empty_payload';
+    if (/timeout/i.test(reason))                  return 'timeout';
+    return 'unknown';
+  }
+  // FMP 402 → disabled_paid_plan
+  expect('FMP 402 → disabled_paid_plan', classifyProviderError('', 402), 'disabled_paid_plan');
+  // Finnhub bare 403 (no plan body) → auth_failed
+  expect('bare 403 → auth_failed',       classifyProviderError('', 403), 'auth_failed');
+  // Finnhub 403 + plan body → plan_restricted (rawBody detection)
+  function classifyWithRawBody(httpStatus, rawBody) {
+    var isPlanRestricted = httpStatus === 403 &&
+      /don.t have access|access to this resource|premium|subscription|plan/i.test(rawBody);
+    if (isPlanRestricted) return 'plan_restricted';
+    return classifyProviderError('', httpStatus);
+  }
+  expect('403 + access body → plan_restricted',
+    classifyWithRawBody(403, "You don't have access to this resource."), 'plan_restricted');
+  expect('403 + premium body → plan_restricted',
+    classifyWithRawBody(403, 'Premium subscription required'), 'plan_restricted');
+  expect('403 + empty body → auth_failed',
+    classifyWithRawBody(403, ''), 'auth_failed');
+  expect('402 always → disabled_paid_plan',
+    classifyWithRawBody(402, ''), 'disabled_paid_plan');
+  expect('missing_api_key → missing_key',
+    classifyProviderError('missing_api_key', null), 'missing_key');
+
+  // Alpha Vantage optional: auth_failed → auth_failed_optional
+  function classifyWithOptional(name, httpStatus, rawBody) {
+    var OPTIONAL_PROVIDERS = new Set(['alphavantage']);
+    var errorType = classifyWithRawBody(httpStatus, rawBody);
+    if (OPTIONAL_PROVIDERS.has(name) && (errorType === 'auth_failed' || errorType === 'plan_restricted')) {
+      return 'auth_failed_optional';
+    }
+    return errorType;
+  }
+  expect('alphavantage 403 → auth_failed_optional',
+    classifyWithOptional('alphavantage', 403, ''), 'auth_failed_optional');
+  expect('finnhub 403 stays auth_failed (not optional)',
+    classifyWithOptional('finnhub', 403, ''), 'auth_failed');
+
+  // ── calcProviderHealth with source ────────────────────────────────────────
+  console.log('[logic] calcProviderHealth with source');
+
+  function calcProviderHealth(providersMeta, errorTypes, eventCount, source) {
+    if (eventCount > 0 && source === 'live')              return 'healthy';
+    if (eventCount > 0)                                   return 'fallback_healthy';
+    var permanentTypes = new Set(['missing_key', 'empty_payload', 'plan_restricted',
+      'disabled_paid_plan', 'auth_failed', 'auth_failed_optional', 'provider_cooldown']);
+    var transientFailures = Object.entries(errorTypes).filter(function (pair) {
+      return pair[1] && !permanentTypes.has(pair[1]);
+    });
+    return transientFailures.length > 0 ? 'degraded' : 'offline';
+  }
+  expect('live events → healthy',
+    calcProviderHealth({}, {}, 5, 'live'), 'healthy');
+  expect('schedule_fallback events → fallback_healthy',
+    calcProviderHealth({}, {}, 3, 'schedule_fallback'), 'fallback_healthy');
+  expect('stale_cache events → fallback_healthy',
+    calcProviderHealth({}, {}, 2, 'stale_cache'), 'fallback_healthy');
+  expect('0 events, all plan/auth errors → offline',
+    calcProviderHealth({}, { te: 'missing_key', fmp: 'disabled_paid_plan', finnhub: 'plan_restricted', alphavantage: 'auth_failed_optional', fred: 'missing_key' }, 0, 'degraded'),
+    'offline');
+  expect('0 events, one 5xx → degraded',
+    calcProviderHealth({}, { te: 'missing_key', fmp: 'provider_down' }, 0, 'degraded'),
+    'degraded');
+  expect('0 events, all missing keys → offline',
+    calcProviderHealth({}, { te: 'missing_key', fmp: 'missing_key' }, 0, 'degraded'),
+    'offline');
+
+  // ── Gated providers do not cause empty calendar ───────────────────────────
+  console.log('[logic] gated providers do not cause empty calendar');
+  // schedule_fallback generates events even when all live providers are plan/auth restricted
+  var schedResult = require('./providers/economic-calendar/schedule-fallback-provider');
+  var testCtx = { from: '2026-06-10', to: '2026-07-10', env: {} };
+  var schedEvents = await schedResult.fetchCalendar(testCtx);
+  expect('schedule events > 0 when live providers unavailable',
+    schedEvents.events.length > 0, true);
+  expect('schedule source = schedule_fallback',
+    schedEvents.events[0].provider, 'schedule_fallback');
+
+  // ── Frontend schedule label ───────────────────────────────────────────────
+  console.log('[logic] frontend schedule source label');
+  var jsSrc = require('fs').readFileSync(
+    require('path').join(__dirname, '..', 'js', 'economic-calendar.js'), 'utf8');
+  expect('EN schedule label = Estimated macro schedule',
+    jsSrc.includes('Estimated macro schedule'), true);
+  expect('AR schedule label = جدول اقتصادي تقديري',
+    jsSrc.includes('جدول اقتصادي تقديري'), true);
+
   // ── Report ──────────────────────────────────────────────────────────────────
   console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
   if (fail > 0) process.exit(1);

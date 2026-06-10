@@ -42,6 +42,10 @@ const ENV_KEY_CHECKS = [
 // failures=1 → 15min, failures=2 → 30min, failures=3 → 60min, failures≥4 → 120min.
 const BASE_COOLDOWN_MS = 15 * 60 * 1000;
 const MAX_COOLDOWN_MS  =  2 * 60 * 60 * 1000;
+// Known-permanent errors (plan restrictions, 402) are cooled down for 24h — no point retrying sooner.
+const PLAN_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+// Providers that are optional supplements — auth failures don't count toward system health.
+const OPTIONAL_PROVIDERS = new Set(['alphavantage']);
 const TMP_LIVE_CACHE      = '/tmp/ec-live-cache.json';
 const STATIC_CACHE_PATH   = path.join(__dirname, '..', 'data', 'economic-calendar.json');
 const CACHE_MAX_AGE_HOURS = 24;
@@ -202,15 +206,39 @@ module.exports = async function handler(req, res) {
       };
 
     } else {
-      // Real failure: classify and set exponential cooldown on 5xx
+      // Real failure: classify, set cooldown, and record error type
       const reason     = sanitize(result.reason && result.reason.message);
       const httpStatus = (result.reason && result.reason.statusCode) || null;
       const respSize   = (result.reason && result.reason.responseSize) || null;
-      const errorType  = classifyProviderError(reason, httpStatus);
-      const metaStatus = resolveProviderStatus(reason, httpStatus);
+      const rawBody    = (result.reason && result.reason.rawBody) || '';
 
-      state.failures++;
-      if (httpStatus !== null && httpStatus >= 500) {
+      // Detect plan restriction from the raw response body (403 with access message)
+      // rather than blindly mapping 403 → auth_failed.
+      const isPlanRestricted = httpStatus === 403 &&
+        /don.t have access|access to this resource|premium|subscription|plan/i.test(rawBody);
+
+      // Optional providers (alphavantage) — auth failure is not a system health signal.
+      const isOptional = OPTIONAL_PROVIDERS.has(name);
+
+      let errorType  = isPlanRestricted ? 'plan_restricted'
+        : classifyProviderError(reason, httpStatus);
+      if (isOptional && (errorType === 'auth_failed' || errorType === 'plan_restricted')) {
+        errorType = 'auth_failed_optional';
+      }
+      const metaStatus = resolveProviderStatus(errorType, httpStatus);
+
+      // Plan/auth restrictions are deterministic — skip failure counter so uptime score
+      // doesn't degrade for something that won't self-heal with retries.
+      const isPermanent = errorType === 'plan_restricted'
+        || errorType === 'disabled_paid_plan'
+        || errorType === 'auth_failed_optional';
+
+      if (!isPermanent) state.failures++;
+
+      if (errorType === 'plan_restricted' || errorType === 'disabled_paid_plan') {
+        state.cooldownUntil = now + PLAN_COOLDOWN_MS;
+        console.log(`[calendar-api] provider=${name} cooldown_set duration=24h http_status=${httpStatus} reason=${errorType}`);
+      } else if (httpStatus !== null && httpStatus >= 500) {
         const cooldownMs  = Math.min(BASE_COOLDOWN_MS * Math.pow(2, state.failures - 1), MAX_COOLDOWN_MS);
         const cooldownMin = Math.round(cooldownMs / 60000);
         state.cooldownUntil = now + cooldownMs;
@@ -341,7 +369,6 @@ module.exports = async function handler(req, res) {
   const activeProviders = PROVIDER_NAMES.filter(function (n) {
     return providersMeta[n] && providersMeta[n].status === 'ok';
   });
-  const providerHealth = calcProviderHealth(providersMeta, errorTypes, enriched.length);
 
   // source: 'live' = fresh provider data | 'schedule_fallback' = estimated from known patterns
   //         'stale_cache' = any cache hit | 'degraded' = no data available
@@ -349,6 +376,8 @@ module.exports = async function handler(req, res) {
     : scheduleEventCount > 0            ? 'schedule_fallback'
     : enriched.length > 0              ? 'stale_cache'
     :                                    'degraded';
+
+  const providerHealth = calcProviderHealth(providersMeta, errorTypes, enriched.length, source);
 
   const httpStatus = (source !== 'degraded') ? 200 : 503;
 
@@ -392,6 +421,19 @@ module.exports = async function handler(req, res) {
       ? `rank=${MERGE_RANK[selectedPrimary]} completeness=${(providersMeta[selectedPrimary] || {}).completeness_score || 0}% events=${(providersMeta[selectedPrimary] || {}).normalized || 0}`
       : (source !== 'live' ? source : 'no_live_provider_ranked');
 
+    // Summarize live provider availability for quick diagnostics
+    const PERMANENT_ERROR_TYPES = new Set([
+      'missing_key', 'plan_restricted', 'disabled_paid_plan',
+      'auth_failed', 'auth_failed_optional', 'provider_cooldown',
+    ]);
+    const liveProviderStatus = activeProviders.length > 0 ? 'live'
+      : PROVIDER_NAMES.every(function (n) {
+          const t = errorTypes[n];
+          return !t || PERMANENT_ERROR_TYPES.has(t);
+        })
+        ? 'unavailable_due_to_plan_or_auth'
+        : 'unavailable_transient';
+
     responseBody.debug = {
       date_range:                { from, to },
       env_keys:                  { present: envPresent, missing: envMissing },
@@ -400,7 +442,9 @@ module.exports = async function handler(req, res) {
       selected_primary_provider: selectedPrimary,
       selected_reason:           selectedReason,
       live_events:               liveEventCount,
+      schedule_events:           scheduleEventCount,
       total_events:              enriched.length,
+      live_provider_status:      liveProviderStatus,
       fallback_used:             fallbackDecision.type,
       cache_age_hours:           cacheAgeHours,
       reason:                    fallbackDecision.reason,
@@ -423,11 +467,16 @@ module.exports = async function handler(req, res) {
 
 // ── Provider classification ───────────────────────────────────────────────────
 
-function resolveProviderStatus(reason, httpStatus) {
-  if (reason === 'missing_api_key') return 'missing_key';
-  if (httpStatus === 402)           return 'disabled_paid_plan';
-  if (reason === 'no_matching_release_dates' ||
-      reason === 'no_supported_events')      return 'no_events';
+// resolveProviderStatus: derives the status string shown in providersMeta.
+// Now receives the already-resolved errorType (not raw reason string) so all
+// plan/optional classification is done in one place (the failure block above).
+function resolveProviderStatus(errorType, httpStatus) {
+  if (errorType === 'missing_key')           return 'missing_key';
+  if (errorType === 'disabled_paid_plan')    return 'disabled_paid_plan';
+  if (errorType === 'plan_restricted')       return 'plan_restricted';
+  if (errorType === 'auth_failed_optional')  return 'auth_failed_optional';
+  if (httpStatus === 402)                    return 'disabled_paid_plan';
+  if (errorType === 'empty_payload')         return 'no_events';
   return 'failed';
 }
 
@@ -435,7 +484,10 @@ function classifyProviderError(reason, httpStatus) {
   if (reason === 'missing_api_key')             return 'missing_key';
   if (httpStatus === 402)                       return 'disabled_paid_plan';
   if (httpStatus === 429)                       return 'rate_limited';
-  if (httpStatus === 401 || httpStatus === 403) return 'auth_failed';
+  if (httpStatus === 401)                       return 'auth_failed';
+  // 403 without a plan-restriction body → auth_failed (key invalid/expired).
+  // 403 WITH a plan-restriction body is caught upstream before this function runs.
+  if (httpStatus === 403)                       return 'auth_failed';
   if (httpStatus !== null && httpStatus >= 500) return 'provider_down';
   if (/invalid json/i.test(reason))             return 'schema_drift';
   if (/legacy_endpoint|unsupported_plan|unexpected_response/i.test(reason)) return 'schema_drift';
@@ -445,15 +497,20 @@ function classifyProviderError(reason, httpStatus) {
   return 'unknown';
 }
 
-// healthy  = events available (live or stale cache)
-// degraded = real provider errors (5xx, 403, cooldown) — known causes
-// offline  = all providers missing keys or returned empty (effectively unconfigured)
-function calcProviderHealth(providersMeta, errorTypes, eventCount) {
-  if (eventCount > 0) return 'healthy';
-  const realFailures = Object.entries(errorTypes).filter(function ([, t]) {
-    return t && t !== 'missing_key' && t !== 'empty_payload';
+// healthy          = live provider events available
+// fallback_healthy = no live events but schedule_fallback or cache is serving content
+// degraded         = real transient provider errors (5xx, timeout) — may self-heal
+// offline          = all providers are unconfigured or have permanent plan/auth issues
+function calcProviderHealth(providersMeta, errorTypes, eventCount, source) {
+  if (eventCount > 0 && source === 'live')              return 'healthy';
+  if (eventCount > 0)                                   return 'fallback_healthy';
+  // Permanent errors (plan, auth) don't count as degraded — they're known and won't self-heal.
+  const permanentTypes = new Set(['missing_key', 'empty_payload', 'plan_restricted',
+    'disabled_paid_plan', 'auth_failed', 'auth_failed_optional', 'provider_cooldown']);
+  const transientFailures = Object.entries(errorTypes).filter(function ([, t]) {
+    return t && !permanentTypes.has(t);
   });
-  return realFailures.length > 0 ? 'degraded' : 'offline';
+  return transientFailures.length > 0 ? 'degraded' : 'offline';
 }
 
 // ── Cache helpers ─────────────────────────────────────────────────────────────

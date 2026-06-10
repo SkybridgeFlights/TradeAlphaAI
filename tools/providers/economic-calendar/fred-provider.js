@@ -11,7 +11,7 @@ async function fetchCalendar(context) {
   if (!apiKey) throw providerError('missing_api_key');
   // Request with ascending sort so upcoming scheduled dates appear first.
   // Increase limit to 2000 to maximise coverage across all FRED releases.
-  const url = `${ENDPOINT}?api_key=${encodeURIComponent(apiKey)}&file_type=json&include_release_dates_with_no_data=true&limit=2000&order_by=release_date&sort_order=asc`;
+  const url = `${ENDPOINT}?api_key=${encodeURIComponent(apiKey)}&file_type=json&include_release_dates_with_no_data=true&limit=1000&order_by=release_date&sort_order=asc`;
   console.log(`[FRED_PROVIDER] endpoint=${ENDPOINT} range=${context.from}..${context.to}`);
   const data = await getJson(url);
   if (!Array.isArray(data?.release_dates)) throw providerError('unexpected_response');
