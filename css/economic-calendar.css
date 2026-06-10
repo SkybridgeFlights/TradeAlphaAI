@@ -607,6 +607,42 @@ tr.ec-detail-row td {
   font-style: italic;
 }
 
+/* ── External calendar fallback widget ───────────────────────────────────── */
+
+.ec-external-frame-wrap {
+  width: 100%;
+  max-width: 1000px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.12);
+  margin-top: 0.75rem;
+}
+
+.ec-external-frame-wrap iframe {
+  display: block;
+  width: 100%;
+  min-height: 467px;
+  border: none;
+}
+
+.ec-external-disclaimer {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--market-muted, #8d978f);
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  .ec-external-frame-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ec-external-frame-wrap iframe {
+    min-width: 520px;
+  }
+}
+
 /* ── Mobile additions ────────────────────────────────────────────────────── */
 
 @media (max-width: 639px) {

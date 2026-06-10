@@ -256,6 +256,25 @@ if (fs.existsSync(TEST_PATH)) {
   warnings.push('tools/test-economic-calendar-logic.js does not exist — logic tests missing');
 }
 
+// ── 9. External calendar iframe section ──────────────────────────────────────
+for (const [page, file] of [['EN', EN_PAGE], ['AR', AR_PAGE]]) {
+  if (fs.existsSync(file)) {
+    const html = fs.readFileSync(file, 'utf8');
+    // Native calendar must still be present
+    if (!html.includes('id="live-calendar"'))
+      failures.push(`${page} page: id="live-calendar" native calendar missing — must not be removed`);
+    // External iframe section must be present
+    if (!html.includes('id="external-calendar"'))
+      failures.push(`${page} page: id="external-calendar" section missing — add Investing.com iframe fallback`);
+    // Iframe must have lazy loading
+    if (html.includes('id="external-calendar"') && !html.includes('loading="lazy"'))
+      failures.push(`${page} page: external-calendar iframe missing loading="lazy"`);
+    // No inline scripts from investing.com domain (scraping guard)
+    if (/<script[^>]*investing\.com[^>]*>/i.test(html))
+      failures.push(`${page} page: investing.com <script> tag detected — only iframe embeds are allowed, no script injection`);
+  }
+}
+
 // ── Report ────────────────────────────────────────────────────────────────────
 if (warnings.length) {
   warnings.forEach((w) => console.warn(`[calendar] WARN: ${w}`));
