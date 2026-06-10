@@ -266,16 +266,262 @@ console.log('\n── volatility-expectation ───────────�
   assertEq('Medium consumer confidence = low', level, 'low');
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// INLINE LOGIC from directional-bias.js (new version)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SCALE_SIM = 90;
+
+const EVENT_DIRECTION_SIM = [
+  { p: ['nonfarm payrolls', 'non-farm payrolls', 'nfp'], tier: 1.0,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['fomc', 'federal reserve', 'interest rate decision', 'rate decision',
+         'federal funds rate', 'fed chair', 'powell'], tier: 1.0,
+    d: { gold: -1, usd: +1, spy: -1, nasdaq: -1 } },
+  { p: ['cpi', 'consumer price index'], tier: 1.0,
+    d: { gold: +1, usd: -1, spy: +1, nasdaq: +1 } },
+  { p: ['core pce', 'personal consumption expenditure'], tier: 1.0,
+    d: { gold: +1, usd: -1, spy: +1, nasdaq: +1 } },
+  { p: ['pce price'], tier: 1.0,
+    d: { gold: +1, usd: -1, spy: +1, nasdaq: +1 } },
+  { p: ['gdp', 'gross domestic product'], tier: 1.0,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['core ppi', 'ppi', 'producer price index'], tier: 0.6,
+    d: { gold: +1, usd: -1, spy: +1, nasdaq: +1 } },
+  { p: ['retail sales'], tier: 0.6,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['ism manufacturing', 'manufacturing pmi', 'pmi manufacturing', 'chicago pmi'], tier: 0.6,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['ism services', 'ism non-manufacturing', 'services pmi', 'non-manufacturing pmi'], tier: 0.6,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['average hourly earnings'], tier: 0.6,
+    d: { gold: +1, usd: +1, spy: -1, nasdaq: -1 } },
+  { p: ['unemployment rate'], tier: 0.6,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['initial jobless claims', 'continuing jobless claims', 'jobless claims'], tier: 0.3,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['consumer confidence', 'michigan consumer sentiment', 'michigan sentiment'], tier: 0.3,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['industrial production', 'capacity utilization'], tier: 0.3,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+  { p: ['durable goods'], tier: 0.3,
+    d: { gold: -1, usd: +1, spy: +1, nasdaq: +1 } },
+];
+
+function simGetEventEntry(eventName) {
+  const n = String(eventName).toLowerCase();
+  for (const entry of EVENT_DIRECTION_SIM) {
+    if (entry.p.some((k) => n.includes(k))) return entry;
+  }
+  return null;
+}
+function simMagnitudeToSignal(mag) {
+  if (mag < 1.5) return 20;
+  if (mag < 5)   return 40;
+  if (mag < 15)  return 60;
+  return 85;
+}
+function simScoreToDirection(score) {
+  const a = Math.abs(score);
+  const sign = score >= 0 ? 1 : -1;
+  if (a < 10) return 'neutral';
+  if (a < 28) return sign > 0 ? 'mildly bullish'  : 'mildly bearish';
+  if (a < 55) return sign > 0 ? 'bullish'          : 'bearish';
+  return              sign > 0 ? 'strongly bullish' : 'strongly bearish';
+}
+
+function simComputeBiasAsset(scoredResults, asset, regime) {
+  let rawScore     = 0;
+  let alignedCount = 0;
+  let conflictCount = 0;
+  const hasTier1 = scoredResults.some((r) => { const e = simGetEventEntry(r.event.event_name); return e && e.tier >= 1.0; });
+  const hasTier2 = scoredResults.some((r) => { const e = simGetEventEntry(r.event.event_name); return e && e.tier >= 0.5; });
+  const eventBlend = hasTier1 ? 0.80 : (hasTier2 ? 0.65 : (scoredResults.length ? 0.45 : 0.0));
+
+  for (const r of scoredResults) {
+    if (r.scored.direction === 'pending' || r.scored.direction === 'inline') continue;
+    const entry = simGetEventEntry(r.event.event_name);
+    if (!entry) continue;
+    const assetDir = entry.d[asset];
+    if (!assetDir) continue;
+    const surpriseSign = r.scored.direction === 'beat' ? +1 : -1;
+    const signal = simMagnitudeToSignal(r.scored.magnitude) * assetDir * surpriseSign;
+    const contribution = entry.tier * signal;
+    rawScore += contribution;
+    if (contribution > 0) alignedCount++; else conflictCount++;
+  }
+  if (alignedCount >= 2 && conflictCount === 0) rawScore *= 1.25;
+  if (alignedCount >= 3 && conflictCount === 0) rawScore *= 1.15;
+
+  const eventScore = Math.tanh(rawScore / SCALE_SIM) * 100;
+
+  // Regime signal (simplified)
+  let regScore = 0;
+  if (asset === 'gold') {
+    if ((regime || '') === 'risk-off') regScore = 45;
+    if ((regime || '') === 'risk-on')  regScore = -20;
+  }
+  if (asset === 'spy') {
+    if ((regime || '') === 'risk-on')  regScore = 35;
+    if ((regime || '') === 'risk-off') regScore = -35;
+  }
+  if (asset === 'nasdaq') {
+    if ((regime || '') === 'risk-on')  regScore = 30;
+    if ((regime || '') === 'risk-off') regScore = -40;
+  }
+  const regimeBlend = 1 - eventBlend;
+  const finalScore = Math.max(-100, Math.min(100, eventScore * eventBlend + regScore * regimeBlend));
+  return { direction: simScoreToDirection(finalScore), score: Math.round(finalScore), alignedCount, conflictCount };
+}
+
+console.log('\n── directional-bias: CPI/NFP/FOMC semantics ───────────');
+
+// CPI beat = lower than expected (LOWER_IS_BETTER) = dovish
+// Expected: gold +, usd -, spy +, nasdaq +
+{
+  const scored = [{ event: { event_name: 'CPI m/m', importance: 'high' }, scored: { direction: 'beat', magnitude: 10, score: 40 } }];
+  const g = simComputeBiasAsset(scored, 'gold', null);
+  assertEq('CPI beat → gold bullish/mildly', true, g.direction === 'bullish' || g.direction === 'strongly bullish' || g.direction === 'mildly bullish');
+  const u = simComputeBiasAsset(scored, 'usd', null);
+  assertEq('CPI beat → usd bearish', true, u.direction === 'bearish' || u.direction === 'mildly bearish' || u.direction === 'strongly bearish');
+  const s = simComputeBiasAsset(scored, 'spy', null);
+  assertEq('CPI beat → spy bullish', true, s.direction === 'bullish' || s.direction === 'strongly bullish' || s.direction === 'mildly bullish');
+  const n = simComputeBiasAsset(scored, 'nasdaq', null);
+  assertEq('CPI beat → nasdaq bullish', true, n.direction === 'bullish' || n.direction === 'strongly bullish' || n.direction === 'mildly bullish');
+}
+
+// CPI miss = higher than expected (hot inflation) = hawkish risk
+// Expected: gold -, usd +, spy -, nasdaq -
+{
+  const scored = [{ event: { event_name: 'CPI m/m', importance: 'high' }, scored: { direction: 'miss', magnitude: 10, score: -40 } }];
+  const g = simComputeBiasAsset(scored, 'gold', null);
+  assertEq('CPI miss → gold bearish', true, g.score < 0);
+  const u = simComputeBiasAsset(scored, 'usd', null);
+  assertEq('CPI miss → usd bullish', true, u.score > 0);
+  const s = simComputeBiasAsset(scored, 'spy', null);
+  assertEq('CPI miss → spy bearish', true, s.score < 0);
+}
+
+// NFP beat = strong employment = hawkish/risk-on
+// Expected: gold -, usd +, spy +, nasdaq +
+{
+  const scored = [{ event: { event_name: 'Nonfarm Payrolls', importance: 'high' }, scored: { direction: 'beat', magnitude: 15, score: 60 } }];
+  const g = simComputeBiasAsset(scored, 'gold', null);
+  assertEq('NFP beat → gold bearish', true, g.score < 0);
+  const u = simComputeBiasAsset(scored, 'usd', null);
+  assertEq('NFP beat → usd bullish', true, u.score > 0);
+  const s = simComputeBiasAsset(scored, 'spy', null);
+  assertEq('NFP beat → spy bullish', true, s.score > 0);
+  const n = simComputeBiasAsset(scored, 'nasdaq', null);
+  assertEq('NFP beat → nasdaq bullish', true, n.score > 0);
+}
+
+// FOMC beat = hawkish surprise
+// Expected: gold -, usd +, spy -, nasdaq -
+{
+  const scored = [{ event: { event_name: 'FOMC Rate Decision', importance: 'high' }, scored: { direction: 'beat', magnitude: 8, score: 32 } }];
+  const g = simComputeBiasAsset(scored, 'gold', null);
+  assertEq('FOMC beat → gold bearish', true, g.score < 0);
+  const u = simComputeBiasAsset(scored, 'usd', null);
+  assertEq('FOMC beat → usd bullish', true, u.score > 0);
+  const s = simComputeBiasAsset(scored, 'spy', null);
+  assertEq('FOMC beat → spy bearish', true, s.score < 0);
+  const n = simComputeBiasAsset(scored, 'nasdaq', null);
+  assertEq('FOMC beat → nasdaq bearish', true, n.score < 0);
+}
+
+// Multi-event alignment: 2+ aligned USD-positive events → conviction boost
+{
+  const scored = [
+    { event: { event_name: 'Nonfarm Payrolls', importance: 'high' }, scored: { direction: 'beat', magnitude: 15, score: 60 } },
+    { event: { event_name: 'Retail Sales m/m', importance: 'high' }, scored: { direction: 'beat', magnitude: 6,  score: 24 } },
+  ];
+  const single = simComputeBiasAsset(
+    [{ event: { event_name: 'Nonfarm Payrolls', importance: 'high' }, scored: { direction: 'beat', magnitude: 15, score: 60 } }],
+    'usd', null
+  );
+  const multi = simComputeBiasAsset(scored, 'usd', null);
+  assert('2 aligned USD-positive events → higher USD score than single', multi.score > single.score);
+  assert('2 aligned events → alignedCount >= 2', multi.alignedCount >= 2);
+}
+
+// Conflicting signals: NFP beat (USD bullish) + GDP miss (USD bearish) → score closer to zero
+{
+  const nfpBeat  = { event: { event_name: 'Nonfarm Payrolls', importance: 'high' }, scored: { direction: 'beat', magnitude: 15, score: 60 } };
+  const gdpMiss  = { event: { event_name: 'GDP q/q', importance: 'high' }, scored: { direction: 'miss', magnitude: 10, score: -40 } };
+  const mixedUsd = simComputeBiasAsset([nfpBeat, gdpMiss], 'usd', null);
+  const cleanUsd = simComputeBiasAsset([nfpBeat], 'usd', null);
+  // Mixed signals cancel — absolute conviction should be lower than clean bullish
+  assert('NFP beat + GDP miss: USD score closer to zero than clean NFP', Math.abs(mixedUsd.score) < cleanUsd.score);
+  // Conflict is detected
+  assert('NFP beat + GDP miss: conflictCount >= 1', mixedUsd.conflictCount >= 1);
+}
+
+// No events, risk-off regime → gold bullish
+{
+  const empty = simComputeBiasAsset([], 'gold', 'risk-off');
+  assert('No events + risk-off → gold bullish', empty.direction === 'bullish' || empty.direction === 'strongly bullish' || empty.direction === 'mildly bullish');
+}
+
+// No events, risk-on regime → spy bullish
+{
+  const empty = simComputeBiasAsset([], 'spy', 'risk-on');
+  assert('No events + risk-on → spy bullish', empty.direction === 'bullish' || empty.direction === 'strongly bullish' || empty.direction === 'mildly bullish');
+}
+
+// No events, unverified regime → neutral
+{
+  const empty = simComputeBiasAsset([], 'gold', null);
+  assertEq('No events + unverified regime → neutral', empty.direction, 'neutral');
+}
+
+// Slight-magnitude events should NOT push into bullish territory (prevent noise signals)
+{
+  const slight = [{ event: { event_name: 'Jobless Claims', importance: 'medium' }, scored: { direction: 'beat', magnitude: 0.8, score: 3 } }];
+  const r = simComputeBiasAsset(slight, 'usd', null);
+  assertEq('Single slight Tier 3 beat = neutral (low noise floor)', r.direction, 'neutral');
+}
+
+// PCE beat = lower inflation = dovish → gold up
+{
+  const scored = [{ event: { event_name: 'Core PCE Price Index', importance: 'high' }, scored: { direction: 'beat', magnitude: 8, score: 32 } }];
+  const g = simComputeBiasAsset(scored, 'gold', null);
+  assert('Core PCE beat → gold bullish', g.score > 0);
+  const u = simComputeBiasAsset(scored, 'usd', null);
+  assert('Core PCE beat → usd bearish', u.score < 0);
+}
+
+// Strength gradient: Tier 1 Major Beat > Tier 1 Moderate Beat > neutral
+{
+  const majorBeat    = [{ event: { event_name: 'Nonfarm Payrolls', importance: 'high' }, scored: { direction: 'beat', magnitude: 20, score: 80 } }];
+  const moderateBeat = [{ event: { event_name: 'Nonfarm Payrolls', importance: 'high' }, scored: { direction: 'beat', magnitude: 4, score: 16 } }];
+  const mj = simComputeBiasAsset(majorBeat,    'usd', null);
+  const md = simComputeBiasAsset(moderateBeat, 'usd', null);
+  assert('Major Beat score > Moderate Beat score', mj.score > md.score);
+  assert('Major Beat = bullish or strongly bullish', mj.direction === 'bullish' || mj.direction === 'strongly bullish');
+  assert('Moderate Beat = mildly bullish or bullish', md.direction === 'mildly bullish' || md.direction === 'bullish');
+}
+
+// Direction label thresholds for scoreToDirection
+assertEq('score 0 = neutral',              simScoreToDirection(0),    'neutral');
+assertEq('score 5 = neutral',              simScoreToDirection(5),    'neutral');
+assertEq('score 15 = mildly bullish',      simScoreToDirection(15),   'mildly bullish');
+assertEq('score -15 = mildly bearish',     simScoreToDirection(-15),  'mildly bearish');
+assertEq('score 35 = bullish',             simScoreToDirection(35),   'bullish');
+assertEq('score -35 = bearish',            simScoreToDirection(-35),  'bearish');
+assertEq('score 60 = strongly bullish',    simScoreToDirection(60),   'strongly bullish');
+assertEq('score -60 = strongly bearish',   simScoreToDirection(-60),  'strongly bearish');
+
 console.log('\n── telegram-formatter headers ─────────────────────────');
 
 {
   const brief = {
     date: '2026-06-10',
     directional_biases: {
-      gold:   { direction: 'bullish', strength: 60, drivers: ['CPI miss'] },
-      usd:    { direction: 'bearish', strength: 40, drivers: ['NFP miss'] },
-      spy:    { direction: 'neutral', strength: 20, drivers: [] },
-      nasdaq: { direction: 'neutral', strength: 15, drivers: [] },
+      gold:   { direction: 'bullish', strength: 60, confidence: 'high', drivers: ['CPI miss'] },
+      usd:    { direction: 'bearish', strength: 40, confidence: 'moderate', drivers: ['NFP miss'] },
+      spy:    { direction: 'mildly bullish', strength: 20, confidence: 'low', drivers: [] },
+      nasdaq: { direction: 'neutral', strength: 8, confidence: 'low', drivers: [] },
     },
     volatility_expectation: { level: 'high', score: 75, drivers: ['FOMC today'] },
     top_surprises: [],
@@ -288,12 +534,22 @@ console.log('\n── telegram-formatter headers ──────────�
 
 console.log('\n── directional emoji ───────────────────────────────────');
 
-assertEq('bullish emoji', DIR_EMOJI_SIM.bullish, '▲');
-assertEq('bearish emoji', DIR_EMOJI_SIM.bearish, '▼');
-assertEq('neutral emoji', DIR_EMOJI_SIM.neutral, '◆');
-assertEq('high vol emoji', VOL_EMOJI_SIM.high, '🔴');
+// New expanded emoji set
+const DIR_EMOJI_NEW = {
+  'strongly bullish': '▲▲', 'bullish': '▲', 'mildly bullish': '△',
+  'neutral': '◆',
+  'mildly bearish': '▽',    'bearish': '▼', 'strongly bearish': '▼▼',
+};
+assertEq('strongly bullish emoji', DIR_EMOJI_NEW['strongly bullish'], '▲▲');
+assertEq('bullish emoji',          DIR_EMOJI_NEW['bullish'],          '▲');
+assertEq('mildly bullish emoji',   DIR_EMOJI_NEW['mildly bullish'],   '△');
+assertEq('neutral emoji',          DIR_EMOJI_NEW['neutral'],          '◆');
+assertEq('mildly bearish emoji',   DIR_EMOJI_NEW['mildly bearish'],   '▽');
+assertEq('bearish emoji',          DIR_EMOJI_NEW['bearish'],          '▼');
+assertEq('strongly bearish emoji', DIR_EMOJI_NEW['strongly bearish'], '▼▼');
+assertEq('high vol emoji',   VOL_EMOJI_SIM.high,     '🔴');
 assertEq('moderate vol emoji', VOL_EMOJI_SIM.moderate, '🟡');
-assertEq('low vol emoji', VOL_EMOJI_SIM.low, '🟢');
+assertEq('low vol emoji',    VOL_EMOJI_SIM.low,      '🟢');
 
 console.log('\n── surprise label thresholds ───────────────────────────');
 

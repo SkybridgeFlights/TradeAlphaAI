@@ -2,17 +2,48 @@
 
 const SITE_URL = (process.env.SITE_URL || 'https://www.tradealphaai.com').replace(/\/$/, '');
 
-const DIR_EMOJI = { bullish: '▲', bearish: '▼', neutral: '◆' };
+const DIR_EMOJI = {
+  'strongly bullish': '▲▲',
+  'bullish':          '▲',
+  'mildly bullish':   '△',
+  'neutral':          '◆',
+  'mildly bearish':   '▽',
+  'bearish':          '▼',
+  'strongly bearish': '▼▼',
+};
 const VOL_EMOJI = { low: '🟢', moderate: '🟡', elevated: '🟠', high: '🔴' };
-const DIR_LABEL_EN = { bullish: 'Bullish', bearish: 'Bearish', neutral: 'Neutral' };
-const DIR_LABEL_AR = { bullish: 'صاعد', bearish: 'هابط', neutral: 'محايد' };
+const CONF_LABEL_EN = { high: '● High', moderate: '◑ Mod', low: '○ Low' };
+const CONF_LABEL_AR = { high: '● عالٍ', moderate: '◑ متوسط', low: '○ منخفض' };
+
+const DIR_LABEL_EN = {
+  'strongly bullish': 'Strongly Bullish',
+  'bullish':          'Bullish',
+  'mildly bullish':   'Mildly Bullish',
+  'neutral':          'Neutral',
+  'mildly bearish':   'Mildly Bearish',
+  'bearish':          'Bearish',
+  'strongly bearish': 'Strongly Bearish',
+};
+const DIR_LABEL_AR = {
+  'strongly bullish': 'صاعد بقوة',
+  'bullish':          'صاعد',
+  'mildly bullish':   'صاعد بحذر',
+  'neutral':          'محايد',
+  'mildly bearish':   'هابط بحذر',
+  'bearish':          'هابط',
+  'strongly bearish': 'هابط بقوة',
+};
 const VOL_LABEL_EN = { low: 'Low Volatility', moderate: 'Moderate', elevated: 'Elevated', high: 'High Volatility' };
 const VOL_LABEL_AR = { low: 'تقلب منخفض', moderate: 'متوسط', elevated: 'مرتفع', high: 'تقلب عالٍ' };
 
 function dirLine(asset, bias, ar) {
-  const b = bias || { direction: 'neutral', strength: 0, drivers: [] };
-  const label = ar ? DIR_LABEL_AR[b.direction] : DIR_LABEL_EN[b.direction];
-  return `${DIR_EMOJI[b.direction] || '◆'} ${asset}: ${label} (${b.strength}/100)`;
+  const b     = bias || { direction: 'neutral', strength: 0, confidence: 'low', drivers: [] };
+  const dir   = b.direction || 'neutral';
+  const emoji = DIR_EMOJI[dir] || '◆';
+  const label = ar ? (DIR_LABEL_AR[dir] || dir) : (DIR_LABEL_EN[dir] || dir);
+  const conf  = ar ? (CONF_LABEL_AR[b.confidence] || '') : (CONF_LABEL_EN[b.confidence] || '');
+  const driver = (b.drivers || [])[0] ? ` — ${(b.drivers)[0]}` : '';
+  return `${emoji} ${asset}: ${label} (${b.strength}) ${conf}${driver}`;
 }
 
 function formatBrief(brief, lang) {
