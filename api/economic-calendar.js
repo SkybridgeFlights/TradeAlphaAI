@@ -3,6 +3,7 @@
 // Vercel serverless API route: GET /api/economic-calendar
 // Query params: ?date=YYYY-MM-DD  or  ?from=YYYY-MM-DD&to=YYYY-MM-DD
 //               ?ec_debug         — enables extended diagnostics in the JSON response
+//               ?ec_debug=raw     — includes raw response body preview (first 600 chars) for failed providers
 // Mirrors netlify/functions/economic-calendar.js for Netlify compatibility.
 
 const fs               = require('fs');
@@ -87,6 +88,7 @@ module.exports = async function handler(req, res) {
 
   const q         = req.query || {};
   const debugMode = q.ec_debug !== undefined;
+  const rawMode   = q.ec_debug === 'raw'; // superset of debugMode — includes raw body previews
   const from      = q.from || q.date || addDays(today(), -1);
   const to        = q.to   || (q.date ? q.date : addDays(today(), 14));
   const now       = Date.now();
@@ -242,6 +244,10 @@ module.exports = async function handler(req, res) {
           error_type:       errorType,
           endpoint:         PROVIDER_ENDPOINTS[name] || null,
         } : {}),
+        ...(rawMode ? {
+          raw_body_preview:  (result.reason && result.reason.rawBody)  || null,
+          response_headers:  (result.reason && result.reason.responseHeaders) || null,
+        } : {}),
       };
     }
   }
@@ -371,6 +377,10 @@ module.exports = async function handler(req, res) {
         normalized_events:      meta.normalized || 0,
         completeness_score:     meta.completeness_score || 0,
         status:                 meta.status || 'not_attempted',
+        ...(rawMode ? {
+          raw_body_preview: meta.raw_body_preview || null,
+          response_headers: meta.response_headers || null,
+        } : {}),
       };
     }
 

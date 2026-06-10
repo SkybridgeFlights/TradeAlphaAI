@@ -20,6 +20,12 @@ function getRaw(url, options = {}) {
           error.statusCode = res.statusCode;
           error.responseSize = byteSize;
           error.endpoint = safeEndpoint;
+          error.rawBody = body.slice(0, 600); // first 600 chars for diagnostics
+          error.responseHeaders = {
+            'content-type': res.headers['content-type'] || null,
+            'x-ratelimit-limit': res.headers['x-ratelimit-limit'] || null,
+            'retry-after': res.headers['retry-after'] || null,
+          };
           reject(error);
           return;
         }
