@@ -1,0 +1,146 @@
+name: Market Brief
+
+# Generates and sends a daily AI market brief to Telegram.
+# Runs once daily at 06:30 UTC (before US pre-market).
+# Can also be triggered manually with optional date override.
+
+on:
+  schedule:
+    - cron: '30 6 * * 1-5'   # Mon–Fri 06:30 UTC
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Target date (YYYY-MM-DD). Leave empty for today.'
+        required: false
+        default: ''
+      locale:
+        description: 'Telegram locale'
+        required: false
+        type: choice
+        options:
+          - both
+          - en
+          - ar
+        default: 'both'
+      send:
+        description: 'Send to Telegram (false = dry-run preview only)'
+        required: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+      dry_run:
+        description: 'Skip OpenAI call (structural brief only)'
+        required: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+
+permissions:
+  contents: write
+
+env:
+  DATE_ARG:   ${{ github.event.inputs.date   || '' }}
+  LOCALE_ARG: ${{ github.event.inputs.locale || 'both' }}
+  SEND_ARG:   ${{ github.event.inputs.send   || 'false' }}
+  DRY_RUN:    ${{ github.event.inputs.dry_run || 'false' }}
+
+jobs:
+  market-brief:
+    name: "Market Brief${{ github.event.inputs.date && format(' [{0}]', github.event.inputs.date) || '' }}${{ github.event.inputs.send != 'true' && ' [dry-run]' || '' }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      # ── Refresh market data ──────────────────────────────────────────────────
+
+      - name: Refresh live market state
+        continue-on-error: true
+        env:
+          FRED_API_KEY:    ${{ secrets.FRED_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: |
+          if [ -n "$FRED_API_KEY" ] || [ -n "$FINNHUB_API_KEY" ]; then
+            node tools/update-live-market-state.js --fetch --write || true
+          else
+            echo "[market-brief] No live data keys — using cached state."
+          fi
+
+      - name: Refresh economic calendar
+        continue-on-error: true
+        env:
+          FMP_API_KEY:      ${{ secrets.FMP_API_KEY }}
+          FINNHUB_API_KEY:  ${{ secrets.FINNHUB_API_KEY }}
+          FRED_API_KEY:     ${{ secrets.FRED_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: node tools/update-economic-calendar.js --fetch --write || true
+
+      # ── Generate brief ───────────────────────────────────────────────────────
+
+      - name: Run market-brief logic tests
+        run: node tools/test-market-brief-logic.js
+
+      - name: Generate market brief
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL:   ${{ secrets.OPENAI_MODEL || 'gpt-4o-mini' }}
+        run: |
+          DATE_FLAG=""
+          DRY_FLAG=""
+          if [ -n "$DATE_ARG" ]; then DATE_FLAG="--date=$DATE_ARG"; fi
+          if [ "$DRY_RUN" = "true" ]; then DRY_FLAG="--dry-run"; fi
+          node tools/generate-market-brief.js --write $DATE_FLAG $DRY_FLAG
+
+      # ── Commit brief ─────────────────────────────────────────────────────────
+
+      - name: Commit brief
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          DATE_LABEL="${DATE_ARG:-$(date -u '+%Y-%m-%d')}"
+          git add data/market-brief/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Generate market brief: ${DATE_LABEL}"
+            git push
+          fi
+
+      # ── Send to Telegram ─────────────────────────────────────────────────────
+
+      - name: Send market brief to Telegram
+        if: env.SEND_ARG == 'true'
+        env:
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:    ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          SITE_URL:            ${{ secrets.SITE_URL || 'https://www.tradealphaai.com' }}
+        run: |
+          DATE_FLAG=""
+          if [ -n "$DATE_ARG" ]; then DATE_FLAG="--date=$DATE_ARG"; fi
+          node tools/send-market-brief.js --locale=$LOCALE_ARG --send $DATE_FLAG
+
+      - name: Preview market brief (dry-run)
+        if: env.SEND_ARG != 'true'
+        env:
+          SITE_URL: ${{ secrets.SITE_URL || 'https://www.tradealphaai.com' }}
+        run: |
+          DATE_FLAG=""
+          if [ -n "$DATE_ARG" ]; then DATE_FLAG="--date=$DATE_ARG"; fi
+          node tools/send-market-brief.js --locale=$LOCALE_ARG $DATE_FLAG
