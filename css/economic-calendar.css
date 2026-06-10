@@ -609,20 +609,30 @@ tr.ec-detail-row td {
 
 /* ── External calendar fallback widget ───────────────────────────────────── */
 
+.ec-priority-notice {
+  font-size: 0.82rem;
+  color: var(--market-muted, #8d978f);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
 .ec-external-frame-wrap {
   width: 100%;
-  max-width: 1000px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   background: rgba(0, 0, 0, 0.12);
-  margin-top: 0.75rem;
+  margin-top: 0;
 }
 
 .ec-external-frame-wrap iframe {
   display: block;
   width: 100%;
-  min-height: 467px;
+  min-height: 580px;
   border: none;
 }
 
@@ -639,7 +649,8 @@ tr.ec-detail-row td {
     -webkit-overflow-scrolling: touch;
   }
   .ec-external-frame-wrap iframe {
-    min-width: 520px;
+    min-height: 420px;
+    min-width: 480px;
   }
 }
 
