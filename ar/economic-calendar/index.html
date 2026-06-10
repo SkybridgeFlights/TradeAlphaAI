@@ -265,9 +265,17 @@
       var el = document.getElementById(id);
       if (el) el.style.display = '';
     }
+    function hideSection(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    }
     function showDegradedBanner() {
       var el = document.getElementById('cal-degraded-banner');
       if (el) el.style.display = '';
+    }
+    function hideDegradedBanner() {
+      var el = document.getElementById('cal-degraded-banner');
+      if (el) el.style.display = 'none';
     }
 
     // ── Formatters ────────────────────────────────────────────────────────────
@@ -327,6 +335,12 @@
 
     // ── Calendar data ─────────────────────────────────────────────────────────
     function loadCalendar() {
+      hideSection('todays-events');
+      hideSection('upcoming-events');
+      hideSection('recent-releases');
+      hideSection('surprise-monitor');
+      hideDegradedBanner();
+
       fetch(CALENDAR_URL)
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (data) {
@@ -385,6 +399,7 @@
 
     // ── Market expectations ───────────────────────────────────────────────────
     function loadExpectations() {
+      hideSection('market-expectations');
       fetch(EXPECTATIONS_URL)
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (data) {
