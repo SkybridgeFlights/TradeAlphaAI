@@ -572,6 +572,130 @@ expect('Japan → JP',          teCountry('Japan'),          'JP');
 expect('Unknown → 2-char',    teCountry('Brazil'),         'BR');
 expect('null/empty → null',   teCountry(''),               null);
 
+// ── Market intelligence lookup table ─────────────────────────────────────────
+console.log('[logic] market intelligence lookup (getAssetTags, volatility, fed/gold flags)');
+
+// Inline the lookup table and helpers for isolated testing
+var INTEL_MAP = [
+  { p: /\bnonfarm\s*payrolls?\b|\bnfp\b/i,            assets: ['USD','Gold','S&P500','Nasdaq'], volatility: 'high',   fed: false, gold: true  },
+  { p: /\bfomc\b|\bfederal\s+open\s+market\b/i,       assets: ['USD','Gold','Bonds','S&P500','Nasdaq'], volatility: 'high',   fed: true,  gold: true  },
+  { p: /\bconsumer\s+price\s+index\b|\bcpi\b/i,       assets: ['USD','Gold','Bonds','S&P500','Nasdaq'], volatility: 'high',   fed: false, gold: true  },
+  { p: /\bpce\b|\bpersonal\s+consumption\s+expenditures?\b/i, assets: ['USD','Gold','Bonds'], volatility: 'high',   fed: true,  gold: true  },
+  { p: /\bproducer\s+price\s+index\b|\bppi\b/i,       assets: ['USD','Bonds'],              volatility: 'medium', fed: false, gold: false },
+  { p: /\bgross\s+domestic\s+product\b|\bgdp\b/i,     assets: ['USD','S&P500','Nasdaq'],    volatility: 'high',   fed: false, gold: false },
+  { p: /\binitial\s+jobless\s+claims?\b|\bjobless\s+claims?\b/i, assets: ['USD','S&P500'], volatility: 'medium', fed: false, gold: false },
+  { p: /\bism\b|\bpurchasing\s+managers/i,             assets: ['USD','S&P500','Nasdaq'],    volatility: 'medium', fed: false, gold: false },
+  { p: /\bretail\s+sales\b/i,                          assets: ['USD','S&P500'],             volatility: 'medium', fed: false, gold: false },
+  { p: /\bdurable\s+goods\s+orders?\b/i,               assets: ['USD','S&P500','Nasdaq'],    volatility: 'medium', fed: false, gold: false },
+  { p: /\btrade\s+balance\b|\bbalance\s+of\s+trade\b/i, assets: ['USD'],                    volatility: 'low',    fed: false, gold: false },
+  { p: /\bhousing\s+starts?\b|\bbuilding\s+permits?\b|\bhome\s+sales?\b|\bnew\s+home\s+sales?\b/i, assets: ['S&P500'], volatility: 'low', fed: false, gold: false },
+  { p: /\bfed\s+(?:chair|minutes|speak|speech|member|governor|president|statement)\b|\bbeige\s+book\b/i, assets: ['USD','Gold','Bonds'], volatility: 'medium', fed: true, gold: true },
+  { p: /\binterest\s+rate\s+decision\b|\brate\s+decision\b/i, assets: ['USD','Gold','Bonds','S&P500','Nasdaq'], volatility: 'high', fed: true, gold: true },
+  { p: /\bunemployment\s+rate\b/i,                     assets: ['USD','S&P500'],             volatility: 'medium', fed: false, gold: false },
+  { p: /\bconsumer\s+confidence\b|\bconsumer\s+sentiment\b|\bumich\b/i, assets: ['USD','S&P500'], volatility: 'low', fed: false, gold: false },
+  { p: /\bcrude\s+oil\b|\beia\s+crude\b|\bpetroleum\s+inventories?\b/i, assets: ['Gold','S&P500'], volatility: 'medium', fed: false, gold: false },
+];
+function getIntelEntry(e) {
+  var name = String(e.event_name || '');
+  for (var i = 0; i < INTEL_MAP.length; i++) {
+    if (INTEL_MAP[i].p.test(name)) return INTEL_MAP[i];
+  }
+  return null;
+}
+function simGetAssetTags(e) {
+  if (e.importance === 'holiday') return [];
+  if (Array.isArray(e.historical_asset_sensitivity) && e.historical_asset_sensitivity.length)
+    return e.historical_asset_sensitivity;
+  var entry = getIntelEntry(e);
+  return entry ? entry.assets.slice() : [];
+}
+function simGetVolatility(e) {
+  if (e.importance === 'holiday') return null;
+  var entry = getIntelEntry(e);
+  if (entry) return entry.volatility;
+  if (e.importance === 'high')   return 'high';
+  if (e.importance === 'medium') return 'medium';
+  if (e.importance === 'low')    return 'low';
+  return null;
+}
+function simIsFedEvent(e) {
+  if (e.country && String(e.country).toUpperCase() !== 'US') return false;
+  var entry = getIntelEntry(e);
+  if (entry) return !!entry.fed;
+  return false;
+}
+function simIsGoldEvent(e) {
+  var entry = getIntelEntry(e);
+  if (entry) return !!entry.gold;
+  return simGetAssetTags(e).indexOf('Gold') !== -1;
+}
+function simReleaseState(e) {
+  if (e.importance === 'holiday') return null;
+  if (!e.event_time) return null;
+  var t = Date.parse(e.event_time);
+  if (isNaN(t)) return null;
+  var hasActual = e.actual !== null && e.actual !== undefined;
+  if (hasActual) return 'released';
+  var diff = t - Date.now();
+  if (diff <= 0 && diff > -3 * 3600000) return 'live';
+  if (diff > 0) return 'upcoming';
+  return null;
+}
+
+// Asset tag tests
+var nfpEvent  = { event_name: 'Nonfarm Payrolls', country: 'US', importance: 'high' };
+var cpiEvent  = { event_name: 'CPI MoM', country: 'US', importance: 'high' };
+var fomcEvent = { event_name: 'FOMC Meeting', country: 'US', importance: 'high' };
+var ppiEvent  = { event_name: 'PPI MoM', country: 'US', importance: 'medium' };
+var gdpEvent  = { event_name: 'GDP Growth Rate', country: 'US', importance: 'high' };
+var holEvent  = { event_name: 'Thanksgiving', country: 'US', importance: 'holiday' };
+
+expect('NFP → includes USD',      simGetAssetTags(nfpEvent).indexOf('USD') !== -1,   true);
+expect('NFP → includes Gold',     simGetAssetTags(nfpEvent).indexOf('Gold') !== -1,  true);
+expect('NFP → includes Nasdaq',   simGetAssetTags(nfpEvent).indexOf('Nasdaq') !== -1,true);
+expect('CPI → includes Bonds',    simGetAssetTags(cpiEvent).indexOf('Bonds') !== -1, true);
+expect('FOMC → includes Bonds',   simGetAssetTags(fomcEvent).indexOf('Bonds') !== -1,true);
+expect('PPI → includes USD',      simGetAssetTags(ppiEvent).indexOf('USD') !== -1,   true);
+expect('PPI → no Gold',           simGetAssetTags(ppiEvent).indexOf('Gold') === -1,  true);
+expect('holiday → empty array',   simGetAssetTags(holEvent).length,                  0);
+expect('server-side takes priority', simGetAssetTags({ event_name: 'NFP', importance: 'high', historical_asset_sensitivity: ['Bonds'] }).indexOf('Bonds') !== -1, true);
+
+// Volatility tests
+expect('NFP → high volatility',   simGetVolatility(nfpEvent),  'high');
+expect('CPI → high volatility',   simGetVolatility(cpiEvent),  'high');
+expect('PPI → medium volatility', simGetVolatility(ppiEvent),  'medium');
+expect('GDP → high volatility',   simGetVolatility(gdpEvent),  'high');
+expect('holiday → null',          simGetVolatility(holEvent),  null);
+expect('unknown high → high',     simGetVolatility({ event_name: 'Unknown Report', importance: 'high' }),   'high');
+expect('unknown medium → medium', simGetVolatility({ event_name: 'Unknown Report', importance: 'medium' }), 'medium');
+expect('unknown low → low',       simGetVolatility({ event_name: 'Unknown Report', importance: 'low' }),    'low');
+
+// Fed/Gold event classification
+expect('FOMC → is Fed event',       simIsFedEvent(fomcEvent),  true);
+expect('NFP → not Fed event',       simIsFedEvent(nfpEvent),   false);
+expect('CPI → not Fed event',       simIsFedEvent(cpiEvent),   false);
+expect('PCE → is Fed event',        simIsFedEvent({ event_name: 'Core PCE Price Index', country: 'US', importance: 'high' }), true);
+expect('non-US FOMC-like → not Fed', simIsFedEvent({ event_name: 'FOMC Decision', country: 'EU', importance: 'high' }), false);
+expect('NFP → is Gold event',       simIsGoldEvent(nfpEvent),  true);
+expect('CPI → is Gold event',       simIsGoldEvent(cpiEvent),  true);
+expect('FOMC → is Gold event',      simIsGoldEvent(fomcEvent), true);
+expect('PPI → not Gold event',      simIsGoldEvent(ppiEvent),  false);
+expect('GDP → not Gold event',      simIsGoldEvent(gdpEvent),  false);
+
+// Release state
+var nowMs = Date.now();
+var evtWithActual  = { event_time: new Date(nowMs - 30 * 60000).toISOString(), actual: 3.2, importance: 'high' };
+var evtFarFuture   = { event_time: new Date(nowMs + 4 * 3600000).toISOString(), actual: null, importance: 'high' };
+var evtJustPast    = { event_time: new Date(nowMs - 20 * 60000).toISOString(), actual: null, importance: 'high' };
+var evtVeryOld     = { event_time: new Date(nowMs - 5 * 3600000).toISOString(), actual: null, importance: 'high' };
+var evtHolidayRs   = { event_time: new Date(nowMs + 60000).toISOString(), actual: null, importance: 'holiday' };
+expect('has actual → released',    simReleaseState(evtWithActual), 'released');
+expect('far future → upcoming',    simReleaseState(evtFarFuture),  'upcoming');
+expect('just past, no actual → live', simReleaseState(evtJustPast), 'live');
+expect('very old, no actual → null',  simReleaseState(evtVeryOld),  null);
+expect('holiday → null',           simReleaseState(evtHolidayRs),  null);
+expect('no event_time → null',     simReleaseState({ importance: 'high' }), null);
+
 // ── Report ─────────────────────────────────────────────────────────────────────
 console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
 if (fail > 0) process.exit(1);

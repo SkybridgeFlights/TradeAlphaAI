@@ -22,9 +22,19 @@
       detailSurpriseAbove: 'Above forecast', detailSurpriseBelow: 'Below forecast',
       detailSurpriseInline: 'In line with forecast',
       disclaimer: 'Economic calendar information only. Not financial advice.',
-      dueSoon:   'Due Soon',
-      releasing: 'Releasing',
+      dueSoon:   'Upcoming',
+      releasing: 'Live',
       released:  'Released',
+      upcoming:  'Upcoming',
+      live:      'Live',
+      mostImportantToday: 'Most Important Today',
+      filterGold:         'Gold Events',
+      filterFed:          'Fed Events',
+      volatilityHigh:     'High Volatility',
+      volatilityMedium:   'Moderate Volatility',
+      volatilityLow:      'Low Volatility',
+      marketImpact:       'Expected Market Impact',
+      historicalNote:     'Historical Context',
     },
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
@@ -45,9 +55,19 @@
       detailSurpriseAbove: 'أعلى من التوقع', detailSurpriseBelow: 'أقل من التوقع',
       detailSurpriseInline: 'مطابق للتوقع',
       disclaimer: 'معلومات التقويم الاقتصادي فقط. لا تمثل نصيحة مالية.',
-      dueSoon:   'قريباً',
-      releasing: 'يُصدر الآن',
+      dueSoon:   'قادم',
+      releasing: 'مباشر',
       released:  'صدر',
+      upcoming:  'قادم',
+      live:      'مباشر',
+      mostImportantToday: 'أهم أحداث اليوم',
+      filterGold:         'أحداث الذهب',
+      filterFed:          'أحداث الفيدرالي',
+      volatilityHigh:     'تذبذب مرتفع',
+      volatilityMedium:   'تذبذب متوسط',
+      volatilityLow:      'تذبذب منخفض',
+      marketImpact:       'التأثير المتوقع على السوق',
+      historicalNote:     'السياق التاريخي',
     }
   };
 
@@ -70,6 +90,177 @@
     holiday:      { en: { what: 'A market holiday — financial markets may be closed or operating with reduced liquidity.', why: 'Market closures affect liquidity and volume across all asset classes.' }, ar: { what: 'عطلة سوق — قد تكون الأسواق مغلقة أو تعمل بسيولة منخفضة.', why: 'إغلاقات السوق تؤثر على السيولة وحجم التداول في جميع فئات الأصول.' } },
     other:        { en: { what: 'Economic data relevant to the current macroeconomic environment.', why: 'Economic releases contribute to the overall picture of economic health and policy expectations.' }, ar: { what: 'بيانات اقتصادية ذات صلة بالبيئة الاقتصادية الكلية.', why: 'تساهم الإصدارات في الصورة الشاملة للصحة الاقتصادية وتوقعات السياسة.' } },
   };
+
+  // ── Market intelligence lookup table ──────────────────────────────────────
+  // Each entry maps event name patterns to asset tags, volatility, Fed/gold flags,
+  // and bilingual interpretation + historical context text.
+  var EVENT_INTEL_MAP = [
+    {
+      p: /\bnonfarm\s*payrolls?\b|\bnfp\b/i,
+      assets: ['USD', 'Gold', 'S&P500', 'Nasdaq'], volatility: 'high', fed: false, gold: true,
+      impact: {
+        en: 'NFP is the most market-moving US labor report. Strong payrolls typically lift USD and equities while pressuring gold. Watch wage growth — elevated wages alongside strong jobs signal sticky inflation.',
+        ar: 'تقرير الرواتب غير الزراعية هو أكثر تقارير العمل تأثيراً. الأرقام القوية ترفع الدولار والأسهم وتضغط على الذهب. نمو الأجور مؤشر ثانوي مهم للتضخم.'
+      },
+      history: {
+        en: 'Historically, NFP beats above +100K vs forecast trigger 0.5%+ USD moves. Gold often inverts the USD reaction within 30 minutes as traders reprice Fed rate expectations.',
+        ar: 'تاريخياً، تجاوز التوقعات بأكثر من 100 ألف وظيفة يحرّك الدولار أكثر من 0.5%. غالباً ما يعكس الذهب الحركة خلال 30 دقيقة مع إعادة تسعير توقعات الفائدة.'
+      }
+    },
+    {
+      p: /\bfomc\b|\bfederal\s+open\s+market\b/i,
+      assets: ['USD', 'Gold', 'Bonds', 'S&P500', 'Nasdaq'], volatility: 'high', fed: true, gold: true,
+      impact: {
+        en: 'FOMC decisions are the single highest-impact macro event. Rate hikes strengthen USD and bond yields, pressuring gold and growth equities. Rate cuts or dovish signals lift gold and risk assets significantly.',
+        ar: 'قرارات FOMC هي الأعلى تأثيراً. رفع الفائدة يقوي الدولار ويضغط على الذهب والأسهم النامية. التخفيض أو الإشارات المرنة تدعم الذهب وأصول الخطر.'
+      },
+      history: {
+        en: 'FOMC decisions historically move gold ±1–3% intraday. Surprise rate hikes (above consensus) produce the sharpest gold selloffs. Post-statement press conferences often reverse initial market moves.',
+        ar: 'تاريخياً، تحرّك قرارات FOMC الذهب ±1-3% خلال الجلسة. رفع الفائدة فوق التوقعات ينتج أشد موجات بيع الذهب. مؤتمرات الصحافة اللاحقة كثيراً ما تعكس الحركات الأولية.'
+      }
+    },
+    {
+      p: /\bconsumer\s+price\s+index\b|\bcpi\b/i,
+      assets: ['USD', 'Gold', 'Bonds', 'S&P500', 'Nasdaq'], volatility: 'high', fed: false, gold: true,
+      impact: {
+        en: 'CPI directly drives Fed rate expectations. Hotter-than-expected inflation typically rallies gold and bond yields while pressuring rate-sensitive growth stocks. Surprise beats cause sharp multi-asset repricing within minutes.',
+        ar: 'مؤشر أسعار المستهلك يقود مباشرة توقعات الفائدة. التضخم الأعلى من المتوقع يدعم الذهب ويضغط على الأسهم النامية.'
+      },
+      history: {
+        en: 'Since 2021, CPI beats above +0.2% MoM vs forecast triggered average gold moves of +0.8% within 2 hours. Core CPI (ex food & energy) is the more Fed-sensitive component.',
+        ar: 'منذ 2021، أدت تجاوزات CPI فوق +0.2% شهرياً إلى تحريك الذهب بمعدل +0.8% خلال ساعتين. المؤشر الأساسي (باستثناء الغذاء والطاقة) هو الأكثر حساسية للاحتياطي الفيدرالي.'
+      }
+    },
+    {
+      p: /\bpce\b|\bpersonal\s+consumption\s+expenditures?\b/i,
+      assets: ['USD', 'Gold', 'Bonds'], volatility: 'high', fed: true, gold: true,
+      impact: {
+        en: "PCE is the Fed's preferred inflation gauge. Core PCE surprises move Fed rate expectations most directly. A hot PCE print can revive rate-hike fears, pressuring bonds and gold.",
+        ar: 'نفقات الاستهلاك الشخصي هي المقياس المفضل للاحتياطي الفيدرالي للتضخم. المفاجآت تؤثر مباشرة على توقعات الفائدة.'
+      },
+      history: {
+        en: 'Core PCE tends to move markets less dramatically than CPI due to its methodological lag, but it is the definitive Fed policy input. Post-PCE Fed communications are often more market-moving than the data itself.',
+        ar: 'يحرّك مؤشر نفقات الاستهلاك الأساسية الأسواق بشكل أقل من CPI، لكنه المدخل الحاسم لسياسة الاحتياطي الفيدرالي.'
+      }
+    },
+    {
+      p: /\bproducer\s+price\s+index\b|\bppi\b/i,
+      assets: ['USD', 'Bonds'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'PPI measures upstream inflation at the producer level, acting as a leading indicator for future CPI. A PPI beat signals potential consumer price pressure ahead, supporting rate-hold expectations.',
+        ar: 'مؤشر أسعار المنتجين يقيس التضخم عند مستوى الإنتاج وهو مؤشر قيادي لمؤشر أسعار المستهلكين المستقبلي.'
+      },
+      history: null
+    },
+    {
+      p: /\bgross\s+domestic\s+product\b|\bgdp\b/i,
+      assets: ['USD', 'S&P500', 'Nasdaq'], volatility: 'high', fed: false, gold: false,
+      impact: {
+        en: 'GDP gauges total economic output. Stronger-than-expected growth lifts USD and equities on improved earnings visibility. Weak GDP raises recession fears and typically boosts gold as a safe-haven alternative.',
+        ar: 'الناتج المحلي الإجمالي يقيس إجمالي الإنتاج. النمو الأقوى من المتوقع يرفع الدولار والأسهم. الضعف يثير مخاوف الركود ويدعم الذهب ملاذاً آمناً.'
+      },
+      history: null
+    },
+    {
+      p: /\binitial\s+jobless\s+claims?\b|\bjobless\s+claims?\b/i,
+      assets: ['USD', 'S&P500'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'Weekly jobless claims are the highest-frequency US labor market indicator. Elevated claims signal labor softening — typically USD-negative and can prompt modest safe-haven gold demand if trend persists.',
+        ar: 'طلبات إعانة البطالة الأسبوعية هي أعلى مؤشرات سوق العمل الأمريكية تكراراً. ارتفاعها يضغط على الدولار ويمكن أن يحفز الطلب على الذهب.'
+      },
+      history: null
+    },
+    {
+      p: /\bism\b|\bpurchasing\s+managers/i,
+      assets: ['USD', 'S&P500', 'Nasdaq'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'PMI/ISM surveys proxy near-term economic momentum. Readings above 50 signal expansion, supporting USD and risk assets. Below 50 signals contraction — watch for recession narrative building if sustained.',
+        ar: 'مسوح PMI/ISM تعكس الزخم الاقتصادي قصير الأجل. فوق 50 = توسع يدعم الدولار، تحت 50 = انكماش.'
+      },
+      history: null
+    },
+    {
+      p: /\bretail\s+sales\b/i,
+      assets: ['USD', 'S&P500'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'Retail sales directly measures consumer spending power, the largest component of US GDP. A beat signals economic resilience, supporting USD and consumer-sector equities.',
+        ar: 'مبيعات التجزئة تقيس مباشرة قدرة الإنفاق الاستهلاكي، أكبر مكونات الناتج المحلي الإجمالي الأمريكي.'
+      },
+      history: null
+    },
+    {
+      p: /\bdurable\s+goods\s+orders?\b/i,
+      assets: ['USD', 'S&P500', 'Nasdaq'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'Durable goods orders reflect business capital investment intentions. Strong data signals corporate confidence and can boost industrial and technology equity sectors.',
+        ar: 'طلبات السلع المعمّرة تعكس نوايا الاستثمار التجاري. البيانات القوية تدل على ثقة الشركات وتعزز قطاعات التصنيع والتكنولوجيا.'
+      },
+      history: null
+    },
+    {
+      p: /\btrade\s+balance\b|\bbalance\s+of\s+trade\b/i,
+      assets: ['USD'], volatility: 'low', fed: false, gold: false,
+      impact: {
+        en: 'Trade balance measures the export/import differential. A widening deficit is typically USD-negative as it reflects higher demand for foreign currencies to finance imports.',
+        ar: 'الميزان التجاري يقيس الفرق بين الصادرات والواردات. العجز المتسع يضغط على الدولار.'
+      },
+      history: null
+    },
+    {
+      p: /\bhousing\s+starts?\b|\bbuilding\s+permits?\b|\bhome\s+sales?\b|\bnew\s+home\s+sales?\b/i,
+      assets: ['S&P500'], volatility: 'low', fed: false, gold: false,
+      impact: {
+        en: 'Housing data reflects the interest-rate-sensitive real estate sector. Persistent weakness signals that higher rates are cooling the economy and may support rate-cut expectations.',
+        ar: 'بيانات الإسكان تعكس حساسية قطاع العقارات لأسعار الفائدة. الضعف المستمر قد يدعم توقعات خفض الفائدة.'
+      },
+      history: null
+    },
+    {
+      p: /\bfed\s+(?:chair|minutes|speak|speech|member|governor|president|statement)\b|\bbeige\s+book\b/i,
+      assets: ['USD', 'Gold', 'Bonds'], volatility: 'medium', fed: true, gold: true,
+      impact: {
+        en: 'Fed communications shape forward rate expectations. Hawkish language ("higher for longer", "not yet confident") typically pressures gold; dovish signals ("cuts appropriate", "inflation near target") support gold.',
+        ar: 'تصريحات الاحتياطي الفيدرالي تشكّل توقعات الفائدة المستقبلية. اللغة المتشددة تضغط على الذهب؛ الإشارات المرنة تدعمه.'
+      },
+      history: null
+    },
+    {
+      p: /\binterest\s+rate\s+decision\b|\brate\s+decision\b/i,
+      assets: ['USD', 'Gold', 'Bonds', 'S&P500', 'Nasdaq'], volatility: 'high', fed: true, gold: true,
+      impact: {
+        en: 'Central bank rate decisions are the highest-impact single events. Unexpected rate changes cause sharp multi-asset repricing across currencies, bonds, and commodities within seconds.',
+        ar: 'قرارات البنوك المركزية بشأن أسعار الفائدة من أعلى الأحداث تأثيراً. التغييرات غير المتوقعة تعيد تسعير الأسواق بحدة خلال ثوانٍ.'
+      },
+      history: null
+    },
+    {
+      p: /\bunemployment\s+rate\b/i,
+      assets: ['USD', 'S&P500'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'Unemployment rate is a lagging labor market indicator. Rising unemployment can trigger safe-haven flows into gold and bonds while weighing on growth equities and USD.',
+        ar: 'معدل البطالة مؤشر متأخر لسوق العمل. ارتفاعه يحفّز تدفقات الملاذ الآمن نحو الذهب والسندات.'
+      },
+      history: null
+    },
+    {
+      p: /\bconsumer\s+confidence\b|\bconsumer\s+sentiment\b|\bumich\b|\buniversity\s+of\s+michigan/i,
+      assets: ['USD', 'S&P500'], volatility: 'low', fed: false, gold: false,
+      impact: {
+        en: 'Consumer confidence surveys measure household spending expectations. Low confidence signals upcoming economic weakness and mild risk-off pressure on equities.',
+        ar: 'استطلاعات ثقة المستهلك تعكس توقعات الإنفاق. انخفاض الثقة يشير إلى ضعف اقتصادي محتمل وضغط خفيف على الأسهم.'
+      },
+      history: null
+    },
+    {
+      p: /\bcrude\s+oil\b|\beia\s+crude\b|\bpetroleum\s+inventories?\b/i,
+      assets: ['Gold', 'S&P500'], volatility: 'medium', fed: false, gold: false,
+      impact: {
+        en: 'Oil inventory data affects energy prices and broader inflation expectations. Large inventory builds can weigh on oil prices and indirectly affect gold via the inflation channel.',
+        ar: 'بيانات مخزون النفط تؤثر على أسعار الطاقة وتوقعات التضخم. ارتفاع المخزونات يضغط على أسعار النفط ويؤثر على الذهب عبر قناة التضخم.'
+      },
+      history: null
+    },
+  ];
 
   // ── DOM refs ──────────────────────────────────────────────────────────────
   var elPrev          = document.getElementById('ec-prev');
@@ -96,16 +287,19 @@
   var filterImpact  = '';
   var filterCountry = '';
   var searchText    = '';
+  var filterGold    = false;
+  var filterFed     = false;
 
   // Request lifecycle — latest-request-wins with AbortController
   var activeController = null;
   var requestSeq       = 0;
 
   // Refresh intervals
-  var REFRESH_NORMAL_MS = 5 * 60 * 1000; // 5 min  — default background refresh
-  var REFRESH_ACTIVE_MS = 30 * 1000;     // 30 sec — when a high-impact event is imminent
-  var REFRESH_WINDOW_MS = 30 * 60 * 1000; // ±30 min window for "due soon" detection
+  var REFRESH_NORMAL_MS = 5 * 60 * 1000;
+  var REFRESH_ACTIVE_MS = 30 * 1000;
+  var REFRESH_WINDOW_MS = 30 * 60 * 1000;
   var refreshTimer      = null;
+  var countdownTimer    = null;
 
   // Enable production diagnostics by appending ?ec_debug to the URL
   var EC_DEBUG = typeof window !== 'undefined' && window.location &&
@@ -226,7 +420,7 @@
 
   // ── Freshness status ──────────────────────────────────────────────────────
   // Returns: 'due-soon' | 'releasing' | 'released' | null
-  // 'upcoming' (far future) intentionally returns null — no badge needed.
+  // 'upcoming' (far future) intentionally returns null — handled by upcomingBadgeHtml.
   function freshnessStatus(e) {
     if (!e.event_time || e.importance === 'holiday') return null;
     var t = Date.parse(e.event_time);
@@ -247,6 +441,183 @@
          + esc(label) + '</span>';
   }
 
+  // ── Market intelligence helpers ───────────────────────────────────────────
+  function getEventIntelEntry(e) {
+    var name = String(e.event_name || '');
+    for (var i = 0; i < EVENT_INTEL_MAP.length; i++) {
+      if (EVENT_INTEL_MAP[i].p.test(name)) return EVENT_INTEL_MAP[i];
+    }
+    return null;
+  }
+
+  function getAssetTags(e) {
+    if (e.importance === 'holiday') return [];
+    if (Array.isArray(e.historical_asset_sensitivity) && e.historical_asset_sensitivity.length) {
+      return e.historical_asset_sensitivity;
+    }
+    if (e.intelligence && Array.isArray(e.intelligence.market_sensitivity) && e.intelligence.market_sensitivity.length) {
+      return e.intelligence.market_sensitivity;
+    }
+    var entry = getEventIntelEntry(e);
+    return entry ? entry.assets.slice() : [];
+  }
+
+  function getVolatilityLabel(e) {
+    if (e.importance === 'holiday') return null;
+    var entry = getEventIntelEntry(e);
+    if (entry) return entry.volatility;
+    if (e.importance === 'high')   return 'high';
+    if (e.importance === 'medium') return 'medium';
+    if (e.importance === 'low')    return 'low';
+    return null;
+  }
+
+  function getVolatilityHtml(e) {
+    var v = getVolatilityLabel(e);
+    if (!v) return '';
+    var label = v === 'high'   ? L.volatilityHigh
+              : v === 'medium' ? L.volatilityMedium
+              : L.volatilityLow;
+    return '<span class="ec-volatility ec-volatility-' + v + '">' + esc(label) + '</span>';
+  }
+
+  function getMarketInterpretation(e) {
+    if (e.importance === 'holiday') return '';
+    var entry = getEventIntelEntry(e);
+    if (!entry || !entry.impact) return '';
+    return (entry.impact[lang] || entry.impact.en) || '';
+  }
+
+  function getHistoricalNote(e) {
+    if (e.importance === 'holiday') return '';
+    var entry = getEventIntelEntry(e);
+    if (!entry || !entry.history) return '';
+    return (entry.history[lang] || entry.history.en) || '';
+  }
+
+  function isFedEvent(e) {
+    if (e.country && String(e.country).toUpperCase() !== 'US') return false;
+    var entry = getEventIntelEntry(e);
+    if (entry) return !!entry.fed;
+    var name = String(e.event_name || '').toLowerCase();
+    return /\bfed\b|\bfomc\b|\bfederal\s+reserve\b|\bbeige\s+book\b/.test(name);
+  }
+
+  function isGoldEvent(e) {
+    var entry = getEventIntelEntry(e);
+    if (entry) return !!entry.gold;
+    return getAssetTags(e).indexOf('Gold') !== -1;
+  }
+
+  // ── Release state badge (broader than freshness — covers all today events) ─
+  function upcomingBadgeHtml(e) {
+    // Show "Upcoming" for today's high/medium future events beyond the ±30min freshness window
+    if (freshnessStatus(e) !== null) return ''; // already has a badge
+    if (!e.event_time || e.importance === 'holiday') return '';
+    var t = Date.parse(e.event_time);
+    if (isNaN(t)) return '';
+    var diff = t - Date.now();
+    if (diff <= 0) return '';
+    if (e.importance !== 'high' && e.importance !== 'medium') return '';
+    if (eventDate(e) !== todayStr()) return '';
+    return '<span class="ec-release-state ec-release-upcoming">' + esc(L.upcoming || 'Upcoming') + '</span>';
+  }
+
+  // ── Pre-release countdown timer ───────────────────────────────────────────
+  function countdownHtml(e) {
+    if (!e.event_time || e.importance === 'holiday') return '';
+    var t = Date.parse(e.event_time);
+    if (isNaN(t)) return '';
+    var diff = t - Date.now();
+    if (diff <= 0) return '';
+    var hasActual = e.actual !== null && e.actual !== undefined;
+    if (hasActual) return '';
+    if (eventDate(e) !== todayStr()) return ''; // only countdown for today's events
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var txt = h > 0 ? h + 'h ' + m + 'm' : m > 0 ? m + 'm ' + s + 's' : s + 's';
+    // data-target enables live 1-second ticking for near events
+    var dataAttr = diff <= REFRESH_WINDOW_MS ? ' data-target="' + t + '"' : '';
+    return '<span class="ec-countdown"' + dataAttr + '>' + esc(txt) + '</span>';
+  }
+
+  function startCountdownTicker() {
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    var els = typeof document !== 'undefined' ? document.querySelectorAll('.ec-countdown[data-target]') : [];
+    if (!els.length) return;
+    countdownTimer = setInterval(function () {
+      var targets = document.querySelectorAll('.ec-countdown[data-target]');
+      var anyLeft = false;
+      targets.forEach(function (el) {
+        var ts   = parseInt(el.getAttribute('data-target'), 10);
+        var diff = ts - Date.now();
+        if (diff <= 0) {
+          el.textContent = L.live || 'Live';
+          el.className   = 'ec-freshness ec-freshness-releasing';
+          el.removeAttribute('data-target');
+          return;
+        }
+        anyLeft = true;
+        var m = Math.floor(diff / 60000);
+        var s = Math.floor((diff % 60000) / 1000);
+        el.textContent = m > 0 ? m + 'm ' + s + 's' : s + 's';
+      });
+      if (!anyLeft) { clearInterval(countdownTimer); countdownTimer = null; }
+    }, 1000);
+  }
+
+  // ── Most Important Today section ──────────────────────────────────────────
+  function renderTopEvents() {
+    if (viewMode !== 'day' || selectedDate !== todayStr()) return '';
+    var today = todayStr();
+    var topEvents = allEvents.filter(function (e) {
+      return e.importance === 'high' && eventDate(e) === today;
+    });
+    if (!topEvents.length) {
+      topEvents = allEvents.filter(function (e) {
+        return e.importance === 'medium' && eventDate(e) === today;
+      }).slice(0, 3);
+    }
+    if (!topEvents.length) return '';
+
+    var cards = topEvents.map(function (e) {
+      var assets = getAssetTags(e);
+      var tagHtml = assets.map(function (a) {
+        return '<span class="ec-asset-tag">' + esc(a) + '</span>';
+      }).join('');
+      var interpretation = getMarketInterpretation(e);
+      var fs    = freshnessStatus(e);
+      var badge = fs ? freshnessHtml(e) : upcomingBadgeHtml(e);
+      var cdHtml = countdownHtml(e);
+      return (
+        '<div class="ec-top-event-card">' +
+          '<div class="ec-top-event-header">' +
+            '<span class="ec-top-event-name">' + esc(translateEventName(e.event_name || '—', lang)) + '</span>' +
+            badge +
+          '</div>' +
+          '<div class="ec-top-event-meta">' +
+            badgeHtml(e.importance) +
+            getVolatilityHtml(e) +
+          '</div>' +
+          '<div class="ec-top-event-time">' +
+            esc(fmtTime(e.event_time)) +
+            (cdHtml ? ' · ' + cdHtml : '') +
+          '</div>' +
+          (tagHtml ? '<div class="ec-top-event-assets">' + tagHtml + '</div>' : '') +
+          (interpretation ? '<p class="ec-top-event-impact">' + esc(interpretation) + '</p>' : '') +
+        '</div>'
+      );
+    }).join('');
+
+    return (
+      '<div class="ec-top-events">' +
+        '<div class="ec-top-events-title">' + esc(L.mostImportantToday) + '</div>' +
+        '<div class="ec-top-events-list">' + cards + '</div>' +
+      '</div>'
+    );
+  }
+
   // ── Filtering ─────────────────────────────────────────────────────────────
   function eventsForPeriod() {
     var from, to;
@@ -264,6 +635,8 @@
       if (d < from || d > to) return false;
       if (filterImpact  && e.importance !== filterImpact)  return false;
       if (filterCountry && e.country    !== filterCountry) return false;
+      if (filterGold && !isGoldEvent(e)) return false;
+      if (filterFed  && !isFedEvent(e))  return false;
       if (searchText) {
         var nm = String(e.event_name || '').toLowerCase();
         if (nm.indexOf(searchText.toLowerCase()) === -1) return false;
@@ -328,14 +701,11 @@
   // ── Detail panel content ──────────────────────────────────────────────────
   function detailContent(e) {
     try {
-      var assets = Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity : [];
-      if (!assets.length && e.intelligence && Array.isArray(e.intelligence.market_sensitivity)) {
-        assets = e.intelligence.market_sensitivity;
-      }
+      var isHoliday = e.importance === 'holiday';
+      var assets = getAssetTags(e);
       var tags = assets.map(function (a) {
         return '<span class="ec-asset-tag">' + esc(a) + '</span>';
       }).join('');
-      var isHoliday = e.importance === 'holiday';
       var html = '<dt>' + esc(L.detailCountry)  + '</dt><dd>' + esc(countryCurrency(e.country)) + '</dd>';
       html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
       html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
@@ -346,6 +716,20 @@
         out += '<div class="ec-detail-assets">'
             +  '<dt>' + esc(L.detailAssets) + '</dt>'
             +  '<div class="ec-asset-tags">' + tags + '</div>'
+            +  '</div>';
+      }
+      var interpretation = !isHoliday ? getMarketInterpretation(e) : '';
+      var historicalNote = !isHoliday ? getHistoricalNote(e) : '';
+      if (interpretation) {
+        out += '<div class="ec-detail-interpretation">'
+            +  '<dt>' + esc(L.marketImpact) + '</dt>'
+            +  '<dd class="ec-interpretation-text">' + esc(interpretation) + '</dd>'
+            +  '</div>';
+      }
+      if (historicalNote) {
+        out += '<div class="ec-detail-history">'
+            +  '<dt>' + esc(L.historicalNote) + '</dt>'
+            +  '<dd class="ec-history-text">' + esc(historicalNote) + '</dd>'
             +  '</div>';
       }
       out += '<p class="ec-detail-disclaimer">' + esc(L.disclaimer) + '</p>';
@@ -417,9 +801,16 @@
           var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
 
           var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
-          var evtSub    = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
-          // Freshness badge in time cell
-          var tdTime    = '<td class="ec-col-time">'    + esc(fmtTime(e.event_time)) + freshnessHtml(e) + '</td>';
+          var evtSub = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
+          evtSub += getVolatilityHtml(e);
+
+          var cdHtml  = countdownHtml(e);
+          var tdTime  = '<td class="ec-col-time">' +
+            esc(fmtTime(e.event_time)) +
+            freshnessHtml(e) +
+            upcomingBadgeHtml(e) +
+            (cdHtml ? cdHtml : '') +
+            '</td>';
           var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
           var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
           var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
@@ -465,15 +856,14 @@
       group.events.forEach(function (e) {
         try {
           var isHoliday = e.importance === 'holiday';
-          var assets = isHoliday ? [] :
-                       (Array.isArray(e.historical_asset_sensitivity) ? e.historical_asset_sensitivity :
-                       (e.intelligence && Array.isArray(e.intelligence.market_sensitivity) ? e.intelligence.market_sensitivity : []));
-          var tags = assets.map(function (a) {
+          var assets = getAssetTags(e);
+          var tags = isHoliday ? '' : assets.map(function (a) {
             return '<span class="ec-asset-tag">' + esc(a) + '</span>';
           }).join('');
           var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
           var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
           var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
+          var cdHtml = countdownHtml(e);
           parts.push(
             '<div class="ec-card" data-ec-i="' + cardIdx + '" tabindex="0" role="button" aria-expanded="false">' +
             '<div class="ec-card-header">' +
@@ -481,8 +871,13 @@
                 '<small>' + esc(countryCurrency(e.country)) + '</small></div>' +
               badgeHtml(e.importance) +
             '</div>' +
-            // Freshness badge in time row
-            '<div class="ec-card-time">' + esc(fmtTime(e.event_time)) + freshnessHtml(e) + '</div>' +
+            '<div class="ec-card-time">' +
+              esc(fmtTime(e.event_time)) +
+              freshnessHtml(e) +
+              upcomingBadgeHtml(e) +
+              (cdHtml ? cdHtml : '') +
+            '</div>' +
+            (!isHoliday ? getVolatilityHtml(e) : '') +
             '<div class="ec-card-nums">' +
               '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colActual)   + '</span><span class="ec-card-num-val">' + dispActual   + '</span></div>' +
               '<div class="ec-card-num-cell"><span class="ec-card-num-label">' + esc(L.colForecast) + '</span><span class="ec-card-num-val">' + dispForecast + '</span></div>' +
@@ -549,16 +944,20 @@
       cardsHtml = '<div class="ec-cards"></div>';
     }
 
+    var topHtml = renderTopEvents();
+
     if (!tbl.html && cardsHtml === '<div class="ec-cards"></div>') {
-      elTableWrap.innerHTML =
+      elTableWrap.innerHTML = topHtml +
         '<div class="ec-empty-state"><strong>' + esc(label) + '</strong>' +
         '<p>' + esc(L.noEvents) + '</p>' +
         '<p class="ec-empty-hint">' + esc(L.noEventsHint) + '</p>' +
         '</div>';
     } else {
-      elTableWrap.innerHTML = tbl.html + cardsHtml;
+      elTableWrap.innerHTML = topHtml + tbl.html + cardsHtml;
       attachListeners(tbl.cols, events);
     }
+
+    startCountdownTicker();
 
     if (EC_DEBUG) {
       console.log('[ec] render — fetched:', allEvents.length,
@@ -675,8 +1074,6 @@
   }
 
   // ── Refresh lifecycle ─────────────────────────────────────────────────────
-  // Adaptive interval: 30 sec when a high-impact event is within ±30 min of now;
-  // 5 min otherwise. Pauses when document is hidden; resumes on visibility.
   function getRefreshInterval() {
     var now  = Date.now();
     var from, to;
@@ -696,7 +1093,7 @@
 
   function scheduleRefresh() {
     if (refreshTimer) clearTimeout(refreshTimer);
-    if (typeof document !== 'undefined' && document.hidden) return; // paused while hidden
+    if (typeof document !== 'undefined' && document.hidden) return;
     var interval = getRefreshInterval();
     refreshTimer = setTimeout(function () {
       refreshTimer = null;
@@ -735,6 +1132,37 @@
         clearTimeout(t);
         t = setTimeout(function () { searchText = v; render(); }, 220);
       });
+    }
+
+    // Inject Gold and Fed filter toggle buttons into .ec-filters
+    var elFilters = document.querySelector('.ec-filters');
+    if (elFilters) {
+      var elFilterGoldBtn = document.createElement('button');
+      elFilterGoldBtn.type      = 'button';
+      elFilterGoldBtn.className = 'ec-btn-quick ec-btn-filter-toggle';
+      elFilterGoldBtn.textContent = L.filterGold;
+      elFilterGoldBtn.setAttribute('aria-pressed', 'false');
+      elFilterGoldBtn.addEventListener('click', function () {
+        filterGold = !filterGold;
+        this.classList.toggle('ec-active', filterGold);
+        this.setAttribute('aria-pressed', filterGold ? 'true' : 'false');
+        render();
+      });
+
+      var elFilterFedBtn = document.createElement('button');
+      elFilterFedBtn.type      = 'button';
+      elFilterFedBtn.className = 'ec-btn-quick ec-btn-filter-toggle';
+      elFilterFedBtn.textContent = L.filterFed;
+      elFilterFedBtn.setAttribute('aria-pressed', 'false');
+      elFilterFedBtn.addEventListener('click', function () {
+        filterFed = !filterFed;
+        this.classList.toggle('ec-active', filterFed);
+        this.setAttribute('aria-pressed', filterFed ? 'true' : 'false');
+        render();
+      });
+
+      elFilters.appendChild(elFilterGoldBtn);
+      elFilters.appendChild(elFilterFedBtn);
     }
   }
 
@@ -817,7 +1245,6 @@
 
         populateCountries();
         render();
-        // Re-schedule with the correct interval now that allEvents is populated
         scheduleRefresh();
       })
       .catch(function (err) {
@@ -849,12 +1276,11 @@
   }
 
   // ── Visibility-based pause/resume ─────────────────────────────────────────
-  // Pause background refresh when the tab is hidden; immediately reload when
-  // it becomes visible again (data may be stale after a long background period).
   if (typeof document !== 'undefined' && 'hidden' in document) {
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) {
         if (refreshTimer) { clearTimeout(refreshTimer); refreshTimer = null; }
+        if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
         if (EC_DEBUG) console.log('[ec] tab hidden — refresh paused');
       } else {
         if (EC_DEBUG) console.log('[ec] tab visible — reloading');

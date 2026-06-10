@@ -643,9 +643,184 @@ tr.ec-detail-row td {
   }
 }
 
+/* ── Volatility labels ───────────────────────────────────────────────────── */
+
+.ec-volatility {
+  display: inline-block;
+  padding: 0.1rem 0.38rem;
+  border-radius: 3px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  margin-inline-start: 0.3rem;
+  vertical-align: middle;
+}
+
+.ec-volatility-high   { background: rgba(255,120,120,0.1); color: var(--market-red,   #ff7878); border: 1px solid rgba(255,120,120,0.22); }
+.ec-volatility-medium { background: rgba(216,177,90,0.09); color: var(--market-gold,  #d8b15a); border: 1px solid rgba(216,177,90,0.2);  }
+.ec-volatility-low    { background: rgba(125,255,140,0.07);color: var(--market-green, #7dff8c); border: 1px solid rgba(125,255,140,0.18);}
+
+/* ── Release state badges (upcoming / live / released) ───────────────────── */
+
+.ec-release-state {
+  display: inline-block;
+  padding: 0.08rem 0.32rem;
+  border-radius: 3px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-inline-start: 0.3rem;
+  vertical-align: middle;
+}
+
+.ec-release-upcoming { background: rgba(148,163,184,0.09); color: #94a3b8;                      border: 1px solid rgba(148,163,184,0.2);  }
+.ec-release-live     { background: rgba(255,160,80,0.11);  color: #e8a040;                      border: 1px solid rgba(255,160,80,0.24);  }
+.ec-release-released { background: rgba(125,255,140,0.09); color: var(--market-green, #7dff8c); border: 1px solid rgba(125,255,140,0.2); }
+
+/* ── Pre-release countdown timer ─────────────────────────────────────────── */
+
+.ec-countdown {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--market-gold, #d8b15a);
+  font-weight: 600;
+  margin-inline-start: 0.3rem;
+  vertical-align: middle;
+  letter-spacing: 0.01em;
+}
+
+/* ── Most Important Today section ────────────────────────────────────────── */
+
+.ec-top-events {
+  margin-bottom: 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(216, 177, 90, 0.13);
+}
+
+.ec-top-events-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--market-gold, #d8b15a);
+  margin-bottom: 0.65rem;
+}
+
+.ec-top-events-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.ec-top-event-card {
+  flex: 1 1 260px;
+  max-width: 380px;
+  background: rgba(216, 177, 90, 0.035);
+  border: 1px solid rgba(216, 177, 90, 0.14);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ec-top-event-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.ec-top-event-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--market-text, #f4f7f1);
+  flex: 1 1 auto;
+}
+
+.ec-top-event-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.ec-top-event-time {
+  font-size: 0.76rem;
+  color: var(--market-soft, #c9d2ca);
+  font-variant-numeric: tabular-nums;
+}
+
+.ec-top-event-assets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.ec-top-event-impact {
+  font-size: 0.76rem;
+  color: var(--market-muted, #8d978f);
+  line-height: 1.5;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.4rem;
+}
+
+/* ── Detail panel: interpretation & historical note ──────────────────────── */
+
+.ec-detail-interpretation,
+.ec-detail-history {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 0.55rem;
+  margin-top: 0.2rem;
+}
+
+.ec-detail-interpretation dt,
+.ec-detail-history dt {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--market-muted, #8d978f);
+  margin-bottom: 0.18rem;
+}
+
+.ec-interpretation-text,
+.ec-history-text {
+  font-size: 0.81rem;
+  color: var(--market-soft, #c9d2ca);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.ec-history-text {
+  color: var(--market-muted, #8d978f);
+  font-style: italic;
+}
+
+/* ── Filter toggle buttons (Gold Events / Fed Events) ────────────────────── */
+
+.ec-btn-filter-toggle {
+  border-style: dashed;
+}
+
+.ec-btn-filter-toggle.ec-active {
+  border-style: solid;
+  background: rgba(216, 177, 90, 0.14);
+  border-color: rgba(216, 177, 90, 0.45);
+  color: var(--market-gold-bright, #f2d27b);
+}
+
 /* ── Mobile additions ────────────────────────────────────────────────────── */
 
 @media (max-width: 639px) {
   .ec-date-group-header { margin-top: 0.6rem; }
   .ec-btn-refresh       { margin-inline-start: 0; }
+  .ec-top-events-list   { flex-direction: column; }
+  .ec-top-event-card    { max-width: 100%; }
 }
