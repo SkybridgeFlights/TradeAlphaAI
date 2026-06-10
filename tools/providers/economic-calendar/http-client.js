@@ -12,9 +12,12 @@ function getJson(url, options = {}) {
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => {
         const body = Buffer.concat(chunks).toString('utf8');
+        const byteSize = body.length;
+        console.log(`[HTTP_CLIENT] GET ${safeEndpoint} status=${res.statusCode} size=${byteSize}B`);
         if (res.statusCode < 200 || res.statusCode >= 300) {
           const error = new Error(`HTTP ${res.statusCode} from ${safeEndpoint}`);
           error.statusCode = res.statusCode;
+          error.responseSize = byteSize;
           error.endpoint = safeEndpoint;
           reject(error);
           return;
@@ -23,6 +26,7 @@ function getJson(url, options = {}) {
           resolve(JSON.parse(body));
         } catch {
           const error = new Error(`Invalid JSON from ${safeEndpoint}`);
+          error.responseSize = byteSize;
           error.endpoint = safeEndpoint;
           reject(error);
         }
