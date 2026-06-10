@@ -2,14 +2,15 @@
 
 const fs = require('fs');
 const path = require('path');
-const fmp = require('./fmp-provider');
-const finnhub = require('./finnhub-provider');
-const fred = require('./fred-provider');
+const fmp          = require('./fmp-provider');
+const finnhub      = require('./finnhub-provider');
+const alphavantage = require('./alphavantage-provider');
+const fred         = require('./fred-provider');
 
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const HEALTH_PATH = path.join(ROOT, 'data', 'provider-health.json');
 const CACHE_PATH = path.join(ROOT, 'data', 'cache', 'economic-calendar-cache.json');
-const PROVIDERS = [fmp, finnhub, fred];
+const PROVIDERS = [fmp, finnhub, alphavantage, fred];
 
 async function fetchEconomicCalendar(options = {}) {
   const context = {
@@ -23,6 +24,7 @@ async function fetchEconomicCalendar(options = {}) {
   const keyChecks = [
     ['FMP_API_KEY', 'FINANCIAL_MODELING_PREP_API_KEY'],
     ['FINNHUB_API_KEY'],
+    ['ALPHAVANTAGE_API_KEY'],
     ['FRED_API_KEY'],
   ];
   for (const [primary, alias] of keyChecks) {
@@ -33,7 +35,7 @@ async function fetchEconomicCalendar(options = {}) {
     console.log(`[calendar-env] ${primary}=${present ? 'present' : 'missing'}`);
   }
 
-  console.log(`[PROVIDER_ROUTER] starting priority=fmp>finnhub>fred range=${context.from}..${context.to}`);
+  console.log(`[PROVIDER_ROUTER] starting priority=fmp>finnhub>alphavantage>fred range=${context.from}..${context.to}`);
 
   for (const provider of PROVIDERS) {
     const name = providerName(provider);
@@ -155,8 +157,9 @@ function healthAttempt(provider, status, endpoint, reason, eventCount) {
 }
 
 function providerName(provider) {
-  if (provider === fmp) return 'fmp';
-  if (provider === finnhub) return 'finnhub';
+  if (provider === fmp)          return 'fmp';
+  if (provider === finnhub)      return 'finnhub';
+  if (provider === alphavantage) return 'alphavantage';
   return 'fred';
 }
 

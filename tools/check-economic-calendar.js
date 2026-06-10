@@ -95,7 +95,7 @@ if (!fs.existsSync(CALENDAR_PATH)) {
         if (cal.source === 'degraded' && !meta.cache_used) {
           warnings.push(
             'data/economic-calendar.json: empty calendar — all providers failed and no stale cache exists. ' +
-            'Set FMP_API_KEY, FINNHUB_API_KEY, or FRED_API_KEY in GitHub Secrets, then run: npm run fetch:economic-calendar'
+            'Set FMP_API_KEY, FINNHUB_API_KEY, ALPHAVANTAGE_API_KEY, or FRED_API_KEY in GitHub Secrets, then run: npm run fetch:economic-calendar'
           );
         } else {
           warnings.push('data/economic-calendar.json: 0 events (source=' + (cal.source || 'unknown') + ')');

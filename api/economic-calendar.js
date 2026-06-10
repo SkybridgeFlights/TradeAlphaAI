@@ -11,19 +11,21 @@ const fmp              = require('../tools/providers/economic-calendar/fmp-provi
 const finnhub          = require('../tools/providers/economic-calendar/finnhub-provider');
 const fred             = require('../tools/providers/economic-calendar/fred-provider');
 const te               = require('../tools/providers/economic-calendar/trading-economics-provider');
+const alphavantage     = require('../tools/providers/economic-calendar/alphavantage-provider');
 const scheduleFallback = require('../tools/providers/economic-calendar/schedule-fallback-provider');
 const { inferImpact, computeIntelligence } =
   require('../tools/providers/economic-calendar/event-intelligence');
 
-const PROVIDERS      = [te, fmp, finnhub, fred];
-const PROVIDER_NAMES = ['te', 'fmp', 'finnhub', 'fred'];
-const MERGE_RANK     = { te: 0, fmp: 1, finnhub: 2, fred: 3, schedule_fallback: 4 };
+const PROVIDERS      = [te, fmp, finnhub, alphavantage, fred];
+const PROVIDER_NAMES = ['te', 'fmp', 'finnhub', 'alphavantage', 'fred'];
+const MERGE_RANK     = { te: 0, fmp: 1, finnhub: 2, alphavantage: 3, fred: 4, schedule_fallback: 5 };
 
 const PROVIDER_ENDPOINTS = {
-  te:      'https://api.tradingeconomics.com/calendar',
-  fmp:     'https://financialmodelingprep.com/stable/economic-calendar',
-  finnhub: 'https://finnhub.io/api/v1/calendar/economic',
-  fred:    'https://api.stlouisfed.org/fred/releases/dates',
+  te:           'https://api.tradingeconomics.com/calendar',
+  fmp:          'https://financialmodelingprep.com/stable/economic-calendar',
+  finnhub:      'https://finnhub.io/api/v1/calendar/economic',
+  alphavantage: 'https://www.alphavantage.co/query',
+  fred:         'https://api.stlouisfed.org/fred/releases/dates',
 };
 
 const ENV_KEY_CHECKS = [
@@ -31,10 +33,14 @@ const ENV_KEY_CHECKS = [
   ['TRADING_ECONOMICS_CLIENT',   'TRADING_ECONOMICS_SECRET'],
   ['FMP_API_KEY',                'FINANCIAL_MODELING_PREP_API_KEY'],
   ['FINNHUB_API_KEY',            null],
+  ['ALPHAVANTAGE_API_KEY',       null],
   ['FRED_API_KEY',               null],
 ];
 
-const COOLDOWN_MS         = 15 * 60 * 1000;       // 15 minutes per 5xx failure
+// Exponential cooldown after 5xx: BASE * 2^(failures-1), capped at MAX.
+// failures=1 → 15min, failures=2 → 30min, failures=3 → 60min, failures≥4 → 120min.
+const BASE_COOLDOWN_MS = 15 * 60 * 1000;
+const MAX_COOLDOWN_MS  =  2 * 60 * 60 * 1000;
 const TMP_LIVE_CACHE      = '/tmp/ec-live-cache.json';
 const STATIC_CACHE_PATH   = path.join(__dirname, '..', 'data', 'economic-calendar.json');
 const CACHE_MAX_AGE_HOURS = 24;
@@ -102,18 +108,25 @@ module.exports = async function handler(req, res) {
   const context = { from, to, env: process.env };
 
   // Fetch all providers in parallel.
-  // Providers in active cooldown (5xx within last 15 min) are skipped immediately.
+  // Providers in active cooldown are skipped immediately.
+  // Each call is wrapped to capture response latency (ms).
+  const latencyMs = {};
   const results = await Promise.allSettled(
     PROVIDERS.map(function (p, i) {
       const name  = PROVIDER_NAMES[i];
       const state = PROVIDER_STATE[name];
       if (state && now < state.cooldownUntil) {
+        latencyMs[name] = 0;
         const err       = new Error('provider_cooldown');
         err.cooldown    = true;
         err.cooldownEnd = state.cooldownUntil;
         return Promise.reject(err);
       }
-      return p.fetchCalendar(context);
+      const t0 = Date.now();
+      return p.fetchCalendar(context).then(
+        function (r)  { latencyMs[name] = Date.now() - t0; return r; },
+        function (e)  { latencyMs[name] = Date.now() - t0; throw e; }
+      );
     })
   );
 
@@ -154,14 +167,19 @@ module.exports = async function handler(req, res) {
         with_forecast:      withForecast,
         with_previous:      withPrevious,
         completeness_score: completenessScore,
-        ...(debugMode ? { endpoint: PROVIDER_ENDPOINTS[name] || null, error_type: null } : {}),
+        uptime_score:       computeUptimeScore(state),
+        ...(debugMode ? {
+          endpoint:        PROVIDER_ENDPOINTS[name] || null,
+          response_time_ms: latencyMs[name] || 0,
+          error_type:       null,
+        } : {}),
       };
       rawPool.push(...usable);
 
     } else if (result.reason && result.reason.cooldown) {
       // Skipped — active cooldown (do not increment failures)
       const remaining = Math.max(0, Math.floor((state.cooldownUntil - now) / 1000));
-      console.log(`[calendar-api] provider=${name} skipped cooldown_remaining=${remaining}s`);
+      console.log(`[calendar-api] provider=${name} skipped cooldown_remaining=${remaining}s uptime_score=${computeUptimeScore(state)}`);
 
       errorTypes[name] = 'provider_cooldown';
       providersMeta[name] = {
@@ -172,15 +190,17 @@ module.exports = async function handler(req, res) {
         with_forecast:      0,
         with_previous:      0,
         completeness_score: 0,
+        uptime_score:       computeUptimeScore(state),
         ...(debugMode ? {
-          error_type:            'provider_cooldown',
+          error_type:             'provider_cooldown',
           cooldown_remaining_sec: remaining,
-          endpoint:              PROVIDER_ENDPOINTS[name] || null,
+          response_time_ms:       0,
+          endpoint:               PROVIDER_ENDPOINTS[name] || null,
         } : {}),
       };
 
     } else {
-      // Real failure: classify, possibly set cooldown
+      // Real failure: classify and set exponential cooldown on 5xx
       const reason     = sanitize(result.reason && result.reason.message);
       const httpStatus = (result.reason && result.reason.statusCode) || null;
       const respSize   = (result.reason && result.reason.responseSize) || null;
@@ -189,16 +209,19 @@ module.exports = async function handler(req, res) {
 
       state.failures++;
       if (httpStatus !== null && httpStatus >= 500) {
-        state.cooldownUntil = now + COOLDOWN_MS;
-        console.log(`[calendar-api] provider=${name} cooldown_set duration=15min http_status=${httpStatus} failures=${state.failures}`);
+        const cooldownMs  = Math.min(BASE_COOLDOWN_MS * Math.pow(2, state.failures - 1), MAX_COOLDOWN_MS);
+        const cooldownMin = Math.round(cooldownMs / 60000);
+        state.cooldownUntil = now + cooldownMs;
+        console.log(`[calendar-api] provider=${name} cooldown_set duration=${cooldownMin}min http_status=${httpStatus} failures=${state.failures}`);
       }
 
       console.log(
         `[calendar-api] provider=${name} ${metaStatus}` +
         ` reason="${reason}"` +
         ` http_status=${httpStatus !== null ? httpStatus : 'N/A'}` +
-        ` resp_size=${respSize !== null ? respSize + 'B' : 'N/A'}` +
-        ` error_type=${errorType}`
+        ` latency=${latencyMs[name] || 0}ms` +
+        ` error_type=${errorType}` +
+        ` uptime_score=${computeUptimeScore(state)}`
       );
 
       errorTypes[name] = errorType;
@@ -210,12 +233,14 @@ module.exports = async function handler(req, res) {
         with_forecast:      0,
         with_previous:      0,
         completeness_score: 0,
+        uptime_score:       computeUptimeScore(state),
         ...(debugMode ? {
           reason,
-          http_status:   httpStatus,
-          response_size: respSize,
-          error_type:    errorType,
-          endpoint:      PROVIDER_ENDPOINTS[name] || null,
+          http_status:      httpStatus,
+          response_size:    respSize,
+          response_time_ms: latencyMs[name] || 0,
+          error_type:       errorType,
+          endpoint:         PROVIDER_ENDPOINTS[name] || null,
         } : {}),
       };
     }
@@ -333,29 +358,45 @@ module.exports = async function handler(req, res) {
   };
 
   if (debugMode) {
-    const providerUptime = {};
+    const providerAnalytics = {};
     for (const name of PROVIDER_NAMES) {
       const state = PROVIDER_STATE[name] || {};
-      providerUptime[name] = {
+      const meta  = providersMeta[name]  || {};
+      providerAnalytics[name] = {
         consecutive_failures:   state.failures || 0,
         cooldown_remaining_sec: Math.max(0, Math.floor((state.cooldownUntil - now) / 1000)),
         last_success_at:        state.lastSuccessAt || null,
+        uptime_score:           computeUptimeScore(state),
+        response_time_ms:       latencyMs[name] || 0,
+        normalized_events:      meta.normalized || 0,
+        completeness_score:     meta.completeness_score || 0,
+        status:                 meta.status || 'not_attempted',
       };
     }
 
+    // Identify the highest-ranked provider that returned live events
+    const selectedPrimary = PROVIDER_NAMES
+      .filter(function (n) { return providersMeta[n] && providersMeta[n].status === 'ok' && providersMeta[n].normalized > 0; })
+      .sort(function (a, b) { return (MERGE_RANK[a] !== undefined ? MERGE_RANK[a] : 9) - (MERGE_RANK[b] !== undefined ? MERGE_RANK[b] : 9); })[0] || null;
+    const selectedReason = selectedPrimary
+      ? `rank=${MERGE_RANK[selectedPrimary]} completeness=${(providersMeta[selectedPrimary] || {}).completeness_score || 0}% events=${(providersMeta[selectedPrimary] || {}).normalized || 0}`
+      : (source !== 'live' ? source : 'no_live_provider_ranked');
+
     responseBody.debug = {
-      date_range:        { from, to },
-      env_keys:          { present: envPresent, missing: envMissing },
-      provider_priority: PROVIDER_NAMES,
-      active_providers:  activeProviders,
-      live_events:       liveEventCount,
-      total_events:      enriched.length,
-      fallback_used:     fallbackDecision.type,
-      cache_age_hours:   cacheAgeHours,
-      reason:            fallbackDecision.reason,
-      provider_health:   providerHealth,
-      provider_uptime:   providerUptime,
-      note:              envMissing.length === ENV_KEY_CHECKS.length
+      date_range:                { from, to },
+      env_keys:                  { present: envPresent, missing: envMissing },
+      provider_priority:         PROVIDER_NAMES,
+      active_providers:          activeProviders,
+      selected_primary_provider: selectedPrimary,
+      selected_reason:           selectedReason,
+      live_events:               liveEventCount,
+      total_events:              enriched.length,
+      fallback_used:             fallbackDecision.type,
+      cache_age_hours:           cacheAgeHours,
+      reason:                    fallbackDecision.reason,
+      provider_health:           providerHealth,
+      provider_analytics:        providerAnalytics,
+      note:                      envMissing.length === ENV_KEY_CHECKS.length
         ? 'ALL env keys missing — no provider can authenticate'
         : null,
     };
@@ -419,6 +460,12 @@ function readStaticCache() {
   } catch (_) {
     return { events: [], updatedAt: null, ageHours: Infinity };
   }
+}
+
+// ── Provider helpers ──────────────────────────────────────────────────────────
+
+function computeUptimeScore(state) {
+  return Math.max(25, 100 - (state.failures || 0) * 25);
 }
 
 // ── Event helpers ─────────────────────────────────────────────────────────────

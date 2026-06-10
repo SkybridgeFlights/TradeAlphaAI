@@ -859,6 +859,62 @@ expect('FOMC schedule has at least 4 future dates', _futureCount >= 4, true);
   expect('live null actual → dash',                simulateDispActual(liveNullEvent,  'en'), '—');
   expect('live actual 3.2 → value',               simulateDispActual(liveRealEvent,  'en'), '3.2');
 
+  // ── Alpha Vantage CSV parsing ─────────────────────────────────────────────
+  console.log('[logic] Alpha Vantage parseCsv / parseNumeric');
+  var { parseCsv, parseNumeric } = require('./providers/economic-calendar/alphavantage-provider');
+
+  // parseCsv basic contract
+  var csvBasic = 'Name,Country,Date,Actual,Previous,Estimate,Impact\nCPI YoY,United States,2026-06-10,3.1,3.0,3.2,high\nGDP,Euro Zone,2026-06-11,,,1.2,medium\n';
+  var parsed = parseCsv(csvBasic);
+  expect('parseCsv: row count',         parsed.length, 2);
+  expect('parseCsv: Name field',        parsed[0].Name, 'CPI YoY');
+  expect('parseCsv: Country field',     parsed[0].Country, 'United States');
+  expect('parseCsv: Date field',        parsed[0].Date, '2026-06-10');
+  expect('parseCsv: Actual field',      parsed[0].Actual, '3.1');
+  expect('parseCsv: empty Actual row2', parsed[1].Actual, '');
+  expect('parseCsv: Impact row2',       parsed[1].Impact, 'medium');
+
+  // parseCsv empty and header-only
+  expect('parseCsv: empty string → []', parseCsv('').length, 0);
+  expect('parseCsv: header only → []',  parseCsv('Name,Country,Date\n').length, 0);
+
+  // parseNumeric
+  expect('parseNumeric: integer',        parseNumeric('3'), 3);
+  expect('parseNumeric: float',          parseNumeric('3.14'), 3.14);
+  expect('parseNumeric: percent',        parseNumeric('2.5%'), 2.5);
+  expect('parseNumeric: with comma',     parseNumeric('1,234.5'), 1234.5);
+  expect('parseNumeric: negative',       parseNumeric('-0.3'), -0.3);
+  expect('parseNumeric: empty → null',   parseNumeric(''), null);
+  expect('parseNumeric: N/A → null',     parseNumeric('N/A'), null);
+  expect('parseNumeric: dash → null',    parseNumeric('-'), null);
+  expect('parseNumeric: undefined→null', parseNumeric(undefined), null);
+
+  // ── Exponential cooldown calculation ──────────────────────────────────────
+  console.log('[logic] exponential cooldown backoff');
+  var BASE_COOLDOWN_MS = 15 * 60 * 1000;  // 15 min
+  var MAX_COOLDOWN_MS  = 2  * 60 * 60 * 1000; // 120 min
+  function calcCooldown(failures) {
+    return Math.min(BASE_COOLDOWN_MS * Math.pow(2, failures - 1), MAX_COOLDOWN_MS);
+  }
+  expect('cooldown failures=1 → 15 min',  calcCooldown(1), BASE_COOLDOWN_MS);
+  expect('cooldown failures=2 → 30 min',  calcCooldown(2), BASE_COOLDOWN_MS * 2);
+  expect('cooldown failures=3 → 60 min',  calcCooldown(3), BASE_COOLDOWN_MS * 4);
+  expect('cooldown failures=4 → 120 min (capped)', calcCooldown(4), MAX_COOLDOWN_MS);
+  expect('cooldown failures=10 → 120 min (capped)', calcCooldown(10), MAX_COOLDOWN_MS);
+
+  // ── Uptime score calculation ──────────────────────────────────────────────
+  console.log('[logic] uptime score');
+  function computeUptimeScore(state) {
+    return Math.max(25, 100 - (state.failures || 0) * 25);
+  }
+  expect('uptime failures=0 → 100', computeUptimeScore({ failures: 0 }), 100);
+  expect('uptime failures=1 → 75',  computeUptimeScore({ failures: 1 }), 75);
+  expect('uptime failures=2 → 50',  computeUptimeScore({ failures: 2 }), 50);
+  expect('uptime failures=3 → 25',  computeUptimeScore({ failures: 3 }), 25);
+  expect('uptime failures=4 → 25 (floor)', computeUptimeScore({ failures: 4 }), 25);
+  expect('uptime failures=99→ 25 (floor)', computeUptimeScore({ failures: 99 }), 25);
+  expect('uptime no state prop → 100', computeUptimeScore({}), 100);
+
   // ── Report ──────────────────────────────────────────────────────────────────
   console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
   if (fail > 0) process.exit(1);
