@@ -5,6 +5,8 @@
 //               ?ec_debug         — enables extended diagnostics in the JSON response
 // Mirrors netlify/functions/economic-calendar.js for Netlify compatibility.
 
+const fs      = require('fs');
+const path    = require('path');
 const fmp     = require('../tools/providers/economic-calendar/fmp-provider');
 const finnhub = require('../tools/providers/economic-calendar/finnhub-provider');
 const fred    = require('../tools/providers/economic-calendar/fred-provider');
@@ -18,7 +20,6 @@ const PROVIDERS      = [te, fmp, finnhub, fred];
 const PROVIDER_NAMES = ['te', 'fmp', 'finnhub', 'fred'];
 
 // Merge rank: lower = preferred as the base event record in deduplication.
-// Within the same rank, richness (non-null actual/forecast/previous) breaks ties.
 const MERGE_RANK = { te: 0, fmp: 1, finnhub: 2, fred: 3 };
 
 // Safe (key-free) endpoint URLs for diagnostics — never include API keys.
@@ -37,6 +38,10 @@ const ENV_KEY_CHECKS = [
   ['FINNHUB_API_KEY',            null],
   ['FRED_API_KEY',               null],
 ];
+
+// Static cache bundled with the deployment (written by GitHub Actions calendar update)
+const STATIC_CACHE_PATH  = path.join(__dirname, '..', 'data', 'economic-calendar.json');
+const CACHE_MAX_AGE_HOURS = 24;
 
 module.exports = async function handler(req, res) {
   console.log('[calendar-api] runtime=vercel');
@@ -68,6 +73,7 @@ module.exports = async function handler(req, res) {
   );
 
   const providersMeta = {};
+  const errorTypes    = {}; // always tracked for health scoring, not exposed unless debug
   const rawPool       = [];
 
   for (let i = 0; i < PROVIDERS.length; i++) {
@@ -79,17 +85,16 @@ module.exports = async function handler(req, res) {
       const usable   = pickUsable(events);
       const rawCount = result.value.rawCount || events.length;
 
-      // Completeness diagnostics: count events with each numeric field populated
       const withActual   = countWith(usable, 'actual');
       const withForecast = countWith(usable, 'forecast');
       const withPrevious = countWith(usable, 'previous');
-      // Score: (filled fields) / (possible fields) × 100, rounded to integer
       const completenessScore = usable.length > 0
         ? Math.round((withActual + withForecast + withPrevious) / (usable.length * 3) * 100)
         : 0;
 
       console.log(`[calendar-api] provider=${name} ok raw=${rawCount} normalized=${usable.length} completeness=${completenessScore}%`);
 
+      errorTypes[name] = null;
       providersMeta[name] = {
         status:             'ok',
         raw:                rawCount,
@@ -106,9 +111,11 @@ module.exports = async function handler(req, res) {
       const httpStatus = (result.reason && result.reason.statusCode) || null;
       const respSize   = (result.reason && result.reason.responseSize) || null;
       const errorType  = classifyProviderError(reason, httpStatus);
+      const metaStatus = resolveProviderStatus(reason, httpStatus);
 
+      errorTypes[name] = errorType;
       console.log(
-        `[calendar-api] provider=${name} failed` +
+        `[calendar-api] provider=${name} ${metaStatus}` +
         ` reason="${reason}"` +
         ` http_status=${httpStatus !== null ? httpStatus : 'N/A'}` +
         ` resp_size=${respSize !== null ? respSize + 'B' : 'N/A'}` +
@@ -116,7 +123,7 @@ module.exports = async function handler(req, res) {
       );
 
       providersMeta[name] = {
-        status:             reason === 'missing_api_key' ? 'missing_key' : 'failed',
+        status:             metaStatus,
         raw:                0,
         normalized:         0,
         with_actual:        0,
@@ -135,25 +142,55 @@ module.exports = async function handler(req, res) {
   }
 
   const merged   = mergeEvents(rawPool);
-  const enriched = merged.map(function (e) {
+  let enriched   = merged.map(function (e) {
     return Object.assign({}, e, { error: undefined, intelligence: computeIntelligence(e) });
   });
   enriched.sort(function (a, b) { return (a.event_time || '').localeCompare(b.event_time || ''); });
 
-  const hasLive = Object.values(providersMeta).some(function (p) { return p && p.status === 'ok'; });
-  const status  = hasLive ? 200 : 503;
+  // ── Static cache fallback ─────────────────────────────────────────────────
+  // When live providers return zero events, attempt the deployment-bundled cache.
+  // Only use it if it has events AND is under 24 hours old.
+  const liveEventCount = enriched.length;
+  const cacheResult    = readStaticCache();
+  let fallbackDecision = { type: 'none', reason: null };
 
+  if (liveEventCount === 0) {
+    if (cacheResult.events.length > 0 && cacheResult.ageHours < CACHE_MAX_AGE_HOURS) {
+      enriched = cacheResult.events;
+      fallbackDecision = {
+        type:   'static_cache',
+        reason: `live_providers_empty cache_age=${Math.round(cacheResult.ageHours * 10) / 10}h`,
+      };
+      console.log(`[calendar-api] fallback=static_cache cache_events=${enriched.length} cache_age=${Math.round(cacheResult.ageHours)}h`);
+    } else {
+      fallbackDecision = {
+        type:   'external_iframe',
+        reason: cacheResult.events.length === 0
+          ? 'no_live_events no_cache_events'
+          : `no_live_events cache_stale cache_age=${Math.round(cacheResult.ageHours)}h`,
+      };
+      console.log(`[calendar-api] fallback=external_iframe cache_events=${cacheResult.events.length} cache_stale=${cacheResult.ageHours >= CACHE_MAX_AGE_HOURS}`);
+    }
+  }
+
+  const hasLive        = Object.values(providersMeta).some(function (p) { return p && p.status === 'ok'; });
   const activeProviders = PROVIDER_NAMES.filter(function (n) {
     return providersMeta[n] && providersMeta[n].status === 'ok';
   });
-  console.log(`[calendar-api] complete source=${hasLive ? 'live' : 'degraded'} events=${enriched.length} active=${activeProviders.join(',') || 'none'}`);
+  const providerHealth = calcProviderHealth(providersMeta, errorTypes, enriched.length);
+  const httpStatus     = (hasLive || enriched.length > 0) ? 200 : 503;
+
+  console.log(`[calendar-api] complete source=${hasLive ? 'live' : 'degraded'} health=${providerHealth} events=${enriched.length} active=${activeProviders.join(',') || 'none'} fallback=${fallbackDecision.type}`);
 
   const responseBody = {
-    schema_version: '2.1',
-    updated_at:     new Date().toISOString(),
-    source:         hasLive ? 'live' : 'degraded',
-    providers:      providersMeta,
-    events:         enriched,
+    schema_version:  '2.1',
+    updated_at:      new Date().toISOString(),
+    source:          hasLive
+      ? (fallbackDecision.type === 'static_cache' ? 'static_cache' : 'live')
+      : 'degraded',
+    provider_health: providerHealth,
+    providers:       providersMeta,
+    events:          enriched,
   };
 
   if (debugMode) {
@@ -162,8 +199,16 @@ module.exports = async function handler(req, res) {
       env_keys:          { present: envPresent, missing: envMissing },
       provider_priority: PROVIDER_NAMES,
       active_providers:  activeProviders,
+      live_events:       liveEventCount,
       total_events:      enriched.length,
-      note: envMissing.length === ENV_KEY_CHECKS.length
+      fallback_used:     fallbackDecision.type,
+      cache_events:      cacheResult.events.length,
+      cache_age_hours:   cacheResult.ageHours < Infinity
+        ? Math.round(cacheResult.ageHours * 10) / 10
+        : null,
+      reason:            fallbackDecision.reason,
+      provider_health:   providerHealth,
+      note:              envMissing.length === ENV_KEY_CHECKS.length
         ? 'ALL env keys missing — no provider can authenticate'
         : null,
     };
@@ -174,9 +219,63 @@ module.exports = async function handler(req, res) {
   res.setHeader('Content-Type',                'application/json');
   res.setHeader('Cache-Control',               'public, max-age=900, stale-while-revalidate=3600');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.statusCode = status;
+  res.statusCode = httpStatus;
   res.end(body);
 };
+
+// ── Provider classification ───────────────────────────────────────────────────
+
+// Maps raw error reason + HTTP status to a clean provider status string.
+// 402 = paid plan required (FMP quota) — disable, do not retry
+// FRED no_matching / no_supported_events = informational, not a failure
+function resolveProviderStatus(reason, httpStatus) {
+  if (reason === 'missing_api_key') return 'missing_key';
+  if (httpStatus === 402)           return 'disabled_paid_plan';
+  if (reason === 'no_matching_release_dates' ||
+      reason === 'no_supported_events')      return 'no_events';
+  return 'failed';
+}
+
+function classifyProviderError(reason, httpStatus) {
+  if (reason === 'missing_api_key')         return 'missing_key';
+  if (httpStatus === 402)                   return 'disabled_paid_plan';
+  if (httpStatus === 429)                   return 'rate_limited';
+  if (httpStatus === 401 || httpStatus === 403) return 'auth_failed';
+  if (httpStatus !== null && httpStatus >= 500) return 'provider_down';
+  if (/invalid json/i.test(reason))         return 'schema_drift';
+  if (/legacy_endpoint|unsupported_plan|unexpected_response/i.test(reason)) return 'schema_drift';
+  if (/api_error/i.test(reason))            return 'auth_failed';
+  if (/no_matching|no_supported_events/i.test(reason)) return 'empty_payload';
+  if (/timeout/i.test(reason))              return 'timeout';
+  return 'unknown';
+}
+
+// healthy  = at least one provider returned usable events
+// degraded = providers attempted but hit real errors (not just missing keys/empty)
+// offline  = no keys configured or all failures are informational
+function calcProviderHealth(providersMeta, errorTypes, eventCount) {
+  if (eventCount > 0) return 'healthy';
+  const realFailures = Object.entries(errorTypes).filter(function ([, t]) {
+    return t && t !== 'missing_key' && t !== 'empty_payload';
+  });
+  return realFailures.length > 0 ? 'degraded' : 'offline';
+}
+
+// ── Static cache ──────────────────────────────────────────────────────────────
+
+function readStaticCache() {
+  try {
+    const raw      = JSON.parse(fs.readFileSync(STATIC_CACHE_PATH, 'utf8'));
+    const events   = Array.isArray(raw.events) ? raw.events : [];
+    const updAt    = raw.updated_at || null;
+    const ageHours = updAt
+      ? (Date.now() - new Date(updAt).getTime()) / 3600000
+      : Infinity;
+    return { events, updatedAt: updAt, ageHours };
+  } catch (_) {
+    return { events: [], updatedAt: null, ageHours: Infinity };
+  }
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -220,8 +319,6 @@ function dedupeKey(e) {
   return date + '|' + country + '|' + name;
 }
 
-// Richness score: how many numeric fields are non-null (actual and forecast
-// weighted more than previous because they're the most visible to users).
 function richness(e) {
   return (e.actual   !== null && e.actual   !== undefined ? 2 : 0)
        + (e.forecast !== null && e.forecast !== undefined ? 2 : 0)
@@ -233,9 +330,7 @@ function mergeGroup(group) {
   const sorted = group.slice().sort(function (a, b) {
     const rankA = MERGE_RANK[a.provider] !== undefined ? MERGE_RANK[a.provider] : 9;
     const rankB = MERGE_RANK[b.provider] !== undefined ? MERGE_RANK[b.provider] : 9;
-    // Primary sort: provider rank (te=0, fmp=1, finnhub=2, fred=3)
     if (rankA !== rankB) return rankA - rankB;
-    // Secondary sort: prefer the richer record (more non-null actual/forecast/previous)
     return richness(b) - richness(a);
   });
   const base    = Object.assign({}, sorted[0]);
@@ -243,9 +338,7 @@ function mergeGroup(group) {
     .filter(function (v, i, a) { return a.indexOf(v) === i; });
   for (let i = 1; i < sorted.length; i++) {
     const other = sorted[i];
-    // FRED is a schedule-only provider — it never has real actual/forecast/previous values.
-    // Explicitly block it from contributing numeric fields even if its null-fill logic
-    // somehow produces non-null values in future.
+    // FRED is schedule-only — never contributes numeric fields
     if (other.provider === 'fred') continue;
     if (base.actual   === null && other.actual   !== null) base.actual   = other.actual;
     if (base.forecast === null && other.forecast !== null) base.forecast = other.forecast;
@@ -254,19 +347,6 @@ function mergeGroup(group) {
   }
   base.sources = sources;
   return base;
-}
-
-function classifyProviderError(reason, httpStatus) {
-  if (reason === 'missing_api_key') return 'missing_key';
-  if (httpStatus === 429) return 'rate_limited';
-  if (httpStatus === 401 || httpStatus === 403) return 'auth_failed';
-  if (httpStatus !== null && httpStatus >= 500) return 'provider_down';
-  if (/invalid json/i.test(reason)) return 'schema_drift';
-  if (/legacy_endpoint|unsupported_plan|unexpected_response/i.test(reason)) return 'schema_drift';
-  if (/api_error/i.test(reason)) return 'auth_failed';
-  if (/no_matching|no_supported_events|empty_payload/i.test(reason)) return 'empty_payload';
-  if (/timeout/i.test(reason)) return 'timeout';
-  return 'unknown';
 }
 
 function sanitize(value) {
