@@ -1021,12 +1021,13 @@
     if (!elStatus) return;
     var src    = calMeta.source || calMeta.provider || '';
     var upd    = calMeta.updated_at || '';
-    var isLive = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred' || src === 'te');
-    var cls    = isLive ? 'ec-status-live' : src === 'cache' ? 'ec-status-cache' : 'ec-status-degraded';
+    var isLive    = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred' || src === 'te');
+    var isCached  = (src === 'cache' || src === 'stale_cache' || src === 'static_cache');
+    var cls       = isLive ? 'ec-status-live' : isCached ? 'ec-status-cache' : 'ec-status-degraded';
     elStatus.className = 'ec-status-bar ' + cls;
 
     var srcLabel = src === 'degraded' ? L.srcDegraded
-                 : src === 'cache'    ? L.srcCache
+                 : isCached           ? L.srcCache
                  : isLive             ? (L.srcLive + (src !== 'live' ? ' (' + src + ')' : ''))
                  : L.srcCache;
 
@@ -1245,6 +1246,7 @@
 
         populateCountries();
         render();
+        maybeStaleCacheNotice(calMeta.source);
         maybeShowExternalFallback(allEvents.length);
         scheduleRefresh();
       })
@@ -1266,6 +1268,7 @@
           elStatus.className    = 'ec-status-bar ec-status-degraded';
           elStatus.textContent  = L.srcDegraded;
         }
+        maybeStaleCacheNotice(null);
         maybeShowExternalFallback(0);
       });
   }
@@ -1275,6 +1278,33 @@
       return '?from=' + weekStart(selectedDate) + '&to=' + weekEnd(selectedDate);
     }
     return '?date=' + selectedDate;
+  }
+
+  // ── Stale cache notice ────────────────────────────────────────────────────
+  // When the API returns cached (not live) data, show a compact recovery notice
+  // near the calendar table so the user knows it is not freshly fetched.
+  function maybeStaleCacheNotice(source) {
+    var noticeId = 'ec-stale-cache-notice';
+    var existing = document.getElementById(noticeId);
+    var isStale  = (source === 'stale_cache' || source === 'cache' || source === 'static_cache');
+    if (!isStale) {
+      if (existing) existing.remove();
+      return;
+    }
+    if (!existing) {
+      var tableWrap = document.getElementById('ec-table-wrap');
+      if (!tableWrap || !tableWrap.parentNode) return;
+      var notice = document.createElement('p');
+      notice.id        = noticeId;
+      notice.style.cssText =
+        'font-size:0.82rem;color:var(--text-muted,#666);' +
+        'background:var(--surface-2,#f9fafb);border:1px solid var(--border,#e0e0e0);' +
+        'border-radius:6px;padding:0.5rem 1rem;margin:0.5rem 0 0;';
+      notice.textContent = lang === 'ar'
+        ? 'يتم عرض آخر بيانات اقتصادية محفوظة مؤقتًا حتى عودة المزودات الحية.'
+        : 'Showing latest cached macro events while live providers recover.';
+      tableWrap.parentNode.insertBefore(notice, tableWrap);
+    }
   }
 
   // ── External iframe fallback ─────────────────────────────────────────────

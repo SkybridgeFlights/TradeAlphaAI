@@ -14,15 +14,10 @@ const te      = require('../tools/providers/economic-calendar/trading-economics-
 const { inferImpact, computeIntelligence } =
   require('../tools/providers/economic-calendar/event-intelligence');
 
-// Provider order for parallel fetch: TE → FMP → Finnhub → FRED
-// TE is preferred for actual/forecast completeness; FRED is schedule-only.
 const PROVIDERS      = [te, fmp, finnhub, fred];
 const PROVIDER_NAMES = ['te', 'fmp', 'finnhub', 'fred'];
+const MERGE_RANK     = { te: 0, fmp: 1, finnhub: 2, fred: 3 };
 
-// Merge rank: lower = preferred as the base event record in deduplication.
-const MERGE_RANK = { te: 0, fmp: 1, finnhub: 2, fred: 3 };
-
-// Safe (key-free) endpoint URLs for diagnostics — never include API keys.
 const PROVIDER_ENDPOINTS = {
   te:      'https://api.tradingeconomics.com/calendar',
   fmp:     'https://financialmodelingprep.com/stable/economic-calendar',
@@ -30,7 +25,6 @@ const PROVIDER_ENDPOINTS = {
   fred:    'https://api.stlouisfed.org/fred/releases/dates',
 };
 
-// Which env keys each provider requires (primary + optional alias)
 const ENV_KEY_CHECKS = [
   ['TRADING_ECONOMICS_API_KEY',  null],
   ['TRADING_ECONOMICS_CLIENT',   'TRADING_ECONOMICS_SECRET'],
@@ -39,19 +33,58 @@ const ENV_KEY_CHECKS = [
   ['FRED_API_KEY',               null],
 ];
 
-// Static cache bundled with the deployment (written by GitHub Actions calendar update)
-const STATIC_CACHE_PATH  = path.join(__dirname, '..', 'data', 'economic-calendar.json');
+const COOLDOWN_MS         = 15 * 60 * 1000;       // 15 minutes per 5xx failure
+const TMP_LIVE_CACHE      = '/tmp/ec-live-cache.json';
+const STATIC_CACHE_PATH   = path.join(__dirname, '..', 'data', 'economic-calendar.json');
 const CACHE_MAX_AGE_HOURS = 24;
+
+// ── Module-level state (survives warm container reuse, resets on cold start) ──
+
+// Provider cooldown + uptime tracking
+const PROVIDER_STATE = {};
+for (const name of PROVIDER_NAMES) {
+  PROVIDER_STATE[name] = { failures: 0, cooldownUntil: 0, lastSuccessAt: null };
+}
+
+// Live cache: populated after any successful fetch with events > 0.
+// Also loaded from /tmp on first invocation so warm restarts preserve it.
+let liveCacheLoaded = false;
+let liveCache       = null; // { events: [], updatedAt: string, providers: {} }
+
+function ensureLiveCacheLoaded() {
+  if (liveCacheLoaded) return;
+  liveCacheLoaded = true;
+  try {
+    const raw = JSON.parse(fs.readFileSync(TMP_LIVE_CACHE, 'utf8'));
+    if (raw && Array.isArray(raw.events) && raw.events.length > 0 && raw.updatedAt) {
+      liveCache = raw;
+      const ageH = Math.round((Date.now() - new Date(raw.updatedAt).getTime()) / 360000) / 10;
+      console.log(`[calendar-api] live-cache loaded from /tmp events=${raw.events.length} age=${ageH}h`);
+    }
+  } catch (_) { /* no /tmp cache yet — starts empty */ }
+}
+
+function writeLiveCache(events, providersMeta) {
+  const cache = { events, updatedAt: new Date().toISOString(), providers: providersMeta };
+  liveCache = cache;
+  try {
+    fs.writeFileSync(TMP_LIVE_CACHE, JSON.stringify(cache), 'utf8');
+  } catch (_) { /* /tmp write failed — module-level liveCache still works */ }
+}
+
+// ── Request handler ───────────────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
   console.log('[calendar-api] runtime=vercel');
+  ensureLiveCacheLoaded();
 
   const q         = req.query || {};
   const debugMode = q.ec_debug !== undefined;
   const from      = q.from || q.date || addDays(today(), -1);
   const to        = q.to   || (q.date ? q.date : addDays(today(), 14));
+  const now       = Date.now();
 
-  // Key diagnostics — presence only, never values; track for debug response
+  // Key diagnostics — presence only, never values
   const envPresent = [];
   const envMissing = [];
   for (const [primary, alias] of ENV_KEY_CHECKS) {
@@ -67,27 +100,44 @@ module.exports = async function handler(req, res) {
 
   const context = { from, to, env: process.env };
 
-  // Fetch all providers in parallel — one slow/failing provider does not block others
+  // Fetch all providers in parallel.
+  // Providers in active cooldown (5xx within last 15 min) are skipped immediately.
   const results = await Promise.allSettled(
-    PROVIDERS.map(function (p) { return p.fetchCalendar(context); })
+    PROVIDERS.map(function (p, i) {
+      const name  = PROVIDER_NAMES[i];
+      const state = PROVIDER_STATE[name];
+      if (state && now < state.cooldownUntil) {
+        const err       = new Error('provider_cooldown');
+        err.cooldown    = true;
+        err.cooldownEnd = state.cooldownUntil;
+        return Promise.reject(err);
+      }
+      return p.fetchCalendar(context);
+    })
   );
 
   const providersMeta = {};
-  const errorTypes    = {}; // always tracked for health scoring, not exposed unless debug
+  const errorTypes    = {}; // tracked for health scoring regardless of debug mode
   const rawPool       = [];
 
   for (let i = 0; i < PROVIDERS.length; i++) {
     const name   = PROVIDER_NAMES[i];
     const result = results[i];
+    const state  = PROVIDER_STATE[name];
 
     if (result.status === 'fulfilled') {
+      // Success: reset cooldown tracking
+      state.failures    = 0;
+      state.cooldownUntil = 0;
+      state.lastSuccessAt = new Date().toISOString();
+
       const events   = result.value.events || [];
       const usable   = pickUsable(events);
       const rawCount = result.value.rawCount || events.length;
 
-      const withActual   = countWith(usable, 'actual');
-      const withForecast = countWith(usable, 'forecast');
-      const withPrevious = countWith(usable, 'previous');
+      const withActual        = countWith(usable, 'actual');
+      const withForecast      = countWith(usable, 'forecast');
+      const withPrevious      = countWith(usable, 'previous');
       const completenessScore = usable.length > 0
         ? Math.round((withActual + withForecast + withPrevious) / (usable.length * 3) * 100)
         : 0;
@@ -106,14 +156,42 @@ module.exports = async function handler(req, res) {
         ...(debugMode ? { endpoint: PROVIDER_ENDPOINTS[name] || null, error_type: null } : {}),
       };
       rawPool.push(...usable);
+
+    } else if (result.reason && result.reason.cooldown) {
+      // Skipped — active cooldown (do not increment failures)
+      const remaining = Math.max(0, Math.floor((state.cooldownUntil - now) / 1000));
+      console.log(`[calendar-api] provider=${name} skipped cooldown_remaining=${remaining}s`);
+
+      errorTypes[name] = 'provider_cooldown';
+      providersMeta[name] = {
+        status:             'cooldown',
+        raw:                0,
+        normalized:         0,
+        with_actual:        0,
+        with_forecast:      0,
+        with_previous:      0,
+        completeness_score: 0,
+        ...(debugMode ? {
+          error_type:            'provider_cooldown',
+          cooldown_remaining_sec: remaining,
+          endpoint:              PROVIDER_ENDPOINTS[name] || null,
+        } : {}),
+      };
+
     } else {
+      // Real failure: classify, possibly set cooldown
       const reason     = sanitize(result.reason && result.reason.message);
       const httpStatus = (result.reason && result.reason.statusCode) || null;
       const respSize   = (result.reason && result.reason.responseSize) || null;
       const errorType  = classifyProviderError(reason, httpStatus);
       const metaStatus = resolveProviderStatus(reason, httpStatus);
 
-      errorTypes[name] = errorType;
+      state.failures++;
+      if (httpStatus !== null && httpStatus >= 500) {
+        state.cooldownUntil = now + COOLDOWN_MS;
+        console.log(`[calendar-api] provider=${name} cooldown_set duration=15min http_status=${httpStatus} failures=${state.failures}`);
+      }
+
       console.log(
         `[calendar-api] provider=${name} ${metaStatus}` +
         ` reason="${reason}"` +
@@ -122,6 +200,7 @@ module.exports = async function handler(req, res) {
         ` error_type=${errorType}`
       );
 
+      errorTypes[name] = errorType;
       providersMeta[name] = {
         status:             metaStatus,
         raw:                0,
@@ -141,35 +220,65 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  const merged   = mergeEvents(rawPool);
-  let enriched   = merged.map(function (e) {
+  let enriched = mergeEvents(rawPool).map(function (e) {
     return Object.assign({}, e, { error: undefined, intelligence: computeIntelligence(e) });
   });
   enriched.sort(function (a, b) { return (a.event_time || '').localeCompare(b.event_time || ''); });
 
-  // ── Static cache fallback ─────────────────────────────────────────────────
-  // When live providers return zero events, attempt the deployment-bundled cache.
-  // Only use it if it has events AND is under 24 hours old.
   const liveEventCount = enriched.length;
-  const cacheResult    = readStaticCache();
+
+  // Persist successful live result to /tmp for stale-cache fallback
+  if (liveEventCount > 0) {
+    writeLiveCache(enriched, providersMeta);
+  }
+
+  // ── Fallback hierarchy ────────────────────────────────────────────────────
+  // live providers → stale live cache (/tmp) → static cache (data/) → external iframe
   let fallbackDecision = { type: 'none', reason: null };
+  let cacheAgeHours    = null;
 
   if (liveEventCount === 0) {
-    if (cacheResult.events.length > 0 && cacheResult.ageHours < CACHE_MAX_AGE_HOURS) {
-      enriched = cacheResult.events;
+    // 1. Stale live cache — most recent successful live response
+    const liveCacheAge = (liveCache && liveCache.updatedAt)
+      ? (now - new Date(liveCache.updatedAt).getTime()) / 3600000
+      : Infinity;
+
+    if (liveCache && liveCache.events.length > 0 && liveCacheAge < CACHE_MAX_AGE_HOURS) {
+      enriched         = liveCache.events;
+      cacheAgeHours    = Math.round(liveCacheAge * 10) / 10;
       fallbackDecision = {
-        type:   'static_cache',
-        reason: `live_providers_empty cache_age=${Math.round(cacheResult.ageHours * 10) / 10}h`,
+        type:   'stale_live_cache',
+        reason: `live_providers_empty live_cache_age=${cacheAgeHours}h`,
       };
-      console.log(`[calendar-api] fallback=static_cache cache_events=${enriched.length} cache_age=${Math.round(cacheResult.ageHours)}h`);
+      console.log(`[calendar-api] fallback=stale_live_cache events=${enriched.length} age=${cacheAgeHours}h`);
+
     } else {
-      fallbackDecision = {
-        type:   'external_iframe',
-        reason: cacheResult.events.length === 0
-          ? 'no_live_events no_cache_events'
-          : `no_live_events cache_stale cache_age=${Math.round(cacheResult.ageHours)}h`,
-      };
-      console.log(`[calendar-api] fallback=external_iframe cache_events=${cacheResult.events.length} cache_stale=${cacheResult.ageHours >= CACHE_MAX_AGE_HOURS}`);
+      // 2. Static cache bundled at deploy time
+      const staticCache = readStaticCache();
+
+      if (staticCache.events.length > 0 && staticCache.ageHours < CACHE_MAX_AGE_HOURS) {
+        enriched         = staticCache.events;
+        cacheAgeHours    = Math.round(staticCache.ageHours * 10) / 10;
+        fallbackDecision = {
+          type:   'static_cache',
+          reason: `live_providers_empty no_live_cache static_cache_age=${cacheAgeHours}h`,
+        };
+        console.log(`[calendar-api] fallback=static_cache events=${enriched.length} age=${cacheAgeHours}h`);
+
+      } else {
+        // 3. Nothing usable — signal frontend to show external iframe
+        const liveCacheReason = liveCache
+          ? `live_cache_stale age=${Math.round(liveCacheAge)}h`
+          : 'no_live_cache';
+        const staticReason = staticCache.events.length === 0
+          ? 'no_static_events'
+          : `static_cache_stale age=${Math.round(staticCache.ageHours)}h`;
+        fallbackDecision = {
+          type:   'external_iframe',
+          reason: `live_providers_empty ${liveCacheReason} ${staticReason}`,
+        };
+        console.log(`[calendar-api] fallback=external_iframe reason="${fallbackDecision.reason}"`);
+      }
     }
   }
 
@@ -178,22 +287,36 @@ module.exports = async function handler(req, res) {
     return providersMeta[n] && providersMeta[n].status === 'ok';
   });
   const providerHealth = calcProviderHealth(providersMeta, errorTypes, enriched.length);
-  const httpStatus     = (hasLive || enriched.length > 0) ? 200 : 503;
 
-  console.log(`[calendar-api] complete source=${hasLive ? 'live' : 'degraded'} health=${providerHealth} events=${enriched.length} active=${activeProviders.join(',') || 'none'} fallback=${fallbackDecision.type}`);
+  // source: 'live' = fresh data | 'stale_cache' = any cache | 'degraded' = no data
+  const source = liveEventCount > 0 ? 'live'
+    : enriched.length > 0            ? 'stale_cache'
+    :                                  'degraded';
+
+  const httpStatus = (source !== 'degraded') ? 200 : 503;
+
+  console.log(`[calendar-api] complete source=${source} health=${providerHealth} events=${enriched.length} active=${activeProviders.join(',') || 'none'} fallback=${fallbackDecision.type}`);
 
   const responseBody = {
     schema_version:  '2.1',
     updated_at:      new Date().toISOString(),
-    source:          hasLive
-      ? (fallbackDecision.type === 'static_cache' ? 'static_cache' : 'live')
-      : 'degraded',
+    source,
     provider_health: providerHealth,
     providers:       providersMeta,
     events:          enriched,
   };
 
   if (debugMode) {
+    const providerUptime = {};
+    for (const name of PROVIDER_NAMES) {
+      const state = PROVIDER_STATE[name] || {};
+      providerUptime[name] = {
+        consecutive_failures:   state.failures || 0,
+        cooldown_remaining_sec: Math.max(0, Math.floor((state.cooldownUntil - now) / 1000)),
+        last_success_at:        state.lastSuccessAt || null,
+      };
+    }
+
     responseBody.debug = {
       date_range:        { from, to },
       env_keys:          { present: envPresent, missing: envMissing },
@@ -202,12 +325,10 @@ module.exports = async function handler(req, res) {
       live_events:       liveEventCount,
       total_events:      enriched.length,
       fallback_used:     fallbackDecision.type,
-      cache_events:      cacheResult.events.length,
-      cache_age_hours:   cacheResult.ageHours < Infinity
-        ? Math.round(cacheResult.ageHours * 10) / 10
-        : null,
+      cache_age_hours:   cacheAgeHours,
       reason:            fallbackDecision.reason,
       provider_health:   providerHealth,
+      provider_uptime:   providerUptime,
       note:              envMissing.length === ENV_KEY_CHECKS.length
         ? 'ALL env keys missing — no provider can authenticate'
         : null,
@@ -225,9 +346,6 @@ module.exports = async function handler(req, res) {
 
 // ── Provider classification ───────────────────────────────────────────────────
 
-// Maps raw error reason + HTTP status to a clean provider status string.
-// 402 = paid plan required (FMP quota) — disable, do not retry
-// FRED no_matching / no_supported_events = informational, not a failure
 function resolveProviderStatus(reason, httpStatus) {
   if (reason === 'missing_api_key') return 'missing_key';
   if (httpStatus === 402)           return 'disabled_paid_plan';
@@ -237,22 +355,22 @@ function resolveProviderStatus(reason, httpStatus) {
 }
 
 function classifyProviderError(reason, httpStatus) {
-  if (reason === 'missing_api_key')         return 'missing_key';
-  if (httpStatus === 402)                   return 'disabled_paid_plan';
-  if (httpStatus === 429)                   return 'rate_limited';
+  if (reason === 'missing_api_key')             return 'missing_key';
+  if (httpStatus === 402)                       return 'disabled_paid_plan';
+  if (httpStatus === 429)                       return 'rate_limited';
   if (httpStatus === 401 || httpStatus === 403) return 'auth_failed';
   if (httpStatus !== null && httpStatus >= 500) return 'provider_down';
-  if (/invalid json/i.test(reason))         return 'schema_drift';
+  if (/invalid json/i.test(reason))             return 'schema_drift';
   if (/legacy_endpoint|unsupported_plan|unexpected_response/i.test(reason)) return 'schema_drift';
-  if (/api_error/i.test(reason))            return 'auth_failed';
+  if (/api_error/i.test(reason))                return 'auth_failed';
   if (/no_matching|no_supported_events/i.test(reason)) return 'empty_payload';
-  if (/timeout/i.test(reason))              return 'timeout';
+  if (/timeout/i.test(reason))                  return 'timeout';
   return 'unknown';
 }
 
-// healthy  = at least one provider returned usable events
-// degraded = providers attempted but hit real errors (not just missing keys/empty)
-// offline  = no keys configured or all failures are informational
+// healthy  = events available (live or stale cache)
+// degraded = real provider errors (5xx, 403, cooldown) — known causes
+// offline  = all providers missing keys or returned empty (effectively unconfigured)
 function calcProviderHealth(providersMeta, errorTypes, eventCount) {
   if (eventCount > 0) return 'healthy';
   const realFailures = Object.entries(errorTypes).filter(function ([, t]) {
@@ -261,7 +379,7 @@ function calcProviderHealth(providersMeta, errorTypes, eventCount) {
   return realFailures.length > 0 ? 'degraded' : 'offline';
 }
 
-// ── Static cache ──────────────────────────────────────────────────────────────
+// ── Cache helpers ─────────────────────────────────────────────────────────────
 
 function readStaticCache() {
   try {
@@ -277,7 +395,7 @@ function readStaticCache() {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Event helpers ─────────────────────────────────────────────────────────────
 
 function countWith(events, field) {
   return events.filter(function (e) {
@@ -285,7 +403,6 @@ function countWith(events, field) {
   }).length;
 }
 
-// Accept events the static normalizer rejected only for "unsupported type"
 function pickUsable(events) {
   const out = [];
   for (const e of events) {
@@ -301,7 +418,6 @@ function pickUsable(events) {
   return out;
 }
 
-// Merge events from all providers, deduplicating on date+country+name
 function mergeEvents(events) {
   const groups = new Map();
   for (const e of events) {
@@ -338,8 +454,7 @@ function mergeGroup(group) {
     .filter(function (v, i, a) { return a.indexOf(v) === i; });
   for (let i = 1; i < sorted.length; i++) {
     const other = sorted[i];
-    // FRED is schedule-only — never contributes numeric fields
-    if (other.provider === 'fred') continue;
+    if (other.provider === 'fred') continue; // schedule-only, no numeric fields
     if (base.actual   === null && other.actual   !== null) base.actual   = other.actual;
     if (base.forecast === null && other.forecast !== null) base.forecast = other.forecast;
     if (base.previous === null && other.previous !== null) base.previous = other.previous;
