@@ -5,18 +5,19 @@
 //               ?ec_debug         — enables extended diagnostics in the JSON response
 // Mirrors netlify/functions/economic-calendar.js for Netlify compatibility.
 
-const fs      = require('fs');
-const path    = require('path');
-const fmp     = require('../tools/providers/economic-calendar/fmp-provider');
-const finnhub = require('../tools/providers/economic-calendar/finnhub-provider');
-const fred    = require('../tools/providers/economic-calendar/fred-provider');
-const te      = require('../tools/providers/economic-calendar/trading-economics-provider');
+const fs               = require('fs');
+const path             = require('path');
+const fmp              = require('../tools/providers/economic-calendar/fmp-provider');
+const finnhub          = require('../tools/providers/economic-calendar/finnhub-provider');
+const fred             = require('../tools/providers/economic-calendar/fred-provider');
+const te               = require('../tools/providers/economic-calendar/trading-economics-provider');
+const scheduleFallback = require('../tools/providers/economic-calendar/schedule-fallback-provider');
 const { inferImpact, computeIntelligence } =
   require('../tools/providers/economic-calendar/event-intelligence');
 
 const PROVIDERS      = [te, fmp, finnhub, fred];
 const PROVIDER_NAMES = ['te', 'fmp', 'finnhub', 'fred'];
-const MERGE_RANK     = { te: 0, fmp: 1, finnhub: 2, fred: 3 };
+const MERGE_RANK     = { te: 0, fmp: 1, finnhub: 2, fred: 3, schedule_fallback: 4 };
 
 const PROVIDER_ENDPOINTS = {
   te:      'https://api.tradingeconomics.com/calendar',
@@ -233,12 +234,35 @@ module.exports = async function handler(req, res) {
   }
 
   // ── Fallback hierarchy ────────────────────────────────────────────────────
-  // live providers → stale live cache (/tmp) → static cache (data/) → external iframe
-  let fallbackDecision = { type: 'none', reason: null };
-  let cacheAgeHours    = null;
+  // live providers → schedule_fallback → stale live cache (/tmp) → static cache (data/) → external iframe
+  let fallbackDecision   = { type: 'none', reason: null };
+  let cacheAgeHours      = null;
+  let scheduleEventCount = 0;
 
   if (liveEventCount === 0) {
-    // 1. Stale live cache — most recent successful live response
+    // 1. Schedule fallback — deterministic estimated events, no API key required
+    try {
+      const schedResult   = await scheduleFallback.fetchCalendar(context);
+      const schedUsable   = pickUsable(schedResult.events || []);
+      if (schedUsable.length > 0) {
+        enriched = schedUsable.map(function (e) {
+          return Object.assign({}, e, { intelligence: computeIntelligence(e) });
+        });
+        enriched.sort(function (a, b) { return (a.event_time || '').localeCompare(b.event_time || ''); });
+        scheduleEventCount = enriched.length;
+        fallbackDecision   = {
+          type:   'schedule_fallback',
+          reason: `live_providers_empty schedule_events=${scheduleEventCount}`,
+        };
+        console.log(`[calendar-api] fallback=schedule_fallback events=${scheduleEventCount}`);
+      }
+    } catch (schedErr) {
+      console.log(`[calendar-api] schedule_fallback error: ${sanitize(schedErr.message)}`);
+    }
+  }
+
+  if (liveEventCount === 0 && scheduleEventCount === 0) {
+    // 2. Stale live cache — most recent successful live response
     const liveCacheAge = (liveCache && liveCache.updatedAt)
       ? (now - new Date(liveCache.updatedAt).getTime()) / 3600000
       : Infinity;
@@ -248,12 +272,12 @@ module.exports = async function handler(req, res) {
       cacheAgeHours    = Math.round(liveCacheAge * 10) / 10;
       fallbackDecision = {
         type:   'stale_live_cache',
-        reason: `live_providers_empty live_cache_age=${cacheAgeHours}h`,
+        reason: `live_providers_empty schedule_empty live_cache_age=${cacheAgeHours}h`,
       };
       console.log(`[calendar-api] fallback=stale_live_cache events=${enriched.length} age=${cacheAgeHours}h`);
 
     } else {
-      // 2. Static cache bundled at deploy time
+      // 3. Static cache bundled at deploy time
       const staticCache = readStaticCache();
 
       if (staticCache.events.length > 0 && staticCache.ageHours < CACHE_MAX_AGE_HOURS) {
@@ -261,12 +285,12 @@ module.exports = async function handler(req, res) {
         cacheAgeHours    = Math.round(staticCache.ageHours * 10) / 10;
         fallbackDecision = {
           type:   'static_cache',
-          reason: `live_providers_empty no_live_cache static_cache_age=${cacheAgeHours}h`,
+          reason: `live_providers_empty schedule_empty no_live_cache static_cache_age=${cacheAgeHours}h`,
         };
         console.log(`[calendar-api] fallback=static_cache events=${enriched.length} age=${cacheAgeHours}h`);
 
       } else {
-        // 3. Nothing usable — signal frontend to show external iframe
+        // 4. Nothing usable — signal frontend to show external iframe
         const liveCacheReason = liveCache
           ? `live_cache_stale age=${Math.round(liveCacheAge)}h`
           : 'no_live_cache';
@@ -275,7 +299,7 @@ module.exports = async function handler(req, res) {
           : `static_cache_stale age=${Math.round(staticCache.ageHours)}h`;
         fallbackDecision = {
           type:   'external_iframe',
-          reason: `live_providers_empty ${liveCacheReason} ${staticReason}`,
+          reason: `live_providers_empty schedule_empty ${liveCacheReason} ${staticReason}`,
         };
         console.log(`[calendar-api] fallback=external_iframe reason="${fallbackDecision.reason}"`);
       }
@@ -288,10 +312,12 @@ module.exports = async function handler(req, res) {
   });
   const providerHealth = calcProviderHealth(providersMeta, errorTypes, enriched.length);
 
-  // source: 'live' = fresh data | 'stale_cache' = any cache | 'degraded' = no data
-  const source = liveEventCount > 0 ? 'live'
-    : enriched.length > 0            ? 'stale_cache'
-    :                                  'degraded';
+  // source: 'live' = fresh provider data | 'schedule_fallback' = estimated from known patterns
+  //         'stale_cache' = any cache hit | 'degraded' = no data available
+  const source = liveEventCount > 0     ? 'live'
+    : scheduleEventCount > 0            ? 'schedule_fallback'
+    : enriched.length > 0              ? 'stale_cache'
+    :                                    'degraded';
 
   const httpStatus = (source !== 'degraded') ? 200 : 503;
 

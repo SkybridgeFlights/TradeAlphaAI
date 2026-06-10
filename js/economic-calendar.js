@@ -1021,14 +1021,16 @@
     if (!elStatus) return;
     var src    = calMeta.source || calMeta.provider || '';
     var upd    = calMeta.updated_at || '';
-    var isLive    = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred' || src === 'te');
-    var isCached  = (src === 'cache' || src === 'stale_cache' || src === 'static_cache');
-    var cls       = isLive ? 'ec-status-live' : isCached ? 'ec-status-cache' : 'ec-status-degraded';
+    var isLive     = (src === 'live' || src === 'fmp' || src === 'finnhub' || src === 'fred' || src === 'te');
+    var isCached   = (src === 'cache' || src === 'stale_cache' || src === 'static_cache');
+    var isSchedule = (src === 'schedule_fallback');
+    var cls        = isLive ? 'ec-status-live' : (isCached || isSchedule) ? 'ec-status-cache' : 'ec-status-degraded';
     elStatus.className = 'ec-status-bar ' + cls;
 
-    var srcLabel = src === 'degraded' ? L.srcDegraded
-                 : isCached           ? L.srcCache
-                 : isLive             ? (L.srcLive + (src !== 'live' ? ' (' + src + ')' : ''))
+    var srcLabel = src === 'degraded'        ? L.srcDegraded
+                 : isSchedule               ? (lang === 'ar' ? 'جدول تقديري' : 'Schedule estimate')
+                 : isCached                 ? L.srcCache
+                 : isLive                   ? (L.srcLive + (src !== 'live' ? ' (' + src + ')' : ''))
                  : L.srcCache;
 
     var updLabel = upd ? ' \xB7 ' + L.labelUpdated + ': ' + new Date(upd).toLocaleString(
@@ -1247,6 +1249,7 @@
         populateCountries();
         render();
         maybeStaleCacheNotice(calMeta.source);
+        maybeScheduleFallbackNotice(calMeta.source);
         maybeShowExternalFallback(allEvents.length);
         scheduleRefresh();
       })
@@ -1269,6 +1272,7 @@
           elStatus.textContent  = L.srcDegraded;
         }
         maybeStaleCacheNotice(null);
+        maybeScheduleFallbackNotice(null);
         maybeShowExternalFallback(0);
       });
   }
@@ -1303,6 +1307,33 @@
       notice.textContent = lang === 'ar'
         ? 'يتم عرض آخر بيانات اقتصادية محفوظة مؤقتًا حتى عودة المزودات الحية.'
         : 'Showing latest cached macro events while live providers recover.';
+      tableWrap.parentNode.insertBefore(notice, tableWrap);
+    }
+  }
+
+  // ── Schedule fallback notice ─────────────────────────────────────────────
+  // When the API returns events from the deterministic schedule generator
+  // (not live providers), show a compact notice so the user knows the dates
+  // are estimated from recurring release patterns, not confirmed official dates.
+  function maybeScheduleFallbackNotice(source) {
+    var noticeId = 'ec-schedule-notice';
+    var existing = document.getElementById(noticeId);
+    if (source !== 'schedule_fallback') {
+      if (existing) existing.remove();
+      return;
+    }
+    if (!existing) {
+      var tableWrap = document.getElementById('ec-table-wrap');
+      if (!tableWrap || !tableWrap.parentNode) return;
+      var notice = document.createElement('p');
+      notice.id        = noticeId;
+      notice.style.cssText =
+        'font-size:0.82rem;color:var(--text-muted,#666);' +
+        'background:var(--surface-2,#f9fafb);border:1px solid var(--border,#e0e0e0);' +
+        'border-radius:6px;padding:0.5rem 1rem;margin:0.5rem 0 0;';
+      notice.textContent = lang === 'ar'
+        ? 'بعض التواريخ المستقبلية تقديرية بناءً على جداول الإصدارات المتكررة وقد تتغير.'
+        : 'Some future dates are estimated from recurring release schedules and may change.';
       tableWrap.parentNode.insertBefore(notice, tableWrap);
     }
   }

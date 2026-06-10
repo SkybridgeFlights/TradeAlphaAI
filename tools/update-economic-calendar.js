@@ -5,6 +5,7 @@ const path = require('path');
 const { analyzeEconomicSurprise } = require('./analyze-economic-surprise');
 const { ALLOWED_TYPES, normalizeManualEvent } = require('./providers/economic-calendar/calendar-normalizer');
 const { fetchEconomicCalendar } = require('./providers/economic-calendar/provider-router');
+const scheduleFallback = require('./providers/economic-calendar/schedule-fallback-provider');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'data', 'economic-calendar.json');
@@ -65,7 +66,34 @@ async function main() {
         );
         return;
       }
-      console.warn('[calendar] no live data and no valid cache — writing empty calendar');
+      // No live data and no existing cache: generate schedule fallback so the
+      // static cache is never committed as empty.
+      console.log('[calendar] no live data and no valid cache — generating schedule_fallback events');
+      const from = dateString(-1);
+      const to   = dateString(30);
+      const schedResult = await scheduleFallback.fetchCalendar({ from, to, env: process.env });
+      const schedValid  = (schedResult.events || []).filter((e) => !e.error);
+      if (schedValid.length > 0 && write) {
+        const schedOutput = {
+          version: '2.0',
+          updated_at: new Date().toISOString(),
+          source: 'schedule_fallback',
+          provider_metadata: { fallback_used: true, reason: 'all_providers_unavailable_schedule_generated' },
+          source_policy: {
+            requires_real_sources: true,
+            manual_or_api_import_only: true,
+            no_fabricated_values: true,
+            allowed_event_types: [...ALLOWED_TYPES],
+            required_source_fields: ['source_name', 'source_url', 'fetched_at']
+          },
+          events: schedValid.sort((a, b) => (a.event_time || '').localeCompare(b.event_time || ''))
+        };
+        fs.mkdirSync(path.dirname(OUT), { recursive: true });
+        fs.writeFileSync(OUT, `${JSON.stringify(schedOutput, null, 2)}\n`, 'utf8');
+        console.log(`[calendar] Wrote ${schedValid.length} schedule_fallback events to data/economic-calendar.json`);
+        return;
+      }
+      console.warn('[calendar] no live data, no valid cache, and schedule_fallback generated nothing — writing empty calendar');
     }
   } else {
     console.log('No economic calendar source provided. Use --source=<json> [--write] or --fetch [--write].');
