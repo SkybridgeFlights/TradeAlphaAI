@@ -568,6 +568,186 @@ console.log('\n── surprise label thresholds ──────────�
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// INLINE LOGIC from prediction-evaluator.js
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PE_THRESHOLDS = {
+  gold:   { '1m': 0.06, '5m': 0.12, '15m': 0.22, '1h': 0.40 },
+  dxy:    { '1m': 0.05, '5m': 0.10, '15m': 0.18, '1h': 0.30 },
+  sp500:  { '1m': 0.05, '5m': 0.10, '15m': 0.18, '1h': 0.30 },
+  nasdaq: { '1m': 0.07, '5m': 0.13, '15m': 0.23, '1h': 0.40 },
+};
+function peThreshold(asset, window) {
+  const key = asset === 'usd' ? 'dxy' : asset === 'spy' ? 'sp500' : asset;
+  return (PE_THRESHOLDS[key] || PE_THRESHOLDS.sp500)[window] || 0.10;
+}
+function peEvaluateOne(predictedBias, actualPct, asset, window) {
+  if (actualPct === null || actualPct === undefined) return 'no_data';
+  const dir = predictedBias?.direction || 'neutral';
+  const thresh = peThreshold(asset, window);
+  const significant = Math.abs(actualPct) >= thresh;
+  const actualDir = significant ? (actualPct > 0 ? 'bullish' : 'bearish') : 'neutral';
+  if (dir === 'neutral') {
+    return actualDir === 'neutral' ? 'correct' : 'partially_correct';
+  }
+  if (actualDir === dir)       return 'correct';
+  if (actualDir === 'neutral') return 'partially_correct';
+  return 'incorrect';
+}
+function peEvaluateAll(predictedBiases, actualMovesByWindow) {
+  const results = {};
+  for (const asset of ['gold', 'usd', 'spy', 'nasdaq']) {
+    results[asset] = {};
+    const predicted = predictedBiases?.[asset] || null;
+    for (const window of ['1m', '5m', '15m', '1h']) {
+      const pct = actualMovesByWindow?.[window]?.[`${asset}_pct`] ?? null;
+      results[asset][window] = peEvaluateOne(predicted, pct, asset, window);
+    }
+  }
+  return results;
+}
+const PE_WINDOW_WEIGHT = { '1m': 0.5, '5m': 0.75, '15m': 1.0, '1h': 1.5 };
+function peCompositeScore(evaluationResults) {
+  let weight = 0; let score = 0;
+  for (const windows of Object.values(evaluationResults)) {
+    for (const [window, label] of Object.entries(windows)) {
+      if (label === 'no_data') continue;
+      const w = PE_WINDOW_WEIGHT[window] || 1;
+      weight += w;
+      if (label === 'correct')            score += w * 1.0;
+      else if (label === 'partially_correct') score += w * 0.5;
+      else if (label === 'neutral_call')  score += w * 0.6;
+    }
+  }
+  if (!weight) return null;
+  return Math.round((score / weight) * 100) / 100;
+}
+function peOverallLabel(score) {
+  if (score === null || score === undefined) return 'no_data';
+  if (score >= 0.70) return 'correct';
+  if (score >= 0.40) return 'partially_correct';
+  return 'incorrect';
+}
+
+console.log('\n── prediction-evaluator ────────────────────────────────');
+
+// Correct: predicted bullish, actual +0.5% for gold at 1h (above 0.40 threshold)
+{
+  const r = peEvaluateOne({ direction: 'bullish' }, 0.5, 'gold', '1h');
+  assertEq('bullish prediction + +0.5% gold@1h = correct', r, 'correct');
+}
+// Incorrect: predicted bullish, actual -0.5%
+{
+  const r = peEvaluateOne({ direction: 'bullish' }, -0.5, 'gold', '1h');
+  assertEq('bullish prediction + -0.5% gold@1h = incorrect', r, 'incorrect');
+}
+// Partially correct: predicted bullish, actual +0.1% (below threshold)
+{
+  const r = peEvaluateOne({ direction: 'bullish' }, 0.1, 'gold', '1h');
+  assertEq('bullish prediction + muted +0.1% gold@1h = partially_correct', r, 'partially_correct');
+}
+// Neutral prediction, market also neutral (below threshold)
+{
+  const r = peEvaluateOne({ direction: 'neutral' }, 0.02, 'gold', '1m');
+  assertEq('neutral prediction + 0.02% gold@1m = correct', r, 'correct');
+}
+// Neutral prediction, market moves significantly
+{
+  const r = peEvaluateOne({ direction: 'neutral' }, 0.8, 'gold', '1h');
+  assertEq('neutral prediction + big move gold@1h = partially_correct', r, 'partially_correct');
+}
+// no_data when pct is null
+{
+  const r = peEvaluateOne({ direction: 'bullish' }, null, 'spy', '5m');
+  assertEq('null pct = no_data', r, 'no_data');
+}
+// evaluateAll produces structure
+{
+  const biases = { gold: { direction: 'bullish' }, usd: { direction: 'bearish' }, spy: { direction: 'bullish' }, nasdaq: { direction: 'bullish' } };
+  const moves  = { '1h': { gold_pct: 0.6, usd_pct: -0.4, spy_pct: 0.5, nasdaq_pct: 0.7 } };
+  const res    = peEvaluateAll(biases, moves);
+  assertEq('evaluateAll gold@1h = correct',   res.gold['1h'],   'correct');
+  assertEq('evaluateAll usd@1h = correct',    res.usd['1h'],    'correct');
+  assertEq('evaluateAll gold@1m = no_data',   res.gold['1m'],   'no_data'); // no 1m data
+}
+// compositeScore on perfect predictions = 1.0
+{
+  const biases = { gold: { direction: 'bullish' }, usd: { direction: 'bearish' }, spy: { direction: 'bullish' }, nasdaq: { direction: 'bullish' } };
+  const moves  = {
+    '1m':  { gold_pct: 0.1, usd_pct: -0.1, spy_pct: 0.1, nasdaq_pct: 0.1 },
+    '5m':  { gold_pct: 0.2, usd_pct: -0.2, spy_pct: 0.2, nasdaq_pct: 0.2 },
+    '15m': { gold_pct: 0.3, usd_pct: -0.3, spy_pct: 0.3, nasdaq_pct: 0.3 },
+    '1h':  { gold_pct: 0.5, usd_pct: -0.5, spy_pct: 0.5, nasdaq_pct: 0.5 },
+  };
+  const res   = peEvaluateAll(biases, moves);
+  const score = peCompositeScore(res);
+  assertEq('all correct predictions = composite 1.0', score, 1.0);
+  assertEq('overallLabel 1.0 = correct', peOverallLabel(score), 'correct');
+}
+// compositeScore on all incorrect = 0
+{
+  const biases = { gold: { direction: 'bullish' }, usd: { direction: 'bullish' }, spy: { direction: 'bullish' }, nasdaq: { direction: 'bullish' } };
+  const moves  = { '1h': { gold_pct: -0.6, usd_pct: -0.6, spy_pct: -0.6, nasdaq_pct: -0.6 } };
+  const res   = peEvaluateAll(biases, moves);
+  const score = peCompositeScore(res);
+  assert('all incorrect predictions: score < 0.4', score < 0.4);
+  assertEq('overallLabel < 0.4 = incorrect or partially_correct', true,
+    peOverallLabel(score) === 'incorrect' || peOverallLabel(score) === 'partially_correct');
+}
+// overallLabel boundaries
+assertEq('overallLabel 0.70 = correct',           peOverallLabel(0.70), 'correct');
+assertEq('overallLabel 0.69 = partially_correct', peOverallLabel(0.69), 'partially_correct');
+assertEq('overallLabel 0.40 = partially_correct', peOverallLabel(0.40), 'partially_correct');
+assertEq('overallLabel 0.39 = incorrect',         peOverallLabel(0.39), 'incorrect');
+assertEq('overallLabel null = no_data',           peOverallLabel(null), 'no_data');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INLINE LOGIC from calibration-engine.js
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CE_EVENT_TYPE_PATTERNS = [
+  { key: 'nfp',           p: ['nonfarm payrolls', 'non-farm payrolls', 'nfp'] },
+  { key: 'fomc',          p: ['fomc', 'federal reserve', 'rate decision', 'federal funds', 'fed chair', 'powell'] },
+  { key: 'cpi',           p: ['cpi', 'consumer price index'] },
+  { key: 'core_pce',      p: ['core pce', 'pce price', 'personal consumption expenditure'] },
+  { key: 'gdp',           p: ['gdp', 'gross domestic product'] },
+  { key: 'jobless_claims',p: ['jobless claims', 'initial claims', 'continuing claims'] },
+];
+function ceNormalizeEventType(eventName) {
+  const n = String(eventName).toLowerCase();
+  for (const { key, p } of CE_EVENT_TYPE_PATTERNS) {
+    if (p.some((k) => n.includes(k))) return key;
+  }
+  return 'other';
+}
+function ceConfidenceMultiplier(accuracyRate, sampleCount) {
+  if (sampleCount < 3)     return 1.0;
+  if (accuracyRate >= 0.78) return 1.3;
+  if (accuracyRate >= 0.65) return 1.15;
+  if (accuracyRate >= 0.50) return 1.0;
+  if (accuracyRate >= 0.35) return 0.8;
+  return 0.6;
+}
+
+console.log('\n── calibration-engine ──────────────────────────────────');
+
+assertEq('normalize NFP event',         ceNormalizeEventType('Nonfarm Payrolls'),               'nfp');
+assertEq('normalize FOMC event',        ceNormalizeEventType('FOMC Rate Decision'),              'fomc');
+assertEq('normalize CPI event',         ceNormalizeEventType('CPI m/m'),                         'cpi');
+assertEq('normalize Core PCE event',    ceNormalizeEventType('Core PCE Price Index m/m'),        'core_pce');
+assertEq('normalize GDP event',         ceNormalizeEventType('GDP q/q Annualized'),              'gdp');
+assertEq('normalize Jobless Claims',    ceNormalizeEventType('Initial Jobless Claims'),          'jobless_claims');
+assertEq('normalize unknown event',     ceNormalizeEventType('Banana Index'),                    'other');
+
+// confidenceMultiplier boundaries
+assertEq('< 3 samples → 1.0',       ceConfidenceMultiplier(0.9, 2),   1.0);  // insufficient data
+assertEq('>= 78% → 1.3',            ceConfidenceMultiplier(0.78, 10), 1.3);
+assertEq('>= 65% → 1.15',           ceConfidenceMultiplier(0.65, 5),  1.15);
+assertEq('>= 50% → 1.0',            ceConfidenceMultiplier(0.50, 5),  1.0);
+assertEq('>= 35% → 0.8',            ceConfidenceMultiplier(0.35, 5),  0.8);
+assertEq('< 35% → 0.6',             ceConfidenceMultiplier(0.20, 5),  0.6);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // REPORT
 // ─────────────────────────────────────────────────────────────────────────────
 
