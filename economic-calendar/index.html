@@ -136,37 +136,34 @@
         </div>
       </section>
 
-      <!-- Today's Events -->
-      <section class="market-section" id="todays-events">
+      <!-- Provider degraded banner — shown only when all calendar fetches fail -->
+      <div id="cal-degraded-banner" class="cal-degraded-banner" style="display:none" role="status" aria-live="polite">
+        Calendar data temporarily unavailable &mdash; live sections are hidden until data recovers. The interactive calendar above may still display cached data.
+      </div>
+
+      <!-- Today's Events — hidden until data confirms events exist -->
+      <section class="market-section" id="todays-events" style="display:none">
         <h2 class="section-heading">Today's Scheduled Events</h2>
-        <div id="calendar-today" class="calendar-table-wrap">
-          <p class="calendar-loading">Loading today's events&hellip;</p>
-        </div>
+        <div id="calendar-today" class="calendar-table-wrap"></div>
       </section>
 
-      <!-- Upcoming High-Impact -->
-      <section class="market-section" id="upcoming-events">
+      <!-- Upcoming High-Impact — hidden until data confirms events exist -->
+      <section class="market-section" id="upcoming-events" style="display:none">
         <h2 class="section-heading">Upcoming High-Impact Releases</h2>
-        <div id="calendar-upcoming" class="calendar-table-wrap">
-          <p class="calendar-loading">Loading upcoming events&hellip;</p>
-        </div>
+        <div id="calendar-upcoming" class="calendar-table-wrap"></div>
       </section>
 
-      <!-- Recently Released -->
-      <section class="market-section" id="recent-releases">
+      <!-- Recently Released — hidden until released events exist -->
+      <section class="market-section" id="recent-releases" style="display:none">
         <h2 class="section-heading">Recently Released</h2>
-        <div id="calendar-recent" class="calendar-table-wrap">
-          <p class="calendar-loading">Loading recent releases&hellip;</p>
-        </div>
+        <div id="calendar-recent" class="calendar-table-wrap"></div>
       </section>
 
-      <!-- Surprise Monitor -->
-      <section class="market-section" id="surprise-monitor">
+      <!-- Surprise Monitor — hidden until material surprises exist -->
+      <section class="market-section" id="surprise-monitor" style="display:none">
         <h2 class="section-heading">Surprise Monitor</h2>
         <p class="section-intro">When an actual release deviates materially from consensus, cross-asset transmission chains activate. The monitor below tracks recent surprises and their educational interpretation.</p>
-        <div id="calendar-surprises" class="calendar-table-wrap">
-          <p class="calendar-loading">Loading surprise analysis&hellip;</p>
-        </div>
+        <div id="calendar-surprises" class="calendar-table-wrap"></div>
       </section>
 
       <!-- Asset Reaction Map -->
@@ -209,22 +206,18 @@
         </div>
       </section>
 
-      <!-- Market Expectations Panel -->
-      <section class="market-section" id="market-expectations">
+      <!-- Market Expectations Panel — hidden until expectations data has entries -->
+      <section class="market-section" id="market-expectations" style="display:none">
         <h2 class="section-heading">Market Expectations Panel</h2>
         <p class="section-intro">Pre-event consensus and pricing narrative sourced from the economic calendar. Updated when new calendar data is available.</p>
-        <div id="expectations-panel" class="calendar-table-wrap">
-          <p class="calendar-loading">Loading expectations&hellip;</p>
-        </div>
+        <div id="expectations-panel" class="calendar-table-wrap"></div>
       </section>
 
-      <!-- Historical Sensitivity Section -->
-      <section class="market-section" id="historical-sensitivity">
+      <!-- Historical Sensitivity Section — hidden until reaction memory has data -->
+      <section class="market-section" id="historical-sensitivity" style="display:none">
         <h2 class="section-heading">Historical Sensitivity Reference</h2>
         <p class="section-intro">Average 1-day asset reactions to above-consensus prints across event types, derived from TradeAlphaAI's event-reaction memory database. Sample sizes below 3 are marked as insufficient data.</p>
-        <div id="historical-sensitivity-panel" class="calendar-table-wrap">
-          <p class="calendar-loading">Loading historical sensitivity data&hellip;</p>
-        </div>
+        <div id="historical-sensitivity-panel" class="calendar-table-wrap"></div>
       </section>
 
       <!-- Probability-Weighted Scenarios -->
@@ -290,60 +283,84 @@
   <script>
   (function () {
     'use strict';
-    var CALENDAR_URL = '/data/economic-calendar.json';
+    var CALENDAR_URL     = '/data/economic-calendar.json';
     var EXPECTATIONS_URL = '/data/market-expectations.json';
 
+    // ── Section visibility helpers ────────────────────────────────────────────
+    // Sections start hidden (style="display:none" in HTML).
+    // Only show when actual content has been confirmed.
+    function showSection(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = '';
+    }
+    function showDegradedBanner() {
+      var el = document.getElementById('cal-degraded-banner');
+      if (el) el.style.display = '';
+    }
+
+    // ── Formatters ────────────────────────────────────────────────────────────
     function fmt(dt) {
       if (!dt) return '—';
       try {
-        return new Date(dt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York', timeZoneName: 'short' });
-      } catch { return dt.slice(0, 16).replace('T', ' '); }
-    }
-
-    function impactBadge(imp) {
-      var cls = imp === 'high' ? 'badge-high' : imp === 'medium' ? 'badge-medium' : 'badge-low';
-      return '<span class="impact-badge ' + cls + '">' + (imp || 'low') + '</span>';
-    }
-
-    function surpriseBadge(dir) {
-      if (!dir || dir === 'pending' || dir === 'near_consensus') return '<span class="surprise-neutral">&#8776; consensus</span>';
-      if (dir === 'hotter_or_stronger') return '<span class="surprise-hot">&#8593; hotter</span>';
-      if (dir === 'softer_or_weaker') return '<span class="surprise-soft">&#8595; softer</span>';
-      return '<span class="surprise-neutral">' + dir + '</span>';
-    }
-
-    function buildTable(events, showSurprise) {
-      if (!events.length) return '<p class="calendar-empty">No events in this window.</p>';
-      var rows = events.map(function (e) {
-        var surprise = showSurprise ? '<td>' + surpriseBadge(e.surprise_direction) + '</td>' : '';
-        var actual = showSurprise && e.actual !== null && e.actual !== undefined ? e.actual + (e.unit ? ' ' + e.unit : '') : (showSurprise ? '—' : '');
-        var actCell = showSurprise ? '<td>' + actual + '</td>' : '';
-        return '<tr>' +
-          '<td class="cal-time">' + fmt(e.event_time) + '</td>' +
-          '<td><strong>' + esc(e.event_name) + '</strong><br><small>' + (e.country || '') + '</small></td>' +
-          '<td>' + impactBadge(e.importance) + '</td>' +
-          '<td class="cal-num">' + (e.forecast !== null && e.forecast !== undefined ? e.forecast + (e.unit ? ' ' + e.unit : '') : '—') + '</td>' +
-          '<td class="cal-num">' + (e.previous !== null && e.previous !== undefined ? e.previous + (e.unit ? ' ' + e.unit : '') : '—') + '</td>' +
-          actCell + surprise +
-          '</tr>';
-      }).join('');
-      var actHeader = showSurprise ? '<th>Actual</th>' : '';
-      var surpHeader = showSurprise ? '<th>Surprise</th>' : '';
-      return '<table class="calendar-table"><thead><tr><th>Time (ET)</th><th>Event</th><th>Impact</th><th>Forecast</th><th>Previous</th>' + actHeader + surpHeader + '</tr></thead><tbody>' + rows + '</tbody></table>';
+        return new Date(dt).toLocaleString('en-US', {
+          month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+          timeZone: 'America/New_York', timeZoneName: 'short'
+        });
+      } catch (_) { return String(dt).slice(0, 16).replace('T', ' '); }
     }
 
     function esc(s) {
       return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    function impactBadge(imp) {
+      var cls = imp === 'high' ? 'badge-high' : imp === 'medium' ? 'badge-medium' : 'badge-low';
+      return '<span class="impact-badge ' + cls + '">' + esc(imp || 'low') + '</span>';
+    }
+
+    function surpriseBadge(dir) {
+      if (!dir || dir === 'pending' || dir === 'near_consensus')
+        return '<span class="surprise-neutral">&#8776; consensus</span>';
+      if (dir === 'hotter_or_stronger') return '<span class="surprise-hot">&#8593; hotter</span>';
+      if (dir === 'softer_or_weaker')   return '<span class="surprise-soft">&#8595; softer</span>';
+      return '<span class="surprise-neutral">' + esc(dir) + '</span>';
+    }
+
+    function buildTable(events, showSurprise) {
+      if (!events.length) return '';
+      var rows = events.map(function (e) {
+        var actual  = showSurprise && e.actual   != null ? e.actual   + (e.unit ? ' ' + e.unit : '') : (showSurprise ? '—' : '');
+        var fcast   = e.forecast  != null ? e.forecast  + (e.unit ? ' ' + e.unit : '') : '—';
+        var prev    = e.previous  != null ? e.previous  + (e.unit ? ' ' + e.unit : '') : '—';
+        var actCell  = showSurprise ? '<td>' + actual + '</td>' : '';
+        var surpCell = showSurprise ? '<td>' + surpriseBadge(e.surprise_direction) + '</td>' : '';
+        return '<tr>' +
+          '<td class="cal-time">' + fmt(e.event_time) + '</td>' +
+          '<td><strong>' + esc(e.event_name) + '</strong><br><small>' + esc(e.country || '') + '</small></td>' +
+          '<td>' + impactBadge(e.importance) + '</td>' +
+          '<td class="cal-num">' + fcast + '</td>' +
+          '<td class="cal-num">' + prev  + '</td>' +
+          actCell + surpCell +
+          '</tr>';
+      }).join('');
+      var actH  = showSurprise ? '<th>Actual</th>'   : '';
+      var surpH = showSurprise ? '<th>Surprise</th>' : '';
+      return '<table class="calendar-table">'
+           + '<thead><tr><th>Time (ET)</th><th>Event</th><th>Impact</th>'
+           + '<th>Forecast</th><th>Previous</th>' + actH + surpH
+           + '</tr></thead><tbody>' + rows + '</tbody></table>';
+    }
+
+    // ── Calendar data ─────────────────────────────────────────────────────────
     function loadCalendar() {
       fetch(CALENDAR_URL)
-        .then(function (r) { return r.json(); })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (data) {
-          var now = Date.now();
+          var now        = Date.now();
           var todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
-          var todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
-          var events = data.events || [];
+          var todayEnd   = new Date(); todayEnd.setHours(23, 59, 59, 999);
+          var events     = Array.isArray(data && data.events) ? data.events : [];
 
           var todayEvents = events.filter(function (e) {
             var t = Date.parse(e.event_time || e.date);
@@ -352,7 +369,7 @@
 
           var upcomingEvents = events.filter(function (e) {
             var t = Date.parse(e.event_time || e.date);
-            return t > now && (e.importance === 'high') && t > todayEnd.getTime();
+            return t > now && e.importance === 'high' && t > todayEnd.getTime();
           }).slice(0, 10);
 
           var recentEvents = events.filter(function (e) {
@@ -363,84 +380,108 @@
           }).slice(0, 8);
 
           var surprises = recentEvents.filter(function (e) {
-            return e.surprise_direction && e.surprise_direction !== 'pending' && e.surprise_direction !== 'near_consensus';
+            return e.surprise_direction &&
+                   e.surprise_direction !== 'pending' &&
+                   e.surprise_direction !== 'near_consensus';
           });
 
-          document.getElementById('calendar-today').innerHTML = buildTable(todayEvents, false);
-          document.getElementById('calendar-upcoming').innerHTML = buildTable(upcomingEvents, false);
-          document.getElementById('calendar-recent').innerHTML = buildTable(recentEvents, true);
-          document.getElementById('calendar-surprises').innerHTML = surprises.length
-            ? buildTable(surprises, true)
-            : '<p class="calendar-empty">No material surprises in the current calendar window.</p>';
+          if (todayEvents.length) {
+            document.getElementById('calendar-today').innerHTML = buildTable(todayEvents, false);
+            showSection('todays-events');
+          }
+
+          if (upcomingEvents.length) {
+            document.getElementById('calendar-upcoming').innerHTML = buildTable(upcomingEvents, false);
+            showSection('upcoming-events');
+          }
+
+          if (recentEvents.length) {
+            document.getElementById('calendar-recent').innerHTML = buildTable(recentEvents, true);
+            showSection('recent-releases');
+          }
+
+          if (surprises.length) {
+            document.getElementById('calendar-surprises').innerHTML = buildTable(surprises, true);
+            showSection('surprise-monitor');
+          }
         })
         .catch(function () {
-          ['calendar-today', 'calendar-upcoming', 'calendar-recent', 'calendar-surprises'].forEach(function (id) {
-            var el = document.getElementById(id);
-            if (el) el.innerHTML = '<p class="calendar-empty">Calendar data temporarily unavailable.</p>';
-          });
+          // All calendar intelligence sections stay hidden.
+          // Show a single compact warning near the top instead.
+          showDegradedBanner();
         });
     }
 
+    // ── Market expectations ───────────────────────────────────────────────────
     function loadExpectations() {
       fetch(EXPECTATIONS_URL)
-        .then(function (r) { return r.json(); })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (data) {
-          var panel = document.getElementById('expectations-panel');
-          if (!panel) return;
-          var items = data.expectations || [];
-          if (!items.length) {
-            panel.innerHTML = '<p class="calendar-empty">No upcoming events with consensus data.</p>';
-            return;
-          }
+          var items = Array.isArray(data && data.expectations) ? data.expectations : [];
+          if (!items.length) return; // section stays hidden — no data to show
           var rows = items.map(function (e) {
+            var cons = e.consensus != null ? String(e.consensus) : '—';
             return '<tr>' +
-              '<td class="cal-time">' + fmt(e.event_time) + '</td>' +
+              '<td class="cal-time">'  + fmt(e.event_time) + '</td>' +
               '<td><strong>' + esc(e.event_name) + '</strong></td>' +
               '<td>' + impactBadge(e.importance) + '</td>' +
-              '<td class="cal-num">' + (e.consensus !== null && e.consensus !== undefined ? e.consensus : '—') + '</td>' +
-              '<td class="cal-narrative">' + esc(e.pricing_narrative) + '</td>' +
+              '<td class="cal-num">'      + esc(cons) + '</td>' +
+              '<td class="cal-narrative">' + esc(e.pricing_narrative || '') + '</td>' +
               '</tr>';
           }).join('');
-          panel.innerHTML = '<table class="calendar-table"><thead><tr><th>Time (ET)</th><th>Event</th><th>Impact</th><th>Consensus</th><th>Market Narrative</th></tr></thead><tbody>' + rows + '</tbody></table>';
+          document.getElementById('expectations-panel').innerHTML =
+            '<table class="calendar-table">'
+            + '<thead><tr><th>Time (ET)</th><th>Event</th><th>Impact</th>'
+            + '<th>Consensus</th><th>Market Narrative</th></tr></thead>'
+            + '<tbody>' + rows + '</tbody></table>';
+          showSection('market-expectations');
         })
         .catch(function () {
-          var el = document.getElementById('expectations-panel');
-          if (el) el.innerHTML = '<p class="calendar-empty">Expectations data temporarily unavailable.</p>';
+          // Section stays hidden — no degraded state for secondary data
         });
     }
 
+    // ── Historical sensitivity ────────────────────────────────────────────────
     function loadHistoricalSensitivity() {
       var panel = document.getElementById('historical-sensitivity-panel');
       if (!panel) return;
       fetch('/data/intelligence/event-reaction-memory.json')
-        .then(function (r) { return r.json(); })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (data) {
-          var patterns = data.historical_patterns || {};
-          var types = Object.keys(patterns);
-          if (!types.length) {
-            panel.innerHTML = '<p class="calendar-empty">Historical sensitivity data will populate after economic events are released and reaction memory is built.</p>';
-            return;
-          }
-          var cards = types.map(function (type) {
-            var p = patterns[type];
+          var patterns  = (data && typeof data.historical_patterns === 'object') ? data.historical_patterns : {};
+          var types     = Object.keys(patterns);
+          // Only show when there is at least one pattern with usable reaction data
+          var usable = types.filter(function (type) {
+            var h = patterns[type] && patterns[type].hotter_than_expected;
+            return h && h.count >= 3;
+          });
+          if (!usable.length) return; // stays hidden until real data accumulates
+          var cards = usable.map(function (type) {
+            var p      = patterns[type];
             var hotter = p.hotter_than_expected;
-            var lines = [];
-            if (hotter && hotter.count >= 3 && hotter.asset_reactions) {
+            var lines  = [];
+            if (hotter && hotter.asset_reactions) {
               Object.keys(hotter.asset_reactions).forEach(function (label) {
                 var d = hotter.asset_reactions[label];
                 if (!d || d.sample_size < 3) return;
                 if (d.consistency === 'mixed' || d.consistency === 'insufficient_data') return;
                 var dir = d.avg_1d_pct > 0 ? '&#8593;' : '&#8595;';
-                lines.push('<li>' + esc(label) + ': ' + dir + ' avg ' + (d.avg_1d_pct > 0 ? '+' : '') + d.avg_1d_pct + '% (' + esc(d.consistency.replace(/_/g, ' ')) + ', n=' + d.sample_size + ')</li>');
+                lines.push('<li>' + esc(label) + ': ' + dir + ' avg '
+                  + (d.avg_1d_pct > 0 ? '+' : '') + d.avg_1d_pct
+                  + '% (' + esc(d.consistency.replace(/_/g, ' ')) + ', n=' + d.sample_size + ')</li>');
               });
             }
-            return '<div class="reaction-card"><h3>' + esc(type) + '</h3><p><small>' + (p.total_events || 0) + ' events in memory</small></p>' +
-              (lines.length ? '<ul>' + lines.slice(0, 4).join('') + '</ul>' : '<p><small>Insufficient history</small></p>') + '</div>';
-          }).join('');
+            if (!lines.length) return '';
+            return '<div class="reaction-card"><h3>' + esc(type) + '</h3>'
+              + '<p><small>' + (p.total_events || 0) + ' events in memory</small></p>'
+              + '<ul>' + lines.slice(0, 4).join('') + '</ul></div>';
+          }).filter(Boolean).join('');
+          if (!cards) return;
           panel.innerHTML = '<div class="reaction-grid">' + cards + '</div>';
+          showSection('historical-sensitivity');
         })
         .catch(function () {
-          if (panel) panel.innerHTML = '<p class="calendar-empty">Historical data unavailable.</p>';
+          // Section stays hidden
         });
     }
 
@@ -451,7 +492,17 @@
   </script>
 
   <style>
-  .calendar-table-wrap { overflow-x: auto; margin: 1rem 0; }
+  /* Degraded provider banner — compact, no full-height container */
+  .cal-degraded-banner {
+    font-size: 0.82rem;
+    color: var(--text-muted, #888);
+    background: var(--surface-2, #f9fafb);
+    border: 1px solid var(--border, #e0e0e0);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 12px;
+  }
+  .calendar-table-wrap { overflow-x: auto; }
   .calendar-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   .calendar-table th { text-align: left; padding: 0.5rem 0.75rem; background: var(--surface-2, #f5f5f5); font-weight: 600; border-bottom: 2px solid var(--border, #e0e0e0); }
   .calendar-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border, #e8e8e8); vertical-align: top; }
@@ -465,7 +516,8 @@
   .surprise-hot { color: #b91c1c; font-weight: 600; }
   .surprise-soft { color: #2563eb; font-weight: 600; }
   .surprise-neutral { color: var(--text-muted, #666); }
-  .calendar-loading, .calendar-empty { color: var(--text-muted, #888); font-style: italic; padding: 1rem 0; }
+  /* No padding/min-height on empty states — section wrapper is hidden when empty */
+  .calendar-loading, .calendar-empty { color: var(--text-muted, #888); font-style: italic; }
   .reaction-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; margin: 1rem 0; }
   .reaction-card { background: var(--surface-2, #f9fafb); border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 1rem 1.25rem; }
   .reaction-card h3 { margin: 0 0 0.6rem; font-size: 0.95rem; font-weight: 700; }
