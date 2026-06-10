@@ -1313,10 +1313,7 @@
       if (!tableWrap || !tableWrap.parentNode) return;
       var notice = document.createElement('p');
       notice.id        = noticeId;
-      notice.style.cssText =
-        'font-size:0.82rem;color:var(--text-muted,#666);' +
-        'background:var(--surface-2,#f9fafb);border:1px solid var(--border,#e0e0e0);' +
-        'border-radius:6px;padding:0.5rem 1rem;margin:0.5rem 0 0;';
+      notice.className = 'ec-stale-cache-notice';
       notice.textContent = lang === 'ar'
         ? 'يتم عرض آخر بيانات اقتصادية محفوظة مؤقتًا حتى عودة المزودات الحية.'
         : 'Showing latest cached macro events while live providers recover.';
@@ -1364,10 +1361,6 @@
       var notice = document.createElement('p');
       notice.id        = noticeId;
       notice.className = 'ec-external-notice';
-      notice.style.cssText =
-        'font-size:0.85rem;color:var(--text-muted,#666);' +
-        'background:var(--surface-2,#f9fafb);border:1px solid var(--border,#e0e0e0);' +
-        'border-radius:6px;padding:0.6rem 1rem;margin-bottom:0.75rem;';
       notice.textContent = lang === 'ar'
         ? 'مزودات البيانات الحية غير متاحة مؤقتًا. يتم عرض التقويم الخارجي للتحقق.'
         : 'Live providers are temporarily unavailable. External calendar is shown for cross-checking.';

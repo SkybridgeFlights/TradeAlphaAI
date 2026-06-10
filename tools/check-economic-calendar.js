@@ -275,6 +275,36 @@ for (const [page, file] of [['EN', EN_PAGE], ['AR', AR_PAGE]]) {
   }
 }
 
+// ── 10. Dark-theme regression: no white backgrounds in calendar sections ─────
+// These patterns indicate light-theme fallback values that break the dark page.
+const WHITE_BG_PATTERNS = [
+  /background\s*:\s*var\(--surface-2,\s*#[ef]/i,   // e.g. var(--surface-2, #f9fafb)
+  /background\s*:\s*var\(--surface-3,\s*#[ef]/i,   // e.g. var(--surface-3, #eff6ff)
+  /background\s*:\s*var\(--surface-2,\s*#[0-9a-f]{6}/i,
+  /background\s*:\s*#fee2e2/i,  // light red badge
+  /background\s*:\s*#fef9c3/i,  // light yellow badge
+  /background\s*:\s*#f0fdf4/i,  // light green badge
+  /background\s*:\s*#dbeafe/i,  // light blue
+  /background\s*:\s*#f0f4ff/i,  // light blue callout
+  /background\s*:\s*var\(--surface-2,\s*#f0f4ff\)/i,
+];
+const WHITE_BG_TARGETS = [
+  ['EN page', EN_PAGE],
+  ['AR page', AR_PAGE],
+  ['frontend JS', path.join(ROOT, 'js', 'economic-calendar.js')],
+  ['economic-calendar CSS', path.join(ROOT, 'css', 'economic-calendar.css')],
+];
+for (const [label, filePath] of WHITE_BG_TARGETS) {
+  if (!fs.existsSync(filePath)) continue;
+  const src = fs.readFileSync(filePath, 'utf8');
+  for (const pat of WHITE_BG_PATTERNS) {
+    if (pat.test(src)) {
+      failures.push(`${label}: light-theme background found matching ${pat} — economic calendar must use dark theme only`);
+      break;
+    }
+  }
+}
+
 // ── Report ────────────────────────────────────────────────────────────────────
 if (warnings.length) {
   warnings.forEach((w) => console.warn(`[calendar] WARN: ${w}`));
