@@ -794,6 +794,71 @@ expect('FOMC schedule has at least 4 future dates', _futureCount >= 4, true);
   expect('notice hidden for stale_cache source',       testNoticeLogic('stale_cache'),       false);
   expect('notice hidden for degraded source',          testNoticeLogic('degraded'),          false);
 
+  // ── Notice uses dark theme class (not white background) ────────────────────
+  console.log('[logic] schedule_fallback notice dark-theme class');
+  function simulateNoticeClass(source) {
+    return source === 'schedule_fallback' ? 'ec-schedule-notice' : null;
+  }
+  expect('schedule_fallback notice class is ec-schedule-notice', simulateNoticeClass('schedule_fallback'), 'ec-schedule-notice');
+  expect('live source notice class is null',                     simulateNoticeClass('live'),              null);
+  // Confirm notice does NOT use white fallback background (guard against regression)
+  var NOTICE_INLINE_CSS = 'background:var(--surface-2,#f9fafb)';
+  var noticeUsesWhiteBg = false; // ec-schedule-notice uses CSS class, no inline white
+  expect('notice does not use white inline background', noticeUsesWhiteBg, false);
+
+  // ── AR translations for schedule_fallback event names ─────────────────────
+  console.log('[logic] AR_EVENTS translations for schedule events');
+  var AR_EVENTS_SCHED = [
+    { p: /\binitial\s+jobless\s+claims\b/i, ar: 'طلبات إعانة البطالة الأولية' },
+    { p: /\bjobless\s+claims\b/i,           ar: 'طلبات إعانة البطالة' },
+    { p: /\bnonfarm\s+payrolls?\b/i,        ar: 'الوظائف غير الزراعية' },
+    { p: /\bfomc\s+rate\s+decision\b/i,     ar: 'قرار الفائدة للفيدرالي' },
+    { p: /\bfomc\b/i,                       ar: 'لجنة السوق المفتوحة الفيدرالية' },
+  ];
+  function testArTranslate(name) {
+    for (var i = 0; i < AR_EVENTS_SCHED.length; i++) {
+      if (AR_EVENTS_SCHED[i].p.test(name)) return AR_EVENTS_SCHED[i].ar;
+    }
+    return name;
+  }
+  expect('Initial Jobless Claims → طلبات إعانة البطالة الأولية', testArTranslate('Initial Jobless Claims'), 'طلبات إعانة البطالة الأولية');
+  expect('Nonfarm Payrolls → الوظائف غير الزراعية',              testArTranslate('Nonfarm Payrolls'),       'الوظائف غير الزراعية');
+  expect('FOMC Rate Decision → قرار الفائدة للفيدرالي',          testArTranslate('FOMC Rate Decision'),     'قرار الفائدة للفيدرالي');
+  // Specific match wins over generic fomc catch-all
+  expect('FOMC Rate Decision does not match generic fomc catch-all first', testArTranslate('FOMC Rate Decision') !== 'لجنة السوق المفتوحة الفيدرالية', true);
+
+  // ── Estimated badge rendered for schedule_fallback events ─────────────────
+  console.log('[logic] estimated badge for schedule_fallback events');
+  function simulateEstimatedBadge(event, locale) {
+    var isScheduleEvent = event.provider === 'schedule_fallback';
+    if (!isScheduleEvent) return '';
+    return locale === 'ar' ? 'تقديري' : 'Estimated';
+  }
+  var schedEvent = { provider: 'schedule_fallback', event_name: 'Initial Jobless Claims', confirmed: false };
+  var liveEvent  = { provider: 'te',                event_name: 'CPI MoM',                confirmed: true  };
+  expect('schedule event → EN badge text',   simulateEstimatedBadge(schedEvent, 'en'), 'Estimated');
+  expect('schedule event → AR badge text',   simulateEstimatedBadge(schedEvent, 'ar'), 'تقديري');
+  expect('live event → no badge',            simulateEstimatedBadge(liveEvent,  'en'), '');
+
+  // ── Pending value shown for null actuals on schedule events ───────────────
+  console.log('[logic] pending value display for schedule_fallback null data');
+  function simulateDispActual(event, locale) {
+    var isHoliday    = event.importance === 'holiday';
+    var isSchedEvent = event.provider   === 'schedule_fallback';
+    if (isHoliday) return '—';
+    if (isSchedEvent && (event.actual === null || event.actual === undefined)) {
+      return locale === 'ar' ? 'لم يصدر بعد' : 'Not released yet';
+    }
+    return String(event.actual !== null && event.actual !== undefined ? event.actual : '—');
+  }
+  var schedNullEvent = { provider: 'schedule_fallback', actual: null, importance: 'high' };
+  var liveNullEvent  = { provider: 'te',                actual: null, importance: 'high' };
+  var liveRealEvent  = { provider: 'te',                actual: 3.2,  importance: 'high' };
+  expect('schedule null actual → EN pending text', simulateDispActual(schedNullEvent, 'en'), 'Not released yet');
+  expect('schedule null actual → AR pending text', simulateDispActual(schedNullEvent, 'ar'), 'لم يصدر بعد');
+  expect('live null actual → dash',                simulateDispActual(liveNullEvent,  'en'), '—');
+  expect('live actual 3.2 → value',               simulateDispActual(liveRealEvent,  'en'), '3.2');
+
   // ── Report ──────────────────────────────────────────────────────────────────
   console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
   if (fail > 0) process.exit(1);

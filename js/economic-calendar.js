@@ -405,8 +405,9 @@
     { p: /\bcore\s+pce\b/i,                        ar: 'نفقات الاستهلاك الشخصي الأساسية' },
     { p: /\bpce\b/i,                               ar: 'نفقات الاستهلاك الشخصي' },
     { p: /\binterest\s+rate\s+decision\b/i,        ar: 'قرار أسعار الفائدة' },
+    { p: /\bfomc\s+rate\s+decision\b/i,             ar: 'قرار الفائدة للفيدرالي' },
     { p: /\bfomc\b/i,                              ar: 'لجنة السوق المفتوحة الفيدرالية' },
-    { p: /\bnonfarm\s+payrolls?\b/i,               ar: 'الرواتب غير الزراعية' },
+    { p: /\bnonfarm\s+payrolls?\b/i,               ar: 'الوظائف غير الزراعية' },
   ];
 
   function translateEventName(name, locale) {
@@ -590,10 +591,12 @@
       var fs    = freshnessStatus(e);
       var badge = fs ? freshnessHtml(e) : upcomingBadgeHtml(e);
       var cdHtml = countdownHtml(e);
+      var isTopSchedule = e.provider === 'schedule_fallback';
+      var topEstimatedBadge = isTopSchedule ? '<span class="ec-badge-estimated">' + (lang === 'ar' ? 'تقديري' : 'Estimated') + '</span>' : '';
       return (
         '<div class="ec-top-event-card">' +
           '<div class="ec-top-event-header">' +
-            '<span class="ec-top-event-name">' + esc(translateEventName(e.event_name || '—', lang)) + '</span>' +
+            '<span class="ec-top-event-name">' + esc(translateEventName(e.event_name || '—', lang)) + topEstimatedBadge + '</span>' +
             badge +
           '</div>' +
           '<div class="ec-top-event-meta">' +
@@ -782,6 +785,7 @@
           var intel       = e.intelligence || {};
           var sur         = intel.surprise  || {};
           var isHoliday   = e.importance === 'holiday';
+          var isSchedule  = e.provider === 'schedule_fallback';
           var released    = !isHoliday && e.actual   !== null && e.actual   !== undefined;
           var hasForecast = !isHoliday && e.forecast !== null && e.forecast !== undefined;
 
@@ -796,23 +800,27 @@
             actualCls += ' ec-val-set';
           }
 
-          var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
-          var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
-          var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
+          var pendingHtml = '<span class="ec-col-num-pending">' + (lang === 'ar' ? 'لم يصدر بعد' : 'Not released yet') + '</span>';
+          var dispActual   = isHoliday ? '—' : (isSchedule && (e.actual   === null || e.actual   === undefined) ? pendingHtml : numVal(e.actual,   e.unit));
+          var dispForecast = isHoliday ? '—' : (isSchedule && (e.forecast === null || e.forecast === undefined) ? pendingHtml : numVal(e.forecast, e.unit));
+          var dispPrevious = isHoliday ? '—' : (isSchedule && (e.previous === null || e.previous === undefined) ? pendingHtml : numVal(e.previous, e.unit));
 
           var evtDisplayName = esc(translateEventName(e.event_name || '—', lang));
+          var estimatedBadge = isSchedule ? '<span class="ec-badge-estimated">' + (lang === 'ar' ? 'تقديري' : 'Estimated') + '</span>' : '';
           var evtSub = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
           evtSub += getVolatilityHtml(e);
 
+          var dateEstimate = isSchedule ? '<span class="ec-date-estimate">' + (lang === 'ar' ? 'تاريخ تقديري' : 'Date estimate') + '</span>' : '';
           var cdHtml  = countdownHtml(e);
           var tdTime  = '<td class="ec-col-time">' +
             esc(fmtTime(e.event_time)) +
+            dateEstimate +
             freshnessHtml(e) +
             upcomingBadgeHtml(e) +
             (cdHtml ? cdHtml : '') +
             '</td>';
           var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
-          var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + '</strong>' + evtSub + '</td>';
+          var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + estimatedBadge + '</strong>' + evtSub + '</td>';
           var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
           var tdActual  = '<td class="' + actualCls + '">' + dispActual   + '</td>';
           var tdFcast   = '<td class="ec-col-num">'         + dispForecast + '</td>';
@@ -855,24 +863,29 @@
       }
       group.events.forEach(function (e) {
         try {
-          var isHoliday = e.importance === 'holiday';
+          var isHoliday  = e.importance === 'holiday';
+          var isScheduleCard = e.provider === 'schedule_fallback';
           var assets = getAssetTags(e);
           var tags = isHoliday ? '' : assets.map(function (a) {
             return '<span class="ec-asset-tag">' + esc(a) + '</span>';
           }).join('');
-          var dispActual   = isHoliday ? '—' : numVal(e.actual,   e.unit);
-          var dispForecast = isHoliday ? '—' : numVal(e.forecast, e.unit);
-          var dispPrevious = isHoliday ? '—' : numVal(e.previous, e.unit);
+          var pendingCardHtml = '<span class="ec-col-num-pending">' + (lang === 'ar' ? 'لم يصدر بعد' : 'Not released yet') + '</span>';
+          var dispActual   = isHoliday ? '—' : (isScheduleCard && (e.actual   === null || e.actual   === undefined) ? pendingCardHtml : numVal(e.actual,   e.unit));
+          var dispForecast = isHoliday ? '—' : (isScheduleCard && (e.forecast === null || e.forecast === undefined) ? pendingCardHtml : numVal(e.forecast, e.unit));
+          var dispPrevious = isHoliday ? '—' : (isScheduleCard && (e.previous === null || e.previous === undefined) ? pendingCardHtml : numVal(e.previous, e.unit));
+          var estimatedCardBadge = isScheduleCard ? '<span class="ec-badge-estimated">' + (lang === 'ar' ? 'تقديري' : 'Estimated') + '</span>' : '';
+          var dateEstimateCard = isScheduleCard ? '<span class="ec-date-estimate">' + (lang === 'ar' ? 'تاريخ تقديري' : 'Date estimate') + '</span>' : '';
           var cdHtml = countdownHtml(e);
           parts.push(
             '<div class="ec-card" data-ec-i="' + cardIdx + '" tabindex="0" role="button" aria-expanded="false">' +
             '<div class="ec-card-header">' +
-              '<div class="ec-card-event"><strong>' + esc(translateEventName(e.event_name || '—', lang)) + '</strong>' +
+              '<div class="ec-card-event"><strong>' + esc(translateEventName(e.event_name || '—', lang)) + estimatedCardBadge + '</strong>' +
                 '<small>' + esc(countryCurrency(e.country)) + '</small></div>' +
               badgeHtml(e.importance) +
             '</div>' +
             '<div class="ec-card-time">' +
               esc(fmtTime(e.event_time)) +
+              dateEstimateCard +
               freshnessHtml(e) +
               upcomingBadgeHtml(e) +
               (cdHtml ? cdHtml : '') +
@@ -1327,13 +1340,10 @@
       if (!tableWrap || !tableWrap.parentNode) return;
       var notice = document.createElement('p');
       notice.id        = noticeId;
-      notice.style.cssText =
-        'font-size:0.82rem;color:var(--text-muted,#666);' +
-        'background:var(--surface-2,#f9fafb);border:1px solid var(--border,#e0e0e0);' +
-        'border-radius:6px;padding:0.5rem 1rem;margin:0.5rem 0 0;';
+      notice.className = 'ec-schedule-notice';
       notice.textContent = lang === 'ar'
-        ? 'بعض التواريخ المستقبلية تقديرية بناءً على جداول الإصدارات المتكررة وقد تتغير.'
-        : 'Some future dates are estimated from recurring release schedules and may change.';
+        ? '📅 بعض التواريخ المستقبلية تقديرية بناءً على جداول الإصدارات المتكررة وقد تتغير.'
+        : '📅 Some future dates are estimated from recurring release schedules and may change.';
       tableWrap.parentNode.insertBefore(notice, tableWrap);
     }
   }
