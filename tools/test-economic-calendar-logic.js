@@ -1025,6 +1025,159 @@ expect('FOMC schedule has at least 4 future dates', _futureCount >= 4, true);
   expect('AR schedule label = جدول اقتصادي تقديري',
     jsSrc.includes('جدول اقتصادي تقديري'), true);
 
+  // ── Schedule fallback: calendar math helpers ──────────────────────────────
+  console.log('[logic] schedule_fallback calendar math helpers');
+  var {
+    nthWeekdayOfMonth, lastWeekdayOfMonth, nthBusinessDayOfMonth,
+    isDSTActive, toUTC, monthsInRange, GDP_ADVANCE_SCHEDULE,
+  } = require('./providers/economic-calendar/schedule-fallback-provider');
+
+  // isDSTActive: June 10 = EDT, Jan 29 = EST
+  expect('isDSTActive June 10 2026 = true (EDT)',  isDSTActive('2026-06-10'), true);
+  expect('isDSTActive Jan 29 2026 = false (EST)',   isDSTActive('2026-01-29'), false);
+  expect('isDSTActive Mar 8 2026 = true (DST start)', isDSTActive('2026-03-08'), true);
+  expect('isDSTActive Nov 1 2026 = false (DST end)',  isDSTActive('2026-11-01'), false);
+
+  // toUTC: 8:30 AM ET → UTC
+  expect('toUTC June 10 8:30 ET = 12:30 UTC (EDT)',
+    toUTC('2026-06-10', 8, 30), '2026-06-10T12:30:00.000Z');
+  expect('toUTC Jan 29 8:30 ET = 13:30 UTC (EST)',
+    toUTC('2026-01-29', 8, 30), '2026-01-29T13:30:00.000Z');
+  expect('toUTC June 17 14:00 ET = 18:00 UTC (EDT, FOMC)',
+    toUTC('2026-06-17', 14, 0), '2026-06-17T18:00:00.000Z');
+  expect('toUTC Jan 28 14:00 ET = 19:00 UTC (EST, FOMC)',
+    toUTC('2026-01-28', 14, 0), '2026-01-28T19:00:00.000Z');
+
+  // nthWeekdayOfMonth — June 2026 starts Monday
+  expect('2nd Wednesday of June 2026 = June 10',
+    nthWeekdayOfMonth(2026, 5, 3, 2), '2026-06-10');
+  expect('3rd Wednesday of June 2026 = June 17',
+    nthWeekdayOfMonth(2026, 5, 3, 3), '2026-06-17');
+  expect('1st Friday of June 2026 = June 5',
+    nthWeekdayOfMonth(2026, 5, 5, 1), '2026-06-05');
+  expect('5th Wednesday of June 2026 = null (only 4)',
+    nthWeekdayOfMonth(2026, 5, 3, 5), null);
+
+  // lastWeekdayOfMonth — June 2026 ends Tuesday
+  expect('last Friday of June 2026 = June 26',
+    lastWeekdayOfMonth(2026, 5, 5), '2026-06-26');
+  expect('last Monday of June 2026 = June 29',
+    lastWeekdayOfMonth(2026, 5, 1), '2026-06-29');
+
+  // nthBusinessDayOfMonth — June 2026: Mon 1, Tue 2, Wed 3
+  expect('1st business day of June 2026 = June 1 (Mon)',
+    nthBusinessDayOfMonth(2026, 5, 1), '2026-06-01');
+  expect('2nd business day of June 2026 = June 2 (Tue)',
+    nthBusinessDayOfMonth(2026, 5, 2), '2026-06-02');
+  expect('3rd business day of June 2026 = June 3 (Wed)',
+    nthBusinessDayOfMonth(2026, 5, 3), '2026-06-03');
+
+  // monthsInRange
+  var _mrange = monthsInRange(new Date('2026-06-10T00:00:00Z'), new Date('2026-08-05T00:00:00Z'));
+  expect('monthsInRange Jun-Aug covers 3 months', _mrange.length, 3);
+  expect('monthsInRange first = June 2026', JSON.stringify(_mrange[0]), JSON.stringify({ year: 2026, month: 5 }));
+  expect('monthsInRange last = August 2026', JSON.stringify(_mrange[2]), JSON.stringify({ year: 2026, month: 7 }));
+
+  // GDP_ADVANCE_SCHEDULE sanity
+  expect('GDP schedule has entries', GDP_ADVANCE_SCHEDULE.length > 0, true);
+  var gdpJul2026 = GDP_ADVANCE_SCHEDULE.find(function (e) { return e.date === '2026-07-29'; });
+  expect('GDP July 2026 entry exists (Q2 2026 advance)', !!gdpJul2026, true);
+  expect('GDP July 2026 confirmed=false', gdpJul2026.confirmed, false);
+
+  // ── Schedule fallback: all 12 event types generated ──────────────────────
+  console.log('[logic] schedule_fallback all 12 event types present');
+  var sfProvider = require('./providers/economic-calendar/schedule-fallback-provider');
+  // Use a 3-month range to ensure all monthly + quarterly events appear
+  var sf3mCtx = { from: '2026-06-01', to: '2026-08-31', env: {} };
+  var sf3mResult = await sfProvider.fetchCalendar(sf3mCtx);
+  var ev3m = sf3mResult.events;
+
+  function ev3mHas(name) { return ev3m.some(function (e) { return e.event_name === name; }); }
+  function ev3mBy(name)  { return ev3m.filter(function (e) { return e.event_name === name; }); }
+
+  expect('CPI events present',                   ev3mHas('CPI'), true);
+  expect('Core CPI events present',              ev3mHas('Core CPI'), true);
+  expect('PCE events present',                   ev3mHas('PCE'), true);
+  expect('Core PCE events present',              ev3mHas('Core PCE'), true);
+  expect('Nonfarm Payrolls present',             ev3mHas('Nonfarm Payrolls'), true);
+  expect('Unemployment Rate present',            ev3mHas('Unemployment Rate'), true);
+  expect('Initial Jobless Claims present',       ev3mHas('Initial Jobless Claims'), true);
+  expect('FOMC Rate Decision present',           ev3mHas('FOMC Rate Decision'), true);
+  expect('GDP present (Q2 2026 July 29)',        ev3mHas('GDP'), true);
+  expect('Retail Sales present',                 ev3mHas('Retail Sales'), true);
+  expect('ISM Manufacturing PMI present',        ev3mHas('ISM Manufacturing PMI'), true);
+  expect('ISM Services PMI present',             ev3mHas('ISM Services PMI'), true);
+
+  expect('all events have provider=schedule_fallback',
+    ev3m.every(function (e) { return e.provider === 'schedule_fallback'; }), true);
+  expect('all actual values are null',
+    ev3m.every(function (e) { return e.actual === null; }), true);
+  expect('all forecast values are null',
+    ev3m.every(function (e) { return e.forecast === null; }), true);
+  expect('all previous values are null',
+    ev3m.every(function (e) { return e.previous === null; }), true);
+  expect('all events confirmed=false',
+    ev3m.every(function (e) { return e.confirmed === false; }), true);
+  expect('all events tagged schedule-estimate',
+    ev3m.every(function (e) { return Array.isArray(e.tags) && e.tags.includes('schedule-estimate'); }), true);
+
+  // CPI and Core CPI co-released on same day
+  var cpiJun    = ev3mBy('CPI').find(function (e) { return e.date.startsWith('2026-06'); });
+  var coreCpiJun = ev3mBy('Core CPI').find(function (e) { return e.date.startsWith('2026-06'); });
+  expect('CPI and Core CPI present in June 2026', !!(cpiJun && coreCpiJun), true);
+  expect('CPI and Core CPI same event_time',
+    !!(cpiJun && coreCpiJun && cpiJun.event_time === coreCpiJun.event_time), true);
+  expect('CPI June 2026 = 2026-06-10 (2nd Wed)', cpiJun && cpiJun.date, '2026-06-10');
+
+  // PCE and Core PCE co-released
+  var pceJun    = ev3mBy('PCE').find(function (e) { return e.date.startsWith('2026-06'); });
+  var corePceJun = ev3mBy('Core PCE').find(function (e) { return e.date.startsWith('2026-06'); });
+  expect('PCE and Core PCE present in June 2026', !!(pceJun && corePceJun), true);
+  expect('PCE and Core PCE same event_time',
+    !!(pceJun && corePceJun && pceJun.event_time === corePceJun.event_time), true);
+  expect('PCE June 2026 = 2026-06-26 (last Fri)', pceJun && pceJun.date, '2026-06-26');
+
+  // NFP and Unemployment Rate co-released on first Friday of July 2026
+  // July 1=Wed → first Friday = July 3
+  var nfpJul = ev3mBy('Nonfarm Payrolls').find(function (e) { return e.date.startsWith('2026-07'); });
+  var urJul  = ev3mBy('Unemployment Rate').find(function (e) { return e.date.startsWith('2026-07'); });
+  expect('NFP and Unemployment Rate co-released in July 2026',
+    !!(nfpJul && urJul && nfpJul.event_time === urJul.event_time), true);
+  expect('NFP July 2026 = 2026-07-03 (first Fri, July 1=Wed)',
+    nfpJul && nfpJul.date, '2026-07-03');
+
+  // ISM Manufacturing ≠ ISM Services on different business days
+  var ismMfgJun = ev3mBy('ISM Manufacturing PMI').find(function (e) { return e.date.startsWith('2026-06'); });
+  var ismSvcJun = ev3mBy('ISM Services PMI').find(function (e) { return e.date.startsWith('2026-06'); });
+  expect('ISM Mfg and Services present in June 2026', !!(ismMfgJun && ismSvcJun), true);
+  expect('ISM Mfg and Services on different days',
+    !!(ismMfgJun && ismSvcJun && ismMfgJun.event_time !== ismSvcJun.event_time), true);
+  expect('ISM Manufacturing June 2026 = June 1 (1st business day)',
+    ismMfgJun && ismMfgJun.date, '2026-06-01');
+  expect('ISM Services June 2026 = June 3 (3rd business day)',
+    ismSvcJun && ismSvcJun.date, '2026-06-03');
+
+  // Retail Sales on 3rd Wednesday, distinct from CPI on 2nd Wednesday
+  var rsJun = ev3mBy('Retail Sales').find(function (e) { return e.date.startsWith('2026-06'); });
+  expect('Retail Sales June 2026 = June 17 (3rd Wed)', rsJun && rsJun.date, '2026-06-17');
+  expect('CPI and Retail Sales on different dates',
+    !!(cpiJun && rsJun && cpiJun.date !== rsJun.date), true);
+
+  // GDP Q2 2026 advance = July 29
+  var gdpJul = ev3mBy('GDP').find(function (e) { return e.date.startsWith('2026-07'); });
+  expect('GDP Q2 2026 advance = July 29', gdpJul && gdpJul.date, '2026-07-29');
+
+  // FOMC time in EDT = 14:00 ET = 18:00 UTC
+  var fomcJun = ev3mBy('FOMC Rate Decision').find(function (e) { return e.date.startsWith('2026-06'); });
+  expect('FOMC June 17 2026 present', fomcJun && fomcJun.date, '2026-06-17');
+  expect('FOMC time 2 PM EDT = 18:00 UTC', fomcJun && fomcJun.event_time, '2026-06-17T18:00:00.000Z');
+
+  // CPI in EDT = 8:30 ET = 12:30 UTC; ISM in EDT = 10:00 ET = 14:00 UTC
+  expect('CPI June 2026 time = 12:30 UTC (EDT)',
+    cpiJun && cpiJun.event_time, '2026-06-10T12:30:00.000Z');
+  expect('ISM Mfg June 2026 time = 14:00 UTC (EDT)',
+    ismMfgJun && ismMfgJun.event_time, '2026-06-01T14:00:00.000Z');
+
   // ── Report ──────────────────────────────────────────────────────────────────
   console.log('\n[test-economic-calendar-logic] ' + pass + ' passed, ' + fail + ' failed\n');
   if (fail > 0) process.exit(1);
