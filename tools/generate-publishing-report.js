@@ -60,6 +60,18 @@ function printFinalDecision(report) {
   const mode = published ? 'published' : report.site_update ? 'site_update_only' : generatedDraft ? 'draft_only' : 'blocked';
   const reason = published ? 'quality_and_publish_gates_passed' : normalizeReason(report.publish_block_reason || report.publish_result);
   const telegramAllowed = published ? 'yes' : 'no';
+  const articleGenerated = generatedDraft || report.drafts_created.length > 0 || published;
+  const articleWritten = report.public_pages_created.length > 0 || report.drafts_created.length > 0;
+  console.log('\n[AUTONOMOUS_PIPELINE]');
+  console.log(`queue_topic=${report.selected_topic || 'none'}`);
+  console.log(`selected_content_type=${report.selected_content_type}`);
+  console.log(`publish_decision=${mode}`);
+  console.log(`article_generated=${articleGenerated ? 'yes' : 'no'}`);
+  console.log(`article_written=${articleWritten ? 'yes' : 'no'}`);
+  console.log(`published=${published ? 'yes' : 'no'}`);
+  console.log(`telegram_sent=${report.telegram_sent ? 'yes' : 'no'}`);
+  console.log(`site_update_only=${report.site_update && !published ? 'yes' : 'no'}`);
+  console.log(`reason=${reason}`);
   console.log('\n[PUBLISH DECISION]');
   console.log(`mode=${mode}`);
   console.log(`reason=${reason}`);

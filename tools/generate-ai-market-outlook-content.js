@@ -289,16 +289,35 @@ function buildCalendarSummary(calendar) {
 
 function buildSystemCore() {
   // [A] Role, voice, compliance — intentionally concise; analytical requirements are in user prompt
-  return `You are a senior cross-asset macro strategist writing institutional research for sophisticated allocators. Your readers — portfolio managers, macro traders, institutional analysts — understand yield curves, factor tilts, vol regimes, and sector mechanics without definitions.
+  return `You are the TradeAlphaAI Macro Desk — a senior cross-asset macro strategist writing institutional research for sophisticated allocators. Your readers — portfolio managers, macro traders, institutional analysts — understand yield curves, factor tilts, vol regimes, and sector mechanics without definitions. The note should read like professional analyst commentary on Investing.com or a sell-side macro desk note, never like generated template content.
 
-VOICE: Macro desk note. Analytical conviction calibrated with hedged precision. Every analytical claim anchored to named instruments, spread relationships, yield levels, or verified data.
+VOICE: Narrative-first macro desk note. Lead with the market story — the tension, the catalyst, or the regime shift — then support it with data. Analytical conviction calibrated with hedged precision. Every analytical claim anchored to named instruments, spread relationships, yield levels, or verified data. Vary sentence openings and transitions; never reuse the same opening construction across sections.
 
-COMPLIANCE: Educational market commentary only. No trade recommendations. No price targets. All directional calls are conditional: "If [catalyst], [mechanism] would [impact named instrument]."
+COVERAGE: Weave in macro context, the key catalyst, and the asset reaction picture across whichever of gold (GLD), the dollar (DXY), the Nasdaq (QQQ), SPY, and Treasury yields are relevant to the theme. Close the analytical arc with forward-looking risks and the next event to watch.
+
+COMPLIANCE: Educational market commentary only. No trade recommendations. No price targets. All directional calls are conditional: "If [catalyst], [mechanism] would [impact named instrument]." Do NOT repeat disclaimer language inside the analytical sections — the page template carries the formal disclaimer; one conditional framing in the prose is enough.
 
 ABSOLUTE PROHIBITIONS — any of these in your output will cause hard rejection:
 - "you should buy", "you should sell", "guaranteed returns", "buy now", "sell now"
 - "various macroeconomic factors", "navigating a complex landscape", "market participants are closely monitoring"
 - "it remains to be seen", "dynamic market landscape", "at the end of the day", "broadly speaking"`;
+}
+
+// Deterministic opening-angle rotation so intros vary between articles
+// instead of converging on one template construction.
+const OPENING_ANGLES = [
+  'Lead with the single most consequential catalyst on the calendar and what its outcome tree looks like across assets.',
+  'Lead with the sharpest cross-asset tension right now (e.g., equities vs. yields, gold vs. the dollar) and why it cannot persist indefinitely.',
+  'Lead with what has changed in the market regime since the prior memory window — what broke, what held, and what that implies.',
+  'Lead with positioning: where flows and breadth say investors actually are, versus where the consensus narrative says they should be.',
+  'Lead with the data: the most recent meaningful print or repricing, and the transmission chain it set in motion.',
+  'Lead with the forward risk: the scenario the market is underpricing, and the named instruments that would confirm it.',
+];
+
+function selectOpeningAngle(slug) {
+  let hash = 0;
+  for (const ch of String(slug || '')) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return OPENING_ANGLES[hash % OPENING_ANGLES.length];
 }
 
 function buildContinuityContext(topic) {
@@ -405,7 +424,10 @@ function buildEnUserPrompt(topic, fw, narrativeContext, calendarText, continuity
     formatting_requirements: buildFormattingRequirementsLayer(),
   };
 
-  return `Write institutional market outlook analysis for the following topic.
+  return `Write institutional market outlook analysis for the following topic, as the TradeAlphaAI Macro Desk.
+
+OPENING ANGLE for this note (use it to shape the executive summary and market context so intros vary across publications):
+${selectOpeningAngle(topic.slug)}
 
 ${promptLayers.market_context}
 

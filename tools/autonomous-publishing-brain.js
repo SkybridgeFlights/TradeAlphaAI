@@ -8,6 +8,7 @@ const { reviewDraft, hasDraft, TOPOLOGY_REPAIRABLE_CHECKS, PROFILES } = require(
 const { CLUSTER_DEFINITIONS } = require('./analyze-content-clusters');
 const { runRepairCycle } = require('./run-authority-repair-cycle');
 const { printFinalDecision, writePublishingReport } = require('./generate-publishing-report');
+const { scorePublishQuality } = require('./score-publish-quality');
 
 // Cache overwrite flags per content type so we know if we need to force-clear drafts
 const PROFILES_OVERWRITE = Object.fromEntries(
@@ -1670,6 +1671,26 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
       targeted_links_added:          targetedLinksAdded,
       targeted_pairs_added:          targetedPairsAdded,
       targeted_repair_checks_fixed:  targetedRepairChecksFix,
+      ...slugFields(),
+      ...artifactFields(),
+    };
+  }
+
+  // ── [PUBLISH_QUALITY] gate — blocks only genuinely weak articles ──────────
+  const publishQuality = scorePublishQuality({ contentType, slug });
+  if (!publishQuality.publish_allowed) {
+    const reason = `publish quality gate failed: ${publishQuality.reasons.join('; ')}`;
+    console.error(`[brain] ${reason}`);
+    // Keep the topic approved and clean the weak draft so the next scheduled
+    // run regenerates fresh instead of converting a transient generation
+    // problem into a stuck manual_revision_required topic.
+    cleanDraftDirectory(contentType, slug);
+    return {
+      ...blockedExecution(reason, review.current_state),
+      generation_result: generationResult,
+      quality_score: review.score,
+      transition_path: [...review.transition_path, 'quality_gate_blocked'],
+      publish_quality: publishQuality,
       ...slugFields(),
       ...artifactFields(),
     };

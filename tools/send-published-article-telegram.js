@@ -146,23 +146,60 @@ function resolveMeta() {
 
 // ── Message builder ──────────────────────────────────────────────────────────
 
-function twoLineSummary(text) {
+function oneLineTakeaway(text) {
   if (!text) return '';
   const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
-  return sentences.slice(0, 2).join(' ').trim() || text.slice(0, 220).trim();
+  const first = (sentences[0] || text).trim();
+  // Strip leading boilerplate so the takeaway reads like analyst commentary.
+  return first
+    .replace(/^(Educational (overview|analysis|context) (of|for)\s*)/i, '')
+    .replace(/^./, (c) => c.toUpperCase())
+    .slice(0, 220)
+    .trim();
+}
+
+// Rotating hooks so deliveries do not converge on one robotic construction.
+const HOOKS = {
+  'market-outlook': [
+    'The macro picture is shifting — here is what the desk is tracking.',
+    'One catalyst, several transmission chains. The desk breaks it down.',
+    'What the cross-asset tape is actually pricing right now.',
+    'Regime signals moved. The desk maps what holds and what breaks.',
+  ],
+  'continuous-intelligence': [
+    'A structural signal just fired in the intelligence layer.',
+    'The regime engine flagged a shift worth a closer read.',
+    'Cross-asset divergence on the radar — the desk takes it apart.',
+    'New intelligence read: what changed, and what confirms it.',
+  ],
+  'editorial': [
+    'New from the research desk.',
+    'A deeper read from TradeAlphaAI Research.',
+    'Fresh research note from the desk.',
+  ],
+};
+
+function pickHook(type, slug) {
+  const pool = HOOKS[type] || HOOKS.editorial;
+  let hash = 0;
+  for (const ch of String(slug || '')) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return pool[hash % pool.length];
 }
 
 function buildMessage(meta, urls) {
-  const summary = twoLineSummary(meta.summaryEn);
+  const takeaway = oneLineTakeaway(meta.summaryEn);
+  const hook = pickHook(CONTENT_TYPE, SLUG);
 
   if (CONTENT_TYPE === 'editorial') {
     const parts = [
-      `📈 New Research: ${meta.titleEn}`,
+      `📈 TradeAlphaAI Research | ${hook}`,
       '',
-      summary,
+      meta.titleEn,
       '',
-      `🔗 ${urls.url}`,
-      `🌐 Arabic: ${urls.ar_url}`,
+      takeaway ? `Desk take: ${takeaway}` : '',
+      '',
+      `🔗 EN: ${urls.url}`,
+      `🌐 AR: ${urls.ar_url}`,
       '',
       '#TradeAlphaAI #MarketResearch',
     ];
@@ -171,22 +208,21 @@ function buildMessage(meta, urls) {
 
   if (CONTENT_TYPE === 'market-outlook') {
     const parts = [
-      '📊 Educational Market Outlook',
+      `📊 TradeAlphaAI Macro Desk | ${hook}`,
       '',
       meta.titleEn,
       '',
-      summary,
+      takeaway ? `Desk take: ${takeaway}` : '',
     ];
     if (meta.directional_bias) {
-      parts.push('', `🧭 Directional bias: ${meta.directional_bias}`);
+      parts.push('', `🧭 Bias: ${meta.directional_bias}`);
     }
     parts.push(
       '',
-      '⚠️ Educational commentary only. Not investment advice.',
+      `🔗 EN: ${urls.url}`,
+      `🌐 AR: ${urls.ar_url}`,
       '',
-      `🔗 ${urls.url}`,
-      `🌐 Arabic: ${urls.ar_url}`,
-      '',
+      'Educational commentary — not investment advice.',
       '#TradeAlphaAI #MarketOutlook'
     );
     return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();
@@ -194,22 +230,21 @@ function buildMessage(meta, urls) {
 
   if (CONTENT_TYPE === 'continuous-intelligence') {
     const parts = [
-      '🧠 Market Intelligence Signal',
+      `🧠 TradeAlphaAI Macro Desk | ${hook}`,
       '',
       meta.titleEn,
       '',
-      summary,
+      takeaway ? `Desk take: ${takeaway}` : '',
     ];
     if (meta.family) {
       parts.push('', `📡 Signal family: ${meta.family.replace(/_/g, ' ')}`);
     }
     parts.push(
       '',
-      '⚠️ Educational market research. Not investment advice.',
+      `🔗 EN: ${urls.url}`,
+      `🌐 AR: ${urls.ar_url}`,
       '',
-      `🔗 ${urls.url}`,
-      `🌐 Arabic: ${urls.ar_url}`,
-      '',
+      'Educational market research — not investment advice.',
       '#TradeAlphaAI #MarketIntelligence'
     );
     return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();

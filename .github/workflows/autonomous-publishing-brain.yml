@@ -47,8 +47,9 @@ on:
           - 'true'
         default: 'false'
   schedule:
-    # Conservative autonomy: scheduled runs report decisions only. Real publishing is manual dispatch.
+    # 09:30 UTC daily — status/dry-run monitoring only
     - cron: '30 9 * * *'
+    # 10:00 UTC Mon/Tue/Thu/Sat — autonomous full_pipeline publish run
     - cron: '0 10 * * 1,2,4,6'
 
 permissions:
@@ -62,9 +63,9 @@ jobs:
   autonomous-publishing-brain:
     runs-on: ubuntu-latest
     env:
-      MODE: ${{ github.event.inputs.mode || 'dry_run' }}
+      MODE: ${{ github.event.inputs.mode || (github.event.schedule == '0 10 * * 1,2,4,6' && 'full_pipeline') || 'dry_run' }}
       CONTENT_TYPE: ${{ github.event.inputs.content_type || 'auto' }}
-      DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
+      DRY_RUN: ${{ github.event.inputs.dry_run || (github.event.schedule == '0 10 * * 1,2,4,6' && 'false') || 'true' }}
       MANUAL_TOPIC: ${{ github.event.inputs.manual_topic || '' }}
       FORCE_CONTENT_TYPE: ${{ github.event.inputs.force_content_type || 'false' }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -80,14 +81,20 @@ jobs:
       - name: Log autonomous publishing context
         run: |
           echo "======================================================"
-          echo "  Autonomous Publishing Brain"
+          echo "  [AUTONOMOUS_PIPELINE] Brain starting"
           echo "  Mode:               ${MODE}"
           echo "  Content type:       ${CONTENT_TYPE}"
           echo "  Dry run:            ${DRY_RUN}"
           echo "  Manual topic:       ${MANUAL_TOPIC:-'(none)'}"
           echo "  Force content type: ${FORCE_CONTENT_TYPE}"
           echo "  Trigger:            ${{ github.event_name }}"
+          echo "  Schedule expr:      ${{ github.event.schedule }}"
           echo "  Run ID:             ${{ github.run_id }}"
+          if [ "${DRY_RUN}" = "false" ] && [ "${MODE}" = "full_pipeline" ]; then
+            echo "  [AUTONOMOUS_PIPELINE] REAL PUBLISH RUN — dry_run=false full_pipeline"
+          else
+            echo "  [AUTONOMOUS_PIPELINE] Monitoring run — no publishing will occur"
+          fi
           echo "======================================================"
 
       - name: Checkout repository
