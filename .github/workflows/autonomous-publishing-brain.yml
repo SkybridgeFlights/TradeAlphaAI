@@ -164,6 +164,11 @@ jobs:
           }
           echo "[calendar] economic calendar fetch step complete"
 
+      - name: Self-heal missing approved market-outlook drafts
+        run: |
+          node tools/self-heal-market-outlook-drafts.js
+          echo "[DRAFT_SELF_HEAL] preflight self-heal step complete"
+
       - name: Preflight production gates
         run: |
           npm run check:economic-calendar
