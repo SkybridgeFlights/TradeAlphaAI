@@ -88,6 +88,21 @@ function getTransactionExpectedFiles() {
   return new Set(files.map(f => f.replace(/\\/g, '/')));
 }
 
+// Defense in depth: pages belonging to the article this run reports as
+// published are never orphans, even if the transaction file is stale.
+function getReportExpectedFiles() {
+  const report = readJson(path.join(ROOT, 'data', 'intelligence', 'publishing-report.json'));
+  if (!report || report.published !== true || !report.selected_topic) return new Set();
+  let expected = [];
+  try {
+    const { expectedPublicPagesFor } = require('./publication-transaction');
+    expected = expectedPublicPagesFor(report.selected_content_type, report.selected_topic);
+  } catch { /* best-effort */ }
+  return new Set(
+    [...expected, ...(report.public_pages_created || [])].map(f => f.replace(/\\/g, '/'))
+  );
+}
+
 // ── Scanner ──────────────────────────────────────────────────────────────────
 
 function scanOrphans(trackedFiles, txExpected) {
@@ -136,8 +151,9 @@ function main() {
   }
 
   const txExpected = getTransactionExpectedFiles();
+  for (const rel of getReportExpectedFiles()) txExpected.add(rel);
   if (txExpected.size > 0) {
-    console.log(`[cleanup-orphan-public-files] transaction has ${txExpected.size} expected output(s) — those are excluded from orphan detection`);
+    console.log(`[cleanup-orphan-public-files] transaction/report has ${txExpected.size} expected output(s) — those are excluded from orphan detection`);
   }
 
   const orphans = scanOrphans(trackedFiles, txExpected);

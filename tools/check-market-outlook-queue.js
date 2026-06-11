@@ -61,7 +61,7 @@ const topics = queue.topics || [];
 console.log(`[market-outlook-queue] Checking ${topics.length} topic(s).`);
 
 // ── 1. Valid status values ────────────────────────────────────────────────────
-const VALID_STATUSES = new Set(['planned', 'draft', 'in_review', 'generated', 'reviewed', 'published', 'manual_revision_required']);
+const VALID_STATUSES = new Set(['planned', 'draft', 'in_review', 'generated', 'reviewed', 'published', 'manual_revision_required', 'failed_generation']);
 for (const t of topics) {
   if (!VALID_STATUSES.has(t.status)) {
     failures.push(`invalid status "${t.status}" on topic ${t.slug}`);

@@ -9,6 +9,8 @@ const { CLUSTER_DEFINITIONS } = require('./analyze-content-clusters');
 const { runRepairCycle } = require('./run-authority-repair-cycle');
 const { printFinalDecision, writePublishingReport } = require('./generate-publishing-report');
 const { scorePublishQuality } = require('./score-publish-quality');
+const { verifyPublishIntegrity } = require('./verify-publish-integrity');
+const publicationTx = require('./publication-transaction');
 
 // Cache overwrite flags per content type so we know if we need to force-clear drafts
 const PROFILES_OVERWRITE = Object.fromEntries(
@@ -114,6 +116,53 @@ function isQueueApproved(contentType, slug) {
   const q = readJson(queuePathFor(contentType), { topics: [] });
   const t = (q.topics || []).find((item) => item.slug === slug);
   return Boolean(t && t.status === 'reviewed' && t.review_status === 'approved');
+}
+
+// Reverts every ledger mutation made by a publish command whose public pages
+// did not survive verification, so a phantom publish can never enter history,
+// send Telegram, or mark the queue as published.
+function rollbackPhantomPublish(contentType, slug, reason) {
+  console.log(`[PUBLISH_ROLLBACK] slug=${slug} content_type=${contentType} reason=${reason}`);
+  try {
+    const qPath = queuePathFor(contentType);
+    const q = readJson(qPath, { topics: [] });
+    const t = (q.topics || []).find((item) => item.slug === slug);
+    if (t) {
+      t.status = 'failed_generation';
+      t.review_status = 'approved';
+      t.failed_reason = String(reason).slice(0, 200);
+      t.failed_at = TODAY;
+      delete t.published_at;
+      q.updated = TODAY;
+      writeJson(qPath, q);
+      console.log(`[PUBLISH_ROLLBACK] queue topic ${slug} -> failed_generation`);
+    }
+  } catch (error) {
+    console.error(`[PUBLISH_ROLLBACK] queue rollback degraded: ${error.message}`);
+  }
+  const ledgers = contentType === 'market-outlook'
+    ? [['data/market-outlook-history.json', 'publications'], ['data/market-outlook-published.json', 'articles']]
+    : contentType === 'editorial'
+      ? [['data/published-history.json', 'publications']]
+      : contentType === 'continuous-intelligence'
+        ? [['data/continuous-intelligence-history.json', 'publications']]
+        : [];
+  for (const [relPath, key] of ledgers) {
+    try {
+      const fullPath = path.join(ROOT, relPath);
+      const data = readJson(fullPath, {});
+      if (Array.isArray(data[key])) {
+        const before = data[key].length;
+        data[key] = data[key].filter((item) => item.slug !== slug);
+        if (data[key].length !== before) {
+          writeJson(fullPath, data);
+          console.log(`[PUBLISH_ROLLBACK] removed ${slug} from ${relPath}`);
+        }
+      }
+    } catch (error) {
+      console.error(`[PUBLISH_ROLLBACK] ${relPath} rollback degraded: ${error.message}`);
+    }
+  }
 }
 
 function promoteQueueTopic(contentType, slug, reason) {
@@ -1696,6 +1745,15 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
     };
   }
 
+  // Publication transaction: records expected public pages BEFORE publishing
+  // so the orphan-file cleaner can never classify this run's pages as orphans.
+  publicationTx.begin({
+    content_type: contentType,
+    slug,
+    mode: 'publish',
+    run_id: process.env.GITHUB_RUN_ID || 'local',
+  });
+
   const publish = publishFn(slug);
   const promotion = publish.status === 0
     ? verifyPublicPromotion(contentType, slug)
@@ -1703,6 +1761,8 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
   if (publish.status === 0 && !promotion.ok) {
     const reason = `publish command succeeded but public promotion is incomplete: ${promotion.missing.join(', ') || 'no expected public pages configured'}`;
     console.error(`[brain] ${reason}`);
+    rollbackPhantomPublish(contentType, slug, reason);
+    publicationTx.rollback({ reason: 'public_promotion_incomplete' });
     return {
       ...blockedExecution(reason, review.current_state, 1),
       generation_result: generationResult,
@@ -1715,7 +1775,34 @@ function executeReviewedPipeline(contentType, action, generateFn, publishFn, rep
       ...artifactFields()
     };
   }
-  const publishSucceeded = publish.status === 0;
+  let publishSucceeded = publish.status === 0;
+  if (publishSucceeded) {
+    // ── Hard publish integrity gate: pages must exist, be readable, and be
+    // complete documents at their expected routes before the publish counts.
+    publicationTx.recordCreated(promotion.expected);
+    const txCheck = publicationTx.verify({ check_sitemap: false, check_report: false });
+    const integrity = verifyPublishIntegrity({ contentType, slug });
+    if (!txCheck.ok || !integrity.publish_allowed) {
+      const reason = `publish integrity verification failed: ${[...txCheck.errors, ...integrity.failures].join('; ') || 'unverified pages'}`;
+      console.error(`[brain] ${reason}`);
+      rollbackPhantomPublish(contentType, slug, reason);
+      publicationTx.rollback({ reason: 'publish_integrity_failed' });
+      return {
+        ...blockedExecution(reason, review.current_state, 1),
+        generation_result: generationResult,
+        quality_score: review.score,
+        transition_path: [...review.transition_path, 'publish_integrity_failed'],
+        expected_public_pages: promotion.expected,
+        missing_public_pages: integrity.failures,
+        telegram_result: 'no: not_published',
+        ...slugFields(),
+        ...artifactFields()
+      };
+    }
+    publicationTx.commit();
+  } else {
+    publicationTx.rollback({ reason: 'publish_command_failed' });
+  }
   return {
     generation_result:             generationResult,
     publish_result:                publishSucceeded ? 'published after autonomous approval' : 'publish failed after autonomous approval',
