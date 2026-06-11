@@ -11,6 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { GLOBAL_BANNED_PHRASES } = require('./editorial-personas');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -96,6 +97,19 @@ function scoreHeadline(headline) {
   return clamp(score);
 }
 
+function countRoboticPhrases(body) {
+  const lower = body.toLowerCase();
+  let hits = 0;
+  for (const phrase of GLOBAL_BANNED_PHRASES) {
+    let index = lower.indexOf(phrase);
+    while (index !== -1) {
+      hits += 1;
+      index = lower.indexOf(phrase, index + phrase.length);
+    }
+  }
+  return hits;
+}
+
 function scoreNarrative(paragraphs, body) {
   if (!paragraphs.length) return 0;
   const substantive = paragraphs.filter((p) => countWords(p) >= 35).length;
@@ -108,6 +122,7 @@ function scoreNarrative(paragraphs, body) {
   if (avgSentence >= 12 && avgSentence <= 32) score += 20; // readable analyst cadence
   else if (avgSentence > 0) score += 8;
   if (sentences.length >= 18) score += 10;                 // enough total narrative
+  score -= countRoboticPhrases(body) * 8;                  // AI-cliché penalty
   return clamp(score);
 }
 
@@ -183,6 +198,8 @@ function scorePublishQuality({ contentType, slug }) {
   result.disclaimer_density = measureDisclaimerDensity(body);
 
   // Conservative gate: block only genuinely weak articles.
+  const roboticHits = countRoboticPhrases(body);
+  if (roboticHits >= 5) result.reasons.push(`robotic phrasing: ${roboticHits} banned-phrase hits (block at 5)`);
   if (!headline) result.reasons.push('missing headline');
   if (result.narrative_score < 30) result.reasons.push(`narrative_score ${result.narrative_score} below 30`);
   if (macro.hits === 0 && asset.hits === 0) result.reasons.push('no macro or asset linkage detected');

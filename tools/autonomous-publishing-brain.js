@@ -2209,6 +2209,14 @@ function main() {
 
   const decision = chooseContentType(status, requestedType, forceContentType);
   let selected = decision.selected;
+  try {
+    const { verticalForContentType } = require('./editorial-personas');
+    const vertical = verticalForContentType(selected);
+    console.log('[VERTICAL ROUTING]');
+    console.log(`content_type=${selected}`);
+    console.log(`vertical=${vertical ? vertical.id : 'unmapped'}`);
+    console.log(`persona=${vertical ? vertical.persona : 'TradeAlphaAI Research'}`);
+  } catch { /* registry optional at runtime */ }
   let action = actionFor(selected, status, mode, manualTopic);
   let execution = executeAction(selected, mode, dryRun, action);
   const fallbackAttempts = [{

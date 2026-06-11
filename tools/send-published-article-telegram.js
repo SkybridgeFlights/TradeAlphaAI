@@ -158,29 +158,23 @@ function oneLineTakeaway(text) {
     .trim();
 }
 
-// Rotating hooks so deliveries do not converge on one robotic construction.
-const HOOKS = {
-  'market-outlook': [
-    'The macro picture is shifting — here is what the desk is tracking.',
-    'One catalyst, several transmission chains. The desk breaks it down.',
-    'What the cross-asset tape is actually pricing right now.',
-    'Regime signals moved. The desk maps what holds and what breaks.',
-  ],
-  'continuous-intelligence': [
-    'A structural signal just fired in the intelligence layer.',
-    'The regime engine flagged a shift worth a closer read.',
-    'Cross-asset divergence on the radar — the desk takes it apart.',
-    'New intelligence read: what changed, and what confirms it.',
-  ],
-  'editorial': [
-    'New from the research desk.',
-    'A deeper read from TradeAlphaAI Research.',
-    'Fresh research note from the desk.',
-  ],
-};
+// Per-vertical Telegram identity comes from the Phase 69 persona registry so
+// every desk keeps a distinct voice from a single source of truth.
+const { verticalForContentType } = require('./editorial-personas');
+
+function verticalConfig(type) {
+  const vertical = verticalForContentType(type);
+  if (vertical && vertical.telegram) return vertical.telegram;
+  return {
+    emoji: '📈',
+    label: 'TradeAlphaAI Research',
+    hashtags: '#TradeAlphaAI',
+    hooks: ['New from the research desk.'],
+  };
+}
 
 function pickHook(type, slug) {
-  const pool = HOOKS[type] || HOOKS.editorial;
+  const pool = verticalConfig(type).hooks;
   let hash = 0;
   for (const ch of String(slug || '')) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
   return pool[hash % pool.length];
@@ -189,10 +183,11 @@ function pickHook(type, slug) {
 function buildMessage(meta, urls) {
   const takeaway = oneLineTakeaway(meta.summaryEn);
   const hook = pickHook(CONTENT_TYPE, SLUG);
+  const desk = verticalConfig(CONTENT_TYPE);
 
   if (CONTENT_TYPE === 'editorial') {
     const parts = [
-      `📈 TradeAlphaAI Research | ${hook}`,
+      `${desk.emoji} ${desk.label} | ${hook}`,
       '',
       meta.titleEn,
       '',
@@ -201,14 +196,14 @@ function buildMessage(meta, urls) {
       `🔗 EN: ${urls.url}`,
       `🌐 AR: ${urls.ar_url}`,
       '',
-      '#TradeAlphaAI #MarketResearch',
+      desk.hashtags,
     ];
     return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();
   }
 
   if (CONTENT_TYPE === 'market-outlook') {
     const parts = [
-      `📊 TradeAlphaAI Macro Desk | ${hook}`,
+      `${desk.emoji} ${desk.label} | ${hook}`,
       '',
       meta.titleEn,
       '',
@@ -223,14 +218,14 @@ function buildMessage(meta, urls) {
       `🌐 AR: ${urls.ar_url}`,
       '',
       'Educational commentary — not investment advice.',
-      '#TradeAlphaAI #MarketOutlook'
+      desk.hashtags
     );
     return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();
   }
 
   if (CONTENT_TYPE === 'continuous-intelligence') {
     const parts = [
-      `🧠 TradeAlphaAI Macro Desk | ${hook}`,
+      `${desk.emoji} ${desk.label} | ${hook}`,
       '',
       meta.titleEn,
       '',
@@ -245,7 +240,7 @@ function buildMessage(meta, urls) {
       `🌐 AR: ${urls.ar_url}`,
       '',
       'Educational market research — not investment advice.',
-      '#TradeAlphaAI #MarketIntelligence'
+      desk.hashtags
     );
     return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();
   }

@@ -24,6 +24,8 @@ const { buildRegimeSequence } = require('./build-regime-sequence');
 const { detectCrossAssetDivergence } = require('./detect-cross-asset-divergence');
 const { buildMarketExpectations } = require('./build-market-expectations');
 const { buildCrossAssetReaction } = require('./build-cross-asset-reaction');
+const { buildPersonaPromptBlock, GLOBAL_BANNED_PHRASES } = require('./editorial-personas');
+const { narrativeStatePromptBlock } = require('./build-market-narrative-state');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -50,8 +52,10 @@ const TIMEOUT_MS = 90000;
 const MIN_WORDS_EN = { executive_summary: 45, market_context: 75, bullish_scenario: 45, bearish_scenario: 45 };
 const MIN_WORDS_AR = { executive_summary: 30, market_context: 50, bullish_scenario: 30, bearish_scenario: 30 };
 
-// Generic filler — hard fail if found
+// Generic filler — hard fail if found. Extended with the Phase 69 global
+// robotic-phrase blacklist shared by every editorial vertical.
 const GENERIC_PHRASES = [
+  ...GLOBAL_BANNED_PHRASES,
   'various macroeconomic factors',
   'navigating a complex landscape',
   'market participants are closely monitoring',
@@ -300,7 +304,10 @@ COMPLIANCE: Educational market commentary only. No trade recommendations. No pri
 ABSOLUTE PROHIBITIONS — any of these in your output will cause hard rejection:
 - "you should buy", "you should sell", "guaranteed returns", "buy now", "sell now"
 - "various macroeconomic factors", "navigating a complex landscape", "market participants are closely monitoring"
-- "it remains to be seen", "dynamic market landscape", "at the end of the day", "broadly speaking"`;
+- "it remains to be seen", "dynamic market landscape", "at the end of the day", "broadly speaking"
+- "in conclusion", "to summarize", "it is important to note", "delve into", "ever-evolving landscape"
+
+${buildPersonaPromptBlock('market-outlook')}`;
 }
 
 // Deterministic opening-angle rotation so intros vary between articles
@@ -334,8 +341,10 @@ function buildContinuityContext(topic) {
     }).join('\n')
     : 'No prior narrative snapshots yet. Establish a baseline without claiming a regime shift.';
 
+  const narrativeState = narrativeStatePromptBlock();
+
   return `continuity_context
-Prior narrative memory:
+${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
 ${priorContext}
 Narrative drift notes:
 ${drift.notes.map((note) => `- ${note}`).join('\n')}
@@ -523,15 +532,20 @@ Return ONLY valid JSON — no markdown, no preamble, no explanation:
 }
 
 function buildArSystemPrompt() {
-  return `أنت محلل أبحاث أسواق مالية متمرس في منصة TradeAlphaAI، تكتب لجمهور عربي من المستثمرين والمحللين الماليين المحترفين على دراية بسياسات الاحتياطي الفيدرالي ومنحنى العائد وديناميكيات الأسواق.
+  return `أنت محلل أول في مكتب الماكرو لدى TradeAlphaAI، تكتب تحليلا ماليا عربيا بمستوى الصحافة المالية الرفيعة على نمط بلومبرغ الشرق وكبار محللي Investing بالعربية. جمهورك مستثمرون ومحللون محترفون يفهمون سياسات الاحتياطي الفيدرالي ومنحنى العائد وديناميكيات السيولة دون شرح مبسط.
 
-أسلوبك التحليلي:
-- المصطلحات المالية العربية الدقيقة: العائد، منحنى العائد، الانتشار، الزخم، التناوب القطاعي، السيولة، الاتساع، التركيز
+قواعد الأسلوب الصارمة:
+- سرد مالي أولا: ابدأ بقصة السوق أو التوتر الرئيسي، ثم ادعمه بالأدلة والأرقام
+- جمل قصيرة مؤثرة بإيقاع متنوع؛ لا قوالب إنشائية ولا افتتاحيات مكررة
+- لا ترجمة حرفية إطلاقا — صياغة عربية أصيلة كأنها كُتبت بالعربية ابتداء
+- لا حشو ولا عبارات روبوتية مثل "في الختام" و"من الجدير بالذكر" و"في عالم اليوم المتسارع"
+- المصطلحات المالية العربية الدقيقة: العائد، منحنى العائد، الفارق، الزخم، التناوب القطاعي، السيولة، الاتساع، التمركز، شهية المخاطرة
 - أسماء الأدوات تبقى بالإنجليزية: TLT, QQQ, NVDA, SMH, SPY, IWM, XLK, XLF, GLD, DXY, VIX
-- لا ترجمة حرفية — تحليل أصيل بالعربية بأسلوب مذكرات الأبحاث المؤسسية
 - سلاسل استدلال: [إشارة] → [آلية السوق] → [أثر على أداة مسماة]
-- لا جمل إنجليزية كاملة في المتن — الأسماء التجارية فقط
-- التحليل مشروط وتعليمي، بلا توصيات استثمارية`;
+- لا جمل إنجليزية كاملة في المتن — الأسماء والرموز التجارية فقط
+- التحليل مشروط وتعليمي، بلا توصيات استثمارية ودون تكرار لصيغ إخلاء المسؤولية داخل التحليل
+
+${buildPersonaPromptBlock('market-outlook', 'ar')}`;
 }
 
 function buildArUserPrompt(topic, enContent) {

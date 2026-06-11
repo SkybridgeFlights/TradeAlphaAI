@@ -239,6 +239,7 @@ jobs:
           node tools/build-regime-engine-v2.js --write || echo "[regime-v2] Build degraded — continuing"
           node tools/build-historical-intelligence-memory.js --write || echo "[historical-memory] Build degraded — continuing"
           node tools/build-narrative-continuity-engine.js --write || echo "[narrative-continuity] Build degraded — continuing"
+          node tools/build-market-narrative-state.js --write || echo "[narrative-state] Build degraded — continuing"
           node tools/build-visual-intelligence-data.js --write || echo "[visual-data] Build degraded — continuing"
           echo "[phase68/69] Regime engine v2, historical memory, continuity, and visual intelligence data built."
 
@@ -263,6 +264,7 @@ jobs:
 
       - name: Validate intelligence and generated pages
         run: |
+          npm run check:editorial-personas
           npm run check:macro-intelligence
           npm run check:responsive
           npm run check:global-header

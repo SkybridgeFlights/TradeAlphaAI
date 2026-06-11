@@ -157,6 +157,8 @@
     "startup:health": "python tools/startup_health_check.py",
     "services:start": "powershell -ExecutionPolicy Bypass -File scripts/start_services_safe.ps1",
     "services:stop": "powershell -ExecutionPolicy Bypass -File scripts/stop_services_safe.ps1",
-    "services:start:dry": "powershell -ExecutionPolicy Bypass -File scripts/start_services_safe.ps1 -DryRun"
+    "services:start:dry": "powershell -ExecutionPolicy Bypass -File scripts/start_services_safe.ps1 -DryRun",
+    "check:editorial-personas": "node tools/check-editorial-personas.js",
+    "build:narrative-state": "node tools/build-market-narrative-state.js --write"
   }
 }
