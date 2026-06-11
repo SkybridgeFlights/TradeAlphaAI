@@ -26,6 +26,7 @@ const { buildMarketExpectations } = require('./build-market-expectations');
 const { buildCrossAssetReaction } = require('./build-cross-asset-reaction');
 const { buildPersonaPromptBlock, GLOBAL_BANNED_PHRASES } = require('./editorial-personas');
 const { narrativeStatePromptBlock } = require('./build-market-narrative-state');
+const { buildVoicePromptBlock, buildArabicVoiceBlock } = require('./analyst-voice-engine');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -433,10 +434,16 @@ function buildEnUserPrompt(topic, fw, narrativeContext, calendarText, continuity
     formatting_requirements: buildFormattingRequirementsLayer(),
   };
 
+  const voiceBlock = buildVoicePromptBlock(topic.slug, {
+    topicText: [topic.title_en, ...(topic.macro_tags || []), topic.topic_cluster || ''].join(' '),
+  });
+
   return `Write institutional market outlook analysis for the following topic, as the TradeAlphaAI Macro Desk.
 
 OPENING ANGLE for this note (use it to shape the executive summary and market context so intros vary across publications):
 ${selectOpeningAngle(topic.slug)}
+
+${voiceBlock}
 
 ${promptLayers.market_context}
 
@@ -563,6 +570,8 @@ function buildArUserPrompt(topic, enContent) {
 
 الموضوع: ${topic.title_ar || topic.title_en}
 التاريخ: ${today}
+
+${buildArabicVoiceBlock(topic.slug)}
 
 التعليمات الإلزامية:
 1. تحليل أصيل بالعربية — ليس ترجمة حرفية

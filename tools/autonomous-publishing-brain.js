@@ -2210,12 +2210,14 @@ function main() {
   const decision = chooseContentType(status, requestedType, forceContentType);
   let selected = decision.selected;
   try {
-    const { verticalForContentType } = require('./editorial-personas');
+    const { verticalForContentType, routeWithConfidence } = require('./editorial-personas');
     const vertical = verticalForContentType(selected);
+    const signalRoute = routeWithConfidence(decision.reason || '');
     console.log('[VERTICAL ROUTING]');
     console.log(`content_type=${selected}`);
     console.log(`vertical=${vertical ? vertical.id : 'unmapped'}`);
     console.log(`persona=${vertical ? vertical.persona : 'TradeAlphaAI Research'}`);
+    console.log(`routing_confidence=${vertical ? '1.00 (content-type mapping)' : `${signalRoute.confidence} (signal inference: ${signalRoute.vertical.id})`}`);
   } catch { /* registry optional at runtime */ }
   let action = actionFor(selected, status, mode, manualTopic);
   let execution = executeAction(selected, mode, dryRun, action);

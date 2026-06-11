@@ -97,6 +97,46 @@ function scoreHeadline(headline) {
   return clamp(score);
 }
 
+// Robotic transitions at paragraph or sentence starts (AI cadence signature).
+const ROBOTIC_OPENERS = /^(overall|in conclusion|to summarize|in summary|additionally|furthermore|moreover|firstly|secondly|lastly|as we can see)[,\s]/i;
+
+// AI cadence detection: repeated sentence openings, robotic paragraph openers,
+// and uniform paragraph rhythm all read as machine writing. 100 = human-like.
+function scoreAiCadence(paragraphs, body) {
+  if (!paragraphs.length) return { score: 0, pacing_variation: 0 };
+  let score = 100;
+
+  // Repeated sentence openings (first two words) within the article.
+  const sentences = body.match(/[^.!?]+[.!?]/g) || [];
+  const openings = sentences
+    .map((s) => s.trim().toLowerCase().split(/\s+/).slice(0, 2).join(' '))
+    .filter((o) => o.length > 3);
+  if (openings.length >= 8) {
+    const counts = new Map();
+    for (const o of openings) counts.set(o, (counts.get(o) || 0) + 1);
+    const repeated = [...counts.values()].filter((n) => n >= 3).reduce((sum, n) => sum + n, 0);
+    score -= Math.min(40, Math.round((repeated / openings.length) * 120));
+  }
+
+  // Robotic openers at paragraph starts.
+  const roboticStarts = paragraphs.filter((p) => ROBOTIC_OPENERS.test(p.trim())).length;
+  score -= roboticStarts * 12;
+
+  // Pacing variation: coefficient of variation of paragraph lengths.
+  const lengths = paragraphs.map((p) => countWords(p)).filter((n) => n > 0);
+  let pacingVariation = 0;
+  if (lengths.length >= 3) {
+    const mean = lengths.reduce((sum, n) => sum + n, 0) / lengths.length;
+    const variance = lengths.reduce((sum, n) => sum + (n - mean) ** 2, 0) / lengths.length;
+    const cv = mean > 0 ? Math.sqrt(variance) / mean : 0;
+    pacingVariation = clamp(Math.round(cv * 160));
+    // Perfectly uniform paragraphs (cv < 0.15) read as template output.
+    if (cv < 0.15) score -= 15;
+  }
+
+  return { score: clamp(score), pacing_variation: pacingVariation };
+}
+
 function countRoboticPhrases(body) {
   const lower = body.toLowerCase();
   let hits = 0;
@@ -196,10 +236,14 @@ function scorePublishQuality({ contentType, slug }) {
   const repetition = scoreRepetition(body);
   result.repetition_score = repetition.score;
   result.disclaimer_density = measureDisclaimerDensity(body);
+  const cadence = scoreAiCadence(paragraphs, body);
+  result.ai_cadence_score = cadence.score;
+  result.pacing_variation = cadence.pacing_variation;
 
   // Conservative gate: block only genuinely weak articles.
   const roboticHits = countRoboticPhrases(body);
   if (roboticHits >= 5) result.reasons.push(`robotic phrasing: ${roboticHits} banned-phrase hits (block at 5)`);
+  if (result.ai_cadence_score < 25) result.reasons.push(`ai_cadence_score ${result.ai_cadence_score} below 25 — machine-cadence writing`);
   if (!headline) result.reasons.push('missing headline');
   if (result.narrative_score < 30) result.reasons.push(`narrative_score ${result.narrative_score} below 30`);
   if (macro.hits === 0 && asset.hits === 0) result.reasons.push('no macro or asset linkage detected');
@@ -219,6 +263,8 @@ function logQuality(result) {
   console.log(`asset_linkage=${result.asset_linkage}`);
   console.log(`repetition_score=${result.repetition_score}`);
   console.log(`disclaimer_density=${result.disclaimer_density}`);
+  console.log(`ai_cadence_score=${result.ai_cadence_score ?? 'n/a'}`);
+  console.log(`pacing_variation=${result.pacing_variation ?? 'n/a'}`);
   console.log(`publish_allowed=${result.publish_allowed ? 'yes' : 'no'}`);
   if (result.reasons.length) console.log(`quality_block_reasons=${result.reasons.join('; ')}`);
 }

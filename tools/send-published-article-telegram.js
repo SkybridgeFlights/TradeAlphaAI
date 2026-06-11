@@ -180,6 +180,23 @@ function pickHook(type, slug) {
   return pool[hash % pool.length];
 }
 
+// Market framing before links — newsroom register keyed to the desk's bias.
+const BIAS_FRAMING = {
+  'cautiously bullish': 'The desk leans constructive — conditional on the catalyst path holding.',
+  'cautiously bearish': 'The desk leans defensive — risk skew matters more than direction here.',
+  'neutral': 'The desk sees a contested tape — positioning, not conviction, drives the next move.',
+  'neutral-to-constructive': 'Constructive undertone, but the desk wants confirmation before leaning in.',
+  'selective risk-on': 'Risk appetite is selective — leadership quality is the tell.',
+  'defensive': 'Defensive posture: the desk is watching where hedges are being built.',
+  'risk-off stabilization': 'Stabilization phase — the desk is tracking whether the selling is exhausted.',
+  'elevated uncertainty': 'Uncertainty premium is the story — the desk maps both tails.',
+  'mixed / range-bound': 'Range logic rules — the desk frames the breakout conditions.',
+};
+
+function marketFraming(bias) {
+  return BIAS_FRAMING[String(bias || '').toLowerCase()] || null;
+}
+
 function buildMessage(meta, urls) {
   const takeaway = oneLineTakeaway(meta.summaryEn);
   const hook = pickHook(CONTENT_TYPE, SLUG);
@@ -211,6 +228,8 @@ function buildMessage(meta, urls) {
     ];
     if (meta.directional_bias) {
       parts.push('', `🧭 Bias: ${meta.directional_bias}`);
+      const framing = marketFraming(meta.directional_bias);
+      if (framing) parts.push(framing);
     }
     parts.push(
       '',

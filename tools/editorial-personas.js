@@ -33,6 +33,9 @@ const GLOBAL_BANNED_PHRASES = [
   'navigating a complex landscape',
   'various macroeconomic factors',
   'it remains to be seen',
+  'as we can see',
+  'as mentioned above',
+  'without further ado',
 ];
 
 const VERTICALS = {
@@ -208,6 +211,36 @@ function routeVertical(signalText) {
   return VERTICALS['macro-desk'];
 }
 
+// Routing with confidence scoring: counts how many distinct routing rules
+// agree on a vertical. confidence 1.0 = unambiguous, 0.5 = contested between
+// verticals, 0.3 = no rule matched (default desk).
+function routeWithConfidence(signalText) {
+  const text = String(signalText || '');
+  const votes = new Map();
+  const matched = [];
+  for (const rule of ROUTING_RULES) {
+    const hit = text.match(rule.match);
+    if (hit) {
+      votes.set(rule.vertical, (votes.get(rule.vertical) || 0) + 1);
+      matched.push({ vertical: rule.vertical, signal: hit[0] });
+    }
+  }
+  if (!votes.size) {
+    return { vertical: VERTICALS['macro-desk'], confidence: 0.3, matched_signals: [], contested: false };
+  }
+  const ranked = [...votes.entries()].sort((a, b) => b[1] - a[1]);
+  const [winnerId, winnerVotes] = ranked[0];
+  const total = [...votes.values()].reduce((sum, n) => sum + n, 0);
+  const contested = ranked.length > 1;
+  const confidence = Math.round((winnerVotes / total) * 100) / 100;
+  return {
+    vertical: VERTICALS[winnerId],
+    confidence: contested ? Math.max(0.5, confidence) : 1.0,
+    matched_signals: matched.map((m) => m.signal),
+    contested,
+  };
+}
+
 // Prompt block used by generators: persona identity + voice rules + bans.
 function buildPersonaPromptBlock(verticalId, locale = 'en') {
   const vertical = VERTICALS[verticalId];
@@ -235,5 +268,6 @@ module.exports = {
   ROUTING_RULES,
   verticalForContentType,
   routeVertical,
+  routeWithConfidence,
   buildPersonaPromptBlock,
 };
