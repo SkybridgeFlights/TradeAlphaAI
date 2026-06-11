@@ -1,0 +1,190 @@
+/* Phase 72 — Newsroom visual identity.
+   Institutional terminal hybrid: dense-but-clean, financial typography
+   hierarchy, market-state accent mapping, urgency highlighting. Scoped under
+   .newsroom-* so it cannot leak into existing layout. RTL-aware. */
+
+:root {
+  --nr-bg: #0b1320;
+  --nr-panel: #101b2d;
+  --nr-line: rgba(148, 178, 218, 0.14);
+  --nr-text: #dbe6f5;
+  --nr-muted: #8aa0bd;
+  --nr-accent: #3fa7ff;
+  --nr-risk-on: #2fbf71;
+  --nr-risk-off: #e4574f;
+  --nr-neutral: #c9a227;
+  --nr-urgent: #ff5d4d;
+  --nr-quiet: #5d7390;
+}
+
+.newsroom {
+  background: linear-gradient(180deg, var(--nr-bg), #0d1626 70%);
+  border: 1px solid var(--nr-line);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem 1.6rem;
+  color: var(--nr-text);
+  font-feature-settings: "tnum" 1;
+}
+
+.newsroom-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  border-bottom: 1px solid var(--nr-line);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.newsroom-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+html[lang="ar"] .newsroom-title { letter-spacing: 0; }
+
+.newsroom-session {
+  font-size: 0.78rem;
+  color: var(--nr-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.newsroom-session .nr-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--nr-accent);
+  display: inline-block;
+}
+
+.newsroom-session[data-session="us-cash"] .nr-dot { background: var(--nr-risk-on); }
+.newsroom-session[data-session="weekend"] .nr-dot,
+.newsroom-session[data-session="after-hours"] .nr-dot { background: var(--nr-quiet); }
+
+/* ── Regime banner ─────────────────────────────────────────────────────── */
+
+.newsroom-banner {
+  font-size: 1.02rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.9rem;
+  border-inline-start: 3px solid var(--nr-accent);
+  background: rgba(63, 167, 255, 0.07);
+  border-radius: 6px;
+}
+
+.newsroom-banner[data-tone="alert"] {
+  border-inline-start-color: var(--nr-urgent);
+  background: rgba(255, 93, 77, 0.08);
+}
+
+.newsroom-banner[data-tone="quiet"] {
+  border-inline-start-color: var(--nr-quiet);
+  background: rgba(93, 115, 144, 0.08);
+}
+
+/* ── Pulse strip ───────────────────────────────────────────────────────── */
+
+.newsroom-pulse-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.1rem;
+}
+
+.nr-chip {
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.6rem;
+  border: 1px solid var(--nr-line);
+  border-radius: 999px;
+  color: var(--nr-muted);
+  background: rgba(16, 27, 45, 0.7);
+  white-space: nowrap;
+}
+
+.nr-chip strong { color: var(--nr-text); font-weight: 600; }
+.nr-chip[data-state="risk_on"] strong, .nr-chip[data-state="confirming"] strong, .nr-chip[data-state="relaxing"] strong { color: var(--nr-risk-on); }
+.nr-chip[data-state="risk_off"] strong, .nr-chip[data-state="deteriorating"] strong, .nr-chip[data-state="stressed"] strong, .nr-chip[data-state="building"] strong { color: var(--nr-risk-off); }
+.nr-chip[data-state="elevated"] strong, .nr-chip[data-state="narrow-megacap"] strong, .nr-chip[data-state="firming"] strong { color: var(--nr-neutral); }
+
+/* ── Module grid ───────────────────────────────────────────────────────── */
+
+.newsroom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.9rem;
+}
+
+.nr-module {
+  background: var(--nr-panel);
+  border: 1px solid var(--nr-line);
+  border-radius: 10px;
+  padding: 0.85rem 1rem 1rem;
+}
+
+.nr-module h3 {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nr-muted);
+  margin: 0 0 0.6rem;
+}
+
+html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
+
+.nr-module ul { list-style: none; margin: 0; padding: 0; }
+.nr-module li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.34rem 0;
+  border-bottom: 1px dashed rgba(148, 178, 218, 0.08);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.nr-module li:last-child { border-bottom: none; }
+
+.nr-wire-headline { color: var(--nr-text); }
+.nr-meta { color: var(--nr-muted); font-size: 0.72rem; white-space: nowrap; }
+
+.nr-badge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.nr-badge[data-urgency="high"] { background: rgba(255, 93, 77, 0.16); color: var(--nr-urgent); }
+.nr-badge[data-urgency="medium"] { background: rgba(201, 162, 39, 0.16); color: var(--nr-neutral); }
+.nr-badge[data-urgency="low"] { background: rgba(93, 115, 144, 0.18); color: var(--nr-quiet); }
+
+.nr-empty { color: var(--nr-quiet); font-size: 0.82rem; padding: 0.3rem 0; }
+
+.newsroom-foot {
+  margin-top: 0.9rem;
+  font-size: 0.7rem;
+  color: var(--nr-quiet);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* ── RTL refinements ───────────────────────────────────────────────────── */
+
+html[dir="rtl"] .newsroom { font-feature-settings: normal; }
+html[dir="rtl"] .nr-chip { letter-spacing: 0; }
+html[dir="rtl"] .nr-meta { white-space: normal; }
+
+@media (max-width: 640px) {
+  .newsroom { padding: 1rem; }
+  .newsroom-grid { grid-template-columns: 1fr; }
+}
