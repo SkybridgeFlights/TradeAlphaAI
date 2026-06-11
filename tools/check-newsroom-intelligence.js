@@ -28,6 +28,7 @@ const PULSE_VOCAB = {
   duration_pressure: ['building', 'relaxing', 'neutral', 'unverified'],
   momentum_concentration: ['narrow-megacap', 'broadening', 'balanced', 'unverified'],
   breadth_state: ['deteriorating', 'confirming', 'mixed', 'unverified'],
+  market_fragility: ['elevated', 'building', 'contained', 'unverified'],
 };
 
 const pulse = readJson('data/intelligence/market-pulse.json');

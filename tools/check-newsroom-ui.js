@@ -37,6 +37,17 @@ for (const page of ['index.html', 'ar/index.html']) {
       failures.push(`${page}: newsroom section missing verified timestamp / awaiting-data note`);
     }
     if (/\blive prices\b|\breal[- ]time quotes\b/i.test(section)) failures.push(`${page}: fake realtime claim detected`);
+
+    // Phase 73 terminal checks: asset strip rendered once with unique symbols,
+    // edition label present, desk modules present.
+    if (count(section, 'nr-asset-strip') !== 1) failures.push(`${page}: asset strip count != 1`);
+    const symbols = [...section.matchAll(/nr-asset-sym">([A-Z0-9]+)</g)].map((m) => m[1]);
+    if (symbols.length && new Set(symbols).size !== symbols.length) failures.push(`${page}: duplicate asset symbols in strip`);
+    if (!section.includes('nr-edition')) failures.push(`${page}: session edition label missing`);
+    if (!section.includes('nr-hero-ribbon')) failures.push(`${page}: hero intelligence ribbon missing`);
+    if (count(section, 'data-desk="risk"') !== 1 || count(section, 'data-desk="macro"') !== 1) {
+      failures.push(`${page}: desk modules missing or duplicated`);
+    }
     if (page === 'ar/index.html') {
       if (!section.includes('dir="rtl"')) failures.push('ar/index.html: newsroom section missing dir="rtl"');
       if (!/[؀-ۿ]/.test(section)) failures.push('ar/index.html: newsroom section contains no Arabic text');

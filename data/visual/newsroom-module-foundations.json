@@ -7,48 +7,141 @@
       "title": "Analyst Desk Card",
       "vertical": "any",
       "status": "foundation",
-      "data_sources": ["tools/editorial-personas.js#VERTICALS[*].visual", "data/intelligence/publishing-report.json"],
-      "contract": { "persona": "string", "accent": "css-color", "icon": "string", "latest_slug": "string", "stance": "directional_bias" }
+      "data_sources": [
+        "tools/editorial-personas.js#VERTICALS[*].visual",
+        "data/intelligence/publishing-report.json"
+      ],
+      "contract": {
+        "persona": "string",
+        "accent": "css-color",
+        "icon": "string",
+        "latest_slug": "string",
+        "stance": "directional_bias"
+      }
     },
     {
       "id": "macro-dashboard-strip",
       "title": "Macro Regime Dashboard Strip",
       "vertical": "macro-desk",
       "status": "foundation",
-      "data_sources": ["data/intelligence/market-narrative-state.json#regimes"],
-      "contract": { "regimes": "object<regime,string>", "updated_at": "iso-datetime", "continuity_note": "string" }
+      "data_sources": [
+        "data/intelligence/market-narrative-state.json#regimes"
+      ],
+      "contract": {
+        "regimes": "object<regime,string>",
+        "updated_at": "iso-datetime",
+        "continuity_note": "string"
+      }
     },
     {
       "id": "asset-heatmap",
       "title": "Cross-Asset Heatmap",
       "vertical": "market-outlook",
       "status": "foundation",
-      "data_sources": ["data/live-market-state.json", "tools/analyst-voice-engine.js#ASSET_CAUSAL_MAP"],
-      "contract": { "assets": "array<{symbol,change_pct,regime_color}>", "causal_highlights": "array<string>" }
+      "data_sources": [
+        "data/live-market-state.json",
+        "tools/analyst-voice-engine.js#ASSET_CAUSAL_MAP"
+      ],
+      "contract": {
+        "assets": "array<{symbol,change_pct,regime_color}>",
+        "causal_highlights": "array<string>"
+      }
     },
     {
       "id": "market-pulse-widget",
       "title": "Market Pulse Widget",
       "vertical": "newswire",
       "status": "foundation",
-      "data_sources": ["data/live-market-state.json#vix", "data/economic-calendar.json"],
-      "contract": { "volatility_state": "string", "next_event": "string", "next_event_time": "iso-datetime" }
+      "data_sources": [
+        "data/live-market-state.json#vix",
+        "data/economic-calendar.json"
+      ],
+      "contract": {
+        "volatility_state": "string",
+        "next_event": "string",
+        "next_event_time": "iso-datetime"
+      }
     },
     {
       "id": "institutional-signal-overlay",
       "title": "Institutional Signal Overlay",
       "vertical": "signals",
       "status": "foundation",
-      "data_sources": ["data/intelligence/market-narrative-state.json#dominant_themes"],
-      "contract": { "themes": "array<{theme,status}>", "risk_disclosure": "string (mandatory)" }
+      "data_sources": [
+        "data/intelligence/market-narrative-state.json#dominant_themes"
+      ],
+      "contract": {
+        "themes": "array<{theme,status}>",
+        "risk_disclosure": "string (mandatory)"
+      }
     },
     {
       "id": "newsroom-homepage-module",
       "title": "Newsroom Homepage Module",
       "vertical": "any",
       "status": "foundation",
-      "data_sources": ["data/feeds/homepage-featured.json", "tools/editorial-personas.js#VERTICALS"],
-      "contract": { "sections": "array<{vertical,label,articles:array<{slug,title,locale}>}>" }
+      "data_sources": [
+        "data/feeds/homepage-featured.json",
+        "tools/editorial-personas.js#VERTICALS"
+      ],
+      "contract": {
+        "sections": "array<{vertical,label,articles:array<{slug,title,locale}>}>"
+      }
+    },
+    {
+      "id": "volatility-surface",
+      "title": "Volatility Surface View",
+      "vertical": "market-outlook",
+      "status": "foundation",
+      "data_sources": [
+        "data/live-market-state.json#vix",
+        "data/intelligence/market-pulse.json#dimensions.volatility_regime"
+      ],
+      "contract": {
+        "regime": "string",
+        "vix_level": "number|null",
+        "history": "array<{date,level}>"
+      }
+    },
+    {
+      "id": "liquidity-map",
+      "title": "Liquidity Migration Map",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/market-pulse.json#dimensions.liquidity_stress",
+        "data/intelligence/market-narrative-state.json#regimes"
+      ],
+      "contract": {
+        "liquidity_state": "string",
+        "flows": "array<{from,to,evidence}>"
+      }
+    },
+    {
+      "id": "sector-leadership-board",
+      "title": "Sector Leadership Board",
+      "vertical": "market-outlook",
+      "status": "foundation",
+      "data_sources": [
+        "data/live-market-state.json#sector_etfs"
+      ],
+      "contract": {
+        "leaders": "array<{symbol,change_pct}>",
+        "laggards": "array<{symbol,change_pct}>"
+      }
+    },
+    {
+      "id": "market-matrix",
+      "title": "Cross-Asset Market Matrix",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "tools/analyst-voice-engine.js#ASSET_CAUSAL_MAP",
+        "data/live-market-state.json"
+      ],
+      "contract": {
+        "rows": "array<{pair,state,chain}>"
+      }
     }
   ]
 }

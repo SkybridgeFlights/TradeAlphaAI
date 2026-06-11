@@ -74,12 +74,27 @@ function derivePulse() {
     liquidity_stress: regimes.liquidity || 'unverified',
     speculative_appetite: (nvdaMove !== null && nvdaMove > 2) || (liveOk && pct(live.bitcoin) !== null && pct(live.bitcoin) > 3)
       ? 'expanding' : 'unverified',
+    market_fragility: 'unverified',
     sourced: {
       vix, dxy_move: dxyMove, us10y: yieldLevel, spy_move: spyMove,
       qqq_move: qqqMove, iwm_move: iwmMove, nvda_move: nvdaMove,
       live_status: (live.metadata && live.metadata.status) || 'unavailable',
     },
   };
+
+  // Market fragility: composite of verified stress signals only.
+  const fragilitySignals = [
+    dimensions.volatility_regime === 'stressed' || dimensions.volatility_regime === 'elevated',
+    dimensions.breadth_state === 'deteriorating',
+    dimensions.momentum_concentration === 'narrow-megacap',
+    dimensions.ai_concentration_risk === 'elevated',
+  ];
+  const verifiedInputs = [dimensions.volatility_regime, dimensions.breadth_state, dimensions.momentum_concentration, dimensions.ai_concentration_risk]
+    .filter((v) => v !== 'unverified').length;
+  if (verifiedInputs >= 2) {
+    const hits = fragilitySignals.filter(Boolean).length;
+    dimensions.market_fragility = hits >= 3 ? 'elevated' : hits >= 1 ? 'building' : 'contained';
+  }
   return dimensions;
 }
 
