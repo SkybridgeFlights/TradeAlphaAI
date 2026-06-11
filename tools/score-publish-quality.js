@@ -97,6 +97,31 @@ function scoreHeadline(headline) {
   return clamp(score);
 }
 
+// Institutional tone: positioning/liquidity/flow vocabulary used by real desks.
+const INSTITUTIONAL_TONE_TERMS = [
+  /\bpositioning\b/i, /\bflows?\b/i, /\bliquidity\b/i, /\bbreadth\b/i,
+  /\bduration\b/i, /\brisk appetite\b/i, /\brepric/i, /\bcrowd/i,
+  /\bhedg/i, /\bvol(atility)? regime\b/i, /\btransmission\b/i, /\bfactor\b/i,
+];
+
+// Market psychology: why markets move, not just what moved.
+const PSYCHOLOGY_TERMS = [
+  /\bfear\b/i, /\bgreed\b/i, /\bsqueeze\b/i, /\bcapitulat/i, /\bexhaust/i,
+  /\bcrowded\b/i, /\bspeculat/i, /\brotation\b/i, /\baccumulat/i,
+  /\bdistribut(ion|ing)\b/i, /\bdefensive\b/i, /\bsentiment\b/i, /\bconviction\b/i,
+];
+
+// Educational tone leaking into desk commentary (fine for editorial vertical).
+const EDUCATIONAL_LEAKAGE = [
+  /\bis a measure of\b/i, /\brefers to\b/i, /\bin simple terms\b/i,
+  /\bfor beginners\b/i, /\bsimply put\b/i, /\bwhat (is|are) [a-z]/i,
+  /\bbasics of\b/i, /\blet'?s break (this|it) down\b/i,
+];
+
+function countPatternHits(patterns, body) {
+  return patterns.filter((p) => p.test(body)).length;
+}
+
 // Robotic transitions at paragraph or sentence starts (AI cadence signature).
 const ROBOTIC_OPENERS = /^(overall|in conclusion|to summarize|in summary|additionally|furthermore|moreover|firstly|secondly|lastly|as we can see)[,\s]/i;
 
@@ -240,6 +265,19 @@ function scorePublishQuality({ contentType, slug }) {
   result.ai_cadence_score = cadence.score;
   result.pacing_variation = cadence.pacing_variation;
 
+  // Newsroom realism dimensions (measured and logged; gating stays with the
+  // conservative reasons below so valid publications are never over-blocked).
+  result.institutional_tone_score = clamp(countPatternHits(INSTITUTIONAL_TONE_TERMS, body) * 12);
+  result.psychology_score = clamp(countPatternHits(PSYCHOLOGY_TERMS, body) * 12);
+  const leakage = countPatternHits(EDUCATIONAL_LEAKAGE, body);
+  result.educational_leakage = contentType === 'editorial' ? 0 : leakage;
+  result.newsroom_realism = clamp(Math.round(
+    result.narrative_score * 0.3 +
+    result.ai_cadence_score * 0.3 +
+    result.institutional_tone_score * 0.2 +
+    result.psychology_score * 0.2
+  ) - result.educational_leakage * 5);
+
   // Conservative gate: block only genuinely weak articles.
   const roboticHits = countRoboticPhrases(body);
   if (roboticHits >= 5) result.reasons.push(`robotic phrasing: ${roboticHits} banned-phrase hits (block at 5)`);
@@ -265,6 +303,10 @@ function logQuality(result) {
   console.log(`disclaimer_density=${result.disclaimer_density}`);
   console.log(`ai_cadence_score=${result.ai_cadence_score ?? 'n/a'}`);
   console.log(`pacing_variation=${result.pacing_variation ?? 'n/a'}`);
+  console.log(`institutional_tone_score=${result.institutional_tone_score ?? 'n/a'}`);
+  console.log(`psychology_score=${result.psychology_score ?? 'n/a'}`);
+  console.log(`educational_leakage=${result.educational_leakage ?? 'n/a'}`);
+  console.log(`newsroom_realism=${result.newsroom_realism ?? 'n/a'}`);
   console.log(`publish_allowed=${result.publish_allowed ? 'yes' : 'no'}`);
   if (result.reasons.length) console.log(`quality_block_reasons=${result.reasons.join('; ')}`);
 }

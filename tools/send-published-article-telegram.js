@@ -197,9 +197,22 @@ function marketFraming(bias) {
   return BIAS_FRAMING[String(bias || '').toLowerCase()] || null;
 }
 
+// Newsroom pulse context: verified session commentary plus urgency awareness.
+// Only verified pulse output is quoted — degraded/unverified pulse stays out
+// of public deliveries.
+function pulseContext() {
+  const pulse = readJson(path.join(ROOT, 'data', 'intelligence', 'market-pulse.json'));
+  if (!pulse || pulse.verified !== true) return { line: null, urgent: false };
+  return {
+    line: pulse.pulse_banner || null,
+    urgent: pulse.dimensions && pulse.dimensions.volatility_regime === 'stressed',
+  };
+}
+
 function buildMessage(meta, urls) {
   const takeaway = oneLineTakeaway(meta.summaryEn);
-  const hook = pickHook(CONTENT_TYPE, SLUG);
+  const pulse = pulseContext();
+  const hook = `${pulse.urgent ? '⚡ ' : ''}${pickHook(CONTENT_TYPE, SLUG)}`;
   const desk = verticalConfig(CONTENT_TYPE);
 
   if (CONTENT_TYPE === 'editorial') {
@@ -231,6 +244,7 @@ function buildMessage(meta, urls) {
       const framing = marketFraming(meta.directional_bias);
       if (framing) parts.push(framing);
     }
+    if (pulse.line) parts.push('', `📡 Pulse: ${pulse.line}`);
     parts.push(
       '',
       `🔗 EN: ${urls.url}`,

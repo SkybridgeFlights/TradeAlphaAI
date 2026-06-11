@@ -27,6 +27,7 @@ const { buildCrossAssetReaction } = require('./build-cross-asset-reaction');
 const { buildPersonaPromptBlock, GLOBAL_BANNED_PHRASES } = require('./editorial-personas');
 const { narrativeStatePromptBlock } = require('./build-market-narrative-state');
 const { buildVoicePromptBlock, buildArabicVoiceBlock } = require('./analyst-voice-engine');
+const { pulsePromptBlock } = require('./build-market-pulse');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -343,9 +344,10 @@ function buildContinuityContext(topic) {
     : 'No prior narrative snapshots yet. Establish a baseline without claiming a regime shift.';
 
   const narrativeState = narrativeStatePromptBlock();
+  const pulse = pulsePromptBlock();
 
   return `continuity_context
-${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
+${pulse ? `${pulse}\n` : ''}${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
 ${priorContext}
 Narrative drift notes:
 ${drift.notes.map((note) => `- ${note}`).join('\n')}

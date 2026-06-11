@@ -18,6 +18,7 @@ const OUT_PATH = path.join(ROOT, 'data', 'intelligence', 'market-narrative-state
 const LIVE_PATH = path.join(ROOT, 'data', 'live-market-state.json');
 const REGIME_PATH = path.join(ROOT, 'data', 'market-regime-state.json');
 const MEMORY_PATH = path.join(ROOT, 'data', 'narrative-memory.json');
+const CALENDAR_PATH = path.join(ROOT, 'data', 'economic-calendar.json');
 
 const TODAY = new Date().toISOString().slice(0, 10);
 const MAX_EVOLUTION_NOTES = 20;
@@ -156,6 +157,34 @@ function buildContinuityNote(state) {
   return `Ongoing narrative state — ${verified.map(([k, v]) => `${k.replace(/_/g, ' ')}: ${v}`).join('; ')}. New analysis should evolve this story: state what persisted, what changed, and what would confirm the next phase.`;
 }
 
+// Editorial continuity: catalysts that remain unresolved (upcoming or just
+// released high-impact events) and the desk's prior stance trajectory, so new
+// articles reference the evolving story instead of standing alone.
+function deriveUnresolvedCatalysts() {
+  const calendar = readJson(CALENDAR_PATH, { events: [] });
+  const horizon = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  return (calendar.events || [])
+    .filter((e) => {
+      const importance = String(e.importance || e.impact_level || '').toLowerCase();
+      const upcoming = e.date >= TODAY && e.date <= horizon && (e.actual === null || e.actual === undefined);
+      const justReleased = e.actual !== null && e.actual !== undefined && e.date >= new Date(Date.now() - 3 * 86400000).toISOString().slice(0, 10);
+      return importance === 'high' && (upcoming || justReleased);
+    })
+    .slice(0, 6)
+    .map((e) => ({
+      name: e.event_name || e.name,
+      date: e.date,
+      state: (e.actual !== null && e.actual !== undefined) ? 'released_awaiting_digestion' : 'pending',
+      assets: (e.historical_asset_sensitivity || []).slice(0, 4),
+    }));
+}
+
+function derivePriorStances(memory) {
+  return (memory.snapshots || []).slice(-3).reverse()
+    .map((s) => ({ date: s.date || null, stance: s.directional_bias || 'unverified' }))
+    .filter((s) => s.date);
+}
+
 function buildState() {
   const live = readJson(LIVE_PATH);
   const regime = readJson(REGIME_PATH);
@@ -170,6 +199,8 @@ function buildState() {
     regimes,
     sourced_snapshot,
     dominant_themes: deriveThemes(memory, previous),
+    unresolved_catalysts: deriveUnresolvedCatalysts(),
+    prior_stances: derivePriorStances(memory),
     narrative_evolution: [
       ...(((previous && previous.narrative_evolution) || []).slice(-(MAX_EVOLUTION_NOTES - 1))),
       { date: TODAY, note: describeChanges(previous, { regimes }) },
@@ -194,6 +225,15 @@ function narrativeStatePromptBlock() {
   }
   const lastEvolution = (state.narrative_evolution || []).slice(-1)[0];
   if (lastEvolution) lines.push(`Latest evolution note: ${lastEvolution.note}`);
+  const catalysts = (state.unresolved_catalysts || []).slice(0, 4);
+  if (catalysts.length) {
+    lines.push('Unresolved catalysts (reference these as the evolving story — e.g. "the pending CPI print continues to shape positioning"):');
+    for (const c of catalysts) lines.push(`- ${c.name} (${c.date}, ${c.state.replace(/_/g, ' ')}; sensitivity: ${c.assets.join(', ') || 'broad'})`);
+  }
+  const stances = (state.prior_stances || []);
+  if (stances.length) {
+    lines.push(`Desk stance trajectory (do not contradict silently — evolve or explain): ${stances.map((s) => `${s.date}: ${s.stance}`).join(' | ')}`);
+  }
   lines.push(`Continuity rule: ${state.continuity_note}`);
   return lines.join('\n');
 }
