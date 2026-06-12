@@ -1,39 +1,28 @@
 {
   "version": "2.0",
   "product": "Daily Market Brief 2.0",
-  "updated_at": "2026-06-12T17:29:12.165Z",
+  "updated_at": "2026-06-12T18:25:22.488Z",
   "run_date": "2026-06-12",
   "verified": true,
   "desk_lead": {
-    "en": "Macro Desk: Regime coherence 100/100 — the observed cross-asset tape is largely aligned. The next scheduled resolution point is Retail Sales.",
-    "ar": "مكتب الماكرو: اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير. نقطة الحسم المجدولة التالية هي Retail Sales."
+    "en": "Macro Desk: Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing. The NVDA/QQQ link is not holding; that is where the tape's internal argument lives. The next scheduled resolution point is Retail Sales.",
+    "ar": "مكتب الماكرو: اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. رابط NVDA/QQQ لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق. نقطة الحسم المجدولة التالية هي Retail Sales."
   },
   "regime": {
     "state": "healthy-trend",
     "state_ar": "healthy-trend",
     "coherence": {
-      "score": 100,
-      "band": "coherent",
+      "score": 50,
+      "band": "tense",
       "observed_links": 2,
-      "en": "Regime coherence 100/100 — the observed cross-asset tape is largely aligned.",
-      "ar": "اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+      "en": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+      "ar": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
     },
-    "conviction": "healthy-trend-structure",
+    "conviction": "strengthening-conviction",
     "volatility": "unverified"
   },
   "what_changed": [],
   "confirms": [
-    {
-      "id": "ai-growth",
-      "legs": [
-        "nvda",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 1,
-      "en": "AI leadership drives the growth complex",
-      "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
-    },
     {
       "id": "breadth-link",
       "legs": [
@@ -46,7 +35,19 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
-  "diverges": [],
+  "diverges": [
+    {
+      "id": "ai-growth",
+      "legs": [
+        "nvda",
+        "qqq"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "AI leadership drives the growth complex",
+      "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
+    }
+  ],
   "contradictions": [],
   "pressure_active": [],
   "next_catalysts": [
@@ -92,65 +93,67 @@
   "most_sensitive_assets": [
     {
       "rank": 1,
-      "asset": "SPY",
-      "score": 27,
-      "live_change_pct": 0.408,
+      "asset": "QQQ",
+      "score": 35,
+      "live_change_pct": 0.495,
       "drivers_en": [
-        "sourced move magnitude +0.41%",
-        "confirming breadth/link relationship",
+        "sourced move magnitude +0.49%",
+        "diverging ai/growth relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.41%",
-        "تأكيد في علاقة breadth/link",
+        "حجم التحرك الموثق +0.49%",
+        "تباعد في علاقة ai/growth",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 2,
-      "asset": "QQQ",
-      "score": 26,
-      "live_change_pct": 0.3207,
+      "asset": "SPY",
+      "score": 27,
+      "live_change_pct": 0.3795,
       "drivers_en": [
-        "sourced move magnitude +0.32%",
-        "confirming ai/growth relationship",
+        "sourced move magnitude +0.38%",
+        "confirming breadth/link relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.32%",
-        "تأكيد في علاقة ai/growth",
+        "حجم التحرك الموثق +0.38%",
+        "تأكيد في علاقة breadth/link",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 3,
       "asset": "GOLD",
-      "score": 19,
-      "live_change_pct": 0.3365,
+      "score": 21,
+      "live_change_pct": 0.5203,
       "drivers_en": [
-        "sourced move magnitude +0.34%",
+        "sourced move magnitude +0.52%",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.34%",
+        "حجم التحرك الموثق +0.52%",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 4,
-      "asset": "DXY",
-      "score": 15,
-      "live_change_pct": null,
+      "asset": "NVDA",
+      "score": 17,
+      "live_change_pct": -0.2489,
       "drivers_en": [
-        "direct relevance to the next scheduled catalyst"
+        "sourced move magnitude -0.25%",
+        "diverging ai/growth relationship"
       ],
       "drivers_ar": [
-        "حساسية مباشرة للمحفز المجدول التالي"
+        "حجم التحرك الموثق -0.25%",
+        "تباعد في علاقة ai/growth"
       ]
     },
     {
       "rank": 5,
-      "asset": "VIX",
+      "asset": "DXY",
       "score": 15,
       "live_change_pct": null,
       "drivers_en": [
@@ -164,52 +167,66 @@
   "asset_sensitivity": [
     {
       "rank": 1,
-      "asset": "SPY",
-      "score": 27,
-      "live_change_pct": 0.408,
+      "asset": "QQQ",
+      "score": 35,
+      "live_change_pct": 0.495,
       "drivers_en": [
-        "sourced move magnitude +0.41%",
-        "confirming breadth/link relationship",
+        "sourced move magnitude +0.49%",
+        "diverging ai/growth relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.41%",
-        "تأكيد في علاقة breadth/link",
+        "حجم التحرك الموثق +0.49%",
+        "تباعد في علاقة ai/growth",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 2,
-      "asset": "QQQ",
-      "score": 26,
-      "live_change_pct": 0.3207,
+      "asset": "SPY",
+      "score": 27,
+      "live_change_pct": 0.3795,
       "drivers_en": [
-        "sourced move magnitude +0.32%",
-        "confirming ai/growth relationship",
+        "sourced move magnitude +0.38%",
+        "confirming breadth/link relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.32%",
-        "تأكيد في علاقة ai/growth",
+        "حجم التحرك الموثق +0.38%",
+        "تأكيد في علاقة breadth/link",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 3,
       "asset": "GOLD",
-      "score": 19,
-      "live_change_pct": 0.3365,
+      "score": 21,
+      "live_change_pct": 0.5203,
       "drivers_en": [
-        "sourced move magnitude +0.34%",
+        "sourced move magnitude +0.52%",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.34%",
+        "حجم التحرك الموثق +0.52%",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 4,
+      "asset": "NVDA",
+      "score": 17,
+      "live_change_pct": -0.2489,
+      "drivers_en": [
+        "sourced move magnitude -0.25%",
+        "diverging ai/growth relationship"
+      ],
+      "drivers_ar": [
+        "حجم التحرك الموثق -0.25%",
+        "تباعد في علاقة ai/growth"
+      ]
+    },
+    {
+      "rank": 5,
       "asset": "DXY",
       "score": 15,
       "live_change_pct": null,
@@ -221,7 +238,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 6,
       "asset": "VIX",
       "score": 15,
       "live_change_pct": null,
@@ -233,7 +250,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 7,
       "asset": "US10Y",
       "score": 15,
       "live_change_pct": null,
@@ -245,7 +262,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 8,
       "asset": "OIL",
       "score": 15,
       "live_change_pct": null,
@@ -254,20 +271,6 @@
       ],
       "drivers_ar": [
         "حساسية مباشرة للمحفز المجدول التالي"
-      ]
-    },
-    {
-      "rank": 8,
-      "asset": "NVDA",
-      "score": 8,
-      "live_change_pct": 0.1025,
-      "drivers_en": [
-        "sourced move magnitude +0.10%",
-        "confirming ai/growth relationship"
-      ],
-      "drivers_ar": [
-        "حجم التحرك الموثق +0.10%",
-        "تأكيد في علاقة ai/growth"
       ]
     },
     {
