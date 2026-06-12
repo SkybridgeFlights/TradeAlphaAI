@@ -638,6 +638,23 @@ html[dir="rtl"] .nr-empty::before {
 .nr-module[data-desk="alerts"] li[data-severity="elevated"] .nr-wire-headline { color: var(--nr-gold-bright); }
 
 .nr-module[data-desk="timeline"] li { font-variant-numeric: tabular-nums; }
+
+/* Phase 83: lifecycle emphasis remains editorial, not alert-like. */
+.nr-module[data-desk="memory"] [data-memory-state="dominant"],
+.nr-module[data-desk="memory"] [data-memory-state="crowded"],
+.nr-module[data-desk="memory"] [data-memory-state="unresolved"] {
+  border-inline-start-color: color-mix(in srgb, var(--nr-gold) 58%, transparent);
+}
+
+.nr-module[data-desk="memory"] [data-memory-state="weakening"],
+.nr-module[data-desk="memory"] [data-memory-state="fading"],
+.nr-module[data-desk="memory"] [data-memory-state="invalidated"] {
+  opacity: .74;
+}
+
+.nr-module[data-desk="memory"] .nr-badge {
+  letter-spacing: .06em;
+}
 .nr-module[data-desk="memory"] li .nr-wire-headline { color: var(--nr-text-soft); font-size: 0.83rem; }
 
 .nr-continuity { color: var(--nr-muted); }

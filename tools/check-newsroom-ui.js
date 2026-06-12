@@ -59,11 +59,11 @@ for (const page of ['index.html', 'ar/index.html']) {
     // Phase 82 behavioral contract. Every render exposes a bounded state
     // vocabulary. Current unverified source artifacts must remain calm,
     // open-paced and non-escalated.
-    const behaviorMatch = section.match(/class="section-panel newsroom" data-session="([^"]+)" data-behavior="([^"]+)" data-intensity="([^"]+)" data-pacing="([^"]+)" data-catalyst-focus="([^"]+)" data-divergence-focus="([^"]+)" data-stress="([^"]+)" data-behavior-verified="([^"]+)" data-desk-bias="([^"]*)"/);
+    const behaviorMatch = section.match(/class="section-panel newsroom" data-session="([^"]+)" data-behavior="([^"]+)" data-intensity="([^"]+)" data-pacing="([^"]+)" data-catalyst-focus="([^"]+)" data-divergence-focus="([^"]+)" data-stress="([^"]+)" data-behavior-verified="([^"]+)" data-memory-status="([^"]+)" data-memory-character="([^"]+)" data-desk-bias="([^"]*)"/);
     if (!behaviorMatch) {
       failures.push(`${page}: behavioral newsroom metadata missing`);
     } else {
-      const [, session, mode, intensity, pacing, catalystFocus, divergenceFocus, stressRaw, behaviorVerified, deskBias] = behaviorMatch;
+      const [, session, mode, intensity, pacing, catalystFocus, divergenceFocus, stressRaw, behaviorVerified, memoryStatus, memoryCharacter, deskBias] = behaviorMatch;
       const stress = Number(stressRaw);
       if (!['asia', 'europe', 'us-premarket', 'us-cash', 'after-hours', 'weekend'].includes(session)) failures.push(`${page}: invalid session personality "${session}"`);
       if (!BEHAVIOR_MODES.includes(mode)) failures.push(`${page}: invalid behavioral mode "${mode}"`);
@@ -73,6 +73,10 @@ for (const page of ['index.html', 'ar/index.html']) {
       if (!DIVERGENCE_FOCUS.includes(divergenceFocus)) failures.push(`${page}: invalid divergence focus "${divergenceFocus}"`);
       if (!Number.isInteger(stress) || stress < 0 || stress > 3) failures.push(`${page}: stress level outside 0..3`);
       if (!deskBias.split(',').filter(Boolean).length) failures.push(`${page}: behavioral desk bias missing`);
+      if (!['verified', 'holding'].includes(memoryStatus)) failures.push(`${page}: invalid editorial memory status "${memoryStatus}"`);
+      if (memoryStatus === 'holding' && memoryCharacter !== 'unavailable') failures.push(`${page}: held memory asserts a current market character`);
+      if (memoryStatus === 'holding' && section.includes('data-memory-state=')) failures.push(`${page}: held memory exposes current lifecycle claims`);
+      if (memoryStatus === 'holding' && section.includes('data-memory-thread=')) failures.push(`${page}: held memory leaks continuity into an active desk`);
       if (behaviorVerified === 'false' && (mode !== 'calm-monitoring' || intensity !== 'quiet' || pacing !== 'open' || stress !== 0 || catalystFocus !== 'none' || divergenceFocus !== 'none')) {
         failures.push(`${page}: unverified behavior escalated beyond calm mode`);
       }
@@ -81,6 +85,7 @@ for (const page of ['index.html', 'ar/index.html']) {
       }
     }
     if (!section.includes('data-lead-mode=')) failures.push(`${page}: state-aware lead mode missing`);
+    if (!section.includes(page === 'ar/index.html' ? 'الذاكرة التحريرية للسوق' : 'Editorial Market Memory')) failures.push(`${page}: editorial memory desk title missing`);
 
     // Phase 81 density and hierarchy: stable band order, every desk carries
     // adaptive metadata, passive desks remain compact, and high-signal desks
@@ -143,7 +148,7 @@ for (const page of ['index.html', 'ar/index.html']) {
 if (!fs.existsSync(path.join(ROOT, 'css', 'newsroom.css'))) failures.push('css/newsroom.css missing');
 else {
   const css = read('css/newsroom.css') || '';
-  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before', '[data-behavior="elevated-volatility"]', '[data-behavior="major-catalyst"]', '[data-divergence-focus="elevated"]']) {
+  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before', '[data-behavior="elevated-volatility"]', '[data-behavior="major-catalyst"]', '[data-divergence-focus="elevated"]', '[data-memory-state="unresolved"]']) {
     if (!css.includes(token)) failures.push(`css/newsroom.css: missing Phase 81 density rule ${token}`);
   }
 }

@@ -36,6 +36,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const MARKER_KEY = 'generated:newsroom-modules';
 const PULSE_MAX_AGE_HOURS = 48;
+const MEMORY_STATES = ['emerging', 'strengthening', 'dominant', 'crowded', 'weakening', 'fading', 'unresolved', 'invalidated'];
 
 function readJson(rel, fallback) {
   try { return JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8')); } catch { return fallback; }
@@ -511,6 +512,19 @@ function renderSection(locale) {
   const convergence = convRaw && convAgeHours <= PULSE_MAX_AGE_HOURS ? convRaw : null;
   const convVerified = Boolean(convergence && convergence.verified === true);
 
+  // Phase 83 editorial memory. Historical artifacts may outlive a live-data
+  // cycle, but only a verified artifact aligned to the current cognition date
+  // may influence today's lead or desk emphasis.
+  const editorialMemory = readJson('data/intelligence/editorial-market-memory.json', null);
+  const memoryCurrent = Boolean(
+    editorialMemory && editorialMemory.verified === true &&
+    cognition.run_date && editorialMemory.run_date === cognition.run_date
+  );
+  const memoryFocus = memoryCurrent ? (editorialMemory.current_focus || []) : [];
+  const memoryCharacter = memoryCurrent && editorialMemory.market_character
+    ? editorialMemory.market_character
+    : null;
+
   // Phase 80 product layer. The artifact is rebuilt before this renderer in
   // both daily and intraday workflows. Missing/stale output degrades to a
   // compact monitoring block rather than inventing a market read.
@@ -578,6 +592,7 @@ function renderSection(locale) {
   // never invented.
   const topDivergence = convVerified ? ((convergence.diverges || [])[0] || null) : null;
   const topObservation = cogFresh ? ((cognition.memory_observations || [])[0] || null) : null;
+  const topMemory = memoryFocus[0] || null;
   let leadHeadline;
   if (!behavior.verified_inputs) {
     leadHeadline = t(
@@ -594,8 +609,8 @@ function renderSection(locale) {
     );
   } else if (behavior.behavioral_mode === 'cross-asset-conflict' && topDivergence) {
     leadHeadline = ar ? topDivergence.ar : topDivergence.en;
-  } else if (behavior.behavioral_mode === 'calm-monitoring' && topObservation) {
-    leadHeadline = ar ? topObservation.ar : topObservation.en;
+  } else if (behavior.behavioral_mode === 'calm-monitoring' && (topMemory || topObservation)) {
+    leadHeadline = topMemory ? (ar ? topMemory.ar : topMemory.en) : (ar ? topObservation.ar : topObservation.en);
   } else {
     leadHeadline = topStory
       || (verified ? pulse.pulse_banner : null)
@@ -636,6 +651,14 @@ function renderSection(locale) {
   }
   if (topObservation) {
     leadLines.push([t('Continuity', 'الاستمرارية'), ar ? topObservation.ar : topObservation.en]);
+  }
+  const persistentMemory = memoryFocus.find((item) => item.kind === 'narrative' && item.id !== (topMemory && topMemory.id));
+  if (persistentMemory) {
+    leadLines.push([t('What persists', 'ما الذي يستمر'), ar ? persistentMemory.ar : persistentMemory.en]);
+  }
+  const failedMemory = memoryCurrent ? ((editorialMemory.failed_expectations || [])[0] || null) : null;
+  if (failedMemory) {
+    leadLines.push([t('What failed to confirm', 'ما لم يتأكد'), ar ? failedMemory.ar : failedMemory.en]);
   }
   if (convVerified && convergence.coherence && convergence.coherence.score !== null) {
     leadLines.push([t('Regime coherence', 'اتساق النظام'), ar ? convergence.coherence.ar : convergence.coherence.en]);
@@ -739,7 +762,7 @@ function renderSection(locale) {
     ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('Rotation structure remains under observation until participation inputs are verified.', 'تبقى بنية التناوب قيد الرصد إلى أن تتأكد بيانات المشاركة في السوق.')}</li>`;
 
-  const riskDesk = verified
+  let riskDesk = verified
     ? [
       [t('Volatility regime', 'نظام التقلب'), dims.volatility_regime],
       [t('Market fragility', 'هشاشة السوق'), dims.market_fragility],
@@ -747,6 +770,10 @@ function renderSection(locale) {
       [t('Duration stress', 'ضغط الحساسية للفائدة'), dims.duration_pressure],
     ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('Risk conditions are being monitored; no verified stress state is asserted this cycle.', 'تخضع ظروف المخاطر للرصد؛ ولا تُعتمد حالة ضغط قبل اكتمال هذه الدورة الموثقة.')}</li>`;
+  const riskMemory = memoryFocus.find((item) => ['market-fragility', 'liquidity-compression', 'defensive-rotation', 'volatility-compression'].includes(item.id));
+  if (verified && riskMemory) {
+    riskDesk += `\n              <li data-memory-thread="${escapeHtml(riskMemory.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="low">${t('CONTINUITY', 'استمرارية')}</span> ${escapeHtml(ar ? riskMemory.ar : riskMemory.en)}</span></li>`;
+  }
 
   const commentary = verified
     ? (pulse.desk_commentary || []).map((line) => `<li><span class="nr-wire-headline">${escapeHtml(line)}</span></li>`).join('\n              ')
@@ -758,9 +785,21 @@ function renderSection(locale) {
     : `<li class="nr-empty">${t('No verified state transitions this cycle — desk in monitoring mode.', 'لا تحولات حالة موثقة في هذه الدورة — المكتب في وضع المراقبة.')}</li>`;
 
   const memoryObs = cogFresh ? (cognition.memory_observations || []) : [];
-  const memoryHtml = memoryObs.length
-    ? memoryObs.slice(0, 4).map((o) => `<li><span class="nr-wire-headline">${escapeHtml(ar ? o.ar : o.en)}</span></li>`).join('\n              ')
-    : `<li class="nr-empty">${t('Cross-session memory builds as verified sessions accumulate.', 'تتكوّن ذاكرة الجلسات مع تراكم الجلسات الموثقة.')}</li>`;
+  const lifecycleLabels = {
+    en: { emerging: 'EMERGING', strengthening: 'STRENGTHENING', dominant: 'DOMINANT', crowded: 'CROWDED', weakening: 'WEAKENING', fading: 'FADING', unresolved: 'UNRESOLVED', invalidated: 'INVALIDATED', failed: 'FAILED TEST', 'ignored-by-price': 'UNPRICED' },
+    ar: { emerging: 'ناشئة', strengthening: 'تتعزز', dominant: 'مهيمنة', crowded: 'مزدحمة', weakening: 'تضعف', fading: 'تتلاشى', unresolved: 'غير محسومة', invalidated: 'انتفت', failed: 'اختبار لم يتحقق', 'ignored-by-price': 'دون تسعير' },
+  };
+  const memoryHtml = memoryFocus.length
+    ? memoryFocus.slice(0, 4).map((item) => {
+      const state = MEMORY_STATES.includes(item.state) || ['failed', 'ignored-by-price'].includes(item.state) ? item.state : 'emerging';
+      const sessions = Number.isInteger(item.sessions) && item.sessions > 1
+        ? `<span class="nr-meta">${ar ? `${item.sessions} جلسات` : `${item.sessions} sessions`}</span>`
+        : '';
+      return `<li data-memory-state="${escapeHtml(state)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="low">${escapeHtml(lifecycleLabels[locale][state])}</span> ${escapeHtml(ar ? item.ar : item.en)}</span>${sessions}</li>`;
+    }).join('\n              ')
+    : memoryObs.length && memoryCurrent
+      ? memoryObs.slice(0, 4).map((o) => `<li><span class="nr-wire-headline">${escapeHtml(ar ? o.ar : o.en)}</span></li>`).join('\n              ')
+      : `<li class="nr-empty">${t('Editorial memory is held until the next verified session; prior claims are not extended.', 'تظل الذاكرة التحريرية معلقة حتى الجلسة الموثقة التالية، ولا يجري تمديد أي استنتاج سابق.')}</li>`;
 
   // ── Macro cognition modules (Phase 75) ──────────────────────────────────
   const convictionRows = [];
@@ -791,9 +830,13 @@ function renderSection(locale) {
   const observedLinks = convVerified
     ? [...(convergence.diverges || []), ...(convergence.confirms || [])].slice(0, 6)
     : [];
-  const crossAssetHtml = observedLinks.length
+  let crossAssetHtml = observedLinks.length
     ? observedLinks.map((l) => `<li><span class="nr-wire-headline"><span class="nr-badge" data-urgency="${LINK_STATE_TIER[l.state] || 'low'}">${escapeHtml(LINK_STATE_LABEL[locale][l.state] || l.state)}</span> <strong>${escapeHtml(l.legs.join('/').toUpperCase())}</strong> — ${escapeHtml(ar ? l.ar : l.en)}${l.chain_strength >= 2 ? ` <em class="nr-contra">×${l.chain_strength}</em>` : ''}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('Cross-asset links await two-leg sourced quotes this session.', 'روابط الأصول بانتظار تسعير موثق لطرفي العلاقة في هذه الجلسة.')}</li>`;
+  const crossAssetMemory = memoryFocus.find((item) => ['cross-asset-conflict', 'gold-resilience', 'dollar-strength', 'yield-pressure'].includes(item.id));
+  if (convVerified && crossAssetMemory) {
+    crossAssetHtml += `\n              <li data-memory-thread="${escapeHtml(crossAssetMemory.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="low">${t('CONTINUITY', 'استمرارية')}</span> ${escapeHtml(ar ? crossAssetMemory.ar : crossAssetMemory.en)}</span></li>`;
+  }
 
   const pressureTracks = macroVerified
     ? Object.entries((macro.pressure && macro.pressure.tracks) || {})
@@ -807,6 +850,10 @@ function renderSection(locale) {
   }
   for (const [key, track] of pressureTracks) {
     positioningRows.push(`<li><span class="nr-wire-headline">${escapeHtml(ar ? track.ar : track.en)}</span><span class="nr-meta">${track.score}/5 · ${escapeHtml(stateLabel(track.state, ar))}</span></li>`);
+  }
+  const positioningMemory = memoryFocus.find((item) => ['narrow-leadership', 'speculative-momentum'].includes(item.id));
+  if (macroVerified && positioningMemory) {
+    positioningRows.push(`<li data-memory-thread="${escapeHtml(positioningMemory.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="low">${t('CONTINUITY', 'استمرارية')}</span> ${escapeHtml(ar ? positioningMemory.ar : positioningMemory.en)}</span></li>`);
   }
   const positioningHtml = positioningRows.length
     ? positioningRows.join('\n              ')
@@ -841,7 +888,7 @@ function renderSection(locale) {
     risk: { title: t('Risk Desk', 'مكتب المخاطر'), body: riskDesk },
     macro: { title: t('Macro Desk View', 'رؤية مكتب الماكرو'), body: commentary },
     alerts: { title: t('Desk Alerts', 'تنبيهات المكتب'), body: alertsHtml },
-    memory: { title: t('Market Memory', 'ذاكرة السوق'), body: memoryHtml },
+    memory: { title: t('Editorial Market Memory', 'الذاكرة التحريرية للسوق'), body: memoryHtml },
     timeline: { title: t('Market State Evolution', 'تطور حالة السوق'), body: timelineHtml },
     conviction: { title: t('Desk Conviction', 'قناعة المكتب'), body: convictionHtml },
     scenarios: { title: t('Scenario Monitor', 'مراقبة السيناريوهات'), body: scenariosHtml },
@@ -879,7 +926,10 @@ function renderSection(locale) {
     risk: { count: verified ? 4 : 0, priority: prioritize('risk', stressed ? 'critical' : (verified ? 'high' : 'quiet')) },
     macro: { count: verified ? (pulse.desk_commentary || []).length : 0, priority: prioritize('macro', verified && focus === 'macro' ? 'high' : (verified ? 'normal' : 'quiet')) },
     alerts: { count: cogAlerts.length, priority: prioritize('alerts', cogAlerts.some((item) => item.severity === 'high') ? 'critical' : (cogAlerts.length ? 'high' : 'quiet')) },
-    memory: { count: memoryObs.length, priority: prioritize('memory', memoryObs.length ? 'normal' : 'quiet') },
+    memory: {
+      count: memoryFocus.length || (memoryCurrent ? memoryObs.length : 0),
+      priority: prioritize('memory', memoryFocus.length || (memoryCurrent && memoryObs.length) ? 'normal' : 'quiet'),
+    },
     timeline: { count: timelineEvents.length, priority: timelineEvents.length ? 'normal' : 'quiet' },
     conviction: { count: convictionRows.length, priority: prioritize('conviction', convictionRows.length ? 'high' : 'quiet') },
     scenarios: { count: scenarioItems.length, priority: prioritize('scenarios', scenarioItems.some((item) => item.status === 'active') ? 'high' : (scenarioItems.length ? 'normal' : 'quiet')) },
@@ -951,7 +1001,7 @@ function renderSection(locale) {
 
   return `
       <section class="section section-tight" id="newsroom-live">
-        <div class="section-panel newsroom" data-session="${session}" data-behavior="${behavior.behavioral_mode}" data-intensity="${behavior.editorial_intensity}" data-pacing="${behavior.pacing_density}" data-catalyst-focus="${behavior.catalyst_focus}" data-divergence-focus="${behavior.divergence_focus}" data-stress="${behavior.stress_level}" data-behavior-verified="${behavior.verified_inputs}" data-desk-bias="${behavior.desk_priority_bias.join(',')}" dir="${ar ? 'rtl' : 'ltr'}">
+        <div class="section-panel newsroom" data-session="${session}" data-behavior="${behavior.behavioral_mode}" data-intensity="${behavior.editorial_intensity}" data-pacing="${behavior.pacing_density}" data-catalyst-focus="${behavior.catalyst_focus}" data-divergence-focus="${behavior.divergence_focus}" data-stress="${behavior.stress_level}" data-behavior-verified="${behavior.verified_inputs}" data-memory-status="${memoryCurrent ? 'verified' : 'holding'}" data-memory-character="${memoryCharacter ? escapeHtml(memoryCharacter.id) : 'unavailable'}" data-desk-bias="${behavior.desk_priority_bias.join(',')}" dir="${ar ? 'rtl' : 'ltr'}">
           <div class="newsroom-head">
             <h2 class="newsroom-title">${t('TradeAlphaAI Terminal', 'منصة TradeAlphaAI')} · <span class="nr-edition">${escapeHtml(edition)}</span></h2>
             <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}${macroVerified && macro.desk_focus ? `<span class="nr-desk-focus" data-focus="${escapeHtml(macro.desk_focus.focus)}">${t('Desk focus', 'تركيز المكتب')}: ${escapeHtml(FOCUS_LABELS[locale][macro.desk_focus.focus] || macro.desk_focus.focus)}</span>` : ''}</span>
