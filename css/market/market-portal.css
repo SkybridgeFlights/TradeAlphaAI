@@ -4092,3 +4092,68 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Editorial reading rhythm (Phase 86) ─────────────────────────────────
+   Institutional research reading experience for article and market-outlook
+   body copy. Scoped to direct section children so card/preview copy keeps
+   its existing density. CSS-only — no markup or behavior changes. */
+
+.market-section > .market-copy {
+  max-width: 74ch;
+  font-size: 1.02rem;
+  line-height: 1.78;
+}
+
+.market-section > .market-copy + .market-copy {
+  margin-top: 16px;
+}
+
+/* Lead paragraph: the entry of each section carries slightly more presence */
+.market-section-head + .market-copy,
+.market-section > .market-copy:first-of-type {
+  font-size: 1.08rem;
+  line-height: 1.72;
+  color: var(--market-text, #f4f7f1);
+}
+
+/* Pull-quote treatment — restrained editorial emphasis, gold editorial bar */
+.market-section blockquote {
+  margin: 26px 0;
+  padding: 4px 22px;
+  border-inline-start: 3px solid var(--market-gold, #d8b15a);
+  font-size: 1.16rem;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--market-text, #f4f7f1);
+  max-width: 64ch;
+}
+
+.market-section blockquote p { margin: 0; }
+
+/* Editorial visual slot anchor (Phase 86 architecture — inert until a
+   renderer resolves <!-- editorial:visual-slot --> markers) */
+.editorial-visual-slot {
+  margin: 28px 0;
+  min-height: 0;
+}
+
+/* Arabic research reading — native rhythm, never compressed */
+.localized-ar .market-section > .market-copy,
+html[dir="rtl"] .market-section > .market-copy {
+  line-height: 1.95;
+  max-width: 70ch;
+}
+
+.localized-ar .market-section-head + .market-copy,
+html[dir="rtl"] .market-section > .market-copy:first-of-type {
+  line-height: 1.9;
+}
+
+html[dir="rtl"] .market-section blockquote { line-height: 1.85; }
+
+@media (max-width: 640px) {
+  .market-section > .market-copy { font-size: 1rem; }
+  .market-section-head + .market-copy,
+  .market-section > .market-copy:first-of-type { font-size: 1.04rem; }
+  .market-section blockquote { padding: 2px 16px; font-size: 1.08rem; }
+}

@@ -166,8 +166,20 @@ ${causalChains.map((t) => `- ${t}`).join('\n')}
 
 REALISM SAFETY: never invent data, firms, quotes, earnings, or price targets. When evidence is soft, use attributed market framing: ${ATTRIBUTED_FRAMES.slice(0, 4).map((f) => `"${f}"`).join(', ')}.
 
-${NARRATIVE_ARC}`;
+${NARRATIVE_ARC}
+
+${HUMAN_PACING}`;
 }
+
+// ── Human pacing system (Phase 86 — anti-AI cadence) ─────────────────────────
+const HUMAN_PACING = `HUMAN PACING SYSTEM (the reader must feel a human analyst, never a template):
+- Paragraph lengths must vary visibly: mix one-sentence pivots with four-to-six sentence analysis. Never produce three consecutive paragraphs of similar length.
+- Never structure sections symmetrically (same paragraph count per section reads as machine output).
+- FORBIDDEN transitions: "furthermore", "moreover", "additionally", "in conclusion", "overall", "it is worth noting", "it is important to note", "in today's fast-paced", "in the ever-evolving". Move between ideas through the market logic itself, not connective filler.
+- Buzzword restraint: at most one use each of "landscape", "navigate", "robust", "dynamic", "underscore" — prefer concrete market language.
+- Emphasis modulation: allow one restrained moment of conviction per piece (a short declarative paragraph); everywhere else, let evidence carry the weight.
+- Narrative pivots: at least once, deliberately turn the argument ("That is the consensus read. The flows disagree.") — observation correcting interpretation.
+- Uncertainty is institutional: say what would prove the read wrong before the piece ends.`;
 
 // Arabic financial-media voice — senior Arabic market editor register.
 const AR_TRANSITIONS = [
@@ -187,7 +199,14 @@ function buildArabicVoiceBlock(slug) {
 - صعّد مستوى القناعة تدريجيا عبر المقال بدل حسم الرأي من السطر الأول
 - أمثلة على نسق الانتقالات المطلوب (استلهم الأسلوب ولا تنسخ حرفيا):
 ${transitions.map((t) => `  • ${t}`).join('\n')}
-- عند ضعف الأدلة استخدم صيغ الإسناد: "تشير التمركزات إلى…"، "يركز المتداولون بشكل متزايد على…"، "توحي التدفقات بأن…"`;
+- عند ضعف الأدلة استخدم صيغ الإسناد: "تشير التمركزات إلى…"، "يركز المتداولون بشكل متزايد على…"، "توحي التدفقات بأن…"
+
+نظام الإيقاع البشري (ممنوع إيقاع الترجمة الآلية):
+- لا تبدأ فقرتين متتاليتين بالأداة نفسها (إن/و/كما/في) — نوّع المداخل كما يفعل محرر حقيقي
+- ممنوع سلاسل الربط المترجمة: "بالإضافة إلى ذلك"، "علاوة على ذلك"، "ومن الجدير بالذكر"، "في الختام" — الانتقال يكون عبر منطق السوق نفسه
+- نوّع أطوال الجمل: جملة عربية قصيرة حاسمة بعد فقرة تحليلية طويلة تصنع الإيقاع الصحفي المطلوب
+- فقرة ضاربة واحدة على الأقل من جملة واحدة عند نقطة تحول في القراءة
+- اذكر قبل نهاية المقال ما الذي قد يُبطل هذه القراءة — فالتحوط المهني جزء من الصوت المؤسسي`;
 }
 
 module.exports = {
@@ -199,6 +218,7 @@ module.exports = {
   ASSET_CAUSAL_MAP,
   ATTRIBUTED_FRAMES,
   NARRATIVE_ARC,
+  HUMAN_PACING,
   relevantCausalChains,
   buildVoicePromptBlock,
   buildArabicVoiceBlock,
