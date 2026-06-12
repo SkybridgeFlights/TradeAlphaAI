@@ -246,6 +246,7 @@ jobs:
           node tools/build-macro-cognition.js --write || echo "[macro-cognition] Build degraded — continuing"
           node tools/build-narrative-convergence.js --write || echo "[convergence] Build degraded — continuing"
           node tools/build-editorial-market-memory.js --write || echo "[editorial-memory] Build degraded — continuing"
+          node tools/build-structural-tension.js --write || echo "[structural-tension] Build degraded — continuing"
           node tools/build-intelligence-briefs.js --write || echo "[product-brief] Build degraded — continuing"
           node tools/build-intraday-brief.js --write || echo "[intraday-brief] Build degraded — continuing"
           node tools/render-newsroom-modules.js || echo "[newsroom] Product render degraded — continuing"
@@ -287,6 +288,8 @@ jobs:
           npm run check:narrative-convergence
           npm run test:editorial-memory
           npm run check:editorial-memory
+          npm run test:structural-tension
+          npm run check:structural-tension
           npm run check:intelligence-productization
           npm run test:newsroom-behavior
           npm run check:macro-intelligence
@@ -572,7 +575,7 @@ jobs:
             stage_paths market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard
             stage_paths js/visual-intelligence.js css/visual-intelligence.css js/market-replay.js css/newsroom.css
             stage_paths market-replay ar/market-replay
-            stage_paths data/intelligence/historical-memory.json data/intelligence/narrative-continuity.json data/intelligence/editorial-market-memory.json
+            stage_paths data/intelligence/historical-memory.json data/intelligence/narrative-continuity.json data/intelligence/editorial-market-memory.json data/intelligence/structural-tension.json
             stage_paths data/system-status/market-intelligence-status.json data/system-status/intelligence-health.json
             stage_paths logs/intelligence-quality-history.json data/feeds data/narrative-memory.json
             stage_paths data/telegram-delivery-ledger.json

@@ -17,6 +17,8 @@ const INTENSITIES = ['quiet', 'measured', 'elevated'];
 const PACING = ['open', 'balanced', 'compressed'];
 const CATALYST_FOCUS = ['none', 'watch', 'near', 'imminent'];
 const DIVERGENCE_FOCUS = ['none', 'watch', 'elevated'];
+const REGIME_PRESSURE = ['stable-regime', 'pressured-regime', 'unstable-regime', 'transition-forming-regime', 'internally-conflicted-regime', 'unverified'];
+const TENSION_LEVELS = ['contained', 'building', 'elevated', 'acute', 'unverified'];
 
 function read(rel) {
   try { return fs.readFileSync(path.join(ROOT, rel), 'utf8'); } catch { return null; }
@@ -59,11 +61,11 @@ for (const page of ['index.html', 'ar/index.html']) {
     // Phase 82 behavioral contract. Every render exposes a bounded state
     // vocabulary. Current unverified source artifacts must remain calm,
     // open-paced and non-escalated.
-    const behaviorMatch = section.match(/class="section-panel newsroom" data-session="([^"]+)" data-behavior="([^"]+)" data-intensity="([^"]+)" data-pacing="([^"]+)" data-catalyst-focus="([^"]+)" data-divergence-focus="([^"]+)" data-stress="([^"]+)" data-behavior-verified="([^"]+)" data-memory-status="([^"]+)" data-memory-character="([^"]+)" data-desk-bias="([^"]*)"/);
+    const behaviorMatch = section.match(/class="section-panel newsroom" data-session="([^"]+)" data-behavior="([^"]+)" data-intensity="([^"]+)" data-pacing="([^"]+)" data-catalyst-focus="([^"]+)" data-divergence-focus="([^"]+)" data-stress="([^"]+)" data-behavior-verified="([^"]+)" data-memory-status="([^"]+)" data-memory-character="([^"]+)" data-tension-status="([^"]+)" data-regime-pressure="([^"]+)" data-tension-level="([^"]+)" data-desk-bias="([^"]*)"/);
     if (!behaviorMatch) {
       failures.push(`${page}: behavioral newsroom metadata missing`);
     } else {
-      const [, session, mode, intensity, pacing, catalystFocus, divergenceFocus, stressRaw, behaviorVerified, memoryStatus, memoryCharacter, deskBias] = behaviorMatch;
+      const [, session, mode, intensity, pacing, catalystFocus, divergenceFocus, stressRaw, behaviorVerified, memoryStatus, memoryCharacter, tensionStatus, regimePressure, tensionLevel, deskBias] = behaviorMatch;
       const stress = Number(stressRaw);
       if (!['asia', 'europe', 'us-premarket', 'us-cash', 'after-hours', 'weekend'].includes(session)) failures.push(`${page}: invalid session personality "${session}"`);
       if (!BEHAVIOR_MODES.includes(mode)) failures.push(`${page}: invalid behavioral mode "${mode}"`);
@@ -77,6 +79,11 @@ for (const page of ['index.html', 'ar/index.html']) {
       if (memoryStatus === 'holding' && memoryCharacter !== 'unavailable') failures.push(`${page}: held memory asserts a current market character`);
       if (memoryStatus === 'holding' && section.includes('data-memory-state=')) failures.push(`${page}: held memory exposes current lifecycle claims`);
       if (memoryStatus === 'holding' && section.includes('data-memory-thread=')) failures.push(`${page}: held memory leaks continuity into an active desk`);
+      if (!['verified', 'holding'].includes(tensionStatus)) failures.push(`${page}: invalid structural tension status "${tensionStatus}"`);
+      if (!REGIME_PRESSURE.includes(regimePressure)) failures.push(`${page}: invalid regime pressure "${regimePressure}"`);
+      if (!TENSION_LEVELS.includes(tensionLevel)) failures.push(`${page}: invalid tension level "${tensionLevel}"`);
+      if (tensionStatus === 'holding' && (regimePressure !== 'unverified' || tensionLevel !== 'unverified')) failures.push(`${page}: held tension asserts a structural condition`);
+      if (tensionStatus === 'holding' && (section.includes('data-tension-thread=') || section.includes('nr-tension-window'))) failures.push(`${page}: held tension leaks structural emphasis`);
       if (behaviorVerified === 'false' && (mode !== 'calm-monitoring' || intensity !== 'quiet' || pacing !== 'open' || stress !== 0 || catalystFocus !== 'none' || divergenceFocus !== 'none')) {
         failures.push(`${page}: unverified behavior escalated beyond calm mode`);
       }
@@ -148,7 +155,7 @@ for (const page of ['index.html', 'ar/index.html']) {
 if (!fs.existsSync(path.join(ROOT, 'css', 'newsroom.css'))) failures.push('css/newsroom.css missing');
 else {
   const css = read('css/newsroom.css') || '';
-  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before', '[data-behavior="elevated-volatility"]', '[data-behavior="major-catalyst"]', '[data-divergence-focus="elevated"]', '[data-memory-state="unresolved"]']) {
+  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before', '[data-behavior="elevated-volatility"]', '[data-behavior="major-catalyst"]', '[data-divergence-focus="elevated"]', '[data-memory-state="unresolved"]', '[data-tension-level="elevated"]']) {
     if (!css.includes(token)) failures.push(`css/newsroom.css: missing Phase 81 density rule ${token}`);
   }
 }
