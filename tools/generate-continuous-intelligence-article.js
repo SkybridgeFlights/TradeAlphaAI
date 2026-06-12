@@ -13,6 +13,7 @@ const fs   = require('fs');
 const path = require('path');
 const { renderGlobalHeader, globalHeaderStyles, globalHeaderScripts } = require('./render-global-header');
 const { renderArticleVisualSection } = require('./render-editorial-visuals');
+const { renderArticleGraphicsSection } = require('./render-editorial-graphics');
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -377,6 +378,7 @@ function buildArticleHtml(topic, ar, regimeV2, intelCtx, continuity, history, tr
   const sections = [
     buildExecutiveSummary(topic, regimeV2, ar),
     renderArticleVisualSection(`${topic.title_en || ''} ${topic.title_ar || ''} ${topic.family || ''}`, locale),
+    renderArticleGraphicsSection(`${topic.title_en || ''} ${topic.title_ar || ''} ${topic.family || ''}`, locale),
     buildWhatChanged(topic, ar),
     buildEvidenceMap(topic, regimeV2, ar),
     buildCrossAssetInterpretation(topic, transmission, etfFlow, ar),
@@ -405,6 +407,7 @@ function buildArticleHtml(topic, ar, regimeV2, intelCtx, continuity, history, tr
   <link rel="stylesheet" href="/css/market/market-portal.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/visual-intelligence.css" />
+  <link rel="stylesheet" href="/css/editorial-graphics.css" />
   <meta property="og:title" content="${esc(title)}" />
   <meta property="og:description" content="${esc(description)}" />
   <meta property="og:url" content="${canonical}" />

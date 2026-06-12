@@ -30,6 +30,7 @@ const path = require('path');
 const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
 const { updateOutlookPublication } = require('./update-market-outlook-publication');
 const { renderOutlookVisualSection } = require('./render-editorial-visuals');
+const { renderOutlookGraphicsSection } = require('./render-editorial-graphics');
 
 const ROOT          = path.resolve(__dirname, '..');
 const CAL_PATH      = path.join(ROOT, 'data', 'economic-calendar.json');
@@ -165,6 +166,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/editorial-graphics.css" />
   ${buildJsonLd(title, description, today, slug)}
 </head>
 <body class="market-page">
@@ -185,6 +187,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
       ${narrative.regime_narrative ? `<section class="market-section"><div class="narrative-callout">${esc(narrative.regime_narrative)}</div></section>` : ''}
 
       ${renderOutlookVisualSection('en')}
+      ${renderOutlookGraphicsSection('en')}
 
       ${regime?.regime ? buildRegimeSection(regime) : ''}
       ${ratePath?.fed_path?.current_stance ? buildRatePathSection(ratePath) : ''}
@@ -263,6 +266,7 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/editorial-graphics.css" />
   ${buildJsonLd(title, description, new Date().toISOString().slice(0, 10), `weekly-${weekSlug}`)}
 </head>
 <body class="market-page">
@@ -286,6 +290,7 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
       </section>
 
       ${renderOutlookVisualSection('en')}
+      ${renderOutlookGraphicsSection('en')}
 
       ${regime?.regime ? buildRegimeSection(regime) : ''}
       ${ratePath?.fed_path?.current_stance ? buildRatePathSection(ratePath) : ''}

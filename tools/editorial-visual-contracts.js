@@ -18,9 +18,13 @@ const VISUAL_KINDS = [
   'volatility',       // volatility regime visual
   'liquidity',        // liquidity/pressure map
   'catalyst',         // catalyst countdown/impact overlay
+  'regime',           // structural regime/transition composition
+  'positioning',      // concentration/positioning composition
+  'timeline',         // editorial memory timeline
+  'monitoring',       // calm-state monitoring card
 ];
 
-const EXPORT_TARGETS = ['article-inline', 'outlook-inline', 'telegram', 'x', 'instagram', 'facebook'];
+const EXPORT_TARGETS = ['article-inline', 'outlook-inline', 'telegram', 'x', 'instagram', 'facebook', 'linkedin'];
 
 // Bilingual context contract every rendered visual must carry — visuals are
 // editorial objects, not decorations.
