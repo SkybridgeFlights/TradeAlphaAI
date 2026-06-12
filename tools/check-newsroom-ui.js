@@ -45,8 +45,37 @@ for (const page of ['index.html', 'ar/index.html']) {
     if (symbols.length && new Set(symbols).size !== symbols.length) failures.push(`${page}: duplicate asset symbols in strip`);
     if (!section.includes('nr-edition')) failures.push(`${page}: session edition label missing`);
     if (!section.includes('nr-hero-ribbon')) failures.push(`${page}: hero intelligence ribbon missing`);
+    if (count(section, 'class="newsroom-flow"') !== 1) failures.push(`${page}: institutional newsroom flow missing or duplicated`);
+    if (section.includes('class="newsroom-grid"')) failures.push(`${page}: legacy flat newsroom grid still rendered`);
     if (count(section, 'data-desk="risk"') !== 1 || count(section, 'data-desk="macro"') !== 1) {
       failures.push(`${page}: desk modules missing or duplicated`);
+    }
+
+    // Phase 81 density and hierarchy: stable band order, every desk carries
+    // adaptive metadata, passive desks remain compact, and high-signal desks
+    // cannot fall below the priority band.
+    const priorityAt = section.indexOf('data-band="priority"');
+    const secondaryAt = section.indexOf('data-band="secondary"');
+    const continuityAt = section.indexOf('data-band="continuity"');
+    if (!(priorityAt >= 0 && secondaryAt > priorityAt && continuityAt > secondaryAt)) {
+      failures.push(`${page}: desk bands missing or outside priority > structure > continuity order`);
+    }
+    for (const band of ['priority', 'secondary', 'continuity']) {
+      if (count(section, `data-band="${band}"`) !== 1) failures.push(`${page}: desk band "${band}" missing or duplicated`);
+    }
+    const modules = [...section.matchAll(/<div class="nr-module" data-desk="([^"]+)" data-density="([^"]+)" data-priority="([^"]+)" data-state="([^"]+)">([\s\S]*?)<\/div>/g)];
+    if (modules.length !== 13) failures.push(`${page}: expected 13 density-aware desk modules, found ${modules.length}`);
+    for (const [, desk, density, priority, state, body] of modules) {
+      if (!['quiet', 'compact', 'standard', 'expanded'].includes(density)) failures.push(`${page}: ${desk} invalid density "${density}"`);
+      if (!['quiet', 'normal', 'high', 'critical'].includes(priority)) failures.push(`${page}: ${desk} invalid priority "${priority}"`);
+      if (!['monitoring', 'active'].includes(state)) failures.push(`${page}: ${desk} invalid state "${state}"`);
+      if (state === 'monitoring' && density !== 'quiet') failures.push(`${page}: monitoring desk ${desk} is not compact`);
+      if (state === 'active' && density === 'quiet') failures.push(`${page}: active desk ${desk} has quiet density`);
+      if (state === 'monitoring' && !body.includes('nr-empty')) failures.push(`${page}: monitoring desk ${desk} lacks intentional empty-state copy`);
+    }
+    const priorityBand = section.slice(priorityAt, secondaryAt);
+    for (const match of section.matchAll(/<div class="nr-module" data-desk="([^"]+)" data-density="[^"]+" data-priority="(high|critical)"/g)) {
+      if (!priorityBand.includes(`data-desk="${match[1]}"`)) failures.push(`${page}: high-priority desk ${match[1]} rendered below priority band`);
     }
 
     // Phase 74 cognition checks: alerts/memory/timeline desks rendered exactly
@@ -81,6 +110,12 @@ for (const page of ['index.html', 'ar/index.html']) {
 }
 
 if (!fs.existsSync(path.join(ROOT, 'css', 'newsroom.css'))) failures.push('css/newsroom.css missing');
+else {
+  const css = read('css/newsroom.css') || '';
+  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before']) {
+    if (!css.includes(token)) failures.push(`css/newsroom.css: missing Phase 81 density rule ${token}`);
+  }
+}
 
 if (failures.length) {
   failures.forEach((f) => console.error(`[newsroom-ui] FAIL: ${f}`));

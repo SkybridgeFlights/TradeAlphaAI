@@ -132,9 +132,36 @@ const ASSET_NAME_AR = {
   'Crypto': 'العملات الرقمية',
 };
 
+const CATALYST_NAME_AR = {
+  'Retail Sales': 'مبيعات التجزئة',
+  'FOMC Rate Decision': 'قرار الفائدة للاحتياطي الفيدرالي',
+  'Initial Jobless Claims': 'طلبات إعانة البطالة الأولية',
+  'PCE': 'مؤشر نفقات الاستهلاك الشخصي',
+  'CPI': 'مؤشر أسعار المستهلك',
+  'Core CPI': 'مؤشر أسعار المستهلك الأساسي',
+  'Nonfarm Payrolls': 'الوظائف غير الزراعية',
+  'Unemployment Rate': 'معدل البطالة',
+  'GDP': 'الناتج المحلي الإجمالي',
+};
+
 function assetName(name, ar) {
   if (!ar) return String(name || '');
   return ASSET_NAME_AR[String(name || '').trim()] || String(name || '');
+}
+
+function catalystName(name, ar) {
+  if (!ar) return String(name || '');
+  return CATALYST_NAME_AR[String(name || '').trim()] || String(name || '');
+}
+
+function localizeCatalystsInText(value, ar) {
+  let text = String(value || '');
+  if (!ar) return text;
+  for (const [en, localized] of Object.entries(CATALYST_NAME_AR)) {
+    text = text.replaceAll(`بـ${en}`, `ب${localized}`);
+    text = text.replaceAll(en, localized);
+  }
+  return text;
 }
 
 const SEVERITY_LABELS = {
@@ -381,7 +408,7 @@ function renderSection(locale) {
   const heroRibbon = `
           <div class="nr-hero-ribbon">
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Top story', 'القصة الأبرز')}</span>${escapeHtml(topStory || t('Desk monitoring — no dominant wire story', 'وضع المراقبة — لا قصة مهيمنة في الموجز'))}</span>
-            <span class="nr-hero-item"><span class="nr-hero-key">${t('Next catalyst', 'المحفز التالي')}</span>${topCatalyst ? escapeHtml(topCatalyst.name) : t('none scheduled', 'لا شيء مجدول')}</span>
+            <span class="nr-hero-item"><span class="nr-hero-key">${t('Next catalyst', 'المحفز التالي')}</span>${topCatalyst ? escapeHtml(catalystName(topCatalyst.name, ar)) : t('none scheduled', 'لا شيء مجدول')}</span>
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>${macroVerified && macro.conviction && macro.conviction.state !== 'unverified' ? `
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Conviction', 'القناعة')}</span>${escapeHtml(CONVICTION_LABELS[locale][macro.conviction.state] || macro.conviction.state)}</span>` : ''}${transitionItem}
           </div>`;
@@ -434,7 +461,7 @@ function renderSection(locale) {
   }
   if (topCatalyst) {
     const when = String(topCatalyst.time || '').includes('T') ? String(topCatalyst.time).slice(11, 16) + ' UTC' : String(topCatalyst.time || '');
-    leadLines.push([t('What the desk awaits', 'ما ينتظره المكتب'), `${topCatalyst.name}${when ? ` — ${when}` : ''}`]);
+    leadLines.push([t('What the desk awaits', 'ما ينتظره المكتب'), `${catalystName(topCatalyst.name, ar)}${when ? ` — ${when}` : ''}`]);
   }
   const topObservation = cogFresh ? ((cognition.memory_observations || [])[0] || null) : null;
   if (topObservation) {
@@ -517,7 +544,7 @@ function renderSection(locale) {
   const catalystItems = catalysts.length
     ? catalysts.map((c) => {
       const when = String(c.time || '').includes('T') ? String(c.time).slice(11, 16) + ' UTC' : escapeHtml(String(c.time || ''));
-      return `<li><span class="nr-wire-headline">${escapeHtml(c.name)}</span><span class="nr-meta">${when}${c.assets && c.assets.length ? ' · ' + escapeHtml(c.assets.slice(0, 3).map((a) => assetName(a, ar)).join(ar ? '، ' : ', ')) : ''}</span></li>`;
+      return `<li><span class="nr-wire-headline">${escapeHtml(catalystName(c.name, ar))}</span><span class="nr-meta">${when}${c.assets && c.assets.length ? ' · ' + escapeHtml(c.assets.slice(0, 3).map((a) => assetName(a, ar)).join(ar ? '، ' : ', ')) : ''}</span></li>`;
     }).join('\n              ')
     : `<li class="nr-empty">${t('No high-impact catalysts on the calendar window.', 'لا محفزات عالية التأثير في نافذة المفكرة الحالية.')}</li>`;
 
@@ -533,19 +560,23 @@ function renderSection(locale) {
     ? movers.map((m) => `<li><span class="nr-wire-headline"><strong>${m.symbol}</strong> ${fmtChange(m.change)} — ${escapeHtml(classifyMove(m.symbol, m.change, dims, ar))}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('No outsized sourced moves this cycle.', 'لا تحركات كبيرة موثقة في هذه الدورة.')}</li>`;
 
-  const rotation = [
-    [t('Breadth', 'الاتساع'), dims.breadth_state],
-    [t('Defensive rotation', 'التناوب الدفاعي'), dims.defensive_rotation],
-    [t('Momentum concentration', 'تركز الزخم'), dims.momentum_concentration],
-    [t('Speculative appetite', 'شهية المضاربة'), dims.speculative_appetite],
-  ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ');
+  const rotation = verified
+    ? [
+      [t('Breadth', 'الاتساع'), dims.breadth_state],
+      [t('Defensive rotation', 'التناوب الدفاعي'), dims.defensive_rotation],
+      [t('Momentum concentration', 'تركز الزخم'), dims.momentum_concentration],
+      [t('Speculative appetite', 'شهية المضاربة'), dims.speculative_appetite],
+    ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ')
+    : `<li class="nr-empty">${t('Rotation structure remains under observation until participation inputs are verified.', 'تبقى بنية التناوب قيد الرصد إلى أن تتأكد بيانات المشاركة في السوق.')}</li>`;
 
-  const riskDesk = [
-    [t('Volatility regime', 'نظام التقلب'), dims.volatility_regime],
-    [t('Market fragility', 'هشاشة السوق'), dims.market_fragility],
-    [t('Liquidity state', 'حالة السيولة'), dims.liquidity_stress],
-    [t('Duration stress', 'ضغط الحساسية للفائدة'), dims.duration_pressure],
-  ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ');
+  const riskDesk = verified
+    ? [
+      [t('Volatility regime', 'نظام التقلب'), dims.volatility_regime],
+      [t('Market fragility', 'هشاشة السوق'), dims.market_fragility],
+      [t('Liquidity state', 'حالة السيولة'), dims.liquidity_stress],
+      [t('Duration stress', 'ضغط الحساسية للفائدة'), dims.duration_pressure],
+    ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ')
+    : `<li class="nr-empty">${t('Risk conditions are being monitored; no verified stress state is asserted this cycle.', 'تخضع ظروف المخاطر للرصد؛ ولا تُعتمد حالة ضغط قبل اكتمال هذه الدورة الموثقة.')}</li>`;
 
   const commentary = verified
     ? (pulse.desk_commentary || []).map((line) => `<li><span class="nr-wire-headline">${escapeHtml(line)}</span></li>`).join('\n              ')
@@ -615,7 +646,7 @@ function renderSection(locale) {
     ? (macro.scenarios || []).filter((s) => s.status !== 'dormant').slice(0, 5)
     : [];
   const scenariosHtml = scenarioItems.length
-    ? scenarioItems.map((s) => `<li data-scenario="${escapeHtml(s.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="${SCENARIO_STATUS_TIER[s.status] || 'low'}">${escapeHtml(SCENARIO_STATUS_LABELS[locale][s.status] || s.status)}</span> ${escapeHtml(ar ? s.ar : s.en)}</span></li>`).join('\n              ')
+    ? scenarioItems.map((s) => `<li data-scenario="${escapeHtml(s.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="${SCENARIO_STATUS_TIER[s.status] || 'low'}">${escapeHtml(SCENARIO_STATUS_LABELS[locale][s.status] || s.status)}</span> ${escapeHtml(localizeCatalystsInText(ar ? s.ar : s.en, ar))}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('Scenario monitor initializes with the next verified data cycle.', 'تبدأ مراقبة السيناريوهات مع دورة البيانات الموثقة التالية.')}</li>`;
 
   const timelineEvents = (cognition.timeline_tail || []).slice(0, 4);
@@ -664,13 +695,83 @@ function renderSection(locale) {
     else if (focus === 'macro') order = promote(order, ['macro', 'scenarios']);
   }
 
-  const moduleHtml = order.map((id) => `
-            <div class="nr-module" data-desk="${id}">
-              <h3>${modules[id].title}</h3>
-              <ul>
-              ${modules[id].body}
-              </ul>
-            </div>`).join('');
+  // Phase 81 layout intelligence: classify existing desk output for visual
+  // density and hierarchy only. No intelligence state is changed here.
+  const moduleMetrics = {
+    wire: { count: wireItems.length, priority: wireItems.length ? 'high' : 'quiet' },
+    catalysts: { count: catalysts.length, priority: catalysts.length ? 'high' : 'quiet' },
+    movers: { count: movers.length, priority: movers.length ? 'high' : 'quiet' },
+    rotation: { count: verified ? 4 : 0, priority: verified ? 'normal' : 'quiet' },
+    risk: { count: verified ? 4 : 0, priority: stressed ? 'critical' : (verified ? 'high' : 'quiet') },
+    macro: { count: verified ? (pulse.desk_commentary || []).length : 0, priority: verified && focus === 'macro' ? 'high' : (verified ? 'normal' : 'quiet') },
+    alerts: { count: cogAlerts.length, priority: cogAlerts.some((item) => item.severity === 'high') ? 'critical' : (cogAlerts.length ? 'high' : 'quiet') },
+    memory: { count: memoryObs.length, priority: memoryObs.length ? 'normal' : 'quiet' },
+    timeline: { count: timelineEvents.length, priority: timelineEvents.length ? 'normal' : 'quiet' },
+    conviction: { count: convictionRows.length, priority: convictionRows.length ? 'high' : 'quiet' },
+    scenarios: { count: scenarioItems.length, priority: scenarioItems.some((item) => item.status === 'active') ? 'high' : (scenarioItems.length ? 'normal' : 'quiet') },
+    crossasset: { count: observedLinks.length, priority: observedLinks.some((item) => item.state === 'diverging') ? 'critical' : (observedLinks.length ? 'high' : 'quiet') },
+    positioning: { count: positioningRows.length, priority: pressureTracks.some(([, track]) => track.score >= 3) ? 'high' : (positioningRows.length ? 'normal' : 'quiet') },
+  };
+  const densityFor = (metric) => {
+    if (!metric || metric.count === 0) return 'quiet';
+    if (metric.count === 1) return 'compact';
+    if (metric.count <= 3) return 'standard';
+    return 'expanded';
+  };
+  const continuityDesks = new Set(['memory', 'timeline', 'macro']);
+  const baselinePriority = new Set(['catalysts', 'scenarios', 'risk']);
+  const priorityIds = order.filter((id) => {
+    const level = moduleMetrics[id].priority;
+    return level === 'critical' || level === 'high' || baselinePriority.has(id);
+  });
+  const continuityIds = order.filter((id) => continuityDesks.has(id) && !priorityIds.includes(id));
+  const secondaryIds = order.filter((id) => !priorityIds.includes(id) && !continuityIds.includes(id));
+
+  function renderModule(id) {
+    const metric = moduleMetrics[id];
+    const state = metric.count ? 'active' : 'monitoring';
+    return `
+              <div class="nr-module" data-desk="${id}" data-density="${densityFor(metric)}" data-priority="${metric.priority}" data-state="${state}">
+                <h3>${modules[id].title}</h3>
+                <ul>
+                ${modules[id].body}
+                </ul>
+              </div>`;
+  }
+
+  function renderBand(id, title, subtitle, ids) {
+    if (!ids.length) return '';
+    return `
+            <section class="nr-desk-band" data-band="${id}">
+              <div class="nr-band-head">
+                <h3>${title}</h3>
+                <span>${subtitle}</span>
+              </div>
+              <div class="nr-desk-grid">${ids.map(renderModule).join('')}
+              </div>
+            </section>`;
+  }
+
+  const moduleHtml = [
+    renderBand(
+      'priority',
+      t('Priority Desks', 'المكاتب ذات الأولوية'),
+      t('Catalysts, active tensions and current market judgment', 'المحفزات والتوترات النشطة وقراءة السوق الراهنة'),
+      priorityIds
+    ),
+    renderBand(
+      'secondary',
+      t('Market Structure', 'بنية السوق'),
+      t('Flow, positioning and supporting confirmation', 'التدفقات والتمركزات وإشارات التأكيد المساندة'),
+      secondaryIds
+    ),
+    renderBand(
+      'continuity',
+      t('Continuity & Memory', 'الاستمرارية والذاكرة'),
+      t('Cross-session context and regime history', 'سياق الجلسات وتاريخ تحولات النظام'),
+      continuityIds
+    ),
+  ].join('');
 
   const edition = EDITIONS[locale][session];
 
@@ -682,16 +783,16 @@ function renderSection(locale) {
             <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}${macroVerified && macro.desk_focus ? `<span class="nr-desk-focus" data-focus="${escapeHtml(macro.desk_focus.focus)}">${t('Desk focus', 'تركيز المكتب')}: ${escapeHtml(FOCUS_LABELS[locale][macro.desk_focus.focus] || macro.desk_focus.focus)}</span>` : ''}</span>
           </div>
 ${heroRibbon}
+          <p class="newsroom-banner" data-tone="${bannerTone}">${banner}</p>
+${leadHtml}
           <div class="nr-asset-strip" data-live-endpoint="/api/live-quotes">
             ${assetCells}
           </div>
-          <p class="newsroom-banner" data-tone="${bannerTone}">${banner}</p>
-${leadHtml}
 ${whatToWatchHtml}
           <div class="newsroom-pulse-strip">
             ${chips}
           </div>
-          <div class="newsroom-grid">${moduleHtml}
+          <div class="newsroom-flow">${moduleHtml}
           </div>
           <div class="newsroom-foot">
             <span>${updatedLabel ? `${t('Data as of', 'البيانات حتى')} ${updatedLabel}` : t('Awaiting first data cycle', 'بانتظار دورة البيانات الأولى')} <span class="nr-live-asof"></span></span>
