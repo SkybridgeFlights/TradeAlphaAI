@@ -110,6 +110,7 @@ const STATE_AR = {
   'deteriorating': 'يتدهور', 'confirming': 'مؤكِّد', 'mixed': 'متباين',
   'active': 'نشط', 'dormant': 'خامل', 'supportive': 'داعمة', 'tightening': 'متشددة',
   'rising': 'صاعد', 'falling': 'هابط', 'sideways': 'عرضي', 'expanding': 'يتوسع',
+  'accumulating': 'يتراكم', 'steady': 'ثابت', 'releasing': 'ينفرج',
   'unverified': '—',
 };
 
@@ -340,6 +341,14 @@ function renderSection(locale) {
   const macro = macroFresh ? macroRaw : null;
   const macroVerified = Boolean(macro && macro.verified === true);
 
+  // Narrative convergence layer (Phase 79) — same stale guard.
+  const convRaw = readJson('data/intelligence/narrative-convergence.json', null);
+  const convAgeHours = convRaw && convRaw.updated_at
+    ? (Date.now() - new Date(convRaw.updated_at).getTime()) / 3600000
+    : Infinity;
+  const convergence = convRaw && convAgeHours <= PULSE_MAX_AGE_HOURS ? convRaw : null;
+  const convVerified = Boolean(convergence && convergence.verified === true);
+
   const updatedAt = (pulse && pulse.updated_at) || (feed && feed.updated_at) || null;
   const updatedLabel = updatedAt ? new Date(updatedAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : null;
 
@@ -421,6 +430,13 @@ function renderSection(locale) {
   const topObservation = cogFresh ? ((cognition.memory_observations || [])[0] || null) : null;
   if (topObservation) {
     leadLines.push([t('Continuity', 'الاستمرارية'), ar ? topObservation.ar : topObservation.en]);
+  }
+  if (convVerified && convergence.coherence && convergence.coherence.score !== null) {
+    leadLines.push([t('Regime coherence', 'اتساق النظام'), ar ? convergence.coherence.ar : convergence.coherence.en]);
+  }
+  const topUnderpriced = convVerified ? ((convergence.underpriced || [])[0] || null) : null;
+  if (topUnderpriced) {
+    leadLines.push([t('Quietly building', 'يتراكم بهدوء'), ar ? topUnderpriced.ar : topUnderpriced.en]);
   }
   const leadHtml = `
           <div class="nr-lead">
@@ -525,6 +541,36 @@ function renderSection(locale) {
     ? convictionRows.join('\n              ')
     : `<li class="nr-empty">${t('Conviction analysis resumes with the next verified data cycle.', 'يستأنف تحليل القناعة مع دورة البيانات الموثقة التالية.')}</li>`;
 
+  // ── Convergence desks (Phase 79) ─────────────────────────────────────────
+  const LINK_STATE_LABEL = {
+    en: { confirming: 'CONFIRMING', diverging: 'DIVERGING', neutral: 'NEUTRAL' },
+    ar: { confirming: 'مؤكِّد', diverging: 'منفصل', neutral: 'محايد' },
+  };
+  const LINK_STATE_TIER = { confirming: 'low', diverging: 'high', neutral: 'low' };
+  const observedLinks = convVerified
+    ? [...(convergence.diverges || []), ...(convergence.confirms || [])].slice(0, 6)
+    : [];
+  const crossAssetHtml = observedLinks.length
+    ? observedLinks.map((l) => `<li><span class="nr-wire-headline"><span class="nr-badge" data-urgency="${LINK_STATE_TIER[l.state] || 'low'}">${escapeHtml(LINK_STATE_LABEL[locale][l.state] || l.state)}</span> <strong>${escapeHtml(l.legs.join('/').toUpperCase())}</strong> — ${escapeHtml(ar ? l.ar : l.en)}${l.chain_strength >= 2 ? ` <em class="nr-contra">×${l.chain_strength}</em>` : ''}</span></li>`).join('\n              ')
+    : `<li class="nr-empty">${t('Cross-asset links await two-leg sourced quotes this session.', 'روابط الأصول بانتظار تسعير موثق لطرفي العلاقة في هذه الجلسة.')}</li>`;
+
+  const pressureTracks = macroVerified
+    ? Object.entries((macro.pressure && macro.pressure.tracks) || {})
+      .filter(([, track]) => Number.isFinite(track.score) && track.score > 0)
+      .sort((a, b) => b[1].score - a[1].score)
+      .slice(0, 6)
+    : [];
+  const positioningRows = [];
+  if (macroVerified && (macro.conviction.state === 'crowded-positioning' || (macro.structure && macro.structure.class === 'crowded-trade'))) {
+    positioningRows.push(`<li><span class="nr-wire-headline">${escapeHtml(ar ? macro.conviction.ar : macro.conviction.en)}</span></li>`);
+  }
+  for (const [key, track] of pressureTracks) {
+    positioningRows.push(`<li><span class="nr-wire-headline">${escapeHtml(ar ? track.ar : track.en)}</span><span class="nr-meta">${track.score}/5 · ${escapeHtml(stateLabel(track.state, ar))}</span></li>`);
+  }
+  const positioningHtml = positioningRows.length
+    ? positioningRows.join('\n              ')
+    : `<li class="nr-empty">${t('Pressure accumulation builds with verified sessions.', 'يتكوّن تراكم الضغوط مع الجلسات الموثقة.')}</li>`;
+
   const scenarioItems = macro
     ? (macro.scenarios || []).filter((s) => s.status !== 'dormant').slice(0, 5)
     : [];
@@ -558,14 +604,16 @@ function renderSection(locale) {
     timeline: { title: t('Market State Evolution', 'تطور حالة السوق'), body: timelineHtml },
     conviction: { title: t('Desk Conviction', 'قناعة المكتب'), body: convictionHtml },
     scenarios: { title: t('Scenario Monitor', 'مراقبة السيناريوهات'), body: scenariosHtml },
+    crossasset: { title: t('Cross-Asset Desk', 'مكتب العلاقات بين الأصول'), body: crossAssetHtml },
+    positioning: { title: t('Positioning Desk', 'مكتب التمركزات'), body: positioningHtml },
   };
   const escalated = cogAlerts.some((a) => a.severity === 'high' || a.severity === 'elevated');
   let order;
-  if (escalated) order = ['alerts', 'risk', 'conviction', 'wire', 'memory', 'scenarios', 'movers', 'catalysts', 'timeline', 'rotation', 'macro'];
-  else if (session === 'weekend') order = ['macro', 'scenarios', 'timeline', 'memory', 'conviction', 'catalysts', 'rotation', 'risk', 'alerts', 'wire', 'movers'];
-  else if (stressed) order = ['risk', 'alerts', 'conviction', 'wire', 'movers', 'scenarios', 'memory', 'catalysts', 'rotation', 'timeline', 'macro'];
-  else if (fedDay) order = ['catalysts', 'wire', 'scenarios', 'alerts', 'conviction', 'risk', 'memory', 'movers', 'rotation', 'timeline', 'macro'];
-  else order = ['wire', 'catalysts', 'conviction', 'alerts', 'movers', 'memory', 'scenarios', 'rotation', 'risk', 'timeline', 'macro'];
+  if (escalated) order = ['alerts', 'risk', 'conviction', 'crossasset', 'wire', 'positioning', 'memory', 'scenarios', 'movers', 'catalysts', 'timeline', 'rotation', 'macro'];
+  else if (session === 'weekend') order = ['macro', 'scenarios', 'timeline', 'memory', 'crossasset', 'conviction', 'positioning', 'catalysts', 'rotation', 'risk', 'alerts', 'wire', 'movers'];
+  else if (stressed) order = ['risk', 'alerts', 'conviction', 'crossasset', 'wire', 'movers', 'positioning', 'scenarios', 'memory', 'catalysts', 'rotation', 'timeline', 'macro'];
+  else if (fedDay) order = ['catalysts', 'wire', 'scenarios', 'alerts', 'conviction', 'crossasset', 'risk', 'positioning', 'memory', 'movers', 'rotation', 'timeline', 'macro'];
+  else order = ['wire', 'catalysts', 'conviction', 'alerts', 'crossasset', 'movers', 'memory', 'positioning', 'scenarios', 'rotation', 'risk', 'timeline', 'macro'];
 
   // Adaptive desk-focus elevation (Phase 75): the homepage reorders itself
   // around the derived focus — never overriding alert escalation or vol stress.

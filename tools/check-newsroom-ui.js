@@ -52,7 +52,7 @@ for (const page of ['index.html', 'ar/index.html']) {
     // Phase 74 cognition checks: alerts/memory/timeline desks rendered exactly
     // once, continuity indicator present, and no alert badge without the
     // cognition artifact actually carrying alerts.
-    for (const desk of ['alerts', 'memory', 'timeline', 'conviction', 'scenarios']) {
+    for (const desk of ['alerts', 'memory', 'timeline', 'conviction', 'scenarios', 'crossasset', 'positioning']) {
       if (count(section, `data-desk="${desk}"`) !== 1) failures.push(`${page}: cognition desk "${desk}" missing or duplicated`);
     }
     // Phase 75: contradiction markers and conviction content require the macro

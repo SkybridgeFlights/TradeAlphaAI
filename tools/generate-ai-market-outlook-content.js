@@ -30,6 +30,7 @@ const { buildVoicePromptBlock, buildArabicVoiceBlock } = require('./analyst-voic
 const { pulsePromptBlock } = require('./build-market-pulse');
 const { cognitionPromptBlock } = require('./build-market-cognition');
 const { macroCognitionPromptBlock } = require('./build-macro-cognition');
+const { convergencePromptBlock } = require('./build-narrative-convergence');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -349,9 +350,10 @@ function buildContinuityContext(topic) {
   const pulse = pulsePromptBlock();
   const cognition = cognitionPromptBlock();
   const macroCognition = macroCognitionPromptBlock();
+  const convergenceBlock = convergencePromptBlock();
 
   return `continuity_context
-${pulse ? `${pulse}\n` : ''}${cognition ? `${cognition}\n` : ''}${macroCognition ? `${macroCognition}\n` : ''}${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
+${pulse ? `${pulse}\n` : ''}${cognition ? `${cognition}\n` : ''}${macroCognition ? `${macroCognition}\n` : ''}${convergenceBlock ? `${convergenceBlock}\n` : ''}${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
 ${priorContext}
 Narrative drift notes:
 ${drift.notes.map((note) => `- ${note}`).join('\n')}

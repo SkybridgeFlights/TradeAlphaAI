@@ -52,6 +52,7 @@ jobs:
           node tools/build-market-pulse.js --write || echo "[market-watch] pulse degraded — continuing"
           node tools/build-market-cognition.js --write || echo "[market-watch] cognition degraded — continuing"
           node tools/build-macro-cognition.js --write || echo "[market-watch] macro-cognition degraded — continuing"
+          node tools/build-narrative-convergence.js --write || echo "[market-watch] convergence degraded — continuing"
           node tools/render-newsroom-modules.js || echo "[market-watch] render degraded — continuing"
 
       - name: Validate intraday artifacts
@@ -60,6 +61,7 @@ jobs:
           npm run check:newsroom-ui
           npm run check:market-cognition
           npm run check:macro-cognition
+          npm run check:narrative-convergence
           npm run check:live-terminal
 
       - name: Commit refreshed state (only when changed)
