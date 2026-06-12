@@ -243,9 +243,10 @@ jobs:
           node tools/build-newswire-events.js --write || echo "[newswire] Build degraded — continuing"
           node tools/build-market-pulse.js --write || echo "[market-pulse] Build degraded — continuing"
           node tools/build-market-cognition.js --write || echo "[cognition] Build degraded — continuing"
+          node tools/build-macro-cognition.js --write || echo "[macro-cognition] Build degraded — continuing"
           node tools/promote-wire-events.js --write || echo "[wire-promotion] Promotion degraded — continuing"
           node tools/build-visual-intelligence-data.js --write || echo "[visual-data] Build degraded — continuing"
-          echo "[phase68/69/74] Regime engine v2, historical memory, continuity, market cognition, and visual intelligence data built."
+          echo "[phase68/69/74/75] Regime engine v2, historical memory, continuity, market cognition, macro cognition, and visual intelligence data built."
 
       - name: Generate continuous intelligence topic candidates
         continue-on-error: true
@@ -274,6 +275,8 @@ jobs:
           npm run check:newsroom-ui
           npm run test:market-cognition
           npm run check:market-cognition
+          npm run test:macro-cognition
+          npm run check:macro-cognition
           npm run check:macro-intelligence
           npm run check:responsive
           npm run check:global-header

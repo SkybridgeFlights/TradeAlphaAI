@@ -17,6 +17,13 @@
 // continuity indicator. All cognition content derives from
 // data/intelligence/market-cognition.json built by build-market-cognition.js.
 //
+// Phase 75 additions: macro cognition layer — Desk Conviction (confidence
+// analysis + structural contradictions + pressure accumulation), Scenario
+// Monitor (conditional institutional scenarios, never predictions), hero
+// conviction slot, adaptive desk-focus module ordering, and a desk focus
+// indicator. Derives from data/intelligence/macro-cognition.json built by
+// build-macro-cognition.js.
+//
 // Honesty rules: only verified, fresh pulse output carries urgency styling;
 // stale pulse (>48h) degrades to monitoring mode; assets without sourced data
 // render as awaiting-data; timestamps are real artifact times.
@@ -115,6 +122,41 @@ const SEVERITY_LABELS = {
   en: { high: 'HIGH', elevated: 'ELEVATED', watch: 'WATCH' },
   ar: { high: 'مرتفع', elevated: 'متصاعد', watch: 'مراقبة' },
 };
+
+const SCENARIO_STATUS_LABELS = {
+  en: { primary: 'BASE', active: 'ACTIVE', watch: 'WATCH', monitor: 'MONITOR', dormant: 'DORMANT' },
+  ar: { primary: 'أساسي', active: 'نشط', watch: 'مراقبة', monitor: 'متابعة', dormant: 'خامل' },
+};
+const SCENARIO_STATUS_TIER = { primary: 'medium', active: 'high', watch: 'low', monitor: 'low', dormant: 'low' };
+
+const CONVICTION_LABELS = {
+  en: {
+    'healthy-trend-structure': 'healthy trend structure', 'increasingly-confirmed': 'increasingly confirmed',
+    'strengthening-conviction': 'strengthening', 'fragile-conviction': 'fragile',
+    'unconfirmed-move': 'unconfirmed move', 'deteriorating-confirmation': 'deteriorating confirmation',
+    'unstable-continuation': 'unstable continuation', 'crowded-positioning': 'crowded positioning',
+    'unverified': '—',
+  },
+  ar: {
+    'healthy-trend-structure': 'بنية اتجاه صحية', 'increasingly-confirmed': 'تأكيد متزايد',
+    'strengthening-conviction': 'قناعة تتعزز', 'fragile-conviction': 'قناعة هشة',
+    'unconfirmed-move': 'تحرك غير مؤكد', 'deteriorating-confirmation': 'تأكيد يتدهور',
+    'unstable-continuation': 'استمرارية غير مستقرة', 'crowded-positioning': 'تمركزات مزدحمة',
+    'unverified': '—',
+  },
+};
+
+const FOCUS_LABELS = {
+  en: { monitoring: 'monitoring', contradictions: 'contradiction watch', risk: 'risk desk', concentration: 'concentration watch', pressure: 'pressure watch', macro: 'macro desk', balanced: 'balanced' },
+  ar: { monitoring: 'مراقبة', contradictions: 'رصد التناقضات', risk: 'مكتب المخاطر', concentration: 'رصد التركز', pressure: 'رصد الضغوط', macro: 'مكتب الماكرو', balanced: 'متوازن' },
+};
+
+// Move the named modules to the front of the order, preserving relative order
+// of everything else (adaptive desk-focus elevation).
+function promote(order, ids) {
+  const lead = ids.filter((id) => order.includes(id));
+  return [...lead, ...order.filter((id) => !lead.includes(id))];
+}
 
 const SEVERITY_TIER = { high: 'high', elevated: 'medium', watch: 'low' };
 
@@ -263,6 +305,15 @@ function renderSection(locale) {
   const cogShifts = Object.fromEntries((cognition.regime_shifts || []).map((s) => [s.dimension, s]));
   const cogAlerts = cogFresh && cognition.verified === true ? (cognition.alerts || []) : [];
 
+  // Macro cognition layer (Phase 75) — same stale guard.
+  const macroRaw = readJson('data/intelligence/macro-cognition.json', null);
+  const macroAgeHours = macroRaw && macroRaw.updated_at
+    ? (Date.now() - new Date(macroRaw.updated_at).getTime()) / 3600000
+    : Infinity;
+  const macroFresh = Boolean(macroRaw && macroAgeHours <= PULSE_MAX_AGE_HOURS);
+  const macro = macroFresh ? macroRaw : null;
+  const macroVerified = Boolean(macro && macro.verified === true);
+
   const updatedAt = (pulse && pulse.updated_at) || (feed && feed.updated_at) || null;
   const updatedLabel = updatedAt ? new Date(updatedAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : null;
 
@@ -287,7 +338,8 @@ function renderSection(locale) {
           <div class="nr-hero-ribbon">
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Top story', 'القصة الأبرز')}</span>${escapeHtml(topStory || t('Desk monitoring — no dominant wire story', 'وضع المراقبة — لا قصة مهيمنة في الموجز'))}</span>
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Next catalyst', 'المحفز التالي')}</span>${topCatalyst ? escapeHtml(topCatalyst.name) : t('none scheduled', 'لا شيء مجدول')}</span>
-            <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>${transitionItem}
+            <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>${macroVerified && macro.conviction && macro.conviction.state !== 'unverified' ? `
+            <span class="nr-hero-item"><span class="nr-hero-key">${t('Conviction', 'القناعة')}</span>${escapeHtml(CONVICTION_LABELS[locale][macro.conviction.state] || macro.conviction.state)}</span>` : ''}${transitionItem}
           </div>`;
 
   // ── Banner ──────────────────────────────────────────────────────────────
@@ -371,6 +423,33 @@ function renderSection(locale) {
     ? memoryObs.slice(0, 4).map((o) => `<li><span class="nr-wire-headline">${escapeHtml(ar ? o.ar : o.en)}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('Cross-session memory builds as verified sessions accumulate.', 'تتكوّن ذاكرة الجلسات مع تراكم الجلسات الموثقة.')}</li>`;
 
+  // ── Macro cognition modules (Phase 75) ──────────────────────────────────
+  const convictionRows = [];
+  if (macroVerified && macro.conviction && macro.conviction.state !== 'unverified') {
+    convictionRows.push(`<li><span class="nr-wire-headline"><span class="nr-badge" data-urgency="medium">${escapeHtml(CONVICTION_LABELS[locale][macro.conviction.state] || macro.conviction.state)}</span> ${escapeHtml(ar ? macro.conviction.ar : macro.conviction.en)}</span></li>`);
+    if (macro.structure && macro.structure.class && !['unverified'].includes(macro.structure.class)) {
+      convictionRows.push(`<li><span class="nr-wire-headline">${escapeHtml(ar ? macro.structure.ar : macro.structure.en)}</span></li>`);
+    }
+    for (const c of (macro.contradictions || []).filter((x) => x.active_today).slice(0, 3)) {
+      convictionRows.push(`<li data-contradiction="${escapeHtml(c.id)}"><span class="nr-wire-headline"><span class="nr-contra${c.escalated ? '" data-escalated="true' : ''}">×${c.sessions}</span> ${escapeHtml(ar ? c.ar : c.en)}</span></li>`);
+    }
+    const elevatedTracks = ((macro.pressure && macro.pressure.elevated) || []).slice(0, 3);
+    for (const key of elevatedTracks) {
+      const track = macro.pressure.tracks[key];
+      convictionRows.push(`<li><span class="nr-wire-headline">${escapeHtml(ar ? track.ar : track.en)}</span><span class="nr-meta">${track.score}/5</span></li>`);
+    }
+  }
+  const convictionHtml = convictionRows.length
+    ? convictionRows.join('\n              ')
+    : `<li class="nr-empty">${t('Conviction analysis resumes with the next verified data cycle.', 'يستأنف تحليل القناعة مع دورة البيانات الموثقة التالية.')}</li>`;
+
+  const scenarioItems = macro
+    ? (macro.scenarios || []).filter((s) => s.status !== 'dormant').slice(0, 5)
+    : [];
+  const scenariosHtml = scenarioItems.length
+    ? scenarioItems.map((s) => `<li data-scenario="${escapeHtml(s.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="${SCENARIO_STATUS_TIER[s.status] || 'low'}">${escapeHtml(SCENARIO_STATUS_LABELS[locale][s.status] || s.status)}</span> ${escapeHtml(ar ? s.ar : s.en)}</span></li>`).join('\n              ')
+    : `<li class="nr-empty">${t('Scenario monitor initializes with the next verified data cycle.', 'تبدأ مراقبة السيناريوهات مع دورة البيانات الموثقة التالية.')}</li>`;
+
   const timelineEvents = (cognition.timeline_tail || []).slice(0, 4);
   const timelineHtml = timelineEvents.length
     ? timelineEvents.map((e) => {
@@ -395,14 +474,25 @@ function renderSection(locale) {
     alerts: { title: t('Desk Alerts', 'تنبيهات المكتب'), body: alertsHtml },
     memory: { title: t('Market Memory', 'ذاكرة السوق'), body: memoryHtml },
     timeline: { title: t('Market State Evolution', 'تطور حالة السوق'), body: timelineHtml },
+    conviction: { title: t('Desk Conviction', 'قناعة المكتب'), body: convictionHtml },
+    scenarios: { title: t('Scenario Monitor', 'مراقبة السيناريوهات'), body: scenariosHtml },
   };
   const escalated = cogAlerts.some((a) => a.severity === 'high' || a.severity === 'elevated');
   let order;
-  if (escalated) order = ['alerts', 'risk', 'wire', 'memory', 'movers', 'catalysts', 'timeline', 'rotation', 'macro'];
-  else if (session === 'weekend') order = ['macro', 'timeline', 'memory', 'catalysts', 'rotation', 'risk', 'alerts', 'wire', 'movers'];
-  else if (stressed) order = ['risk', 'alerts', 'wire', 'movers', 'memory', 'catalysts', 'rotation', 'timeline', 'macro'];
-  else if (fedDay) order = ['catalysts', 'wire', 'alerts', 'risk', 'memory', 'movers', 'rotation', 'timeline', 'macro'];
-  else order = ['wire', 'catalysts', 'alerts', 'movers', 'memory', 'rotation', 'risk', 'timeline', 'macro'];
+  if (escalated) order = ['alerts', 'risk', 'conviction', 'wire', 'memory', 'scenarios', 'movers', 'catalysts', 'timeline', 'rotation', 'macro'];
+  else if (session === 'weekend') order = ['macro', 'scenarios', 'timeline', 'memory', 'conviction', 'catalysts', 'rotation', 'risk', 'alerts', 'wire', 'movers'];
+  else if (stressed) order = ['risk', 'alerts', 'conviction', 'wire', 'movers', 'scenarios', 'memory', 'catalysts', 'rotation', 'timeline', 'macro'];
+  else if (fedDay) order = ['catalysts', 'wire', 'scenarios', 'alerts', 'conviction', 'risk', 'memory', 'movers', 'rotation', 'timeline', 'macro'];
+  else order = ['wire', 'catalysts', 'conviction', 'alerts', 'movers', 'memory', 'scenarios', 'rotation', 'risk', 'timeline', 'macro'];
+
+  // Adaptive desk-focus elevation (Phase 75): the homepage reorders itself
+  // around the derived focus — never overriding alert escalation or vol stress.
+  const focus = (macroVerified && macro.desk_focus && macro.desk_focus.focus) || null;
+  if (focus && !escalated && !stressed) {
+    if (focus === 'contradictions' || focus === 'concentration') order = promote(order, ['conviction']);
+    else if (focus === 'risk' || focus === 'pressure') order = promote(order, ['risk', 'conviction']);
+    else if (focus === 'macro') order = promote(order, ['macro', 'scenarios']);
+  }
 
   const moduleHtml = order.map((id) => `
             <div class="nr-module" data-desk="${id}">
@@ -419,7 +509,7 @@ function renderSection(locale) {
         <div class="section-panel newsroom" dir="${ar ? 'rtl' : 'ltr'}">
           <div class="newsroom-head">
             <h2 class="newsroom-title">${t('TradeAlphaAI Terminal', 'منصة TradeAlphaAI')} · <span class="nr-edition">${escapeHtml(edition)}</span></h2>
-            <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}</span>
+            <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}${macroVerified && macro.desk_focus ? `<span class="nr-desk-focus" data-focus="${escapeHtml(macro.desk_focus.focus)}">${t('Desk focus', 'تركيز المكتب')}: ${escapeHtml(FOCUS_LABELS[locale][macro.desk_focus.focus] || macro.desk_focus.focus)}</span>` : ''}</span>
           </div>
 ${heroRibbon}
           <div class="nr-asset-strip">

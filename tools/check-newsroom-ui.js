@@ -52,8 +52,16 @@ for (const page of ['index.html', 'ar/index.html']) {
     // Phase 74 cognition checks: alerts/memory/timeline desks rendered exactly
     // once, continuity indicator present, and no alert badge without the
     // cognition artifact actually carrying alerts.
-    for (const desk of ['alerts', 'memory', 'timeline']) {
+    for (const desk of ['alerts', 'memory', 'timeline', 'conviction', 'scenarios']) {
       if (count(section, `data-desk="${desk}"`) !== 1) failures.push(`${page}: cognition desk "${desk}" missing or duplicated`);
+    }
+    // Phase 75: contradiction markers and conviction content require the macro
+    // cognition artifact to actually carry them (no decorative intelligence).
+    if (section.includes('data-contradiction=') || section.includes('data-escalated="true"')) {
+      let macro = null;
+      try { macro = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/intelligence/macro-cognition.json'), 'utf8')); } catch {}
+      const active = ((macro && macro.contradictions) || []).filter((c) => c.active_today);
+      if (!active.length) failures.push(`${page}: rendered contradictions without macro-cognition source`);
     }
     if (!section.includes('nr-continuity')) failures.push(`${page}: continuity indicator missing`);
     if (section.includes('data-severity=')) {

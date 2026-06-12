@@ -192,6 +192,86 @@
       "contract": {
         "links": "array<{id,legs,expected,state,evidence}>"
       }
+    },
+    {
+      "id": "desk-conviction",
+      "title": "Desk Conviction",
+      "vertical": "macro-desk",
+      "status": "live",
+      "data_sources": [
+        "data/intelligence/macro-cognition.json#conviction",
+        "data/intelligence/macro-cognition.json#contradictions",
+        "data/intelligence/macro-cognition.json#pressure"
+      ],
+      "contract": {
+        "conviction": "{state,regime_confidence,confirmations,contradictions,en,ar}",
+        "contradictions": "array<{id,sessions,escalated,en,ar}>",
+        "pressure": "{tracks,elevated}"
+      }
+    },
+    {
+      "id": "scenario-monitor",
+      "title": "Scenario Monitor",
+      "vertical": "macro-desk",
+      "status": "live",
+      "data_sources": [
+        "data/intelligence/macro-cognition.json#scenarios"
+      ],
+      "contract": {
+        "scenarios": "array<{id,status,en,ar,derived_from,catalyst?}>"
+      }
+    },
+    {
+      "id": "pressure-map",
+      "title": "Market Pressure Map",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/macro-cognition.json#pressure"
+      ],
+      "contract": {
+        "tracks": "array<{track,score,state,history}>"
+      }
+    },
+    {
+      "id": "regime-transition-map",
+      "title": "Regime Transition Map",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/market-timeline.json#events",
+        "data/intelligence/market-cognition.json#regime_shifts"
+      ],
+      "contract": {
+        "nodes": "array<{dimension,state,phase}>",
+        "transitions": "array<{date,from,to}>"
+      }
+    },
+    {
+      "id": "macro-dependency-map",
+      "title": "Macro Dependency Map",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/market-cognition.json#causal_links",
+        "data/intelligence/macro-cognition.json#contradictions"
+      ],
+      "contract": {
+        "edges": "array<{legs,expected,state,intensity}>"
+      }
+    },
+    {
+      "id": "concentration-map",
+      "title": "Concentration Map",
+      "vertical": "market-outlook",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/macro-cognition.json#pressure.tracks.concentration_pressure",
+        "data/live-market-state.json#nvda"
+      ],
+      "contract": {
+        "readings": "array<{metric,value,state}>"
+      }
     }
   ]
 }

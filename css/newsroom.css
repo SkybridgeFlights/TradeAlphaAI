@@ -283,6 +283,35 @@ html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
 
 html[dir="rtl"] .nr-phase { letter-spacing: 0; }
 
+/* ── Macro cognition layer (Phase 75) ──────────────────────────────────── */
+
+.nr-desk-focus {
+  margin-inline-start: 0.7rem;
+  padding-inline-start: 0.7rem;
+  border-inline-start: 1px solid var(--nr-line);
+  color: var(--nr-muted);
+  font-size: 0.74rem;
+}
+.nr-desk-focus[data-focus="contradictions"],
+.nr-desk-focus[data-focus="risk"],
+.nr-desk-focus[data-focus="pressure"] { color: var(--nr-neutral); }
+
+.nr-contra {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(201, 162, 39, 0.16);
+  color: var(--nr-neutral);
+  font-variant-numeric: tabular-nums;
+}
+.nr-contra[data-escalated="true"] { background: rgba(255, 93, 77, 0.16); color: var(--nr-urgent); }
+
+.nr-module[data-desk="conviction"] li,
+.nr-module[data-desk="scenarios"] li { align-items: flex-start; }
+.nr-module[data-desk="scenarios"] .nr-wire-headline { font-size: 0.83rem; line-height: 1.5; }
+
 /* ── RTL refinements ───────────────────────────────────────────────────── */
 
 html[dir="rtl"] .newsroom { font-feature-settings: normal; }
