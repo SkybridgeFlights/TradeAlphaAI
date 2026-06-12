@@ -66,6 +66,8 @@ for (const page of ['index.html', 'ar/index.html']) {
     if (!section.includes('nr-continuity')) failures.push(`${page}: continuity indicator missing`);
     if (count(section, 'class="nr-lead"') !== 1) failures.push(`${page}: desk lead block missing or duplicated`);
     if (!section.includes('nr-lead-headline')) failures.push(`${page}: desk lead headline missing`);
+    if (count(section, 'class="nr-watch"') !== 1) failures.push(`${page}: What to Watch block missing or duplicated`);
+    if (!section.includes('data-intelligence-product="phase-80"')) failures.push(`${page}: Phase 80 product marker missing`);
     if (section.includes('data-severity=')) {
       let cognition = null;
       try { cognition = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/intelligence/market-cognition.json'), 'utf8')); } catch {}

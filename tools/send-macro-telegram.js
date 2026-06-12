@@ -26,6 +26,7 @@ const REGIME_PATH   = path.join(ROOT, 'data', 'intelligence', 'market-regime.jso
 const RATE_PATH     = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelligence.json');
 const TRANSMISSION_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-transmission.json');
 const ETF_FLOW_PATH  = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
+const DAILY_BRIEF_PATH = path.join(ROOT, 'data', 'intelligence', 'daily-intelligence-brief.json');
 const STATUS_PATH    = path.join(ROOT, 'data', 'intelligence', 'telegram-status.json');
 const PUBLISHING_REPORT_PATH = argValue('--report')
   ? path.resolve(ROOT, argValue('--report'))
@@ -34,6 +35,7 @@ const EDITORIAL_QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json
 const OUTLOOK_QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
 
 const TYPE     = argValue('--type') || 'auto';
+const LOCALE   = argValue('--locale') || 'en';
 const SEND     = process.argv.includes('--send');
 const EVENT_FILTER = (argValue('--event-type') || '').toLowerCase();
 const MAX_LENGTH = 4000; // Telegram message limit
@@ -43,6 +45,7 @@ const DISCLAIMER = '⚠️ Educational commentary only. Not financial advice.';
 if (!['auto', 'publication', 'preview', 'release', 'weekly', 'briefing'].includes(TYPE)) {
   fail(`Unknown --type: ${TYPE}. Use auto, publication, preview, release, weekly, or briefing.`);
 }
+if (!['en', 'ar'].includes(LOCALE)) fail(`Unknown --locale: ${LOCALE}. Use en or ar.`);
 
 const calendar  = readJson(CAL_PATH,       { events: [] });
 const narrative = readJson(NARRATIVE_PATH, { release_narratives: [], preview_narratives: [], active_themes: [], regime_narrative: null });
@@ -51,15 +54,20 @@ const regime    = readJson(REGIME_PATH,    { regime: null, regime_label: null, c
 const ratePath  = readJson(RATE_PATH,      { fed_path: null });
 const transmission = readJson(TRANSMISSION_PATH, { regime_transmission_note: null, event_analyses: [] });
 const etfFlow   = readJson(ETF_FLOW_PATH,   { rotation_analysis: null });
+const dailyBrief = readJson(DAILY_BRIEF_PATH, null);
 const publishingReport = readJson(PUBLISHING_REPORT_PATH, {});
 
-const publication = publicationFromReport(publishingReport);
+// Explicit macro modes must never be shadowed by a stale publishing report.
+// Publication routing is available only in auto/publication mode.
+const publication = ['auto', 'publication'].includes(TYPE)
+  ? publicationFromReport(publishingReport)
+  : null;
 const route = publication ? 'publication_announcement' : TYPE === 'auto' ? 'skip' : 'macro_briefing';
 const message = publication
   ? buildPublicationAnnouncement(publication)
   : TYPE === 'auto'
     ? null
-    : buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow);
+    : buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow, dailyBrief);
 
 if (publication) {
   console.log('[TELEGRAM ROUTE]');
@@ -115,12 +123,12 @@ function writeStatus(sent, result) {
 
 // ── Message builders ──────────────────────────────────────────────────────────
 
-function buildMessage(type, calendar, narrative, expect, regime, ratePath, transmission, etfFlow) {
+function buildMessage(type, calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief) {
   switch (type) {
     case 'preview':   return buildPreviewMessage(calendar, narrative, expect);
     case 'release':   return buildReleaseMessage(narrative, regime, ratePath);
     case 'weekly':    return buildWeeklyMessage(calendar, narrative, expect, regime, transmission, etfFlow);
-    case 'briefing':  return buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow);
+    case 'briefing':  return buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief);
     default:          return null;
   }
 }
@@ -317,7 +325,10 @@ function buildWeeklyMessage(calendar, narrative, expect, regime, transmission, e
   return lines.join('\n').slice(0, MAX_LENGTH);
 }
 
-function buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow) {
+function buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief) {
+  if (productBrief && productBrief.version === '2.0') {
+    return buildIntelligenceProductBrief(productBrief, LOCALE);
+  }
   const today = new Date().toISOString().slice(0, 10);
   const lines = [`*Daily Macro Intelligence — ${today}*\n`];
 
@@ -372,6 +383,64 @@ function buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath
   appendInstitutionalState(lines, transmission, etfFlow);
 
   lines.push(DISCLAIMER);
+  return lines.join('\n').slice(0, MAX_LENGTH);
+}
+
+function buildIntelligenceProductBrief(brief, locale) {
+  const ar = locale === 'ar';
+  const lines = [
+    ar ? `*موجز السوق اليومي 2.0 — ${brief.run_date}*` : `*Daily Market Brief 2.0 — ${brief.run_date}*`,
+    '',
+    escMd(ar ? brief.desk_lead.ar : brief.desk_lead.en),
+    '',
+  ];
+  const coherence = brief.regime?.coherence || {};
+  const regime = ar ? brief.regime?.state_ar : String(brief.regime?.state || 'unverified').replace(/_/g, ' ');
+  const coherenceText = coherence.score === null
+    ? (ar ? 'بانتظار مدخلات موثقة' : 'awaiting verified inputs')
+    : `${coherence.score}/100 · ${String(coherence.band || '').replace(/_/g, ' ')}`;
+  lines.push(ar ? `*النظام:* ${escMd(regime)} · *الاتساق:* ${escMd(coherenceText)}` : `*Regime:* ${escMd(regime)} · *Coherence:* ${escMd(coherenceText)}`);
+
+  const changed = (brief.what_changed || []).slice(0, 2);
+  if (changed.length) {
+    lines.push('', ar ? '*ما الذي تغير*' : '*What changed*');
+    for (const item of changed) lines.push(`• ${escMd(ar ? (item.ar || item.en || String(item)) : (item.en || String(item)))}`);
+  }
+
+  const confirms = (brief.confirms || []).slice(0, 3);
+  const diverges = (brief.diverges || []).slice(0, 3);
+  if (confirms.length || diverges.length) {
+    lines.push('', ar ? '*التأكيد والتباعد*' : '*Confirmation and divergence*');
+    if (confirms.length) lines.push(`${ar ? 'يؤكد' : 'Confirms'}: ${escMd(confirms.map((item) => item.id || item).join(', '))}`);
+    if (diverges.length) lines.push(`${ar ? 'يتباعد' : 'Diverges'}: ${escMd(diverges.map((item) => item.id || item).join(', '))}`);
+  }
+
+  const pressure = (brief.pressure_active || []).slice(0, 3);
+  if (pressure.length) {
+    lines.push('', ar ? '*مسارات الضغط النشطة*' : '*Active pressure tracks*');
+    for (const item of pressure) {
+      lines.push(`• ${escMd(ar ? (item.ar || item.track) : (item.en || item.track))} · ${item.score}/5`);
+    }
+  }
+
+  const catalyst = (brief.next_catalysts || [])[0];
+  lines.push('', ar ? '*المحفز التالي*' : '*Next catalyst*');
+  lines.push(catalyst ? escMd(`${ar ? (catalyst.name_ar || catalyst.name) : catalyst.name} · ${String(catalyst.time || '').replace('T', ' ').slice(0, 16)} UTC`) : (ar ? 'لا محفز موثق في النافذة الحالية.' : 'No sourced catalyst in the current window.'));
+
+  const sensitive = (brief.most_sensitive_assets || []).slice(0, 5);
+  lines.push('', ar ? '*الأصول الأكثر حساسية*' : '*Most sensitive assets*');
+  lines.push(sensitive.length ? sensitive.map((item) => `${item.asset} ${item.score}`).join(' · ') : '—');
+
+  lines.push('', ar ? '*ما يستحق المتابعة*' : '*Monitoring checklist*');
+  for (const item of (brief.monitoring_checklist || []).slice(0, 5)) {
+    lines.push(`• ${escMd(ar ? item.ar : item.en)}`);
+  }
+
+  lines.push('', ar ? '*تأطير المخاطر*' : '*Risk framing*');
+  lines.push(escMd(ar ? brief.risk_framing.ar : brief.risk_framing.en));
+  lines.push('', ar
+    ? '⚠️ استخبارات سوق تعليمية وسياق متابعة فقط، وليست نصيحة استثمارية أو توصية تداول.'
+    : DISCLAIMER);
   return lines.join('\n').slice(0, MAX_LENGTH);
 }
 

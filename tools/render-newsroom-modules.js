@@ -349,6 +349,15 @@ function renderSection(locale) {
   const convergence = convRaw && convAgeHours <= PULSE_MAX_AGE_HOURS ? convRaw : null;
   const convVerified = Boolean(convergence && convergence.verified === true);
 
+  // Phase 80 product layer. The artifact is rebuilt before this renderer in
+  // both daily and intraday workflows. Missing/stale output degrades to a
+  // compact monitoring block rather than inventing a market read.
+  const briefRaw = readJson('data/intelligence/daily-intelligence-brief.json', null);
+  const briefAgeHours = briefRaw && briefRaw.updated_at
+    ? (Date.now() - new Date(briefRaw.updated_at).getTime()) / 3600000
+    : Infinity;
+  const dailyBrief = briefRaw && briefAgeHours <= PULSE_MAX_AGE_HOURS ? briefRaw : null;
+
   const updatedAt = (pulse && pulse.updated_at) || (feed && feed.updated_at) || null;
   const updatedLabel = updatedAt ? new Date(updatedAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : null;
 
@@ -445,6 +454,37 @@ function renderSection(locale) {
             <ul class="nr-lead-lines">
               ${leadLines.map(([k, v]) => `<li><span class="nr-lead-key">${escapeHtml(k)}</span>${escapeHtml(v)}</li>`).join('\n              ')}
             </ul>` : ''}
+          </div>`;
+
+  // ── What to Watch (Phase 80 intelligence-to-action product layer) ──────
+  const checklist = (dailyBrief && dailyBrief.monitoring_checklist) || [];
+  const watchItems = checklist.slice(0, 3);
+  const sensitiveAssets = ((dailyBrief && dailyBrief.most_sensitive_assets) || [])
+    .slice(0, 3)
+    .map((item) => item.asset)
+    .join(' · ') || '—';
+  const briefCatalyst = ((dailyBrief && dailyBrief.next_catalysts) || [])[0] || topCatalyst;
+  const briefCoherence = dailyBrief && dailyBrief.regime && dailyBrief.regime.coherence
+    ? dailyBrief.regime.coherence
+    : null;
+  const coherenceLabel = briefCoherence && briefCoherence.score !== null
+    ? `${briefCoherence.score}/100 · ${String(briefCoherence.band || '').replace(/_/g, ' ')}`
+    : t('awaiting verified inputs', 'بانتظار مدخلات موثقة');
+  const whatToWatchHtml = `
+          <div class="nr-watch" data-intelligence-product="phase-80">
+            <div class="nr-watch-head">
+              <span class="nr-watch-title">${t('What to Watch', 'ما يستحق المتابعة')}</span>
+              <span class="nr-watch-coherence">${t('Regime coherence', 'اتساق النظام')}: ${escapeHtml(coherenceLabel)}</span>
+            </div>
+            <ul class="nr-watch-list">
+              ${watchItems.length
+                ? watchItems.map((item) => `<li>${escapeHtml(ar ? item.ar : item.en)}</li>`).join('\n              ')
+                : `<li>${t('Monitoring priorities resume with the next product brief cycle.', 'تُستأنف أولويات المتابعة مع دورة الموجز التالية.')}</li>`}
+            </ul>
+            <div class="nr-watch-meta">
+              <span><strong>${t('Next catalyst', 'المحفز التالي')}</strong>${briefCatalyst ? escapeHtml(ar ? (briefCatalyst.name_ar || briefCatalyst.name) : briefCatalyst.name) : '—'}</span>
+              <span><strong>${t('Most sensitive', 'الأكثر حساسية')}</strong>${escapeHtml(sensitiveAssets)}</span>
+            </div>
           </div>`;
 
   // ── Asset intelligence strip ────────────────────────────────────────────
@@ -647,6 +687,7 @@ ${heroRibbon}
           </div>
           <p class="newsroom-banner" data-tone="${bannerTone}">${banner}</p>
 ${leadHtml}
+${whatToWatchHtml}
           <div class="newsroom-pulse-strip">
             ${chips}
           </div>

@@ -245,6 +245,9 @@ jobs:
           node tools/build-market-cognition.js --write || echo "[cognition] Build degraded — continuing"
           node tools/build-macro-cognition.js --write || echo "[macro-cognition] Build degraded — continuing"
           node tools/build-narrative-convergence.js --write || echo "[convergence] Build degraded — continuing"
+          node tools/build-intelligence-briefs.js --write || echo "[product-brief] Build degraded — continuing"
+          node tools/build-intraday-brief.js --write || echo "[intraday-brief] Build degraded — continuing"
+          node tools/render-newsroom-modules.js || echo "[newsroom] Product render degraded — continuing"
           node tools/promote-wire-events.js --write || echo "[wire-promotion] Promotion degraded — continuing"
           node tools/build-visual-intelligence-data.js --write || echo "[visual-data] Build degraded — continuing"
           echo "[phase68/69/74/75] Regime engine v2, historical memory, continuity, market cognition, macro cognition, and visual intelligence data built."
@@ -281,6 +284,7 @@ jobs:
           npm run check:live-terminal
           npm run test:narrative-convergence
           npm run check:narrative-convergence
+          npm run check:intelligence-productization
           npm run check:macro-intelligence
           npm run check:responsive
           npm run check:global-header
