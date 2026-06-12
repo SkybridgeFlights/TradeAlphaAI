@@ -285,6 +285,8 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
         ${weekEvents.length ? buildWeekEventTable(weekEvents, prevNarratives) : '<p class="calendar-empty">No high-impact events scheduled in the current calendar for this week.</p>'}
       </section>
 
+      ${renderOutlookVisualSection('en')}
+
       ${regime?.regime ? buildRegimeSection(regime) : ''}
       ${ratePath?.fed_path?.current_stance ? buildRatePathSection(ratePath) : ''}
 

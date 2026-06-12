@@ -9,6 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { CHART_LIBRARY } = require('./build-chart-narratives');
 
 const ROOT = path.resolve(__dirname, '..');
 const NARRATIVES_PATH = path.join(ROOT, 'data', 'intelligence', 'chart-narratives.json');
@@ -48,6 +49,70 @@ function renderEditorialFigure(chart, locale) {
 <!-- editorial:visual-slot:${esc(chart.id)}:${esc(chart.kind)} -->`;
 }
 
+function plainText(value) {
+  return String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+
+function selectRelevantChart(charts, articleContext) {
+  if (!Array.isArray(charts) || !charts.length) return null;
+  const text = plainText(articleContext);
+  const ranked = charts
+    .map((chart) => {
+      const terms = (CHART_LIBRARY[chart.id] && CHART_LIBRARY[chart.id].article_terms) || [];
+      return {
+        chart,
+        matches: terms.filter((term) => text.includes(String(term).toLowerCase())).length,
+      };
+    })
+    .filter((entry) => entry.matches >= 2)
+    .sort((a, b) => b.matches - a.matches || b.chart.score - a.chart.score);
+  return ranked.length ? ranked[0].chart : null;
+}
+
+function selectChartForArticle(articleContext) {
+  const data = loadChartNarratives();
+  return data ? selectRelevantChart(data.selected, articleContext) : null;
+}
+
+function renderArticleVisualSection(articleContext, locale) {
+  const chart = selectChartForArticle(articleContext);
+  if (!chart) return '';
+  const ar = locale === 'ar';
+  return `<section class="market-section editorial-visual-section article-visual-intelligence" aria-labelledby="visual-intelligence-heading">
+        <div class="market-section-head"><span class="eyebrow" id="visual-intelligence-heading">${ar ? 'قراءة بصرية مرتبطة بالسياق' : 'Contextual visual intelligence'}</span></div>
+        ${renderEditorialFigure(chart, locale)}
+      </section>`;
+}
+
+function injectArticleVisual(html, locale) {
+  if (!html || html.includes('class="editorial-figure"')) return html;
+  const section = renderArticleVisualSection(html, locale);
+  if (!section) return html;
+
+  let output = html;
+  const articleStart = output.search(/<article\b[^>]*>/i);
+  const firstHeadingOffset = articleStart >= 0
+    ? output.slice(articleStart).search(/<h2\b/i)
+    : -1;
+  if (articleStart >= 0 && firstHeadingOffset >= 0) {
+    const insertion = articleStart + firstHeadingOffset;
+    output = output.slice(0, insertion) + section + '\n' + output.slice(insertion);
+  } else {
+    const mainEnd = output.search(/<\/main>/i);
+    if (mainEnd < 0) return html;
+    output = output.slice(0, mainEnd) + section + '\n' + output.slice(mainEnd);
+  }
+  if (!output.includes('/js/editorial-visuals.js')) {
+    output = output.replace(/<\/body>/i, '  <script src="/js/editorial-visuals.js" defer></script>\n</body>');
+  }
+  return output;
+}
+
 // First consumer helper: the single most relevant figure for a page, wrapped
 // as a market-outlook section. Returns '' when nothing is editorially
 // justified — restraint is the default.
@@ -62,4 +127,12 @@ function renderOutlookVisualSection(locale) {
       </section>`;
 }
 
-module.exports = { renderEditorialFigure, renderOutlookVisualSection, loadChartNarratives };
+module.exports = {
+  renderEditorialFigure,
+  renderOutlookVisualSection,
+  renderArticleVisualSection,
+  selectRelevantChart,
+  selectChartForArticle,
+  injectArticleVisual,
+  loadChartNarratives,
+};

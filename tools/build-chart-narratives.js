@@ -33,46 +33,83 @@ const OUT_PATH = path.join(ROOT, 'data', 'intelligence', 'chart-narratives.json'
 const TODAY = new Date().toISOString().slice(0, 10);
 const STALE_HOURS = 48;
 const MAX_CHARTS = 2;
+const SUPPORTED_VISUAL_TYPES = [
+  'price-structure',
+  'cross-asset-comparison',
+  'volatility',
+  'liquidity-pressure',
+  'catalyst-timeline',
+  'macro-divergence',
+  'breadth',
+  'positioning-concentration',
+];
+const ANNOTATION_CONTRACT = {
+  version: '1.0',
+  max_annotations: 3,
+  allowed_types: [
+    'macro-annotation',
+    'liquidity-marker',
+    'divergence-highlight',
+    'catalyst-zone',
+    'volatility-compression-zone',
+    'commentary-label',
+  ],
+  bilingual_labels_required: true,
+  evidence_reference_required: true,
+  rendering_status: 'foundation-only',
+};
 
 const CHART_LIBRARY = {
   'yields-growth': {
     kind: 'cross-asset',
+    visual_type: 'cross-asset-comparison',
     symbols: ['TVC:US10Y', 'NASDAQ:QQQ'],
+    article_terms: ['yield', 'yields', 'rates', 'duration', 'qqq', 'growth equities', 'العوائد', 'الفائدة', 'أسهم النمو'],
     title_en: 'Yields vs growth equities', title_ar: 'العوائد مقابل أسهم النمو',
     reading_en: (ctx) => `Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is ${ctx.diverging ? 'not holding this session, which is where the structural argument lives' : 'the channel through which duration stress reaches valuations'}.`,
     reading_ar: (ctx) => `ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ ${ctx.diverging ? 'لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي' : 'هي القناة التي ينتقل عبرها إجهاد الفائدة إلى التقييمات'}.`,
   },
   'dollar-gold': {
     kind: 'cross-asset',
+    visual_type: 'macro-divergence',
     symbols: ['TVC:DXY', 'OANDA:XAUUSD'],
+    article_terms: ['dollar', 'dxy', 'gold', 'xau', 'ذهب', 'الدولار'],
     title_en: 'Dollar vs gold', title_ar: 'الدولار مقابل الذهب',
-    reading_en: (ctx) => `Gold holding against a firming dollar${ctx.chain >= 2 ? ` for ${ctx.chain} sessions` : ''} — an unusual co-move that typically resolves through one side giving way.`,
-    reading_ar: (ctx) => `الذهب يصمد رغم تقوّي الدولار${ctx.chain >= 2 ? ` منذ ${ctx.chain} جلسات` : ''} — تحرك متزامن غير معتاد يُحسم عادة بتراجع أحد الطرفين.`,
+    reading_en: (ctx) => `Gold holding against a firming dollar${ctx.chain >= 2 ? ` for ${ctx.chain} sessions` : ''} — an unusual co-move that leaves the relationship structurally unresolved.`,
+    reading_ar: (ctx) => `الذهب يصمد رغم تقوّي الدولار${ctx.chain >= 2 ? ` منذ ${ctx.chain} جلسات` : ''} — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.`,
   },
   'breadth-confirmation': {
     kind: 'cross-asset',
+    visual_type: 'breadth',
     symbols: ['AMEX:SPY', 'AMEX:RSP'],
+    article_terms: ['breadth', 'equal weight', 'equal-weight', 'rsp', 'spy', 'participation', 'اتساع السوق', 'الوزن المتساوي', 'المشاركة'],
     title_en: 'Cap-weighted vs equal-weight breadth', title_ar: 'المؤشر الموزون مقابل الوزن المتساوي',
     reading_en: () => 'The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.',
     reading_ar: () => 'المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.',
   },
   'volatility-structure': {
     kind: 'volatility',
+    visual_type: 'volatility',
     symbols: ['TVC:VIX'],
+    article_terms: ['volatility', 'vix', 'compression', 'hedging', 'التقلب', 'التحوط', 'الانضغاط'],
     title_en: 'Volatility structure', title_ar: 'بنية التقلب',
     reading_en: (ctx) => `Volatility compression${ctx.pressure >= 3 ? ` with stored pressure at ${ctx.pressure}/5` : ''} — the longer the floor holds, the more it resembles stored instability rather than calm.`,
     reading_ar: (ctx) => `انضغاط التقلب${ctx.pressure >= 3 ? ` مع ضغط مخزّن عند ${ctx.pressure}/5` : ''} — كلما طال صمود القاع، اقترب من كونه عدم استقرار مخزّناً لا هدوءاً.`,
   },
   'ai-concentration': {
     kind: 'cross-asset',
+    visual_type: 'positioning-concentration',
     symbols: ['NASDAQ:NVDA', 'NASDAQ:QQQ'],
+    article_terms: ['ai', 'artificial intelligence', 'nvda', 'nvidia', 'qqq', 'megacap', 'concentration', 'الذكاء الاصطناعي', 'إنفيديا', 'التركز'],
     title_en: 'AI leadership vs the growth complex', title_ar: 'قيادة الذكاء الاصطناعي مقابل قطاع النمو',
     reading_en: () => 'AI leadership against the broader growth complex — when the gap widens while breadth thins, the leadership is carrying more weight than the structure can comfortably bear.',
     reading_ar: () => 'قيادة الذكاء الاصطناعي مقابل قطاع النمو الأوسع — حين تتسع الفجوة بينما يضيق الاتساع، تحمل القيادة وزناً أكبر مما تحتمله البنية بارتياح.',
   },
   'liquidity-beta': {
     kind: 'liquidity',
+    visual_type: 'liquidity-pressure',
     symbols: ['CRYPTO:BTCUSD', 'NASDAQ:QQQ'],
+    article_terms: ['liquidity', 'funding', 'bitcoin', 'btc', 'crypto', 'qqq', 'السيولة', 'التمويل', 'بتكوين'],
     title_en: 'Liquidity beta', title_ar: 'بيتا السيولة',
     reading_en: () => 'Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.',
     reading_ar: () => 'الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.',
@@ -171,6 +208,7 @@ function buildChartNarratives() {
       return {
         id: c.id,
         kind: spec.kind,
+        visual_type: spec.visual_type,
         symbols: spec.symbols,
         title_en: spec.title_en,
         title_ar: spec.title_ar,
@@ -189,6 +227,8 @@ function buildChartNarratives() {
     run_date: TODAY,
     verified,
     selected,
+    supported_visual_types: SUPPORTED_VISUAL_TYPES,
+    annotation_contract: ANNOTATION_CONTRACT,
     policy: 'At most two charts; selection derives only from verified intelligence artifacts; an unverified session selects nothing.',
   };
 }
@@ -205,4 +245,11 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { buildChartNarratives, scoreCharts, CHART_LIBRARY, MAX_CHARTS };
+module.exports = {
+  buildChartNarratives,
+  scoreCharts,
+  CHART_LIBRARY,
+  MAX_CHARTS,
+  SUPPORTED_VISUAL_TYPES,
+  ANNOTATION_CONTRACT,
+};

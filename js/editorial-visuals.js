@@ -46,8 +46,6 @@
     });
     container.appendChild(script);
 
-    var fallback = slot.querySelector('.editorial-visual-fallback');
-    if (fallback) fallback.remove();
     slot.appendChild(container);
   }
 

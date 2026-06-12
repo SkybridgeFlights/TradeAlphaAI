@@ -5,6 +5,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { ensureProductionEditorialLayout, hasProductionEditorialLayout } = require('./editorial-layout-renderer');
 const { assessPublicationConfidence } = require('./intelligence/publication-confidence-engine');
+const { injectArticleVisual } = require('./render-editorial-visuals');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'editorial-topic-queue.json');
@@ -39,8 +40,14 @@ diagnoseArticleParts(fs.readFileSync(draftAr, 'utf8'), true, relative(draftAr));
 if (!hasRequiredArticleParts(fs.readFileSync(draftEn, 'utf8'), false)) fail(`${relative(draftEn)} is missing required article metadata/schema/discovery/layout`);
 if (!hasRequiredArticleParts(fs.readFileSync(draftAr, 'utf8'), true)) fail(`${relative(draftAr)} is missing required Arabic article metadata/schema/discovery/layout`);
 
-const enHtml = ensureProductionEditorialLayout(fs.readFileSync(draftEn, 'utf8'), topic, 'en');
-const arHtml = ensureProductionEditorialLayout(fs.readFileSync(draftAr, 'utf8'), topic, 'ar');
+const enHtml = injectArticleVisual(
+  ensureProductionEditorialLayout(fs.readFileSync(draftEn, 'utf8'), topic, 'en'),
+  'en'
+);
+const arHtml = injectArticleVisual(
+  ensureProductionEditorialLayout(fs.readFileSync(draftAr, 'utf8'), topic, 'ar'),
+  'ar'
+);
 assertProductionLayout(enHtml, false, relative(draftEn));
 assertProductionLayout(arHtml, true, relative(draftAr));
 

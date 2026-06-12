@@ -4184,8 +4184,19 @@ html[dir="rtl"] .market-section blockquote { line-height: 1.85; }
 }
 
 .editorial-visual-fallback {
+  position: relative;
+  z-index: 0;
   color: var(--market-muted, #8d978f);
   font-size: 0.8rem;
+}
+
+.editorial-visual-slot > .tradingview-widget-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: rgb(9, 11, 15);
 }
 
 .editorial-figure figcaption {
@@ -4213,6 +4224,8 @@ html[dir="rtl"] .figure-kicker { letter-spacing: 0; font-size: 0.7rem; }
 }
 
 html[dir="rtl"] .figure-reading { line-height: 1.9; }
+html[dir="rtl"] .editorial-figure figcaption { text-align: right; }
+html[dir="rtl"] .figure-attribution { direction: ltr; unicode-bidi: embed; display: inline-block; }
 
 .figure-attribution {
   font-size: 0.68rem;
@@ -4222,4 +4235,5 @@ html[dir="rtl"] .figure-reading { line-height: 1.9; }
 @media (max-width: 640px) {
   .editorial-visual-slot { min-height: 260px; }
   .editorial-figure figcaption { padding: 12px 14px 14px; }
+  .figure-reading { font-size: 0.9rem; line-height: 1.58; }
 }

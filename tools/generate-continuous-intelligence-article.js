@@ -12,6 +12,7 @@
 const fs   = require('fs');
 const path = require('path');
 const { renderGlobalHeader, globalHeaderStyles, globalHeaderScripts } = require('./render-global-header');
+const { renderArticleVisualSection } = require('./render-editorial-visuals');
 
 const ROOT = path.resolve(__dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -375,6 +376,7 @@ function buildArticleHtml(topic, ar, regimeV2, intelCtx, continuity, history, tr
 
   const sections = [
     buildExecutiveSummary(topic, regimeV2, ar),
+    renderArticleVisualSection(`${topic.title_en || ''} ${topic.title_ar || ''} ${topic.family || ''}`, locale),
     buildWhatChanged(topic, ar),
     buildEvidenceMap(topic, regimeV2, ar),
     buildCrossAssetInterpretation(topic, transmission, etfFlow, ar),
@@ -453,6 +455,7 @@ function buildArticleHtml(topic, ar, regimeV2, intelCtx, continuity, history, tr
   <footer class="site-footer"><div class="wrap site-footer-inner"><div><strong>TradeAlphaAI</strong><p>${ar ? 'أبحاث مالية تعليمية غير استشارية.' : 'Educational, non-advisory financial research.'}</p></div><nav aria-label="${ar ? 'روابط التذييل' : 'Footer navigation'}"><a href="${ar ? '/ar/insights/' : '/insights/'}">${ar ? 'مقالات' : 'Insights'}</a><a href="${ar ? '/ar/market-outlook/' : '/market-outlook/'}">${ar ? 'توقعات السوق' : 'Market Outlook'}</a><a href="${ar ? '/ar/intelligence/' : '/intelligence/'}">${ar ? 'ذكاء السوق' : 'Market Intelligence'}</a><a href="${ar ? '/ar/market-replay/' : '/market-replay/'}">${ar ? 'إعادة تشغيل السوق' : 'Market Replay'}</a><a href="${ar ? '/ar/methodology.html' : '/methodology.html'}">${ar ? 'المنهجية' : 'Methodology'}</a></nav><small>&copy; 2026 TradeAlphaAI</small></div></footer>
 
   <script src="/js/language-router.js" defer></script>
+  <script src="/js/editorial-visuals.js" defer></script>
   ${scriptsHtml}
 </body>
 </html>`;
