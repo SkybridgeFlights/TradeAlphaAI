@@ -1,0 +1,80 @@
+name: Intraday Market Watch
+
+# Phase 75-RT — intraday refresh loop. Keeps the server-rendered newsroom,
+# pulse, cognition, and wire current during US market hours so the terminal
+# evolves intraday instead of waiting for the daily publishing run.
+#
+# Scope is intentionally narrow: fetch live state -> rebuild intelligence
+# artifacts -> re-render newsroom -> validate -> commit only when artifacts
+# actually changed. No publishing, no Telegram, no content generation —
+# all publication integrity protections stay exclusively in the
+# autonomous-publishing-brain pipeline.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every 30 minutes through the US session (13:00–21:00 UTC, Mon–Fri).
+    - cron: '5,35 13-20 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intraday-market-watch
+  cancel-in-progress: false
+
+jobs:
+  market-watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch live market state (sourced providers only)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: |
+          node tools/update-live-market-state.js --fetch --write || echo "[market-watch] live fetch degraded — existing state retained"
+
+      - name: Rebuild intraday intelligence stack
+        run: |
+          node tools/build-market-narrative-state.js --write || echo "[market-watch] narrative-state degraded — continuing"
+          node tools/build-newswire-events.js --write || echo "[market-watch] newswire degraded — continuing"
+          node tools/build-market-pulse.js --write || echo "[market-watch] pulse degraded — continuing"
+          node tools/build-market-cognition.js --write || echo "[market-watch] cognition degraded — continuing"
+          node tools/build-macro-cognition.js --write || echo "[market-watch] macro-cognition degraded — continuing"
+          node tools/render-newsroom-modules.js || echo "[market-watch] render degraded — continuing"
+
+      - name: Validate intraday artifacts
+        run: |
+          npm run check:newsroom-intelligence
+          npm run check:newsroom-ui
+          npm run check:market-cognition
+          npm run check:macro-cognition
+          npm run check:live-terminal
+
+      - name: Commit refreshed state (only when changed)
+        run: |
+          git config user.name "tradealphaai-market-watch"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/ index.html ar/index.html
+          if git diff --cached --quiet; then
+            echo "[market-watch] no intraday changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Intraday market watch: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "[market-watch] push attempt ${attempt} failed — retrying"
+            sleep 5
+          done
+          echo "[market-watch] push failed after retries"; exit 1

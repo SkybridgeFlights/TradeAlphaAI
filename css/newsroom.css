@@ -281,6 +281,11 @@ html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
 
 .nr-continuity { color: var(--nr-muted); }
 
+/* Live refresh indicator (Phase 75-RT) — populated only by verified quotes */
+.nr-live-asof { color: var(--nr-accent); margin-inline-start: 0.5rem; }
+.nr-live-asof:empty { display: none; }
+.nr-live-asof[data-live-status="partial"] { color: var(--nr-neutral); }
+
 html[dir="rtl"] .nr-phase { letter-spacing: 0; }
 
 /* ── Macro cognition layer (Phase 75) ──────────────────────────────────── */

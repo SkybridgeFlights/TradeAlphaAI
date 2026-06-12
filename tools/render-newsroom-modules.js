@@ -89,13 +89,13 @@ const EDITIONS = {
 const DIM_LABELS = {
   en: {
     risk_state: 'Risk', liquidity_stress: 'Liquidity', volatility_regime: 'Volatility',
-    breadth_state: 'Breadth', ai_concentration_risk: 'AI Concentration',
+    breadth_state: 'Breadth', momentum_concentration: 'Momentum', ai_concentration_risk: 'AI Concentration',
     speculative_appetite: 'Speculative Appetite', defensive_rotation: 'Defensive Rotation',
     dollar_pressure: 'Dollar', duration_pressure: 'Duration', market_fragility: 'Fragility',
   },
   ar: {
     risk_state: 'المخاطر', liquidity_stress: 'السيولة', volatility_regime: 'التقلب',
-    breadth_state: 'الاتساع', ai_concentration_risk: 'تركز الذكاء الاصطناعي',
+    breadth_state: 'الاتساع', momentum_concentration: 'تركز الزخم', ai_concentration_risk: 'تركز الذكاء الاصطناعي',
     speculative_appetite: 'شهية المضاربة', defensive_rotation: 'التناوب الدفاعي',
     dollar_pressure: 'الدولار', duration_pressure: 'حساسية الفائدة', market_fragility: 'الهشاشة',
   },
@@ -194,6 +194,10 @@ const STRIP_ASSETS = [
   { key: 'bitcoin', symbol: 'BTC' },
   { key: 'vix', symbol: 'VIX' },
   { key: 'nvda', symbol: 'NVDA' },
+  // OIL is populated by the live quote feed (/api/live-quotes — sourced CL=F
+  // quote); the CI snapshot has no oil node, so it server-renders as
+  // awaiting-data and only ever shows sourced values.
+  { key: 'oil', symbol: 'OIL' },
 ];
 
 // Contextual intelligence per asset, derived only from sourced direction +
@@ -238,6 +242,10 @@ function assetContext(symbol, changePct, dims, ar) {
       if (up) return { label: t('AI momentum extended', 'زخم الذكاء الاصطناعي ممتد'), state: 'up' };
       if (down) return { label: t('AI momentum cooling', 'زخم الذكاء الاصطناعي يهدأ'), state: 'down' };
       return { label: t('AI complex consolidating', 'قطاع الذكاء الاصطناعي يتماسك'), state: 'flat' };
+    case 'OIL':
+      if (up) return { label: t('Energy bid firming', 'الطلب على الطاقة يتقوى'), state: 'up' };
+      if (down) return { label: t('Energy complex soft', 'قطاع الطاقة ضعيف'), state: 'down' };
+      return { label: t('Crude rangebound', 'الخام في نطاق محدود'), state: 'flat' };
     default:
       return { label: '—', state: 'flat' };
   }
@@ -353,14 +361,14 @@ function renderSection(locale) {
   const assetCells = STRIP_ASSETS.map(({ key, symbol }) => {
     const node = liveOk ? liveNode(live, key) : { value: null, change: null };
     const ctx = assetContext(symbol, node.change, dims, ar);
-    return `<div class="nr-asset" data-dir="${ctx.state}"><span class="nr-asset-sym">${symbol}</span><span class="nr-asset-chg">${fmtChange(node.change)}</span><span class="nr-asset-ctx">${escapeHtml(ctx.label)}</span></div>`;
+    return `<div class="nr-asset" data-symbol="${symbol}" data-dir="${ctx.state}"><span class="nr-asset-sym">${symbol}</span><span class="nr-asset-chg">${fmtChange(node.change)}</span><span class="nr-asset-ctx">${escapeHtml(ctx.label)}</span></div>`;
   }).join('\n            ');
 
   // ── Macro monitor chips (terminal dashboard, with regime phase markers) ─
   const chips = Object.entries(DIM_LABELS[locale]).map(([key, label]) => {
     const value = dims[key] || 'unverified';
     const marker = cogFresh && value !== 'unverified' ? phaseMarker(cogShifts[key], ar) : '';
-    return `<span class="nr-chip" data-state="${escapeHtml(value)}">${escapeHtml(label)}: <strong>${escapeHtml(stateLabel(value, ar))}</strong>${marker}</span>`;
+    return `<span class="nr-chip" data-dim="${key}" data-state="${escapeHtml(value)}">${escapeHtml(label)}: <strong>${escapeHtml(stateLabel(value, ar))}</strong>${marker}</span>`;
   }).join('\n            ');
 
   // ── Modules (with desk identities) ──────────────────────────────────────
@@ -512,7 +520,7 @@ function renderSection(locale) {
             <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}${macroVerified && macro.desk_focus ? `<span class="nr-desk-focus" data-focus="${escapeHtml(macro.desk_focus.focus)}">${t('Desk focus', 'تركيز المكتب')}: ${escapeHtml(FOCUS_LABELS[locale][macro.desk_focus.focus] || macro.desk_focus.focus)}</span>` : ''}</span>
           </div>
 ${heroRibbon}
-          <div class="nr-asset-strip">
+          <div class="nr-asset-strip" data-live-endpoint="/api/live-quotes">
             ${assetCells}
           </div>
           <p class="newsroom-banner" data-tone="${bannerTone}">${banner}</p>
@@ -522,11 +530,12 @@ ${heroRibbon}
           <div class="newsroom-grid">${moduleHtml}
           </div>
           <div class="newsroom-foot">
-            <span>${updatedLabel ? `${t('Data as of', 'البيانات حتى')} ${updatedLabel}` : t('Awaiting first data cycle', 'بانتظار دورة البيانات الأولى')}</span>
+            <span>${updatedLabel ? `${t('Data as of', 'البيانات حتى')} ${updatedLabel}` : t('Awaiting first data cycle', 'بانتظار دورة البيانات الأولى')} <span class="nr-live-asof"></span></span>
             <span class="nr-continuity">${Number.isFinite(cognition.sessions_tracked) && cognition.sessions_tracked > 0 ? (ar ? `الاستمرارية: ${cognition.sessions_tracked} ${cognition.sessions_tracked === 1 ? 'جلسة متتبعة' : 'جلسات متتبعة'}` : `Continuity: ${cognition.sessions_tracked} ${cognition.sessions_tracked === 1 ? 'session' : 'sessions'} tracked`) : t('Continuity memory initializing', 'ذاكرة الاستمرارية قيد التهيئة')}</span>
             <span>${t('Sourced platform data only — educational market intelligence, not investment advice.', 'بيانات موثقة من المنصة فقط — استخبارات سوق تعليمية وليست نصيحة استثمارية.')}</span>
           </div>
         </div>
+        <script src="/js/live-terminal.js" defer></script>
       </section>`;
 }
 
