@@ -4157,3 +4157,69 @@ html[dir="rtl"] .market-section blockquote { line-height: 1.85; }
   .market-section > .market-copy:first-of-type { font-size: 1.04rem; }
   .market-section blockquote { padding: 2px 16px; font-size: 1.08rem; }
 }
+
+/* ── Editorial visual intelligence (Phase 87) ────────────────────────────
+   Institutional chart figures: one calm chart, an editorial reading, and
+   honest attribution. The chart mounts lazily; the caption reads even if
+   the embed never loads. */
+
+.editorial-visual-section { margin-top: 8px; }
+
+.editorial-figure {
+  margin: 26px 0;
+  border: 1px solid var(--market-line);
+  border-radius: var(--market-radius-md, 18px);
+  background: linear-gradient(180deg, rgba(17, 21, 27, 0.94), rgba(9, 11, 15, 0.92));
+  overflow: hidden;
+}
+
+.editorial-visual-slot {
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--market-line);
+  background: rgba(9, 11, 15, 0.6);
+}
+
+.editorial-visual-fallback {
+  color: var(--market-muted, #8d978f);
+  font-size: 0.8rem;
+}
+
+.editorial-figure figcaption {
+  padding: 14px 18px 16px;
+}
+
+.figure-kicker {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--market-gold-bright, #f2d27b);
+  margin-bottom: 6px;
+}
+
+html[dir="rtl"] .figure-kicker { letter-spacing: 0; font-size: 0.7rem; }
+
+.figure-reading {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--market-soft, #cad3c7);
+  max-width: 70ch;
+}
+
+html[dir="rtl"] .figure-reading { line-height: 1.9; }
+
+.figure-attribution {
+  font-size: 0.68rem;
+  color: var(--market-muted, #8d978f);
+}
+
+@media (max-width: 640px) {
+  .editorial-visual-slot { min-height: 260px; }
+  .editorial-figure figcaption { padding: 12px 14px 14px; }
+}

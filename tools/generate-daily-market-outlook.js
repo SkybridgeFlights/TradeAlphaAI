@@ -29,6 +29,7 @@ const fs   = require('fs');
 const path = require('path');
 const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
 const { updateOutlookPublication } = require('./update-market-outlook-publication');
+const { renderOutlookVisualSection } = require('./render-editorial-visuals');
 
 const ROOT          = path.resolve(__dirname, '..');
 const CAL_PATH      = path.join(ROOT, 'data', 'economic-calendar.json');
@@ -183,6 +184,8 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
 
       ${narrative.regime_narrative ? `<section class="market-section"><div class="narrative-callout">${esc(narrative.regime_narrative)}</div></section>` : ''}
 
+      ${renderOutlookVisualSection('en')}
+
       ${regime?.regime ? buildRegimeSection(regime) : ''}
       ${ratePath?.fed_path?.current_stance ? buildRatePathSection(ratePath) : ''}
 
@@ -211,6 +214,7 @@ function buildDailyPage(calendar, memory, narrative, live, expectations, today, 
   </main>
   ${buildFooter()}
   <script src="/js/mobile-nav.js" defer></script>
+  <script src="/js/editorial-visuals.js" defer></script>
 </body>
 </html>`;
 }
@@ -309,6 +313,7 @@ function buildWeeklyPage(calendar, memory, narrative, live, expectations, weekSl
   </main>
   ${buildFooter()}
   <script src="/js/mobile-nav.js" defer></script>
+  <script src="/js/editorial-visuals.js" defer></script>
 </body>
 </html>`;
 }

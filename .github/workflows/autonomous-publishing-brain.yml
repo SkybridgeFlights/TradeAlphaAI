@@ -245,6 +245,7 @@ jobs:
           node tools/build-market-cognition.js --write || echo "[cognition] Build degraded — continuing"
           node tools/build-macro-cognition.js --write || echo "[macro-cognition] Build degraded — continuing"
           node tools/build-narrative-convergence.js --write || echo "[convergence] Build degraded — continuing"
+          node tools/build-chart-narratives.js --write || echo "[chart-narratives] Build degraded — continuing"
           node tools/build-editorial-market-memory.js --write || echo "[editorial-memory] Build degraded — continuing"
           node tools/build-structural-tension.js --write || echo "[structural-tension] Build degraded — continuing"
           node tools/build-intelligence-briefs.js --write || echo "[product-brief] Build degraded — continuing"
@@ -278,6 +279,7 @@ jobs:
           npm run check:editorial-personas
           npm run check:narrative-realism
           npm run check:editorial-cadence
+          npm run check:editorial-visuals
           npm run check:newsroom-intelligence
           npm run check:newsroom-ui
           npm run test:market-cognition
