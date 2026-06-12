@@ -106,16 +106,32 @@ for (const page of ['index.html', 'ar/index.html']) {
     for (const band of ['priority', 'secondary', 'continuity']) {
       if (count(section, `data-band="${band}"`) !== 1) failures.push(`${page}: desk band "${band}" missing or duplicated`);
     }
+    // Phase 85 surface compression: active desks render full cards; quiet
+    // desks compress into per-band strips. Together they must cover exactly
+    // the 13 desks, full empty-state cards are forbidden, and calm-state
+    // language is centralized into one shared note.
     const modules = [...section.matchAll(/<div class="nr-module" data-desk="([^"]+)" data-density="([^"]+)" data-priority="([^"]+)" data-state="([^"]+)">([\s\S]*?)<\/div>/g)];
-    if (modules.length !== 13) failures.push(`${page}: expected 13 density-aware desk modules, found ${modules.length}`);
-    for (const [, desk, density, priority, state, body] of modules) {
-      if (!['quiet', 'compact', 'standard', 'expanded'].includes(density)) failures.push(`${page}: ${desk} invalid density "${density}"`);
-      if (!['quiet', 'normal', 'high', 'critical'].includes(priority)) failures.push(`${page}: ${desk} invalid priority "${priority}"`);
-      if (!['monitoring', 'active'].includes(state)) failures.push(`${page}: ${desk} invalid state "${state}"`);
-      if (state === 'monitoring' && density !== 'quiet') failures.push(`${page}: monitoring desk ${desk} is not compact`);
-      if (state === 'active' && density === 'quiet') failures.push(`${page}: active desk ${desk} has quiet density`);
-      if (state === 'monitoring' && !body.includes('nr-empty')) failures.push(`${page}: monitoring desk ${desk} lacks intentional empty-state copy`);
+    const quietChips = [...section.matchAll(/<span class="nr-quiet-desk" data-desk="([^"]+)" data-state="monitoring">/g)];
+    if (modules.length + quietChips.length !== 13) {
+      failures.push(`${page}: expected 13 desks across cards+quiet strips, found ${modules.length}+${quietChips.length}`);
     }
+    for (const [, desk, density, priority, state, body] of modules) {
+      if (!['compact', 'standard', 'expanded'].includes(density)) failures.push(`${page}: ${desk} invalid active density "${density}"`);
+      if (!['quiet', 'normal', 'high', 'critical'].includes(priority)) failures.push(`${page}: ${desk} invalid priority "${priority}"`);
+      if (state !== 'active') failures.push(`${page}: full card for non-active desk ${desk} — quiet desks must compress to strips`);
+      if (body.includes('nr-empty')) failures.push(`${page}: active desk ${desk} renders empty-state copy — should be a quiet strip instead`);
+    }
+    const seenDesks = new Set();
+    for (const [, desk] of [...modules, ...quietChips]) {
+      if (seenDesks.has(desk)) failures.push(`${page}: desk ${desk} appears both as card and quiet chip`);
+      seenDesks.add(desk);
+    }
+    if (quietChips.length && count(section, 'nr-calm-note') !== 1) {
+      failures.push(`${page}: quiet desks present but shared calm note missing or duplicated`);
+    }
+    // Text-fatigue cap: repeated calm-state phrasing must stay centralized.
+    const calmPhrases = (section.match(/verified data cycle|دورة البيانات الموثقة/g) || []).length;
+    if (calmPhrases > 3) failures.push(`${page}: calm-state language repeated ${calmPhrases} times — centralize it`);
     const priorityBand = section.slice(priorityAt, secondaryAt);
     for (const match of section.matchAll(/<div class="nr-module" data-desk="([^"]+)" data-density="[^"]+" data-priority="(high|critical)"/g)) {
       if (!priorityBand.includes(`data-desk="${match[1]}"`)) failures.push(`${page}: high-priority desk ${match[1]} rendered below priority band`);
@@ -157,6 +173,9 @@ else {
   const css = read('css/newsroom.css') || '';
   for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before', '[data-behavior="elevated-volatility"]', '[data-behavior="major-catalyst"]', '[data-divergence-focus="elevated"]', '[data-memory-state="unresolved"]', '[data-tension-level="elevated"]']) {
     if (!css.includes(token)) failures.push(`css/newsroom.css: missing Phase 81 density rule ${token}`);
+  }
+  for (const token of ['.nr-quiet-strip', '.nr-quiet-desk', '.nr-calm-note', '[data-compressed="true"]']) {
+    if (!css.includes(token)) failures.push(`css/newsroom.css: missing Phase 85 compression rule ${token}`);
   }
 }
 

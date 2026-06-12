@@ -272,6 +272,94 @@
       "contract": {
         "readings": "array<{metric,value,state}>"
       }
+    },
+    {
+      "id": "premium-article-surface",
+      "title": "Premium Article Surface",
+      "vertical": "market-outlook",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/narrative-convergence.json",
+        "data/intelligence/daily-intelligence-brief.json"
+      ],
+      "contract": {
+        "lead": "{headline,kicker,regime_context}",
+        "body_slots": "array<{type:paragraph|visual|pullquote,ref}>",
+        "continuity_footer": "{prior_refs,unresolved}"
+      }
+    },
+    {
+      "id": "market-outlook-surface",
+      "title": "Institutional Market Outlook Surface",
+      "vertical": "market-outlook",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/macro-cognition.json#scenarios",
+        "data/intelligence/narrative-convergence.json"
+      ],
+      "contract": {
+        "scenario_rail": "array<{id,status}>",
+        "coherence_strip": "{score,band}",
+        "visual_slots": "array<{slot,kind}>"
+      }
+    },
+    {
+      "id": "chart-intelligence-slot",
+      "title": "Chart Intelligence Slot",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "/api/live-quotes",
+        "data/intelligence/market-timeline.json"
+      ],
+      "contract": {
+        "slot": "{container_id,asset,overlay_kind:transition|pressure|divergence,annotations:array}",
+        "renderer": "pluggable (TradingView-compatible)"
+      }
+    },
+    {
+      "id": "macro-visual-annotations",
+      "title": "Macro Visual Annotations",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/market-cognition.json#timeline_tail",
+        "data/intelligence/narrative-convergence.json#diverges"
+      ],
+      "contract": {
+        "annotations": "array<{date,kind,label_en,label_ar,evidence}>"
+      }
+    },
+    {
+      "id": "editorial-graphics-adapter",
+      "title": "Editorial Graphics Adapter",
+      "vertical": "newswire",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/daily-intelligence-brief.json"
+      ],
+      "contract": {
+        "card": "{headline,metric_rows,palette:institutional,locale}",
+        "targets": [
+          "article-inline",
+          "telegram",
+          "x",
+          "instagram"
+        ]
+      }
+    },
+    {
+      "id": "cross-surface-continuity",
+      "title": "Cross-Surface Narrative Continuity",
+      "vertical": "macro-desk",
+      "status": "foundation",
+      "data_sources": [
+        "data/intelligence/narrative-convergence.json",
+        "data/intelligence/market-narrative-state.json"
+      ],
+      "contract": {
+        "thread": "{theme_id,surfaces:array<homepage|article|outlook|telegram>,last_state}"
+      }
     }
   ]
 }

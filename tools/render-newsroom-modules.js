@@ -996,11 +996,16 @@ function renderSection(locale) {
   const continuityIds = order.filter((id) => continuityDesks.has(id) && !priorityIds.includes(id));
   const secondaryIds = order.filter((id) => !priorityIds.includes(id) && !continuityIds.includes(id));
 
+  // Phase 85 — surface compression. Only desks with verified content earn a
+  // full card; quiet desks collapse into one compact strip per band (still
+  // individually addressable via data-desk for integrity checks) and one
+  // shared calm note replaces thirteen repeated empty-state boxes. Desks
+  // re-expand automatically the moment their underlying artifact carries
+  // content — the surface breathes with the market.
   function renderModule(id) {
     const metric = moduleMetrics[id];
-    const state = metric.count ? 'active' : 'monitoring';
     return `
-              <div class="nr-module" data-desk="${id}" data-density="${densityFor(metric)}" data-priority="${metric.priority}" data-state="${state}">
+              <div class="nr-module" data-desk="${id}" data-density="${densityFor(metric)}" data-priority="${metric.priority}" data-state="active">
                 <h3>${modules[id].title}</h3>
                 <ul>
                 ${modules[id].body}
@@ -1008,18 +1013,39 @@ function renderSection(locale) {
               </div>`;
   }
 
-  function renderBand(id, title, subtitle, ids) {
+  function renderQuietStrip(ids) {
     if (!ids.length) return '';
     return `
-            <section class="nr-desk-band" data-band="${id}">
+              <div class="nr-quiet-strip">
+                <span class="nr-quiet-label">${t('Quiet', 'هادئ')}</span>
+                ${ids.map((id) => `<span class="nr-quiet-desk" data-desk="${id}" data-state="monitoring">${modules[id].title}</span>`).join('\n                ')}
+              </div>`;
+  }
+
+  function renderBand(id, title, subtitle, ids) {
+    if (!ids.length) return '';
+    const activeIds = ids.filter((moduleId) => moduleMetrics[moduleId].count > 0);
+    const quietIds = ids.filter((moduleId) => moduleMetrics[moduleId].count === 0);
+    const grid = activeIds.length
+      ? `
+              <div class="nr-desk-grid">${activeIds.map(renderModule).join('')}
+              </div>`
+      : '';
+    return `
+            <section class="nr-desk-band" data-band="${id}" data-compressed="${activeIds.length ? 'false' : 'true'}">
               <div class="nr-band-head">
                 <h3>${title}</h3>
                 <span>${subtitle}</span>
-              </div>
-              <div class="nr-desk-grid">${ids.map(renderModule).join('')}
-              </div>
+              </div>${grid}${renderQuietStrip(quietIds)}
             </section>`;
   }
+
+  const allBandIds = [...priorityIds, ...secondaryIds, ...continuityIds];
+  const anyQuiet = allBandIds.some((id) => moduleMetrics[id].count === 0);
+  const calmNote = anyQuiet
+    ? `
+            <p class="nr-calm-note">${t('Quiet desks hold their last verified state and re-expand automatically when sourced conditions change.', 'تحتفظ المكاتب الهادئة بآخر حالة موثقة وتتوسع تلقائياً عند تغير الظروف الموثقة.')}</p>`
+    : '';
 
   const moduleHtml = [
     renderBand(
@@ -1040,7 +1066,7 @@ function renderSection(locale) {
       t('Cross-session context and regime history', 'سياق الجلسات وتاريخ تحولات النظام'),
       continuityIds
     ),
-  ].join('');
+  ].join('') + calmNote;
 
   const edition = EDITIONS[locale][session];
 

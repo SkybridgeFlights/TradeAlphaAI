@@ -848,3 +848,62 @@ html[dir="rtl"] .newsroom[data-intensity="elevated"] .nr-lead-headline { font-si
   .nr-band-head { align-items: flex-start; flex-direction: column; gap: 0.15rem; }
   .nr-band-head span { text-align: start; }
 }
+
+/* ── Surface compression (Phase 85) ───────────────────────────────────── */
+/* Quiet desks collapse into one compact strip per band; a single shared
+   calm note replaces repeated empty-state boxes. Active desks keep full
+   cards and re-expand automatically — the surface breathes with the
+   market instead of displaying its machinery. */
+
+.nr-quiet-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.55rem;
+  margin-top: 0.55rem;
+  padding: 0.42rem 0.7rem;
+  border: 1px dashed rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.014);
+}
+
+.nr-quiet-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nr-quiet);
+}
+
+html[lang="ar"] .nr-quiet-label { letter-spacing: 0; font-size: 0.68rem; }
+
+.nr-quiet-desk {
+  font-size: 0.7rem;
+  color: var(--nr-muted);
+  white-space: nowrap;
+}
+
+.nr-quiet-desk:not(:last-child)::after {
+  content: "·";
+  margin-inline-start: 0.55rem;
+  color: var(--nr-quiet);
+}
+
+.nr-calm-note {
+  margin: 0.8rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--nr-quiet);
+}
+
+html[dir="rtl"] .nr-calm-note { line-height: 1.75; font-size: 0.76rem; }
+
+/* A fully quiet band keeps its identity but loses its vertical weight. */
+.nr-desk-band[data-compressed="true"] { padding-bottom: 0.2rem; }
+.nr-desk-band[data-compressed="true"] .nr-band-head { margin-bottom: 0.2rem; }
+.nr-desk-band[data-compressed="true"] .nr-band-head span { display: none; }
+
+@media (max-width: 640px) {
+  .nr-quiet-strip { padding: 0.4rem 0.6rem; }
+  .nr-quiet-desk { white-space: normal; }
+}

@@ -300,7 +300,7 @@
             <span class="nr-chip" data-dim="market_fragility" data-state="contained">Fragility: <strong>contained</strong></span>
           </div>
           <div class="newsroom-flow">
-            <section class="nr-desk-band" data-band="priority">
+            <section class="nr-desk-band" data-band="priority" data-compressed="false">
               <div class="nr-band-head">
                 <h3>Priority Desks</h3>
                 <span>Catalysts, active tensions and current market judgment</span>
@@ -356,36 +356,12 @@
               </div>
               </div>
             </section>
-            <section class="nr-desk-band" data-band="secondary">
+            <section class="nr-desk-band" data-band="secondary" data-compressed="false">
               <div class="nr-band-head">
                 <h3>Market Structure</h3>
                 <span>Flow, positioning and supporting confirmation</span>
               </div>
               <div class="nr-desk-grid">
-              <div class="nr-module" data-desk="wire" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>Live Newswire</h3>
-                <ul>
-                <li class="nr-empty">Wire quiet — no high-impact sourced events in the last 48 hours.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="alerts" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>Desk Alerts</h3>
-                <ul>
-                <li class="nr-empty">No verified state transitions this cycle — desk in monitoring mode.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="positioning" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>Positioning Desk</h3>
-                <ul>
-                <li class="nr-empty">Pressure accumulation builds with verified sessions.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="movers" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>Top Movers — Flow Monitor</h3>
-                <ul>
-                <li class="nr-empty">No outsized sourced moves this cycle.</li>
-                </ul>
-              </div>
               <div class="nr-module" data-desk="rotation" data-density="expanded" data-priority="normal" data-state="active">
                 <h3>Rotation Signals — Flow Monitor</h3>
                 <ul>
@@ -396,27 +372,26 @@
                 </ul>
               </div>
               </div>
+              <div class="nr-quiet-strip">
+                <span class="nr-quiet-label">Quiet</span>
+                <span class="nr-quiet-desk" data-desk="wire" data-state="monitoring">Live Newswire</span>
+                <span class="nr-quiet-desk" data-desk="alerts" data-state="monitoring">Desk Alerts</span>
+                <span class="nr-quiet-desk" data-desk="positioning" data-state="monitoring">Positioning Desk</span>
+                <span class="nr-quiet-desk" data-desk="movers" data-state="monitoring">Top Movers — Flow Monitor</span>
+              </div>
             </section>
-            <section class="nr-desk-band" data-band="continuity">
+            <section class="nr-desk-band" data-band="continuity" data-compressed="true">
               <div class="nr-band-head">
                 <h3>Continuity & Memory</h3>
                 <span>Cross-session context and regime history</span>
               </div>
-              <div class="nr-desk-grid">
-              <div class="nr-module" data-desk="memory" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>Editorial Market Memory</h3>
-                <ul>
-                <li class="nr-empty">Editorial memory is held until the next verified session; prior claims are not extended.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="timeline" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>Market State Evolution</h3>
-                <ul>
-                <li class="nr-empty">No verified regime transitions recorded yet — the evolution timeline starts with the first sourced shift.</li>
-                </ul>
-              </div>
+              <div class="nr-quiet-strip">
+                <span class="nr-quiet-label">Quiet</span>
+                <span class="nr-quiet-desk" data-desk="memory" data-state="monitoring">Editorial Market Memory</span>
+                <span class="nr-quiet-desk" data-desk="timeline" data-state="monitoring">Market State Evolution</span>
               </div>
             </section>
+            <p class="nr-calm-note">Quiet desks hold their last verified state and re-expand automatically when sourced conditions change.</p>
           </div>
           <div class="newsroom-foot">
             <span>Data as of 2026-06-12 16:24 UTC <span class="nr-live-asof"></span></span>

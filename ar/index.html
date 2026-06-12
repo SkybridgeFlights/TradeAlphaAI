@@ -290,7 +290,7 @@
             <span class="nr-chip" data-dim="market_fragility" data-state="contained">الهشاشة: <strong>محتوى</strong></span>
           </div>
           <div class="newsroom-flow">
-            <section class="nr-desk-band" data-band="priority">
+            <section class="nr-desk-band" data-band="priority" data-compressed="false">
               <div class="nr-band-head">
                 <h3>المكاتب ذات الأولوية</h3>
                 <span>المحفزات والتوترات النشطة وقراءة السوق الراهنة</span>
@@ -346,36 +346,12 @@
               </div>
               </div>
             </section>
-            <section class="nr-desk-band" data-band="secondary">
+            <section class="nr-desk-band" data-band="secondary" data-compressed="false">
               <div class="nr-band-head">
                 <h3>بنية السوق</h3>
                 <span>التدفقات والتمركزات وإشارات التأكيد المساندة</span>
               </div>
               <div class="nr-desk-grid">
-              <div class="nr-module" data-desk="wire" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>الموجز المباشر</h3>
-                <ul>
-                <li class="nr-empty">الموجز هادئ — لا أحداث موثقة عالية التأثير خلال 48 ساعة الماضية.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="alerts" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>تنبيهات المكتب</h3>
-                <ul>
-                <li class="nr-empty">لا تحولات حالة موثقة في هذه الدورة — المكتب في وضع المراقبة.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="positioning" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>مكتب التمركزات</h3>
-                <ul>
-                <li class="nr-empty">يتكوّن تراكم الضغوط مع الجلسات الموثقة.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="movers" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>أبرز التحركات — مراقبة التدفقات</h3>
-                <ul>
-                <li class="nr-empty">لا تحركات كبيرة موثقة في هذه الدورة.</li>
-                </ul>
-              </div>
               <div class="nr-module" data-desk="rotation" data-density="expanded" data-priority="normal" data-state="active">
                 <h3>إشارات التناوب — مراقبة التدفقات</h3>
                 <ul>
@@ -386,27 +362,26 @@
                 </ul>
               </div>
               </div>
+              <div class="nr-quiet-strip">
+                <span class="nr-quiet-label">هادئ</span>
+                <span class="nr-quiet-desk" data-desk="wire" data-state="monitoring">الموجز المباشر</span>
+                <span class="nr-quiet-desk" data-desk="alerts" data-state="monitoring">تنبيهات المكتب</span>
+                <span class="nr-quiet-desk" data-desk="positioning" data-state="monitoring">مكتب التمركزات</span>
+                <span class="nr-quiet-desk" data-desk="movers" data-state="monitoring">أبرز التحركات — مراقبة التدفقات</span>
+              </div>
             </section>
-            <section class="nr-desk-band" data-band="continuity">
+            <section class="nr-desk-band" data-band="continuity" data-compressed="true">
               <div class="nr-band-head">
                 <h3>الاستمرارية والذاكرة</h3>
                 <span>سياق الجلسات وتاريخ تحولات النظام</span>
               </div>
-              <div class="nr-desk-grid">
-              <div class="nr-module" data-desk="memory" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>الذاكرة التحريرية للسوق</h3>
-                <ul>
-                <li class="nr-empty">تظل الذاكرة التحريرية معلقة حتى الجلسة الموثقة التالية، ولا يجري تمديد أي استنتاج سابق.</li>
-                </ul>
-              </div>
-              <div class="nr-module" data-desk="timeline" data-density="quiet" data-priority="quiet" data-state="monitoring">
-                <h3>تطور حالة السوق</h3>
-                <ul>
-                <li class="nr-empty">لا تحولات نظام موثقة بعد — يبدأ خط التطور مع أول تحول موثق.</li>
-                </ul>
-              </div>
+              <div class="nr-quiet-strip">
+                <span class="nr-quiet-label">هادئ</span>
+                <span class="nr-quiet-desk" data-desk="memory" data-state="monitoring">الذاكرة التحريرية للسوق</span>
+                <span class="nr-quiet-desk" data-desk="timeline" data-state="monitoring">تطور حالة السوق</span>
               </div>
             </section>
+            <p class="nr-calm-note">تحتفظ المكاتب الهادئة بآخر حالة موثقة وتتوسع تلقائياً عند تغير الظروف الموثقة.</p>
           </div>
           <div class="newsroom-foot">
             <span>البيانات حتى 2026-06-12 16:24 UTC <span class="nr-live-asof"></span></span>
