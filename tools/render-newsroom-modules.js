@@ -118,6 +118,24 @@ function stateLabel(value, ar) {
   return ar ? (STATE_AR[value] || value) : value.replace(/_/g, '-');
 }
 
+// Calendar asset sensitivity names arrive in English; localize the common
+// names for Arabic readers (tickers stay Latin — Arabic financial-media
+// convention).
+const ASSET_NAME_AR = {
+  'Treasury yields': 'عوائد الخزانة',
+  'Oil': 'النفط',
+  'Gold': 'الذهب',
+  'Defensive sectors': 'القطاعات الدفاعية',
+  'Equities': 'الأسهم',
+  'Dollar': 'الدولار',
+  'Crypto': 'العملات الرقمية',
+};
+
+function assetName(name, ar) {
+  if (!ar) return String(name || '');
+  return ASSET_NAME_AR[String(name || '').trim()] || String(name || '');
+}
+
 const SEVERITY_LABELS = {
   en: { high: 'HIGH', elevated: 'ELEVATED', watch: 'WATCH' },
   ar: { high: 'مرتفع', elevated: 'متصاعد', watch: 'مراقبة' },
@@ -357,6 +375,62 @@ function renderSection(locale) {
         'وضع المراقبة — مؤشرات النظام بانتظار دورة البيانات الموثقة التالية.');
   const bannerTone = !verified ? 'quiet' : stressed ? 'alert' : 'info';
 
+  // ── Desk lead — the dominant story (Phase 78 continuity layer) ──────────
+  // One coherent institutional read: what changed, why it matters, which
+  // assets, what the desk awaits, and the cross-session continuity thread.
+  // Every line derives from a verified artifact; missing pieces are omitted,
+  // never invented.
+  const leadHeadline = topStory
+    || (cogAlerts.length ? (ar ? cogAlerts[0].headline_ar : cogAlerts[0].headline_en) : null)
+    || (verified ? pulse.pulse_banner : null)
+    || t('Desk monitoring — the structural watch continues while regime inputs await the next sourced cycle.',
+         'مراقبة المكتب مستمرة — المتابعة الهيكلية قائمة بانتظار دورة البيانات الموثقة التالية.');
+
+  const leadLines = [];
+  const latestTransition = cogFresh ? ((cognition.timeline_tail || [])[0] || null) : null;
+  if (latestTransition && latestTransition.dimension) {
+    const dimLabel = DIM_LABELS[locale][latestTransition.dimension] || String(latestTransition.dimension).replace(/_/g, ' ');
+    leadLines.push([
+      t('What changed', 'ما الذي تغيّر'),
+      ar
+        ? `${dimLabel}: من ${stateLabel(latestTransition.from, true)} إلى ${stateLabel(latestTransition.to, true)} (${latestTransition.date})`
+        : `${dimLabel}: ${stateLabel(latestTransition.from, false)} → ${stateLabel(latestTransition.to, false)} (${latestTransition.date})`,
+    ]);
+  }
+  if (macroVerified && macro.conviction && macro.conviction.state !== 'unverified') {
+    leadLines.push([t('Why it matters', 'لماذا يهم'), ar ? macro.conviction.ar : macro.conviction.en]);
+  }
+  const divergingLegs = cogFresh && cognition.verified === true
+    ? (cognition.causal_links || []).filter((l) => l.state === 'diverging').map((l) => l.legs.join('/').toUpperCase())
+    : [];
+  const focusAssets = divergingLegs.length
+    ? divergingLegs.slice(0, 3).join(' · ')
+    : (topCatalyst && topCatalyst.assets && topCatalyst.assets.length
+      ? topCatalyst.assets.slice(0, 4).map((a) => assetName(a, ar)).join(' · ')
+      : null);
+  if (focusAssets) {
+    leadLines.push([
+      divergingLegs.length ? t('Links under stress', 'روابط تحت الضغط') : t('Assets in focus', 'أصول تحت المجهر'),
+      focusAssets,
+    ]);
+  }
+  if (topCatalyst) {
+    const when = String(topCatalyst.time || '').includes('T') ? String(topCatalyst.time).slice(11, 16) + ' UTC' : String(topCatalyst.time || '');
+    leadLines.push([t('What the desk awaits', 'ما ينتظره المكتب'), `${topCatalyst.name}${when ? ` — ${when}` : ''}`]);
+  }
+  const topObservation = cogFresh ? ((cognition.memory_observations || [])[0] || null) : null;
+  if (topObservation) {
+    leadLines.push([t('Continuity', 'الاستمرارية'), ar ? topObservation.ar : topObservation.en]);
+  }
+  const leadHtml = `
+          <div class="nr-lead">
+            <span class="nr-lead-kicker">${t('Desk lead', 'محور المكتب')}</span>
+            <p class="nr-lead-headline">${escapeHtml(leadHeadline)}</p>${leadLines.length ? `
+            <ul class="nr-lead-lines">
+              ${leadLines.map(([k, v]) => `<li><span class="nr-lead-key">${escapeHtml(k)}</span>${escapeHtml(v)}</li>`).join('\n              ')}
+            </ul>` : ''}
+          </div>`;
+
   // ── Asset intelligence strip ────────────────────────────────────────────
   const assetCells = STRIP_ASSETS.map(({ key, symbol }) => {
     const node = liveOk ? liveNode(live, key) : { value: null, change: null };
@@ -387,7 +461,7 @@ function renderSection(locale) {
   const catalystItems = catalysts.length
     ? catalysts.map((c) => {
       const when = String(c.time || '').includes('T') ? String(c.time).slice(11, 16) + ' UTC' : escapeHtml(String(c.time || ''));
-      return `<li><span class="nr-wire-headline">${escapeHtml(c.name)}</span><span class="nr-meta">${when}${c.assets && c.assets.length ? ' · ' + escapeHtml(c.assets.slice(0, 3).join(', ')) : ''}</span></li>`;
+      return `<li><span class="nr-wire-headline">${escapeHtml(c.name)}</span><span class="nr-meta">${when}${c.assets && c.assets.length ? ' · ' + escapeHtml(c.assets.slice(0, 3).map((a) => assetName(a, ar)).join(ar ? '، ' : ', ')) : ''}</span></li>`;
     }).join('\n              ')
     : `<li class="nr-empty">${t('No high-impact catalysts on the calendar window.', 'لا محفزات عالية التأثير في نافذة المفكرة الحالية.')}</li>`;
 
@@ -514,7 +588,7 @@ function renderSection(locale) {
 
   return `
       <section class="section section-tight" id="newsroom-live">
-        <div class="section-panel newsroom" dir="${ar ? 'rtl' : 'ltr'}">
+        <div class="section-panel newsroom" data-session="${session}" dir="${ar ? 'rtl' : 'ltr'}">
           <div class="newsroom-head">
             <h2 class="newsroom-title">${t('TradeAlphaAI Terminal', 'منصة TradeAlphaAI')} · <span class="nr-edition">${escapeHtml(edition)}</span></h2>
             <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}${macroVerified && macro.desk_focus ? `<span class="nr-desk-focus" data-focus="${escapeHtml(macro.desk_focus.focus)}">${t('Desk focus', 'تركيز المكتب')}: ${escapeHtml(FOCUS_LABELS[locale][macro.desk_focus.focus] || macro.desk_focus.focus)}</span>` : ''}</span>
@@ -524,6 +598,7 @@ ${heroRibbon}
             ${assetCells}
           </div>
           <p class="newsroom-banner" data-tone="${bannerTone}">${banner}</p>
+${leadHtml}
           <div class="newsroom-pulse-strip">
             ${chips}
           </div>
