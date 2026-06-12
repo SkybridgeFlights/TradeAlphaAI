@@ -1,21 +1,21 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-12T11:43:31.677Z",
+  "updated_at": "2026-06-12T16:24:49.747Z",
   "run_date": "2026-06-12",
-  "verified": false,
+  "verified": true,
   "conviction": {
-    "state": "unverified",
-    "regime_confidence": "unverified",
-    "confirmations": 0,
+    "state": "healthy-trend-structure",
+    "regime_confidence": "moderate",
+    "confirmations": 3,
     "contradictions": 0,
-    "en": "Conviction analysis resumes with the next verified data cycle.",
-    "ar": "يستأنف تحليل القناعة مع دورة البيانات الموثقة التالية."
+    "en": "Healthy trend structure — confirmations are broad and uncontested across the causal network.",
+    "ar": "بنية اتجاه صحية — التأكيدات واسعة وغير متنازع عليها عبر الشبكة السببية."
   },
   "contradictions": [],
   "structure": {
-    "class": "unverified",
-    "en": "Structure classification resumes with verified inputs.",
-    "ar": "يستأنف تصنيف البنية مع المدخلات الموثقة."
+    "class": "healthy-trend",
+    "en": "Healthy trend structure — broad participation with no structural contradictions.",
+    "ar": "بنية اتجاه صحية — مشاركة واسعة دون تناقضات هيكلية."
   },
   "pressure": {
     "tracks": {
@@ -50,7 +50,7 @@
       "concentration_pressure": {
         "score": 0,
         "base_score": 0,
-        "state": "unverified",
+        "state": "dormant",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
@@ -69,17 +69,68 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Monitoring base case — regime inputs await the next sourced data cycle; no structural scenario is asserted.",
-      "ar": "الحالة الأساسية للمراقبة — مدخلات النظام بانتظار دورة البيانات الموثقة التالية؛ لا سيناريو هيكلي مطروح.",
+      "en": "Base case — healthy trend with healthy trend structure; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — بنية اتجاه صحية مع بنية اتجاه صحية؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
-        "unverified_session"
+        "structure",
+        "conviction"
+      ]
+    },
+    {
+      "id": "bullish-continuation",
+      "status": "active",
+      "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
+      "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
+      "derived_from": [
+        "breadth_state",
+        "contradictions"
+      ]
+    },
+    {
+      "id": "fragile-upside",
+      "status": "dormant",
+      "en": "Fragile upside — the index can extend while participation thins; deteriorating breadth alongside new highs would confirm this path, broadening would invalidate it.",
+      "ar": "صعود هش — يمكن للمؤشر أن يمتد بينما تضيق المشاركة؛ تدهور الاتساع مع قمم جديدة يؤكد هذا المسار، واتساع المشاركة يبطله.",
+      "derived_from": [
+        "structure",
+        "breadth_state"
+      ]
+    },
+    {
+      "id": "defensive-rotation",
+      "status": "dormant",
+      "en": "Defensive rotation — accumulating protection demand would rotate leadership toward defensives; gold bid plus widening credit-sensitive weakness would confirm.",
+      "ar": "التناوب الدفاعي — تراكم الطلب على الحماية سيحوّل القيادة نحو الأصول الدفاعية؛ يؤكد ذلك إقبال على الذهب مع اتساع ضعف الأصول الحساسة للائتمان.",
+      "derived_from": [
+        "defensive_rotation",
+        "defensive_pressure"
+      ]
+    },
+    {
+      "id": "volatility-expansion",
+      "status": "dormant",
+      "en": "Volatility expansion — stored compression is the fuel; a catalyst that breaks the range would release it. VIX regime change is the confirming signal.",
+      "ar": "توسع التقلب — الانضغاط المخزّن هو الوقود؛ ومحفز يكسر النطاق سيطلقه. تغير نظام VIX هو إشارة التأكيد.",
+      "derived_from": [
+        "volatility_pressure",
+        "volatility_regime"
+      ]
+    },
+    {
+      "id": "invalidation-path",
+      "status": "monitor",
+      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "derived_from": [
+        "breadth_state",
+        "volatility_regime"
       ]
     },
     {
       "id": "catalyst-dependency",
       "status": "monitor",
-      "en": "Catalyst dependency — the next verified read hinges on Retail Sales.",
-      "ar": "اعتماد على المحفز — القراءة الموثقة التالية مرهونة بـRetail Sales.",
+      "en": "Catalyst dependency — Retail Sales is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
+      "ar": "اعتماد على المحفز — Retail Sales هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
       "derived_from": [
         "calendar"
       ],
@@ -87,9 +138,9 @@
     }
   ],
   "desk_focus": {
-    "focus": "monitoring",
-    "reason_en": "awaiting verified data cycle",
-    "reason_ar": "بانتظار دورة بيانات موثقة"
+    "focus": "balanced",
+    "reason_en": "no dominant stress pattern",
+    "reason_ar": "لا نمط ضغط مهيمن"
   },
-  "macro_note": "Macro cognition holding prior state — no verified inputs this run."
+  "macro_note": "Macro cognition — conviction: healthy-trend-structure; structure: healthy-trend; contradictions active: 0 (0 escalated); elevated pressure tracks: 0."
 }
