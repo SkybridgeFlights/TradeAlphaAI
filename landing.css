@@ -13,9 +13,15 @@
   --gold: #d8b15a;
   --gold-bright: #f2d27b;
   --gold-soft: rgba(216, 177, 90, 0.1);
-  --green: #7dff8c;
-  --green-soft: rgba(125, 255, 140, 0.12);
-  --green-strong: #b7ff54;
+  /* Institutional palette — aligned with the terminal identity (newsroom.css):
+     muted green strictly for live/active status, blue for intelligence
+     accents, gold for primary CTAs. No neon. */
+  --green: #2fbf71;
+  --green-soft: rgba(47, 191, 113, 0.1);
+  --green-strong: #4cd690;
+  --blue: #3fa7ff;
+  --blue-soft: rgba(63, 167, 255, 0.08);
+  --blue-bright: #6fc1ff;
   --danger: #ff6d6d;
   --shadow-lg: 0 24px 80px rgba(0, 0, 0, 0.45);
   --shadow-md: 0 18px 42px rgba(0, 0, 0, 0.28);
@@ -32,8 +38,8 @@ html {
 body {
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(216, 177, 90, 0.12), transparent 28%),
-    radial-gradient(circle at 88% 16%, rgba(125, 255, 140, 0.08), transparent 20%),
+    radial-gradient(circle at top left, rgba(216, 177, 90, 0.1), transparent 28%),
+    radial-gradient(circle at 88% 16%, rgba(63, 167, 255, 0.06), transparent 22%),
     linear-gradient(180deg, #060708 0%, #030405 100%);
   font-family: "Inter", "Space Grotesk", "Cairo", "IBM Plex Sans Arabic", "Segoe UI", sans-serif;
   line-height: 1.6;
@@ -112,7 +118,7 @@ a {
   border: 1px solid rgba(216, 177, 90, 0.22);
   background:
     linear-gradient(145deg, rgba(216, 177, 90, 0.2), rgba(216, 177, 90, 0.03)),
-    radial-gradient(circle at 70% 28%, rgba(125, 255, 140, 0.16), transparent 34%);
+    radial-gradient(circle at 70% 28%, rgba(63, 167, 255, 0.12), transparent 34%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 0 30px rgba(216, 177, 90, 0.12);
@@ -133,7 +139,7 @@ a {
 
 .brand-mark::after {
   inset: 13px 12px;
-  background: linear-gradient(180deg, rgba(183, 255, 84, 0.95), rgba(216, 177, 90, 0.95));
+  background: linear-gradient(180deg, rgba(242, 210, 123, 0.95), rgba(216, 177, 90, 0.95));
   clip-path: polygon(0 100%, 28% 38%, 48% 66%, 100% 0, 100% 26%, 56% 100%);
   opacity: 0.9;
 }
@@ -217,23 +223,23 @@ a {
   min-height: 40px;
   padding: 0 16px;
   border-radius: 999px;
-  border: 1px solid rgba(183, 255, 84, 0.24);
+  border: 1px solid rgba(216, 177, 90, 0.28);
   background:
-    linear-gradient(135deg, rgba(183, 255, 84, 0.18), rgba(216, 177, 90, 0.12)),
+    linear-gradient(135deg, rgba(216, 177, 90, 0.16), rgba(216, 177, 90, 0.06)),
     rgba(255, 255, 255, 0.035);
-  color: var(--text);
+  color: var(--gold-bright);
   text-decoration: none;
   font-size: 13px;
   font-weight: 800;
   white-space: nowrap;
-  box-shadow: 0 10px 28px rgba(183, 255, 84, 0.08);
+  box-shadow: 0 10px 28px rgba(216, 177, 90, 0.08);
 }
 
 .header-signal-cta:hover,
 .header-signal-cta:focus-visible {
-  border-color: rgba(183, 255, 84, 0.42);
+  border-color: rgba(216, 177, 90, 0.45);
   background:
-    linear-gradient(135deg, rgba(183, 255, 84, 0.24), rgba(216, 177, 90, 0.18)),
+    linear-gradient(135deg, rgba(216, 177, 90, 0.24), rgba(216, 177, 90, 0.1)),
     rgba(255, 255, 255, 0.05);
   transform: translateY(-1px);
 }
@@ -366,8 +372,8 @@ a {
 }
 
 .live-ticker {
-  border: 1px solid rgba(125, 255, 140, 0.18);
-  background: rgba(125, 255, 140, 0.06);
+  border: 1px solid rgba(47, 191, 113, 0.22);
+  background: var(--green-soft);
   color: var(--green-strong);
 }
 
@@ -376,7 +382,7 @@ a {
   height: 7px;
   border-radius: 999px;
   background: var(--green);
-  box-shadow: 0 0 10px rgba(125, 255, 140, 0.9);
+  box-shadow: 0 0 8px rgba(47, 191, 113, 0.5);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -503,8 +509,8 @@ h3 {
 .cta-btn.secondary:focus-visible,
 .plan-btn.secondary:hover,
 .plan-btn.secondary:focus-visible {
-  border-color: rgba(125, 255, 140, 0.18);
-  background: rgba(125, 255, 140, 0.06);
+  border-color: rgba(63, 167, 255, 0.22);
+  background: rgba(63, 167, 255, 0.05);
 }
 
 .hero-support,
@@ -844,8 +850,8 @@ h3 {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: var(--green-strong);
-  box-shadow: 0 0 10px rgba(125, 255, 140, 0.35);
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(47, 191, 113, 0.3);
 }
 
 .plan-foot {
@@ -940,16 +946,16 @@ h3 {
 }
 
 .social-link-telegram {
-  color: var(--green-strong);
-  border-color: rgba(125, 255, 140, 0.2);
-  background: rgba(125, 255, 140, 0.06);
+  color: var(--blue-bright);
+  border-color: rgba(63, 167, 255, 0.22);
+  background: var(--blue-soft);
 }
 
 .social-link-telegram:hover,
 .social-link-telegram:focus-visible {
-  color: #d9ffd5;
-  border-color: rgba(125, 255, 140, 0.34);
-  background: rgba(125, 255, 140, 0.12);
+  color: #a8d8ff;
+  border-color: rgba(63, 167, 255, 0.38);
+  background: rgba(63, 167, 255, 0.12);
 }
 
 .sr-only {
@@ -1218,9 +1224,9 @@ h3 {
 }
 
 .system-type {
-  color: var(--green-strong);
-  border: 1px solid rgba(125, 255, 140, 0.16);
-  background: rgba(125, 255, 140, 0.06);
+  color: var(--blue-bright);
+  border: 1px solid rgba(63, 167, 255, 0.2);
+  background: var(--blue-soft);
 }
 
 .system-card h3,
@@ -1590,8 +1596,8 @@ html[dir="rtl"] .topbar .lang-menu {
 }
 
 .proof-chip-green {
-  border-color: rgba(125, 255, 140, 0.22);
-  background: rgba(125, 255, 140, 0.06);
+  border-color: rgba(47, 191, 113, 0.26);
+  background: var(--green-soft);
   color: var(--green-strong);
 }
 
@@ -1601,18 +1607,20 @@ html[dir="rtl"] .topbar .lang-menu {
   color: var(--gold-bright);
 }
 
-/* Signal card (hero right panel) */
+/* Signal card (hero right panel) — institutional signal terminal */
 .signal-card {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   border-radius: 22px;
-  border: 1px solid rgba(125, 255, 140, 0.18);
+  border: 1px solid rgba(63, 167, 255, 0.16);
   background:
-    linear-gradient(180deg, rgba(12, 18, 14, 0.97), rgba(8, 10, 12, 0.96)),
-    radial-gradient(circle at top right, rgba(125, 255, 140, 0.08), transparent 44%);
+    linear-gradient(180deg, rgba(13, 19, 30, 0.97), rgba(8, 11, 17, 0.96)),
+    radial-gradient(circle at top right, rgba(63, 167, 255, 0.07), transparent 44%);
+  box-shadow: 0 0 0 1px rgba(63, 167, 255, 0.04), var(--shadow-md);
   overflow: hidden;
+  font-feature-settings: "tnum" 1;
 }
 
 .signal-card-header {
@@ -1645,27 +1653,62 @@ html[dir="rtl"] .topbar .lang-menu {
 }
 
 .signal-dir-dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 12px rgba(125, 255, 140, 0.8);
+  box-shadow: 0 0 8px rgba(47, 191, 113, 0.5);
   flex-shrink: 0;
   animation: pulse 2s ease-in-out infinite;
 }
 
 .signal-dir-label {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--green-strong);
-  font-family: "Space Grotesk", "Inter", sans-serif;
+  color: var(--text);
+  font-family: "Space Grotesk", "Inter", "Cairo", "IBM Plex Sans Arabic", sans-serif;
 }
 
 .signal-dir-sub {
   font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
+}
+
+/* Active market rows — terminal-style, status in muted green chips */
+.signal-market-list {
+  display: grid;
+  gap: 1px;
+  margin-top: 12px;
+  border: 1px solid rgba(63, 167, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(63, 167, 255, 0.06);
+  overflow: hidden;
+}
+
+.signal-market-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  background: rgba(10, 15, 24, 0.92);
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+.signal-market-row strong {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green-strong);
+  border: 1px solid rgba(47, 191, 113, 0.24);
+  background: var(--green-soft);
+  border-radius: 999px;
+  padding: 2px 9px;
 }
 
 .signal-stats {
@@ -1686,15 +1729,19 @@ html[dir="rtl"] .topbar .lang-menu {
 }
 
 .signal-stat-key {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
   color: var(--muted);
 }
 
 .signal-stat-val {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .signal-stat-val.green { color: var(--green-strong); }
@@ -1706,12 +1753,13 @@ html[dir="rtl"] .topbar .lang-menu {
   gap: 2px;
   padding: 14px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(216, 177, 90, 0.05), transparent);
 }
 
 .signal-free {
   font-size: 13px;
   font-weight: 700;
-  color: var(--green-strong);
+  color: var(--gold-bright);
 }
 
 .signal-price-after {
@@ -1779,8 +1827,8 @@ html[dir="rtl"] .topbar .lang-menu {
   font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: var(--green-strong);
-  font-family: "Space Grotesk", "Inter", sans-serif;
+  color: var(--gold-bright);
+  font-family: "Space Grotesk", "Inter", "Cairo", "IBM Plex Sans Arabic", sans-serif;
   line-height: 1;
 }
 
