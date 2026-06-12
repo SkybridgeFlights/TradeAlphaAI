@@ -1,27 +1,46 @@
-/* Phase 72 — Newsroom visual identity.
-   Institutional terminal hybrid: dense-but-clean, financial typography
-   hierarchy, market-state accent mapping, urgency highlighting. Scoped under
-   .newsroom-* so it cannot leak into existing layout. RTL-aware. */
+/* TradeAlphaAI Newsroom — institutional intelligence layer.
+   Phase 76 visual harmonization: the newsroom inherits the platform design
+   system (landing.css) instead of carrying its own navy terminal identity.
+   The surrounding .section-panel supplies the premium surface (radius,
+   gold-tinted gradient, soft shadow, white-alpha border); this sheet only
+   layers the intelligence identity inside it.
+
+   Color discipline:
+     green  — positive / live / confirmed states ONLY
+     gold   — premium / promotional / edition emphasis ONLY
+     blue   — intelligence / data emphasis ONLY
+   Scoped under .newsroom / .nr-* so it cannot leak into existing layout.
+   RTL-aware. */
 
 :root {
-  --nr-bg: #0b1320;
-  --nr-panel: #101b2d;
-  --nr-line: rgba(148, 178, 218, 0.14);
-  --nr-text: #dbe6f5;
-  --nr-muted: #8aa0bd;
+  --nr-line: rgba(255, 255, 255, 0.08);
+  --nr-line-strong: rgba(255, 255, 255, 0.14);
+  --nr-soft: rgba(255, 255, 255, 0.028);
+  --nr-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+  --nr-text: #f4f7f1;
+  --nr-text-soft: #cad3c7;
+  --nr-muted: #8d978f;
+  --nr-quiet: #5d675f;
   --nr-accent: #3fa7ff;
+  --nr-accent-soft: rgba(63, 167, 255, 0.07);
   --nr-risk-on: #2fbf71;
-  --nr-risk-off: #e4574f;
-  --nr-neutral: #c9a227;
-  --nr-urgent: #ff5d4d;
-  --nr-quiet: #5d7390;
+  --nr-risk-off: #ff6d6d;
+  --nr-gold: #d8b15a;
+  --nr-gold-bright: #f2d27b;
+  --nr-gold-soft: rgba(216, 177, 90, 0.08);
+  --nr-urgent: #ff6d6d;
+  /* Back-compat aliases (older selectors and inline tooling) */
+  --nr-neutral: #d8b15a;
+  --nr-panel: rgba(255, 255, 255, 0.028);
+  --nr-bg: transparent;
 }
 
+/* ── Container: inherit the platform panel, add rhythm only ─────────────── */
+
 .newsroom {
-  background: linear-gradient(180deg, var(--nr-bg), #0d1626 70%);
-  border: 1px solid var(--nr-line);
-  border-radius: 14px;
-  padding: 1.4rem 1.5rem 1.6rem;
+  position: relative;
+  z-index: 1;
+  padding: 4px 2px 6px;
   color: var(--nr-text);
   font-feature-settings: "tnum" 1;
 }
@@ -31,18 +50,19 @@
   align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
+  gap: 0.6rem 1.1rem;
   border-bottom: 1px solid var(--nr-line);
-  padding-bottom: 0.7rem;
-  margin-bottom: 1rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.15rem;
 }
 
 .newsroom-title {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   margin: 0;
+  color: var(--nr-text);
 }
 
 html[lang="ar"] .newsroom-title { letter-spacing: 0; }
@@ -52,6 +72,7 @@ html[lang="ar"] .newsroom-title { letter-spacing: 0; }
   color: var(--nr-muted);
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.45rem;
 }
 
@@ -65,24 +86,25 @@ html[lang="ar"] .newsroom-title { letter-spacing: 0; }
 .newsroom-session[data-session="weekend"] .nr-dot,
 .newsroom-session[data-session="after-hours"] .nr-dot { background: var(--nr-quiet); }
 
-.nr-edition { color: var(--nr-accent); }
+/* Edition is a premium label — gold, matching site eyebrows */
+.nr-edition { color: var(--nr-gold-bright); }
 
 /* ── Hero intelligence ribbon ─────────────────────────────────────────── */
 
 .nr-hero-ribbon {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 1.4rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.9rem;
+  gap: 0.5rem 1.6rem;
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 1.05rem;
   border: 1px solid var(--nr-line);
-  border-radius: 8px;
-  background: rgba(16, 27, 45, 0.85);
+  border-radius: 14px;
+  background: var(--nr-soft);
   font-size: 0.8rem;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
-.nr-hero-item { display: inline-flex; align-items: baseline; gap: 0.45rem; color: var(--nr-text); }
+.nr-hero-item { display: inline-flex; align-items: baseline; gap: 0.45rem; color: var(--nr-text-soft); }
 
 .nr-hero-key {
   font-size: 0.64rem;
@@ -95,37 +117,40 @@ html[lang="ar"] .newsroom-title { letter-spacing: 0; }
 
 html[lang="ar"] .nr-hero-key { letter-spacing: 0; }
 
-/* ── Live asset intelligence strip ────────────────────────────────────── */
+/* ── Live asset intelligence matrix ───────────────────────────────────── */
+/* Soft card cells instead of a hard segmented grid — luxury terminal, not
+   developer panel. */
 
 .nr-asset-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
-  gap: 1px;
-  background: var(--nr-line);
-  border: 1px solid var(--nr-line);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+  margin-bottom: 1.05rem;
 }
 
 .nr-asset {
-  background: var(--nr-panel);
-  padding: 0.5rem 0.65rem;
+  background: var(--nr-soft);
+  border: 1px solid var(--nr-line);
+  border-radius: 12px;
+  padding: 0.58rem 0.72rem;
   display: flex;
   flex-direction: column;
-  gap: 0.12rem;
+  gap: 0.16rem;
   min-width: 0;
+  transition: border-color 0.22s ease;
 }
 
+.nr-asset:hover { border-color: var(--nr-line-strong); }
+
 .nr-asset-sym {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--nr-muted);
 }
 
 .nr-asset-chg {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--nr-text);
@@ -135,82 +160,86 @@ html[lang="ar"] .nr-hero-key { letter-spacing: 0; }
 .nr-asset[data-dir="down"] .nr-asset-chg { color: var(--nr-risk-off); }
 
 .nr-asset-ctx {
-  font-size: 0.68rem;
+  font-size: 0.69rem;
   color: var(--nr-muted);
-  line-height: 1.35;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ── Regime banner ─────────────────────────────────────────────────────── */
+/* ── Regime banner ────────────────────────────────────────────────────── */
 
 .newsroom-banner {
-  font-size: 1.02rem;
-  line-height: 1.5;
-  margin: 0 0 1rem;
-  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  margin: 0 0 1.05rem;
+  padding: 0.75rem 1rem;
   border-inline-start: 3px solid var(--nr-accent);
-  background: rgba(63, 167, 255, 0.07);
-  border-radius: 6px;
+  background: var(--nr-accent-soft);
+  border-radius: 8px;
+  color: var(--nr-text-soft);
 }
 
 .newsroom-banner[data-tone="alert"] {
   border-inline-start-color: var(--nr-urgent);
-  background: rgba(255, 93, 77, 0.08);
+  background: rgba(255, 109, 109, 0.07);
 }
 
 .newsroom-banner[data-tone="quiet"] {
   border-inline-start-color: var(--nr-quiet);
-  background: rgba(93, 115, 144, 0.08);
+  background: var(--nr-soft);
 }
 
-/* ── Pulse strip ───────────────────────────────────────────────────────── */
+/* ── Pulse strip ──────────────────────────────────────────────────────── */
 
 .newsroom-pulse-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1.1rem;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .nr-chip {
   font-size: 0.74rem;
-  letter-spacing: 0.04em;
-  padding: 0.28rem 0.6rem;
+  letter-spacing: 0.03em;
+  padding: 0.3rem 0.68rem;
   border: 1px solid var(--nr-line);
   border-radius: 999px;
   color: var(--nr-muted);
-  background: rgba(16, 27, 45, 0.7);
+  background: var(--nr-soft);
   white-space: nowrap;
 }
 
 .nr-chip strong { color: var(--nr-text); font-weight: 600; }
 .nr-chip[data-state="risk_on"] strong, .nr-chip[data-state="confirming"] strong, .nr-chip[data-state="relaxing"] strong { color: var(--nr-risk-on); }
 .nr-chip[data-state="risk_off"] strong, .nr-chip[data-state="deteriorating"] strong, .nr-chip[data-state="stressed"] strong, .nr-chip[data-state="building"] strong { color: var(--nr-risk-off); }
-.nr-chip[data-state="elevated"] strong, .nr-chip[data-state="narrow-megacap"] strong, .nr-chip[data-state="firming"] strong { color: var(--nr-neutral); }
+.nr-chip[data-state="elevated"] strong, .nr-chip[data-state="narrow-megacap"] strong, .nr-chip[data-state="firming"] strong { color: var(--nr-gold-bright); }
 
-/* ── Module grid ───────────────────────────────────────────────────────── */
+/* ── Module grid ──────────────────────────────────────────────────────── */
 
 .newsroom-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
-  gap: 0.7rem;
+  grid-template-columns: repeat(auto-fit, minmax(252px, 1fr));
+  gap: 0.9rem;
 }
 
 .nr-module {
-  background: var(--nr-panel);
+  background: var(--nr-card);
   border: 1px solid var(--nr-line);
-  border-radius: 10px;
-  padding: 0.85rem 1rem 1rem;
+  border-radius: 16px;
+  padding: 1rem 1.1rem 1.1rem;
+  transition: border-color 0.22s ease;
 }
 
+.nr-module:hover { border-color: rgba(216, 177, 90, 0.16); }
+
 .nr-module h3 {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--nr-muted);
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.65rem;
 }
 
 html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
@@ -221,41 +250,43 @@ html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
   justify-content: space-between;
   align-items: baseline;
   gap: 0.6rem;
-  padding: 0.34rem 0;
-  border-bottom: 1px dashed rgba(148, 178, 218, 0.08);
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
   font-size: 0.85rem;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 .nr-module li:last-child { border-bottom: none; }
 
-.nr-wire-headline { color: var(--nr-text); }
+.nr-wire-headline { color: var(--nr-text-soft); }
 .nr-meta { color: var(--nr-muted); font-size: 0.72rem; white-space: nowrap; }
 
 .nr-badge {
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  padding: 0.12rem 0.45rem;
-  border-radius: 4px;
+  padding: 0.14rem 0.45rem;
+  border-radius: 5px;
   text-transform: uppercase;
 }
-.nr-badge[data-urgency="high"] { background: rgba(255, 93, 77, 0.16); color: var(--nr-urgent); }
-.nr-badge[data-urgency="medium"] { background: rgba(201, 162, 39, 0.16); color: var(--nr-neutral); }
-.nr-badge[data-urgency="low"] { background: rgba(93, 115, 144, 0.18); color: var(--nr-quiet); }
+.nr-badge[data-urgency="high"] { background: rgba(255, 109, 109, 0.14); color: var(--nr-urgent); }
+.nr-badge[data-urgency="medium"] { background: var(--nr-gold-soft); color: var(--nr-gold-bright); }
+.nr-badge[data-urgency="low"] { background: rgba(93, 103, 95, 0.18); color: var(--nr-muted); }
 
-.nr-empty { color: var(--nr-quiet); font-size: 0.82rem; padding: 0.3rem 0; }
+.nr-empty { color: var(--nr-quiet); font-size: 0.82rem; padding: 0.32rem 0; }
 
 .newsroom-foot {
-  margin-top: 0.9rem;
+  margin-top: 1.1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--nr-line);
   font-size: 0.7rem;
   color: var(--nr-quiet);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.45rem 1rem;
 }
 
-/* ── Cognition layer (Phase 74) ────────────────────────────────────────── */
+/* ── Cognition layer (Phase 74) ───────────────────────────────────────── */
 
 .nr-phase {
   font-style: normal;
@@ -264,31 +295,31 @@ html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
   letter-spacing: 0.05em;
   margin-inline-start: 0.35rem;
   padding: 0.08rem 0.32rem;
-  border-radius: 3px;
+  border-radius: 4px;
   vertical-align: 0.08em;
   text-transform: uppercase;
 }
-.nr-phase[data-phase="emerging"] { background: rgba(63, 167, 255, 0.18); color: var(--nr-accent); }
-.nr-phase[data-phase="strengthening"] { background: rgba(201, 162, 39, 0.16); color: var(--nr-neutral); }
+.nr-phase[data-phase="emerging"] { background: rgba(63, 167, 255, 0.14); color: var(--nr-accent); }
+.nr-phase[data-phase="strengthening"] { background: var(--nr-gold-soft); color: var(--nr-gold-bright); }
 .nr-phase[data-phase="established"],
-.nr-phase[data-phase="extended"] { background: rgba(93, 115, 144, 0.2); color: var(--nr-muted); }
+.nr-phase[data-phase="extended"] { background: rgba(93, 103, 95, 0.2); color: var(--nr-muted); }
 
 .nr-module[data-desk="alerts"] li[data-severity="high"] .nr-wire-headline { color: var(--nr-urgent); }
-.nr-module[data-desk="alerts"] li[data-severity="elevated"] .nr-wire-headline { color: var(--nr-neutral); }
+.nr-module[data-desk="alerts"] li[data-severity="elevated"] .nr-wire-headline { color: var(--nr-gold-bright); }
 
 .nr-module[data-desk="timeline"] li { font-variant-numeric: tabular-nums; }
-.nr-module[data-desk="memory"] li .nr-wire-headline { color: var(--nr-text); font-size: 0.83rem; }
+.nr-module[data-desk="memory"] li .nr-wire-headline { color: var(--nr-text-soft); font-size: 0.83rem; }
 
 .nr-continuity { color: var(--nr-muted); }
 
 /* Live refresh indicator (Phase 75-RT) — populated only by verified quotes */
 .nr-live-asof { color: var(--nr-accent); margin-inline-start: 0.5rem; }
 .nr-live-asof:empty { display: none; }
-.nr-live-asof[data-live-status="partial"] { color: var(--nr-neutral); }
+.nr-live-asof[data-live-status="partial"] { color: var(--nr-gold-bright); }
 
 html[dir="rtl"] .nr-phase { letter-spacing: 0; }
 
-/* ── Macro cognition layer (Phase 75) ──────────────────────────────────── */
+/* ── Macro cognition layer (Phase 75) ─────────────────────────────────── */
 
 .nr-desk-focus {
   margin-inline-start: 0.7rem;
@@ -299,36 +330,50 @@ html[dir="rtl"] .nr-phase { letter-spacing: 0; }
 }
 .nr-desk-focus[data-focus="contradictions"],
 .nr-desk-focus[data-focus="risk"],
-.nr-desk-focus[data-focus="pressure"] { color: var(--nr-neutral); }
+.nr-desk-focus[data-focus="pressure"] { color: var(--nr-gold-bright); }
 
 .nr-contra {
   display: inline-block;
   font-size: 0.66rem;
   font-weight: 700;
   padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  background: rgba(201, 162, 39, 0.16);
-  color: var(--nr-neutral);
+  border-radius: 5px;
+  background: var(--nr-gold-soft);
+  color: var(--nr-gold-bright);
   font-variant-numeric: tabular-nums;
 }
-.nr-contra[data-escalated="true"] { background: rgba(255, 93, 77, 0.16); color: var(--nr-urgent); }
+.nr-contra[data-escalated="true"] { background: rgba(255, 109, 109, 0.14); color: var(--nr-urgent); }
 
 .nr-module[data-desk="conviction"] li,
 .nr-module[data-desk="scenarios"] li { align-items: flex-start; }
-.nr-module[data-desk="scenarios"] .nr-wire-headline { font-size: 0.83rem; line-height: 1.5; }
+.nr-module[data-desk="scenarios"] .nr-wire-headline { font-size: 0.83rem; line-height: 1.55; }
 
-/* ── RTL refinements ───────────────────────────────────────────────────── */
+/* ── RTL refinements — native Arabic rhythm, not mirrored English ─────── */
 
 html[dir="rtl"] .newsroom { font-feature-settings: normal; }
-html[dir="rtl"] .nr-chip { letter-spacing: 0; }
+html[dir="rtl"] .nr-chip { letter-spacing: 0; padding-inline: 0.75rem; }
 html[dir="rtl"] .nr-meta { white-space: normal; }
 
 html[dir="rtl"] .nr-asset-sym { letter-spacing: 0; }
-html[dir="rtl"] .nr-hero-ribbon { font-size: 0.82rem; }
+html[dir="rtl"] .nr-hero-ribbon { font-size: 0.82rem; line-height: 1.65; }
+html[dir="rtl"] .newsroom-banner { line-height: 1.7; }
+html[dir="rtl"] .nr-module li { line-height: 1.65; }
+html[dir="rtl"] .nr-module h3 { font-size: 0.78rem; }
+html[dir="rtl"] .nr-asset-ctx { line-height: 1.5; }
+html[dir="rtl"] .nr-wire-headline { line-height: 1.65; }
+
+/* ── Responsive rhythm ────────────────────────────────────────────────── */
 
 @media (max-width: 640px) {
-  .newsroom { padding: 1rem; }
-  .newsroom-grid { grid-template-columns: 1fr; }
-  .nr-asset-strip { grid-template-columns: repeat(2, 1fr); }
-  .nr-hero-ribbon { flex-direction: column; gap: 0.3rem; }
+  .newsroom { padding: 2px 0 4px; }
+  .newsroom-head { padding-bottom: 0.75rem; margin-bottom: 1rem; }
+  .newsroom-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+  .nr-module { padding: 0.95rem 1rem 1rem; }
+  .nr-module li { font-size: 0.86rem; padding: 0.46rem 0; }
+  .nr-asset-strip { grid-template-columns: repeat(2, 1fr); gap: 7px; }
+  .nr-asset { padding: 0.55rem 0.65rem; }
+  .nr-hero-ribbon { flex-direction: column; gap: 0.45rem; padding: 0.7rem 0.85rem; }
+  .newsroom-pulse-strip { gap: 0.45rem; }
+  .nr-chip { font-size: 0.76rem; padding: 0.34rem 0.7rem; }
+  .newsroom-foot { flex-direction: column; gap: 0.4rem; }
 }
