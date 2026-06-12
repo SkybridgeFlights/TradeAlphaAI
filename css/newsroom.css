@@ -45,6 +45,80 @@
   font-feature-settings: "tnum" 1;
 }
 
+/* ── Behavioral intelligence (Phase 82) ─────────────────────────────────
+   Verified-state personality only. Selectors change editorial gravity,
+   spacing and emphasis; they never add motion, urgency copy or new content. */
+
+.newsroom[data-pacing="open"] .newsroom-flow { gap: 0.98rem; }
+.newsroom[data-pacing="open"] .nr-desk-band { padding-top: 0.78rem; }
+.newsroom[data-pacing="compressed"] .newsroom-flow { gap: 0.62rem; }
+.newsroom[data-pacing="compressed"] .nr-desk-band { padding-top: 0.52rem; }
+.newsroom[data-pacing="compressed"] .nr-desk-grid { gap: 0.5rem; }
+.newsroom[data-pacing="compressed"] .nr-module { padding-block: 0.68rem 0.72rem; }
+
+.newsroom[data-intensity="quiet"] .nr-lead {
+  border-color: rgba(216, 177, 90, 0.11);
+  border-inline-start-color: rgba(216, 177, 90, 0.58);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.012));
+}
+.newsroom[data-intensity="quiet"] .nr-lead-headline { font-weight: 650; }
+.newsroom[data-intensity="elevated"] .nr-lead {
+  border-color: rgba(255, 109, 109, 0.2);
+  border-inline-start-color: rgba(255, 109, 109, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 109, 109, 0.045), rgba(255, 255, 255, 0.014)),
+    linear-gradient(135deg, rgba(216, 177, 90, 0.045), transparent 58%);
+}
+.newsroom[data-intensity="elevated"] .nr-lead-headline { font-size: 1.08rem; font-weight: 750; }
+
+.newsroom[data-behavior="calm-monitoring"] .nr-desk-band[data-band="continuity"] {
+  border-top-color: rgba(216, 177, 90, 0.12);
+}
+.newsroom[data-behavior="calm-monitoring"] .nr-desk-band[data-band="continuity"] .nr-band-head h3 {
+  color: var(--nr-muted);
+}
+.newsroom[data-behavior="elevated-volatility"] .nr-desk-band[data-band="secondary"] {
+  opacity: 0.82;
+}
+.newsroom[data-behavior="elevated-volatility"] .nr-module[data-desk="risk"],
+.newsroom[data-behavior="elevated-volatility"] .nr-module[data-desk="alerts"] {
+  border-color: rgba(255, 109, 109, 0.24);
+}
+.newsroom[data-behavior="major-catalyst"] .nr-module[data-desk="catalysts"],
+.newsroom[data-catalyst-focus="imminent"] .nr-watch {
+  border-color: rgba(216, 177, 90, 0.24);
+}
+.newsroom[data-behavior="major-catalyst"] .nr-catalyst-window,
+.newsroom[data-catalyst-focus="imminent"] .nr-watch-meta strong {
+  color: var(--nr-gold-bright);
+  font-weight: 750;
+}
+.newsroom[data-divergence-focus="elevated"] .nr-watch-coherence {
+  color: var(--nr-gold-bright);
+  font-weight: 700;
+}
+.newsroom[data-divergence-focus="elevated"] .nr-module[data-desk="crossasset"] {
+  border-color: rgba(216, 177, 90, 0.26);
+}
+.newsroom[data-behavior="speculative-momentum"] .nr-module[data-desk="positioning"],
+.newsroom[data-behavior="speculative-momentum"] .nr-module[data-desk="rotation"] {
+  border-color: rgba(216, 177, 90, 0.22);
+}
+.newsroom[data-behavior="defensive-rotation"] .nr-module[data-desk="risk"],
+.newsroom[data-behavior="defensive-rotation"] .nr-module[data-desk="rotation"] {
+  border-color: rgba(141, 151, 143, 0.22);
+  background: linear-gradient(180deg, rgba(141, 151, 143, 0.04), rgba(255, 255, 255, 0.012));
+}
+
+/* Session personality stays secondary to verified market behavior. */
+.newsroom[data-session="asia"] { --nr-session-line: rgba(63, 167, 255, 0.09); }
+.newsroom[data-session="europe"],
+.newsroom[data-session="us-premarket"] { --nr-session-line: rgba(216, 177, 90, 0.13); }
+.newsroom[data-session="us-cash"] { --nr-session-line: rgba(47, 191, 113, 0.13); }
+.newsroom[data-session="after-hours"] { --nr-session-line: rgba(141, 151, 143, 0.1); }
+.newsroom[data-session="weekend"] { --nr-session-line: rgba(216, 177, 90, 0.08); }
+.newsroom .nr-hero-ribbon { border-color: var(--nr-session-line, var(--nr-line)); }
+
 /* ── Motion discipline (Phase 77) ─────────────────────────────────────────
    Institutional motion: opacity/transform only (compositor-friendly), short
    ease-out curves, one quiet entrance, no loops except a slow breathing dot.
@@ -678,6 +752,7 @@ html[dir="rtl"] .nr-watch-list li { line-height: 1.7; }
 html[dir="rtl"] .nr-band-head h3 { letter-spacing: 0; font-size: 0.75rem; }
 html[dir="rtl"] .nr-band-head span { line-height: 1.65; }
 html[dir="rtl"] .nr-asset-ctx { font-size: 0.68rem; }
+html[dir="rtl"] .newsroom[data-intensity="elevated"] .nr-lead-headline { font-size: 1.1rem; }
 
 /* ── Responsive rhythm ────────────────────────────────────────────────── */
 

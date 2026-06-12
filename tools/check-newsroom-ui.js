@@ -12,6 +12,11 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const failures = [];
+const BEHAVIOR_MODES = ['calm-monitoring', 'elevated-volatility', 'major-catalyst', 'cross-asset-conflict', 'speculative-momentum', 'defensive-rotation'];
+const INTENSITIES = ['quiet', 'measured', 'elevated'];
+const PACING = ['open', 'balanced', 'compressed'];
+const CATALYST_FOCUS = ['none', 'watch', 'near', 'imminent'];
+const DIVERGENCE_FOCUS = ['none', 'watch', 'elevated'];
 
 function read(rel) {
   try { return fs.readFileSync(path.join(ROOT, rel), 'utf8'); } catch { return null; }
@@ -50,6 +55,32 @@ for (const page of ['index.html', 'ar/index.html']) {
     if (count(section, 'data-desk="risk"') !== 1 || count(section, 'data-desk="macro"') !== 1) {
       failures.push(`${page}: desk modules missing or duplicated`);
     }
+
+    // Phase 82 behavioral contract. Every render exposes a bounded state
+    // vocabulary. Current unverified source artifacts must remain calm,
+    // open-paced and non-escalated.
+    const behaviorMatch = section.match(/class="section-panel newsroom" data-session="([^"]+)" data-behavior="([^"]+)" data-intensity="([^"]+)" data-pacing="([^"]+)" data-catalyst-focus="([^"]+)" data-divergence-focus="([^"]+)" data-stress="([^"]+)" data-behavior-verified="([^"]+)" data-desk-bias="([^"]*)"/);
+    if (!behaviorMatch) {
+      failures.push(`${page}: behavioral newsroom metadata missing`);
+    } else {
+      const [, session, mode, intensity, pacing, catalystFocus, divergenceFocus, stressRaw, behaviorVerified, deskBias] = behaviorMatch;
+      const stress = Number(stressRaw);
+      if (!['asia', 'europe', 'us-premarket', 'us-cash', 'after-hours', 'weekend'].includes(session)) failures.push(`${page}: invalid session personality "${session}"`);
+      if (!BEHAVIOR_MODES.includes(mode)) failures.push(`${page}: invalid behavioral mode "${mode}"`);
+      if (!INTENSITIES.includes(intensity)) failures.push(`${page}: invalid editorial intensity "${intensity}"`);
+      if (!PACING.includes(pacing)) failures.push(`${page}: invalid pacing density "${pacing}"`);
+      if (!CATALYST_FOCUS.includes(catalystFocus)) failures.push(`${page}: invalid catalyst focus "${catalystFocus}"`);
+      if (!DIVERGENCE_FOCUS.includes(divergenceFocus)) failures.push(`${page}: invalid divergence focus "${divergenceFocus}"`);
+      if (!Number.isInteger(stress) || stress < 0 || stress > 3) failures.push(`${page}: stress level outside 0..3`);
+      if (!deskBias.split(',').filter(Boolean).length) failures.push(`${page}: behavioral desk bias missing`);
+      if (behaviorVerified === 'false' && (mode !== 'calm-monitoring' || intensity !== 'quiet' || pacing !== 'open' || stress !== 0 || catalystFocus !== 'none' || divergenceFocus !== 'none')) {
+        failures.push(`${page}: unverified behavior escalated beyond calm mode`);
+      }
+      if (mode === 'elevated-volatility' && (intensity !== 'elevated' || pacing !== 'compressed' || stress < 1)) {
+        failures.push(`${page}: volatility escalation lacks disciplined intensity/pacing`);
+      }
+    }
+    if (!section.includes('data-lead-mode=')) failures.push(`${page}: state-aware lead mode missing`);
 
     // Phase 81 density and hierarchy: stable band order, every desk carries
     // adaptive metadata, passive desks remain compact, and high-signal desks
@@ -112,7 +143,7 @@ for (const page of ['index.html', 'ar/index.html']) {
 if (!fs.existsSync(path.join(ROOT, 'css', 'newsroom.css'))) failures.push('css/newsroom.css missing');
 else {
   const css = read('css/newsroom.css') || '';
-  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before']) {
+  for (const token of ['.newsroom-flow', '.nr-desk-band', '[data-state="monitoring"]', '.nr-empty::before', '[data-behavior="elevated-volatility"]', '[data-behavior="major-catalyst"]', '[data-divergence-focus="elevated"]']) {
     if (!css.includes(token)) failures.push(`css/newsroom.css: missing Phase 81 density rule ${token}`);
   }
 }

@@ -332,6 +332,141 @@ function liveNode(live, key) {
   };
 }
 
+const BEHAVIOR_MODES = [
+  'calm-monitoring',
+  'elevated-volatility',
+  'major-catalyst',
+  'cross-asset-conflict',
+  'speculative-momentum',
+  'defensive-rotation',
+];
+const EDITORIAL_INTENSITIES = ['quiet', 'measured', 'elevated'];
+const PACING_DENSITIES = ['open', 'balanced', 'compressed'];
+const CATALYST_FOCUS_LEVELS = ['none', 'watch', 'near', 'imminent'];
+const DIVERGENCE_FOCUS_LEVELS = ['none', 'watch', 'elevated'];
+const BEHAVIOR_LABELS = {
+  en: {
+    'calm-monitoring': 'Continuity lead',
+    'elevated-volatility': 'Risk lead',
+    'major-catalyst': 'Catalyst lead',
+    'cross-asset-conflict': 'Conflict lead',
+    'speculative-momentum': 'Positioning lead',
+    'defensive-rotation': 'Defensive lead',
+  },
+  ar: {
+    'calm-monitoring': 'محور الاستمرارية',
+    'elevated-volatility': 'محور المخاطر',
+    'major-catalyst': 'محور المحفز',
+    'cross-asset-conflict': 'محور التباعد',
+    'speculative-momentum': 'محور التمركزات',
+    'defensive-rotation': 'محور التحول الدفاعي',
+  },
+};
+
+function catalystHoursUntil(catalyst, now = new Date()) {
+  const timestamp = Date.parse(catalyst && catalyst.time);
+  if (!Number.isFinite(timestamp)) return null;
+  return Math.round(((timestamp - now.getTime()) / 3600000) * 10) / 10;
+}
+
+function deriveNewsroomBehavior(input = {}) {
+  const {
+    verified = false,
+    dimensions = {},
+    cognition = {},
+    macro = {},
+    convergence = {},
+    catalysts = [],
+    session = 'asia',
+    now = new Date(),
+  } = input;
+
+  // Behavioral escalation is forbidden unless the full live reasoning stack
+  // is verified. Session personality remains clock-derived but cannot elevate
+  // market intensity on its own.
+  if (!verified) {
+    return {
+      behavioral_mode: 'calm-monitoring',
+      editorial_intensity: 'quiet',
+      desk_priority_bias: ['memory', 'macro', 'catalysts'],
+      pacing_density: 'open',
+      catalyst_focus: 'none',
+      divergence_focus: 'none',
+      stress_level: 0,
+      session_personality: session,
+      catalyst_hours: null,
+      verified_inputs: false,
+    };
+  }
+
+  const alerts = cognition.alerts || [];
+  const divergences = convergence.diverges || [];
+  const contradictions = (macro.contradictions || []).filter((item) => item.active_today);
+  const pressure = (macro.pressure && macro.pressure.tracks) || {};
+  const coherenceBand = convergence.coherence && convergence.coherence.band;
+  const nextCatalyst = catalysts
+    .map((item) => ({ item, hours: catalystHoursUntil(item, now) }))
+    .filter(({ hours }) => hours !== null && hours >= 0)
+    .sort((a, b) => a.hours - b.hours)[0] || null;
+  const majorCatalyst = nextCatalyst && /fomc|fed|cpi|pce|payroll|nfp|gdp|retail sales/i.test(String(nextCatalyst.item.name || ''));
+  const catalystFocus = !nextCatalyst ? 'none'
+    : nextCatalyst.hours <= 6 ? 'imminent'
+      : nextCatalyst.hours <= 24 ? 'near'
+        : nextCatalyst.hours <= 72 ? 'watch'
+          : 'none';
+
+  const volatilityStress = ['elevated', 'stressed'].includes(dimensions.volatility_regime);
+  const liquidityStress = ['tightening', 'stressed', 'elevated'].includes(dimensions.liquidity_stress)
+    || Number(pressure.liquidity_pressure && pressure.liquidity_pressure.score) >= 3;
+  const fragilityStress = ['elevated', 'stressed', 'building'].includes(dimensions.market_fragility);
+  const highAlert = alerts.some((item) => item.severity === 'high');
+  const elevatedAlert = alerts.some((item) => item.severity === 'elevated');
+  const conflict = divergences.length > 0 || coherenceBand === 'conflicted' || contradictions.length >= 2;
+  const speculative = dimensions.speculative_appetite === 'active'
+    || dimensions.ai_concentration_risk === 'elevated'
+    || dimensions.momentum_concentration === 'narrow-megacap'
+    || Number(pressure.speculative_pressure && pressure.speculative_pressure.score) >= 3
+    || Number(pressure.concentration_pressure && pressure.concentration_pressure.score) >= 3;
+  const defensive = dimensions.defensive_rotation === 'active'
+    || dimensions.risk_state === 'risk_off'
+    || Number(pressure.defensive_pressure && pressure.defensive_pressure.score) >= 3;
+
+  let stressLevel = 0;
+  if (volatilityStress || elevatedAlert) stressLevel += 1;
+  if (liquidityStress || fragilityStress) stressLevel += 1;
+  if (highAlert || dimensions.volatility_regime === 'stressed') stressLevel += 1;
+  stressLevel = Math.min(3, stressLevel);
+
+  let behavioralMode = 'calm-monitoring';
+  if (volatilityStress || liquidityStress || stressLevel >= 2) behavioralMode = 'elevated-volatility';
+  else if (majorCatalyst && ['imminent', 'near', 'watch'].includes(catalystFocus)) behavioralMode = 'major-catalyst';
+  else if (conflict) behavioralMode = 'cross-asset-conflict';
+  else if (speculative) behavioralMode = 'speculative-momentum';
+  else if (defensive) behavioralMode = 'defensive-rotation';
+
+  const biasByMode = {
+    'calm-monitoring': ['memory', 'macro', 'catalysts'],
+    'elevated-volatility': ['risk', 'alerts', 'crossasset', 'conviction'],
+    'major-catalyst': ['catalysts', 'crossasset', 'risk', 'scenarios'],
+    'cross-asset-conflict': ['crossasset', 'conviction', 'risk', 'positioning'],
+    'speculative-momentum': ['positioning', 'rotation', 'conviction', 'risk'],
+    'defensive-rotation': ['risk', 'rotation', 'crossasset', 'memory'],
+  };
+
+  return {
+    behavioral_mode: behavioralMode,
+    editorial_intensity: behavioralMode === 'elevated-volatility' ? 'elevated' : behavioralMode === 'calm-monitoring' ? 'quiet' : 'measured',
+    desk_priority_bias: biasByMode[behavioralMode],
+    pacing_density: behavioralMode === 'elevated-volatility' ? 'compressed' : behavioralMode === 'calm-monitoring' ? 'open' : 'balanced',
+    catalyst_focus: catalystFocus,
+    divergence_focus: divergences.length >= 2 || coherenceBand === 'conflicted' ? 'elevated' : divergences.length ? 'watch' : 'none',
+    stress_level: stressLevel,
+    session_personality: session,
+    catalyst_hours: nextCatalyst ? nextCatalyst.hours : null,
+    verified_inputs: true,
+  };
+}
+
 function renderSection(locale) {
   const ar = locale === 'ar';
   const t = (en, arText) => (ar ? arText : en);
@@ -398,6 +533,19 @@ function renderSection(locale) {
     || null;
   const catalysts = (pulse && pulse.catalysts_today) || [];
   const topCatalyst = catalysts[0] || null;
+  const behaviorVerified = Boolean(
+    verified && cogFresh && cognition.verified === true &&
+    macroVerified && convVerified
+  );
+  const behavior = deriveNewsroomBehavior({
+    verified: behaviorVerified,
+    dimensions: dims,
+    cognition,
+    macro: macro || {},
+    convergence: convergence || {},
+    catalysts,
+    session,
+  });
   // Emerging regime transition (verified) earns a hero ribbon slot.
   const emergingShift = cogFresh && cognition.verified === true
     ? (cognition.regime_shifts || []).find((s) => s.phase === 'emerging' && s.from)
@@ -405,12 +553,15 @@ function renderSection(locale) {
   const transitionItem = emergingShift
     ? `\n            <span class="nr-hero-item"><span class="nr-hero-key">${t('Transition', 'التحول')}</span>${escapeHtml(DIM_LABELS[locale][emergingShift.dimension] || emergingShift.dimension)}: ${ar ? `من ${escapeHtml(stateLabel(emergingShift.from.state, true))} إلى ${escapeHtml(stateLabel(emergingShift.state, true))}` : `${escapeHtml(stateLabel(emergingShift.from.state, false))} → ${escapeHtml(stateLabel(emergingShift.state, false))}`}</span>`
     : '';
+  const catalystWindowItem = behavior.verified_inputs && behavior.catalyst_focus !== 'none' && behavior.catalyst_hours !== null
+    ? `\n            <span class="nr-hero-item nr-catalyst-window"><span class="nr-hero-key">${t('Catalyst window', 'نافذة المحفز')}</span>${behavior.catalyst_hours < 1 ? t('under 1h', 'أقل من ساعة') : t(`${Math.round(behavior.catalyst_hours)}h`, `خلال ${Math.round(behavior.catalyst_hours)} س`)}</span>`
+    : '';
   const heroRibbon = `
           <div class="nr-hero-ribbon">
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Top story', 'القصة الأبرز')}</span>${escapeHtml(topStory || t('Desk monitoring — no dominant wire story', 'وضع المراقبة — لا قصة مهيمنة في الموجز'))}</span>
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Next catalyst', 'المحفز التالي')}</span>${topCatalyst ? escapeHtml(catalystName(topCatalyst.name, ar)) : t('none scheduled', 'لا شيء مجدول')}</span>
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>${macroVerified && macro.conviction && macro.conviction.state !== 'unverified' ? `
-            <span class="nr-hero-item"><span class="nr-hero-key">${t('Conviction', 'القناعة')}</span>${escapeHtml(CONVICTION_LABELS[locale][macro.conviction.state] || macro.conviction.state)}</span>` : ''}${transitionItem}
+            <span class="nr-hero-item"><span class="nr-hero-key">${t('Conviction', 'القناعة')}</span>${escapeHtml(CONVICTION_LABELS[locale][macro.conviction.state] || macro.conviction.state)}</span>` : ''}${catalystWindowItem}${transitionItem}
           </div>`;
 
   // ── Banner ──────────────────────────────────────────────────────────────
@@ -425,11 +576,31 @@ function renderSection(locale) {
   // assets, what the desk awaits, and the cross-session continuity thread.
   // Every line derives from a verified artifact; missing pieces are omitted,
   // never invented.
-  const leadHeadline = topStory
-    || (cogAlerts.length ? (ar ? cogAlerts[0].headline_ar : cogAlerts[0].headline_en) : null)
-    || (verified ? pulse.pulse_banner : null)
-    || t('Desk monitoring — the structural watch continues while regime inputs await the next sourced cycle.',
-         'مراقبة المكتب مستمرة — المتابعة الهيكلية قائمة بانتظار دورة البيانات الموثقة التالية.');
+  const topDivergence = convVerified ? ((convergence.diverges || [])[0] || null) : null;
+  const topObservation = cogFresh ? ((cognition.memory_observations || [])[0] || null) : null;
+  let leadHeadline;
+  if (!behavior.verified_inputs) {
+    leadHeadline = t(
+      'Desk monitoring — the structural watch continues while regime inputs await the next sourced cycle.',
+      'مراقبة المكتب مستمرة؛ وتبقى القراءة الهيكلية معلّقة إلى حين اكتمال دورة البيانات الموثقة التالية.'
+    );
+  } else if (behavior.behavioral_mode === 'elevated-volatility') {
+    leadHeadline = (cogAlerts.length ? (ar ? cogAlerts[0].headline_ar : cogAlerts[0].headline_en) : null)
+      || pulse.pulse_banner;
+  } else if (behavior.behavioral_mode === 'major-catalyst' && topCatalyst) {
+    leadHeadline = t(
+      `The desk is positioned around ${topCatalyst.name}; confirmation now depends on the cross-asset response.`,
+      `تتركز قراءة المكتب حول ${catalystName(topCatalyst.name, true)}؛ ويعتمد التأكيد الآن على استجابة الأصول المرتبطة.`
+    );
+  } else if (behavior.behavioral_mode === 'cross-asset-conflict' && topDivergence) {
+    leadHeadline = ar ? topDivergence.ar : topDivergence.en;
+  } else if (behavior.behavioral_mode === 'calm-monitoring' && topObservation) {
+    leadHeadline = ar ? topObservation.ar : topObservation.en;
+  } else {
+    leadHeadline = topStory
+      || (verified ? pulse.pulse_banner : null)
+      || t('The desk is maintaining a measured structural watch.', 'يحافظ المكتب على متابعة هيكلية منضبطة.');
+  }
 
   const leadLines = [];
   const latestTransition = cogFresh ? ((cognition.timeline_tail || [])[0] || null) : null;
@@ -463,7 +634,6 @@ function renderSection(locale) {
     const when = String(topCatalyst.time || '').includes('T') ? String(topCatalyst.time).slice(11, 16) + ' UTC' : String(topCatalyst.time || '');
     leadLines.push([t('What the desk awaits', 'ما ينتظره المكتب'), `${catalystName(topCatalyst.name, ar)}${when ? ` — ${when}` : ''}`]);
   }
-  const topObservation = cogFresh ? ((cognition.memory_observations || [])[0] || null) : null;
   if (topObservation) {
     leadLines.push([t('Continuity', 'الاستمرارية'), ar ? topObservation.ar : topObservation.en]);
   }
@@ -475,8 +645,8 @@ function renderSection(locale) {
     leadLines.push([t('Quietly building', 'يتراكم بهدوء'), ar ? topUnderpriced.ar : topUnderpriced.en]);
   }
   const leadHtml = `
-          <div class="nr-lead">
-            <span class="nr-lead-kicker">${t('Desk lead', 'محور المكتب')}</span>
+          <div class="nr-lead" data-lead-mode="${behavior.behavioral_mode}">
+            <span class="nr-lead-kicker">${escapeHtml(BEHAVIOR_LABELS[locale][behavior.behavioral_mode])}</span>
             <p class="nr-lead-headline">${escapeHtml(leadHeadline)}</p>${leadLines.length ? `
             <ul class="nr-lead-lines">
               ${leadLines.map(([k, v]) => `<li><span class="nr-lead-key">${escapeHtml(k)}</span>${escapeHtml(v)}</li>`).join('\n              ')}
@@ -697,20 +867,24 @@ function renderSection(locale) {
 
   // Phase 81 layout intelligence: classify existing desk output for visual
   // density and hierarchy only. No intelligence state is changed here.
+  const behaviorBias = new Set(behavior.desk_priority_bias);
+  const prioritize = (id, fallback) => behavior.verified_inputs && fallback !== 'quiet' && behaviorBias.has(id)
+    ? (fallback === 'critical' ? 'critical' : 'high')
+    : fallback;
   const moduleMetrics = {
     wire: { count: wireItems.length, priority: wireItems.length ? 'high' : 'quiet' },
-    catalysts: { count: catalysts.length, priority: catalysts.length ? 'high' : 'quiet' },
-    movers: { count: movers.length, priority: movers.length ? 'high' : 'quiet' },
-    rotation: { count: verified ? 4 : 0, priority: verified ? 'normal' : 'quiet' },
-    risk: { count: verified ? 4 : 0, priority: stressed ? 'critical' : (verified ? 'high' : 'quiet') },
-    macro: { count: verified ? (pulse.desk_commentary || []).length : 0, priority: verified && focus === 'macro' ? 'high' : (verified ? 'normal' : 'quiet') },
-    alerts: { count: cogAlerts.length, priority: cogAlerts.some((item) => item.severity === 'high') ? 'critical' : (cogAlerts.length ? 'high' : 'quiet') },
-    memory: { count: memoryObs.length, priority: memoryObs.length ? 'normal' : 'quiet' },
+    catalysts: { count: catalysts.length, priority: prioritize('catalysts', catalysts.length ? 'high' : 'quiet') },
+    movers: { count: movers.length, priority: prioritize('movers', movers.length ? 'high' : 'quiet') },
+    rotation: { count: verified ? 4 : 0, priority: prioritize('rotation', verified ? 'normal' : 'quiet') },
+    risk: { count: verified ? 4 : 0, priority: prioritize('risk', stressed ? 'critical' : (verified ? 'high' : 'quiet')) },
+    macro: { count: verified ? (pulse.desk_commentary || []).length : 0, priority: prioritize('macro', verified && focus === 'macro' ? 'high' : (verified ? 'normal' : 'quiet')) },
+    alerts: { count: cogAlerts.length, priority: prioritize('alerts', cogAlerts.some((item) => item.severity === 'high') ? 'critical' : (cogAlerts.length ? 'high' : 'quiet')) },
+    memory: { count: memoryObs.length, priority: prioritize('memory', memoryObs.length ? 'normal' : 'quiet') },
     timeline: { count: timelineEvents.length, priority: timelineEvents.length ? 'normal' : 'quiet' },
-    conviction: { count: convictionRows.length, priority: convictionRows.length ? 'high' : 'quiet' },
-    scenarios: { count: scenarioItems.length, priority: scenarioItems.some((item) => item.status === 'active') ? 'high' : (scenarioItems.length ? 'normal' : 'quiet') },
-    crossasset: { count: observedLinks.length, priority: observedLinks.some((item) => item.state === 'diverging') ? 'critical' : (observedLinks.length ? 'high' : 'quiet') },
-    positioning: { count: positioningRows.length, priority: pressureTracks.some(([, track]) => track.score >= 3) ? 'high' : (positioningRows.length ? 'normal' : 'quiet') },
+    conviction: { count: convictionRows.length, priority: prioritize('conviction', convictionRows.length ? 'high' : 'quiet') },
+    scenarios: { count: scenarioItems.length, priority: prioritize('scenarios', scenarioItems.some((item) => item.status === 'active') ? 'high' : (scenarioItems.length ? 'normal' : 'quiet')) },
+    crossasset: { count: observedLinks.length, priority: prioritize('crossasset', observedLinks.some((item) => item.state === 'diverging') ? 'critical' : (observedLinks.length ? 'high' : 'quiet')) },
+    positioning: { count: positioningRows.length, priority: prioritize('positioning', pressureTracks.some(([, track]) => track.score >= 3) ? 'high' : (positioningRows.length ? 'normal' : 'quiet')) },
   };
   const densityFor = (metric) => {
     if (!metric || metric.count === 0) return 'quiet';
@@ -777,7 +951,7 @@ function renderSection(locale) {
 
   return `
       <section class="section section-tight" id="newsroom-live">
-        <div class="section-panel newsroom" data-session="${session}" dir="${ar ? 'rtl' : 'ltr'}">
+        <div class="section-panel newsroom" data-session="${session}" data-behavior="${behavior.behavioral_mode}" data-intensity="${behavior.editorial_intensity}" data-pacing="${behavior.pacing_density}" data-catalyst-focus="${behavior.catalyst_focus}" data-divergence-focus="${behavior.divergence_focus}" data-stress="${behavior.stress_level}" data-behavior-verified="${behavior.verified_inputs}" data-desk-bias="${behavior.desk_priority_bias.join(',')}" dir="${ar ? 'rtl' : 'ltr'}">
           <div class="newsroom-head">
             <h2 class="newsroom-title">${t('TradeAlphaAI Terminal', 'منصة TradeAlphaAI')} · <span class="nr-edition">${escapeHtml(edition)}</span></h2>
             <span class="newsroom-session" data-session="${session}"><span class="nr-dot"></span>${escapeHtml(SESSION_LABELS[locale][session])}${macroVerified && macro.desk_focus ? `<span class="nr-desk-focus" data-focus="${escapeHtml(macro.desk_focus.focus)}">${t('Desk focus', 'تركيز المكتب')}: ${escapeHtml(FOCUS_LABELS[locale][macro.desk_focus.focus] || macro.desk_focus.focus)}</span>` : ''}</span>
@@ -832,4 +1006,14 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { renderSection, marketSession };
+module.exports = {
+  renderSection,
+  marketSession,
+  deriveNewsroomBehavior,
+  catalystHoursUntil,
+  BEHAVIOR_MODES,
+  EDITORIAL_INTENSITIES,
+  PACING_DENSITIES,
+  CATALYST_FOCUS_LEVELS,
+  DIVERGENCE_FOCUS_LEVELS,
+};
