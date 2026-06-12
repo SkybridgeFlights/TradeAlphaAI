@@ -48,6 +48,19 @@ for (const page of ['index.html', 'ar/index.html']) {
     if (count(section, 'data-desk="risk"') !== 1 || count(section, 'data-desk="macro"') !== 1) {
       failures.push(`${page}: desk modules missing or duplicated`);
     }
+
+    // Phase 74 cognition checks: alerts/memory/timeline desks rendered exactly
+    // once, continuity indicator present, and no alert badge without the
+    // cognition artifact actually carrying alerts.
+    for (const desk of ['alerts', 'memory', 'timeline']) {
+      if (count(section, `data-desk="${desk}"`) !== 1) failures.push(`${page}: cognition desk "${desk}" missing or duplicated`);
+    }
+    if (!section.includes('nr-continuity')) failures.push(`${page}: continuity indicator missing`);
+    if (section.includes('data-severity=')) {
+      let cognition = null;
+      try { cognition = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/intelligence/market-cognition.json'), 'utf8')); } catch {}
+      if (!cognition || !(cognition.alerts || []).length) failures.push(`${page}: rendered alerts without cognition alert source`);
+    }
     if (page === 'ar/index.html') {
       if (!section.includes('dir="rtl"')) failures.push('ar/index.html: newsroom section missing dir="rtl"');
       if (!/[؀-ۿ]/.test(section)) failures.push('ar/index.html: newsroom section contains no Arabic text');

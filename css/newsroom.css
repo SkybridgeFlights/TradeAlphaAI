@@ -255,6 +255,34 @@ html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
   gap: 0.4rem;
 }
 
+/* ── Cognition layer (Phase 74) ────────────────────────────────────────── */
+
+.nr-phase {
+  font-style: normal;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-inline-start: 0.35rem;
+  padding: 0.08rem 0.32rem;
+  border-radius: 3px;
+  vertical-align: 0.08em;
+  text-transform: uppercase;
+}
+.nr-phase[data-phase="emerging"] { background: rgba(63, 167, 255, 0.18); color: var(--nr-accent); }
+.nr-phase[data-phase="strengthening"] { background: rgba(201, 162, 39, 0.16); color: var(--nr-neutral); }
+.nr-phase[data-phase="established"],
+.nr-phase[data-phase="extended"] { background: rgba(93, 115, 144, 0.2); color: var(--nr-muted); }
+
+.nr-module[data-desk="alerts"] li[data-severity="high"] .nr-wire-headline { color: var(--nr-urgent); }
+.nr-module[data-desk="alerts"] li[data-severity="elevated"] .nr-wire-headline { color: var(--nr-neutral); }
+
+.nr-module[data-desk="timeline"] li { font-variant-numeric: tabular-nums; }
+.nr-module[data-desk="memory"] li .nr-wire-headline { color: var(--nr-text); font-size: 0.83rem; }
+
+.nr-continuity { color: var(--nr-muted); }
+
+html[dir="rtl"] .nr-phase { letter-spacing: 0; }
+
 /* ── RTL refinements ───────────────────────────────────────────────────── */
 
 html[dir="rtl"] .newsroom { font-feature-settings: normal; }

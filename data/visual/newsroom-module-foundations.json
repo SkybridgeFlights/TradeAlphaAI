@@ -142,6 +142,56 @@
       "contract": {
         "rows": "array<{pair,state,chain}>"
       }
+    },
+    {
+      "id": "desk-alerts",
+      "title": "Desk Alerts",
+      "vertical": "newswire",
+      "status": "live",
+      "data_sources": [
+        "data/intelligence/market-cognition.json#alerts"
+      ],
+      "contract": {
+        "alerts": "array<{type,severity,headline_en,headline_ar,derived_from}>"
+      }
+    },
+    {
+      "id": "market-memory",
+      "title": "Market Memory",
+      "vertical": "macro-desk",
+      "status": "live",
+      "data_sources": [
+        "data/intelligence/market-cognition.json#memory_observations",
+        "data/intelligence/session-history.json"
+      ],
+      "contract": {
+        "observations": "array<{kind,sessions,en,ar}>"
+      }
+    },
+    {
+      "id": "market-state-evolution",
+      "title": "Market State Evolution",
+      "vertical": "macro-desk",
+      "status": "live",
+      "data_sources": [
+        "data/intelligence/market-timeline.json#events",
+        "data/intelligence/market-cognition.json#timeline_tail"
+      ],
+      "contract": {
+        "events": "array<{date,dimension,from,to}>"
+      }
+    },
+    {
+      "id": "causal-network",
+      "title": "Cross-Asset Causal Network",
+      "vertical": "macro-desk",
+      "status": "live",
+      "data_sources": [
+        "data/intelligence/market-cognition.json#causal_links"
+      ],
+      "contract": {
+        "links": "array<{id,legs,expected,state,evidence}>"
+      }
     }
   ]
 }

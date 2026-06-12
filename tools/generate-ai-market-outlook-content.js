@@ -28,6 +28,7 @@ const { buildPersonaPromptBlock, GLOBAL_BANNED_PHRASES } = require('./editorial-
 const { narrativeStatePromptBlock } = require('./build-market-narrative-state');
 const { buildVoicePromptBlock, buildArabicVoiceBlock } = require('./analyst-voice-engine');
 const { pulsePromptBlock } = require('./build-market-pulse');
+const { cognitionPromptBlock } = require('./build-market-cognition');
 
 const ROOT          = path.resolve(__dirname, '..');
 const QUEUE_PATH    = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -345,9 +346,10 @@ function buildContinuityContext(topic) {
 
   const narrativeState = narrativeStatePromptBlock();
   const pulse = pulsePromptBlock();
+  const cognition = cognitionPromptBlock();
 
   return `continuity_context
-${pulse ? `${pulse}\n` : ''}${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
+${pulse ? `${pulse}\n` : ''}${cognition ? `${cognition}\n` : ''}${narrativeState ? `${narrativeState}\n` : ''}Prior narrative memory:
 ${priorContext}
 Narrative drift notes:
 ${drift.notes.map((note) => `- ${note}`).join('\n')}

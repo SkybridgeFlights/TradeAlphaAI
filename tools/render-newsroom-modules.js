@@ -1,6 +1,6 @@
 'use strict';
 
-// Phase 72/73 — Newsroom & terminal module renderer.
+// Phase 72/73/74 — Newsroom & terminal module renderer.
 // Injects the live terminal section into index.html and ar/index.html between
 // <!-- generated:newsroom-modules:start/end --> markers (idempotent).
 //
@@ -10,6 +10,12 @@
 // Flow / Weekend Macro Outlook) with emphasis-based module ordering, and
 // institutional desk identities (Macro Desk View, Risk Desk, Flow Monitor,
 // Fed Watch). Newsroom framing only — no fabricated analysts or institutions.
+//
+// Phase 74 additions: cognition layer — Desk Alerts (verified state
+// transitions only), Market Memory (cross-session observations), Market State
+// Evolution timeline, regime phase markers on the macro monitor, and a
+// continuity indicator. All cognition content derives from
+// data/intelligence/market-cognition.json built by build-market-cognition.js.
 //
 // Honesty rules: only verified, fresh pulse output carries urgency styling;
 // stale pulse (>48h) degrades to monitoring mode; assets without sourced data
@@ -103,6 +109,25 @@ const STATE_AR = {
 function stateLabel(value, ar) {
   if (!value || value === 'unverified') return '—';
   return ar ? (STATE_AR[value] || value) : value.replace(/_/g, '-');
+}
+
+const SEVERITY_LABELS = {
+  en: { high: 'HIGH', elevated: 'ELEVATED', watch: 'WATCH' },
+  ar: { high: 'مرتفع', elevated: 'متصاعد', watch: 'مراقبة' },
+};
+
+const SEVERITY_TIER = { high: 'high', elevated: 'medium', watch: 'low' };
+
+// Regime phase marker shown next to macro monitor chips.
+function phaseMarker(shift, ar) {
+  if (!shift || !shift.phase) return '';
+  if (shift.phase === 'emerging') {
+    return `<em class="nr-phase" data-phase="emerging">${ar ? 'تحول' : 'shift'}</em>`;
+  }
+  if (['strengthening', 'established', 'extended'].includes(shift.phase) && shift.sessions_in_state >= 2) {
+    return `<em class="nr-phase" data-phase="${shift.phase}">×${shift.sessions_in_state}</em>`;
+  }
+  return '';
 }
 
 function urgencyTier(urgency) {
@@ -227,6 +252,17 @@ function renderSection(locale) {
     : Infinity;
   const pulse = pulseRaw && pulseAgeHours <= PULSE_MAX_AGE_HOURS ? pulseRaw : (pulseRaw ? { ...pulseRaw, verified: false } : null);
 
+  // Cognition layer (Phase 74) — same stale guard; stale cognition keeps its
+  // memory/timeline (history is real) but drops live alerts.
+  const cogRaw = readJson('data/intelligence/market-cognition.json', null);
+  const cogAgeHours = cogRaw && cogRaw.updated_at
+    ? (Date.now() - new Date(cogRaw.updated_at).getTime()) / 3600000
+    : Infinity;
+  const cogFresh = Boolean(cogRaw && cogAgeHours <= PULSE_MAX_AGE_HOURS);
+  const cognition = cogRaw || {};
+  const cogShifts = Object.fromEntries((cognition.regime_shifts || []).map((s) => [s.dimension, s]));
+  const cogAlerts = cogFresh && cognition.verified === true ? (cognition.alerts || []) : [];
+
   const updatedAt = (pulse && pulse.updated_at) || (feed && feed.updated_at) || null;
   const updatedLabel = updatedAt ? new Date(updatedAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : null;
 
@@ -240,11 +276,18 @@ function renderSection(locale) {
     || null;
   const catalysts = (pulse && pulse.catalysts_today) || [];
   const topCatalyst = catalysts[0] || null;
+  // Emerging regime transition (verified) earns a hero ribbon slot.
+  const emergingShift = cogFresh && cognition.verified === true
+    ? (cognition.regime_shifts || []).find((s) => s.phase === 'emerging' && s.from)
+    : null;
+  const transitionItem = emergingShift
+    ? `\n            <span class="nr-hero-item"><span class="nr-hero-key">${t('Transition', 'التحول')}</span>${escapeHtml(DIM_LABELS[locale][emergingShift.dimension] || emergingShift.dimension)}: ${ar ? `من ${escapeHtml(stateLabel(emergingShift.from.state, true))} إلى ${escapeHtml(stateLabel(emergingShift.state, true))}` : `${escapeHtml(stateLabel(emergingShift.from.state, false))} → ${escapeHtml(stateLabel(emergingShift.state, false))}`}</span>`
+    : '';
   const heroRibbon = `
           <div class="nr-hero-ribbon">
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Top story', 'القصة الأبرز')}</span>${escapeHtml(topStory || t('Desk monitoring — no dominant wire story', 'وضع المراقبة — لا قصة مهيمنة في الموجز'))}</span>
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Next catalyst', 'المحفز التالي')}</span>${topCatalyst ? escapeHtml(topCatalyst.name) : t('none scheduled', 'لا شيء مجدول')}</span>
-            <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>
+            <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>${transitionItem}
           </div>`;
 
   // ── Banner ──────────────────────────────────────────────────────────────
@@ -261,10 +304,11 @@ function renderSection(locale) {
     return `<div class="nr-asset" data-dir="${ctx.state}"><span class="nr-asset-sym">${symbol}</span><span class="nr-asset-chg">${fmtChange(node.change)}</span><span class="nr-asset-ctx">${escapeHtml(ctx.label)}</span></div>`;
   }).join('\n            ');
 
-  // ── Macro monitor chips (terminal dashboard) ────────────────────────────
+  // ── Macro monitor chips (terminal dashboard, with regime phase markers) ─
   const chips = Object.entries(DIM_LABELS[locale]).map(([key, label]) => {
     const value = dims[key] || 'unverified';
-    return `<span class="nr-chip" data-state="${escapeHtml(value)}">${escapeHtml(label)}: <strong>${escapeHtml(stateLabel(value, ar))}</strong></span>`;
+    const marker = cogFresh && value !== 'unverified' ? phaseMarker(cogShifts[key], ar) : '';
+    return `<span class="nr-chip" data-state="${escapeHtml(value)}">${escapeHtml(label)}: <strong>${escapeHtml(stateLabel(value, ar))}</strong>${marker}</span>`;
   }).join('\n            ');
 
   // ── Modules (with desk identities) ──────────────────────────────────────
@@ -317,6 +361,27 @@ function renderSection(locale) {
     ? (pulse.desk_commentary || []).map((line) => `<li><span class="nr-wire-headline">${escapeHtml(line)}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('Desk commentary resumes with the next verified data cycle.', 'يستأنف تعليق المكتب مع دورة البيانات الموثقة التالية.')}</li>`;
 
+  // ── Cognition modules (Phase 74) ────────────────────────────────────────
+  const alertsHtml = cogAlerts.length
+    ? cogAlerts.map((a) => `<li data-severity="${escapeHtml(a.severity)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="${SEVERITY_TIER[a.severity] || 'low'}">${escapeHtml(SEVERITY_LABELS[locale][a.severity] || a.severity)}</span> ${escapeHtml(ar ? a.headline_ar : a.headline_en)}</span></li>`).join('\n              ')
+    : `<li class="nr-empty">${t('No verified state transitions this cycle — desk in monitoring mode.', 'لا تحولات حالة موثقة في هذه الدورة — المكتب في وضع المراقبة.')}</li>`;
+
+  const memoryObs = cogFresh ? (cognition.memory_observations || []) : [];
+  const memoryHtml = memoryObs.length
+    ? memoryObs.slice(0, 4).map((o) => `<li><span class="nr-wire-headline">${escapeHtml(ar ? o.ar : o.en)}</span></li>`).join('\n              ')
+    : `<li class="nr-empty">${t('Cross-session memory builds as verified sessions accumulate.', 'تتكوّن ذاكرة الجلسات مع تراكم الجلسات الموثقة.')}</li>`;
+
+  const timelineEvents = (cognition.timeline_tail || []).slice(0, 4);
+  const timelineHtml = timelineEvents.length
+    ? timelineEvents.map((e) => {
+      const dimLabel = DIM_LABELS[locale][e.dimension] || String(e.dimension || '').replace(/_/g, ' ');
+      const text = ar
+        ? `${dimLabel}: من ${stateLabel(e.from, true)} إلى ${stateLabel(e.to, true)}`
+        : `${dimLabel}: ${stateLabel(e.from, false)} → ${stateLabel(e.to, false)}`;
+      return `<li><span class="nr-wire-headline">${escapeHtml(text)}</span><span class="nr-meta">${escapeHtml(String(e.date || ''))}</span></li>`;
+    }).join('\n              ')
+    : `<li class="nr-empty">${t('No verified regime transitions recorded yet — the evolution timeline starts with the first sourced shift.', 'لا تحولات نظام موثقة بعد — يبدأ خط التطور مع أول تحول موثق.')}</li>`;
+
   // ── Session-aware module ordering ───────────────────────────────────────
   // weekend -> macro view first; fed/catalyst day -> catalysts first;
   // stressed vol -> risk desk first; default -> wire first.
@@ -327,12 +392,17 @@ function renderSection(locale) {
     rotation: { title: t('Rotation Signals — Flow Monitor', 'إشارات التناوب — مراقبة التدفقات'), body: rotation },
     risk: { title: t('Risk Desk', 'مكتب المخاطر'), body: riskDesk },
     macro: { title: t('Macro Desk View', 'رؤية مكتب الماكرو'), body: commentary },
+    alerts: { title: t('Desk Alerts', 'تنبيهات المكتب'), body: alertsHtml },
+    memory: { title: t('Market Memory', 'ذاكرة السوق'), body: memoryHtml },
+    timeline: { title: t('Market State Evolution', 'تطور حالة السوق'), body: timelineHtml },
   };
+  const escalated = cogAlerts.some((a) => a.severity === 'high' || a.severity === 'elevated');
   let order;
-  if (session === 'weekend') order = ['macro', 'catalysts', 'rotation', 'risk', 'wire', 'movers'];
-  else if (stressed) order = ['risk', 'wire', 'movers', 'catalysts', 'rotation', 'macro'];
-  else if (fedDay) order = ['catalysts', 'wire', 'risk', 'movers', 'rotation', 'macro'];
-  else order = ['wire', 'catalysts', 'movers', 'rotation', 'risk', 'macro'];
+  if (escalated) order = ['alerts', 'risk', 'wire', 'memory', 'movers', 'catalysts', 'timeline', 'rotation', 'macro'];
+  else if (session === 'weekend') order = ['macro', 'timeline', 'memory', 'catalysts', 'rotation', 'risk', 'alerts', 'wire', 'movers'];
+  else if (stressed) order = ['risk', 'alerts', 'wire', 'movers', 'memory', 'catalysts', 'rotation', 'timeline', 'macro'];
+  else if (fedDay) order = ['catalysts', 'wire', 'alerts', 'risk', 'memory', 'movers', 'rotation', 'timeline', 'macro'];
+  else order = ['wire', 'catalysts', 'alerts', 'movers', 'memory', 'rotation', 'risk', 'timeline', 'macro'];
 
   const moduleHtml = order.map((id) => `
             <div class="nr-module" data-desk="${id}">
@@ -363,6 +433,7 @@ ${heroRibbon}
           </div>
           <div class="newsroom-foot">
             <span>${updatedLabel ? `${t('Data as of', 'البيانات حتى')} ${updatedLabel}` : t('Awaiting first data cycle', 'بانتظار دورة البيانات الأولى')}</span>
+            <span class="nr-continuity">${Number.isFinite(cognition.sessions_tracked) && cognition.sessions_tracked > 0 ? (ar ? `الاستمرارية: ${cognition.sessions_tracked} ${cognition.sessions_tracked === 1 ? 'جلسة متتبعة' : 'جلسات متتبعة'}` : `Continuity: ${cognition.sessions_tracked} ${cognition.sessions_tracked === 1 ? 'session' : 'sessions'} tracked`) : t('Continuity memory initializing', 'ذاكرة الاستمرارية قيد التهيئة')}</span>
             <span>${t('Sourced platform data only — educational market intelligence, not investment advice.', 'بيانات موثقة من المنصة فقط — استخبارات سوق تعليمية وليست نصيحة استثمارية.')}</span>
           </div>
         </div>
