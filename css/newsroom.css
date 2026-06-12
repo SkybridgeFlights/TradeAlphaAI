@@ -45,6 +45,47 @@
   font-feature-settings: "tnum" 1;
 }
 
+/* ── Motion discipline (Phase 77) ─────────────────────────────────────────
+   Institutional motion: opacity/transform only (compositor-friendly), short
+   ease-out curves, one quiet entrance, no loops except a slow breathing dot.
+   Everything collapses under prefers-reduced-motion. */
+
+@keyframes nr-rise {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nr-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes nr-quote-settle {
+  from { background-color: rgba(255, 255, 255, 0.07); }
+  to { background-color: rgba(255, 255, 255, 0.028); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nr-hero-ribbon { animation: nr-rise 0.42s ease-out both; }
+  .nr-asset-strip { animation: nr-rise 0.42s 0.05s ease-out both; }
+  .newsroom-banner { animation: nr-rise 0.42s 0.1s ease-out both; }
+  .newsroom-pulse-strip { animation: nr-rise 0.42s 0.14s ease-out both; }
+  .newsroom-grid .nr-module { animation: nr-rise 0.46s ease-out both; }
+  .newsroom-grid .nr-module:nth-child(1) { animation-delay: 0.16s; }
+  .newsroom-grid .nr-module:nth-child(2) { animation-delay: 0.2s; }
+  .newsroom-grid .nr-module:nth-child(3) { animation-delay: 0.24s; }
+  .newsroom-grid .nr-module:nth-child(n+4) { animation-delay: 0.28s; }
+
+  .newsroom-session .nr-dot { animation: nr-breathe 3.4s ease-in-out infinite; }
+
+  /* Live quote settle: triggered by the refresh engine only when a sourced
+     value actually changed — one quiet highlight that decays, no flashing. */
+  .nr-asset.nr-settle { animation: nr-quote-settle 0.9s ease-out; }
+
+  .nr-live-asof { transition: opacity 0.35s ease; }
+  .nr-live-asof.nr-fading { opacity: 0.25; }
+}
+
 .newsroom-head {
   display: flex;
   align-items: baseline;
@@ -106,6 +147,9 @@ html[lang="ar"] .newsroom-title { letter-spacing: 0; }
 
 .nr-hero-item { display: inline-flex; align-items: baseline; gap: 0.45rem; color: var(--nr-text-soft); }
 
+/* Scanning path: the top story is the entry point of the eye flow */
+.nr-hero-item:first-child { color: var(--nr-text); font-weight: 600; }
+
 .nr-hero-key {
   font-size: 0.64rem;
   font-weight: 700;
@@ -137,10 +181,11 @@ html[lang="ar"] .nr-hero-key { letter-spacing: 0; }
   flex-direction: column;
   gap: 0.16rem;
   min-width: 0;
-  transition: border-color 0.22s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: border-color 0.22s ease, transform 0.22s ease, background-color 0.9s ease;
 }
 
-.nr-asset:hover { border-color: var(--nr-line-strong); }
+.nr-asset:hover { border-color: var(--nr-line-strong); transform: translateY(-1px); }
 
 .nr-asset-sym {
   font-size: 0.66rem;
@@ -208,7 +253,10 @@ html[lang="ar"] .nr-hero-key { letter-spacing: 0; }
   color: var(--nr-muted);
   background: var(--nr-soft);
   white-space: nowrap;
+  transition: border-color 0.22s ease, color 0.22s ease;
 }
+
+.nr-chip:hover { border-color: var(--nr-line-strong); color: var(--nr-text-soft); }
 
 .nr-chip strong { color: var(--nr-text); font-weight: 600; }
 .nr-chip[data-state="risk_on"] strong, .nr-chip[data-state="confirming"] strong, .nr-chip[data-state="relaxing"] strong { color: var(--nr-risk-on); }
@@ -228,12 +276,19 @@ html[lang="ar"] .nr-hero-key { letter-spacing: 0; }
   border: 1px solid var(--nr-line);
   border-radius: 16px;
   padding: 1rem 1.1rem 1.1rem;
-  transition: border-color 0.22s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
-.nr-module:hover { border-color: rgba(216, 177, 90, 0.16); }
+.nr-module:hover {
+  border-color: rgba(216, 177, 90, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 10px 26px rgba(0, 0, 0, 0.18);
+}
 
 .nr-module h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -241,6 +296,28 @@ html[lang="ar"] .nr-hero-key { letter-spacing: 0; }
   color: var(--nr-muted);
   margin: 0 0 0.65rem;
 }
+
+/* Desk identity markers — instant scanning of what kind of desk speaks.
+   Quiet 5px ticks: red = risk surface, gold = judgment, blue = data flow. */
+.nr-module h3::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--nr-quiet);
+  flex-shrink: 0;
+}
+.nr-module[data-desk="alerts"] h3::before,
+.nr-module[data-desk="risk"] h3::before { background: rgba(255, 109, 109, 0.7); }
+.nr-module[data-desk="conviction"] h3::before,
+.nr-module[data-desk="scenarios"] h3::before,
+.nr-module[data-desk="macro"] h3::before { background: rgba(216, 177, 90, 0.75); }
+.nr-module[data-desk="wire"] h3::before,
+.nr-module[data-desk="movers"] h3::before,
+.nr-module[data-desk="catalysts"] h3::before { background: rgba(63, 167, 255, 0.7); }
+.nr-module[data-desk="memory"] h3::before,
+.nr-module[data-desk="timeline"] h3::before,
+.nr-module[data-desk="rotation"] h3::before { background: rgba(141, 151, 143, 0.7); }
 
 html[lang="ar"] .nr-module h3 { letter-spacing: 0; }
 
@@ -356,7 +433,9 @@ html[dir="rtl"] .nr-meta { white-space: normal; }
 
 html[dir="rtl"] .nr-asset-sym { letter-spacing: 0; }
 html[dir="rtl"] .nr-hero-ribbon { font-size: 0.82rem; line-height: 1.65; }
-html[dir="rtl"] .newsroom-banner { line-height: 1.7; }
+html[dir="rtl"] .newsroom-banner { line-height: 1.7; font-size: 1.02rem; }
+html[dir="rtl"] .newsroom-title { font-size: 1.05rem; }
+html[dir="rtl"] .nr-chip { font-size: 0.78rem; }
 html[dir="rtl"] .nr-module li { line-height: 1.65; }
 html[dir="rtl"] .nr-module h3 { font-size: 0.78rem; }
 html[dir="rtl"] .nr-asset-ctx { line-height: 1.5; }
@@ -373,7 +452,23 @@ html[dir="rtl"] .nr-wire-headline { line-height: 1.65; }
   .nr-asset-strip { grid-template-columns: repeat(2, 1fr); gap: 7px; }
   .nr-asset { padding: 0.55rem 0.65rem; }
   .nr-hero-ribbon { flex-direction: column; gap: 0.45rem; padding: 0.7rem 0.85rem; }
-  .newsroom-pulse-strip { gap: 0.45rem; }
-  .nr-chip { font-size: 0.76rem; padding: 0.34rem 0.7rem; }
+
+  /* Pulse strip becomes a thumb-friendly horizontal lane instead of a tall
+     wrapped block — density preserved, vertical rhythm restored. */
+  .newsroom-pulse-strip {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.45rem;
+    padding-bottom: 0.35rem;
+    margin-inline: -2px;
+    padding-inline: 2px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(to right, black 92%, transparent);
+  }
+  .newsroom-pulse-strip::-webkit-scrollbar { display: none; }
+  html[dir="rtl"] .newsroom-pulse-strip { mask-image: linear-gradient(to left, black 92%, transparent); }
+
+  .nr-chip { font-size: 0.76rem; padding: 0.34rem 0.7rem; flex-shrink: 0; }
   .newsroom-foot { flex-direction: column; gap: 0.4rem; }
 }

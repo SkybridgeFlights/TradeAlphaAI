@@ -28,6 +28,19 @@
   var timer = null;
   var lastStatus = null;
 
+  // Motion discipline: update transitions only when the user allows motion.
+  var MOTION_OK = typeof window.matchMedia === 'function'
+    ? !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : true;
+
+  // One quiet settle highlight when a sourced value actually changed.
+  function settle(cell) {
+    if (!MOTION_OK) return;
+    cell.classList.remove('nr-settle');
+    void cell.offsetWidth; // restart the animation
+    cell.classList.add('nr-settle');
+  }
+
   // ── Contextual labels (mirrors render-newsroom-modules assetContext) ──────
   var LABELS = {
     GOLD: { up: ['Gold bid returning', 'عودة الطلب على الذهب'], down: ['Gold momentum fading', 'تراجع زخم الذهب'], flat: ['Gold holding range', 'الذهب في نطاق مستقر'] },
@@ -92,7 +105,11 @@
       if (!entry || !entry.live) continue; // keep server-rendered honesty state
       var chg = cell.querySelector('.nr-asset-chg');
       var ctx = cell.querySelector('.nr-asset-ctx');
-      if (chg) chg.textContent = fmtChange(entry.change_pct);
+      var next = fmtChange(entry.change_pct);
+      if (chg && chg.textContent !== next) {
+        chg.textContent = next;
+        settle(cell);
+      }
       cell.setAttribute('data-dir', entry.direction || 'flat');
       var text = label(symbol, entry, dims);
       if (ctx && text) ctx.textContent = text;
@@ -120,9 +137,18 @@
     }
     var names = Object.keys(sources).join(', ');
     var time = payload.updated_at ? payload.updated_at.slice(11, 16) + ' UTC' : '';
-    node.textContent = AR
+    var text = AR
       ? 'تحديث موثق ' + time + (names ? ' · المصادر: ' + names : '')
       : 'Sourced update ' + time + (names ? ' · ' + names : '');
+    if (node.textContent !== text && MOTION_OK) {
+      node.classList.add('nr-fading');
+      setTimeout(function () {
+        node.textContent = text;
+        node.classList.remove('nr-fading');
+      }, 180);
+    } else {
+      node.textContent = text;
+    }
     node.setAttribute('data-live-status', payload.status || 'unknown');
   }
 

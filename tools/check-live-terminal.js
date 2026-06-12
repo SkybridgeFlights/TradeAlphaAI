@@ -52,6 +52,7 @@ if (!engine) {
   if (!/failures\s*>=\s*MAX_FAILURES/.test(engine)) failures.push('live-terminal.js: missing degraded backoff');
   if (!/Math\.min\(Math\.max\(base, 30\), 300\)/.test(engine)) failures.push('live-terminal.js: cadence not bounded to 30–300s');
   if (/\breal[- ]time quotes\b|\blive prices\b/i.test(engine)) failures.push('live-terminal.js: fake realtime claim in user-facing text');
+  if (!engine.includes('prefers-reduced-motion')) failures.push('live-terminal.js: motion discipline missing reduced-motion guard');
   console.log('[live-terminal] js/live-terminal.js ok');
 }
 
