@@ -1,0 +1,487 @@
+{
+  "version": "2.0",
+  "updated_at": "2026-06-12T19:07:43.409Z",
+  "run_date": "2026-06-12",
+  "mode": "preview_only",
+  "verified": true,
+  "posting_enabled": false,
+  "credentials_required": false,
+  "source_artifacts": {
+    "daily": "data/intelligence/daily-intelligence-brief.json",
+    "intraday": "data/intelligence/intraday-brief.json",
+    "newsroom": "data/feeds/newsroom-pulse.json",
+    "convergence": "data/intelligence/narrative-convergence.json",
+    "charts": "data/intelligence/chart-narratives.json",
+    "cognition": "data/intelligence/market-cognition.json",
+    "outlooks": "data/feeds/latest-market-outlooks.json",
+    "articles": "data/feeds/latest-insights.json"
+  },
+  "platform_contracts": {
+    "telegram": {
+      "limit": 3200,
+      "hashtag_cap": 3,
+      "threshold": 62,
+      "cooldown_hours": 6
+    },
+    "x": {
+      "limit": 275,
+      "hashtag_cap": 2,
+      "threshold": 64,
+      "cooldown_hours": 8
+    },
+    "x-thread": {
+      "limit": 275,
+      "hashtag_cap": 2,
+      "threshold": 78,
+      "cooldown_hours": 18
+    },
+    "facebook": {
+      "limit": 1800,
+      "hashtag_cap": 3,
+      "threshold": 72,
+      "cooldown_hours": 18
+    },
+    "instagram": {
+      "limit": 2000,
+      "hashtag_cap": 5,
+      "threshold": 74,
+      "cooldown_hours": 18
+    },
+    "linkedin": {
+      "limit": 2200,
+      "hashtag_cap": 4,
+      "threshold": 68,
+      "cooldown_hours": 20
+    }
+  },
+  "distribution_policy": {
+    "max_story_per_platform_per_run": 1,
+    "bilingual_pair_required": true,
+    "quiet_state_may_select_none": true,
+    "stale_sources_suppressed": true,
+    "duplicate_sources_suppressed": true,
+    "narrative_overlap_threshold": 0.72,
+    "max_platforms_per_story": 3,
+    "approval_required": true
+  },
+  "candidates_considered": [
+    {
+      "id": "session-2026-06-12",
+      "kind": "session",
+      "score": 68,
+      "urgency": "elevated",
+      "source_artifact": "data/intelligence/daily-intelligence-brief.json"
+    },
+    {
+      "id": "outlook-market-regime-2026-06-11",
+      "kind": "outlook",
+      "score": 70,
+      "urgency": "routine",
+      "source_artifact": "data/feeds/latest-market-outlooks.json"
+    },
+    {
+      "id": "article-etf-diversification-basics",
+      "kind": "article",
+      "score": 64,
+      "urgency": "low",
+      "source_artifact": "data/feeds/latest-insights.json"
+    }
+  ],
+  "previews": [
+    {
+      "platform": "telegram",
+      "language": "en",
+      "source_artifact": "data/intelligence/daily-intelligence-brief.json",
+      "source_story_id": "session-2026-06-12",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "Market structure brief",
+      "hook": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+      "body": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing. • Divergence in focus: AI leadership drives the growth complex. • Next scheduled test: Retail Sales. In focus: QQQ · SPY · GOLD · NVDA · DXY · IWM · OIL",
+      "cta": "Read the full context: https://www.tradealphaai.com/",
+      "evidence_references": [
+        "data/intelligence/daily-intelligence-brief.json",
+        "data/intelligence/narrative-convergence.json"
+      ],
+      "related_symbols": [
+        "QQQ",
+        "SPY",
+        "GOLD",
+        "NVDA",
+        "DXY",
+        "IWM",
+        "OIL"
+      ],
+      "hashtags": [
+        "#Markets",
+        "#Macro",
+        "#MarketIntelligence"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "2296aa0be5dc2e0cf908",
+      "source_hash": "857dcaf7743b3fef1537",
+      "content_hash": "8a7f76d57906822fc2b4",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "market-regime brief card",
+        "render": false
+      },
+      "urgency_level": "elevated",
+      "distribution_relevance_score": 78,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 6,
+      "disclaimer": "Educational market context only. Not investment advice."
+    },
+    {
+      "platform": "telegram",
+      "language": "ar",
+      "source_artifact": "data/intelligence/daily-intelligence-brief.json",
+      "source_story_id": "session-2026-06-12",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "موجز بنية السوق",
+      "hook": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+      "body": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. • موضع التباعد الأبرز: قيادة الذكاء الاصطناعي تحرك قطاع النمو. • الاختبار المجدول التالي: مبيعات التجزئة. تحت المجهر: QQQ · SPY · GOLD · NVDA · DXY · IWM · OIL",
+      "cta": "اقرأ السياق الكامل: https://www.tradealphaai.com/ar/",
+      "evidence_references": [
+        "data/intelligence/daily-intelligence-brief.json",
+        "data/intelligence/narrative-convergence.json"
+      ],
+      "related_symbols": [
+        "QQQ",
+        "SPY",
+        "GOLD",
+        "NVDA",
+        "DXY",
+        "IWM",
+        "OIL"
+      ],
+      "hashtags": [
+        "#الأسواق",
+        "#الاقتصاد_الكلي",
+        "#استخبارات_السوق"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "f426d571f9cb32d9a80e",
+      "source_hash": "857dcaf7743b3fef1537",
+      "content_hash": "7d7dc6fa19382122e3fc",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "بطاقة موجز نظام السوق",
+        "render": false
+      },
+      "urgency_level": "elevated",
+      "distribution_relevance_score": 78,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 6,
+      "disclaimer": "سياق تعليمي للأسواق فقط، وليس نصيحة استثمارية."
+    },
+    {
+      "platform": "x",
+      "language": "en",
+      "source_artifact": "data/intelligence/daily-intelligence-brief.json",
+      "source_story_id": "session-2026-06-12",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "Market structure brief",
+      "hook": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+      "body": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing. $QQQ $SPY $GOLD",
+      "cta": "Read the full context: https://www.tradealphaai.com/",
+      "evidence_references": [
+        "data/intelligence/daily-intelligence-brief.json",
+        "data/intelligence/narrative-convergence.json"
+      ],
+      "related_symbols": [
+        "QQQ",
+        "SPY",
+        "GOLD",
+        "NVDA",
+        "DXY",
+        "IWM",
+        "OIL"
+      ],
+      "hashtags": [
+        "#Markets",
+        "#Macro"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "6a14fd5bb5b61e607ec8",
+      "source_hash": "857dcaf7743b3fef1537",
+      "content_hash": "f76da2a4007eed1652b9",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "market-regime brief card",
+        "render": false
+      },
+      "urgency_level": "elevated",
+      "distribution_relevance_score": 78,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 8,
+      "disclaimer": "Educational market context only. Not investment advice."
+    },
+    {
+      "platform": "x",
+      "language": "ar",
+      "source_artifact": "data/intelligence/daily-intelligence-brief.json",
+      "source_story_id": "session-2026-06-12",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "موجز بنية السوق",
+      "hook": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+      "body": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. $QQQ $SPY $GOLD",
+      "cta": "اقرأ السياق الكامل: https://www.tradealphaai.com/ar/",
+      "evidence_references": [
+        "data/intelligence/daily-intelligence-brief.json",
+        "data/intelligence/narrative-convergence.json"
+      ],
+      "related_symbols": [
+        "QQQ",
+        "SPY",
+        "GOLD",
+        "NVDA",
+        "DXY",
+        "IWM",
+        "OIL"
+      ],
+      "hashtags": [
+        "#الأسواق",
+        "#الاقتصاد_الكلي"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "2d6f8d34b17b3401cdd8",
+      "source_hash": "857dcaf7743b3fef1537",
+      "content_hash": "680bbd8f0852b8c70a53",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "بطاقة موجز نظام السوق",
+        "render": false
+      },
+      "urgency_level": "elevated",
+      "distribution_relevance_score": 78,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 8,
+      "disclaimer": "سياق تعليمي للأسواق فقط، وليس نصيحة استثمارية."
+    },
+    {
+      "platform": "facebook",
+      "language": "en",
+      "source_artifact": "data/feeds/latest-insights.json",
+      "source_story_id": "article-etf-diversification-basics",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "ETF Diversification Basics: Holdings, Sectors, and Overlap",
+      "hook": "Institutional educational research on etf diversification basics: holdings, sectors, and overlap, including exposure mechanics, concentration, liquidity, macro sensitivity, and risk transmission.",
+      "body": "Institutional educational research on etf diversification basics: holdings, sectors, and overlap, including exposure mechanics, concentration, liquidity, macro sensitivity, and risk transmission.",
+      "cta": "Read the full context: https://www.tradealphaai.com/insights/etf-diversification-basics.html",
+      "evidence_references": [
+        "data/feeds/latest-insights.json",
+        "article:etf-diversification-basics"
+      ],
+      "related_symbols": [],
+      "hashtags": [
+        "#Markets",
+        "#Macro",
+        "#MarketIntelligence"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "7ae955079855cf3716b0",
+      "source_hash": "7cf2143972fc11b3d139",
+      "content_hash": "ae150dc97c0b923ad5a3",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "research takeaway card",
+        "render": false
+      },
+      "urgency_level": "low",
+      "distribution_relevance_score": 74,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 18,
+      "disclaimer": "Educational market context only. Not investment advice."
+    },
+    {
+      "platform": "facebook",
+      "language": "ar",
+      "source_artifact": "data/feeds/latest-insights.json",
+      "source_story_id": "article-etf-diversification-basics",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "أساسيات تنويع صناديق المؤشرات: المكونات والقطاعات والتداخل",
+      "hook": "أساسيات تنويع صناديق المؤشرات: المكونات والقطاعات والتداخل ضمن بحث تعليمي مؤسسي يشرح آليات التعرض والتركيز والسيولة والحساسية الكلية وانتقال المخاطر دون تقديم نصيحة مالية.",
+      "body": "أساسيات تنويع صناديق المؤشرات: المكونات والقطاعات والتداخل ضمن بحث تعليمي مؤسسي يشرح آليات التعرض والتركيز والسيولة والحساسية الكلية وانتقال المخاطر دون تقديم نصيحة مالية.",
+      "cta": "اقرأ السياق الكامل: https://www.tradealphaai.com/ar/insights/etf-diversification-basics.html",
+      "evidence_references": [
+        "data/feeds/latest-insights.json",
+        "article:etf-diversification-basics"
+      ],
+      "related_symbols": [],
+      "hashtags": [
+        "#الأسواق",
+        "#الاقتصاد_الكلي",
+        "#استخبارات_السوق"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "89b9d8daff358360c559",
+      "source_hash": "7cf2143972fc11b3d139",
+      "content_hash": "cac18968fa31539a4285",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "بطاقة خلاصة بحثية",
+        "render": false
+      },
+      "urgency_level": "low",
+      "distribution_relevance_score": 74,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 18,
+      "disclaimer": "سياق تعليمي للأسواق فقط، وليس نصيحة استثمارية."
+    },
+    {
+      "platform": "linkedin",
+      "language": "en",
+      "source_artifact": "data/feeds/latest-market-outlooks.json",
+      "source_story_id": "outlook-market-regime-2026-06-11",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "Market Regime Context: Risk Signals and Educational Outlook Scenarios",
+      "hook": "Educational context for current market regime signals, risk dynamics, and conditional scenarios. This is not a prediction or investment recommendation.",
+      "body": "Institutional market note — 2026-06-12 Educational context for current market regime signals, risk dynamics, and conditional scenarios. This is not a prediction or investment recommendation. The relevant signal is not a single asset move, but the degree of confirmation across the market structure.",
+      "cta": "Read the full context: https://www.tradealphaai.com/market-outlook/market-regime-2026-06-11.html",
+      "evidence_references": [
+        "data/feeds/latest-market-outlooks.json",
+        "market-outlook:market-regime-2026-06-11"
+      ],
+      "related_symbols": [],
+      "hashtags": [
+        "#Markets",
+        "#Macro",
+        "#MarketIntelligence"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "ab2b251286ff498e9c6f",
+      "source_hash": "d39aebd4e7143c27ae7a",
+      "content_hash": "f48e90b497f928e9f09b",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "catalyst context card",
+        "render": false
+      },
+      "urgency_level": "routine",
+      "distribution_relevance_score": 80,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 20,
+      "disclaimer": "Educational market context only. Not investment advice."
+    },
+    {
+      "platform": "linkedin",
+      "language": "ar",
+      "source_artifact": "data/feeds/latest-market-outlooks.json",
+      "source_story_id": "outlook-market-regime-2026-06-11",
+      "generated_at": "2026-06-12T19:07:43.409Z",
+      "title": "سياق نظام السوق: إشارات المخاطر والسيناريوهات التعليمية",
+      "hook": "سياق تعليمي لإشارات نظام السوق وديناميكيات المخاطر والسيناريوهات المشروطة، وليس توقعا أو توصية استثمارية.",
+      "body": "قراءة مؤسسية في السوق — 2026-06-12 سياق تعليمي لإشارات نظام السوق وديناميكيات المخاطر والسيناريوهات المشروطة، وليس توقعا أو توصية استثمارية. الدلالة الأساسية ليست في حركة أصل منفرد، بل في درجة اتساق العلاقات بين الأصول.",
+      "cta": "اقرأ السياق الكامل: https://www.tradealphaai.com/ar/market-outlook/market-regime-2026-06-11.html",
+      "evidence_references": [
+        "data/feeds/latest-market-outlooks.json",
+        "market-outlook:market-regime-2026-06-11"
+      ],
+      "related_symbols": [],
+      "hashtags": [
+        "#الأسواق",
+        "#الاقتصاد_الكلي",
+        "#استخبارات_السوق"
+      ],
+      "no_advice": true,
+      "dedupe_hash": "9a2c3008cc8ca9859398",
+      "source_hash": "d39aebd4e7143c27ae7a",
+      "content_hash": "f8ca4a28a40b92dd6b3c",
+      "visual_recommendation": {
+        "type": "editorial-card",
+        "concept": "بطاقة سياق المحفز",
+        "render": false
+      },
+      "urgency_level": "routine",
+      "distribution_relevance_score": 80,
+      "distribution_status": "suppressed",
+      "suppression_reasons": [
+        "duplicate_content"
+      ],
+      "approval_required": true,
+      "auto_post_allowed": false,
+      "cooldown_hours": 20,
+      "disclaimer": "سياق تعليمي للأسواق فقط، وليس نصيحة استثمارية."
+    }
+  ],
+  "approval_queue": [],
+  "future_distribution": {
+    "adapters": [
+      {
+        "platform": "telegram",
+        "status": "disabled",
+        "interface": "preview-provider-adapter-v1"
+      },
+      {
+        "platform": "x",
+        "status": "disabled",
+        "interface": "preview-provider-adapter-v1"
+      },
+      {
+        "platform": "x-thread",
+        "status": "disabled",
+        "interface": "preview-provider-adapter-v1"
+      },
+      {
+        "platform": "facebook",
+        "status": "disabled",
+        "interface": "preview-provider-adapter-v1"
+      },
+      {
+        "platform": "instagram",
+        "status": "disabled",
+        "interface": "preview-provider-adapter-v1"
+      },
+      {
+        "platform": "linkedin",
+        "status": "disabled",
+        "interface": "preview-provider-adapter-v1"
+      }
+    ],
+    "posting_ledger": "data/social/posting-ledger.json",
+    "retry_policy": {
+      "enabled": false,
+      "max_attempts": 3,
+      "backoff": "exponential",
+      "activation_requires_adapter": true
+    },
+    "credential_injection": "future environment-only provider configuration; no credentials read in preview mode",
+    "approval_path": "preview_ready -> approved -> adapter_send -> ledger_record"
+  },
+  "silence_reason": null
+}

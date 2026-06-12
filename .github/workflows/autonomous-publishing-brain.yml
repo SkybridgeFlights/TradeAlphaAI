@@ -250,6 +250,7 @@ jobs:
           node tools/build-structural-tension.js --write || echo "[structural-tension] Build degraded — continuing"
           node tools/build-intelligence-briefs.js --write || echo "[product-brief] Build degraded — continuing"
           node tools/build-intraday-brief.js --write || echo "[intraday-brief] Build degraded — continuing"
+          node tools/build-social-intelligence.js --write || echo "[social-intelligence] Build degraded — continuing (preview-only layer)"
           node tools/render-newsroom-modules.js || echo "[newsroom] Product render degraded — continuing"
           node tools/promote-wire-events.js --write || echo "[wire-promotion] Promotion degraded — continuing"
           node tools/build-visual-intelligence-data.js --write || echo "[visual-data] Build degraded — continuing"
@@ -280,6 +281,7 @@ jobs:
           npm run check:narrative-realism
           npm run check:editorial-cadence
           npm run check:editorial-visuals
+          npm run check:social-intelligence
           npm run check:newsroom-intelligence
           npm run check:newsroom-ui
           npm run test:market-cognition

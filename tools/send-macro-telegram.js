@@ -27,6 +27,7 @@ const RATE_PATH     = path.join(ROOT, 'data', 'intelligence', 'rate-path-intelli
 const TRANSMISSION_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-transmission.json');
 const ETF_FLOW_PATH  = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
 const DAILY_BRIEF_PATH = path.join(ROOT, 'data', 'intelligence', 'daily-intelligence-brief.json');
+const CHART_NARRATIVES_PATH = path.join(ROOT, 'data', 'intelligence', 'chart-narratives.json');
 const STATUS_PATH    = path.join(ROOT, 'data', 'intelligence', 'telegram-status.json');
 const PUBLISHING_REPORT_PATH = argValue('--report')
   ? path.resolve(ROOT, argValue('--report'))
@@ -55,6 +56,7 @@ const ratePath  = readJson(RATE_PATH,      { fed_path: null });
 const transmission = readJson(TRANSMISSION_PATH, { regime_transmission_note: null, event_analyses: [] });
 const etfFlow   = readJson(ETF_FLOW_PATH,   { rotation_analysis: null });
 const dailyBrief = readJson(DAILY_BRIEF_PATH, null);
+const chartNarratives = readJson(CHART_NARRATIVES_PATH, null);
 const publishingReport = readJson(PUBLISHING_REPORT_PATH, {});
 
 // Explicit macro modes must never be shadowed by a stale publishing report.
@@ -67,7 +69,7 @@ const message = publication
   ? buildPublicationAnnouncement(publication)
   : TYPE === 'auto'
     ? null
-    : buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow, dailyBrief);
+    : buildMessage(TYPE, calendar, narrative, expect, regime, ratePath, transmission, etfFlow, dailyBrief, chartNarratives);
 
 if (publication) {
   console.log('[TELEGRAM ROUTE]');
@@ -123,12 +125,12 @@ function writeStatus(sent, result) {
 
 // ── Message builders ──────────────────────────────────────────────────────────
 
-function buildMessage(type, calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief) {
+function buildMessage(type, calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief, charts) {
   switch (type) {
     case 'preview':   return buildPreviewMessage(calendar, narrative, expect);
     case 'release':   return buildReleaseMessage(narrative, regime, ratePath);
     case 'weekly':    return buildWeeklyMessage(calendar, narrative, expect, regime, transmission, etfFlow);
-    case 'briefing':  return buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief);
+    case 'briefing':  return buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief, charts);
     default:          return null;
   }
 }
@@ -325,9 +327,9 @@ function buildWeeklyMessage(calendar, narrative, expect, regime, transmission, e
   return lines.join('\n').slice(0, MAX_LENGTH);
 }
 
-function buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief) {
+function buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath, transmission, etfFlow, productBrief, charts) {
   if (productBrief && productBrief.version === '2.0') {
-    return buildIntelligenceProductBrief(productBrief, LOCALE);
+    return buildIntelligenceProductBrief(productBrief, LOCALE, charts);
   }
   const today = new Date().toISOString().slice(0, 10);
   const lines = [`*Daily Macro Intelligence — ${today}*\n`];
@@ -386,7 +388,7 @@ function buildDailyBriefingMessage(calendar, narrative, expect, regime, ratePath
   return lines.join('\n').slice(0, MAX_LENGTH);
 }
 
-function buildIntelligenceProductBrief(brief, locale) {
+function buildIntelligenceProductBrief(brief, locale, charts) {
   const ar = locale === 'ar';
   const lines = [
     ar ? `*موجز السوق اليومي 2.0 — ${brief.run_date}*` : `*Daily Market Brief 2.0 — ${brief.run_date}*`,
@@ -430,6 +432,12 @@ function buildIntelligenceProductBrief(brief, locale) {
   const sensitive = (brief.most_sensitive_assets || []).slice(0, 5);
   lines.push('', ar ? '*الأصول الأكثر حساسية*' : '*Most sensitive assets*');
   lines.push(sensitive.length ? sensitive.map((item) => `${item.asset} ${item.score}`).join(' · ') : '—');
+
+  const chart = charts?.verified === true ? (charts.selected || [])[0] : null;
+  if (chart) {
+    lines.push('', ar ? '*القراءة البصرية*' : '*Chart intelligence*');
+    lines.push(escMd(ar ? chart.reading_ar : chart.reading_en));
+  }
 
   lines.push('', ar ? '*ما يستحق المتابعة*' : '*Monitoring checklist*');
   for (const item of (brief.monitoring_checklist || []).slice(0, 5)) {
