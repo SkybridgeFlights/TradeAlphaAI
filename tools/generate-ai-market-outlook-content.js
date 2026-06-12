@@ -656,6 +656,64 @@ function callOpenAI(systemPrompt, userPrompt, apiKey, { maxTokens = 2000, temper
 
 // ── Section-level validation ───────────────────────────────────────────────────
 
+// Mirrors check-market-intelligence-quality EN/AR disclaimer detection — kept
+// in sync so generation always conforms to the page-wide cap.
+const EN_BODY_DISCLAIMER_PATTERNS = [
+  /not financial advice/i,
+  /not investment advice/i,
+  /educational[^.]*only/i,
+  /not a recommendation to buy or sell/i,
+  /market conditions can change/i,
+];
+const AR_BODY_DISCLAIMER_PATTERNS = [
+  /ليست? توصية/,
+  /تعليمي فقط/,
+  /للتعليم والتوعية/,
+  /ليست? نصيحة/,
+  /لا يُعتبر نصيحة/,
+  /هذا التحليل عبارة عن تعليق تعليمي/,
+];
+
+function stripDisclaimerSentences(text, patterns) {
+  if (typeof text !== 'string' || !text) return text;
+  const sentences = text.match(/[^.!؟?\n]+[.!؟?]?\s*/g) || [text];
+  const kept = sentences.filter((s) => !patterns.some((p) => p.test(s)));
+  const result = kept.join('').replace(/\s{2,}/g, ' ').trim();
+  // Never empty a section: if scrubbing would gut it, keep the original and
+  // let the downstream quality gate decide.
+  return result.length >= 40 || result.length >= text.trim().length * 0.5 ? result : text;
+}
+
+function scrubBodyDisclaimers(content, patterns) {
+  if (!content || typeof content !== 'object') return;
+  let removed = 0;
+  for (const [key, value] of Object.entries(content)) {
+    if (typeof value === 'string') {
+      const next = stripDisclaimerSentences(value, patterns);
+      if (next !== value) { removed += 1; content[key] = next; }
+    } else if (Array.isArray(value)) {
+      const mapped = value.map((item) => {
+        if (typeof item !== 'string') return item;
+        const next = stripDisclaimerSentences(item, patterns);
+        if (next !== item) removed += 1;
+        return next;
+      });
+      // A list item that is itself a pure disclaimer gets dropped entirely —
+      // but never below the structural minimum of 3 items (the section
+      // validators own that contract).
+      const pureDisclaimer = (item) => typeof item === 'string' && patterns.some((p) => p.test(item)) && stripDisclaimerSentences(item, patterns) === item;
+      const filtered = mapped.filter((item) => !pureDisclaimer(item));
+      if (filtered.length !== mapped.length && filtered.length >= 3) {
+        removed += mapped.length - filtered.length;
+        content[key] = filtered;
+      } else {
+        content[key] = mapped;
+      }
+    }
+  }
+  if (removed) process.stderr.write(`[DISCLAIMER_SCRUB] consolidated ${removed} field(s) — template disclaimer remains the single source\n`);
+}
+
 function validateSections(en) {
   const results = {};
   const normalizedBias = normalizeBias(en.directional_bias) || en.directional_bias;
@@ -873,6 +931,16 @@ function validateContent(en, ar) {
       errors.push(`en.directional_bias "${en.directional_bias}" not in allowed set`);
     }
   }
+
+  // Deterministic disclaimer consolidation (first-live-run self-heal):
+  // the page template carries the single formal disclaimer block, so any
+  // disclaimer sentence the model leaks into analytical prose is removed
+  // here — deterministically — before validation. The downstream
+  // check-market-intelligence-quality cap (max 3 page-wide) stays fully
+  // intact; this makes generation conform to it instead of gambling on
+  // prompt compliance.
+  scrubBodyDisclaimers(en, EN_BODY_DISCLAIMER_PATTERNS);
+  scrubBodyDisclaimers(ar, AR_BODY_DISCLAIMER_PATTERNS);
 
   const finalSectionResults = validateSections(en);
   logSectionDiagnostics(finalSectionResults, 'Final validation');
