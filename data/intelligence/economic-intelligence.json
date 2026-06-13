@@ -1,22 +1,31 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-13T20:50:55.888Z",
+  "generated_at": "2026-06-13T20:52:16.253Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
   "calendar_updated_at": "2026-06-10T20:32:19.159Z",
   "enrichment": {
-    "fetch_attempted": false,
+    "fetch_attempted": true,
     "keys_present": {
-      "fred": false,
+      "fred": true,
       "bls": false,
       "bea": false,
       "eia": false,
-      "fmp": false,
-      "finnhub": false
+      "fmp": true,
+      "finnhub": true
     },
-    "forecast_providers": {},
+    "forecast_providers": {
+      "fmp": {
+        "ok": false,
+        "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar"
+      },
+      "finnhub": {
+        "ok": false,
+        "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic"
+      }
+    },
     "forecast_observations": 0,
-    "note": "Offline deterministic enrichment; run with --fetch to pull official actuals + provider forecasts."
+    "note": "Official actuals pulled where keys/network allowed; forecasts merged from provider consensus (FMP/Finnhub) or labelled historical proxy. Missing values stay null (never fabricated)."
   },
   "release_states": [
     "scheduled",
@@ -30,21 +39,22 @@
   "counts": {
     "total": 30,
     "high_impact": 26,
-    "parsed": 0,
+    "parsed": 3,
     "awaiting": 27,
-    "delayed": 3,
+    "delayed": 0,
     "surprise_ready": 0,
     "by_state": {
       "scheduled": 27,
       "awaiting_release": 0,
       "released": 0,
-      "parsed": 0,
+      "parsed": 3,
       "revised": 0,
-      "delayed": 3,
+      "delayed": 0,
       "archived": 0
     },
     "by_forecast_quality": {
-      "unavailable": 30
+      "historical_proxy": 3,
+      "unavailable": 27
     }
   },
   "events": [
@@ -55,17 +65,17 @@
       "country": "US",
       "release_time": "2026-06-11T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 229000,
       "forecast": null,
-      "previous": null,
+      "previous": 225000,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Dept. of Labor",
-      "source_url": "https://www.dol.gov/ui/data.pdf",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/ICSA",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -73,35 +83,37 @@
         "IWM",
         "VIX"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 225000,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-06-06",
         "official_series": "ICSA"
       },
       "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
+        "surprise_score": 2,
+        "surprise_direction": "near_consensus",
+        "surprise_label": "in_line__proxy_based",
+        "policy_tone": "event_specific",
+        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Initial Jobless Claims was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
+        "forecast_basis": "historical_proxy",
+        "surprise_confidence": 25,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
+      "surprise_confidence": 25,
+      "forecast_basis": "historical_proxy",
+      "forecast_sources": [
+        "historical_proxy:previous_release"
+      ],
       "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
+      "forecast_confidence": 25,
+      "forecast_quality": "historical_proxy",
+      "consensus_state": "proxy_only",
       "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
+      "proxy_used": true,
+      "proxy_value": 225000,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -117,7 +129,7 @@
       },
       "narrative_tags": [
         "labor",
-        "awaiting_data"
+        "in_line"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -125,7 +137,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::initial-jobless-claims::20260618T123000",
@@ -1082,17 +1094,17 @@
       "country": "US",
       "release_time": "2026-06-10T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 333.979,
       "forecast": null,
-      "previous": null,
+      "previous": 332.407,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Bureau of Labor Statistics",
-      "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -1100,35 +1112,37 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 332.407,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-05-01",
         "official_series": "CPIAUCSL"
       },
       "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
+        "surprise_score": 0,
+        "surprise_direction": "near_consensus",
+        "surprise_label": "in_line__proxy_based",
+        "policy_tone": "neutral",
+        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
+        "forecast_basis": "historical_proxy",
+        "surprise_confidence": 25,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
+      "surprise_confidence": 25,
+      "forecast_basis": "historical_proxy",
+      "forecast_sources": [
+        "historical_proxy:previous_release"
+      ],
       "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
+      "forecast_confidence": 25,
+      "forecast_quality": "historical_proxy",
+      "consensus_state": "proxy_only",
       "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
+      "proxy_used": true,
+      "proxy_value": 332.407,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -1144,7 +1158,7 @@
       },
       "narrative_tags": [
         "inflation",
-        "awaiting_data"
+        "in_line"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -1152,7 +1166,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::core-cpi::20260610T123000",
@@ -1161,17 +1175,17 @@
       "country": "US",
       "release_time": "2026-06-10T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 336.121,
       "forecast": null,
-      "previous": null,
+      "previous": 335.423,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Bureau of Labor Statistics",
-      "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/CPILFESL",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -1179,35 +1193,37 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 335.423,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-05-01",
         "official_series": "CPILFESL"
       },
       "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
+        "surprise_score": 0,
+        "surprise_direction": "near_consensus",
+        "surprise_label": "in_line__proxy_based",
+        "policy_tone": "neutral",
+        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Core CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
+        "forecast_basis": "historical_proxy",
+        "surprise_confidence": 25,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
+      "surprise_confidence": 25,
+      "forecast_basis": "historical_proxy",
+      "forecast_sources": [
+        "historical_proxy:previous_release"
+      ],
       "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
+      "forecast_confidence": 25,
+      "forecast_quality": "historical_proxy",
+      "consensus_state": "proxy_only",
       "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
+      "proxy_used": true,
+      "proxy_value": 335.423,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -1223,7 +1239,7 @@
       },
       "narrative_tags": [
         "inflation",
-        "awaiting_data"
+        "in_line"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -1231,7 +1247,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::cpi::20260708T123000",
