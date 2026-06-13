@@ -40,6 +40,15 @@ const ROOTS = [
   'market-outlook',
   'ar/market-outlook',
   'en/market-outlook',
+  // Phase 99: canonical editorial desks exposed in the global nav
+  'articles',
+  'ar/articles',
+  'market-news',
+  'ar/market-news',
+  'briefs',
+  'ar/briefs',
+  'intelligence',
+  'ar/intelligence',
   'economic-calendar',
   'ar/economic-calendar',
   'system-status',
@@ -60,6 +69,17 @@ const ROOTS = [
   'market-replay',
   'ar/market-replay',
 ];
+
+// Phase 99: legacy pre-canonical pages that predate the global-header markers
+// and carry no recognizable header anchor. They are unindexed (absent from the
+// sitemaps) and not linked from the institutional /articles/ surface, so they
+// are excluded from the canonical-header invariant rather than mutated in a
+// nav-only phase. Excluded uniformly from the bake and the runtime checks.
+const EXCLUDE = new Set([
+  'articles/best-forex-strategy.html',
+  'articles/capital-management.html',
+  'articles/use-signals.html',
+]);
 
 let changed = 0;
 let skipped = 0;
@@ -147,6 +167,10 @@ function detectActive(relative) {
   if (/^(?:ar\/)?ai-stock-screener\.html$/.test(relative)) return 'screener';
   if (/^(?:ar\/)?methodology\.html$/.test(relative)) return 'methodology';
   if (/(?:^|[/\\])insights[/\\]/.test(relative) || /^(?:ar\/|en\/)?insights\//.test(relative)) return 'insights';
+  if (/(?:^|[/\\])articles[/\\]/.test(relative)) return 'articles';
+  if (/(?:^|[/\\])market-news[/\\]/.test(relative)) return 'market-news';
+  if (/(?:^|[/\\])briefs[/\\]/.test(relative)) return 'briefs';
+  if (/(?:^|[/\\])intelligence[/\\]/.test(relative)) return 'intelligence';
   if (/market-outlook[/\\]/.test(relative)) return 'market-outlook';
   if (/economic-calendar[/\\]/.test(relative)) return 'economic-calendar';
   if (/^(?:ar\/)?stocks[/\\]/.test(relative)) return 'stocks';
@@ -178,6 +202,15 @@ function computeLocaleHrefs(relative, ar) {
   if (relative.match(/^(?:ar\/)?economic-calendar\//)) {
     return { arabicHref: '/ar/economic-calendar/', englishHref: '/economic-calendar/' };
   }
+  // Phase 99: canonical editorial desks — point the locale switch at the
+  // matching counterpart (index or specific article) so it never falls back home.
+  for (const sec of ['articles', 'market-news', 'briefs', 'intelligence']) {
+    const m = relative.match(new RegExp(`^(?:ar\\/|en\\/)?${sec}\\/([^/]+\\.html)$`));
+    if (m) {
+      const slug = m[1] === 'index.html' ? '' : m[1];
+      return { arabicHref: `/ar/${sec}/${slug}`, englishHref: `/${sec}/${slug}` };
+    }
+  }
   // Default: let the renderer compute section-level counterpart
   return { arabicHref: undefined, englishHref: undefined };
 }
@@ -204,7 +237,9 @@ function collectTargetFiles() {
       files.add(absolute);
     }
   }
-  return [...files].sort();
+  return [...files]
+    .filter((f) => !EXCLUDE.has(path.relative(ROOT, f).replaceAll('\\', '/')))
+    .sort();
 }
 
 function removeAssetTags(html, assetPattern, tagName) {

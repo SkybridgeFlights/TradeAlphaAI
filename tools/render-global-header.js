@@ -102,8 +102,17 @@ function englishLinks() {
         ['/rankings.html#top-broad-market-etfs','Best ETFs for 2026']
       ]
     },
-    { key: 'insights',          href: '/insights/',              label: 'Articles' },
-    { key: 'market-outlook',    href: '/market-outlook/',        label: 'Market Outlook' },
+    {
+      key: 'research', href: '/insights/', label: 'Research &amp; News',
+      children: [
+        ['/articles/',       'Articles'],
+        ['/insights/',       'Insights'],
+        ['/market-news/',    'Market News'],
+        ['/market-outlook/', 'Market Outlook'],
+        ['/briefs/',         'Briefs'],
+        ['/intelligence/',   'Intelligence']
+      ]
+    },
     { key: 'economic-calendar', href: '/economic-calendar/',     label: 'Economic Calendar' },
     { key: 'methodology',       href: '/methodology.html',       label: 'Methodology' }
   ];
@@ -128,8 +137,17 @@ function arabicLinks() {
         ['/ar/rankings.html#top-etfs',          'أفضل صناديق المؤشرات لعام 2026']
       ]
     },
-    { key: 'insights',          href: '/ar/insights/',              label: 'المقالات' },
-    { key: 'market-outlook',    href: '/ar/market-outlook/',        label: 'توقعات السوق' },
+    {
+      key: 'research', href: '/ar/insights/', label: 'الأبحاث والأخبار',
+      children: [
+        ['/ar/articles/',       'المقالات'],
+        ['/ar/insights/',       'الرؤى'],
+        ['/ar/market-news/',    'أخبار السوق'],
+        ['/ar/market-outlook/', 'توقعات السوق'],
+        ['/ar/briefs/',         'الموجزات'],
+        ['/ar/intelligence/',   'الذكاء السوقي']
+      ]
+    },
     { key: 'economic-calendar', href: '/ar/economic-calendar/',     label: 'التقويم الاقتصادي' },
     { key: 'methodology',       href: '/ar/methodology.html',       label: 'المنهجية' }
   ];
@@ -142,8 +160,9 @@ function renderNavItem(item, active) {
   if (!item.children) {
     return `<a href="${item.href}" class="nav-link${activeClass}"${current}>${item.label}</a>`;
   }
+  const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
   return `<div class="nav-menu">
-            <a href="${item.href}" class="nav-link nav-menu-trigger${activeClass}"${current}>${item.label}<span class="nav-badge">${item.badge}</span></a>
+            <a href="${item.href}" class="nav-link nav-menu-trigger${activeClass}"${current}>${item.label}${badge}</a>
             <div class="nav-dropdown">
               ${item.children.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n              ')}
             </div>
