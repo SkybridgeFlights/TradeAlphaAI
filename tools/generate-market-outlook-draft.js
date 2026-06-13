@@ -27,6 +27,8 @@ const REGIME_PATH = path.join(ROOT, 'data', 'market-regime-state.json');
 const MEMORY_PATH = path.join(ROOT, 'data', 'topic-memory.json');
 const LIVE_MARKET_PATH = path.join(ROOT, 'data', 'live-market-state.json');
 const ETF_FLOW_PATH = path.join(ROOT, 'data', 'intelligence', 'etf-flow-intelligence.json');
+const CONVERGENCE_PATH = path.join(ROOT, 'data', 'intelligence', 'narrative-convergence.json');
+const MACRO_COGNITION_PATH = path.join(ROOT, 'data', 'intelligence', 'macro-cognition.json');
 const OUT_DIR = path.join(ROOT, 'drafts', 'market-outlook');
 const SITE_URL = 'https://www.tradealphaai.com';
 const ELIGIBLE = new Set(['planned', 'draft']);
@@ -41,6 +43,8 @@ const regime = readJson(REGIME_PATH, {});
 const memory = readJson(MEMORY_PATH, { recent_topics: [] });
 const liveMarket = readJson(LIVE_MARKET_PATH, { metadata: { status: 'fallback' } });
 const etfFlow = readJson(ETF_FLOW_PATH, { etf_profiles: {}, regime_context: 'unknown' });
+const convergence = readJson(CONVERGENCE_PATH, null);
+const macroCognition = readJson(MACRO_COGNITION_PATH, null);
 
 const topic = slugArg
   ? (queue.topics || []).find((item) => item.slug === slugArg)
@@ -174,6 +178,68 @@ function scrubLeadDisclaimers(text) {
   return result.replace(/\s{2,}/g, ' ').trim();
 }
 
+// Phase 90 — deterministic conviction & cross-asset read for the structural
+// (no-AI) path, sourced ONLY from verified convergence/macro-cognition
+// artifacts. Gives the fallback path the same institutional framing the AI
+// path gets from the prompt layer: what the tape is pricing, what confirms,
+// what does NOT confirm, what may be underpriced, and what would invalidate
+// the read. When inputs are unverified it states that honestly — still in
+// conviction/contradiction vocabulary, never fabricating a tension.
+function freshArtifact(a) {
+  if (!a || !a.updated_at) return false;
+  return (Date.now() - new Date(a.updated_at).getTime()) / 3600000 <= 72;
+}
+
+function buildConvictionRead(ar) {
+  const conv = freshArtifact(convergence) && convergence.verified === true ? convergence : null;
+  const macro = freshArtifact(macroCognition) && macroCognition.verified === true ? macroCognition : null;
+  const rows = [];
+  const add = (kEn, kAr, vEn, vAr) => rows.push({ k: ar ? kAr : kEn, v: ar ? vAr : vEn });
+
+  if (conv && conv.coherence && conv.coherence.score !== null) {
+    add('What the tape is pricing', 'ما يُسعّره السوق', conv.coherence.en, conv.coherence.ar);
+  }
+  const confirms = conv ? (conv.confirms || []) : [];
+  if (confirms.length) {
+    const legs = confirms.slice(0, 2).map((l) => l.legs.join('/').toUpperCase()).join(' · ');
+    add('What confirms the read', 'ما يؤكد القراءة',
+      `Cross-asset links holding: ${legs}.`,
+      `روابط الأصول الصامدة: ${legs}.`);
+  }
+  const diverges = conv ? (conv.diverges || []) : [];
+  if (diverges.length) {
+    const top = diverges[0];
+    add('What does not confirm it', 'ما لا يؤكدها',
+      `The ${top.legs.join('/').toUpperCase()} relationship is not holding${top.chain_strength >= 2 ? ` — a ${top.chain_strength}-session strain` : ''}; that divergence is the open tension in the current read.`,
+      `علاقة ${top.legs.join('/').toUpperCase()} لا تصمد${top.chain_strength >= 2 ? ` — إجهاد مستمر منذ ${top.chain_strength} جلسات` : ''}؛ وهذا الانفصال هو التوتر المفتوح في القراءة الحالية.`);
+  }
+  const underpriced = conv ? (conv.underpriced || []) : [];
+  if (underpriced.length) {
+    add('What the market may be underpricing', 'ما قد يُبخّسه السوق', underpriced[0].en, underpriced[0].ar);
+  }
+  const contradiction = macro ? (macro.contradictions || []).find((c) => c.active_today && c.escalated) : null;
+  if (contradiction && !diverges.length) {
+    add('What does not confirm it', 'ما لا يؤكدها', contradiction.en, contradiction.ar);
+  }
+
+  // Invalidation — derived from the structural picture, always present.
+  const invalEn = diverges.length
+    ? `This read would be invalidated if the ${diverges[0].legs.join('/').toUpperCase()} relationship re-aligns while breadth and volatility confirm the move together.`
+    : 'This read would be invalidated if cross-asset confirmation breaks down — a divergence opening between the index, breadth, and the volatility regime.';
+  const invalAr = diverges.length
+    ? `تُبطَل هذه القراءة إذا عادت علاقة ${diverges[0].legs.join('/').toUpperCase()} إلى الاتساق بينما يؤكد الاتساع والتقلب التحرك معاً.`
+    : 'تُبطَل هذه القراءة إذا انهار التأكيد عبر الأصول — بانفتاح انفصال بين المؤشر والاتساع ونظام التقلب.';
+  add('What would invalidate this read', 'ما الذي يُبطل هذه القراءة', invalEn, invalAr);
+
+  if (rows.length <= 1) {
+    // Unverified window: one honest institutional line, still framed as a read.
+    const en = 'With the cross-asset signal set unverified this cycle, the desk holds the prior structural read rather than asserting a new one. The read would be invalidated once verified breadth and volatility data either confirm or break the standing regime.';
+    const arT = 'مع عدم توثّق مجموعة الإشارات عبر الأصول في هذه الدورة، يحتفظ المكتب بالقراءة الهيكلية السابقة بدل فرض قراءة جديدة. وتُبطَل القراءة حين تؤكد بيانات الاتساع والتقلب الموثقة النظام القائم أو تكسره.';
+    return { paragraph: ar ? arT : en, rows: [] };
+  }
+  return { paragraph: null, rows };
+}
+
 function render(topic, locale, intel, aiContent = null, dataGenerationId = new Date().toISOString()) {
   const labelSets = getLabels();
   const ar = locale === 'ar';
@@ -247,6 +313,16 @@ function render(topic, locale, intel, aiContent = null, dataGenerationId = new D
     languageHref: ar ? `/market-outlook/${topic.slug}.html` : `/ar/market-outlook/${topic.slug}.html`
   });
   const articleIntelligence = buildArticleIntelligence(topic, ar);
+  const conviction = buildConvictionRead(ar);
+  const convictionBody = conviction.paragraph
+    ? `<p class="market-copy">${escapeHtml(conviction.paragraph)}</p>`
+    : conviction.rows.map((r) => `<p class="market-copy"><strong>${escapeHtml(r.k)}:</strong> ${escapeHtml(r.v)}</p>`).join('\n          ');
+  const convictionSection = `      <section class="market-section" id="conviction-read">
+        <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.convictionRead)}</span><h2>${escapeHtml(L.convictionRead)}</h2></div>
+        <div class="market-panel">
+          ${convictionBody}
+        </div>
+      </section>`;
   const compSection = buildInstitutionalComparisonSection(topic, etfFlow, ar);
   const historySection = buildHistoricalComparisonSection(ar);
   const breadcrumb = ar
@@ -347,6 +423,8 @@ ${sidebarLinks}
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.executiveSummary)}</span><h2>${escapeHtml(L.executiveSummary)}</h2></div>
         <div class="market-panel"><p class="market-copy">${escapeHtml(execSummaryText)}</p></div>
       </section>
+
+${convictionSection}
 
 ${articleIntelligence}
 
@@ -793,6 +871,7 @@ function getLabels() {
     uncertainty: 'Uncertainty',
     disclaimerTitle: 'Educational Disclaimer',
     executiveSummary: 'Executive Summary',
+    convictionRead: 'Conviction & Cross-Asset Read',
     intelligenceSnapshot: 'Market Intelligence Snapshot',
     intelligenceIntro: 'This article is connected to the macro intelligence layer: regime memory, active signals, divergence checks, and sequence analysis.',
     riskRegime: 'Risk Regime',
@@ -852,6 +931,7 @@ function getLabels() {
     uncertainty: 'عدم اليقين',
     disclaimerTitle: 'إخلاء المسؤولية التعليمي',
     executiveSummary: 'الملخص التنفيذي',
+    convictionRead: 'القناعة والقراءة عبر الأصول',
     marketTone: 'نبرة السوق',
     keyDrivers: 'العوامل الرئيسية',
     macroBackdrop: 'الخلفية الكلية',

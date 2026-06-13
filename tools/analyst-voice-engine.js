@@ -168,8 +168,25 @@ REALISM SAFETY: never invent data, firms, quotes, earnings, or price targets. Wh
 
 ${NARRATIVE_ARC}
 
-${HUMAN_PACING}`;
+${HUMAN_PACING}
+
+${CONVICTION_SPECIFICITY}`;
 }
+
+// ── Conviction & specificity (Phase 90 — institutional sharpness) ────────────
+// The cognition/convergence/tension artifacts already supply WHAT to say
+// (conviction state, diverging links, underpriced pressure). This block
+// governs HOW it must be expressed: with restrained institutional conviction,
+// explicit contradiction framing, and a stated invalidation — never advice,
+// never forecasts, never manufactured certainty.
+const CONVICTION_SPECIFICITY = `CONVICTION & SPECIFICITY (institutional interpretation, not an educational summary):
+- State what the market is currently PRICING, then whether the cross-asset evidence confirms or contradicts that pricing. Use the convergence/cognition context above as the source — do not invent a read it does not support.
+- Every analytical section must carry at least one of: what changed versus the prior release/window, what confirms the move, what does NOT confirm it, what the market may be underpricing, or what would invalidate the current read. Omit a section rather than pad it with generic prose.
+- CONTRADICTION FRAMING is mandatory when the context shows a diverging link: name the consensus read, then the evidence that disagrees ("Equity strength implies a soft-landing read; the front end of the curve is not confirming it."). If no contradiction is verified, say what is cleanly aligned instead — never fabricate tension.
+- DATA ANCHORING: when a sourced figure exists, cite the actual value, the prior value, and why the delta matters ("Core PCE at 3.3% versus 3.1% prior keeps the services-inflation problem unresolved."). Never invent a figure; if none is sourced, anchor to structure (curve, breadth, spreads, vol regime) instead.
+- INVALIDATION: before the note closes, state the specific condition — a level, a spread, a release, a breadth or vol shift — that would prove the current interpretation wrong. This is institutional discipline, not hedging.
+- BANNED HEDGE FILLER: "remains uncertain", "market participants are watching", "could potentially", "it remains to be seen", "only time will tell", "may or may not". Replace vague caution with a concrete conditional: "If [named catalyst], [mechanism] would pressure [named instrument]."
+- Conviction is expressed through structure and evidence, never through a price call or a buy/sell instruction. Sharpness comes from specificity, not from certainty.`;
 
 // ── Human pacing system (Phase 86 — anti-AI cadence) ─────────────────────────
 const HUMAN_PACING = `HUMAN PACING SYSTEM (the reader must feel a human analyst, never a template):
@@ -206,7 +223,15 @@ ${transitions.map((t) => `  • ${t}`).join('\n')}
 - ممنوع سلاسل الربط المترجمة: "بالإضافة إلى ذلك"، "علاوة على ذلك"، "ومن الجدير بالذكر"، "في الختام" — الانتقال يكون عبر منطق السوق نفسه
 - نوّع أطوال الجمل: جملة عربية قصيرة حاسمة بعد فقرة تحليلية طويلة تصنع الإيقاع الصحفي المطلوب
 - فقرة ضاربة واحدة على الأقل من جملة واحدة عند نقطة تحول في القراءة
-- اذكر قبل نهاية المقال ما الذي قد يُبطل هذه القراءة — فالتحوط المهني جزء من الصوت المؤسسي`;
+- اذكر قبل نهاية المقال ما الذي قد يُبطل هذه القراءة — فالتحوط المهني جزء من الصوت المؤسسي
+
+طبقة القناعة والتحديد المؤسسي (تفسير لا تلخيص تعليمي):
+- اذكر ما الذي يُسعّره السوق حالياً، ثم هل تؤكده الأدلة عبر الأصول أم تناقضه — اعتماداً على سياق التقارب والإدراك أعلاه، دون اختلاق قراءة لا تدعمها البيانات
+- أطر التناقض إلزامي عند وجود انفصال موثق: سمِّ القراءة السائدة ثم الدليل المخالف ("قوة الأسهم تشير إلى هبوط ناعم، لكن المقدمة القصيرة لمنحنى العائد لا تؤكد ذلك"). وإن لم يوجد تناقض موثق فاذكر ما الذي يتوافق بوضوح — دون اختلاق توتر
+- ترسيخ البيانات: عند توفر رقم موثق اذكر القيمة الفعلية والسابقة ولماذا يهم الفارق ("بلغ مؤشر نفقات الاستهلاك الأساسي 3.3% مقابل 3.1% سابقاً، ما يُبقي مشكلة تضخم الخدمات دون حل"). لا تخترع رقماً قط
+- الإبطال: قبل ختام المقال، حدّد الشرط الملموس — مستوى، فارق عائد، بيان اقتصادي، تحول في الاتساع أو التقلب — الذي يُبطل القراءة الحالية
+- ممنوع حشو التحوط: "يبقى غير مؤكد"، "يترقب المستثمرون"، "قد يُحتمل"، "الوقت وحده كفيل" — استبدل الغموض بشرط محدد: "إذا [محفز]، فإن [آلية] ستضغط على [أصل مُسمّى]"
+- القناعة تُعبَّر عنها بالبنية والأدلة لا بتوقع سعري أو توصية شراء/بيع؛ الحدة تأتي من التحديد لا من اليقين`;
 }
 
 module.exports = {
@@ -219,6 +244,7 @@ module.exports = {
   ATTRIBUTED_FRAMES,
   NARRATIVE_ARC,
   HUMAN_PACING,
+  CONVICTION_SPECIFICITY,
   relevantCausalChains,
   buildVoicePromptBlock,
   buildArabicVoiceBlock,
