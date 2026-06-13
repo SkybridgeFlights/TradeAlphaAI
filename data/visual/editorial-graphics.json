@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-12T19:28:10.800Z",
-  "run_date": "2026-06-12",
+  "updated_at": "2026-06-13T06:42:30.831Z",
+  "run_date": "2026-06-13",
   "verified": true,
   "stale": false,
   "mode": "calm-restraint",
@@ -9,37 +9,37 @@
     "charts": {
       "path": "data/intelligence/chart-narratives.json",
       "verified": true,
-      "updated_at": "2026-06-12T19:26:37.890Z"
+      "updated_at": "2026-06-13T06:42:30.634Z"
     },
     "cognition": {
       "path": "data/intelligence/market-cognition.json",
       "verified": true,
-      "updated_at": "2026-06-12T18:25:22.295Z"
+      "updated_at": "2026-06-13T06:42:30.540Z"
     },
     "convergence": {
       "path": "data/intelligence/narrative-convergence.json",
       "verified": true,
-      "updated_at": "2026-06-12T18:25:22.360Z"
+      "updated_at": "2026-06-13T06:42:30.606Z"
     },
     "tension": {
       "path": "data/intelligence/structural-tension.json",
       "verified": true,
-      "updated_at": "2026-06-12T18:25:22.455Z"
+      "updated_at": "2026-06-13T06:42:30.700Z"
     },
     "memory": {
       "path": "data/intelligence/editorial-market-memory.json",
       "verified": true,
-      "updated_at": "2026-06-12T18:25:22.422Z"
+      "updated_at": "2026-06-13T06:42:30.661Z"
     },
     "pulse": {
       "path": "data/intelligence/market-pulse.json",
       "verified": true,
-      "updated_at": "2026-06-12T18:25:22.264Z"
+      "updated_at": "2026-06-13T06:42:30.512Z"
     },
     "social": {
       "path": "data/social/social-preview.json",
       "verified": true,
-      "updated_at": "2026-06-12T19:07:43.409Z"
+      "updated_at": "2026-06-13T06:42:30.792Z"
     }
   },
   "visual_language": {
@@ -156,41 +156,50 @@
       "generated_at": "2026-06-12T19:25:41.584Z"
     },
     {
-      "id": "catalyst-retail-sales",
-      "visual_type": "catalyst-watch",
-      "headline_en": "Retail Sales is the next scheduled market test",
-      "headline_ar": "مبيعات التجزئة هي محطة الاختبار المجدولة التالية للسوق",
+      "id": "memory-cross-asset-conflict",
+      "visual_type": "market-memory-timeline",
+      "headline_en": "The market is carrying unresolved structure across sessions",
+      "headline_ar": "السوق يحمل بنية غير محسومة عبر الجلسات",
       "narrative_context": {
-        "en": "The visual prioritizes timing and verified asset sensitivity without assigning a directional outcome.",
-        "ar": "يركز الرسم على التوقيت وحساسية الأصول الموثقة من دون إسناد نتيجة اتجاهية."
+        "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
+        "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي."
       },
       "evidence_refs": [
-        "market-pulse:catalyst:Retail Sales:2026-06-17T12:30:00.000Z"
+        "convergence:ai-growth",
+        "editorial-memory:2026-06-12:changed:cross-asset-conflict",
+        "editorial-memory:2026-06-13:intensified:cross-asset-conflict"
       ],
-      "chart_symbol_refs": [
-        "US10Y",
-        "SPY",
-        "IWM",
-        "OIL"
-      ],
+      "chart_symbol_refs": [],
       "annotations": [
         {
-          "type": "catalyst-zone",
-          "label_en": "2026-06-17T12:30:00.000Z",
-          "label_ar": "توقيت الحدث: 2026-06-17T12:30:00.000Z",
-          "evidence_ref": "market-pulse:catalyst:Retail Sales:2026-06-17T12:30:00.000Z"
+          "type": "commentary-label",
+          "label_en": "2026-06-12: Cross-asset relationships continue to resist a single coherent regime reading.",
+          "label_ar": "2026-06-12: لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
+          "evidence_ref": "editorial-memory:2026-06-12:changed:cross-asset-conflict"
+        },
+        {
+          "type": "commentary-label",
+          "label_en": "2026-06-13: Cross-asset relationships continue to resist a single coherent regime reading.",
+          "label_ar": "2026-06-13: لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
+          "evidence_ref": "editorial-memory:2026-06-13:intensified:cross-asset-conflict"
         }
       ],
       "allowed_platforms": [
+        "article-inline",
         "outlook-inline",
-        "telegram",
-        "x",
-        "facebook",
+        "instagram",
         "linkedin"
       ],
-      "visual_priority": 70,
+      "visual_priority": 74,
       "calm_mode_compatible": true,
       "export_targets": [
+        {
+          "target": "article-inline",
+          "width": 1200,
+          "height": 675,
+          "ratio": "16:9",
+          "safe_area": 72
+        },
         {
           "target": "outlook-inline",
           "width": 1200,
@@ -199,25 +208,11 @@
           "safe_area": 72
         },
         {
-          "target": "telegram",
-          "width": 1280,
-          "height": 720,
-          "ratio": "16:9",
-          "safe_area": 80
-        },
-        {
-          "target": "x",
-          "width": 1600,
-          "height": 900,
-          "ratio": "16:9",
-          "safe_area": 96
-        },
-        {
-          "target": "facebook",
-          "width": 1200,
-          "height": 630,
-          "ratio": "1.91:1",
-          "safe_area": 72
+          "target": "instagram",
+          "width": 1080,
+          "height": 1350,
+          "ratio": "4:5",
+          "safe_area": 84
         },
         {
           "target": "linkedin",
@@ -229,8 +224,8 @@
       ],
       "rendering_contract": {
         "version": "1.0",
-        "mode": "catalyst-card",
-        "emphasis": "timing-and-sensitivity",
+        "mode": "memory-timeline",
+        "emphasis": "persistence",
         "visual_language": "institutional-editorial-v1",
         "data_policy": "verified-evidence-only",
         "price_series_policy": "none",
@@ -240,17 +235,29 @@
         "rtl_safe": true,
         "static_render": true,
         "hydration_required": false,
-        "event_time": "2026-06-17T12:30:00.000Z",
-        "event_name": "Retail Sales",
-        "event_name_ar": "مبيعات التجزئة"
+        "timeline": [
+          {
+            "date": "2026-06-12",
+            "kind": "changed"
+          },
+          {
+            "date": "2026-06-13",
+            "kind": "intensified"
+          }
+        ]
       },
-      "attribution": "TradeAlphaAI market pulse; scheduled event time from the verified economic calendar.",
+      "attribution": "TradeAlphaAI editorial memory; verified session history only.",
       "verified": true,
       "stale": false,
       "status": "active",
-      "source_hash": "542ad5d727d0c280ae7381f443b61e058f9ef923ec1c791c253face0fc84bd8e",
-      "generated_at": "2026-06-12T19:28:10.800Z"
+      "source_hash": "9fcebad8af6e7cc4b3fff458106555945161e0f7b72bc9aa7f46cf1801458b99",
+      "generated_at": "2026-06-13T06:42:30.831Z"
     }
   ],
-  "suppressed": []
+  "suppressed": [
+    {
+      "id": "catalyst-retail-sales",
+      "reason": "session-density-limit"
+    }
+  ]
 }
