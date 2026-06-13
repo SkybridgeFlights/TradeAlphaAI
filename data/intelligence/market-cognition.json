@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-13T11:46:22.415Z",
+  "updated_at": "2026-06-13T12:30:56.656Z",
   "run_date": "2026-06-13",
   "verified": true,
   "sessions_tracked": 2,
@@ -142,10 +142,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "nvda": -0.2489,
-        "qqq": 0.495
+        "nvda": 0.1562,
+        "qqq": 0.5885
       }
     },
     {
@@ -171,8 +171,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": 0.3795,
-        "iwm": 0.9779
+        "spy": 0.5408,
+        "iwm": 0.8746
       }
     },
     {
@@ -191,12 +191,21 @@
   "signals": {
     "confirmation": [
       {
+        "source": "causal:ai-growth",
+        "en": "AI leadership drives the growth complex",
+        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
+        "evidence": {
+          "nvda": 0.1562,
+          "qqq": 0.5885
+        }
+      },
+      {
         "source": "causal:breadth-link",
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": 0.3795,
-          "iwm": 0.9779
+          "spy": 0.5408,
+          "iwm": 0.8746
         }
       },
       {
@@ -205,17 +214,7 @@
         "ar": "اتساع السوق يؤكد الصعود خارج قيادة الأسهم الكبرى."
       }
     ],
-    "contradiction": [
-      {
-        "source": "causal:ai-growth",
-        "en": "Divergence on the nvda/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة nvda/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "nvda": -0.2489,
-          "qqq": 0.495
-        }
-      }
-    ],
+    "contradiction": [],
     "fragility": [],
     "exhaustion": [],
     "liquidity": [],
