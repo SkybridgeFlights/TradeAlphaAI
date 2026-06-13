@@ -54,7 +54,7 @@ function deduplicate(events) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const from = dateStr(-1);
+  const from = dateStr(-4); // Phase 105: keep recent releases in-window for reaction interpretation.
   const to   = dateStr(28); // Phase 104: wider window for richer US + global coverage (UI still filters to 7d/week).
   console.log(`[calendar:fetch] target range=${from}..${to}`);
 
