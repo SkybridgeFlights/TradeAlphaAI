@@ -14,6 +14,7 @@ const fred             = require('../tools/providers/economic-calendar/fred-prov
 const te               = require('../tools/providers/economic-calendar/trading-economics-provider');
 const alphavantage     = require('../tools/providers/economic-calendar/alphavantage-provider');
 const scheduleFallback = require('../tools/providers/economic-calendar/schedule-fallback-provider');
+const { getGlobalEventsForCalendar } = require('../tools/build-global-macro-events');
 const { inferImpact, computeIntelligence } =
   require('../tools/providers/economic-calendar/event-intelligence');
 
@@ -365,6 +366,25 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // ── Phase 104: global macro supplement ────────────────────────────────────
+  // Append the official global event set (central-bank schedules + recurring
+  // official releases) to whatever US set resolved above, then dedupe + sort so
+  // any live/US data wins collisions. Free/official only; degrades gracefully.
+  let globalEventCount = 0;
+  try {
+    const globalEvents = getGlobalEventsForCalendar({ from, to }).map(function (e) {
+      return Object.assign({}, e, { error: undefined, intelligence: computeIntelligence(e) });
+    });
+    if (globalEvents.length) {
+      globalEventCount = globalEvents.length;
+      enriched = mergeEvents(enriched.concat(globalEvents));
+      enriched.sort(function (a, b) { return (a.event_time || '').localeCompare(b.event_time || ''); });
+      console.log(`[calendar-api] merged ${globalEventCount} global macro event(s); total=${enriched.length}`);
+    }
+  } catch (gErr) {
+    console.log(`[calendar-api] global macro merge error: ${sanitize(gErr.message)}`);
+  }
+
   const hasLive        = Object.values(providersMeta).some(function (p) { return p && p.status === 'ok'; });
   const activeProviders = PROVIDER_NAMES.filter(function (n) {
     return providersMeta[n] && providersMeta[n].status === 'ok';
@@ -372,10 +392,13 @@ module.exports = async function handler(req, res) {
 
   // source: 'live' = fresh provider data | 'schedule_fallback' = estimated from known patterns
   //         'stale_cache' = any cache hit | 'degraded' = no data available
-  const source = liveEventCount > 0     ? 'live'
+  let source = liveEventCount > 0       ? 'live'
     : scheduleEventCount > 0            ? 'schedule_fallback'
     : enriched.length > 0              ? 'stale_cache'
     :                                    'degraded';
+  // If only the global official supplement produced events, that is still a
+  // valid schedule-based source (not degraded).
+  if (source === 'degraded' && enriched.length > 0) source = 'schedule_fallback';
 
   const providerHealth = calcProviderHealth(providersMeta, errorTypes, enriched.length, source);
 
