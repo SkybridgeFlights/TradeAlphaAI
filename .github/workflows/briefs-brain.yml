@@ -63,14 +63,75 @@ jobs:
         run: |
           git config user.name "tradealphaai-briefs-brain"
           git config user.email "actions@users.noreply.github.com"
-          git add briefs/ ar/briefs/ data/intelligence/daily-intelligence-brief.json data/social/ sitemap-core.xml sitemap-ar.xml
+
+          # Every path Briefs Brain is allowed to regenerate. generate-seo-sitemaps
+          # rewrites ALL sitemaps + robots.txt (the prior narrow add of only
+          # sitemap-core/sitemap-ar left the rest unstaged → git pull --rebase
+          # aborted with "you have unstaged changes"). Stage comprehensively.
+          INTENDED="briefs/ ar/briefs/ \
+            data/intelligence/ data/feeds/ data/social/ data/visual/ data/system-status/ \
+            sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
+            sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
+
+          stage_intended() {
+            for p in $INTENDED; do
+              [ -e "$p" ] && git add -A -- "$p" || true
+            done
+          }
+          stage_intended
+
+          # Fail safely on any change OUTSIDE the intended set rather than pushing
+          # a partial/contaminated state (e.g. local settings, logs, stray drafts).
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              briefs/*|ar/briefs/*|data/intelligence/*|data/feeds/*|data/social/*|data/visual/*|data/system-status/*|sitemap*.xml|robots.txt) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[briefs] ERROR: changes outside intended paths — refusing to push partial state:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          # Diagnostics
+          echo "[briefs] === git status --short ==="; git status --short
+          echo "[briefs] === staged diff summary ==="; git diff --cached --stat
+          echo "[briefs] === unstaged diff summary (expected empty) ==="; git diff --stat
+
           if git diff --cached --quiet; then
             echo "[briefs] no changes — nothing to commit"
             exit 0
           fi
           git commit -m "Briefs brain refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
-          for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin main && exit 0
-            echo "[briefs] push attempt ${attempt} failed — retrying"; sleep 5
+
+          # Robust push: rebase onto remote; on artifact drift/conflict, regenerate
+          # the deterministic artifacts on top of the incoming state, restage, continue.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              # Pre-push guard: tree must be clean so the next rebase never aborts.
+              if ! git diff --quiet || ! git diff --cached --quiet; then
+                echo "[briefs] residual changes after rebase — restaging"; stage_intended
+                git diff --cached --quiet || git commit --amend --no-edit
+              fi
+              if git push origin main; then
+                echo "[briefs] pushed on attempt ${attempt}"; exit 0
+              fi
+              echo "[briefs] push rejected (race) on attempt ${attempt} — retrying"
+            else
+              echo "[briefs] rebase conflict on attempt ${attempt} — regenerating artifacts to reconcile"
+              node tools/build-intelligence-briefs.js --write || echo "[briefs] brief regen degraded"
+              node tools/generate-briefs-index.js --write || echo "[briefs] surface regen degraded"
+              node tools/generate-seo-sitemaps.js || echo "[briefs] sitemap regen degraded"
+              node tools/build-social-intelligence.js --write || echo "[briefs] social regen degraded"
+              node tools/build-distribution-plan.js --write || echo "[briefs] distribution regen degraded"
+              stage_intended
+              git -c core.editor=true rebase --continue || git rebase --abort
+            fi
+            sleep $((attempt * 3))
           done
           echo "[briefs] push failed after retries"; exit 1
