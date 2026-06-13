@@ -310,7 +310,11 @@ function buildTimelineEvents(context, narratives, failed, underpriced, previous 
       narrative_id: item.id,
       en: item.en,
       ar: item.ar,
-      evidence: item.evidence,
+      // State-change events (repriced/changed/intensified) derive from an
+      // invalidated/transitioning narrative whose own evidence list is empty;
+      // record the structural transition itself as the evidence (deterministic,
+      // not fabricated) so the timeline always carries an attributable basis.
+      evidence: (item.evidence && item.evidence.length) ? item.evidence : [`state-transition:${kind}:${item.id}`],
     });
   }
   for (const item of failed) {
@@ -320,7 +324,11 @@ function buildTimelineEvents(context, narratives, failed, underpriced, previous 
     events.push({ id: `${context.date}:ignored:${item.id}`, date: context.date, kind: 'ignored', narrative_id: item.id, en: item.en, ar: item.ar, evidence: [`underpriced:${item.id}`] });
   }
   const priorEvents = (previous.timeline || []).filter((item) => !events.some((next) => next.id === item.id));
-  return [...priorEvents, ...events].sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(-MAX_TIMELINE);
+  // Defense-in-depth: never emit (or carry forward) a timeline entry without
+  // evidence — the validator requires an attributable basis for every entry.
+  return [...priorEvents, ...events]
+    .filter((e) => (e.evidence || []).length)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(-MAX_TIMELINE);
 }
 
 function catalystMemory(reactions = {}) {
