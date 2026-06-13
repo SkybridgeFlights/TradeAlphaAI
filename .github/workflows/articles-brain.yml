@@ -69,14 +69,71 @@ jobs:
         run: |
           git config user.name "tradealphaai-articles-brain"
           git config user.email "actions@users.noreply.github.com"
-          git add articles/ ar/articles/ data/intelligence/educational-topics.json data/social/ sitemap-core.xml sitemap-ar.xml
+
+          # Stage every path this brain may regenerate. generate-seo-sitemaps
+          # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
+          # regenerated topic/social artifacts. Staging narrowly (the prior
+          # sitemap-core/sitemap-ar only) left other sitemaps unstaged → git rebase
+          # aborted with "you have unstaged changes". Stage comprehensively + fail safe.
+          INTENDED="articles/ ar/articles/ data/ \
+            sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
+            sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
+
+          stage_intended() {
+            for p in $INTENDED; do
+              [ -e "$p" ] && git add -A -- "$p" || true
+            done
+          }
+          stage_intended
+
+          # Refuse to push if anything changed OUTSIDE the intended set (local
+          # settings, logs, stray drafts) rather than committing a partial state.
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              articles/*|ar/articles/*|data/*|sitemap*.xml|robots.txt) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[articles] ERROR: changes outside intended paths — refusing to push partial state:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          echo "[articles] === git status --short ==="; git status --short
+          echo "[articles] === staged diff summary ==="; git diff --cached --stat
+          echo "[articles] === unstaged diff summary (expected empty) ==="; git diff --stat
+
           if git diff --cached --quiet; then
             echo "[articles] no changes — nothing to commit"
             exit 0
           fi
           git commit -m "Articles brain refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
-          for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin main && exit 0
-            echo "[articles] push attempt ${attempt} failed — retrying"; sleep 5
+
+          # Robust push: rebase onto remote; on artifact drift/conflict regenerate
+          # the shared deterministic artifacts, restage, continue. Rebase safety kept.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              if ! git diff --quiet || ! git diff --cached --quiet; then
+                echo "[articles] residual changes after rebase — restaging"; stage_intended
+                git diff --cached --quiet || git commit --amend --no-edit
+              fi
+              if git push origin main; then
+                echo "[articles] pushed on attempt ${attempt}"; exit 0
+              fi
+              echo "[articles] push rejected (race) on attempt ${attempt} — retrying"
+            else
+              echo "[articles] rebase conflict on attempt ${attempt} — regenerating shared artifacts to reconcile"
+              node tools/generate-seo-sitemaps.js || echo "[articles] sitemap regen degraded"
+              node tools/build-social-intelligence.js --write || echo "[articles] social regen degraded"
+              node tools/build-distribution-plan.js --write || echo "[articles] distribution regen degraded"
+              stage_intended
+              git -c core.editor=true rebase --continue || git rebase --abort
+            fi
+            sleep $((attempt * 3))
           done
           echo "[articles] push failed after retries"; exit 1
