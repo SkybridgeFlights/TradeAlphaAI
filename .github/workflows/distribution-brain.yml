@@ -1,0 +1,68 @@
+name: Distribution Brain
+
+# Phase 93 — dedicated, platform-aware distribution orchestration.
+# Runs on its own cadence, independent of any publishing workflow. It rebuilds
+# the social previews, rendered graphics, and the platform-routed distribution
+# plan, then validates them. PREVIEW ONLY: it never posts to any platform and
+# reads no platform credentials — the distribution plan is an approval-gated
+# routing artifact a future delivery layer will consume.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Twice daily, offset from the publishing/market-watch crons.
+    - cron: '20 11 * * *'
+    - cron: '20 21 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: distribution-brain
+  cancel-in-progress: false
+
+jobs:
+  distribution-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild distribution intelligence (preview-only)
+        run: |
+          node tools/build-social-intelligence.js --write || echo "[distribution] social previews degraded — continuing"
+          node tools/build-editorial-graphics.js --write || echo "[distribution] editorial graphics degraded — continuing"
+          node tools/build-graphic-exports.js --write || echo "[distribution] graphic exports degraded — continuing"
+          node tools/build-distribution-plan.js --write || echo "[distribution] distribution plan degraded — continuing"
+
+      - name: Validate distribution artifacts
+        run: |
+          npm run check:social-intelligence
+          npm run check:editorial-graphics
+          npm run check:graphic-exports
+          npm run check:distribution-plan
+
+      - name: Commit distribution artifacts (only when changed)
+        run: |
+          git config user.name "tradealphaai-distribution-brain"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/social/
+          if git diff --cached --quiet; then
+            echo "[distribution] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Distribution plan refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "[distribution] push attempt ${attempt} failed — retrying"
+            sleep 5
+          done
+          echo "[distribution] push failed after retries"; exit 1

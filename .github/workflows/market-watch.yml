@@ -61,6 +61,7 @@ jobs:
           node tools/build-social-intelligence.js --write || echo "[market-watch] social previews degraded — continuing (preview-only)"
           node tools/build-editorial-graphics.js --write || echo "[market-watch] editorial graphics degraded — continuing (preview-only)"
           node tools/build-graphic-exports.js --write || echo "[market-watch] graphic exports degraded — continuing (preview-only SVG)"
+          node tools/build-distribution-plan.js --write || echo "[market-watch] distribution plan degraded — continuing (preview-only routing)"
           node tools/render-newsroom-modules.js || echo "[market-watch] render degraded — continuing"
 
       - name: Validate intraday artifacts
@@ -79,6 +80,7 @@ jobs:
           npm run check:social-intelligence
           npm run check:editorial-graphics
           npm run check:graphic-exports
+          npm run check:distribution-plan
           npm run test:newsroom-behavior
 
       - name: Commit refreshed state (only when changed)

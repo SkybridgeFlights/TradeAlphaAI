@@ -253,6 +253,7 @@ jobs:
           node tools/build-social-intelligence.js --write || echo "[social-intelligence] Build degraded — continuing (preview-only layer)"
           node tools/build-editorial-graphics.js --write || echo "[editorial-graphics] Build degraded — continuing (preview-only exports)"
           node tools/build-graphic-exports.js --write || echo "[graphic-exports] Render degraded — continuing (preview-only SVG media)"
+          node tools/build-distribution-plan.js --write || echo "[distribution-plan] Build degraded — continuing (preview-only routing)"
           node tools/render-newsroom-modules.js || echo "[newsroom] Product render degraded — continuing"
           node tools/promote-wire-events.js --write || echo "[wire-promotion] Promotion degraded — continuing"
           node tools/build-visual-intelligence-data.js --write || echo "[visual-data] Build degraded — continuing"
@@ -287,6 +288,8 @@ jobs:
           npm run check:social-intelligence
           npm run check:editorial-graphics
           npm run check:graphic-exports
+          npm run check:distribution-plan
+          npm run test:platform-relevance
           npm run check:newsroom-intelligence
           npm run check:newsroom-ui
           npm run test:market-cognition
