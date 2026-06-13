@@ -53,6 +53,7 @@ jobs:
           node tools/build-global-macro-events.js --write || echo "[market-news] global macro acquisition degraded — continuing"
           node tools/fetch-economic-calendar.js --write || echo "[market-news] calendar fetch degraded — using cache"
           node tools/build-economic-intelligence.js --fetch --write || echo "[market-news] economic intelligence degraded — continuing"
+          node tools/build-macro-reactions.js --write || echo "[market-news] macro reactions degraded — continuing"
           node tools/build-newswire-events.js --write || echo "[market-news] newswire degraded — continuing"
           node tools/build-news-eligibility.js --write || echo "[market-news] eligibility degraded — continuing"
           node tools/generate-market-news-index.js --write || echo "[market-news] surface regen degraded — continuing"
@@ -69,6 +70,7 @@ jobs:
           npm run check:global-macro-acquisition
           npm run check:economic-intelligence
           npm run check:forecast-consensus
+          npm run check:macro-reactions
           npm run check:newsroom-intelligence
           npm run check:distribution-plan
           npm run check:seo

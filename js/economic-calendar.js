@@ -42,6 +42,7 @@
       labelConfidence: 'Confidence', labelSource: 'Source', labelConsensus: 'Consensus', labelReleaseState: 'Release state',
       labelRevision: 'Revision', revisedFrom: 'Revised from', macroRead: 'Macro reading', assetSensitivity: 'Affected assets',
       acqOfficial: 'Official schedule', acqRecurring: 'Est. recurring', labelRegion: 'Region', labelSourceConfidence: 'Source confidence',
+      labelReaction: 'Market reaction', labelConviction: 'Reaction conviction', labelCrossAsset: 'Cross-asset confirmation', reactionAwaiting: 'Awaiting reaction data',
     },
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
@@ -82,8 +83,24 @@
       labelConfidence: 'الثقة', labelSource: 'المصدر', labelConsensus: 'حالة الإجماع', labelReleaseState: 'حالة الإصدار',
       labelRevision: 'مراجعة', revisedFrom: 'روجِع من', macroRead: 'القراءة الكلية', assetSensitivity: 'الأصول المتأثرة',
       acqOfficial: 'جدول رسمي', acqRecurring: 'دوري تقديري', labelRegion: 'المنطقة', labelSourceConfidence: 'ثقة المصدر',
+      labelReaction: 'تفاعل السوق', labelConviction: 'قناعة التفاعل', labelCrossAsset: 'تأكيد عبر الأصول', reactionAwaiting: 'بانتظار بيانات التفاعل',
     }
   };
+
+  // Phase 105 — reaction classification + conviction → localized display.
+  var REACTION_LABELS = {
+    confirmed_reaction: { en: 'Confirmed', ar: 'مؤكَّد' }, partial_confirmation: { en: 'Partial confirmation', ar: 'تأكيد جزئي' },
+    delayed_confirmation: { en: 'Delayed confirmation', ar: 'تأكيد متأخر' }, fading_reaction: { en: 'Fading', ar: 'يتلاشى' },
+    rejected_reaction: { en: 'Rejected', ar: 'مرفوض' }, divergence: { en: 'Divergence', ar: 'تباعد' },
+    cross_asset_disagreement: { en: 'Cross-asset disagreement', ar: 'تعارض عبر الأصول' }, volatility_without_direction: { en: 'Volatility without direction', ar: 'تذبذب دون اتجاه' },
+    awaiting_data: { en: 'Awaiting reaction data', ar: 'بانتظار بيانات التفاعل' },
+  };
+  var CONVICTION_LABELS = {
+    strong: { en: 'Strong', ar: 'قوية' }, moderate: { en: 'Moderate', ar: 'متوسطة' }, low: { en: 'Low', ar: 'منخفضة' },
+    unstable: { en: 'Unstable', ar: 'غير مستقرة' }, crowded_positioning: { en: 'Crowded positioning', ar: 'تمركز مزدحم' },
+    fragile_continuation: { en: 'Fragile continuation', ar: 'استمرار هش' }, none: { en: '—', ar: '—' },
+  };
+  function reactionText(map, key) { var m = map[key]; return m ? (m[lang] || m.en) : String(key || '').replace(/_/g, ' '); }
 
   var lang  = document.documentElement.lang === 'ar' ? 'ar' : 'en';
   var L     = T[lang];
@@ -109,17 +126,28 @@
   // The canonical macro layer (data/intelligence/economic-intelligence.json),
   // keyed by event id. Loaded once; merged onto calendar events before render.
   var econIntelById = null; // null = not yet loaded
+  var macroReactionById = null; // Phase 105 — reaction intelligence by event id
 
   function ensureEconIntel(cb) {
-    if (econIntelById !== null) { cb(); return; }
+    if (econIntelById !== null && macroReactionById !== null) { cb(); return; }
+    var pending = 2;
+    var done = function () { if (--pending <= 0) cb(); };
     fetch('/data/intelligence/economic-intelligence.json')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
         econIntelById = {};
         if (d && Array.isArray(d.events)) d.events.forEach(function (ev) { if (ev && ev.id) econIntelById[ev.id] = ev; });
-        cb();
+        done();
       })
-      .catch(function () { econIntelById = {}; cb(); });
+      .catch(function () { econIntelById = {}; done(); });
+    fetch('/data/intelligence/macro-reactions.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        macroReactionById = {};
+        if (d && Array.isArray(d.reactions)) d.reactions.forEach(function (rx) { if (rx && rx.event_id) macroReactionById[rx.event_id] = rx; });
+        done();
+      })
+      .catch(function () { macroReactionById = {}; done(); });
   }
 
   // Merge enriched official values onto calendar events. CRITICAL: only a real
@@ -130,6 +158,7 @@
     events.forEach(function (e) {
       var ci = econIntelById && e && econIntelById[e.id];
       e.econ_intel = ci || null;
+      e.macro_reaction = (macroReactionById && e && macroReactionById[e.id]) || null;
       if (!ci) return;
       if ((e.actual === null || e.actual === undefined) && ci.actual !== null && ci.actual !== undefined) e.actual = ci.actual;
       if ((e.previous === null || e.previous === undefined) && ci.previous !== null && ci.previous !== undefined) e.previous = ci.previous;
@@ -851,6 +880,26 @@
           var from = (ci.revised_from !== null && ci.revised_from !== undefined) ? numVal(ci.revised_from, e.unit) : '—';
           var od = (ci.historical_context && ci.historical_context.observation_date) ? ' <small>(' + esc(ci.historical_context.observation_date) + ')</small>' : '';
           html += '<dt>' + esc(L.labelRevision) + '</dt><dd>' + esc(L.revisedFrom) + ' ' + from + ' → ' + numVal(ci.revised, e.unit) + od + '</dd>';
+        }
+      }
+
+      // Phase 105: live macro reaction intelligence (honest — only when observed).
+      var rx = e.macro_reaction;
+      if (rx) {
+        if (rx.has_reaction_data && rx.classification !== 'awaiting_data') {
+          var rCls = rx.classification === 'confirmed_reaction' ? 'ec-rx-confirmed'
+                   : rx.classification === 'rejected_reaction' ? 'ec-rx-rejected'
+                   : rx.classification === 'fading_reaction' ? 'ec-rx-fading' : 'ec-rx-mixed';
+          html += '<dt>' + esc(L.labelReaction) + '</dt><dd class="' + rCls + '">' + esc(reactionText(REACTION_LABELS, rx.classification)) + '</dd>';
+          if (rx.conviction && rx.conviction !== 'none') html += '<dt>' + esc(L.labelConviction) + '</dt><dd>' + esc(reactionText(CONVICTION_LABELS, rx.conviction)) + '</dd>';
+          // Cross-asset confirmation count (non-directional, no signals).
+          var confd = (rx.cross_asset_matrix || []).filter(function (m) { return m.confirms === true; }).length;
+          var compd = (rx.cross_asset_matrix || []).filter(function (m) { return m.confirms !== null; }).length;
+          if (compd) html += '<dt>' + esc(L.labelCrossAsset) + '</dt><dd>' + confd + ' / ' + compd + '</dd>';
+          // Narrative: EN only (artifact text is English; AR stays native via labels).
+          if (lang === 'en' && rx.narrative) html += '<dt>' + esc(L.macroRead) + '</dt><dd class="ec-macro-read">' + esc(rx.narrative) + '</dd>';
+        } else if (e.econ_intel && ['released', 'parsed', 'revised', 'delayed'].indexOf((e.econ_intel || {}).release_state) >= 0) {
+          html += '<dt>' + esc(L.labelReaction) + '</dt><dd class="ec-rx-await">' + esc(L.reactionAwaiting) + '</dd>';
         }
       }
 

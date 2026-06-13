@@ -52,6 +52,14 @@ if (!/\.ec-state-badge\b/.test(css)) fail('no .ec-state-badge styling in CSS');
 // 5. Unavailable / awaiting-consensus fallback present (no blank forecast).
 if (!/fcUnavailable|awaitingConsensus/.test(js)) fail('no honest "awaiting consensus / unavailable" fallback for forecast');
 
+// 5b. Phase 105 — macro reaction rendering must be present and gated on observed
+// data (a reaction is shown only when has_reaction_data, else awaiting fallback).
+if (!/macro_reaction|macro-reactions\.json/.test(js)) fail('JS does not surface macro reaction intelligence');
+if (/macro_reaction/.test(js) && !/rx\.has_reaction_data && rx\.classification !== 'awaiting_data'/.test(js)) {
+  fail('reaction rendering not gated on has_reaction_data (could show a fabricated reaction)');
+}
+if (/macro_reaction/.test(js) && !/reactionAwaiting/.test(js)) fail('no awaiting-reaction-data fallback');
+
 // 6. Release-state labels translated in BOTH locales.
 const stateKeys = ['stateScheduled', 'stateAwaiting', 'stateReleased', 'stateParsed', 'stateRevised', 'stateDelayed', 'stateArchived'];
 const enBlock = (js.match(/en:\s*\{[\s\S]*?\n\s{4}\},/) || [''])[0];

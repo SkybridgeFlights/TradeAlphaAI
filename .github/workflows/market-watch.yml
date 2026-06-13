@@ -56,6 +56,8 @@ jobs:
           node tools/build-chart-narratives.js --write || echo "[market-watch] chart-narratives degraded — continuing"
           node tools/build-editorial-market-memory.js --write || echo "[market-watch] editorial-memory degraded — continuing"
           node tools/build-structural-tension.js --write || echo "[market-watch] structural-tension degraded — continuing"
+          node tools/build-economic-intelligence.js --fetch --write || echo "[market-watch] economic intelligence degraded — continuing"
+          node tools/build-macro-reactions.js --write || echo "[market-watch] macro reactions degraded — continuing"
           node tools/build-intelligence-briefs.js --write || echo "[market-watch] daily product brief degraded — continuing"
           node tools/build-intraday-brief.js --write || echo "[market-watch] intraday brief degraded — continuing"
           node tools/build-social-intelligence.js --write || echo "[market-watch] social previews degraded — continuing (preview-only)"
@@ -70,6 +72,7 @@ jobs:
           npm run check:newsroom-ui
           npm run check:market-cognition
           npm run check:macro-cognition
+          npm run check:macro-reactions
           npm run check:narrative-convergence
           npm run test:editorial-memory
           npm run check:editorial-memory
