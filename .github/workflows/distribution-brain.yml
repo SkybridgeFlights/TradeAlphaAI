@@ -42,6 +42,7 @@ jobs:
           node tools/build-editorial-graphics.js --write || echo "[distribution] editorial graphics degraded — continuing"
           node tools/build-graphic-exports.js --write || echo "[distribution] graphic exports degraded — continuing"
           node tools/build-distribution-plan.js --write || echo "[distribution] distribution plan degraded — continuing"
+          node tools/build-social-approval-queue.js --write || echo "[distribution] approval queue degraded — continuing"
 
       - name: Validate distribution artifacts
         run: |
@@ -49,6 +50,7 @@ jobs:
           npm run check:editorial-graphics
           npm run check:graphic-exports
           npm run check:distribution-plan
+          npm run check:social-activation
 
       - name: Commit distribution artifacts (only when changed)
         run: |

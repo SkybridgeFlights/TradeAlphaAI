@@ -24,6 +24,7 @@ const CANONICAL = new Set([
   'market-news-brain.yml',
   'market-outlook-brain.yml',
   'briefs-brain.yml',
+  'social-approval-runner.yml',      // Phase 100 — manual controlled social delivery (no schedule)
 ]);
 
 const LEGACY = new Set([

@@ -1,0 +1,141 @@
+name: Social Distribution Approval Runner
+
+# Phase 100 — controlled social activation: manual approval runner.
+# Purpose: read data/social/approval-queue.json and DELIVER only items a human
+# has marked approval_status=approved, and only when the explicit per-platform
+# posting flag is true, SOCIAL_DRY_RUN is false, credentials preflight, the
+# source URL returns 200, and the posting ledger is clear of the duplicate key.
+#
+# SAFETY: manual dispatch ONLY (no schedule → no scheduled live posting). Every
+# input defaults to the safe posture — dry-run on, all posting flags false — so
+# a default run is a rehearsal that posts nothing. Telegram is untouched (its
+# live URL-verified path is separate). In this phase adapter delivery is a stub,
+# so even a fully-enabled run cannot emit an external post yet.
+
+on:
+  workflow_dispatch:
+    inputs:
+      social_dry_run:
+        description: 'Dry-run (true = rehearse only, never deliver). Keep true unless intentionally going live.'
+        type: choice
+        options: ['true', 'false']
+        default: 'true'
+      enable_x_posting:
+        description: 'Enable X delivery for approved items'
+        type: choice
+        options: ['false', 'true']
+        default: 'false'
+      enable_facebook_posting:
+        description: 'Enable Facebook delivery for approved items'
+        type: choice
+        options: ['false', 'true']
+        default: 'false'
+      enable_instagram_posting:
+        description: 'Enable Instagram delivery for approved items'
+        type: choice
+        options: ['false', 'true']
+        default: 'false'
+      enable_linkedin_posting:
+        description: 'Enable LinkedIn delivery for approved items'
+        type: choice
+        options: ['false', 'true']
+        default: 'false'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: social-approval-runner
+  cancel-in-progress: false
+
+env:
+  # Resolved from dispatch inputs; default posture is fully safe.
+  SOCIAL_DRY_RUN: ${{ inputs.social_dry_run || 'true' }}
+  REQUIRE_SOCIAL_APPROVAL: 'true'
+  ENABLE_X_POSTING: ${{ inputs.enable_x_posting || 'false' }}
+  ENABLE_FACEBOOK_POSTING: ${{ inputs.enable_facebook_posting || 'false' }}
+  ENABLE_INSTAGRAM_POSTING: ${{ inputs.enable_instagram_posting || 'false' }}
+  ENABLE_LINKEDIN_POSTING: ${{ inputs.enable_linkedin_posting || 'false' }}
+  # Credentials are optional — when absent the adapters stay blocked_no_credentials.
+  X_API_KEY: ${{ secrets.X_API_KEY }}
+  X_API_SECRET: ${{ secrets.X_API_SECRET }}
+  X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+  X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+  FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+  FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+  INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+  INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+  LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+  LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+
+jobs:
+  social-approval-runner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh approval queue (preview-only)
+        run: |
+          node tools/build-social-approval-queue.js --write || echo "[approval] queue build degraded — continuing"
+
+      - name: Validate activation safety
+        run: |
+          npm run check:social-activation
+
+      - name: Run approval delivery (gated; dry-run by default)
+        run: |
+          node tools/run-social-approval.js --write
+
+      - name: Commit ledger + queue (only when changed)
+        run: |
+          git config user.name "tradealphaai-social-approval-runner"
+          git config user.email "actions@users.noreply.github.com"
+
+          INTENDED="data/social/"
+          stage_intended() { for p in $INTENDED; do [ -e "$p" ] && git add -A -- "$p" || true; done; }
+          stage_intended
+
+          # Refuse to push anything outside data/social/.
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              data/social/*) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[approval] ERROR: changes outside data/social/ — refusing to push:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          echo "[approval] === git status --short ==="; git status --short
+          if git diff --cached --quiet; then
+            echo "[approval] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Social approval runner: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              if ! git diff --quiet || ! git diff --cached --quiet; then stage_intended; git diff --cached --quiet || git commit --amend --no-edit; fi
+              if git push origin main; then echo "[approval] pushed on attempt ${attempt}"; exit 0; fi
+            else
+              node tools/build-social-approval-queue.js --write || true
+              stage_intended
+              git -c core.editor=true rebase --continue || git rebase --abort
+            fi
+            sleep $((attempt * 3))
+          done
+          echo "[approval] push failed after retries"; exit 1
