@@ -1,18 +1,18 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-13T17:15:25.244Z",
+  "generated_at": "2026-06-13T17:28:29.163Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
   "calendar_updated_at": "2026-06-10T20:32:19.159Z",
   "enrichment": {
-    "fetch_attempted": false,
+    "fetch_attempted": true,
     "keys_present": {
-      "fred": false,
+      "fred": true,
       "bls": false,
       "bea": false,
       "eia": false
     },
-    "note": "Offline deterministic enrichment from the normalized calendar; run with --fetch to pull official actuals."
+    "note": "Official actuals pulled where keys/network allowed; missing values are null (never fabricated)."
   },
   "release_states": [
     "scheduled",
@@ -26,16 +26,16 @@
   "counts": {
     "total": 30,
     "high_impact": 26,
-    "parsed": 0,
+    "parsed": 3,
     "awaiting": 27,
-    "delayed": 3,
+    "delayed": 0,
     "by_state": {
       "scheduled": 27,
       "awaiting_release": 0,
       "released": 0,
-      "parsed": 0,
+      "parsed": 3,
       "revised": 0,
-      "delayed": 3,
+      "delayed": 0,
       "archived": 0
     }
   },
@@ -47,17 +47,17 @@
       "country": "US",
       "release_time": "2026-06-11T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 229000,
       "forecast": null,
-      "previous": null,
+      "previous": 225000,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Dept. of Labor",
-      "source_url": "https://www.dol.gov/ui/data.pdf",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/ICSA",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -65,12 +65,12 @@
         "IWM",
         "VIX"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 225000,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-06-06",
         "official_series": "ICSA"
       },
       "surprise": {
@@ -78,7 +78,7 @@
         "surprise_direction": "pending",
         "policy_tone": "event_specific",
         "expectation_confirmation": "unverified",
-        "reaction_interpretation": "Initial Jobless Claims was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+        "reaction_interpretation": "Initial Jobless Claims produced a material surprise, but the market implication remains conditional on rates, the dollar, volatility, and positioning."
       },
       "cross_asset": {
         "directional": {
@@ -103,7 +103,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::initial-jobless-claims::20260618T123000",
@@ -892,17 +892,17 @@
       "country": "US",
       "release_time": "2026-06-10T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 333.979,
       "forecast": null,
-      "previous": null,
+      "previous": 332.407,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Bureau of Labor Statistics",
-      "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -910,20 +910,20 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 332.407,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-05-01",
         "official_series": "CPIAUCSL"
       },
       "surprise": {
         "surprise_score": null,
         "surprise_direction": "pending",
-        "policy_tone": "neutral",
+        "policy_tone": "hawkish_impulse",
         "expectation_confirmation": "unverified",
-        "reaction_interpretation": "CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+        "reaction_interpretation": "CPI exceeded the policy-sensitive consensus in a direction that could reinforce a more restrictive rate path; confirmation requires higher yields and a firmer dollar rather than the surprise alone."
       },
       "cross_asset": {
         "directional": {
@@ -948,7 +948,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::core-cpi::20260610T123000",
@@ -957,17 +957,17 @@
       "country": "US",
       "release_time": "2026-06-10T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 336.121,
       "forecast": null,
-      "previous": null,
+      "previous": 335.423,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Bureau of Labor Statistics",
-      "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/CPILFESL",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -975,20 +975,20 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 335.423,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-05-01",
         "official_series": "CPILFESL"
       },
       "surprise": {
         "surprise_score": null,
         "surprise_direction": "pending",
-        "policy_tone": "neutral",
+        "policy_tone": "hawkish_impulse",
         "expectation_confirmation": "unverified",
-        "reaction_interpretation": "Core CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+        "reaction_interpretation": "Core CPI exceeded the policy-sensitive consensus in a direction that could reinforce a more restrictive rate path; confirmation requires higher yields and a firmer dollar rather than the surprise alone."
       },
       "cross_asset": {
         "directional": {
@@ -1013,7 +1013,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::cpi::20260708T123000",
