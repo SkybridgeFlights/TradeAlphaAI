@@ -129,8 +129,10 @@ async function enrichEvent(event, { fetch, env, observations = [] }) {
     }
   }
 
-  // Phase 102: forecast & consensus intelligence (never fabricated).
-  const forecastIntel = computeConsensus(event, observations);
+  // Phase 102: forecast & consensus intelligence (never fabricated). Pass the
+  // ENRICHED previous (e.g. FRED-filled) so the labelled historical proxy can
+  // use the real prior print rather than the raw calendar's null.
+  const forecastIntel = computeConsensus({ ...event, previous }, observations);
   const forecast = forecastIntel.forecast; // provider consensus or null (proxy/unavailable)
   const surprise = upgradeSurprise(event, category, forecastIntel, actual);
 

@@ -1,31 +1,22 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-13T20:48:02.276Z",
+  "generated_at": "2026-06-13T20:50:55.888Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
   "calendar_updated_at": "2026-06-10T20:32:19.159Z",
   "enrichment": {
-    "fetch_attempted": true,
+    "fetch_attempted": false,
     "keys_present": {
-      "fred": true,
+      "fred": false,
       "bls": false,
       "bea": false,
       "eia": false,
-      "fmp": true,
-      "finnhub": true
+      "fmp": false,
+      "finnhub": false
     },
-    "forecast_providers": {
-      "fmp": {
-        "ok": false,
-        "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar"
-      },
-      "finnhub": {
-        "ok": false,
-        "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic"
-      }
-    },
+    "forecast_providers": {},
     "forecast_observations": 0,
-    "note": "Official actuals pulled where keys/network allowed; forecasts merged from provider consensus (FMP/Finnhub) or labelled historical proxy. Missing values stay null (never fabricated)."
+    "note": "Offline deterministic enrichment; run with --fetch to pull official actuals + provider forecasts."
   },
   "release_states": [
     "scheduled",
@@ -39,17 +30,17 @@
   "counts": {
     "total": 30,
     "high_impact": 26,
-    "parsed": 3,
+    "parsed": 0,
     "awaiting": 27,
-    "delayed": 0,
+    "delayed": 3,
     "surprise_ready": 0,
     "by_state": {
       "scheduled": 27,
       "awaiting_release": 0,
       "released": 0,
-      "parsed": 3,
+      "parsed": 0,
       "revised": 0,
-      "delayed": 0,
+      "delayed": 3,
       "archived": 0
     },
     "by_forecast_quality": {
@@ -64,17 +55,17 @@
       "country": "US",
       "release_time": "2026-06-11T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": 229000,
+      "actual": null,
       "forecast": null,
-      "previous": 225000,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/ICSA",
-      "confidence": 90,
+      "source": "U.S. Dept. of Labor",
+      "source_url": "https://www.dol.gov/ui/data.pdf",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -82,12 +73,12 @@
         "IWM",
         "VIX"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 225000,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-06-06",
+        "observation_date": null,
         "official_series": "ICSA"
       },
       "surprise": {
@@ -134,7 +125,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::initial-jobless-claims::20260618T123000",
@@ -1091,17 +1082,17 @@
       "country": "US",
       "release_time": "2026-06-10T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": 333.979,
+      "actual": null,
       "forecast": null,
-      "previous": 332.407,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
-      "confidence": 90,
+      "source": "U.S. Bureau of Labor Statistics",
+      "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -1109,12 +1100,12 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 332.407,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "CPIAUCSL"
       },
       "surprise": {
@@ -1161,7 +1152,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::core-cpi::20260610T123000",
@@ -1170,17 +1161,17 @@
       "country": "US",
       "release_time": "2026-06-10T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": 336.121,
+      "actual": null,
       "forecast": null,
-      "previous": 335.423,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/CPILFESL",
-      "confidence": 90,
+      "source": "U.S. Bureau of Labor Statistics",
+      "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -1188,12 +1179,12 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 335.423,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "CPILFESL"
       },
       "surprise": {
@@ -1240,7 +1231,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::cpi::20260708T123000",
