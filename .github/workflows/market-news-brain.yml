@@ -51,6 +51,7 @@ jobs:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
         run: |
           node tools/fetch-economic-calendar.js --write || echo "[market-news] calendar fetch degraded — using cache"
+          node tools/build-economic-intelligence.js --fetch --write || echo "[market-news] economic intelligence degraded — continuing"
           node tools/build-newswire-events.js --write || echo "[market-news] newswire degraded — continuing"
           node tools/build-news-eligibility.js --write || echo "[market-news] eligibility degraded — continuing"
           node tools/generate-market-news-index.js --write || echo "[market-news] surface regen degraded — continuing"
@@ -64,6 +65,7 @@ jobs:
       - name: Validate
         run: |
           npm run check:market-news
+          npm run check:economic-intelligence
           npm run check:newsroom-intelligence
           npm run check:distribution-plan
           npm run check:seo
