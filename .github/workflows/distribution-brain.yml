@@ -56,18 +56,92 @@ jobs:
         run: |
           git config user.name "tradealphaai-distribution-brain"
           git config user.email "actions@users.noreply.github.com"
+
           # Stage every artifact the build steps regenerate — social previews,
-          # graphics, exports, the distribution plan, AND the editorial-graphics
-          # artifact in data/visual (else an unstaged file blocks pull --rebase).
-          git add data/social/ data/visual/editorial-graphics.json
+          # graphics, exports, distribution plan, approval queue (all under
+          # data/social/) AND the editorial-graphics artifact in data/visual.
+          INTENDED="data/social/ data/visual/editorial-graphics.json"
+          stage_intended() { for p in $INTENDED; do [ -e "$p" ] && git add -A -- "$p" || true; done; }
+          regenerate_intended() {
+            node tools/build-social-intelligence.js --write
+            node tools/build-editorial-graphics.js --write
+            node tools/build-graphic-exports.js --write
+            node tools/build-distribution-plan.js --write
+            node tools/build-social-approval-queue.js --write
+          }
+          validate_intended() {
+            npm run check:social-intelligence
+            npm run check:editorial-graphics
+            npm run check:graphic-exports
+            npm run check:distribution-plan
+            npm run check:social-activation
+          }
+          stage_intended
+
+          # Refuse to push anything outside the intended set.
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              data/social/*|data/visual/editorial-graphics.json) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[distribution] ERROR: changes outside intended paths — refusing to push:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          echo "[distribution] === git status --short ==="; git status --short
           if git diff --cached --quiet; then
             echo "[distribution] no changes — nothing to commit"
             exit 0
           fi
           git commit -m "Distribution plan refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
-          for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin main && exit 0
-            echo "[distribution] push attempt ${attempt} failed — retrying"
-            sleep 5
+
+          # Robust push: rebase onto remote; on artifact drift/conflict regenerate
+          # the deterministic artifacts, restage, continue. Rebase safety kept.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              if ! git diff --quiet || ! git diff --cached --quiet; then
+                echo "[distribution] residual changes after rebase — restaging"; stage_intended
+                git diff --cached --quiet || git commit --amend --no-edit
+              fi
+              if git push origin main; then echo "[distribution] pushed on attempt ${attempt}"; exit 0; fi
+              echo "[distribution] push rejected (race) on attempt ${attempt} — retrying"
+            else
+              echo "[distribution] rebase conflict on attempt ${attempt} — regenerating artifacts to reconcile"
+              regenerate_intended
+              validate_intended
+              stage_intended
+              if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+                echo "[distribution] unresolved paths remain after deterministic regeneration"
+                git diff --name-only --diff-filter=U
+                git rebase --abort
+                exit 1
+              fi
+              if git diff --cached --quiet; then
+                git rebase --skip
+              else
+                git -c core.editor=true rebase --continue
+              fi
+              # Rebuild once more against the fully rebased tree. If the local
+              # refresh became empty, create a replacement commit; otherwise
+              # amend the rebased refresh commit.
+              regenerate_intended
+              validate_intended
+              stage_intended
+              if ! git diff --cached --quiet; then
+                if git log -1 --pretty=%s | grep -q '^Distribution plan refresh:'; then
+                  git commit --amend --no-edit
+                else
+                  git commit -m "Distribution plan refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+                fi
+              fi
+            fi
+            sleep $((attempt * 3))
           done
           echo "[distribution] push failed after retries"; exit 1
