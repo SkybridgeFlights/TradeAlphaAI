@@ -12,7 +12,8 @@ const core = [
   "rankings.html", "methodology.html", "market-data-status.html", "tadawul.html"
 ].filter((rel) => exists(rel))
   .concat((marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists))
-  .concat(existsDir("briefs") ? ["briefs/"] : []);
+  .concat(existsDir("briefs") ? ["briefs/"] : [])
+  .concat(existsDir("market-news") ? ["market-news/"] : []);
 
 const stocks = htmlFiles("stocks").map(toRel);
 const etfs = htmlFiles("etfs").map(toRel);
@@ -50,7 +51,7 @@ console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} com
 
 function arUrls() {
   const out = ["ar/"];
-  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "methodology.html", "market-data-status.html"]) {
+  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "market-news/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);

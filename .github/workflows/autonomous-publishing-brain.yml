@@ -278,8 +278,10 @@ jobs:
           node tools/generate-daily-market-outlook.js --mode=weekly --write
           echo "[outlook] Daily and weekly institutional outlook pages generated."
           node tools/generate-briefs-index.js --write || echo "[briefs] section regen degraded — continuing"
+          node tools/build-news-eligibility.js --write || echo "[news] eligibility degraded — continuing"
+          node tools/generate-market-news-index.js --write || echo "[market-news] section regen degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[sitemaps] regen degraded — continuing"
-          echo "[briefs] Briefs section index regenerated."
+          echo "[briefs/market-news] Section indexes regenerated."
 
       - name: Validate intelligence and generated pages
         run: |
@@ -294,6 +296,7 @@ jobs:
           npm run check:distribution-plan
           npm run test:platform-relevance
           npm run check:briefs-section
+          npm run check:market-news
           npm run check:newsroom-intelligence
           npm run check:newsroom-ui
           npm run test:market-cognition
