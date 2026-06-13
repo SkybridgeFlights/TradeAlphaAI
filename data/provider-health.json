@@ -1,9 +1,47 @@
 {
+  "provider": "degraded",
+  "status": "degraded",
+  "degraded": true,
+  "reason": "all_providers_unavailable",
+  "endpoint": null,
+  "fallback_used": true,
+  "fallback_provider": "degraded",
+  "last_success": null,
+  "last_checked": "2026-06-13T12:30:51.851Z",
+  "event_count": 0,
   "providers": {
     "fmp": {
-      "last_checked": "2026-06-06T22:19:02.279Z",
-      "status": "degraded",
-      "last_error": "http_403"
+      "last_checked": "2026-06-13T12:30:50.512Z",
+      "status": "unavailable",
+      "last_error": "http_403",
+      "degraded": true,
+      "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar",
+      "endpoint": "https://financialmodelingprep.com/stable/economic-calendar",
+      "last_event_count": 0
+    },
+    "finnhub": {
+      "last_checked": "2026-06-13T12:30:50.737Z",
+      "status": "unavailable",
+      "degraded": true,
+      "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic",
+      "endpoint": "https://finnhub.io/api/v1/calendar/economic",
+      "last_event_count": 0
+    },
+    "alphavantage": {
+      "last_checked": "2026-06-13T12:30:50.737Z",
+      "status": "unavailable",
+      "degraded": true,
+      "reason": "missing_api_key",
+      "endpoint": "https://www.alphavantage.co/query",
+      "last_event_count": 0
+    },
+    "fred": {
+      "last_checked": "2026-06-13T12:30:51.850Z",
+      "status": "unavailable",
+      "degraded": true,
+      "reason": "no_supported_events",
+      "endpoint": "https://api.stlouisfed.org/fred/releases/dates",
+      "last_event_count": 0
     }
   }
 }
