@@ -65,6 +65,7 @@ jobs:
         run: |
           node tools/build-social-intelligence.js --write || echo "[market-news] social previews degraded — continuing"
           node tools/build-distribution-plan.js --write || echo "[market-news] distribution plan degraded — continuing"
+          node tools/build-intelligence-monitor.js --write || echo "[market-news] intelligence monitor degraded — continuing"
 
       - name: Validate
         run: |
@@ -75,6 +76,7 @@ jobs:
           npm run check:forecast-consensus
           npm run check:macro-reactions
           npm run check:liquidity-regime
+          npm run check:intelligence-monitor
           npm run check:newsroom-intelligence
           npm run check:distribution-plan
           npm run check:seo

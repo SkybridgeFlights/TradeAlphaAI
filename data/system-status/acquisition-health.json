@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-13T23:48:38.561Z",
+  "source_layer": "acquisition-health",
+  "calendar_source": "schedule_fallback",
+  "calendar_event_count": 31,
+  "calendar_age_hours": 1,
+  "coverage_by_country": {
+    "DE": 1,
+    "US": 17,
+    "JP": 2,
+    "AU": 3,
+    "CA": 2,
+    "GB": 3,
+    "CH": 1,
+    "EU": 2
+  },
+  "regions": {
+    "United Kingdom": 3,
+    "Japan": 2,
+    "Australia": 3,
+    "Switzerland": 1,
+    "Eurozone": 2,
+    "Canada": 2
+  },
+  "official_vs_estimated": {
+    "official_schedule": 4,
+    "estimated_recurring": 9
+  },
+  "sources": [
+    {
+      "id": "fred",
+      "kind": "official_actuals",
+      "available": false,
+      "note": "FRED key absent — actuals degrade to scheduled/awaiting."
+    },
+    {
+      "id": "fmp_forecast",
+      "kind": "consensus_forecast",
+      "available": false,
+      "note": "FMP forecast unavailable (missing_api_key)."
+    },
+    {
+      "id": "finnhub_forecast",
+      "kind": "consensus_forecast",
+      "available": false,
+      "note": "Finnhub forecast unavailable (missing_api_key)."
+    },
+    {
+      "id": "global_official_schedules",
+      "kind": "official_schedule",
+      "available": true,
+      "note": "Global official schedules: 13 event(s) across 6 region(s)."
+    }
+  ],
+  "degraded_sources": [
+    "fred",
+    "fmp_forecast",
+    "finnhub_forecast"
+  ],
+  "overall": "degraded"
+}

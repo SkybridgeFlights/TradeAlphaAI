@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-13T23:48:38.574Z",
+  "source_layer": "intelligence-monitor",
+  "overall_health": "degraded",
+  "regime": {
+    "regime": "broad_risk_support",
+    "liquidity_state": "defensive_demand",
+    "stability": "stable",
+    "confidence": 56,
+    "coherence": 0.33,
+    "health": "healthy",
+    "stale_warning": false
+  },
+  "publishing": {
+    "market_news": "no_publish",
+    "market_news_reason": "No event cleared the significance threshold — desk reacts to released, surprising, cross-asset-confirmed events only."
+  },
+  "acquisition": {
+    "calendar_source": "schedule_fallback",
+    "event_count": 31,
+    "degraded_sources": [
+      "fred",
+      "fmp_forecast",
+      "finnhub_forecast"
+    ],
+    "regions": {
+      "United Kingdom": 3,
+      "Japan": 2,
+      "Australia": 3,
+      "Switzerland": 1,
+      "Eurozone": 2,
+      "Canada": 2
+    },
+    "health": "degraded"
+  },
+  "reaction_capture": {
+    "considered": 4,
+    "reaction_ready": 0,
+    "awaiting": 4,
+    "health": "warning"
+  },
+  "workflows": [
+    {
+      "name": "Market News Brain",
+      "health": "healthy",
+      "age_hours": 1
+    },
+    {
+      "name": "Market Outlook Brain",
+      "health": "healthy",
+      "age_hours": 0.6
+    },
+    {
+      "name": "Briefs Brain",
+      "health": "healthy",
+      "age_hours": 0.6
+    },
+    {
+      "name": "Articles Brain",
+      "health": "healthy",
+      "age_hours": 11.3
+    },
+    {
+      "name": "Distribution Brain",
+      "health": "healthy",
+      "age_hours": 0.6
+    },
+    {
+      "name": "Intraday Market Watch",
+      "health": "healthy",
+      "age_hours": 0.6
+    }
+  ]
+}

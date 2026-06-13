@@ -52,11 +52,13 @@ jobs:
         run: |
           node tools/build-social-intelligence.js --write || echo "[briefs] social previews degraded — continuing"
           node tools/build-distribution-plan.js --write || echo "[briefs] distribution plan degraded — continuing"
+          node tools/build-intelligence-monitor.js --write || echo "[briefs] intelligence monitor degraded — continuing"
 
       - name: Validate
         run: |
           npm run check:briefs-section
           npm run check:liquidity-regime
+          npm run check:intelligence-monitor
           npm run check:distribution-plan
           npm run check:seo
           npm run check:bilingual-structure

@@ -372,6 +372,7 @@ jobs:
         run: |
           node tools/update-market-outlook-publication.js
           node tools/update-homepage-featured.js --write
+          node tools/build-intelligence-monitor.js --write
           node tools/generate-system-status.js
           node tools/update-content-feeds.js
           node tools/update-market-intelligence-status.js || echo "[intelligence] Status widget update degraded — continuing"

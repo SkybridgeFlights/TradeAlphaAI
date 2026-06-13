@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { renderSiteFooter, renderSiteHeader } = require('./global-layout-renderer');
+const { renderGlobalHeader, globalHeaderStyles, globalHeaderScripts } = require('./render-global-header');
 const { collectPages } = require('./update-market-outlook-publication');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -28,6 +29,11 @@ function main() {
   const telegram    = readJson(TELEGRAM_PATH,  {});
   const editorialQ  = readJson(EDITORIAL_Q,    { topics: [] });
   const orphanData  = readJson(ORPHAN_PATH,    { orphans: [] });
+
+  // Phase 108: operational intelligence monitor artifacts.
+  const monitor   = readJson(path.join(ROOT, 'data', 'system-status', 'intelligence-monitor.json'), null);
+  const acqHealth = readJson(path.join(ROOT, 'data', 'system-status', 'acquisition-health.json'), null);
+  const rxHealth  = readJson(path.join(ROOT, 'data', 'system-status', 'reaction-capture-health.json'), null);
 
   const latestOutlook = collectPages()[0] || null;
   const providerRows  = Object.entries(provider.providers || {});
@@ -61,14 +67,16 @@ function main() {
   <meta name="description" content="Operational status for TradeAlphaAI publishing and macro intelligence services." />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="${SITE_URL}/system-status/" />
+  <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/landing.css" />
   <link rel="stylesheet" href="/css/market/market-portal.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
+  ${globalHeaderStyles()}
 </head>
 <body class="market-page">
-  ${renderSiteHeader({ locale: 'en' })}
+  ${renderGlobalHeader({ locale: 'en', activePage: '' })}
   <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>System Status</span></nav>
@@ -96,6 +104,17 @@ function main() {
           ${card('Degraded mode', degraded ? '⚠ Active' : '✓ Off', degraded ? (provider.reason || degradation.reason || 'One or more macro inputs are degraded.') : 'All providers operational')}
         </div>
       </section>
+      ${monitor ? `<section class="market-section">
+        <div class="market-section-head"><span class="eyebrow">Operational Intelligence Monitor</span><h2>Intelligence-state observability</h2></div>
+        <div class="market-grid three">
+          ${card('Overall intelligence health', escapeHtml(String(monitor.overall_health || 'unavailable')), `Updated ${escapeHtml(monitor.generated_at || '—')}`)}
+          ${card('Market regime', escapeHtml(String((monitor.regime && monitor.regime.regime) || 'unavailable')), `Liquidity: ${escapeHtml(String((monitor.regime && monitor.regime.liquidity_state) || '—'))} · Stability: ${escapeHtml(String((monitor.regime && monitor.regime.stability) || '—'))}${monitor.regime && monitor.regime.stale_warning ? ' · ⚠ stale' : ''}`)}
+          ${card('Market News decision', escapeHtml(String((monitor.publishing && monitor.publishing.market_news) || '—')), escapeHtml(String((monitor.publishing && monitor.publishing.market_news_reason) || '')))}
+          ${card('Macro acquisition', escapeHtml(String((monitor.acquisition && monitor.acquisition.health) || '—')), `${(monitor.acquisition && monitor.acquisition.event_count) || 0} events${acqHealth && (acqHealth.degraded_sources || []).length ? ' · degraded: ' + escapeHtml(acqHealth.degraded_sources.join(', ')) : ''}`)}
+          ${card('Reaction capture', escapeHtml(String((monitor.reaction_capture && monitor.reaction_capture.health) || '—')), `${(monitor.reaction_capture && monitor.reaction_capture.reaction_ready) || 0} ready · ${(monitor.reaction_capture && monitor.reaction_capture.awaiting) || 0} awaiting`)}
+          ${(monitor.workflows || []).map((w) => card(escapeHtml(w.name), escapeHtml(String(w.health)), w.age_hours != null ? `Last artifact ${escapeHtml(String(w.age_hours))}h ago` : 'No artifact timestamp')).join('\n          ')}
+        </div>
+      </section>` : ''}
       <section class="market-section">
         <div class="market-section-head"><span class="eyebrow">Provider Health</span><h2>Current data-provider state</h2></div>
         <div class="market-panel">
@@ -108,7 +127,7 @@ function main() {
     </div>
   </main>
   ${renderSiteFooter({ locale: 'en' })}
-  <script src="/js/mobile-nav.js" defer></script>
+  ${globalHeaderScripts()}
 </body>
 </html>`;
   fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });

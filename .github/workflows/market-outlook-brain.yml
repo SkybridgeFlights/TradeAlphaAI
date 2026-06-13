@@ -67,6 +67,7 @@ jobs:
           node tools/build-editorial-graphics.js --write || echo "[outlook] graphics degraded — continuing"
           node tools/build-graphic-exports.js --write || echo "[outlook] graphic exports degraded — continuing"
           node tools/build-distribution-plan.js --write || echo "[outlook] distribution plan degraded — continuing"
+          node tools/build-intelligence-monitor.js --write || echo "[outlook] intelligence monitor degraded — continuing"
 
       - name: Validate
         run: |
@@ -80,6 +81,7 @@ jobs:
           npm run check:forecast-consensus
           npm run check:macro-reactions
           npm run check:liquidity-regime
+          npm run check:intelligence-monitor
           npm run check:distribution-plan
 
       - name: Commit refreshed intelligence (only when changed)
