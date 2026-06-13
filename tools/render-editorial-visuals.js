@@ -15,6 +15,22 @@ const ROOT = path.resolve(__dirname, '..');
 const NARRATIVES_PATH = path.join(ROOT, 'data', 'intelligence', 'chart-narratives.json');
 const STALE_HOURS = 48;
 
+// Phase 91 — short institutional chips for each annotation type (bilingual).
+const ANNOTATION_CHIP = {
+  en: {
+    'divergence-highlight': 'Divergence', 'commentary-label': 'Confirmation',
+    'transition-label': 'Regime shift', 'pressure-band': 'Pressure',
+    'volatility-compression-zone': 'Vol compression', 'catalyst-zone': 'Catalyst',
+    'macro-annotation': 'Macro', 'liquidity-marker': 'Liquidity', 'liquidity-zone': 'Liquidity',
+  },
+  ar: {
+    'divergence-highlight': 'انفصال', 'commentary-label': 'تأكيد',
+    'transition-label': 'تحوّل النظام', 'pressure-band': 'ضغط',
+    'volatility-compression-zone': 'انضغاط التقلب', 'catalyst-zone': 'محفز',
+    'macro-annotation': 'ماكرو', 'liquidity-marker': 'سيولة', 'liquidity-zone': 'سيولة',
+  },
+};
+
 function esc(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -36,10 +52,22 @@ function renderEditorialFigure(chart, locale) {
   const ar = locale === 'ar';
   const reading = ar ? chart.reading_ar : chart.reading_en;
   const title = ar ? chart.title_ar : chart.title_en;
+  // Phase 91 — institutional annotation evidence rail. Native typography-driven
+  // callouts (no canvas, no drawn arrows): each annotation is a type chip plus
+  // a bilingual structural label, derived from verified artifacts. Rendered
+  // only when annotations exist; otherwise the figure is the chart + caption.
+  const annotations = Array.isArray(chart.annotations) ? chart.annotations : [];
+  const railRows = annotations.map((a) => {
+    const label = ar ? a.label_ar : a.label_en;
+    return `      <li class="figure-annotation" data-annotation-type="${esc(a.type)}" data-severity="${esc(a.severity || 'info')}"><span class="annotation-chip">${esc(ANNOTATION_CHIP[locale] && ANNOTATION_CHIP[locale][a.type] ? ANNOTATION_CHIP[locale][a.type] : a.type)}</span><span class="annotation-label">${esc(label)}</span></li>`;
+  }).join('\n');
+  const rail = annotations.length
+    ? `\n  <ul class="figure-annotations" aria-label="${ar ? 'دلائل الرسم المؤسسية' : 'Chart evidence annotations'}">\n${railRows}\n  </ul>`
+    : '';
   return `<figure class="editorial-figure" data-visual-id="${esc(chart.id)}" data-visual-kind="${esc(chart.kind)}">
   <div class="editorial-visual-slot" data-tv-symbols="${esc(chart.symbols.join(','))}" data-visual-locale="${ar ? 'ar' : 'en'}" data-visual-title="${esc(title)}">
     <span class="editorial-visual-fallback">${ar ? 'يُحمَّل الرسم عند العرض — المصدر: TradingView' : 'Chart loads on view — source: TradingView'}</span>
-  </div>
+  </div>${rail}
   <figcaption>
     <span class="figure-kicker">${ar ? 'قراءة الرسم' : 'Chart intelligence'}</span>
     <p class="figure-reading">${esc(reading)}</p>

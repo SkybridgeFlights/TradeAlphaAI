@@ -59,8 +59,92 @@ const ANNOTATION_CONTRACT = {
   ],
   bilingual_labels_required: true,
   evidence_reference_required: true,
-  rendering_status: 'foundation-only',
+  rendering_status: 'active',
 };
+
+// Phase 91 — per-chart annotation relevance. Each chart knows which verified
+// signals can annotate it: the causal link it visualizes, the pulse dimension
+// it tracks, the stored-pressure track that escalates it, and the catalyst
+// asset names whose scheduled events open a catalyst window over it.
+const ANNOTATION_MAP = {
+  'yields-growth': { link: 'yields-growth', dim: 'duration_pressure', pressure: 'yield_pressure', catalystAssets: ['Treasury yields', 'QQQ', 'TLT'] },
+  'dollar-gold': { link: 'dollar-gold', dim: 'dollar_pressure', pressure: null, catalystAssets: ['Gold', 'DXY'] },
+  'breadth-confirmation': { link: 'breadth-link', dim: 'breadth_state', pressure: null, catalystAssets: ['SPY', 'IWM'] },
+  'volatility-structure': { link: 'vix-equities', dim: 'volatility_regime', pressure: 'volatility_pressure', catalystAssets: ['VIX', 'SPY'] },
+  'ai-concentration': { link: 'ai-growth', dim: 'ai_concentration_risk', pressure: 'concentration_pressure', catalystAssets: ['QQQ', 'NVDA'] },
+  'liquidity-beta': { link: 'liquidity-beta', dim: 'liquidity_stress', pressure: 'liquidity_pressure', catalystAssets: ['QQQ'] },
+};
+
+// Build institutional annotations for a chart from verified artifacts only.
+// Returns at most ANNOTATION_CONTRACT.max_annotations entries, each evidence-
+// backed and bilingual. No price levels, no prediction, no trade framing —
+// annotations describe structural relationships, never targets.
+function buildAnnotations(chartId, sources) {
+  const map = ANNOTATION_MAP[chartId];
+  if (!map) return [];
+  const { conv, cog, mac, pul } = sources;
+  const out = [];
+
+  // Divergence / confirmation marker from the causal link this chart visualizes.
+  const diverge = ((conv && conv.diverges) || []).find((l) => l.id === map.link);
+  const confirm = ((conv && conv.confirms) || []).find((l) => l.id === map.link);
+  if (diverge) {
+    const legs = (diverge.legs || []).join('/').toUpperCase();
+    const n = diverge.chain_strength || 1;
+    out.push({
+      type: 'divergence-highlight', severity: n >= 2 ? 'high' : 'elevated',
+      label_en: `Divergence — ${legs} not confirming${n >= 2 ? ` (${n}-session strain)` : ''}`,
+      label_ar: `انفصال — ${legs} لا يؤكد${n >= 2 ? ` (إجهاد ${n} جلسات)` : ''}`,
+      evidence: [`convergence:diverges:${map.link}:chain=${n}`],
+    });
+  } else if (confirm) {
+    const legs = (confirm.legs || []).join('/').toUpperCase();
+    out.push({
+      type: 'commentary-label', severity: 'info',
+      label_en: `Confirmation — ${legs} relationship holding`,
+      label_ar: `تأكيد — علاقة ${legs} صامدة`,
+      evidence: [`convergence:confirms:${map.link}`],
+    });
+  }
+
+  // Regime transition label when the chart's dimension just shifted.
+  const transition = ((cog && cog.timeline_tail) || []).find((e) => e.dimension === map.dim && e.from && e.to);
+  if (transition && out.length < ANNOTATION_CONTRACT.max_annotations) {
+    out.push({
+      type: 'transition-label', severity: 'elevated',
+      label_en: `Regime shift — ${String(map.dim).replace(/_/g, ' ')} ${transition.from} → ${transition.to}`,
+      label_ar: `تحوّل النظام — ${String(map.dim).replace(/_/g, ' ')}: ${transition.from} ← ${transition.to}`,
+      evidence: [`cognition:timeline:${map.dim}:${transition.from}->${transition.to}:${transition.date || ''}`],
+    });
+  }
+
+  // Stored-pressure band when the relevant track is elevated (>=3/5).
+  const pressureScore = map.pressure && mac && mac.pressure && mac.pressure.tracks && mac.pressure.tracks[map.pressure]
+    ? mac.pressure.tracks[map.pressure].score : 0;
+  if (pressureScore >= 3 && out.length < ANNOTATION_CONTRACT.max_annotations) {
+    const isVol = map.pressure === 'volatility_pressure';
+    out.push({
+      type: isVol ? 'volatility-compression-zone' : 'pressure-band', severity: pressureScore >= 4 ? 'high' : 'elevated',
+      label_en: `Stored pressure — ${String(map.pressure).replace(/_/g, ' ')} ${pressureScore}/5`,
+      label_ar: `ضغط مخزّن — ${pressureScore}/5`,
+      evidence: [`macro:pressure:${map.pressure}:${pressureScore}`],
+    });
+  }
+
+  // Catalyst window when an upcoming high-impact event touches this chart's assets.
+  const catalyst = ((pul && pul.catalysts_today) || []).find((c) => (c.assets || []).some((a) => map.catalystAssets.includes(a)));
+  if (catalyst && out.length < ANNOTATION_CONTRACT.max_annotations) {
+    const when = String(catalyst.time || '').slice(0, 10);
+    out.push({
+      type: 'catalyst-zone', severity: 'info',
+      label_en: `Catalyst window — ${catalyst.name}${when ? ` (${when})` : ''}`,
+      label_ar: `نافذة محفز — ${catalyst.name}${when ? ` (${when})` : ''}`,
+      evidence: [`pulse:catalyst:${catalyst.name}:${when}`],
+    });
+  }
+
+  return out.slice(0, ANNOTATION_CONTRACT.max_annotations);
+}
 
 const CHART_LIBRARY = {
   'yields-growth': {
@@ -206,6 +290,7 @@ function buildChartNarratives() {
       tracks: (mac.pressure && mac.pressure.tracks) || {},
       shifts: (cog.regime_shifts || []),
     });
+    const annotationSources = { conv, cog, mac, pul };
     selected = candidates.slice(0, MAX_CHARTS).map((c) => {
       const spec = CHART_LIBRARY[c.id];
       return {
@@ -219,6 +304,7 @@ function buildChartNarratives() {
         reading_ar: spec.reading_ar(c.ctx),
         score: Math.round(c.score),
         evidence: c.evidence,
+        annotations: buildAnnotations(c.id, annotationSources),
         attribution: 'Chart: TradingView · Quotes: sourced market providers',
       };
     });
@@ -251,8 +337,10 @@ if (require.main === module) main();
 module.exports = {
   buildChartNarratives,
   scoreCharts,
+  buildAnnotations,
   CHART_LIBRARY,
   MAX_CHARTS,
   SUPPORTED_VISUAL_TYPES,
   ANNOTATION_CONTRACT,
+  ANNOTATION_MAP,
 };

@@ -40,7 +40,8 @@ if (narratives) {
   }
   const annotation = narratives.annotation_contract || {};
   if (annotation.max_annotations !== ANNOTATION_CONTRACT.max_annotations) failures.push('chart-narratives: annotation density cap missing');
-  if (annotation.rendering_status !== 'foundation-only') failures.push('chart-narratives: annotation renderer must remain foundation-only');
+  // Phase 91: the annotation layer is now active (rendered as an evidence rail).
+  if (annotation.rendering_status !== 'active') failures.push('chart-narratives: annotation rendering_status must be active');
   if (!annotation.bilingual_labels_required || !annotation.evidence_reference_required) {
     failures.push('chart-narratives: annotation evidence/bilingual requirements missing');
   }
@@ -60,6 +61,23 @@ if (narratives) {
     if (/will (rally|crash|rise|fall)|buy|sell|target/i.test(chart.reading_en)) failures.push(`chart-narratives: chart ${chart.id} reading contains advice/prediction language`);
     if (/\b(entry|exit|support|resistance|breakout|breakdown|moon|go long|go short)\b/i.test(`${chart.title_en} ${chart.reading_en}`)) {
       failures.push(`chart-narratives: chart ${chart.id} uses retail-style chart language`);
+    }
+    // Phase 91 — annotation evidence integrity.
+    const annotations = Array.isArray(chart.annotations) ? chart.annotations : [];
+    if (annotations.length > ANNOTATION_CONTRACT.max_annotations) {
+      failures.push(`chart-narratives: chart ${chart.id} has ${annotations.length} annotations (cap ${ANNOTATION_CONTRACT.max_annotations})`);
+    }
+    for (const a of annotations) {
+      if (!ANNOTATION_CONTRACT.allowed_types.includes(a.type)) failures.push(`chart-narratives: chart ${chart.id} annotation type "${a.type}" outside contract`);
+      if (!a.label_en || !a.label_ar || !/[؀-ۿ]/.test(a.label_ar)) failures.push(`chart-narratives: chart ${chart.id} annotation missing bilingual label`);
+      if (!Array.isArray(a.evidence) || !a.evidence.length) failures.push(`chart-narratives: chart ${chart.id} annotation lacks evidence reference`);
+      const text = `${a.label_en}`;
+      if (/\b(buy|sell|target|will (rise|fall|rally|crash)|price target|\$\d|\d+\s*(points?|pips?))\b/i.test(text)) {
+        failures.push(`chart-narratives: chart ${chart.id} annotation contains price/prediction/advice language`);
+      }
+      if (/\b(support|resistance|breakout|breakdown|entry|exit|long|short)\b/i.test(text)) {
+        failures.push(`chart-narratives: chart ${chart.id} annotation uses retail-TA language`);
+      }
     }
   }
   console.log(`[editorial-visuals] chart-narratives ok (verified=${narratives.verified}, selected=${selected.length})`);
@@ -83,6 +101,13 @@ function scanPages(dir) {
       if (!figure.includes('figure-reading')) failures.push(`${label}: figure missing editorial reading`);
       if (!figure.includes('editorial-visual-slot')) failures.push(`${label}: figure missing visual slot container`);
       if (isArabic && !/[؀-ۿ]/.test(figure)) failures.push(`${label}: Arabic page figure carries no Arabic reading`);
+      // Phase 91 — rendered annotation rails: no more than the annotation cap,
+      // and Arabic pages must carry Arabic annotation labels.
+      const annRows = (figure.match(/class="figure-annotation"/g) || []).length;
+      if (annRows > ANNOTATION_CONTRACT.max_annotations) failures.push(`${label}: figure has ${annRows} annotations (cap ${ANNOTATION_CONTRACT.max_annotations})`);
+      if (figure.includes('figure-annotations') && /\b(support|resistance|breakout|price target|buy now|sell now)\b/i.test(figure)) {
+        failures.push(`${label}: annotation rail contains retail-TA/advice language`);
+      }
     }
     if (figures.length && !html.includes('/js/editorial-visuals.js')) {
       failures.push(`${label}: figures present but editorial-visuals.js not included`);
