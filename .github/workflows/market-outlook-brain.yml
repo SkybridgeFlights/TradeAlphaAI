@@ -50,6 +50,7 @@ jobs:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: |
           node tools/update-live-market-state.js --fetch --write || echo "[outlook] live state degraded — continuing"
+          node tools/build-global-macro-events.js --write || echo "[outlook] global macro acquisition degraded — continuing"
           node tools/build-economic-intelligence.js --fetch --write || echo "[outlook] economic intelligence degraded — continuing"
           node tools/build-market-pulse.js --write || echo "[outlook] pulse degraded — continuing"
           node tools/build-market-cognition.js --write || echo "[outlook] cognition degraded — continuing"
@@ -72,6 +73,7 @@ jobs:
           npm run check:narrative-convergence
           npm run check:structural-tension
           npm run check:editorial-visuals
+          npm run check:global-macro-acquisition
           npm run check:economic-intelligence
           npm run check:forecast-consensus
           npm run check:distribution-plan

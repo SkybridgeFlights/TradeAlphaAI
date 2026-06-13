@@ -4,7 +4,9 @@ const ALLOWED_TYPES = new Set([
   'CPI', 'Core CPI', 'PCE', 'Core PCE', 'NFP', 'Unemployment Rate',
   'FOMC Rate Decision', 'Fed Statement', 'Powell Speech', 'GDP',
   'Retail Sales', 'ISM PMI', 'Jobless Claims', 'Treasury Auction',
-  'ECB Rate Decision', 'BoJ Rate Decision', 'BoE Rate Decision'
+  'ECB Rate Decision', 'BoJ Rate Decision', 'BoE Rate Decision',
+  // Phase 104 — global central bank decisions (official published schedules).
+  'BoC Rate Decision', 'RBA Rate Decision', 'SNB Rate Decision', 'PBoC Rate Decision'
 ]);
 const ALLOWED_IMPORTANCE = new Set(['high', 'medium', 'low']);
 
@@ -95,8 +97,10 @@ function normalizeType(value) {
     [/retail sales|advance monthly sales/, 'Retail Sales'],
     [/ism.*pmi|manufacturing pmi.*us|services pmi.*us|institute for supply management/, 'ISM PMI'],
     [/jobless claims|initial claims|unemployment insurance weekly claims/, 'Jobless Claims'],
-    [/treasury.*auction/, 'Treasury Auction'], [/ecb/, 'ECB Rate Decision'],
-    [/boj|bank of japan/, 'BoJ Rate Decision'], [/boe|bank of england/, 'BoE Rate Decision']
+    [/treasury.*auction/, 'Treasury Auction'], [/ecb|european central bank/, 'ECB Rate Decision'],
+    [/boj|bank of japan/, 'BoJ Rate Decision'], [/boe|bank of england/, 'BoE Rate Decision'],
+    [/boc|bank of canada/, 'BoC Rate Decision'], [/rba|reserve bank of australia/, 'RBA Rate Decision'],
+    [/snb|swiss national bank/, 'SNB Rate Decision'], [/pboc|people'?s bank of china/, 'PBoC Rate Decision']
   ];
   return (mappings.find(([pattern]) => pattern.test(text)) || [null, clean(value)])[1];
 }
@@ -110,7 +114,14 @@ function normalizeImportance(value) {
 
 function normalizeCountry(value) {
   const text = clean(value).toUpperCase();
-  const aliases = { US: 'US', USA: 'US', UNITED_STATES: 'US', UK: 'GB', GBR: 'GB' };
+  const aliases = {
+    US: 'US', USA: 'US', UNITED_STATES: 'US', UK: 'GB', GBR: 'GB', GB: 'GB',
+    // Phase 104 — global coverage.
+    EU: 'EU', EUR: 'EU', EUROZONE: 'EU', EURO_AREA: 'EU', EA: 'EU',
+    DE: 'DE', GERMANY: 'DE', JP: 'JP', JPN: 'JP', JAPAN: 'JP',
+    CN: 'CN', CHN: 'CN', CHINA: 'CN', CA: 'CA', CAN: 'CA', CANADA: 'CA',
+    AU: 'AU', AUS: 'AU', AUSTRALIA: 'AU', CH: 'CH', CHE: 'CH', SWITZERLAND: 'CH',
+  };
   return aliases[text.replace(/\s+/g, '_')] || text || null;
 }
 
@@ -129,7 +140,7 @@ function normalizeDateTime(value, timezone = '') {
 function defaultSensitivity(type) {
   if (/CPI|PCE/.test(type)) return ['Treasury yields', 'DXY', 'Gold', 'QQQ', 'TLT'];
   if (/NFP|Unemployment|Jobless/.test(type)) return ['Treasury yields', 'DXY', 'SPY', 'IWM', 'VIX'];
-  if (/FOMC|Fed|ECB|BoJ|BoE/.test(type)) return ['Treasury yields', 'DXY', 'Gold', 'SPY', 'QQQ', 'TLT', 'VIX'];
+  if (/FOMC|Fed|ECB|BoJ|BoE|BoC|RBA|SNB|PBoC|Rate Decision/.test(type)) return ['Treasury yields', 'DXY', 'Gold', 'SPY', 'QQQ', 'TLT', 'VIX'];
   if (/GDP|Retail|ISM/.test(type)) return ['Treasury yields', 'SPY', 'IWM', 'Oil', 'Defensive sectors'];
   return ['Treasury yields', 'DXY', 'SPY', 'VIX'];
 }

@@ -10,6 +10,8 @@ const path = require('path');
 const { analyzeEconomicSurprise } = require('./analyze-economic-surprise');
 const { ALLOWED_TYPES }           = require('./providers/economic-calendar/calendar-normalizer');
 const { fetchEconomicCalendar }   = require('./providers/economic-calendar/provider-router');
+const { getGlobalEventsForCalendar } = require('./build-global-macro-events');
+const scheduleFallback            = require('./providers/economic-calendar/schedule-fallback-provider');
 
 const ROOT  = path.resolve(__dirname, '..');
 const OUT   = path.join(ROOT, 'data', 'economic-calendar.json');
@@ -53,7 +55,7 @@ function deduplicate(events) {
 
 async function main() {
   const from = dateStr(-1);
-  const to   = dateStr(14);
+  const to   = dateStr(28); // Phase 104: wider window for richer US + global coverage (UI still filters to 7d/week).
   console.log(`[calendar:fetch] target range=${from}..${to}`);
 
   let result;
@@ -66,8 +68,23 @@ async function main() {
 
   const rawCount        = result.rawCount       || (result.events || []).length;
   const normalizedCount = (result.events || []).length;
-  const validEvents     = (result.events || []).filter(e => !e.error);
-  const rejectedCount   = normalizedCount - validEvents.length;
+  let   validEvents     = (result.events || []).filter(e => !e.error);
+  // Phase 104: always include the deterministic US recurring schedule and the
+  // global macro acquisition supplement (official central-bank schedules +
+  // recurring official statistical releases), then dedupe so any live/router
+  // data takes priority. Free/official only; degrades gracefully on error.
+  let globalCount = 0; let usScheduleCount = 0;
+  try {
+    const sched = await scheduleFallback.fetchCalendar({ from, to, env: process.env });
+    const usSchedule = (sched.events || []).filter(e => !e.error);
+    const globalEvents = getGlobalEventsForCalendar({ from, to }).filter(e => !e.error);
+    usScheduleCount = usSchedule.length; globalCount = globalEvents.length;
+    validEvents = validEvents.concat(usSchedule, globalEvents);
+    console.log(`[calendar:fetch] merged ${usScheduleCount} US schedule + ${globalCount} global macro event(s)`);
+  } catch (err) {
+    console.warn(`[calendar:fetch] schedule/global merge degraded: ${sanitize(err.message)}`);
+  }
+  const rejectedCount   = normalizedCount - (result.events || []).filter(e => !e.error).length;
   console.log(`[calendar:fetch] provider=${result.provider} raw=${rawCount} normalized=${normalizedCount} valid=${validEvents.length} rejected=${rejectedCount}`);
   if (rejectedCount > 0) {
     const reasons = {};
@@ -101,10 +118,15 @@ async function main() {
     .map(e => ({ ...e, ...analyzeEconomicSurprise(e) }))
     .sort((a, b) => (a.event_time || '').localeCompare(b.event_time || ''));
 
+  // When live providers are degraded but the deterministic schedule + global
+  // supplement produced events, label the source honestly as the composite
+  // official-schedule acquisition rather than 'degraded'.
+  const sourceLabel = (result.provider === 'degraded' && enriched.length) ? 'schedule_fallback' : result.provider;
+
   const output = {
     version: '2.0',
     updated_at: new Date().toISOString(),
-    source: result.provider,
+    source: sourceLabel,
     provider_metadata: {
       endpoint:     result.endpoint    || null,
       fallback_used: result.fallbackUsed === true,

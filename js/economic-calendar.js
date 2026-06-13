@@ -41,6 +41,7 @@
       proxyContext: 'Proxy-Based Context', awaitingConsensus: 'Awaiting Consensus Data',
       labelConfidence: 'Confidence', labelSource: 'Source', labelConsensus: 'Consensus', labelReleaseState: 'Release state',
       labelRevision: 'Revision', revisedFrom: 'Revised from', macroRead: 'Macro reading', assetSensitivity: 'Affected assets',
+      acqOfficial: 'Official schedule', acqRecurring: 'Est. recurring', labelRegion: 'Region', labelSourceConfidence: 'Source confidence',
     },
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
@@ -80,6 +81,7 @@
       proxyContext: 'سياق مبني على مرجع تاريخي', awaitingConsensus: 'بانتظار بيانات الإجماع',
       labelConfidence: 'الثقة', labelSource: 'المصدر', labelConsensus: 'حالة الإجماع', labelReleaseState: 'حالة الإصدار',
       labelRevision: 'مراجعة', revisedFrom: 'روجِع من', macroRead: 'القراءة الكلية', assetSensitivity: 'الأصول المتأثرة',
+      acqOfficial: 'جدول رسمي', acqRecurring: 'دوري تقديري', labelRegion: 'المنطقة', labelSourceConfidence: 'ثقة المصدر',
     }
   };
 
@@ -179,6 +181,18 @@
     var meta = releaseStateMeta(ci.release_state);
     if (!meta) return '';
     return '<span class="ec-state-badge ' + meta.cls + '">' + esc(meta.label) + '</span>';
+  }
+
+  // Phase 104: acquisition-method badge (official schedule vs estimated recurring).
+  function acquisitionBadgeHtml(e) {
+    if (!e || !e.acquisition_method || e.importance === 'holiday') return '';
+    if (e.acquisition_method === 'official_schedule' || e.acquisition_method === 'official_api') {
+      return '<span class="ec-acq-badge ec-acq-official">' + esc(L.acqOfficial) + '</span>';
+    }
+    if (e.acquisition_method === 'estimated_recurring') {
+      return '<span class="ec-acq-badge ec-acq-recurring">' + esc(L.acqRecurring) + '</span>';
+    }
+    return '';
   }
 
   // ── Market intelligence lookup table ──────────────────────────────────────
@@ -854,6 +868,13 @@
         return '<span class="ec-asset-tag">' + esc(a) + '</span>';
       }).join('');
       var html = '<dt>' + esc(L.detailCountry)  + '</dt><dd>' + esc(countryCurrency(e.country)) + '</dd>';
+      if (e.region) html += '<dt>' + esc(L.labelRegion) + '</dt><dd>' + esc(e.region) + '</dd>';
+      if (e.acquisition_method) {
+        var acqTxt = (e.acquisition_method === 'official_schedule' || e.acquisition_method === 'official_api') ? L.acqOfficial
+                   : e.acquisition_method === 'estimated_recurring' ? L.acqRecurring : e.acquisition_method;
+        html += '<dt>' + esc(L.labelReleaseState) + '</dt><dd>' + esc(acqTxt) + '</dd>';
+      }
+      if (typeof e.source_confidence === 'number') html += '<dt>' + esc(L.labelSourceConfidence) + '</dt><dd>' + e.source_confidence + '</dd>';
       html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
       html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
       html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.previous, e.unit)) + '</dd>';
@@ -954,6 +975,7 @@
           var evtSub = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
           evtSub += getVolatilityHtml(e);
           evtSub += releaseStateBadgeHtml(e);
+          evtSub += acquisitionBadgeHtml(e);
 
           var dateEstimate = isSchedule ? '<span class="ec-date-estimate">' + (lang === 'ar' ? 'تاريخ تقديري' : 'Date estimate') + '</span>' : '';
           var cdHtml  = countdownHtml(e);

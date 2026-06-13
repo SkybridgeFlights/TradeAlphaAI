@@ -50,6 +50,7 @@ jobs:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
         run: |
+          node tools/build-global-macro-events.js --write || echo "[market-news] global macro acquisition degraded — continuing"
           node tools/fetch-economic-calendar.js --write || echo "[market-news] calendar fetch degraded — using cache"
           node tools/build-economic-intelligence.js --fetch --write || echo "[market-news] economic intelligence degraded — continuing"
           node tools/build-newswire-events.js --write || echo "[market-news] newswire degraded — continuing"
@@ -65,6 +66,7 @@ jobs:
       - name: Validate
         run: |
           npm run check:market-news
+          npm run check:global-macro-acquisition
           npm run check:economic-intelligence
           npm run check:forecast-consensus
           npm run check:newsroom-intelligence
