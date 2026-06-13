@@ -35,6 +35,12 @@
       volatilityLow:      'Low Volatility',
       marketImpact:       'Expected Market Impact',
       historicalNote:     'Historical Context',
+      stateScheduled: 'Scheduled', stateAwaiting: 'Awaiting Release', stateReleased: 'Released',
+      stateParsed: 'Released', stateRevised: 'Revised', stateDelayed: 'Delayed', stateArchived: 'Archived',
+      fcProvider: 'Consensus', fcSingle: 'Single Source', fcProxy: 'Historical Proxy', fcUnavailable: 'Awaiting Consensus Data',
+      proxyContext: 'Proxy-Based Context', awaitingConsensus: 'Awaiting Consensus Data',
+      labelConfidence: 'Confidence', labelSource: 'Source', labelConsensus: 'Consensus', labelReleaseState: 'Release state',
+      labelRevision: 'Revision', revisedFrom: 'Revised from', macroRead: 'Macro reading', assetSensitivity: 'Affected assets',
     },
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
@@ -68,6 +74,12 @@
       volatilityLow:      'تذبذب منخفض',
       marketImpact:       'التأثير المتوقع على السوق',
       historicalNote:     'السياق التاريخي',
+      stateScheduled: 'مجدول', stateAwaiting: 'بانتظار الصدور', stateReleased: 'صدر',
+      stateParsed: 'صدر', stateRevised: 'مُراجَع', stateDelayed: 'متأخر', stateArchived: 'مؤرشف',
+      fcProvider: 'إجماع', fcSingle: 'مصدر واحد', fcProxy: 'مرجع تاريخي', fcUnavailable: 'بانتظار بيانات الإجماع',
+      proxyContext: 'سياق مبني على مرجع تاريخي', awaitingConsensus: 'بانتظار بيانات الإجماع',
+      labelConfidence: 'الثقة', labelSource: 'المصدر', labelConsensus: 'حالة الإجماع', labelReleaseState: 'حالة الإصدار',
+      labelRevision: 'مراجعة', revisedFrom: 'روجِع من', macroRead: 'القراءة الكلية', assetSensitivity: 'الأصول المتأثرة',
     }
   };
 
@@ -90,6 +102,84 @@
     holiday:      { en: { what: 'A market holiday — financial markets may be closed or operating with reduced liquidity.', why: 'Market closures affect liquidity and volume across all asset classes.' }, ar: { what: 'عطلة سوق — قد تكون الأسواق مغلقة أو تعمل بسيولة منخفضة.', why: 'إغلاقات السوق تؤثر على السيولة وحجم التداول في جميع فئات الأصول.' } },
     other:        { en: { what: 'Economic data relevant to the current macroeconomic environment.', why: 'Economic releases contribute to the overall picture of economic health and policy expectations.' }, ar: { what: 'بيانات اقتصادية ذات صلة بالبيئة الاقتصادية الكلية.', why: 'تساهم الإصدارات في الصورة الشاملة للصحة الاقتصادية وتوقعات السياسة.' } },
   };
+
+  // ── Phase 103: economic-intelligence artifact wiring ──────────────────────
+  // The canonical macro layer (data/intelligence/economic-intelligence.json),
+  // keyed by event id. Loaded once; merged onto calendar events before render.
+  var econIntelById = null; // null = not yet loaded
+
+  function ensureEconIntel(cb) {
+    if (econIntelById !== null) { cb(); return; }
+    fetch('/data/intelligence/economic-intelligence.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        econIntelById = {};
+        if (d && Array.isArray(d.events)) d.events.forEach(function (ev) { if (ev && ev.id) econIntelById[ev.id] = ev; });
+        cb();
+      })
+      .catch(function () { econIntelById = {}; cb(); });
+  }
+
+  // Merge enriched official values onto calendar events. CRITICAL: only a real
+  // provider consensus may fill the `forecast` field — a historical proxy NEVER
+  // becomes the displayed forecast (it is surfaced separately and labelled).
+  function attachEconIntel(events) {
+    if (!Array.isArray(events)) return;
+    events.forEach(function (e) {
+      var ci = econIntelById && e && econIntelById[e.id];
+      e.econ_intel = ci || null;
+      if (!ci) return;
+      if ((e.actual === null || e.actual === undefined) && ci.actual !== null && ci.actual !== undefined) e.actual = ci.actual;
+      if ((e.previous === null || e.previous === undefined) && ci.previous !== null && ci.previous !== undefined) e.previous = ci.previous;
+      var providerForecast = ci.forecast_quality === 'provider_consensus' || ci.forecast_quality === 'single_provider';
+      if ((e.forecast === null || e.forecast === undefined) && providerForecast && ci.forecast !== null && ci.forecast !== undefined) e.forecast = ci.forecast;
+    });
+  }
+
+  // Canonical surprise labels → localized display text (no trading signals).
+  var SURPRISE_LABELS = {
+    hotter_inflation:  { en: 'Hotter inflation',   ar: 'تضخم أعلى من المتوقع' },
+    cooler_inflation:  { en: 'Cooler inflation',   ar: 'تضخم أدنى من المتوقع' },
+    labor_resilience:  { en: 'Labor resilience',   ar: 'مرونة سوق العمل' },
+    labor_weakening:   { en: 'Labor weakening',    ar: 'تباطؤ سوق العمل' },
+    growth_resilience: { en: 'Growth resilience',  ar: 'مرونة النمو' },
+    growth_slowdown:   { en: 'Growth slowdown',    ar: 'تباطؤ النمو' },
+    hawkish_pressure:  { en: 'Hawkish pressure',   ar: 'ضغط متشدد' },
+    dovish_repricing:  { en: 'Dovish repricing',   ar: 'إعادة تسعير ميسّرة' },
+    in_line:           { en: 'In line with consensus', ar: 'متوافق مع الإجماع' },
+    positive_surprise: { en: 'Positive surprise',  ar: 'مفاجأة إيجابية' },
+    negative_surprise: { en: 'Negative surprise',  ar: 'مفاجأة سلبية' },
+    pending:           { en: 'Pending',            ar: 'قيد الانتظار' },
+  };
+
+  function surpriseLabelText(label) {
+    if (!label) return '';
+    var base = String(label).replace(/__proxy_based$/, '');
+    var m = SURPRISE_LABELS[base];
+    return m ? (m[lang] || m.en) : base.replace(/_/g, ' ');
+  }
+
+  // Release-state → localized label + style class.
+  function releaseStateMeta(state) {
+    var map = {
+      scheduled:        { label: L.stateScheduled, cls: 'ec-state-scheduled' },
+      awaiting_release: { label: L.stateAwaiting,  cls: 'ec-state-awaiting' },
+      released:         { label: L.stateReleased,  cls: 'ec-state-released' },
+      parsed:           { label: L.stateParsed,    cls: 'ec-state-parsed' },
+      revised:          { label: L.stateRevised,   cls: 'ec-state-revised' },
+      delayed:          { label: L.stateDelayed,   cls: 'ec-state-delayed' },
+      archived:         { label: L.stateArchived,  cls: 'ec-state-archived' },
+    };
+    return map[state] || null;
+  }
+
+  function releaseStateBadgeHtml(e) {
+    var ci = e && e.econ_intel;
+    if (!ci || !ci.release_state || e.importance === 'holiday') return '';
+    var meta = releaseStateMeta(ci.release_state);
+    if (!meta) return '';
+    return '<span class="ec-state-badge ' + meta.cls + '">' + esc(meta.label) + '</span>';
+  }
 
   // ── Market intelligence lookup table ──────────────────────────────────────
   // Each entry maps event name patterns to asset tags, volatility, Fed/gold flags,
@@ -672,30 +762,84 @@
     return '<span class="ec-badge ' + cls + '">' + esc(L[imp] || imp || '') + '</span>';
   }
 
+  // Map artifact category → educational CAT_DESC key.
+  function mapCat(c) {
+    if (c === 'policy') return 'central_bank';
+    if (c === 'rates') return 'treasury';
+    if (c === 'energy') return 'energy';
+    if (c === 'growth') return 'growth';
+    if (c === 'inflation') return 'inflation';
+    if (c === 'labor') return 'labor';
+    return 'other';
+  }
+
   // ── Intelligence panel ────────────────────────────────────────────────────
+  // Surfaces the canonical economic-intelligence fields with honest degradation:
+  // a historical proxy is NEVER shown as consensus, unavailable data is shown
+  // plainly, and no null/undefined ever reaches the DOM.
   function intelligenceHtml(e) {
     try {
-      var intel = e.intelligence;
-      if (!intel || !intel.category) return '';
       if (e.importance === 'holiday') return '';
-      var catKey  = intel.category;
-      var catData = CAT_DESC[catKey] || CAT_DESC.other;
-      var desc    = catData[lang] || catData.en;
-      var html    = '';
-      if (desc.what) html += '<dt>' + esc(L.detailWhat) + '</dt><dd>' + esc(desc.what) + '</dd>';
-      if (desc.why)  html += '<dt>' + esc(L.detailWhy)  + '</dt><dd>' + esc(desc.why)  + '</dd>';
-      var sur         = intel.surprise;
-      var hasForecast = e.forecast !== null && e.forecast !== undefined;
-      if (sur && sur.available && hasForecast && sur.direction !== 'unknown') {
-        var sLabel = sur.direction === 'above' ? L.detailSurpriseAbove
-                   : sur.direction === 'below' ? L.detailSurpriseBelow
-                   : L.detailSurpriseInline;
-        var sCls   = sur.direction === 'above' ? 'ec-surprise-hot'
-                   : sur.direction === 'below' ? 'ec-surprise-soft'
-                   : 'ec-surprise-inline';
-        html += '<dt>Surprise</dt><dd class="' + sCls + '">' + esc(sLabel) +
-                ' <small>(' + esc(sur.magnitude || '') + ')</small></dd>';
+      var ci = e.econ_intel;
+      var html = '';
+
+      // 1. Category education (kept).
+      var catKey = ci && ci.category ? mapCat(ci.category) : (e.intelligence && e.intelligence.category);
+      var catData = catKey ? (CAT_DESC[catKey] || CAT_DESC.other) : null;
+      if (catData) {
+        var desc = catData[lang] || catData.en;
+        if (desc.what) html += '<dt>' + esc(L.detailWhat) + '</dt><dd>' + esc(desc.what) + '</dd>';
+        if (desc.why)  html += '<dt>' + esc(L.detailWhy)  + '</dt><dd>' + esc(desc.why)  + '</dd>';
       }
+
+      if (ci) {
+        // 2. Release state.
+        var meta = releaseStateMeta(ci.release_state);
+        if (meta) html += '<dt>' + esc(L.labelReleaseState) + '</dt><dd><span class="ec-state-badge ' + meta.cls + '">' + esc(meta.label) + '</span></dd>';
+
+        // 3. Forecast basis — provider consensus vs labelled proxy vs unavailable.
+        var fq = ci.forecast_quality;
+        if (fq === 'provider_consensus' || fq === 'single_provider') {
+          var fcLabel = fq === 'provider_consensus' ? L.fcProvider : L.fcSingle;
+          var fcVal = (ci.forecast !== null && ci.forecast !== undefined) ? numVal(ci.forecast, e.unit) : '—';
+          var cnt = ci.forecast_source_count ? ' <small>(' + ci.forecast_source_count + ')</small>' : '';
+          html += '<dt>' + esc(L.detailForecast) + '</dt><dd><span class="ec-fc-consensus">' + esc(fcLabel) + '</span> ' + fcVal + cnt + '</dd>';
+        } else if (fq === 'historical_proxy') {
+          var pv = (ci.proxy_value !== null && ci.proxy_value !== undefined) ? numVal(ci.proxy_value, e.unit) : '—';
+          html += '<dt>' + esc(L.detailForecast) + '</dt><dd><span class="ec-fc-proxy">' + esc(L.fcProxy) + '</span> ' + pv + '</dd>';
+        } else {
+          html += '<dt>' + esc(L.detailForecast) + '</dt><dd><span class="ec-fc-unavailable">' + esc(L.fcUnavailable) + '</span></dd>';
+        }
+
+        // 4. Surprise — ready / proxy-based / awaiting.
+        var sur = ci.surprise || {};
+        var hasScore = sur.surprise_score !== null && sur.surprise_score !== undefined;
+        if (ci.surprise_ready === true && hasScore) {
+          var dir = sur.surprise_direction;
+          var sCls = dir === 'hotter_or_stronger' ? 'ec-surprise-hot' : dir === 'softer_or_weaker' ? 'ec-surprise-soft' : 'ec-surprise-inline';
+          var conf = (typeof ci.surprise_confidence === 'number') ? ' <small>(' + esc(L.labelConfidence) + ' ' + ci.surprise_confidence + ')</small>' : '';
+          html += '<dt>' + esc(L.surpriseReady || 'Surprise') + '</dt><dd class="' + sCls + '">' + esc(surpriseLabelText(sur.surprise_label)) + conf + '</dd>';
+          // Macro reading: English only (artifact text is English; AR keeps native structure).
+          if (lang === 'en' && sur.macro_interpretation) html += '<dt>' + esc(L.macroRead) + '</dt><dd class="ec-macro-read">' + esc(sur.macro_interpretation) + '</dd>';
+        } else if (ci.proxy_used === true && hasScore) {
+          html += '<dt>' + esc(L.surpriseReady || 'Surprise') + '</dt><dd class="ec-surprise-proxy">' + esc(L.proxyContext) + ' <small>' + esc(surpriseLabelText(sur.surprise_label)) + '</small></dd>';
+        } else {
+          html += '<dt>' + esc(L.surpriseReady || 'Surprise') + '</dt><dd class="ec-surprise-await">' + esc(L.awaitingConsensus) + '</dd>';
+        }
+
+        // 5. Confidence + source attribution (never one without the other).
+        if (typeof ci.confidence === 'number' && ci.source) {
+          html += '<dt>' + esc(L.labelConfidence) + '</dt><dd>' + ci.confidence + ' <small>· ' + esc(L.labelSource) + ': ' + esc(ci.source) + '</small></dd>';
+        }
+
+        // 6. Revision.
+        if (ci.revised !== null && ci.revised !== undefined) {
+          var from = (ci.revised_from !== null && ci.revised_from !== undefined) ? numVal(ci.revised_from, e.unit) : '—';
+          var od = (ci.historical_context && ci.historical_context.observation_date) ? ' <small>(' + esc(ci.historical_context.observation_date) + ')</small>' : '';
+          html += '<dt>' + esc(L.labelRevision) + '</dt><dd>' + esc(L.revisedFrom) + ' ' + from + ' → ' + numVal(ci.revised, e.unit) + od + '</dd>';
+        }
+      }
+
       if (!html) return '';
       return '<div class="ec-detail-intelligence"><dl>' + html + '</dl></div>';
     } catch (_) { return ''; }
@@ -809,6 +953,7 @@
           var estimatedBadge = isSchedule ? '<span class="ec-badge-estimated">' + (lang === 'ar' ? 'تقديري' : 'Estimated') + '</span>' : '';
           var evtSub = e.type && e.type !== e.event_name ? '<small>' + esc(e.type) + '</small>' : '';
           evtSub += getVolatilityHtml(e);
+          evtSub += releaseStateBadgeHtml(e);
 
           var dateEstimate = isSchedule ? '<span class="ec-date-estimate">' + (lang === 'ar' ? 'تاريخ تقديري' : 'Date estimate') + '</span>' : '';
           var cdHtml  = countdownHtml(e);
@@ -1259,12 +1404,15 @@
           }
         }
 
-        populateCountries();
-        render();
-        maybeStaleCacheNotice(calMeta.source);
-        maybeScheduleFallbackNotice(calMeta.source);
-        maybeShowExternalFallback(allEvents.length);
-        scheduleRefresh();
+        ensureEconIntel(function () {
+          attachEconIntel(allEvents);
+          populateCountries();
+          render();
+          maybeStaleCacheNotice(calMeta.source);
+          maybeScheduleFallbackNotice(calMeta.source);
+          maybeShowExternalFallback(allEvents.length);
+          scheduleRefresh();
+        });
       })
       .catch(function (err) {
         if (err && err.name === 'AbortError') {

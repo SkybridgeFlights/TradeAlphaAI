@@ -904,3 +904,45 @@ tr.ec-detail-row td {
   .ec-top-events-list   { flex-direction: column; }
   .ec-top-event-card    { max-width: 100%; }
 }
+
+/* ── Phase 103: institutional economic-intelligence surfacing ──────────────
+   Dark-theme only. Surfaces release-state, forecast basis, surprise and
+   revision from data/intelligence/economic-intelligence.json. A historical
+   proxy is styled distinctly from a real consensus so it can never be mistaken
+   for one. No trading-signal colours, no light backgrounds. */
+.ec-state-badge {
+  display: inline-block;
+  margin-inline-start: 0.4rem;
+  margin-top: 0.25rem;
+  padding: 0.08rem 0.5rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(226, 232, 240, 0.85);
+  vertical-align: middle;
+}
+.ec-state-scheduled { border-color: rgba(148, 163, 184, 0.35); color: rgba(203, 213, 225, 0.85); }
+.ec-state-awaiting  { border-color: rgba(216, 177, 90, 0.45); color: rgba(226, 191, 120, 0.95); background: rgba(216, 177, 90, 0.08); }
+.ec-state-released,
+.ec-state-parsed    { border-color: rgba(110, 231, 216, 0.45); color: rgba(150, 235, 220, 0.95); background: rgba(110, 231, 216, 0.08); }
+.ec-state-revised   { border-color: rgba(167, 139, 250, 0.45); color: rgba(196, 181, 253, 0.95); background: rgba(167, 139, 250, 0.08); }
+.ec-state-delayed   { border-color: rgba(248, 150, 100, 0.45); color: rgba(251, 175, 130, 0.95); background: rgba(248, 150, 100, 0.08); }
+.ec-state-archived  { border-color: rgba(100, 116, 139, 0.35); color: rgba(148, 163, 184, 0.7); }
+
+/* Forecast basis — consensus vs proxy vs unavailable (visually distinct). */
+.ec-fc-consensus   { color: rgba(150, 235, 220, 0.95); font-weight: 600; }
+.ec-fc-proxy       { color: rgba(226, 191, 120, 0.95); font-weight: 600; font-style: italic; }
+.ec-fc-unavailable { color: rgba(148, 163, 184, 0.7); font-style: italic; }
+
+/* Surprise rendering. */
+.ec-surprise-hot     { color: rgba(251, 146, 110, 0.95); font-weight: 600; }
+.ec-surprise-soft    { color: rgba(110, 200, 231, 0.95); font-weight: 600; }
+.ec-surprise-inline  { color: rgba(203, 213, 225, 0.85); }
+.ec-surprise-proxy   { color: rgba(226, 191, 120, 0.9); font-style: italic; opacity: 0.92; }
+.ec-surprise-await   { color: rgba(148, 163, 184, 0.7); font-style: italic; }
+.ec-macro-read       { color: rgba(203, 213, 225, 0.82); line-height: 1.5; }
+
+[dir="rtl"] .ec-state-badge { margin-inline-start: 0; margin-inline-end: 0.4rem; }
