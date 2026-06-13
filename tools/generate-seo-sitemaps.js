@@ -14,6 +14,7 @@ const core = [
   .concat((marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists))
   .concat(existsDir("briefs") ? ["briefs/"] : [])
   .concat(existsDir("market-news") ? ["market-news/"] : [])
+  .concat(existsDir("market-news") ? htmlFiles("market-news").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("intelligence") ? ["intelligence/"] : [])
   .concat(existsDir("articles") ? ["articles/"] : [])
   .concat(educationalArticleFiles("articles").map(toRel));
@@ -58,14 +59,14 @@ function arUrls() {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
-  for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook"]) {
+  for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook", "market-news"]) {
     const files = dir === "market-outlook"
       ? htmlFilesRecursive(path.join("ar", dir))
       : dir === "articles"
         ? educationalArticleFiles(path.join("ar", dir))
       : htmlFiles(path.join("ar", dir));
     for (const file of files) {
-      if (file.endsWith("/index.html") && (dir === "insights" || dir === "articles")) continue;
+      if (file.endsWith("/index.html") && (dir === "insights" || dir === "articles" || dir === "market-news")) continue;
       out.push(toRel(file));
     }
   }

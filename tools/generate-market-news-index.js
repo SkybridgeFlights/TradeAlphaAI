@@ -89,9 +89,30 @@ ${css.map((href) => `  <link rel="stylesheet" href="${href}" />`).join('\n')}
 </head>`;
 }
 
+// Phase 107: list published market-news articles (scan the section directory).
+function publishedArticles(ar) {
+  const dir = path.join(ROOT, ar ? 'ar/market-news' : 'market-news');
+  let files = [];
+  try { files = fs.readdirSync(dir).filter((f) => f.endsWith('.html') && f !== 'index.html'); } catch { return []; }
+  return files.map((f) => {
+    let title = f.replace(/\.html$/, '');
+    try { const m = fs.readFileSync(path.join(dir, f), 'utf8').match(/<h1>([\s\S]*?)<\/h1>/i); if (m) title = m[1].replace(/<[^>]+>/g, '').trim(); } catch { /* keep slug */ }
+    return { href: `${ar ? '/ar/market-news/' : '/market-news/'}${f}`, title };
+  }).sort((a, b) => b.href.localeCompare(a.href));
+}
+
 function buildMain(ar, eligibility) {
   const t = (en, arT) => (ar ? arT : en);
   const eligible = fresh(eligibility) ? (eligibility.eligible || []) : [];
+  const published = publishedArticles(ar);
+  const publishedBlock = published.length
+    ? `      <section class="market-section" id="published-analysis">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Published analysis', 'تحليلات منشورة'))}</span><h2>${esc(t('Published reaction analysis', 'تحليلات التفاعل المنشورة'))}</h2></div>
+        <div class="market-grid three">
+${published.map((a) => `          <article class="market-card"><span class="market-card-kicker">${esc(t('Analysis', 'تحليل'))}</span><h3><a href="${esc(a.href)}">${esc(a.title)}</a></h3></article>`).join('\n')}
+        </div>
+      </section>`
+    : '';
 
   const reactionBlock = eligible.length
     ? `      <section class="market-section" id="active-reactions">
@@ -120,6 +141,7 @@ ${eligible.map((e) => `          <article class="market-card"><span class="marke
       </section>
 
 ${reactionBlock}
+${publishedBlock}
 
       <section class="market-section" id="news-coverage">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Coverage scope', 'نطاق التغطية'))}</span><h2>${esc(t('What the News desk covers', 'ما يغطيه مكتب الأخبار'))}</h2></div>
