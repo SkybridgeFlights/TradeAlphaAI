@@ -20,9 +20,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const { analyzeEconomicSurprise } = require('./analyze-economic-surprise');
 const { seriesFor, affectedAssets } = require('./providers/economic-calendar/series-map');
 const { fetchOfficial } = require('./providers/economic-calendar/official-series');
+const { fetchForecastObservations } = require('./providers/economic-calendar/forecast-providers');
+const { computeConsensus, upgradeSurprise } = require('./forecast-consensus');
 
 const ROOT = path.resolve(__dirname, '..');
 const CAL_PATH = path.join(ROOT, 'data', 'economic-calendar.json');
@@ -106,7 +107,7 @@ function orientCrossAsset(template, surprise) {
   return { directional: out, conditional: !resolved, basis: resolved ? 'resolved_surprise' : 'directional_template' };
 }
 
-async function enrichEvent(event, { fetch, env }) {
+async function enrichEvent(event, { fetch, env, observations = [] }) {
   const map = seriesFor(event.type);
   const category = (map && map.category) || 'macro';
 
@@ -128,13 +129,10 @@ async function enrichEvent(event, { fetch, env }) {
     }
   }
 
-  const forecast = num(event.forecast); // forecasts only from a sourced provider; never fabricated
-  const surprise = analyzeEconomicSurprise({ ...event, actual, forecast });
-  // Safety: a surprise SCORE must never exist without both inputs.
-  if ((actual === null || forecast === null) && surprise.surprise_score !== null) {
-    surprise.surprise_score = null;
-    surprise.surprise_direction = 'pending';
-  }
+  // Phase 102: forecast & consensus intelligence (never fabricated).
+  const forecastIntel = computeConsensus(event, observations);
+  const forecast = forecastIntel.forecast; // provider consensus or null (proxy/unavailable)
+  const surprise = upgradeSurprise(event, category, forecastIntel, actual);
 
   const state = releaseState(event, { actual, revised });
   const template = (map && map.cross_asset) || { US10Y: '+', DXY: '+', SPY: '-', VIX: '+' };
@@ -167,6 +165,17 @@ async function enrichEvent(event, { fetch, env }) {
       official_series: map ? (map.fred || map.bls || map.eia || map.treasury || null) : null,
     },
     surprise,
+    surprise_ready: surprise.surprise_ready,
+    surprise_confidence: surprise.surprise_confidence,
+    forecast_basis: forecastIntel.forecast_basis,
+    forecast_sources: forecastIntel.forecast_sources,
+    forecast_source_count: forecastIntel.forecast_source_count,
+    forecast_confidence: forecastIntel.forecast_confidence,
+    forecast_quality: forecastIntel.forecast_quality,
+    consensus_state: forecastIntel.consensus_state,
+    forecast_dispersion: forecastIntel.forecast_dispersion,
+    proxy_used: forecastIntel.proxy_used,
+    proxy_value: forecastIntel.proxy_value,
     cross_asset: orientCrossAsset(template, surprise),
     narrative_tags: narrativeTags(category, surprise),
     data_capabilities: event.data_capabilities || {},
@@ -174,14 +183,34 @@ async function enrichEvent(event, { fetch, env }) {
   };
 }
 
+function dateStr(offsetDays) {
+  return new Date(Date.now() + offsetDays * 86400000).toISOString().slice(0, 10);
+}
+
 async function build({ fetch = false, env = process.env } = {}) {
   const cal = readJson(CAL_PATH, { events: [] });
   const events = Array.isArray(cal.events) ? cal.events : [];
+
+  // Phase 102: pull forecast observations once (graceful — [] without keys).
+  let observations = [];
+  let forecastProviders = {};
+  if (fetch) {
+    try {
+      const fr = await fetchForecastObservations({ from: dateStr(-2), to: dateStr(14), env });
+      observations = fr.observations;
+      forecastProviders = fr.providerStatus;
+    } catch (err) {
+      forecastProviders = { error: String((err && err.message) || 'forecast_fetch_failed') };
+    }
+  }
+
   const enriched = [];
-  for (const e of events) enriched.push(await enrichEvent(e, { fetch, env }));
+  for (const e of events) enriched.push(await enrichEvent(e, { fetch, env, observations }));
 
   const byState = {};
   for (const s of RELEASE_STATES) byState[s] = enriched.filter((e) => e.release_state === s).length;
+  const byForecastQuality = {};
+  for (const e of enriched) byForecastQuality[e.forecast_quality] = (byForecastQuality[e.forecast_quality] || 0) + 1;
 
   const keysPresent = {
     fred: Boolean(String(env.FRED_API_KEY || '').trim()),
@@ -198,8 +227,10 @@ async function build({ fetch = false, env = process.env } = {}) {
     calendar_updated_at: cal.updated_at || null,
     enrichment: {
       fetch_attempted: Boolean(fetch),
-      keys_present: keysPresent,
-      note: fetch ? 'Official actuals pulled where keys/network allowed; missing values are null (never fabricated).' : 'Offline deterministic enrichment from the normalized calendar; run with --fetch to pull official actuals.',
+      keys_present: { ...keysPresent, fmp: Boolean(String(env.FMP_API_KEY || env.FINANCIAL_MODELING_PREP_API_KEY || '').trim()), finnhub: Boolean(String(env.FINNHUB_API_KEY || '').trim()) },
+      forecast_providers: forecastProviders,
+      forecast_observations: observations.length,
+      note: fetch ? 'Official actuals pulled where keys/network allowed; forecasts merged from provider consensus (FMP/Finnhub) or labelled historical proxy. Missing values stay null (never fabricated).' : 'Offline deterministic enrichment; run with --fetch to pull official actuals + provider forecasts.',
     },
     release_states: RELEASE_STATES,
     counts: {
@@ -208,7 +239,9 @@ async function build({ fetch = false, env = process.env } = {}) {
       parsed: byState.parsed + byState.revised,
       awaiting: byState.awaiting_release + byState.scheduled,
       delayed: byState.delayed,
+      surprise_ready: enriched.filter((e) => e.surprise_ready).length,
       by_state: byState,
+      by_forecast_quality: byForecastQuality,
     },
     events: enriched,
     note: enriched.length ? null : 'No calendar events available — economic intelligence intentionally empty.',

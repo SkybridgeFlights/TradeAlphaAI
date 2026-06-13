@@ -56,10 +56,12 @@ for (const e of events || []) {
     if (!isNumOrNull(e[f])) fail(`${lbl}: ${f} must be a number or null (got ${typeof e[f]})`);
   }
 
-  // Fabrication guard: surprise score requires BOTH actual and forecast.
+  // Fabrication guard: a surprise score requires an actual AND a forecast basis
+  // — either a sourced forecast or an explicitly-labelled historical proxy.
   const score = e.surprise && e.surprise.surprise_score;
-  if (score !== null && score !== undefined && (e.actual === null || e.forecast === null)) {
-    fail(`${lbl}: surprise_score present without actual+forecast (fabrication)`);
+  if (score !== null && score !== undefined) {
+    const hasBasis = e.forecast !== null || e.proxy_used === true;
+    if (e.actual === null || !hasBasis) fail(`${lbl}: surprise_score present without actual + (forecast | labelled proxy) (fabrication)`);
   }
 
   // Attribution guard: any released value must carry a source.
