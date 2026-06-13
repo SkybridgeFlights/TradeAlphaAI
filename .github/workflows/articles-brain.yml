@@ -1,0 +1,82 @@
+name: Articles Brain
+
+# Phase 98 — canonical Educational Articles desk.
+# Purpose: keep the /articles/ institutional research surface, its topic
+# selection (anti-repetition), and its social distribution current on a steady
+# daily cadence — independent of market tension. Full article-page publishing
+# flows through the gated Autonomous Publishing Brain engine (single
+# publishing-lock, quality + integrity + URL-verified Telegram), which this
+# brain feeds with fresh, de-duplicated topic eligibility.
+#
+# Social posting is preview-only by default. Live posting requires explicit
+# ENABLE_*_POSTING env flags (default false); Telegram delivery stays gated
+# by the publisher's URL-200 verification.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Once daily, 06:10 UTC (ahead of the US session).
+    - cron: '10 6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: articles-brain
+  cancel-in-progress: false
+
+env:
+  ENABLE_X_POSTING: 'false'
+  ENABLE_FACEBOOK_POSTING: 'false'
+  ENABLE_INSTAGRAM_POSTING: 'false'
+  ENABLE_LINKEDIN_POSTING: 'false'
+
+jobs:
+  articles-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh educational topic selection + research surface
+        run: |
+          node tools/build-educational-topics.js --write || echo "[articles] topic engine degraded — continuing"
+          node tools/generate-articles-index.js --write || echo "[articles] surface regen degraded — continuing"
+          node tools/generate-seo-sitemaps.js || echo "[articles] sitemap regen degraded — continuing"
+
+      - name: Refresh social distribution (preview-only)
+        run: |
+          node tools/build-social-intelligence.js --write || echo "[articles] social previews degraded — continuing"
+          node tools/build-distribution-plan.js --write || echo "[articles] distribution plan degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:educational-articles
+          npm run check:distribution-plan
+          npm run check:seo
+          npm run check:indexing
+          npm run check:bilingual-structure
+
+      - name: Commit refreshed surface (only when changed)
+        run: |
+          git config user.name "tradealphaai-articles-brain"
+          git config user.email "actions@users.noreply.github.com"
+          git add articles/ ar/articles/ data/intelligence/educational-topics.json data/social/ sitemap-core.xml sitemap-ar.xml
+          if git diff --cached --quiet; then
+            echo "[articles] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Articles brain refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "[articles] push attempt ${attempt} failed — retrying"; sleep 5
+          done
+          echo "[articles] push failed after retries"; exit 1

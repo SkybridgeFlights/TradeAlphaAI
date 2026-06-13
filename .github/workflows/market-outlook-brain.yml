@@ -1,0 +1,90 @@
+name: Market Outlook Brain
+
+# Phase 98 — canonical Market Outlook desk (high-conviction, selective).
+# Purpose: keep the institutional intelligence stack that gates outlook
+# publishing — cognition, macro cognition, convergence, structural tension,
+# chart narratives — current, plus the /market-outlook/ surface and its
+# distribution. It is the most selective desk: an outlook publishes only when
+# verified tension / divergence / catalyst pressure clears conviction, which
+# the gated Autonomous Publishing Brain engine enforces.
+#
+# Social posting preview-only by default; Telegram URL-200 gated in publisher.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 3x/week check (Mon/Wed/Fri 09:40 UTC); publishes only if conviction passes.
+    - cron: '40 9 * * 1,3,5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-outlook-brain
+  cancel-in-progress: false
+
+env:
+  ENABLE_X_POSTING: 'false'
+  ENABLE_FACEBOOK_POSTING: 'false'
+  ENABLE_INSTAGRAM_POSTING: 'false'
+  ENABLE_LINKEDIN_POSTING: 'false'
+
+jobs:
+  market-outlook-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh conviction intelligence stack
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: |
+          node tools/update-live-market-state.js --fetch --write || echo "[outlook] live state degraded — continuing"
+          node tools/build-market-pulse.js --write || echo "[outlook] pulse degraded — continuing"
+          node tools/build-market-cognition.js --write || echo "[outlook] cognition degraded — continuing"
+          node tools/build-macro-cognition.js --write || echo "[outlook] macro cognition degraded — continuing"
+          node tools/build-narrative-convergence.js --write || echo "[outlook] convergence degraded — continuing"
+          node tools/build-structural-tension.js --write || echo "[outlook] structural tension degraded — continuing"
+          node tools/build-chart-narratives.js --write || echo "[outlook] chart narratives degraded — continuing"
+
+      - name: Refresh social distribution (preview-only)
+        run: |
+          node tools/build-social-intelligence.js --write || echo "[outlook] social previews degraded — continuing"
+          node tools/build-editorial-graphics.js --write || echo "[outlook] graphics degraded — continuing"
+          node tools/build-graphic-exports.js --write || echo "[outlook] graphic exports degraded — continuing"
+          node tools/build-distribution-plan.js --write || echo "[outlook] distribution plan degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:market-cognition
+          npm run check:macro-cognition
+          npm run check:narrative-convergence
+          npm run check:structural-tension
+          npm run check:editorial-visuals
+          npm run check:distribution-plan
+
+      - name: Commit refreshed intelligence (only when changed)
+        run: |
+          git config user.name "tradealphaai-market-outlook-brain"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/ market-outlook/ ar/market-outlook/
+          if git diff --cached --quiet; then
+            echo "[outlook] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Market outlook brain refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "[outlook] push attempt ${attempt} failed — retrying"; sleep 5
+          done
+          echo "[outlook] push failed after retries"; exit 1

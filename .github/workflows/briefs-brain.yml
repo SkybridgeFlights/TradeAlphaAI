@@ -1,0 +1,76 @@
+name: Briefs Brain
+
+# Phase 98 — canonical Briefs desk (terminal-rhythm cadence).
+# Purpose: keep the /briefs/ surface and the daily intelligence brief current
+# on a steady cadence — Morning Brief daily, with the surface reflecting the
+# latest verified brief. Concise but narrative and institutional. Independent
+# of market-outlook eligibility. Social distribution preview-only by default.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Morning brief daily 07:00 UTC; midday refresh 15:00 UTC on weekdays.
+    - cron: '0 7 * * *'
+    - cron: '0 15 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: briefs-brain
+  cancel-in-progress: false
+
+env:
+  ENABLE_X_POSTING: 'false'
+  ENABLE_FACEBOOK_POSTING: 'false'
+  ENABLE_INSTAGRAM_POSTING: 'false'
+  ENABLE_LINKEDIN_POSTING: 'false'
+
+jobs:
+  briefs-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh brief intelligence + surface
+        run: |
+          node tools/build-intelligence-briefs.js --write || echo "[briefs] brief build degraded — continuing"
+          node tools/generate-briefs-index.js --write || echo "[briefs] surface regen degraded — continuing"
+          node tools/generate-seo-sitemaps.js || echo "[briefs] sitemap regen degraded — continuing"
+
+      - name: Refresh social distribution (preview-only)
+        run: |
+          node tools/build-social-intelligence.js --write || echo "[briefs] social previews degraded — continuing"
+          node tools/build-distribution-plan.js --write || echo "[briefs] distribution plan degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:briefs-section
+          npm run check:distribution-plan
+          npm run check:seo
+          npm run check:bilingual-structure
+
+      - name: Commit refreshed surface (only when changed)
+        run: |
+          git config user.name "tradealphaai-briefs-brain"
+          git config user.email "actions@users.noreply.github.com"
+          git add briefs/ ar/briefs/ data/intelligence/daily-intelligence-brief.json data/social/ sitemap-core.xml sitemap-ar.xml
+          if git diff --cached --quiet; then
+            echo "[briefs] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Briefs brain refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "[briefs] push attempt ${attempt} failed — retrying"; sleep 5
+          done
+          echo "[briefs] push failed after retries"; exit 1

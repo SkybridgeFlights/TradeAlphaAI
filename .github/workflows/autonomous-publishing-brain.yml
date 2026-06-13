@@ -1,5 +1,12 @@
 name: Autonomous Publishing Brain
 
+# Phase 98 — supervisor / engine. The canonical full-system publisher that
+# carries every safety gate (publishing-lock, quality + integrity gates,
+# URL-verified Telegram, no-phantom/no-duplicate publish). The specialized
+# canonical brains (articles / market-news / market-outlook / briefs) own
+# their section intelligence + distribution cadence; actual page publishing
+# flows through this gated engine. Kept as backup/supervisor + manual full run.
+
 on:
   workflow_dispatch:
     inputs:
@@ -305,6 +312,7 @@ jobs:
           npm run test:platform-relevance
           npm run check:briefs-section
           npm run check:market-news
+          npm run check:workflows
           npm run check:newsroom-intelligence
           npm run check:newsroom-ui
           npm run test:market-cognition

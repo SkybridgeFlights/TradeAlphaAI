@@ -1,0 +1,86 @@
+name: Market News Brain
+
+# Phase 98 — canonical Market News desk (event-driven).
+# Purpose: keep the /market-news/ surface, the event-significance eligibility
+# engine, and its distribution current. It publishes reaction analysis only
+# when a released, surprising, cross-asset-confirmed event clears the
+# significance threshold — the eligibility engine gates that. Full article-page
+# publishing flows through the gated Autonomous Publishing Brain engine.
+#
+# Social posting preview-only by default (ENABLE_*_POSTING flags default false);
+# Telegram stays URL-200 gated in the publisher.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Several checks across the US session (event-driven; publishes only if eligible).
+    - cron: '20 13,16,19 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-news-brain
+  cancel-in-progress: false
+
+env:
+  ENABLE_X_POSTING: 'false'
+  ENABLE_FACEBOOK_POSTING: 'false'
+  ENABLE_INSTAGRAM_POSTING: 'false'
+  ENABLE_LINKEDIN_POSTING: 'false'
+
+jobs:
+  market-news-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh newswire + news eligibility + surface
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          node tools/fetch-economic-calendar.js --write || echo "[market-news] calendar fetch degraded — using cache"
+          node tools/build-newswire-events.js --write || echo "[market-news] newswire degraded — continuing"
+          node tools/build-news-eligibility.js --write || echo "[market-news] eligibility degraded — continuing"
+          node tools/generate-market-news-index.js --write || echo "[market-news] surface regen degraded — continuing"
+          node tools/generate-seo-sitemaps.js || echo "[market-news] sitemap regen degraded — continuing"
+
+      - name: Refresh social distribution (preview-only)
+        run: |
+          node tools/build-social-intelligence.js --write || echo "[market-news] social previews degraded — continuing"
+          node tools/build-distribution-plan.js --write || echo "[market-news] distribution plan degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:market-news
+          npm run check:newsroom-intelligence
+          npm run check:distribution-plan
+          npm run check:seo
+          npm run check:bilingual-structure
+
+      - name: Commit refreshed surface (only when changed)
+        run: |
+          git config user.name "tradealphaai-market-news-brain"
+          git config user.email "actions@users.noreply.github.com"
+          git add market-news/ ar/market-news/ data/intelligence/news-eligibility.json data/newswire/ data/social/ sitemap-core.xml sitemap-ar.xml
+          if git diff --cached --quiet; then
+            echo "[market-news] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Market news brain refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "[market-news] push attempt ${attempt} failed — retrying"; sleep 5
+          done
+          echo "[market-news] push failed after retries"; exit 1
