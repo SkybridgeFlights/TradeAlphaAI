@@ -149,11 +149,36 @@ if (aiMode) {
   attemptStructuralPromotion(topic, topic.slug, 'structural_generation_complete_no_ai_key');
 }
 
+// Disclaimer consolidation: the formal disclaimer block is the single
+// disclaimer source on the page (3 pattern hits by itself against the
+// page-wide max of 3 enforced by check-market-intelligence-quality). Topic
+// summaries seeded into the queue sometimes append their own disclaimer
+// fragment ("— not investment advice"), which pushed the first live publish
+// to 4 and correctly failed the gate. Scrub such fragments from any
+// topic-sourced lead text at render time — deterministic conformance for
+// every future seeded topic, with the gate left fully intact.
+//
+// The pattern list lives inside the (hoisted) function so there is no
+// module-level const in a temporal dead zone: render() is invoked at the top
+// of this module before later const declarations would be initialized.
+function scrubLeadDisclaimers(text) {
+  const fragments = [
+    /\s*[—–-]?\s*not (?:investment|financial) advice\.?/gi,
+    /\s*[—–-]?\s*educational[^.،]*only\.?/gi,
+    /\s*[—–-]?\s*not a recommendation to buy or sell[^.]*\.?/gi,
+    /\s*[—–-]?\s*ليست? نصيحة استثمارية\.?/g,
+    /\s*[—–-]?\s*تعليمي فقط\.?/g,
+  ];
+  let result = String(text || '');
+  for (const pattern of fragments) result = result.replace(pattern, '');
+  return result.replace(/\s{2,}/g, ' ').trim();
+}
+
 function render(topic, locale, intel, aiContent = null, dataGenerationId = new Date().toISOString()) {
   const labelSets = getLabels();
   const ar = locale === 'ar';
   const title = ar ? topic.title_ar : topic.title_en;
-  const summary = ar ? topic.summary_ar : topic.summary_en;
+  const summary = scrubLeadDisclaimers(ar ? topic.summary_ar : topic.summary_en);
   const disclaimer = ar ? DISCLAIMER_AR : DISCLAIMER_EN;
   const enUrl = `${SITE_URL}/market-outlook/${topic.slug}.html`;
   const arUrl = `${SITE_URL}/ar/market-outlook/${topic.slug}.html`;
