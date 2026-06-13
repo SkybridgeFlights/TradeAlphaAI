@@ -140,8 +140,8 @@ function scanDir(dir, isPublished) {
 }
 
 // Pending drafts gate; published pages warn-only (never retro-failed).
-const draftCount = scanDir('drafts/market-outlook', false) + scanDir('drafts/editorial', false);
-const publishedCount = scanDir('market-outlook', true);
+const draftCount = scanDir('drafts/market-outlook', false) + scanDir('drafts/editorial', false) + scanDir('drafts/educational', false);
+const publishedCount = scanDir('market-outlook', true) + scanDir('articles', true) + scanDir('ar/articles', true);
 
 console.log(`[editorial-cadence] scanned drafts=${draftCount} published=${publishedCount} warnings=${warnings.length} failures=${failures.length}`);
 warnings.slice(0, 10).forEach((w) => console.warn(`[editorial-cadence] WARN: ${w}`));

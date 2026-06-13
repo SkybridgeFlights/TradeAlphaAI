@@ -74,8 +74,18 @@ ${css.map((href) => `  <link rel="stylesheet" href="${href}" />`).join('\n')}
 function buildMain(ar, topics) {
   const t = (en, arT) => (ar ? arT : en);
   const families = (topics && topics.candidates) || [];
+  const displayFamilies = [...families].sort((left, right) => {
+    const leftPublished = fs.existsSync(path.join(ROOT, 'articles', `${left.id}.html`));
+    const rightPublished = fs.existsSync(path.join(ROOT, 'articles', `${right.id}.html`));
+    return Number(rightPublished) - Number(leftPublished);
+  });
   // Present the institutional education program as the editorial scope.
-  const scopeCards = families.slice(0, 9).map((f) => `          <article class="market-card"><span class="market-card-kicker">${esc(t('Market structure', 'بنية السوق'))}</span><h3>${esc(ar ? f.title_ar : f.title_en)}</h3></article>`).join('\n');
+  const scopeCards = displayFamilies.slice(0, 9).map((f) => {
+    const published = fs.existsSync(path.join(ROOT, ar ? 'ar/articles' : 'articles', `${f.id}.html`));
+    const title = esc(ar ? f.title_ar : f.title_en);
+    const heading = published ? `<a href="${ar ? '/ar' : ''}/articles/${f.id}.html">${title}</a>` : title;
+    return `          <article class="market-card"><span class="market-card-kicker">${esc(published ? t('Published research', 'بحث منشور') : t('Market structure', 'بنية السوق'))}</span><h3>${heading}</h3></article>`;
+  }).join('\n');
 
   return `  <main class="market-shell">
     <div class="wrap">
@@ -117,7 +127,11 @@ function generate(ar) {
   const bodyOpenTagEnd = template.indexOf('>', bodyOpenIdx) + 1;
   const bodyTag = template.slice(bodyOpenIdx, bodyOpenTagEnd);
   const headerBlock = template.slice(bodyOpenTagEnd, headerEndIdx)
-    .replace('data-active-section="market-outlook"', 'data-active-section="articles"');
+    .replace('data-active-section="market-outlook"', 'data-active-section="articles"')
+    .replace(/class="nav-link is-active" aria-current="page">Market Outlook/g, 'class="nav-link">Market Outlook')
+    .replace(/class="nav-link is-active" aria-current="page">توقعات السوق/g, 'class="nav-link">توقعات السوق')
+    .replace(/href="\/ar\/market-outlook\/"/g, 'href="/ar/articles/"')
+    .replace(/href="\/market-outlook\/"/g, 'href="/articles/"');
   const footer = template.slice(mainEndIdx);
   const topics = readJson(TOPICS_PATH);
   return `<!doctype html>

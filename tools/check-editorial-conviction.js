@@ -114,8 +114,8 @@ function scanDir(dir, isPublished) {
   return scanned;
 }
 
-const draftCount = scanDir('drafts/market-outlook', false);
-const publishedCount = scanDir('market-outlook', true);
+const draftCount = scanDir('drafts/market-outlook', false) + scanDir('drafts/educational', false);
+const publishedCount = scanDir('market-outlook', true) + scanDir('articles', true) + scanDir('ar/articles', true);
 
 console.log(`[editorial-conviction] scanned drafts=${draftCount} published=${publishedCount} warnings=${warnings.length} failures=${failures.length}`);
 warnings.slice(0, 12).forEach((w) => console.warn(`[editorial-conviction] WARN: ${w}`));

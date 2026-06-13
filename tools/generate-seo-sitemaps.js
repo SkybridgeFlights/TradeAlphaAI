@@ -14,7 +14,8 @@ const core = [
   .concat((marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists))
   .concat(existsDir("briefs") ? ["briefs/"] : [])
   .concat(existsDir("market-news") ? ["market-news/"] : [])
-  .concat(existsDir("articles") ? ["articles/"] : []);
+  .concat(existsDir("articles") ? ["articles/"] : [])
+  .concat(educationalArticleFiles("articles").map(toRel));
 
 const stocks = htmlFiles("stocks").map(toRel);
 const etfs = htmlFiles("etfs").map(toRel);
@@ -56,16 +57,26 @@ function arUrls() {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
-  for (const dir of ["stocks", "etfs", "compare", "insights", "market-outlook"]) {
+  for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook"]) {
     const files = dir === "market-outlook"
       ? htmlFilesRecursive(path.join("ar", dir))
+      : dir === "articles"
+        ? educationalArticleFiles(path.join("ar", dir))
       : htmlFiles(path.join("ar", dir));
     for (const file of files) {
-      if (file.endsWith("/index.html") && dir === "insights") continue;
+      if (file.endsWith("/index.html") && (dir === "insights" || dir === "articles")) continue;
       out.push(toRel(file));
     }
   }
   return unique(out);
+}
+
+function educationalArticleFiles(dir) {
+  return htmlFiles(dir).filter((rel) => {
+    if (rel.endsWith("/index.html")) return false;
+    try { return fs.readFileSync(path.join(root, rel), "utf8").includes("data-educational-article="); }
+    catch { return false; }
+  });
 }
 
 function writeUrlset(file, rels, changefreq, priorityFn) {

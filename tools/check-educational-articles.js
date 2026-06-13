@@ -114,6 +114,34 @@ if (!topics) {
   console.log(`[educational-articles] topic engine ok (eligible=${eligible.length}/${(topics.candidates || []).length})`);
 }
 
+const publishedEn = fs.existsSync(path.join(ROOT, 'articles'))
+  ? fs.readdirSync(path.join(ROOT, 'articles')).filter((file) => file.endsWith('.html') && file !== 'index.html' && (read(`articles/${file}`) || '').includes('data-educational-article='))
+  : [];
+if (publishedEn.length > 1) failures.push(`educational articles: supervised phase permits one publication, found ${publishedEn.length}`);
+for (const file of publishedEn) {
+  const slug = file.replace(/\.html$/, '');
+  const en = read(`articles/${file}`) || '';
+  const ar = read(`ar/articles/${file}`) || '';
+  if (!ar) failures.push(`ar/articles/${file}: bilingual counterpart missing`);
+  if (!en.includes(`https://www.tradealphaai.com/articles/${file}`)) failures.push(`articles/${file}: canonical URL missing`);
+  if (!ar.includes(`https://www.tradealphaai.com/ar/articles/${file}`)) failures.push(`ar/articles/${file}: canonical URL missing`);
+  if (!en.includes('data-editorial-intelligence="v2"') || !ar.includes('data-editorial-intelligence="v2"')) failures.push(`${slug}: institutional reasoning contract missing`);
+  if ((en.match(/<section\b/g) || []).length < 9 || (ar.match(/<section\b/g) || []).length < 9) failures.push(`${slug}: insufficient bilingual structural depth`);
+  if ((en.match(/<p\b/g) || []).length < 18 || (ar.match(/<p\b/g) || []).length < 18) failures.push(`${slug}: insufficient bilingual paragraph depth`);
+  const enMain = (en.match(/<main[\s\S]*?<\/main>/i) || [''])[0];
+  const arMain = (ar.match(/<main[\s\S]*?<\/main>/i) || [''])[0];
+  failures.push(...institutionalLanguageFailures(enMain, `articles/${file}`));
+  failures.push(...institutionalLanguageFailures(arMain, `ar/articles/${file}`));
+  if (!(read('articles/index.html') || '').includes(`/articles/${file}`)) failures.push(`articles/index.html: ${file} not linked`);
+  if (!(read('ar/articles/index.html') || '').includes(`/ar/articles/${file}`)) failures.push(`ar/articles/index.html: ${file} not linked`);
+  if (!coreSitemap.includes(`https://www.tradealphaai.com/articles/${file}`)) failures.push(`sitemap-core.xml: ${file} missing`);
+  if (!arSitemap.includes(`https://www.tradealphaai.com/ar/articles/${file}`)) failures.push(`sitemap-ar.xml: ${file} missing`);
+  if (fs.existsSync(path.join(ROOT, 'insights', file)) || fs.existsSync(path.join(ROOT, 'ar', 'insights', file))) failures.push(`${slug}: duplicate exists under /insights/`);
+  const history = topics?.history || [];
+  if (!history.some((item) => item.slug === slug && item.status === 'published' && item.supervised === true)) failures.push(`${slug}: supervised publication history missing`);
+  if ((topics?.eligible || []).some((item) => item.id === slug)) failures.push(`${slug}: published concept remains eligible despite cooldown`);
+}
+
 if (failures.length) {
   failures.forEach((f) => console.error(`[educational-articles] FAIL: ${f}`));
   process.exit(1);

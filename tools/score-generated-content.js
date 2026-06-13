@@ -7,7 +7,9 @@ const ROOT = path.resolve(__dirname, '..');
 const slug = argValue('--slug');
 const type = argValue('--type') || 'editorial';
 const minScore = Number(argValue('--min-score') || 0);
-const targetDir = type === 'market_outlook' ? 'drafts/market-outlook' : 'drafts/editorial';
+const targetDir = type === 'market_outlook' ? 'drafts/market-outlook'
+  : type === 'educational' ? 'drafts/educational'
+  : 'drafts/editorial';
 const dirs = slug ? [path.join(ROOT, targetDir, slug)] : listDirs(path.join(ROOT, targetDir));
 const results = dirs.filter(fs.existsSync).map(scoreDraft);
 
