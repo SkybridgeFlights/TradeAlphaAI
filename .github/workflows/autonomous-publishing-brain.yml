@@ -271,6 +271,13 @@ jobs:
           node tools/apply-global-header.js || echo "[header] Apply degraded — continuing"
           echo "[phase68] Dashboard pages generated and global header applied."
 
+      - name: Generate institutional educational articles surface
+        run: |
+          node tools/build-educational-topics.js --write
+          node tools/generate-articles-index.js --write
+          node tools/generate-seo-sitemaps.js
+          echo "[educational-articles] Topic decisions, bilingual indexes, and sitemaps regenerated."
+
       - name: Generate market outlook pages
         if: ${{ env.MODE == 'full_pipeline' || env.MODE == 'generate_only' }}
         run: |
@@ -294,6 +301,7 @@ jobs:
           npm run check:editorial-graphics
           npm run check:graphic-exports
           npm run check:distribution-plan
+          npm run check:educational-articles
           npm run test:platform-relevance
           npm run check:briefs-section
           npm run check:market-news
@@ -574,7 +582,7 @@ jobs:
               stage_paths market-dashboard ar/market-dashboard macro-dashboard ar/macro-dashboard etf-dashboard ar/etf-dashboard
               stage_paths market-replay ar/market-replay intelligence ar/intelligence en/intelligence system-status
               stage_paths market-outlook/daily market-outlook/weekly ar/market-outlook/daily ar/market-outlook/weekly
-              stage_paths index.html ar/index.html market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html
+              stage_paths index.html ar/index.html articles ar/articles market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html
               stage_paths js/visual-intelligence.js js/market-replay.js css/visual-intelligence.css css/newsroom.css
               stage_glob "sitemap*.xml"
               commit_message="Autonomous site intelligence update"
@@ -599,7 +607,7 @@ jobs:
             stage_paths data/system-status/market-intelligence-status.json data/system-status/intelligence-health.json
             stage_paths logs/intelligence-quality-history.json data/feeds data/narrative-memory.json
             stage_paths data/telegram-delivery-ledger.json
-            stage_paths market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html system-status
+            stage_paths articles ar/articles market-outlook/index.html ar/market-outlook/index.html intelligence/index.html ar/intelligence/index.html system-status
             stage_paths sitemap-core.xml sitemap-market.xml index.html ar/index.html
             stage_glob "sitemap*.xml"
             commit_message="Autonomous publish ${slug}"
