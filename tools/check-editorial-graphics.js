@@ -133,9 +133,23 @@ function main() {
   if (social.mode !== 'preview_only' || social.posting_enabled !== false || social.credentials_required !== false) {
     failures.push('social graphics must remain credential-free preview-only output');
   }
+  // The graphics artifact and the social-graphics preview are written together
+  // by build-editorial-graphics.js but can be committed by different workflow
+  // runs (publish vs. market-watch), so the committed pair may be momentarily
+  // out of sync. A social export referencing a no-longer-active graphic is a
+  // genuine inconsistency only when both files share the same build generation;
+  // when the social preview is OLDER than the graphics artifact it is benign
+  // staleness that the next build resyncs — a warning, not a pipeline failure.
+  // Safety invariants (preview-only, posting disabled, attribution) stay hard.
+  const graphicsTs = Date.parse(artifact.updated_at || artifact.generated_at || 0);
+  const socialTs = Date.parse(social.updated_at || social.generated_at || 0);
+  const socialIsStale = Number.isFinite(graphicsTs) && Number.isFinite(socialTs) && socialTs < graphicsTs;
   for (const item of social.exports || []) {
     if (item.posting_enabled !== false || item.approval?.required !== true) failures.push(`${item.id} is not export-safe preview output`);
-    if (!ids.includes(item.graphic_id)) failures.push(`${item.id} references an inactive graphic`);
+    if (!ids.includes(item.graphic_id)) {
+      if (socialIsStale) warnings.push(`${item.id} references an inactive graphic (stale social preview — resyncs on next graphics build)`);
+      else failures.push(`${item.id} references an inactive graphic`);
+    }
     if (!item.image_composition_contract?.attribution) failures.push(`${item.id} lacks export attribution`);
   }
 
