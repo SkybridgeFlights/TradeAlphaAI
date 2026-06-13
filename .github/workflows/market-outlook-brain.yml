@@ -53,6 +53,7 @@ jobs:
           node tools/build-global-macro-events.js --write || echo "[outlook] global macro acquisition degraded — continuing"
           node tools/build-economic-intelligence.js --fetch --write || echo "[outlook] economic intelligence degraded — continuing"
           node tools/build-macro-reactions.js --write || echo "[outlook] macro reactions degraded — continuing"
+          node tools/build-liquidity-regime.js --write || echo "[outlook] liquidity regime degraded — continuing"
           node tools/build-market-pulse.js --write || echo "[outlook] pulse degraded — continuing"
           node tools/build-market-cognition.js --write || echo "[outlook] cognition degraded — continuing"
           node tools/build-macro-cognition.js --write || echo "[outlook] macro cognition degraded — continuing"
@@ -78,6 +79,7 @@ jobs:
           npm run check:economic-intelligence
           npm run check:forecast-consensus
           npm run check:macro-reactions
+          npm run check:liquidity-regime
           npm run check:distribution-plan
 
       - name: Commit refreshed intelligence (only when changed)

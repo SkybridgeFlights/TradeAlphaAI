@@ -43,6 +43,7 @@ jobs:
 
       - name: Refresh brief intelligence + surface
         run: |
+          node tools/build-liquidity-regime.js --write || echo "[briefs] liquidity regime degraded — continuing"
           node tools/build-intelligence-briefs.js --write || echo "[briefs] brief build degraded — continuing"
           node tools/generate-briefs-index.js --write || echo "[briefs] surface regen degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[briefs] sitemap regen degraded — continuing"
@@ -55,6 +56,7 @@ jobs:
       - name: Validate
         run: |
           npm run check:briefs-section
+          npm run check:liquidity-regime
           npm run check:distribution-plan
           npm run check:seo
           npm run check:bilingual-structure

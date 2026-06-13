@@ -43,6 +43,7 @@
       labelRevision: 'Revision', revisedFrom: 'Revised from', macroRead: 'Macro reading', assetSensitivity: 'Affected assets',
       acqOfficial: 'Official schedule', acqRecurring: 'Est. recurring', labelRegion: 'Region', labelSourceConfidence: 'Source confidence',
       labelReaction: 'Market reaction', labelConviction: 'Reaction conviction', labelCrossAsset: 'Cross-asset confirmation', reactionAwaiting: 'Awaiting reaction data',
+      labelRegime: 'Market regime', labelLiquidity: 'Liquidity', labelStability: 'Stability', labelCoherence: 'Cross-asset coherence',
     },
     ar: {
       today: 'اليوم', tomorrow: 'غداً', thisWeek: 'هذا الأسبوع', nextWeek: 'الأسبوع القادم',
@@ -84,8 +85,29 @@
       labelRevision: 'مراجعة', revisedFrom: 'روجِع من', macroRead: 'القراءة الكلية', assetSensitivity: 'الأصول المتأثرة',
       acqOfficial: 'جدول رسمي', acqRecurring: 'دوري تقديري', labelRegion: 'المنطقة', labelSourceConfidence: 'ثقة المصدر',
       labelReaction: 'تفاعل السوق', labelConviction: 'قناعة التفاعل', labelCrossAsset: 'تأكيد عبر الأصول', reactionAwaiting: 'بانتظار بيانات التفاعل',
+      labelRegime: 'نظام السوق', labelLiquidity: 'السيولة', labelStability: 'الاستقرار', labelCoherence: 'الاتساق عبر الأصول',
     }
   };
+
+  // Phase 106 — regime / liquidity / stability → localized display.
+  var REGIME_LABELS = {
+    healthy_risk_expansion: { en: 'Healthy risk expansion', ar: 'توسّع مخاطر صحي' }, broad_risk_support: { en: 'Broad risk support', ar: 'دعم مخاطر واسع' },
+    narrow_leadership: { en: 'Narrow leadership', ar: 'قيادة ضيقة' }, crowded_growth_positioning: { en: 'Crowded growth positioning', ar: 'تمركز نمو مزدحم' },
+    defensive_rotation: { en: 'Defensive rotation', ar: 'تدوير دفاعي' }, liquidity_stress: { en: 'Liquidity stress', ar: 'ضغط سيولة' },
+    unstable_rally: { en: 'Unstable rally', ar: 'صعود غير مستقر' }, volatility_transition: { en: 'Volatility transition', ar: 'تحوّل تذبذب' },
+    yield_pressure_regime: { en: 'Yield pressure', ar: 'ضغط العوائد' }, macro_fragility: { en: 'Macro fragility', ar: 'هشاشة كلية' }, indeterminate: { en: '—', ar: '—' },
+  };
+  var LIQUIDITY_LABELS = {
+    easing: { en: 'Easing', ar: 'تيسير' }, tightening: { en: 'Tightening', ar: 'تشديد' }, yield_pressure: { en: 'Yield pressure', ar: 'ضغط العوائد' },
+    defensive_demand: { en: 'Defensive demand', ar: 'طلب دفاعي' }, volatility_absorption: { en: 'Volatility absorption', ar: 'امتصاص تذبذب' },
+    volatility_rejection: { en: 'Volatility rejection', ar: 'رفض تذبذب' }, neutral: { en: 'Neutral', ar: 'محايد' }, indeterminate: { en: '—', ar: '—' },
+  };
+  var STABILITY_LABELS = {
+    stable: { en: 'Stable', ar: 'مستقر' }, fragile: { en: 'Fragile', ar: 'هش' }, deteriorating: { en: 'Deteriorating', ar: 'يتدهور' },
+    unstable: { en: 'Unstable', ar: 'غير مستقر' }, strengthening: { en: 'Strengthening', ar: 'يتقوّى' }, transition_state: { en: 'Transition', ar: 'انتقالي' }, indeterminate: { en: '—', ar: '—' },
+  };
+  function lbl(map, key) { var m = map[key]; return m ? (m[lang] || m.en) : String(key || '').replace(/_/g, ' '); }
+  var regimeContext = null; // Phase 106 — current structural regime (single global object)
 
   // Phase 105 — reaction classification + conviction → localized display.
   var REACTION_LABELS = {
@@ -129,9 +151,13 @@
   var macroReactionById = null; // Phase 105 — reaction intelligence by event id
 
   function ensureEconIntel(cb) {
-    if (econIntelById !== null && macroReactionById !== null) { cb(); return; }
-    var pending = 2;
+    if (econIntelById !== null && macroReactionById !== null && regimeContext !== null) { cb(); return; }
+    var pending = 3;
     var done = function () { if (--pending <= 0) cb(); };
+    fetch('/data/intelligence/liquidity-regime.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { regimeContext = d || {}; done(); })
+      .catch(function () { regimeContext = {}; done(); });
     fetch('/data/intelligence/economic-intelligence.json')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
@@ -901,6 +927,15 @@
         } else if (e.econ_intel && ['released', 'parsed', 'revised', 'delayed'].indexOf((e.econ_intel || {}).release_state) >= 0) {
           html += '<dt>' + esc(L.labelReaction) + '</dt><dd class="ec-rx-await">' + esc(L.reactionAwaiting) + '</dd>';
         }
+      }
+
+      // Phase 106: structural market-regime context (environment for the reaction).
+      if (regimeContext && regimeContext.regime && regimeContext.regime !== 'indeterminate') {
+        var rg = regimeContext;
+        html += '<dt>' + esc(L.labelRegime) + '</dt><dd class="ec-regime-state">' + esc(lbl(REGIME_LABELS, rg.regime)) + '</dd>';
+        if (rg.liquidity_state && rg.liquidity_state !== 'indeterminate') html += '<dt>' + esc(L.labelLiquidity) + '</dt><dd>' + esc(lbl(LIQUIDITY_LABELS, rg.liquidity_state)) + '</dd>';
+        if (rg.stability && rg.stability !== 'indeterminate') html += '<dt>' + esc(L.labelStability) + '</dt><dd>' + esc(lbl(STABILITY_LABELS, rg.stability)) + '</dd>';
+        if (rg.cross_asset_coherence && typeof rg.cross_asset_coherence.score === 'number') html += '<dt>' + esc(L.labelCoherence) + '</dt><dd>' + rg.cross_asset_coherence.score + '</dd>';
       }
 
       if (!html) return '';
