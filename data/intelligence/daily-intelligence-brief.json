@@ -1,28 +1,39 @@
 {
   "version": "2.0",
   "product": "Daily Market Brief 2.0",
-  "updated_at": "2026-06-13T12:13:59.517Z",
+  "updated_at": "2026-06-13T23:10:49.081Z",
   "run_date": "2026-06-13",
   "verified": true,
   "desk_lead": {
-    "en": "Macro Desk: Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing. The NVDA/QQQ link is not holding — a 2-session strain; that is where the tape's internal argument lives. The next scheduled resolution point is Retail Sales.",
-    "ar": "مكتب الماكرو: اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. رابط NVDA/QQQ لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق. نقطة الحسم المجدولة التالية هي Retail Sales."
+    "en": "Macro Desk: Regime coherence 100/100 — the observed cross-asset tape is largely aligned. The next scheduled resolution point is BoJ Rate Decision.",
+    "ar": "مكتب الماكرو: اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير. نقطة الحسم المجدولة التالية هي BoJ Rate Decision."
   },
   "regime": {
     "state": "healthy-trend",
     "state_ar": "healthy-trend",
     "coherence": {
-      "score": 50,
-      "band": "tense",
+      "score": 100,
+      "band": "coherent",
       "observed_links": 2,
-      "en": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
-      "ar": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
+      "en": "Regime coherence 100/100 — the observed cross-asset tape is largely aligned.",
+      "ar": "اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
     },
-    "conviction": "strengthening-conviction",
+    "conviction": "healthy-trend-structure",
     "volatility": "unverified"
   },
   "what_changed": [],
   "confirms": [
+    {
+      "id": "ai-growth",
+      "legs": [
+        "nvda",
+        "qqq"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "AI leadership drives the growth complex",
+      "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
+    },
     {
       "id": "breadth-link",
       "legs": [
@@ -35,38 +46,14 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
-  "diverges": [
-    {
-      "id": "ai-growth",
-      "legs": [
-        "nvda",
-        "qqq"
-      ],
-      "state": "diverging",
-      "chain_strength": 2,
-      "en": "AI leadership drives the growth complex",
-      "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
-    }
-  ],
+  "diverges": [],
   "contradictions": [],
   "pressure_active": [],
   "next_catalysts": [
     {
-      "name": "Retail Sales",
-      "name_ar": "مبيعات التجزئة",
-      "time": "2026-06-17T12:30:00.000Z",
-      "assets": [
-        "Treasury yields",
-        "SPY",
-        "IWM",
-        "Oil",
-        "Defensive sectors"
-      ]
-    },
-    {
-      "name": "FOMC Rate Decision",
-      "name_ar": "قرار الفائدة للاحتياطي الفيدرالي",
-      "time": "2026-06-17T18:00:00.000Z",
+      "name": "BoJ Rate Decision",
+      "name_ar": "BoJ Rate Decision",
+      "time": "2026-06-16T03:00:00.000Z",
       "assets": [
         "Treasury yields",
         "DXY",
@@ -78,15 +65,29 @@
       ]
     },
     {
-      "name": "Initial Jobless Claims",
-      "name_ar": "طلبات إعانة البطالة الأولية",
-      "time": "2026-06-18T12:30:00.000Z",
+      "name": "RBA Rate Decision",
+      "name_ar": "RBA Rate Decision",
+      "time": "2026-06-16T03:30:00.000Z",
       "assets": [
         "Treasury yields",
         "DXY",
+        "Gold",
         "SPY",
-        "IWM",
+        "QQQ",
+        "TLT",
         "VIX"
+      ]
+    },
+    {
+      "name": "Canada CPI",
+      "name_ar": "Canada CPI",
+      "time": "2026-06-16T13:00:00.000Z",
+      "assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
       ]
     }
   ],
@@ -94,31 +95,31 @@
     {
       "rank": 1,
       "asset": "QQQ",
-      "score": 35,
-      "live_change_pct": 0.495,
+      "score": 29,
+      "live_change_pct": 0.5885,
       "drivers_en": [
-        "sourced move magnitude +0.49%",
-        "diverging ai/growth relationship",
+        "sourced move magnitude +0.59%",
+        "confirming ai/growth relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.49%",
-        "تباعد في علاقة ai/growth",
+        "حجم التحرك الموثق +0.59%",
+        "تأكيد في علاقة ai/growth",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 2,
       "asset": "SPY",
-      "score": 27,
-      "live_change_pct": 0.3795,
+      "score": 28,
+      "live_change_pct": 0.5408,
       "drivers_en": [
-        "sourced move magnitude +0.38%",
+        "sourced move magnitude +0.54%",
         "confirming breadth/link relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.38%",
+        "حجم التحرك الموثق +0.54%",
         "تأكيد في علاقة breadth/link",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
@@ -126,34 +127,32 @@
     {
       "rank": 3,
       "asset": "GOLD",
-      "score": 21,
-      "live_change_pct": 0.5203,
+      "score": 16,
+      "live_change_pct": 0.0569,
       "drivers_en": [
-        "sourced move magnitude +0.52%",
+        "sourced move magnitude +0.06%",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.52%",
+        "حجم التحرك الموثق +0.06%",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 4,
-      "asset": "NVDA",
-      "score": 17,
-      "live_change_pct": -0.2489,
+      "asset": "DXY",
+      "score": 15,
+      "live_change_pct": null,
       "drivers_en": [
-        "sourced move magnitude -0.25%",
-        "diverging ai/growth relationship"
+        "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -0.25%",
-        "تباعد في علاقة ai/growth"
+        "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 5,
-      "asset": "DXY",
+      "asset": "VIX",
       "score": 15,
       "live_change_pct": null,
       "drivers_en": [
@@ -168,31 +167,31 @@
     {
       "rank": 1,
       "asset": "QQQ",
-      "score": 35,
-      "live_change_pct": 0.495,
+      "score": 29,
+      "live_change_pct": 0.5885,
       "drivers_en": [
-        "sourced move magnitude +0.49%",
-        "diverging ai/growth relationship",
+        "sourced move magnitude +0.59%",
+        "confirming ai/growth relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.49%",
-        "تباعد في علاقة ai/growth",
+        "حجم التحرك الموثق +0.59%",
+        "تأكيد في علاقة ai/growth",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 2,
       "asset": "SPY",
-      "score": 27,
-      "live_change_pct": 0.3795,
+      "score": 28,
+      "live_change_pct": 0.5408,
       "drivers_en": [
-        "sourced move magnitude +0.38%",
+        "sourced move magnitude +0.54%",
         "confirming breadth/link relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.38%",
+        "حجم التحرك الموثق +0.54%",
         "تأكيد في علاقة breadth/link",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
@@ -200,33 +199,19 @@
     {
       "rank": 3,
       "asset": "GOLD",
-      "score": 21,
-      "live_change_pct": 0.5203,
+      "score": 16,
+      "live_change_pct": 0.0569,
       "drivers_en": [
-        "sourced move magnitude +0.52%",
+        "sourced move magnitude +0.06%",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.52%",
+        "حجم التحرك الموثق +0.06%",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 4,
-      "asset": "NVDA",
-      "score": 17,
-      "live_change_pct": -0.2489,
-      "drivers_en": [
-        "sourced move magnitude -0.25%",
-        "diverging ai/growth relationship"
-      ],
-      "drivers_ar": [
-        "حجم التحرك الموثق -0.25%",
-        "تباعد في علاقة ai/growth"
-      ]
-    },
-    {
-      "rank": 5,
       "asset": "DXY",
       "score": 15,
       "live_change_pct": null,
@@ -238,7 +223,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 5,
       "asset": "VIX",
       "score": 15,
       "live_change_pct": null,
@@ -250,7 +235,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "asset": "US10Y",
       "score": 15,
       "live_change_pct": null,
@@ -262,20 +247,34 @@
       ]
     },
     {
-      "rank": 8,
-      "asset": "OIL",
-      "score": 15,
-      "live_change_pct": null,
+      "rank": 7,
+      "asset": "NVDA",
+      "score": 9,
+      "live_change_pct": 0.1562,
       "drivers_en": [
-        "direct relevance to the next scheduled catalyst"
+        "sourced move magnitude +0.16%",
+        "confirming ai/growth relationship"
       ],
       "drivers_ar": [
-        "حساسية مباشرة للمحفز المجدول التالي"
+        "حجم التحرك الموثق +0.16%",
+        "تأكيد في علاقة ai/growth"
+      ]
+    },
+    {
+      "rank": 8,
+      "asset": "BTC",
+      "score": 0,
+      "live_change_pct": null,
+      "drivers_en": [
+        "structural watchlist relevance; no sourced move asserted"
+      ],
+      "drivers_ar": [
+        "حساسية هيكلية قيد المتابعة من دون ادعاء تحرك غير موثق"
       ]
     },
     {
       "rank": 9,
-      "asset": "BTC",
+      "asset": "OIL",
       "score": 0,
       "live_change_pct": null,
       "drivers_en": [
@@ -313,8 +312,8 @@
     },
     {
       "id": "next-catalyst",
-      "en": "Watch Retail Sales - 2026-06-17 12:30 UTC as the next scheduled test of the current regime.",
-      "ar": "راقب مبيعات التجزئة - 2026-06-17 12:30 UTC بوصفه الاختبار المجدول التالي للنظام الحالي.",
+      "en": "Watch BoJ Rate Decision - 2026-06-16 03:00 UTC as the next scheduled test of the current regime.",
+      "ar": "راقب BoJ Rate Decision - 2026-06-16 03:00 UTC بوصفه الاختبار المجدول التالي للنظام الحالي.",
       "source": "calendar"
     }
   ],
