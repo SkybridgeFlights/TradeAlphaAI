@@ -479,52 +479,106 @@ function sLabel(structure, dim, ar) {
   return ar ? d.label_ar : d.label_en;
 }
 
+// Each topic leads with a DISTINCT deep treatment of its focus dimension and a
+// topic-specific set of supporting reads, so two topics produce substantially
+// different prose (the duplicate-narrative validator enforces this). The deep
+// paragraph per focus is unique; supports and the watch close vary by topic.
+function structureFocusDeep(focus, L, t) {
+  const D = {
+    participation: () => t(`Participation is the structural core of this note, and it reads ${L('participation')}. Breadth answers whether index strength is shared across the market or carried by a narrow set of leaders — the same level can sit on broad participation or on a handful of names, and the two behave very differently when stress arrives. The desk reads this through index-level leadership, the regime breadth sub-state and the multi-session breadth memory rather than any oscillator, because the question is the quality of the advance, not its label. A market making highs on narrowing participation is structurally weaker than one grinding sideways with broad participation, even when the headline level says the opposite.`,
+      `المشاركة هي اللب الهيكلي لهذه المذكرة، وتقرأ ${L('participation')}. ويجيب الاتساع عمّا إذا كانت قوة المؤشر موزّعة عبر السوق أم محمولة على مجموعة ضيقة من القادة — فالمستوى نفسه قد يستند إلى مشاركة واسعة أو إلى حفنة من الأسماء، وتتصرف الحالتان تصرفاً مختلفاً تماماً عند وصول الضغط. ويقرأ المكتب ذلك عبر قيادة مستوى المؤشر وحالة اتساع النظام والذاكرة متعددة الجلسات بدل أي مذبذب، لأن السؤال هو جودة الصعود لا تسميته. فالسوق الذي يسجّل قمماً على مشاركة آخذة في التضيّق أضعف هيكلياً من سوق يتحرك جانبياً بمشاركة واسعة، حتى لو قال المستوى المعلن عكس ذلك.`),
+    volatility_structure: () => t(`Volatility structure is the focus here, and it reads ${L('volatility_structure')}. Compression is not the same as stability: a quiet tape can reflect genuine balance, or a temporary absence of force ahead of a catalyst, and the two carry opposite risk. The desk reads volatility as the market's pricing of how much it expects to move, then asks whether that pricing is consistent with participation and cross-asset coherence. Compression that coincides with narrowing breadth is a more fragile structure than compression on broad participation, because the cushion is thinner if the tape is forced to reprice. Calm is a starting condition to interrogate, not a conclusion to rest on.`,
+      `بنية التذبذب هي محور التركيز هنا، وتقرأ ${L('volatility_structure')}. والانضغاط ليس كالاستقرار: فالسوق الهادئ قد يعكس توازناً حقيقياً، أو غياباً مؤقتاً للقوة قبل محفز، وتحمل الحالتان مخاطرة متعاكسة. ويقرأ المكتب التذبذب بوصفه تسعير السوق لمقدار ما يتوقع أن يتحرك، ثم يسأل ما إذا كان ذلك التسعير متسقاً مع المشاركة والاتساق عبر الأصول. فالانضغاط المتزامن مع اتساع آخذ في التضيّق بنية أهش من الانضغاط على مشاركة واسعة، لأن الوسادة أرقّ إذا اضطر السوق لإعادة التسعير. فالهدوء حالة بداية تُستجوب لا خلاصة يُستراح إليها.`),
+    cross_asset: () => t(`Cross-asset coherence is the subject of this note, and it reads ${L('cross_asset')}. Coherence is the degree to which rates, the dollar, equities and gold are telling the same story — a coherent tape transmits a shock cleanly, while a divergent one fragments it, and divergences are often where structure changes first. The desk reads the coherence score and direction from the cross-asset state and the structural-tension layer, not from any single pair. When equities and the dollar disagree, or yields move against risk, the structure is carrying an unresolved tension even if the index level looks calm — and that tension is the structural signal worth tracking, well before it resolves into a regime change.`,
+      `الاتساق عبر الأصول هو موضوع هذه المذكرة، ويقرأ ${L('cross_asset')}. والاتساق هو درجة رواية العوائد والدولار والأسهم والذهب القصة نفسها — فالسوق المتسق ينقل الصدمة بوضوح، بينما يُجزّئها السوق المتباعد، وكثيراً ما تكون التباعدات حيث تتغير البنية أولاً. ويقرأ المكتب درجة الاتساق واتجاهه من حالة الأصول المتقاطعة وطبقة التوتر الهيكلي، لا من أي زوج منفرد. وحين تختلف الأسهم والدولار، أو تتحرك العوائد ضد المخاطر، تحمل البنية توتراً غير محلول حتى لو بدا مستوى المؤشر هادئاً — وذلك التوتر هو الإشارة الهيكلية الجديرة بالتتبع، قبل وقت طويل من تبلوره في تغيّر للنظام.`),
+    rotation: () => t(`Leadership rotation is the focus of this note, and it reads ${L('rotation')}. Rotation tells the desk whether defensive or cyclical leadership dominates, and it is one of the cleaner reads on what participants are actually positioning for beneath the index level. Defensive leadership — utilities, staples, healthcare carrying the tape — is a different structure from cyclical leadership even at the same index level, because it signals where conviction is concentrated. The desk reads rotation from the regime defensive sub-state and the observed sector leadership composition, and treats defensive rotation under otherwise broad participation as a genuinely mixed structure rather than collapsing it into a single directional call.`,
+      `تدوير القيادة هو محور هذه المذكرة، ويقرأ ${L('rotation')}. ويخبر التدوير المكتب بما إذا كانت القيادة دفاعية أم دورية، وهو من أوضح القراءات لما يتمركز له المشاركون فعلاً تحت مستوى المؤشر. فالقيادة الدفاعية — المرافق والسلع الأساسية والرعاية الصحية تحمل السوق — بنية مختلفة عن القيادة الدورية حتى عند المستوى نفسه، لأنها تشير إلى حيث تتركز القناعة. ويقرأ المكتب التدوير من حالة الدفاع في النظام وتركيب قيادة القطاعات المرصودة، ويعدّ التدوير الدفاعي في ظل مشاركة واسعة بقية الأبعاد بنية مختلطة فعلاً بدل دمجها في حكم اتجاهي واحد.`),
+    stability: () => t(`Structural stability is the focus here, and it reads ${L('stability')}. Stability frames how much stress the structure can absorb before it changes character — a stable structure can take a surprise and hold its shape, while a fragile one re-rates on a smaller shock. The desk reads stability from the regime stability state, the structural-tension level and the multi-session fragility memory, and crucially weights persistence: a structure that has held across several verified sessions earns more confidence than a single-session snapshot. Stability is not the absence of movement; it is the capacity to absorb movement without the underlying participation, coherence and rotation breaking down together.`,
+      `الاستقرار الهيكلي هو محور التركيز هنا، ويقرأ ${L('stability')}. ويؤطّر الاستقرار مقدار الضغط الذي تمتصه البنية قبل أن تتغير طبيعتها — فالبنية المستقرة تتحمّل مفاجأة وتحافظ على شكلها، بينما تعيد الهشة التسعير على صدمة أصغر. ويقرأ المكتب الاستقرار من حالة استقرار النظام ومستوى التوتر الهيكلي وذاكرة الهشاشة متعددة الجلسات، ويرجّح الاستمرارية بصورة حاسمة: فالبنية التي صمدت عبر عدة جلسات موثّقة تكتسب ثقة أكبر من لقطة جلسة واحدة. والاستقرار ليس غياب الحركة؛ بل القدرة على امتصاص الحركة دون أن تنهار المشاركة والاتساق والتدوير معاً.`),
+  };
+  return (D[focus] || D.participation)();
+}
+
+function structureBrief(dim, L, t) {
+  const B = {
+    participation: () => t(`Participation alongside this reads ${L('participation')} — the breadth context that tells the desk whether the focus structure is supported by the broad market or leaning on a narrow set of leaders.`,
+      `المشاركة إلى جانب ذلك تقرأ ${L('participation')} — سياق الاتساع الذي يخبر المكتب ما إذا كانت بنية التركيز مدعومة بالسوق العريض أم متّكئة على مجموعة ضيقة من القادة.`),
+    volatility_structure: () => t(`Volatility structure reads ${L('volatility_structure')} — the desk reads this as the market's pricing of expected movement, and asks whether calm reflects balance or a thin cushion ahead of a catalyst.`,
+      `بنية التذبذب تقرأ ${L('volatility_structure')} — ويقرأ المكتب ذلك بوصفه تسعير السوق للحركة المتوقعة، ويسأل ما إذا كان الهدوء يعكس توازناً أم وسادة رقيقة قبل محفز.`),
+    cross_asset: () => t(`Cross-asset coherence reads ${L('cross_asset')} — whether rates, the dollar and equities are telling the same story, which decides whether a shock would transmit cleanly or fragment across the tape.`,
+      `الاتساق عبر الأصول يقرأ ${L('cross_asset')} — ما إذا كانت العوائد والدولار والأسهم تروي القصة نفسها، وهو ما يقرر ما إذا كانت الصدمة ستنتقل بوضوح أم تتجزّأ عبر السوق.`),
+    rotation: () => t(`Leadership rotation reads ${L('rotation')} — defensive versus cyclical leadership is the desk's read on where conviction is concentrated beneath the headline level.`,
+      `تدوير القيادة يقرأ ${L('rotation')} — والقيادة الدفاعية مقابل الدورية هي قراءة المكتب لحيث تتركز القناعة تحت المستوى المعلن.`),
+    concentration: () => t(`Concentration reads ${L('concentration')} — how much of the move depends on a small set of names, which is the difference between a durable advance and one exposed to a single leadership group.`,
+      `التركّز يقرأ ${L('concentration')} — مقدار اعتماد الحركة على مجموعة صغيرة من الأسماء، وهو الفرق بين صعود متين وآخر مكشوف لمجموعة قيادة واحدة.`),
+    momentum: () => t(`The momentum structure reads ${L('momentum')} — whether leadership is broadening or narrowing, which the desk treats as the early tell on whether the structure is strengthening or quietly deteriorating.`,
+      `بنية الزخم تقرأ ${L('momentum')} — ما إذا كانت القيادة تتسع أم تضيق، وهو ما يعدّه المكتب المؤشر المبكر على ما إذا كانت البنية تتقوّى أم تتدهور بهدوء.`),
+    liquidity_participation: () => t(`Liquidity participation reads ${L('liquidity_participation')} — whether real flow is behind the move or whether it is thinning, which is the difference between an absorbable advance and an exhausted one.`,
+      `مشاركة السيولة تقرأ ${L('liquidity_participation')} — ما إذا كان تدفق حقيقي خلف الحركة أم أنها تترقّق، وهو الفرق بين صعود قابل للامتصاص وآخر مستنزَف.`),
+    persistence: () => t(`Persistence reads ${L('persistence')} — the honest record of how many verified sessions actually support the read, so a structure that has held earns more weight than a single snapshot.`,
+      `الاستمرارية تقرأ ${L('persistence')} — السجل الأمين لعدد الجلسات الموثّقة التي تدعم القراءة فعلاً، فتكتسب البنية التي صمدت وزناً أكبر من لقطة منفردة.`),
+    stability: () => t(`Structural stability reads ${L('stability')} — how much stress the structure can absorb before it changes character, the frame the desk holds every other dimension against.`,
+      `الاستقرار الهيكلي يقرأ ${L('stability')} — مقدار الضغط الذي تمتصه البنية قبل أن تتغير طبيعتها، وهو الإطار الذي يقيس المكتب عليه كل بُعد آخر.`),
+  };
+  return (B[dim] || B.participation)();
+}
+
+const STRUCTURE_PLAN = {
+  participation_breadth: { focus: 'participation', supports: ['concentration', 'momentum'] },
+  volatility_structure: { focus: 'volatility_structure', supports: ['cross_asset', 'liquidity_participation'] },
+  cross_asset_structure: { focus: 'cross_asset', supports: ['volatility_structure', 'rotation'] },
+  rotation_concentration: { focus: 'rotation', supports: ['concentration', 'participation'] },
+  structural_stability: { focus: 'stability', supports: ['liquidity_participation', 'persistence'] },
+};
+
+const STRUCTURE_HEADS = {
+  participation: ['Participation and breadth', 'المشاركة والاتساع'],
+  volatility_structure: ['Volatility structure', 'بنية التذبذب'],
+  cross_asset: ['Cross-asset coherence', 'الاتساق عبر الأصول'],
+  rotation: ['Leadership rotation', 'تدوير القيادة'],
+  stability: ['Structural stability', 'الاستقرار الهيكلي'],
+  concentration: ['Concentration', 'التركّز'],
+  momentum: ['Momentum structure', 'بنية الزخم'],
+  liquidity_participation: ['Liquidity participation', 'مشاركة السيولة'],
+  persistence: ['Persistence', 'الاستمرارية'],
+};
+
 function renderStructureBody(ctx, locale) {
   const ar = locale === 'ar';
   const t = (en, arT) => (ar ? arT : en);
   const s = ctx.structure || {};
   const topic = (ctx.structure_topic) || STRUCTURE_TOPICS[0];
+  const plan = STRUCTURE_PLAN[topic.id] || STRUCTURE_PLAN.participation_breadth;
   const title = ar ? topic.ar : topic.en;
   const eyebrow = t('Institutional Market Structure', 'بنية السوق المؤسسية');
   const conf = s.structural_confidence != null ? s.structural_confidence : null;
   const dom = s.dominant ? sLabel(s, s.dominant.dimension, ar) : null;
   const L = (dim) => sLabel(s, dim, ar);
+  const focusName = ar ? STRUCTURE_HEADS[plan.focus][1] : STRUCTURE_HEADS[plan.focus][0];
 
   const sections = [];
   const sec = (id, head, copy) => sections.push(`<section class="market-section" id="${id}"><div class="market-section-head"><span class="eyebrow">${esc(t('Structure desk', 'مكتب البنية'))}</span><h2>${esc(head)}</h2></div><div class="market-panel">${copy}</div></section>`);
   const p = (str) => `<p class="market-copy">${esc(str)}</p>`;
 
-  // 1) Lead — the structural reading, led by the dominant dimension.
-  sec('lead', t('The structural reading', 'القراءة الهيكلية'),
-    p(t(`This note reads the structure of the tape rather than any single print. Across the participation, volatility, cross-asset, rotation and stability dimensions the desk tracks, the most salient feature is ${dom || 'an indeterminate structure'}, and the composite read carries a structural confidence of ${conf != null ? conf : 'n/a'}/100. Structure is the question of what the surface level is built on, not where it goes next; the analysis below works through participation and stability rather than forecasting price.`,
-      `تقرأ هذه المذكرة بنية السوق بدل أي إصدار منفرد. وعبر أبعاد المشاركة والتذبذب والأصول المتقاطعة والتدوير والاستقرار التي يتتبعها المكتب، فإن أبرز ملمح هو ${dom || 'بنية غير محددة'}، وتحمل القراءة المركبة ثقة هيكلية تبلغ ${conf != null ? conf : 'غير متاح'}/100. والبنية هي مسألة ما يستند إليه المستوى السطحي لا وجهته التالية؛ ويعمل التحليل أدناه على المشاركة والاستقرار بدل التنبؤ بالسعر.`))
-    + p(t('It is a deterministic composition of verified upstream signals — the liquidity-regime engine, the cross-asset coherence read, the structural-tension layer and multi-session memory. The research-desk intelligence rail alongside this note carries the regime snapshot the structure read is measured against, and where a dimension lacks sufficient evidence it is reported as indeterminate rather than inferred, so the note degrades honestly instead of manufacturing structure.',
-      'وهي تركيب حتمي لإشارات منبع موثّقة — محرك نظام السيولة، وقراءة الاتساق عبر الأصول، وطبقة التوتر الهيكلي، والذاكرة متعددة الجلسات. ويحمل مسار استخبارات مكتب الأبحاث المرافق لهذه المذكرة لقطة النظام التي تُقاس عليها قراءة البنية، وحين يفتقر بُعد إلى أدلة كافية يُذكر بوصفه غير محدد بدل استنتاجه، لتتراجع المذكرة بأمانة بدل تصنيع بنية.')));
+  // 1) Lead — topic-specific opening (focus + dominant) + shared honesty clause.
+  sec('lead', ar ? topic.ar : topic.en,
+    p(t(`This note reads the market through one structural lens — ${focusName.toLowerCase()} — set within the desk's wider structure read, where the most salient feature across all dimensions is ${dom || 'an indeterminate structure'} and the composite carries a structural confidence of ${conf != null ? conf : 'n/a'}/100. Structure is the question of what the surface level is built on, not where it goes next, so the focus below is the quality of ${focusName.toLowerCase()} rather than any forecast of price.`,
+      `تقرأ هذه المذكرة السوق عبر عدسة هيكلية واحدة — ${focusName} — ضمن قراءة البنية الأوسع لدى المكتب، حيث أبرز ملمح عبر جميع الأبعاد هو ${dom || 'بنية غير محددة'} وتحمل القراءة المركبة ثقة هيكلية تبلغ ${conf != null ? conf : 'غير متاح'}/100. والبنية مسألة ما يستند إليه المستوى السطحي لا وجهته التالية، لذا فإن التركيز أدناه على جودة ${focusName} بدل أي تنبؤ بالسعر.`))
+    + p(t('It is a deterministic composition of verified upstream signals — the liquidity-regime engine, the cross-asset coherence read, the structural-tension layer and multi-session memory. The research-desk intelligence rail alongside this note carries the regime snapshot the structure read is measured against, and where a dimension lacks sufficient evidence it is reported as indeterminate rather than inferred.',
+      'وهي تركيب حتمي لإشارات منبع موثّقة — محرك نظام السيولة، وقراءة الاتساق عبر الأصول، وطبقة التوتر الهيكلي، والذاكرة متعددة الجلسات. ويحمل مسار استخبارات مكتب الأبحاث المرافق لهذه المذكرة لقطة النظام التي تُقاس عليها قراءة البنية، وحين يفتقر بُعد إلى أدلة كافية يُذكر بوصفه غير محدد بدل استنتاجه.')));
 
-  // 2) Participation & breadth.
-  sec('participation', t('Participation and breadth', 'المشاركة والاتساع'),
-    p(t(`Participation reads ${L('participation')}. Breadth is the structural question of whether strength is shared across the market or carried by a narrow set of leaders — the same index level can sit on broad participation or on a handful of names, and the two structures behave very differently when stress arrives. The desk reads this through index-level leadership, the regime breadth sub-state and the multi-session breadth memory rather than any oscillator.`,
-      `تقرأ المشاركة ${L('participation')}. والاتساع هو السؤال الهيكلي عمّا إذا كانت القوة موزّعة عبر السوق أم محمولة على مجموعة ضيقة من القادة — فمستوى المؤشر نفسه قد يستند إلى مشاركة واسعة أو إلى حفنة من الأسماء، وتتصرف البنيتان تصرفاً مختلفاً تماماً عند وصول الضغط. ويقرأ المكتب ذلك عبر قيادة مستوى المؤشر وحالة اتساع النظام والذاكرة متعددة الجلسات بدل أي مذبذب.`)));
+  // 2) Focus — the deep, topic-distinct treatment of the lead dimension.
+  sec(plan.focus === 'stability' ? 'regime' : plan.focus, focusName, p(structureFocusDeep(plan.focus, L, t)));
 
-  // 3) Volatility & cross-asset coherence.
-  sec('volatility-cross-asset', t('Volatility and cross-asset coherence', 'التذبذب والاتساق عبر الأصول'),
-    p(t(`Volatility structure reads ${L('volatility_structure')}, and cross-asset coherence reads ${L('cross_asset')}. These belong together: a coherent tape transmits a shock cleanly across rates, the dollar and equities, while a divergent one fragments it, and compression is not the same as stability — quiet can reflect genuine balance or a temporary absence of force ahead of a catalyst. The desk treats the difference between calm and stability as a structural question, not a reassurance.`,
-      `تقرأ بنية التذبذب ${L('volatility_structure')}، ويقرأ الاتساق عبر الأصول ${L('cross_asset')}. وهما يترافقان: فالسوق المتسق ينقل الصدمة بوضوح عبر العوائد والدولار والأسهم، بينما يُجزّئها السوق المتباعد، والانضغاط ليس كالاستقرار — فالهدوء قد يعكس توازناً حقيقياً أو غياباً مؤقتاً للقوة قبل محفز. ويعدّ المكتب الفرق بين الهدوء والاستقرار سؤالاً هيكلياً لا طمأنة.`)));
+  // 3) Supporting reads — topic-specific selection of other dimensions.
+  for (const dim of plan.supports) {
+    sec(`support-${dim}`, ar ? STRUCTURE_HEADS[dim][1] : STRUCTURE_HEADS[dim][0], p(structureBrief(dim, L, t)));
+  }
 
-  // 4) Rotation, concentration & momentum.
-  sec('rotation-concentration', t('Rotation, concentration and momentum', 'التدوير والتركّز والزخم'),
-    p(t(`Leadership rotation reads ${L('rotation')}, concentration reads ${L('concentration')}, and the momentum structure reads ${L('momentum')}. Rotation tells the desk whether defensive or cyclical leadership dominates; concentration measures how much of the move depends on a small set of names; and momentum structure asks whether that leadership is broadening or narrowing. Defensive rotation under otherwise broad participation is a classic mixed structure — the desk holds both readings rather than collapsing them into a single call.`,
-      `يقرأ تدوير القيادة ${L('rotation')}، ويقرأ التركّز ${L('concentration')}، وتقرأ بنية الزخم ${L('momentum')}. ويخبر التدوير المكتب بما إذا كانت القيادة دفاعية أم دورية؛ ويقيس التركّز مقدار اعتماد الحركة على مجموعة صغيرة من الأسماء؛ وتسأل بنية الزخم عمّا إذا كانت تلك القيادة تتسع أم تضيق. والتدوير الدفاعي في ظل مشاركة واسعة بقية الأبعاد بنية مختلطة كلاسيكية — ويحتفظ المكتب بالقراءتين بدل دمجهما في حكم واحد.`)));
-
-  // 5) Stability & liquidity participation.
-  sec('stability', t('Structural stability and liquidity', 'الاستقرار الهيكلي والسيولة'),
-    p(t(`The structural stability read is ${L('stability')}, with liquidity participation reading ${L('liquidity_participation')} and the persistence of the structure reading ${L('persistence')}. Stability frames how much stress the structure can absorb before it changes character; liquidity participation asks whether real flow is behind the move or whether it is thinning; and persistence is the honest record of how many verified sessions actually support the read. The desk weights a structure that has held across sessions differently from a single-session snapshot.`,
-      `قراءة الاستقرار الهيكلي هي ${L('stability')}، مع مشاركة سيولة تقرأ ${L('liquidity_participation')} واستمرارية للبنية تقرأ ${L('persistence')}. ويؤطّر الاستقرار مقدار الضغط الذي يمكن للبنية امتصاصه قبل أن تتغير طبيعتها؛ وتسأل مشاركة السيولة عمّا إذا كان تدفق حقيقي خلف الحركة أم أنها تترقّق؛ والاستمرارية هي السجل الأمين لعدد الجلسات الموثّقة التي تدعم القراءة فعلاً. ويرجّح المكتب بنية صمدت عبر الجلسات بصورة مختلفة عن لقطة جلسة واحدة.`)));
-
-  // 6) What the desk watches.
+  // 4) Watch — closes on the focus dimension specifically.
   sec('watch-next', t('What the desk watches', 'ما يراقبه المكتب'),
-    p(t('From here the desk watches whether participation broadens or narrows, whether cross-asset coherence holds as catalysts arrive, and whether defensive leadership deepens into a rotation or fades. Structure analysis is continuous: this note is one reading in a sequence, and the value is in how participation, coherence and stability evolve across sessions rather than in any single snapshot.',
-      'ومن هنا يراقب المكتب ما إذا كانت المشاركة تتسع أم تضيق، وما إذا كان الاتساق عبر الأصول يصمد مع وصول المحفزات، وما إذا كانت القيادة الدفاعية تتعمّق إلى تدوير أم تتلاشى. وتحليل البنية مستمر: فهذه المذكرة قراءة ضمن سلسلة، والقيمة في كيفية تطوّر المشاركة والاتساق والاستقرار عبر الجلسات لا في أي لقطة منفردة.')));
+    p(t(`From here the desk watches ${focusName.toLowerCase()} specifically — whether it strengthens, holds or breaks down as catalysts arrive — and how it interacts with the rest of the structure. Structure analysis is continuous: this note is one reading of ${focusName.toLowerCase()} in a sequence, and the value is in how it evolves across verified sessions rather than in any single snapshot.`,
+      `ومن هنا يراقب المكتب ${focusName} تحديداً — ما إذا كانت تتقوّى أو تثبت أو تنهار مع وصول المحفزات — وكيف تتفاعل مع بقية البنية. وتحليل البنية مستمر: فهذه المذكرة قراءة لـ${focusName} ضمن سلسلة، والقيمة في كيفية تطوّرها عبر الجلسات الموثّقة لا في أي لقطة منفردة.`)));
 
   const body = injectPanels(sections.join('\n'), ctx, locale);
   const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
