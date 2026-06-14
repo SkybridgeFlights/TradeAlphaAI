@@ -4130,6 +4130,56 @@
 
 .market-section blockquote p { margin: 0; }
 
+/* ── Phase 120: premium long-form reading rhythm for published article bodies
+   (market-news / daily research / market-structure / educational). Scoped to
+   article pages via their body markers so index/dashboard pages are untouched.
+   Generated copy lives inside .market-panel, so the earlier ".market-section >
+   .market-copy" reading rules never reached it — paragraphs rendered full-width
+   in stacked cards with large gaps. These rules restore an institutional
+   measure, an even paragraph rhythm and tighter (still elegant) section spacing
+   so the page reads as continuous long-form research, not fragmented blocks. */
+body[data-market-news-article] .market-section,
+body[data-educational-article] .market-section {
+  margin-bottom: 20px;
+}
+body[data-market-news-article] .market-section-head,
+body[data-educational-article] .market-section-head {
+  margin-bottom: 12px;
+}
+body[data-market-news-article] .market-panel .market-copy,
+body[data-educational-article] .market-panel .market-copy {
+  max-width: 74ch;
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+body[data-market-news-article] .market-panel .market-copy + .market-copy,
+body[data-educational-article] .market-panel .market-copy + .market-copy {
+  margin-top: 0.95rem;
+}
+body[data-market-news-article] .market-panel .market-copy:first-of-type,
+body[data-educational-article] .market-panel .market-copy:first-of-type {
+  font-size: 1.06rem;
+  color: var(--market-text, #f4f7f1);
+}
+/* Arabic long-form: keep the more generous line-height at the institutional measure. */
+[dir="rtl"] body[data-market-news-article] .market-panel .market-copy,
+[dir="rtl"] body[data-educational-article] .market-panel .market-copy {
+  max-width: 70ch;
+  line-height: 1.95;
+}
+/* Inline evidence panels + the intelligence rail sit within the prose column. */
+body[data-market-news-article] .article-evidence-panel,
+body[data-educational-article] .article-evidence-panel { margin: 1.4rem auto; max-width: 74ch; }
+body[data-market-news-article] .research-intel-rail,
+body[data-educational-article] .research-intel-rail { margin: 1rem 0 1.4rem; }
+/* Mobile: comfortable density without crowding. */
+@media (max-width: 640px) {
+  body[data-market-news-article] .market-section,
+  body[data-educational-article] .market-section { margin-bottom: 16px; }
+  body[data-market-news-article] .market-panel .market-copy,
+  body[data-educational-article] .market-panel .market-copy { font-size: 1rem; line-height: 1.75; }
+}
+
 /* Editorial visual slot anchor (Phase 86 architecture — inert until a
    renderer resolves <!-- editorial:visual-slot --> markers) */
 .editorial-visual-slot {
