@@ -134,7 +134,7 @@ function regimeVisuals(rg) {
     analytical_reason: { regime: rg.regime, question: 'What is the structural environment macro reactions are landing in?' },
     narrative_hook: {
       en: `The liquidity snapshot frames the environment: a ${clean(rg.regime)} regime with ${clean(rg.liquidity_state)} liquidity and ${clean(rg.stability)} stability.`,
-      ar: `يؤطّر مشهد السيولة البيئة: نظام ${clean(rg.regime)} مع سيولة ${clean(rg.liquidity_state)} واستقرار ${clean(rg.stability)}.`,
+      ar: `يؤطّر مشهد السيولة البيئة: نظام ${arVal('regime', rg.regime)} مع سيولة ${arVal('liquidity', rg.liquidity_state)} واستقرار ${arVal('stability', rg.stability)}.`,
     },
     evidence: { regime: rg.regime, liquidity_state: rg.liquidity_state, stability: rg.stability, coherence: coh, sub_states: sub },
     assets: [],

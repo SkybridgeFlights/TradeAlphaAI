@@ -19,6 +19,7 @@
 const fs = require('fs');
 const path = require('path');
 const { scoreArticle, QUALITY_FLOOR } = require('./editorial-quality');
+const { scoreVisual, VISUAL_QUALITY_FLOOR } = require('./visual-quality');
 
 const ROOT = path.resolve(__dirname, '..');
 const ELIG = path.join(ROOT, 'data', 'intelligence', 'news-eligibility.json');
@@ -26,6 +27,8 @@ const INTEL = path.join(ROOT, 'data', 'intelligence', 'economic-intelligence.jso
 const REACTIONS = path.join(ROOT, 'data', 'intelligence', 'macro-reactions.json');
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const CROSS = path.join(ROOT, 'data', 'intelligence', 'cross-asset-state.json');
+const CHART_INTEL = path.join(ROOT, 'data', 'visual', 'chart-intelligence.json');
+const MAX_PANELS = 2;
 const COVERAGE = path.join(ROOT, 'data', 'intelligence', 'market-news-coverage.json');
 const EN_INDEX = path.join(ROOT, 'market-news', 'index.html');
 const AR_INDEX = path.join(ROOT, 'ar', 'market-news', 'index.html');
@@ -60,6 +63,90 @@ function gatherContext(elig) {
     || null;
   const reaction = event ? (reactions.reactions || []).find((r) => r.event_id === event.id) : null;
   return { elig, event, reaction, regime, cross };
+}
+
+// Phase 114 — deterministic placement of chart-intelligence panels by section.
+const PANEL_PLACEMENT = {
+  cross_asset_divergence: 'confirmation', macro_confirmation_matrix: 'confirmation',
+  reaction_persistence: 'confirmation', fading_reaction: 'confirmation',
+  dollar_vs_gold_structure: 'cross-asset', yields_vs_equities_relationship: 'cross-asset',
+  liquidity_regime_snapshot: 'regime', risk_regime_transition: 'regime', yield_pressure_structure: 'regime',
+  volatility_transition: 'regime', defensive_rotation: 'regime', breadth_fragility: 'regime', catalyst_window: 'cross-asset',
+};
+// Priority order so a reaction article leads with its reaction evidence.
+const PANEL_PRIORITY = ['cross_asset_divergence', 'macro_confirmation_matrix', 'reaction_persistence', 'fading_reaction', 'liquidity_regime_snapshot', 'risk_regime_transition'];
+
+// Select up to MAX_PANELS justified, quality-passing chart-intelligence panels
+// relevant to this article. Deterministic; no duplicate type or section.
+function selectPanels(ctx, locale) {
+  let manifest; try { manifest = JSON.parse(fs.readFileSync(CHART_INTEL, 'utf8')); } catch { return []; }
+  const visuals = (manifest.visuals || []).filter((v) => {
+    if (!v.narrative_hook || !v.narrative_hook[locale]) return false;
+    if (!v.analytical_reason) return false;
+    if (!v.files || !v.files[locale]) return false;
+    if (!fs.existsSync(path.join(ROOT, v.files[locale]))) return false;
+    if (!PANEL_PLACEMENT[v.chart_type]) return false;
+    const s = scoreVisual(v);
+    return s.flags.length === 0 && s.score >= VISUAL_QUALITY_FLOOR;
+  });
+  // Reaction panels are relevant only when this article's reaction has data.
+  const reactionTypes = new Set(['cross_asset_divergence', 'macro_confirmation_matrix', 'reaction_persistence', 'fading_reaction']);
+  const hasReaction = ctx.reaction && ctx.reaction.has_reaction_data;
+  const eligible = visuals.filter((v) => (reactionTypes.has(v.chart_type) ? hasReaction : true));
+
+  const picked = []; const seenType = new Set(); const seenSection = new Set();
+  for (const type of PANEL_PRIORITY) {
+    if (picked.length >= MAX_PANELS) break;
+    const v = eligible.find((x) => x.chart_type === type);
+    if (!v || seenType.has(v.chart_type)) continue;
+    const section = PANEL_PLACEMENT[v.chart_type];
+    if (seenSection.has(section)) continue; // one panel per section, no clutter
+    picked.push({ visual: v, section });
+    seenType.add(v.chart_type); seenSection.add(section);
+  }
+  return picked;
+}
+
+function panelFigure(visual, locale, manifest) {
+  const ar = locale === 'ar';
+  let svg = '';
+  try { svg = fs.readFileSync(path.join(ROOT, visual.files[locale]), 'utf8'); } catch { return ''; }
+  // Make the fixed-size SVG responsive: drop width/height from the <svg> tag,
+  // keep the viewBox so aspect ratio is preserved and CSS controls the size.
+  svg = svg.replace(/(<svg\b[^>]*?)\s+width="\d+"\s+height="\d+"/, '$1');
+  const hook = visual.narrative_hook[locale];
+  const reason = (visual.analytical_reason && visual.analytical_reason.question) || '';
+  const asOf = (manifest.generated_at || '').slice(0, 10) || '—';
+  const attribution = ar ? 'المصدر: مرجعَا نظام السيولة والتفاعل لدى TradeAlphaAI' : 'Source: TradeAlphaAI liquidity-regime + reaction artifacts';
+  const asOfLabel = ar ? 'لقطة · بتاريخ' : 'Snapshot · as of';
+  return `<figure class="article-evidence-panel" data-chart-type="${esc(visual.chart_type)}">
+  <div class="aep-svg">${svg}</div>
+  <figcaption class="aep-caption">
+    <span class="aep-hook">${esc(hook)}</span>
+    ${reason ? `<span class="aep-reason">${esc(reason)}</span>` : ''}
+    <span class="aep-attrib">${esc(attribution)} · ${esc(asOfLabel)} ${esc(asOf)}</span>
+  </figcaption>
+</figure>`;
+}
+
+function injectPanels(body, ctx, locale) {
+  const picked = selectPanels(ctx, locale);
+  if (!picked.length) return body;
+  let manifest = {}; try { manifest = JSON.parse(fs.readFileSync(CHART_INTEL, 'utf8')); } catch { /* none */ }
+  let out = body;
+  for (const { visual, section } of picked) {
+    const fig = panelFigure(visual, locale, manifest);
+    if (!fig) continue;
+    // Insert the figure immediately after the target section's closing tag.
+    const marker = `id="${section}"`;
+    const idx = out.indexOf(marker);
+    if (idx < 0) { out += `\n${fig}`; continue; }
+    const close = out.indexOf('</section>', idx);
+    if (close < 0) { out += `\n${fig}`; continue; }
+    const insertAt = close + '</section>'.length;
+    out = out.slice(0, insertAt) + `\n${fig}` + out.slice(insertAt);
+  }
+  return out;
 }
 
 // ── Bilingual article rendering ───────────────────────────────────────────────
@@ -152,8 +239,9 @@ function renderArticle(ctx, locale) {
     p(t('The desk watches whether the cross-asset reaction strengthens or fades through the session, whether breadth confirms the index-level move, and whether the liquidity and regime backdrop absorbs or rejects the release. Revisions and the next data in the same cluster will retest this reading.',
       'يراقب المكتب ما إذا كان التفاعل عبر الأصول يتقوّى أو يتلاشى خلال الجلسة، وما إذا كان الاتساع يؤكد حركة المؤشر، وما إذا كانت خلفية السيولة والنظام تمتص الإصدار أو ترفضه. وستعيد المراجعات والبيانات التالية في المجموعة نفسها اختبار هذه القراءة.')));
 
-  const body = sections.join('\n');
-  const wordCount = body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  // Phase 114: inline the justified chart-intelligence SVG panels deterministically.
+  const body = injectPanels(sections.join('\n'), ctx, locale);
+  const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { title, eyebrow, body, wordCount };
 }
 
@@ -290,8 +378,8 @@ function publish(write) {
   // Phase 109: editorial-quality gate. Score the rendered bodies for flow,
   // repetition, filler/cliché, retail TA, predictions and null leaks. A piece
   // must be flag-free and clear the quality floor in BOTH languages to publish.
-  const enText = renderArticle(ctx, 'en').body.replace(/<[^>]+>/g, ' ');
-  const arText = renderArticle(ctx, 'ar').body.replace(/<[^>]+>/g, ' ');
+  const enText = renderArticle(ctx, 'en').body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
+  const arText = renderArticle(ctx, 'ar').body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
   const quality = scoreArticle({ en: enText, ar: arText });
   if (quality.flags.length || quality.min_score < QUALITY_FLOOR) {
     console.log(`[market-news-article] editorial-quality gate failed (min_score=${quality.min_score}/${QUALITY_FLOOR}, flags=${JSON.stringify(quality.flags)}) — NOT publishing.`);

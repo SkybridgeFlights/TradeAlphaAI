@@ -4333,3 +4333,19 @@ html[dir="rtl"] .figure-annotation { line-height: 1.85; }
 .ri-note { margin: 0.85rem 0 0; font-size: 0.82rem; color: rgba(203, 213, 225, 0.78); line-height: 1.5; }
 [dir="rtl"] .ri-label { letter-spacing: 0; }
 @media (max-width: 600px) { .ri-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Phase 114: inline chart-intelligence evidence panel (dark, institutional) */
+.article-evidence-panel {
+  margin: 1.75rem 0;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.article-evidence-panel .aep-svg { border-radius: 8px; overflow: hidden; }
+.article-evidence-panel .aep-svg svg { display: block; width: 100%; height: auto; }
+.aep-caption { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.75rem 0.5rem 0.25rem; }
+.aep-hook { font-size: 0.95rem; font-weight: 500; color: rgba(203, 213, 225, 0.92); line-height: 1.5; }
+.aep-reason { font-size: 0.8rem; color: rgba(148, 163, 184, 0.85); font-style: italic; }
+.aep-attrib { font-size: 0.72rem; color: rgba(148, 163, 184, 0.7); letter-spacing: 0.01em; }
+@media print { .article-evidence-panel { break-inside: avoid; } }
