@@ -18,6 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { scoreArticle, QUALITY_FLOOR } = require('./editorial-quality');
 
 const ROOT = path.resolve(__dirname, '..');
 const ELIG = path.join(ROOT, 'data', 'intelligence', 'news-eligibility.json');
@@ -133,9 +134,18 @@ function renderArticle(ctx, locale) {
   // 6. Confirmation / divergence
   sec('confirmation', t('What confirms, what diverges', 'ما يؤكد وما يتباعد'),
     p(rx && rx.has_reaction_data
-      ? t(`Confirmation is measured by breadth and persistence: ${(rx.cross_asset_matrix || []).filter((m) => m.confirms === true).length} of ${(rx.cross_asset_matrix || []).filter((m) => m.confirms !== null).length} tracked assets moved with the expected transmission. Divergence in the remainder is where the desk concentrates scrutiny.`,
-          `يُقاس التأكيد بالاتساع والاستمرارية: تحرّك ${(rx.cross_asset_matrix || []).filter((m) => m.confirms === true).length} من ${(rx.cross_asset_matrix || []).filter((m) => m.confirms !== null).length} أصول وفق الأثر المتوقع. والتباعد في البقية هو حيث يركّز المكتب تدقيقه.`)
+      ? t(`Confirmation is measured by breadth and persistence rather than the print itself: ${(rx.cross_asset_matrix || []).filter((m) => m.confirms === true).length} of ${(rx.cross_asset_matrix || []).filter((m) => m.confirms !== null).length} tracked assets moved with the expected transmission, and the evidence rail below sets out each one. Where an asset breaks from the others, the reaction loses the cross-asset agreement that an institutional desk treats as the real test, so it is the divergence rather than the headline that frames how much weight the move can carry.`,
+          `يُقاس التأكيد بالاتساع والاستمرارية لا بالرقم ذاته: تحرّك ${(rx.cross_asset_matrix || []).filter((m) => m.confirms === true).length} من ${(rx.cross_asset_matrix || []).filter((m) => m.confirms !== null).length} أصول وفق الأثر المتوقع، ويعرض مسار الأدلة أدناه كلاً منها. وحين ينفصل أصل عن البقية يفقد التفاعل الاتساق عبر الأصول الذي يعدّه المكتب المؤسسي الاختبار الحقيقي، إذ يصبح التباعد لا العنوان هو ما يحدد وزن الحركة.`)
       : t('Until reaction windows are observed, confirmation and divergence remain open questions; the desk avoids asserting either from the headline alone.', 'حتى تُرصد نوافذ التفاعل، يبقى التأكيد والتباعد سؤالين مفتوحين؛ ويتجنب المكتب الجزم بأيهما من العنوان وحده.')));
+
+  // Evidence rail — the narrative-visual link. It exists to isolate, asset by
+  // asset, where the observed reaction matched the expected transmission and
+  // where it diverged; the article's confirmation reading refers to it directly.
+  if (rx && rx.has_reaction_data && (rx.cross_asset_matrix || []).some((m) => m.confirms !== null)) {
+    const rows = (rx.cross_asset_matrix || []).filter((m) => m.confirms !== null).map((m) =>
+      `<li class="ec-rail-row ${m.confirms ? 'ec-rail-confirm' : 'ec-rail-diverge'}"><span class="ec-rail-asset">${esc(m.asset)}</span><span class="ec-rail-state">${esc(m.confirms ? t('confirmed', 'مؤكَّد') : t('diverged', 'متباعد'))}</span></li>`).join('');
+    sections.push(`<aside class="market-evidence-rail" aria-label="${esc(t('Cross-asset evidence rail', 'مسار الأدلة عبر الأصول'))}"><div class="ec-rail-head"><span class="eyebrow">${esc(t('Cross-asset evidence rail', 'مسار الأدلة عبر الأصول'))}</span></div><ul class="ec-rail-list">${rows}</ul><p class="market-copy ec-rail-note">${esc(t('The rail isolates where the move matched the expected transmission and where it broke — the divergence, not the headline, is where institutional conviction is decided.', 'يعزل المسار حيث طابقت الحركة الأثر المتوقع وحيث انكسرت — والتباعد، لا العنوان، هو حيث تُحسم القناعة المؤسسية.'))}</p></aside>`);
+  }
 
   // 7. What the desk watches next
   sec('watch-next', t('What the desk watches next', 'ما يراقبه المكتب لاحقاً'),
@@ -228,6 +238,18 @@ function publish(write) {
     console.log(`[market-news-article] quality gate: article too short (en=${en.wordCount}/${MIN_WORDS.en}, ar=${arDoc.wordCount}/${MIN_WORDS.ar}) — NOT publishing.`);
     return { published: false, reason: 'below_min_words' };
   }
+
+  // Phase 109: editorial-quality gate. Score the rendered bodies for flow,
+  // repetition, filler/cliché, retail TA, predictions and null leaks. A piece
+  // must be flag-free and clear the quality floor in BOTH languages to publish.
+  const enText = renderArticle(ctx, 'en').body.replace(/<[^>]+>/g, ' ');
+  const arText = renderArticle(ctx, 'ar').body.replace(/<[^>]+>/g, ' ');
+  const quality = scoreArticle({ en: enText, ar: arText });
+  if (quality.flags.length || quality.min_score < QUALITY_FLOOR) {
+    console.log(`[market-news-article] editorial-quality gate failed (min_score=${quality.min_score}/${QUALITY_FLOOR}, flags=${JSON.stringify(quality.flags)}) — NOT publishing.`);
+    return { published: false, reason: 'below_quality_floor', quality };
+  }
+  console.log(`[market-news-article] editorial quality: en=${quality.en.score} ar=${quality.ar.score} (floor ${QUALITY_FLOOR}, flag-free)`);
 
   console.log(`[market-news-article] selected "${elig.headline}" (significance ${elig.significance}) → slug ${slug} (en=${en.wordCount}w, ar=${arDoc.wordCount}w)`);
   if (!write) { console.log('[market-news-article] dry-run — not writing.'); return { published: false, reason: 'dry_run', slug, ctx }; }

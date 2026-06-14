@@ -36,6 +36,22 @@ const GLOBAL_BANNED_PHRASES = [
   'as we can see',
   'as mentioned above',
   'without further ado',
+  // Phase 109 — macro-newsroom filler / hedging clichés.
+  'markets are watching',
+  'investors are watching',
+  'investors remain cautious',
+  'remain on the sidelines',
+  'on the sidelines',
+  'wait and see',
+  'wait-and-see',
+  'closely watching',
+  'could potentially',
+  'only time will tell',
+  'remains to be seen',
+  'investors are advised',
+  'all eyes are on',
+  'all eyes on',
+  'keep an eye on',
 ];
 
 const VERTICALS = {
