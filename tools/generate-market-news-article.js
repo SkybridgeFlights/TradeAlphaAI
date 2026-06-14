@@ -114,8 +114,8 @@ function renderArticle(ctx, locale) {
   const rg = ctx.regime || {};
   if (rg.regime && rg.regime !== 'indeterminate') {
     sec('regime', t('Liquidity and regime context', 'سياق السيولة والنظام'),
-      p(t(`The release lands in a ${rg.regime.replace(/_/g, ' ')} regime with ${String(rg.liquidity_state || '').replace(/_/g, ' ')} liquidity and ${rg.stability || ''} stability (cross-asset coherence ${rg.cross_asset_coherence && rg.cross_asset_coherence.score}). ${rg.narrative || ''}`,
-        `يأتي الإصدار ضمن نظام ${rg.regime.replace(/_/g, ' ')} مع سيولة ${String(rg.liquidity_state || '').replace(/_/g, ' ')} واستقرار ${rg.stability || ''} (اتساق عبر الأصول ${rg.cross_asset_coherence && rg.cross_asset_coherence.score}).`)));
+      p(t(`The research-desk intelligence rail alongside this analysis frames the environment the release lands in: a ${rg.regime.replace(/_/g, ' ')} regime with ${String(rg.liquidity_state || '').replace(/_/g, ' ')} liquidity and ${rg.stability || ''} stability, cross-asset coherence ${rg.cross_asset_coherence && rg.cross_asset_coherence.score}. ${rg.narrative || ''} That backdrop matters because the same surprise is absorbed differently depending on whether liquidity is supportive and breadth is broad or whether the tape is narrow and fragile.`,
+        `يؤطّر مسار استخبارات مكتب الأبحاث المرافق لهذا التحليل البيئة التي يأتي فيها الإصدار: نظام ${rg.regime.replace(/_/g, ' ')} مع سيولة ${String(rg.liquidity_state || '').replace(/_/g, ' ')} واستقرار ${rg.stability || ''}، واتساق عبر الأصول ${rg.cross_asset_coherence && rg.cross_asset_coherence.score}. ${rg.narrative || ''} وتهمّ هذه الخلفية لأن المفاجأة نفسها تُمتص بصورة مختلفة تبعاً لما إذا كانت السيولة داعمة والاتساع واسعاً أم أن التداول ضيق وهش.`)));
   } else {
     sec('regime', t('Liquidity and regime context', 'سياق السيولة والنظام'),
       p(t('The structural regime is currently indeterminate on the observed dimensions, so the desk does not overlay a regime read on this release.',
@@ -155,6 +155,53 @@ function renderArticle(ctx, locale) {
   const body = sections.join('\n');
   const wordCount = body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { title, eyebrow, body, wordCount };
+}
+
+// Phase 113 — native Arabic value maps for the embedded intelligence rail.
+const RI_AR = {
+  regime: { healthy_risk_expansion: 'توسّع مخاطر صحي', broad_risk_support: 'دعم مخاطر واسع', narrow_leadership: 'قيادة ضيقة', crowded_growth_positioning: 'تمركز نمو مزدحم', defensive_rotation: 'تدوير دفاعي', liquidity_stress: 'ضغط سيولة', unstable_rally: 'صعود غير مستقر', volatility_transition: 'تحوّل تذبذب', yield_pressure_regime: 'ضغط العوائد', macro_fragility: 'هشاشة كلية', indeterminate: 'غير محدد' },
+  liquidity: { easing: 'تيسير', tightening: 'تشديد', yield_pressure: 'ضغط العوائد', defensive_demand: 'طلب دفاعي', volatility_absorption: 'امتصاص تذبذب', volatility_rejection: 'رفض تذبذب', neutral: 'محايد', indeterminate: 'غير محدد' },
+  stability: { stable: 'مستقر', fragile: 'هش', deteriorating: 'يتدهور', unstable: 'غير مستقر', strengthening: 'يتقوّى', transition_state: 'انتقالي', indeterminate: 'غير محدد' },
+  reaction: { confirmed_reaction: 'مؤكَّد', partial_confirmation: 'تأكيد جزئي', delayed_confirmation: 'تأكيد متأخر', fading_reaction: 'يتلاشى', rejected_reaction: 'مرفوض', divergence: 'تباعد', cross_asset_disagreement: 'تعارض عبر الأصول', volatility_without_direction: 'تذبذب دون اتجاه' },
+};
+function riVal(cat, v, ar) { if (!v) return '—'; return ar ? ((RI_AR[cat] && RI_AR[cat][v]) || String(v).replace(/_/g, ' ')) : String(v).replace(/_/g, ' '); }
+
+// Embedded "research desk" intelligence rail — a deterministic context panel
+// derived from the canonical artifacts, with honest freshness and degradation.
+// It is referenced in the article prose (no disconnected blocks) and never
+// claims real-time "live" data — it is an "as of <date>" snapshot.
+function renderIntelligenceRail(ctx, locale) {
+  const ar = locale === 'ar';
+  const t = (en, arT) => (ar ? arT : en);
+  const rg = ctx.regime || {};
+  const rx = ctx.reaction;
+  const coh = rg.cross_asset_coherence ? rg.cross_asset_coherence.score : null;
+  const asOf = (rg.generated_at || '').slice(0, 10) || '—';
+  const ageH = rg.attribution && typeof rg.attribution.market_state_age_hours === 'number' ? rg.attribution.market_state_age_hours : null;
+  const stale = typeof ageH === 'number' && ageH > 48;
+
+  const reactionState = rx && rx.has_reaction_data && rx.classification !== 'awaiting_data'
+    ? riVal('reaction', rx.classification, ar) : t('awaiting reaction data', 'بانتظار بيانات التفاعل');
+
+  const card = (label, value) => `<div class="ri-card"><span class="ri-label">${esc(label)}</span><span class="ri-value">${esc(value)}</span></div>`;
+  const cards = [
+    card(t('Regime', 'النظام'), riVal('regime', rg.regime, ar) || (ar ? 'غير متاح' : 'unavailable')),
+    card(t('Liquidity', 'السيولة'), riVal('liquidity', rg.liquidity_state, ar)),
+    card(t('Stability', 'الاستقرار'), riVal('stability', rg.stability, ar)),
+    card(t('Cross-asset coherence', 'الاتساق عبر الأصول'), coh != null ? String(coh) : '—'),
+    card(t('Reaction', 'التفاعل'), reactionState),
+  ].join('');
+
+  const note = rg.regime && rg.regime !== 'indeterminate'
+    ? (stale ? t(`Snapshot may be stale (market state ${ageH}h old).`, `قد تكون اللقطة قديمة (حالة السوق منذ ${ageH} ساعة).`)
+            : t('This snapshot derives from the canonical liquidity-regime and reaction artifacts and updates deterministically.', 'تُشتق هذه اللقطة من مرجعَي نظام السيولة والتفاعل المعتمدين وتُحدَّث بصورة حتمية.'))
+    : t('Structural regime is currently indeterminate on the observed dimensions.', 'النظام الهيكلي غير محدد حالياً وفق الأبعاد المرصودة.');
+
+  return `<aside class="research-intel-rail" aria-label="${esc(t('Research desk intelligence', 'استخبارات مكتب الأبحاث'))}">
+    <div class="ri-head"><span class="eyebrow">${esc(t('Research desk intelligence', 'استخبارات مكتب الأبحاث'))}</span><span class="ri-asof">${esc(t('Snapshot · as of', 'لقطة · بتاريخ'))} ${esc(asOf)}</span></div>
+    <div class="ri-grid">${cards}</div>
+    <p class="ri-note market-copy">${esc(note)}</p>
+  </aside>`;
 }
 
 function assembleHtml(ctx, locale, slug) {
@@ -214,6 +261,7 @@ function assembleHtml(ctx, locale, slug) {
     <h1>${esc(title)}</h1>
     <p class="market-copy"><time datetime="${dateISO}">${dateISO}</time> · TradeAlphaAI Markets Desk</p>
   </div></header>
+${renderIntelligenceRail(ctx, locale)}
 ${body}
   <section class="market-section" id="news-disclaimer"><div class="market-panel"><h2>${esc(ar ? 'إخلاء المسؤولية التعليمي' : 'Educational disclaimer')}</h2><p class="market-copy">${esc(disc)}</p></div></section>
 </div></main>`;

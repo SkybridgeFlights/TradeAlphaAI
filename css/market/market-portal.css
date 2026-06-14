@@ -4311,3 +4311,25 @@ html[dir="rtl"] .figure-annotation { line-height: 1.85; }
 .ec-rail-state { opacity: 0.85; font-weight: 500; }
 .ec-rail-note { color: rgba(203, 213, 225, 0.82); font-size: 0.9rem; margin: 0; }
 [dir="rtl"] .market-evidence-rail { border-inline-start: 1px solid rgba(255,255,255,0.1); border-inline-end: 3px solid rgba(110, 231, 216, 0.5); }
+
+/* ── Phase 113: research-desk embedded intelligence rail (dark, institutional) */
+.research-intel-rail {
+  margin: 1.25rem 0 1.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+}
+.research-intel-rail .ri-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.85rem; }
+.research-intel-rail .ri-asof { font-size: 0.72rem; color: rgba(148, 163, 184, 0.75); letter-spacing: 0.02em; }
+.ri-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem; }
+.ri-card {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  padding: 0.6rem 0.75rem; border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.025);
+}
+.ri-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.03em; color: rgba(148, 163, 184, 0.85); text-transform: uppercase; }
+.ri-value { font-size: 0.95rem; font-weight: 600; color: rgba(216, 177, 90, 0.95); }
+.ri-note { margin: 0.85rem 0 0; font-size: 0.82rem; color: rgba(203, 213, 225, 0.78); line-height: 1.5; }
+[dir="rtl"] .ri-label { letter-spacing: 0; }
+@media (max-width: 600px) { .ri-grid { grid-template-columns: repeat(2, 1fr); } }
