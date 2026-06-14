@@ -27,6 +27,7 @@ const CANONICAL = new Set([
   'daily-research-brain.yml',        // Phase 115 — continuous Daily Research Brain (publishes on quiet tape)
   'technical-intelligence-brain.yml', // Phase 116 — continuous Technical Structure Brain (/market-structure/)
   'homepage-feed.yml',               // Phase 117 — homepage intelligence feed refresh (owns index.html feed module)
+  'educational-intelligence-brain.yml', // Phase 118 — continuous Educational Intelligence Engine (/articles/)
   'social-approval-runner.yml',      // Phase 100 — manual controlled social delivery (no schedule)
 ]);
 

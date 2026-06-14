@@ -26,7 +26,7 @@ const DRY_RUN      = !SMOKE_TEST && (process.argv.includes('--dry-run') || !proc
 // Phase 117 — daily-research notes (published under /market-news/) and
 // market-structure notes (published under /market-structure/) join the
 // controlled Telegram channel. Both are bilingual EN/AR.
-const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence', 'daily-research', 'market-structure'];
+const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence', 'daily-research', 'market-structure', 'educational'];
 
 // Phase 117 — safety caps for controlled activation (ledger-enforced).
 const PER_DAY_CAP = Number(process.env.TELEGRAM_PER_DAY_CAP || 6);
@@ -105,6 +105,7 @@ const PATH_BY_TYPE = {
   'continuous-intelligence': { en: `intelligence/${SLUG}.html`,   ar: `ar/intelligence/${SLUG}.html` },
   'daily-research':          { en: `market-news/${SLUG}.html`,    ar: `ar/market-news/${SLUG}.html` },
   'market-structure':        { en: `market-structure/${SLUG}.html`, ar: `ar/market-structure/${SLUG}.html` },
+  'educational':             { en: `articles/${SLUG}.html`,        ar: `ar/articles/${SLUG}.html` },
 };
 
 function resolveUrls() {
@@ -139,7 +140,7 @@ function resolveMeta() {
 
   // Phase 117 — research / structure notes carry their title in the <h1> and the
   // institutional summary in the description meta (bilingual EN/AR pages).
-  if (CONTENT_TYPE === 'daily-research' || CONTENT_TYPE === 'market-structure') {
+  if (CONTENT_TYPE === 'daily-research' || CONTENT_TYPE === 'market-structure' || CONTENT_TYPE === 'educational') {
     titleEn = extractH1(path.join(ROOT, PATH_BY_TYPE[CONTENT_TYPE].en));
     titleAr = extractH1(path.join(ROOT, PATH_BY_TYPE[CONTENT_TYPE].ar));
     summaryEn = null; // the page description is just "title — disclaimer"; use a clean topic-named line instead
@@ -331,8 +332,8 @@ function buildMessage(meta, urls) {
 
   // Phase 117 — restrained institutional style for research / structure notes:
   // type label, title, one-sentence summary, EN/AR links. No advice, no hype.
-  if (CONTENT_TYPE === 'daily-research' || CONTENT_TYPE === 'market-structure') {
-    const typeLabel = CONTENT_TYPE === 'daily-research' ? 'Research Note' : 'Market Structure';
+  if (CONTENT_TYPE === 'daily-research' || CONTENT_TYPE === 'market-structure' || CONTENT_TYPE === 'educational') {
+    const typeLabel = CONTENT_TYPE === 'daily-research' ? 'Research Note' : CONTENT_TYPE === 'market-structure' ? 'Market Structure' : 'Educational';
     const summary = takeaway || `A new TradeAlphaAI ${typeLabel.toLowerCase()} examines ${String(meta.titleEn || '').toLowerCase()}.`;
     const parts = [
       `${typeLabel} — ${meta.titleEn}`,

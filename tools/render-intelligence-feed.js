@@ -94,8 +94,26 @@ function buildSection(ar) {
   const structureNote = latest('market-structure', (f) => f.startsWith('structure-'));
   const news = latest('market-news', (f) => !f.startsWith('research-'));
   const outlook = latest('market-outlook', () => true);
+  // Latest educational article — newest /articles/ page carrying the educational
+  // marker (evergreen pillar; Phase 118 homepage integration).
+  const eduDir = path.join(ROOT, 'articles');
+  let educational = null;
+  try {
+    const eduFiles = fs.readdirSync(eduDir).filter((f) => f.endsWith('.html') && f !== 'index.html' && fs.readFileSync(path.join(eduDir, f), 'utf8').includes('data-educational-article='));
+    if (eduFiles.length) {
+      // Newest by file mtime so the latest published concept surfaces.
+      eduFiles.sort((a, b) => fs.statSync(path.join(eduDir, b)).mtimeMs - fs.statSync(path.join(eduDir, a)).mtimeMs);
+      const f = eduFiles[0];
+      let title = f.replace(/\.html$/, '');
+      const m = fs.readFileSync(path.join(eduDir, f), 'utf8').match(/<h1>([\s\S]*?)<\/h1>/i);
+      if (m) title = m[1].replace(/<[^>]+>/g, '').trim();
+      educational = { href: `/articles/${f}`, title };
+    }
+  } catch { /* none */ }
+
   if (research) items.push([t('Latest research note', 'أحدث مذكرة بحث'), research]);
   if (structureNote) items.push([t('Latest structure analysis', 'أحدث تحليل بنية'), structureNote]);
+  if (educational) items.push([t('Latest educational article', 'أحدث مقال تعليمي'), educational]);
   if (news) items.push([t('Latest market news', 'أحدث أخبار السوق'), news]);
   if (outlook) items.push([t('Latest market outlook', 'أحدث توقعات السوق'), outlook]);
   // Latest brief from the verified brief artifact.

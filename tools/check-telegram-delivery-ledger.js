@@ -13,7 +13,7 @@ function pass(msg) { console.log(`  ✓ ${msg}`); }
 function warn(msg) { console.warn(`  ⚠ ${msg}`); warns++; }
 function fail(msg) { console.error(`  ✗ ${msg}`); issues++; }
 
-const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence', 'daily-research', 'market-structure'];
+const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence', 'daily-research', 'market-structure', 'educational'];
 
 const EXPECTED_URL_PREFIX = {
   'editorial':               '/insights/',
@@ -21,6 +21,7 @@ const EXPECTED_URL_PREFIX = {
   'continuous-intelligence': '/intelligence/',
   'daily-research':          '/market-news/',
   'market-structure':        '/market-structure/',
+  'educational':             '/articles/',
 };
 
 // ── Load ledger ──────────────────────────────────────────────────────────────

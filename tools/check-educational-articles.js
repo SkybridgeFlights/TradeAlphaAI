@@ -117,7 +117,13 @@ if (!topics) {
 const publishedEn = fs.existsSync(path.join(ROOT, 'articles'))
   ? fs.readdirSync(path.join(ROOT, 'articles')).filter((file) => file.endsWith('.html') && file !== 'index.html' && (read(`articles/${file}`) || '').includes('data-educational-article='))
   : [];
-if (publishedEn.length > 1) failures.push(`educational articles: supervised phase permits one publication, found ${publishedEn.length}`);
+// Phase 118 — autonomous Educational Intelligence Engine: the prior single-
+// publication supervised gate is replaced by a corpus-bounded guard. The engine
+// publishes one concept per run with topic-engine cooldown + near-duplicate
+// checks; it can never publish more distinct articles than concepts exist, so a
+// count beyond the candidate corpus signals runaway/duplicate spam.
+const educationalCorpusCap = (topics.candidates || []).length || 30;
+if (publishedEn.length > educationalCorpusCap) failures.push(`educational articles: ${publishedEn.length} published exceeds concept corpus ${educationalCorpusCap} (runaway/duplicate spam)`);
 for (const file of publishedEn) {
   const slug = file.replace(/\.html$/, '');
   const en = read(`articles/${file}`) || '';
@@ -138,7 +144,8 @@ for (const file of publishedEn) {
   if (!arSitemap.includes(`https://www.tradealphaai.com/ar/articles/${file}`)) failures.push(`sitemap-ar.xml: ${file} missing`);
   if (fs.existsSync(path.join(ROOT, 'insights', file)) || fs.existsSync(path.join(ROOT, 'ar', 'insights', file))) failures.push(`${slug}: duplicate exists under /insights/`);
   const history = topics?.history || [];
-  if (!history.some((item) => item.slug === slug && item.status === 'published' && item.supervised === true)) failures.push(`${slug}: supervised publication history missing`);
+  // Phase 118 — a publication record must exist (supervised OR autonomous).
+  if (!history.some((item) => item.slug === slug && item.status === 'published')) failures.push(`${slug}: publication history record missing`);
   if ((topics?.eligible || []).some((item) => item.id === slug)) failures.push(`${slug}: published concept remains eligible despite cooldown`);
 }
 

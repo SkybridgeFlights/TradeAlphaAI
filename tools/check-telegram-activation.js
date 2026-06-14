@@ -54,9 +54,14 @@ function notes(dirRel, prefix) {
   const dir = path.join(ROOT, dirRel);
   try { return fs.readdirSync(dir).filter((f) => f.startsWith(prefix) && f.endsWith('.html')).map((f) => f.replace(/\.html$/, '')); } catch { return []; }
 }
+function educationalNotes() {
+  const dir = path.join(ROOT, 'articles');
+  try { return fs.readdirSync(dir).filter((f) => f.endsWith('.html') && f !== 'index.html' && (fs.readFileSync(path.join(dir, f), 'utf8')).includes('data-educational-article=')).map((f) => f.replace(/\.html$/, '')); } catch { return []; }
+}
 const samples = [
   ...notes('market-news', 'research-').slice(0, 2).map((slug) => ['daily-research', slug]),
   ...notes('market-structure', 'structure-').slice(0, 2).map((slug) => ['market-structure', slug]),
+  ...educationalNotes().slice(0, 2).map((slug) => ['educational', slug]),
 ];
 for (const [type, slug] of samples) {
   let out = '';

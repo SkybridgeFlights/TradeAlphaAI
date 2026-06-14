@@ -1,0 +1,160 @@
+name: Educational Intelligence Brain
+
+# Phase 118 — continuous Educational Intelligence Engine.
+# Purpose: publish ONE evergreen institutional educational article per session
+# day to the separate /articles/ pillar, driven by the existing topic engine
+# (build-educational-topics: rotation, cooldown, eligibility, anti-repetition).
+# Concepts are deterministic, distinct, source-grounded explainers — NOT beginner
+# fluff, listicles, retail TA, signals or investment advice. Honest self-gate
+# when no eligible covered concept remains. Kept distinct from market-news /
+# market-structure / market-outlook.
+#
+# Social posting preview-only by default (ENABLE_*_POSTING flags default false);
+# Telegram stays URL-200 gated + dry-run unless ENABLE_TELEGRAM_PUBLISH=='true'.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Once per session day, staggered after the research + structure brains.
+    - cron: '45 15 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: educational-intelligence-brain
+  cancel-in-progress: false
+
+env:
+  ENABLE_X_POSTING: 'false'
+  ENABLE_FACEBOOK_POSTING: 'false'
+  ENABLE_INSTAGRAM_POSTING: 'false'
+  ENABLE_LINKEDIN_POSTING: 'false'
+
+jobs:
+  educational-intelligence-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh topic engine + publish educational article
+        id: publish
+        run: |
+          node tools/build-educational-topics.js --write || echo "[educational] topic refresh degraded — continuing"
+          # Capture the published slug (empty when self-gated) for controlled Telegram.
+          PUB=$(node tools/generate-educational-article.js --write 2>&1); echo "$PUB"
+          SLUG=$(echo "$PUB" | grep -oE 'published /articles/[^ ]+\.html' | head -1 | sed -E 's#.*/##; s#\.html$##') || true
+          echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
+          node tools/generate-articles-index.js --write || echo "[educational] articles index degraded — continuing"
+          node tools/generate-seo-sitemaps.js || echo "[educational] sitemap regen degraded — continuing"
+          node tools/render-intelligence-feed.js --write || echo "[educational] homepage feed refresh degraded — continuing"
+
+      - name: Refresh social distribution (preview-only)
+        run: |
+          node tools/build-distribution-plan.js --write || echo "[educational] distribution plan degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:educational-articles
+          npm run check:educational-rotation
+          npm run check:telegram-activation
+          npm run check:homepage-feed
+          npm run check:article-pairs
+          npm run check:bilingual-structure
+          npm run check:ar-rtl
+          npm run check:language-purity
+          npm run check:header-runtime-integrity
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+          npm run check:no-orphan-public-files
+          npm run check:distribution-plan
+
+      - name: Commit refreshed surface (only when changed)
+        run: |
+          git config user.name "tradealphaai-educational-intelligence-brain"
+          git config user.email "actions@users.noreply.github.com"
+
+          # Stage every path this brain may regenerate: the /articles/ pillar
+          # (EN + AR), the homepage feed, the topic memory + data tree, and all
+          # sitemaps + robots. Stage comprehensively + fail safe.
+          INTENDED="articles/ ar/articles/ index.html ar/index.html data/ \
+            sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
+            sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
+          stage_intended() { for p in $INTENDED; do [ -e "$p" ] && git add -A -- "$p" || true; done; }
+          stage_intended
+
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              articles/*|ar/articles/*|index.html|ar/index.html|data/*|sitemap*.xml|robots.txt) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[educational] ERROR: changes outside intended paths — refusing to push partial state:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          echo "[educational] === staged diff summary ==="; git diff --cached --stat
+          if git diff --cached --quiet; then
+            echo "[educational] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Educational intelligence brain: $(date -u +'%Y-%m-%d %H:%M') UTC"
+
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              if ! git diff --quiet || ! git diff --cached --quiet; then
+                echo "[educational] residual changes after rebase — regenerating shared surfaces + restaging"
+                node tools/generate-articles-index.js --write || true
+                node tools/generate-seo-sitemaps.js || true
+                node tools/render-intelligence-feed.js --write || true
+                stage_intended
+                git diff --cached --quiet || git commit --amend --no-edit
+              fi
+              if git push origin main; then
+                echo "[educational] pushed on attempt ${attempt}"; break
+              fi
+              echo "[educational] push rejected (race) on attempt ${attempt} — retrying"
+            else
+              echo "[educational] rebase conflict on attempt ${attempt} — regenerating shared artifacts"
+              git checkout --theirs -- index.html ar/index.html sitemap-core.xml sitemap-ar.xml 2>/dev/null || true
+              node tools/generate-articles-index.js --write || true
+              node tools/generate-seo-sitemaps.js || true
+              node tools/render-intelligence-feed.js --write || true
+              stage_intended
+              git -c core.editor=true rebase --continue || git rebase --abort
+            fi
+            sleep $((attempt * 3))
+            if [ "$attempt" = "5" ]; then echo "[educational] push failed after retries"; exit 1; fi
+          done
+
+      # Controlled Telegram delivery — AFTER push (live URL), ONLY on an actual
+      # publish, DRY-RUN by default (real send needs ENABLE_TELEGRAM_PUBLISH=true
+      # + secrets; sender enforces URL-200, dup, cap, cooldown). Telegram only.
+      - name: Telegram delivery (controlled, dry-run unless activated)
+        if: steps.publish.outputs.slug != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          ENABLE_TELEGRAM_PUBLISH: ${{ vars.ENABLE_TELEGRAM_PUBLISH }}
+        run: |
+          FLAG="--dry-run"
+          if [ "$ENABLE_TELEGRAM_PUBLISH" = "true" ]; then FLAG="--send"; fi
+          echo "[educational] controlled Telegram dispatch for article '${{ steps.publish.outputs.slug }}' (mode: $FLAG)"
+          [ "$FLAG" = "--send" ] && sleep 45 || true
+          node tools/send-published-article-telegram.js --slug="${{ steps.publish.outputs.slug }}" --content-type=educational $FLAG || echo "[educational] Telegram dispatch non-fatal — continuing"

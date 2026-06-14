@@ -163,7 +163,11 @@ function isNoindex(rel) {
 
 function relToUrl(rel) {
   if (!rel) return `${domain}/`;
-  return `${domain}/${rel.replace(/index\.html$/, "").replaceAll("\\", "/")}`;
+  // Convert ONLY actual index pages (".../index.html" or root "index.html") to
+  // clean directory URLs. Anchoring to a path separator prevents mangling a
+  // filename that merely ends in "index.html" — e.g. "breadth-vs-index.html"
+  // must NOT become "breadth-vs-".
+  return `${domain}/${rel.replace(/(^|\/)index\.html$/, "$1").replaceAll("\\", "/")}`;
 }
 
 function toRel(file) {
