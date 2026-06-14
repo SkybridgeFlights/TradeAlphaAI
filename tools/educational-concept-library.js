@@ -461,7 +461,65 @@ const DEFINITIONS = [
     thesis_ar: 'تؤثر العوائد الحقيقية في الذهب عبر كلفة الفرصة، فيما قد تعاكسها قنوات العملة والاحتياطيات والتحوط.',
     lens_en: 'The rate channel must be separated from official demand, dollar effects, and systemic hedging.',
     lens_ar: 'يجب فصل قناة العائد عن الطلب الرسمي وأثر الدولار والتحوط من المخاطر النظامية.',
-    visual: 'gold-channel-map', related: ['dxy-gold-relationship', 'inflation-surprise-mechanics'], fingerprints: ['gold opportunity cost', 'inflation adjusted yield'],
+    visual: 'gold-channel-map', related: ['yield-curve-pressure', 'dxy-gold-relationship', 'tlt-duration-sensitivity'], fingerprints: ['gold opportunity cost', 'inflation adjusted yield'],
+    depth: {
+      context: { en: [
+        'The real-yield channel describes the dominant relationship between inflation-adjusted interest rates and gold: because gold pays no income, a higher real yield raises the opportunity cost of holding it, while a lower real yield lowers that cost. The link is to the real rate — the nominal yield less expected inflation — not to the nominal yield alone.',
+        'The institutional context is that this is one channel among several, not a law. Currency moves, official-sector reserve demand, and systemic hedging can all pull gold away from what the real-yield channel implies, so a desk treats real yields as the baseline driver to be read alongside, not instead of, those competing forces.',
+      ], ar: [
+        'تصف قناة العائد الحقيقي العلاقة المهيمنة بين الفائدة المعدّلة بالتضخم والذهب: فلأن الذهب لا يدرّ دخلاً، يرفع العائد الحقيقي الأعلى كلفة الفرصة لحيازته، بينما يخفضها العائد الحقيقي الأدنى. والصلة بالمعدل الحقيقي — العائد الاسمي مطروحاً منه التضخم المتوقع — لا بالعائد الاسمي وحده.',
+        'والسياق المؤسسي أن هذه قناة بين عدة قنوات لا قانون. فقد تجذب تحركات العملة والطلب الرسمي على الاحتياطيات والتحوّط من المخاطر النظامية الذهبَ بعيداً عمّا تقتضيه قناة العائد الحقيقي، لذا يعدّ المكتب العوائد الحقيقية المحرّك الأساس الذي يُقرأ إلى جانب تلك القوى المنافسة لا بدلاً منها.',
+      ] },
+      why: { en: [
+        'The channel matters because it explains gold\'s behaviour far better than the nominal headline does, and it ties gold directly into the rates and curve picture. A move in long-end real yields re-rates gold for the same reason it re-rates long-duration equities — both are sensitive to the real discount rate.',
+        'It also matters because it disciplines the analysis: when gold and real yields move together against the usual inverse relationship, that divergence is itself information, signalling that a competing channel — reserve demand or a flight to safety — has temporarily overwhelmed the rate channel and is now the dominant force.',
+      ], ar: [
+        'تهمّ القناة لأنها تفسّر سلوك الذهب أفضل بكثير من العنوان الاسمي، وتربط الذهب مباشرةً بصورة الفائدة والمنحنى. فحركة في العوائد الحقيقية الطويلة تعيد تسعير الذهب للسبب نفسه الذي تعيد به تسعير أسهم الأجل الطويل — فكلاهما حسّاس لمعدل الخصم الحقيقي.',
+        'وتهمّ أيضاً لأنها تنضبط التحليل: فحين يتحرك الذهب والعوائد الحقيقية معاً عكس العلاقة العكسية المعتادة، يكون ذلك التباعد نفسه معلومة، تشير إلى أن قناة منافسة — طلب الاحتياطيات أو هروباً نحو الأمان — طغت مؤقتاً على قناة الفائدة وأصبحت القوة المهيمنة.',
+      ] },
+      desk: { en: [
+        'A desk reads gold by first isolating the real-yield channel — using the inflation-adjusted yield rather than the nominal — and only then layering on the offsetting drivers: the dollar, official reserve accumulation, and stress hedging. The discipline is to attribute the move to a channel before interpreting it.',
+        'The interpretation is conditional. When real yields lead and gold follows inversely, the rate channel is in control and the read is clean; when gold defies real yields, the desk infers that an official-demand or safe-haven channel is dominant, and weights the signal accordingly rather than forcing the standard relationship.',
+      ], ar: [
+        'يقرأ المكتب الذهب بعزل قناة العائد الحقيقي أولاً — مستخدماً العائد المعدّل بالتضخم لا الاسمي — ثم فقط يضيف المحرّكات المعاكسة: الدولار وتراكم الاحتياطيات الرسمية والتحوّط من الضغط. والانضباط هو عزو الحركة إلى قناة قبل تفسيرها.',
+        'والتفسير مشروط. فحين تقود العوائد الحقيقية ويتبعها الذهب عكسياً، تكون قناة الفائدة مسيطرة والقراءة نظيفة؛ وحين يتحدى الذهب العوائد الحقيقية، يستنتج المكتب أن قناة طلب رسمي أو ملاذ آمن مهيمنة، فيرجّح الإشارة وفقاً لذلك بدل فرض العلاقة المعيارية.',
+      ] },
+      transmission: { en: [
+        'The mechanism is opportunity cost. Gold competes with real, inflation-protected income; when the real return on safe assets rises, the relative attractiveness of a non-yielding store of value falls, and capital rotates toward the real yield. When the real return falls or turns negative, that same capital rotates back toward gold.',
+        'Because the driver is the real rather than the nominal rate, the channel can transmit even when nominal yields are flat: a change in expected inflation alone shifts the real yield and therefore gold. A desk that watches only nominal yields will miss moves that the real-yield channel fully explains.',
+      ], ar: [
+        'الآلية كلفة الفرصة. فالذهب ينافس دخلاً حقيقياً محمياً من التضخم؛ وحين يرتفع العائد الحقيقي على الأصول الآمنة تتراجع الجاذبية النسبية لمخزن قيمة لا يدرّ عائداً، فيتدوّر رأس المال نحو العائد الحقيقي. وحين يهبط العائد الحقيقي أو يصير سالباً يعود رأس المال نفسه نحو الذهب.',
+        'ولأن المحرّك هو المعدل الحقيقي لا الاسمي، قد تنتقل القناة حتى حين تكون العوائد الاسمية ثابتة: فتغيّر التضخم المتوقع وحده يزيح العائد الحقيقي ومن ثم الذهب. والمكتب الذي يراقب العوائد الاسمية فقط سيفوته تحركات تفسّرها قناة العائد الحقيقي بالكامل.',
+      ] },
+      connection: { en: [
+        'Across assets, the real-yield channel ties gold to the curve and the dollar: the same long-end real-rate move that pressures gold also pressures long-duration equities, while a firmer dollar often accompanies higher real yields. Reading gold, real yields, the dollar, and long-duration equities together is how a desk confirms which channel is in control.',
+        'In regime terms, gold\'s relationship to real yields is a sensitive read on financial conditions and stress. When the rate channel dominates, gold behaves as a real-rate instrument; when the safe-haven channel takes over — gold rising with a firm dollar — that co-move is one of the cleaner signals that the regime is shifting toward defensive demand.',
+      ], ar: [
+        'عبر الأصول، تربط قناة العائد الحقيقي الذهب بالمنحنى والدولار: فحركة المعدل الحقيقي في الطرف الطويل التي تضغط الذهب تضغط أيضاً أسهم الأجل الطويل، بينما يرافق دولار أصلب غالباً عوائد حقيقية أعلى. وقراءة الذهب والعوائد الحقيقية والدولار وأسهم الأجل الطويل معاً هي كيف يؤكد المكتب أي قناة مسيطرة.',
+        'وبلغة النظام، علاقة الذهب بالعوائد الحقيقية قراءة حسّاسة للأوضاع المالية والضغط. فحين تهيمن قناة الفائدة يتصرف الذهب أداةَ معدّل حقيقي؛ وحين تتولّى قناة الملاذ الآمن — الذهب يرتفع مع دولار صلب — يكون ذلك التحرك المشترك من أنظف الإشارات على انزياح النظام نحو الطلب الدفاعي.',
+      ] },
+      misread: { en: [
+        'The common misread is to relate gold to nominal yields. Gold can rise while nominal yields rise if expected inflation is rising faster, because the real yield is falling — so a reader watching the nominal headline sees a paradox that the real-yield channel resolves instantly.',
+        'The second error is to treat the inverse gold/real-yield relationship as unconditional. When official reserve demand or a safe-haven bid dominates, gold and real yields can rise together for an extended period, and insisting on the textbook inverse during such episodes is precisely the failure that channel-attribution is meant to prevent.',
+      ], ar: [
+        'القراءة الخاطئة الشائعة هي ربط الذهب بالعوائد الاسمية. فقد يرتفع الذهب بينما ترتفع العوائد الاسمية إذا كان التضخم المتوقع يرتفع أسرع، لأن العائد الحقيقي يهبط — فالقارئ الذي يراقب العنوان الاسمي يرى مفارقة تحلّها قناة العائد الحقيقي فوراً.',
+        'والخطأ الثاني معاملة العلاقة العكسية بين الذهب والعائد الحقيقي بوصفها غير مشروطة. فحين يهيمن الطلب الرسمي على الاحتياطيات أو طلب الملاذ الآمن، قد يرتفع الذهب والعوائد الحقيقية معاً لفترة ممتدة، والإصرار على العلاقة العكسية النموذجية خلال تلك الفترات هو تحديداً العطب الذي يهدف عزو القنوات إلى منعه.',
+      ] },
+      framework: { en: [
+        'A practical framework starts from the real yield — nominal less expected inflation — as the baseline driver, then asks whether gold is tracking it inversely as expected. If it is, the rate channel is in control and the read is straightforward; if it is not, the desk identifies which competing channel (dollar, reserves, stress) is responsible.',
+        'The desk then tests coherence and persistence: does the dollar and long-duration equities confirm the implied real-rate move, and does the relationship hold across sessions. A gold move that the real-yield channel and the broader rate complex confirm is treated as structural; an unconfirmed one is held as channel-ambiguous.',
+      ], ar: [
+        'يبدأ الإطار العملي من العائد الحقيقي — الاسمي مطروحاً منه التضخم المتوقع — بوصفه المحرّك الأساس، ثم يسأل هل يتتبّعه الذهب عكسياً كما يُتوقع. فإن فعل كانت قناة الفائدة مسيطرة والقراءة مباشرة؛ وإن لم يفعل حدّد المكتب أي قناة منافسة (الدولار أو الاحتياطيات أو الضغط) هي المسؤولة.',
+        'ثم يختبر المكتب الاتساق والاستمرارية: هل يؤكد الدولار وأسهم الأجل الطويل حركة المعدل الحقيقي الضمنية، وهل تصمد العلاقة عبر الجلسات. وحركة ذهب تؤكدها قناة العائد الحقيقي ومجمّع الفائدة الأوسع تُعامَل هيكلية؛ وغير المؤكدة تُحتفظ بها غامضة القناة.',
+      ] },
+      visual: { en: [
+        'The gold-channel-map visual separates the real-yield channel from the offsetting dollar, reserve-demand, and safe-haven channels, showing which is dominant without attaching prices or fabricated levels. Its purpose is to make channel-attribution legible — to show why gold can defy nominal yields yet still obey the real-rate logic.',
+        'Read it as an attribution map rather than a forecast: it depicts the competing forces acting on gold so the reader can identify which channel is in control now, instead of forcing every gold move into a single textbook relationship.',
+      ], ar: [
+        'يفصل شكل خريطة قنوات الذهب قناة العائد الحقيقي عن قنوات الدولار والطلب على الاحتياطيات والملاذ الآمن المعاكسة، مُظهراً أيّها مهيمن دون إلحاق أسعار أو مستويات مصطنعة. وغرضه جعل عزو القنوات مقروءاً — إظهار لماذا قد يتحدى الذهب العوائد الاسمية ويظل مع ذلك مطيعاً لمنطق المعدل الحقيقي.',
+        'اقرأه خريطة عزو لا تنبؤاً: فهو يصوّر القوى المتنافسة المؤثرة في الذهب ليحدد القارئ أي قناة مسيطرة الآن، بدل فرض كل حركة للذهب في علاقة نموذجية واحدة.',
+      ] },
+    },
   },
   {
     id: 'dollar-global-liquidity', category: 'macro-liquidity',

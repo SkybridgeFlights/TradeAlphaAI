@@ -109,17 +109,30 @@ const LEGACY_CONCEPT_LIBRARY = {
 };
 
 
-// ── Topic selection — drive the EXISTING engine; pick the top eligible topic
-//    that has a library entry and is not already published on disk. ───────────
+// ── Topic selection — Phase 123 institutional editorial orchestration.
+// Candidates are the cooldown-filtered eligible topics with a library entry that
+// are not already published; they are ranked by the deterministic educational-
+// priority engine (deep-first, with progression/cluster/anti-shallow-domination
+// weighting). The top-ranked concept wins; the reason is logged for governance.
+const { rankCandidates } = require('./educational-priority');
+
+function recentSlugs() {
+  const topics = readJson(TOPICS_PATH, { history: [] });
+  return (topics.history || [])
+    .filter((h) => h && h.slug && h.status === 'published' && h.published_at)
+    .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at))
+    .map((h) => h.slug);
+}
+
 function selectTopic() {
   const topics = readJson(TOPICS_PATH, { eligible: [] });
-  const eligible = (topics.eligible || []).slice().sort((a, b) => (b.priority || 0) - (a.priority || 0));
-  for (const t of eligible) {
-    if (!CONCEPT_LIBRARY[t.id]) continue;
-    if (fs.existsSync(path.join(ROOT, 'articles', `${t.id}.html`))) continue; // already published
-    return t;
-  }
-  return null;
+  const candidates = (topics.eligible || []).filter((t) => CONCEPT_LIBRARY[t.id] && !fs.existsSync(path.join(ROOT, 'articles', `${t.id}.html`)));
+  if (!candidates.length) return null;
+  const ranked = rankCandidates(candidates, { library: CONCEPT_LIBRARY, recentSlugs: recentSlugs() });
+  const top = ranked[0];
+  console.log(`[educational] priority pick: ${top.id} (score ${top.score}, ${top.is_deep ? 'DEEP' : 'shallow'}) — ${top.reasons.join(', ')}`);
+  if (ranked.length > 1) console.log(`[educational] runner-up: ${ranked[1].id} (score ${ranked[1].score}, ${ranked[1].is_deep ? 'DEEP' : 'shallow'})`);
+  return top.topic;
 }
 
 function pageShell(locale, slug) {
