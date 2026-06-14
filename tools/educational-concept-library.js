@@ -193,7 +193,65 @@ const DEFINITIONS = [
     thesis_ar: 'قد تمتص الإصدارات والضمانات والطلب الدفاعي على النقد السيولة من دون صدمة سوقية ظاهرة.',
     lens_en: 'The relevant question is who can warehouse new supply and how much marginal balance-sheet capacity remains.',
     lens_ar: 'السؤال المحوري هو من يستطيع حمل المعروض الجديد ومقدار ما تبقى من قدرة هامشية في الميزانيات.',
-    visual: 'balance-sheet-flow', related: ['liquidity-tightening', 'participation-quality'], fingerprints: ['issuance absorption', 'dealer capacity'],
+    visual: 'balance-sheet-flow', related: ['liquidity-tightening', 'dollar-global-liquidity', 'participation-quality'], fingerprints: ['issuance absorption', 'dealer capacity'],
+    depth: {
+      context: { en: [
+        'Liquidity absorption is the quiet counterpart to liquidity tightening: it describes how new supply of assets — government issuance, collateral demand, defensive cash holdings — is soaked up by the system\'s balance-sheet capacity without necessarily producing a visible price shock. The drain on liquidity is real, but it happens through who holds what, not through a dramatic move.',
+        'The institutional context is that liquidity is not destroyed when it is absorbed; it is reallocated into instruments and holders that immobilise it. A desk reads absorption as a slow change in the system\'s free capacity to take risk, which is why it can tighten conditions structurally while the headline tape stays calm.',
+      ], ar: [
+        'امتصاص السيولة هو النظير الهادئ لتشدد السيولة: فهو يصف كيف يُمتَص المعروض الجديد من الأصول — الإصدارات الحكومية والطلب على الضمانات والاحتفاظ الدفاعي بالنقد — بقدرة ميزانيات النظام دون أن ينتج بالضرورة صدمة سعرية ظاهرة. فالاستنزاف حقيقي لكنه يحدث عبر من يحمل ماذا لا عبر حركة درامية.',
+        'والسياق المؤسسي أن السيولة لا تُدمَّر حين تُمتَص؛ بل يُعاد تخصيصها في أدوات وحائزين يجمّدونها. ويقرأ المكتب الامتصاص بوصفه تغيّراً بطيئاً في القدرة الحرة للنظام على تحمّل المخاطر، ولهذا قد يشدّد الظروف هيكلياً بينما يبقى السطح هادئاً.',
+      ] },
+      why: { en: [
+        'Absorption matters because it tightens conditions silently. A large wave of issuance that the market absorbs smoothly still removes marginal balance-sheet capacity, so the next shock lands on a system with less room — even though no single day looked stressful while the supply was being taken down.',
+        'It also matters because it is frequently misattributed. When risk assets struggle during heavy absorption, the move is often blamed on sentiment or fundamentals when the binding constraint is simply that balance sheets are full, which is a structurally different and more persistent pressure than a sentiment wobble.',
+      ], ar: [
+        'يهمّ الامتصاص لأنه يشدّد الظروف بصمت. فموجة إصدار كبيرة يمتصها السوق بسلاسة تزيل مع ذلك قدرة هامشية من الميزانيات، فتقع الصدمة التالية على نظام بمساحة أقل — رغم أن أي يوم منفرد لم يبدُ متوتراً أثناء استيعاب المعروض.',
+        'ويهمّ أيضاً لأنه كثيراً ما يُنسَب خطأً. فحين تتعثّر الأصول الخطرة أثناء امتصاص كثيف، يُعزى التحرك غالباً إلى المعنويات أو الأساسيات بينما القيد الفعلي هو ببساطة أن الميزانيات ممتلئة، وهو ضغط هيكلي مختلف وأكثر استمراراً من تذبذب معنوي.',
+      ] },
+      desk: { en: [
+        'A desk reads absorption by asking who can warehouse the new supply and how much marginal capacity remains, rather than by watching price alone. It tracks issuance calendars, collateral demand, dealer inventories, and the cash that defensive holders are parking, because the binding question is capacity, not direction.',
+        'The interpretation is about reserve: a market that absorbs supply with ample spare capacity is structurally stronger than one that absorbs the same supply only by exhausting its buffers. The desk grades absorption by how much cushion is being consumed, and treats near-exhaustion as a fragility signal even when prices hold.',
+      ], ar: [
+        'يقرأ المكتب الامتصاص بسؤال من يستطيع حمل المعروض الجديد ومقدار ما تبقى من قدرة هامشية، لا بمراقبة السعر وحده. ويتتبّع جداول الإصدار والطلب على الضمانات ومخزونات الوسطاء والنقد الذي يركنه الحائزون الدفاعيون، لأن السؤال المُلزِم هو القدرة لا الاتجاه.',
+        'والتفسير يتعلق بالاحتياطي: فالسوق الذي يمتص المعروض بقدرة فائضة وافرة أقوى هيكلياً من سوق يمتص المعروض نفسه باستنزاف وسائده فقط. ويدرّج المكتب الامتصاص بمقدار الوسادة المستهلكة، ويعدّ قرب الاستنزاف إشارة هشاشة حتى لو صمدت الأسعار.',
+      ] },
+      transmission: { en: [
+        'The mechanism runs through balance-sheet space. Each unit of new supply must be held by someone — a dealer, a bank, a fund — and warehousing it consumes capital and collateral capacity. As that capacity fills, the cost of intermediating any further risk rises, and the marginal buyer for unrelated assets quietly disappears.',
+        'Because the constraint is cumulative, absorption transmits with a lag and then non-linearly. The system takes supply comfortably until buffers thin, after which a modest additional wave can force the same deleveraging that liquidity tightening produces — which is why absorption and tightening are best read as two views of one balance-sheet constraint.',
+      ], ar: [
+        'تجري الآلية عبر حيّز الميزانية. فكل وحدة من المعروض الجديد يجب أن يحملها أحد — وسيط أو بنك أو صندوق — وحملها يستهلك رأس المال وقدرة الضمانات. ومع امتلاء تلك القدرة ترتفع كلفة الوساطة في أي مخاطر إضافية، ويختفي بهدوء المشتري الهامشي لأصول غير ذات صلة.',
+        'ولأن القيد تراكمي، ينتقل الامتصاص بتأخّر ثم بلاخطية. فيستوعب النظام المعروض براحة حتى ترقّ الوسائد، وبعدها قد تفرض موجة إضافية متواضعة تقليص الرافعة نفسه الذي ينتجه تشدد السيولة — ولهذا يُقرأ الامتصاص والتشدد على أفضل وجه بوصفهما رؤيتين لقيد ميزانية واحد.',
+      ] },
+      connection: { en: [
+        'Across assets, heavy absorption shows up as a firmer dollar, richer collateral, and underperformance in the assets most dependent on abundant balance sheet — long duration and the more leveraged corners of risk. Reading these together separates a genuine capacity constraint from an ordinary risk-off move.',
+        'In regime terms, absorption is upstream of the liquidity regime: it is one of the channels through which a supportive environment quietly becomes a constrained one. A desk pairs it with the liquidity-tightening read, since the two describe the supply side and the price-of-funding side of the same shrinking capacity.',
+      ], ar: [
+        'عبر الأصول، يظهر الامتصاص الكثيف في دولار أصلب وضمانات أغلى وأداء أضعف في الأصول الأكثر اعتماداً على وفرة الميزانية — الأجل الطويل والزوايا الأكثر رفعاً من المخاطر. وقراءة هذه معاً تفصل قيد القدرة الحقيقي عن حركة عزوف اعتيادية.',
+        'وبلغة النظام، يسبق الامتصاص نظام السيولة: فهو إحدى القنوات التي تتحول عبرها بيئة داعمة بهدوء إلى مقيّدة. ويقرنه المكتب بقراءة تشدد السيولة، إذ يصف الاثنان جانب المعروض وجانب كلفة التمويل للقدرة المتقلّصة نفسها.',
+      ] },
+      misread: { en: [
+        'The common misread is to equate smooth absorption with abundant liquidity. A market can take down a large supply wave without a hiccup precisely while it is using up the last of its spare capacity, so the calm itself can be the warning rather than the reassurance.',
+        'The opposite error is to read every soft patch during issuance as a capacity crisis. Much supply is absorbed routinely with ample room, so a desk requires corroboration — firming collateral, fuller dealer balance sheets, duration underperformance — before treating absorption as a binding structural constraint.',
+      ], ar: [
+        'القراءة الخاطئة الشائعة هي مساواة الامتصاص السلس بوفرة السيولة. فقد يستوعب السوق موجة معروض كبيرة دون تعثّر في اللحظة ذاتها التي يستنفد فيها آخر قدرته الفائضة، فيكون الهدوء نفسه التحذير لا الطمأنة.',
+        'والخطأ المعاكس قراءة كل وهن أثناء الإصدار أزمةَ قدرة. فكثير من المعروض يُمتَص روتينياً بمساحة وافرة، لذا يشترط المكتب تأكيداً — تصلّب الضمانات وامتلاء ميزانيات الوسطاء وضعف أداء الأجل الطويل — قبل معاملة الامتصاص قيداً هيكلياً مُلزِماً.',
+      ] },
+      framework: { en: [
+        'A practical framework tracks capacity rather than price: the issuance calendar against estimated balance-sheet room, collateral conditions, dealer inventory levels, and the share of new supply ending up in immobilising hands. The question is always how much cushion remains, not whether today\'s auction cleared.',
+        'The desk then asks whether absorption is broadening, persisting, and coinciding with funding stress — the same three structural tests applied to tightening. A configuration that consumes buffers across sessions while funding firms is treated as a genuine constraint; an isolated heavy day that the system shrugs off is not.',
+      ], ar: [
+        'يتتبّع الإطار العملي القدرة لا السعر: جدول الإصدار مقابل تقدير حيّز الميزانية، وشروط الضمانات، ومستويات مخزون الوسطاء، وحصة المعروض الجديد المنتهية إلى أيدٍ تجمّده. والسؤال دائماً كم تبقّى من وسادة، لا هل نجح مزاد اليوم.',
+        'ثم يسأل المكتب هل يتسع الامتصاص ويستمر ويتزامن مع ضغط تمويل — الاختبارات الهيكلية الثلاثة نفسها المطبَّقة على التشدد. والتكوين الذي يستهلك الوسائد عبر الجلسات بينما يتصلّب التمويل يُعامَل قيداً حقيقياً؛ ويومٌ ثقيل معزول يتجاوزه النظام ليس كذلك.',
+      ] },
+      visual: { en: [
+        'The balance-sheet-flow visual traces where new supply ends up — which holders absorb it and how much marginal capacity that consumes — without attaching prices or fabricated quantities. Its purpose is to make the capacity drain legible, showing why a calm absorption can still tighten the system.',
+        'Read it as a stock-and-flow map rather than a forecast: it depicts the channels through which supply immobilises balance sheet, so the reader can judge how much spare capacity remains rather than inferring stress from price action alone.',
+      ], ar: [
+        'يتتبّع شكل تدفق الميزانية أين ينتهي المعروض الجديد — أي الحائزين يمتصونه وكم يستهلك ذلك من قدرة هامشية — دون إلحاق أسعار أو كميات مصطنعة. وغرضه جعل استنزاف القدرة مقروءاً، مُظهراً كيف يظل بإمكان امتصاص هادئ أن يشدّد النظام.',
+        'اقرأه خريطة مخزون وتدفّق لا تنبؤاً: فهو يصوّر القنوات التي يجمّد عبرها المعروض الميزانية، ليحكم القارئ على ما تبقّى من قدرة فائضة بدل استنتاج الضغط من حركة السعر وحدها.',
+      ] },
+    },
   },
   {
     id: 'risk-on-risk-off-regimes', category: 'macro-liquidity',
@@ -269,7 +327,65 @@ const DEFINITIONS = [
     thesis_ar: 'قد يكشف الدوران الدفاعي تراجع جودة المشاركة قبل ظهور عزوف واسع عن المخاطر.',
     lens_en: 'Sector leadership, credit quality, duration demand, and breadth distinguish caution from liquidation.',
     lens_ar: 'تميّز قيادة القطاعات وجودة الائتمان والطلب على المدة والاتساع بين الحذر والتصفية.',
-    visual: 'rotation-map', related: ['risk-on-risk-off-regimes', 'participation-quality'], fingerprints: ['defensive leadership', 'cyclical participation'],
+    visual: 'rotation-map', related: ['risk-on-risk-off-regimes', 'breadth-deterioration', 'participation-quality'], fingerprints: ['defensive leadership', 'cyclical participation'],
+    depth: {
+      context: { en: [
+        'Defensive rotation is a change in leadership toward defensive sectors — utilities, staples, healthcare — that occurs without broad liquidation. The index can hold or even rise while the composition of what is leading quietly shifts toward safety, which is why it is a structural tell rather than a price event.',
+        'The institutional context is that rotation reveals positioning intent before it shows up in aggregate risk aversion. A market that is still advancing but doing so on defensive leadership is expressing caution through composition, and a desk reads that composition as information about conviction beneath the surface.',
+      ], ar: [
+        'الدوران الدفاعي تحوّل في القيادة نحو القطاعات الدفاعية — المرافق والسلع الأساسية والرعاية الصحية — يحدث دون تصفية شاملة. فقد يثبت المؤشر أو حتى يرتفع بينما يتحوّل بهدوء تركيب ما يقود نحو الأمان، ولهذا يكون مؤشراً هيكلياً لا حدثاً سعرياً.',
+        'والسياق المؤسسي أن الدوران يكشف نيّة التموضع قبل أن تظهر في عزوف إجمالي عن المخاطر. فالسوق الذي ما زال يصعد لكن على قيادة دفاعية يعبّر عن الحذر عبر التركيب، ويقرأ المكتب ذلك التركيب بوصفه معلومة عن القناعة تحت السطح.',
+      ] },
+      why: { en: [
+        'Rotation matters because it is an early and relatively clean read on conviction. Participants can keep an index aloft while repositioning toward safety, so defensive leadership inside a rising tape signals that the advance is being led by caution rather than risk appetite — a structurally weaker configuration than the same level on cyclical leadership.',
+        'It also matters because it precedes, rather than coincides with, broad risk-off. By the time aggregate risk aversion is obvious in the index, the rotation that warned of it has usually been underway for some time, so reading leadership composition gives a desk lead time that price alone does not.',
+      ], ar: [
+        'يهمّ الدوران لأنه قراءة مبكرة ونظيفة نسبياً للقناعة. فيستطيع المشاركون إبقاء المؤشر مرتفعاً بينما يعيدون التموضع نحو الأمان، فتشير القيادة الدفاعية داخل سوق صاعد إلى أن الصعود تقوده الحيطة لا شهية المخاطرة — تكوين أضعف هيكلياً من المستوى نفسه على قيادة دورية.',
+        'ويهمّ أيضاً لأنه يسبق العزوف الواسع عن المخاطر لا يتزامن معه. فحين يصبح العزوف الإجمالي واضحاً في المؤشر يكون الدوران الذي حذّر منه قد بدأ منذ حين عادةً، فتمنح قراءة تركيب القيادة المكتب وقت استباق لا يمنحه السعر وحده.',
+      ] },
+      desk: { en: [
+        'A desk distinguishes caution from liquidation by reading sector leadership, credit quality, duration demand, and breadth together. Defensive leadership with stable credit and orderly breadth is a cautious tilt; the same leadership with widening credit spreads and narrowing breadth is the early signature of genuine de-risking.',
+        'The interpretation is conditional on the regime. Defensive rotation inside a supportive liquidity regime is often a healthy consolidation; the identical rotation inside a tightening regime carries far more weight, so the desk reads rotation against funding conditions rather than in isolation.',
+      ], ar: [
+        'يميّز المكتب الحذر عن التصفية بقراءة قيادة القطاعات وجودة الائتمان والطلب على المدة والاتساع معاً. فالقيادة الدفاعية مع ائتمان مستقر واتساع منظّم ميلٌ حذِر؛ والقيادة نفسها مع اتساع فروق الائتمان وتضيّق الاتساع هي التوقيع المبكر لخفض حقيقي للمخاطر.',
+        'والتفسير مشروط بالنظام. فالدوران الدفاعي داخل نظام سيولة داعم كثيراً ما يكون تماسكاً صحياً؛ والدوران نفسه داخل نظام متشدد يحمل وزناً أكبر بكثير، لذا يقرأ المكتب الدوران مقابل شروط التمويل لا بمعزل.',
+      ] },
+      transmission: { en: [
+        'The mechanism is a reallocation of capital along the risk spectrum rather than its withdrawal. Money leaving cyclicals for staples keeps aggregate exposure roughly constant but lowers the beta of the market\'s leadership, so the same index level now rests on lower-conviction risk-taking.',
+        'Because rotation is gradual, it transmits as a slow erosion of the advance\'s quality. The danger is that the index masks it: leadership can deteriorate for an extended period while the headline holds, and the rotation only becomes a price event if and when the defensive bid itself gives way.',
+      ], ar: [
+        'الآلية إعادة تخصيص لرأس المال على طيف المخاطر لا سحبٌ له. فالأموال المغادرة الأسهم الدورية إلى السلع الأساسية تُبقي الانكشاف الإجمالي ثابتاً تقريباً لكنها تخفض «بيتا» قيادة السوق، فيستند المستوى نفسه إلى مخاطرة أقل قناعة.',
+        'ولأن الدوران تدريجي، ينتقل بوصفه تآكلاً بطيئاً لجودة الصعود. والخطر أن يخفيه المؤشر: فقد تتدهور القيادة لفترة ممتدة بينما يثبت العنوان، ولا يصبح الدوران حدثاً سعرياً إلا إذا تخلّى الطلب الدفاعي نفسه.',
+      ] },
+      connection: { en: [
+        'Across assets, defensive rotation typically pairs with firmer duration demand, a steady-to-firmer dollar, and a fading bid for the most speculative risk. Reading equity leadership alongside the bond and dollar signals confirms whether the rotation reflects genuine caution or merely sector-specific news.',
+        'In regime terms, defensive rotation is one of the channels feeding the risk-on/risk-off read: it is the leadership dimension of the broader regime. A desk treats persistent defensive leadership as evidence that the regime is drifting from supportive toward fragile, well before that shift is confirmed in the index.',
+      ], ar: [
+        'عبر الأصول، يقترن الدوران الدفاعي عادةً بطلب أصلب على المدة، ودولار ثابت إلى أصلب، وتلاشي الطلب على أكثر المخاطر مضاربةً. وقراءة قيادة الأسهم إلى جانب إشارات السندات والدولار تؤكد ما إذا كان الدوران يعكس حذراً حقيقياً أم مجرد خبر خاص بقطاع.',
+        'وبلغة النظام، الدوران الدفاعي إحدى القنوات التي تغذّي قراءة الإقبال والعزوف: فهو بُعد القيادة في النظام الأوسع. ويعدّ المكتب القيادة الدفاعية المستمرة دليلاً على انجراف النظام من الداعم نحو الهش، قبل وقت طويل من تأكيد ذلك في المؤشر.',
+      ] },
+      misread: { en: [
+        'The common misread is to dismiss defensive rotation because the index is still rising. The level is precisely what hides the change: a market making highs on defensive leadership is structurally different from one making highs on cyclical leadership, even though the price looks identical.',
+        'The opposite error is to read every defensive day as the start of a risk-off regime. Single-session sector noise, rebalancing, and idiosyncratic moves are common, so a desk requires persistence and cross-asset corroboration before treating rotation as a genuine deterioration in participation quality.',
+      ], ar: [
+        'القراءة الخاطئة الشائعة هي تجاهل الدوران الدفاعي لأن المؤشر ما زال يصعد. فالمستوى هو تحديداً ما يخفي التغيّر: فالسوق الذي يسجّل قمماً على قيادة دفاعية يختلف هيكلياً عن سوق يسجّلها على قيادة دورية، وإن بدا السعر متطابقاً.',
+        'والخطأ المعاكس قراءة كل يوم دفاعي بدايةً لنظام عزوف. فضجيج القطاعات لجلسة واحدة وإعادة الموازنة والتحركات الفردية شائعة، لذا يشترط المكتب الاستمرارية والتأكيد عبر الأصول قبل معاملة الدوران تدهوراً حقيقياً في جودة المشاركة.',
+      ] },
+      framework: { en: [
+        'A practical framework reads four dimensions in concert: which sectors lead, whether credit quality is holding, whether duration is being bid, and whether breadth is broadening or narrowing. Caution shows as defensive leadership with otherwise orderly internals; liquidation shows as defensive leadership with credit and breadth deteriorating together.',
+        'The desk then tests persistence and regime context — is the rotation holding across sessions, and is the funding backdrop supportive or tightening. A persistent defensive tilt in a tightening regime is treated as a meaningful structural warning; an isolated defensive session in a supportive regime is not.',
+      ], ar: [
+        'يقرأ الإطار العملي أربعة أبعاد معاً: أي القطاعات تقود، وهل تصمد جودة الائتمان، وهل يُطلَب على المدة، وهل يتسع الاتساع أم يضيق. فالحذر يظهر قيادةً دفاعية مع داخليات منظّمة؛ والتصفية تظهر قيادةً دفاعية مع تدهور الائتمان والاتساع معاً.',
+        'ثم يختبر المكتب الاستمرارية وسياق النظام — هل يصمد الدوران عبر الجلسات، وهل خلفية التمويل داعمة أم متشددة. والميل الدفاعي المستمر في نظام متشدد يُعامَل تحذيراً هيكلياً ذا معنى؛ وجلسة دفاعية معزولة في نظام داعم ليست كذلك.',
+      ] },
+      visual: { en: [
+        'The rotation-map visual shows the shift in leadership across the risk spectrum — from cyclical toward defensive or back — without attaching prices or fabricated flows. Its purpose is to make the change in composition visible, so the reader can see leadership move while the index level stays flat.',
+        'Read it as a composition map rather than a forecast: it depicts where leadership sits now relative to caution and risk, letting the reader judge the quality of an advance instead of inferring it from the headline level alone.',
+      ], ar: [
+        'يُظهر شكل خريطة الدوران تحوّل القيادة عبر طيف المخاطر — من الدورية نحو الدفاعية أو العكس — دون إلحاق أسعار أو تدفقات مصطنعة. وغرضه جعل تغيّر التركيب مرئياً، ليرى القارئ القيادة تتحرك بينما يبقى مستوى المؤشر ثابتاً.',
+        'اقرأه خريطة تركيب لا تنبؤاً: فهو يصوّر أين تقع القيادة الآن نسبةً إلى الحذر والمخاطرة، ليحكم القارئ على جودة الصعود بدل استنتاجها من المستوى المعلن وحده.',
+      ] },
+    },
   },
   {
     id: 'yield-curve-pressure', category: 'macro-liquidity',
@@ -278,7 +394,65 @@ const DEFINITIONS = [
     thesis_ar: 'تنبع أهمية ضغط المنحنى من مصدر الحركة وموضعها، لا من تسمية آلية للتحدب أو التسطح.',
     lens_en: 'Front-end policy pricing, long-end term premium, and issuance supply transmit differently.',
     lens_ar: 'ينتقل تسعير السياسة في الآجال القصيرة وعلاوة الأجل والمعروض في الآجال الطويلة بطرق مختلفة.',
-    visual: 'curve-transmission', related: ['central-bank-reaction-function', 'tlt-duration-sensitivity'], fingerprints: ['curve shape', 'term premium'],
+    visual: 'curve-transmission', related: ['central-bank-reaction-function', 'real-yields-gold', 'tlt-duration-sensitivity'], fingerprints: ['curve shape', 'term premium'],
+    depth: {
+      context: { en: [
+        'Yield-curve pressure describes a change in the shape of the curve — the relationship between short and long rates — that alters financial conditions. What matters is not the steepening-or-flattening label but the source and location of the move: the same shape change means very different things depending on whether the front end, the long end, or both are driving it.',
+        'The institutional context is that the curve encodes two distinct stories at once: the front end is dominated by expected policy, while the long end reflects growth, inflation, and term premium. A desk reads curve pressure by decomposing the move into those drivers rather than reacting to the headline spread.',
+      ], ar: [
+        'تصف ضغوط منحنى العائد تغيّراً في شكل المنحنى — العلاقة بين الفائدة القصيرة والطويلة — يبدّل الأوضاع المالية. والمهم ليس تسمية التحدّب أو التسطّح بل مصدر الحركة وموضعها: فتغيّر الشكل نفسه يعني أموراً مختلفة تماماً تبعاً لما إذا كان الطرف القصير أو الطويل أو كلاهما يقوده.',
+        'والسياق المؤسسي أن المنحنى يرمّز قصتين متمايزتين في آن: فالطرف القصير تهيمن عليه السياسة المتوقعة، بينما يعكس الطرف الطويل النمو والتضخم وعلاوة الأجل. ويقرأ المكتب ضغط المنحنى بتفكيك الحركة إلى تلك المحرّكات لا بالتفاعل مع الفارق المعلن.',
+      ] },
+      why: { en: [
+        'Curve pressure matters because it is a primary channel of financial conditions. A long-end-led rise tightens conditions on the most duration-sensitive assets and re-rates growth equities; a front-end-led move is mostly about policy expectations; and a flattening driven by long-end demand carries a different message than one driven by front-end repricing.',
+        'It also matters because the location of the move tells a desk what the market is actually pricing. The same ten-basis-point change in a headline spread can reflect easing policy expectations, rising term premium, or a flight to duration — and conflating them is one of the most common ways a curve read goes wrong.',
+      ], ar: [
+        'تهمّ ضغوط المنحنى لأنها قناة أساسية للأوضاع المالية. فارتفاع يقوده الطرف الطويل يشدّد الظروف على أكثر الأصول حساسية للأجل ويعيد تسعير أسهم النمو؛ وحركة يقودها الطرف القصير تتعلق غالباً بتوقعات السياسة؛ وتسطّح يقوده الطلب على الأجل الطويل يحمل رسالة مختلفة عن تسطّح يقوده إعادة تسعير الطرف القصير.',
+        'وتهمّ أيضاً لأن موضع الحركة يخبر المكتب بما يسعّره السوق فعلاً. فتغيّر عشر نقاط أساس نفسه في فارق معلن قد يعكس توقعات تيسير، أو ارتفاع علاوة الأجل، أو هروباً نحو المدة — وخلطها من أكثر الطرق شيوعاً لانحراف قراءة المنحنى.',
+      ] },
+      desk: { en: [
+        'A desk reads the curve by decomposing it: front-end policy pricing, long-end term premium, and issuance supply each transmit differently, so the first task is to attribute the move before interpreting it. A long-end move on heavy supply is a different signal from the same move on a growth re-rating.',
+        'The interpretation is about transmission, not prediction. The desk asks which assets the specific curve move re-prices — duration-heavy equities, the dollar, mortgage and credit spreads — and treats the curve as an input into financial conditions rather than a directional forecast of rates.',
+      ], ar: [
+        'يقرأ المكتب المنحنى بتفكيكه: فتسعير السياسة في الطرف القصير، وعلاوة الأجل في الطرف الطويل، ومعروض الإصدار، ينتقل كلٌّ منها بطريقة مختلفة، لذا تكون المهمة الأولى عزو الحركة قبل تفسيرها. فحركة في الطرف الطويل على معروض ثقيل إشارة مختلفة عن الحركة نفسها على إعادة تسعير للنمو.',
+        'والتفسير يتعلق بالانتقال لا التنبؤ. فيسأل المكتب أي الأصول تعيد حركة المنحنى المحددة تسعيرها — الأسهم كثيفة الأجل والدولار وفروق الرهن والائتمان — ويعدّ المنحنى مدخلاً للأوضاع المالية لا تنبؤاً اتجاهياً بالفائدة.',
+      ] },
+      transmission: { en: [
+        'The mechanism runs through the discount rate and the cost of leverage. A higher long end raises the rate at which distant cash flows are discounted, compressing long-duration valuations first, while a higher front end raises the cost of carry and financing across the system. Each location of the curve therefore hits a different part of the market.',
+        'Because the curve sits upstream of so many assets, its moves propagate widely but unevenly. A desk traces the specific channel — duration, carry, or term premium — rather than assuming a uniform effect, because a steepening that helps banks can simultaneously pressure the growth complex through the very same long-end move.',
+      ], ar: [
+        'تجري الآلية عبر معدل الخصم وكلفة الرافعة. فارتفاع الطرف الطويل يرفع المعدل الذي تُخصَم به التدفقات البعيدة، فيضغط تقييمات الأجل الطويل أولاً، بينما يرفع ارتفاع الطرف القصير كلفة الحمل والتمويل عبر النظام. فيصيب كل موضع من المنحنى جزءاً مختلفاً من السوق.',
+        'ولأن المنحنى يقع أعلى كثير من الأصول، تنتشر حركاته على نطاق واسع لكن بتفاوت. ويتتبّع المكتب القناة المحددة — المدة أو الحمل أو علاوة الأجل — بدل افتراض أثر موحّد، لأن تحدّباً يفيد البنوك قد يضغط في آنٍ مجمّع النمو عبر حركة الطرف الطويل ذاتها.',
+      ] },
+      connection: { en: [
+        'Across assets, curve pressure is most visible where duration concentrates: long bonds, the most rate-sensitive equities, the dollar as rate differentials shift, and gold through the real-yield channel. Reading these together is how a desk confirms that a curve move is transmitting rather than sitting isolated in the rates market.',
+        'In regime terms, the curve is one of the earliest inputs into the liquidity and risk regimes. A long-end-led tightening is often the leading edge of a regime turning less supportive, so a desk pairs the curve read with funding conditions and the real-yield/gold relationship to judge whether financial conditions are genuinely tightening.',
+      ], ar: [
+        'عبر الأصول، يكون ضغط المنحنى أوضح حيث تتركّز المدة: السندات الطويلة، وأكثر الأسهم حساسية للفائدة، والدولار مع تبدّل فوارق الفائدة، والذهب عبر قناة العائد الحقيقي. وقراءة هذه معاً هي كيف يؤكد المكتب أن حركة المنحنى تنتقل لا أنها معزولة في سوق الفائدة.',
+        'وبلغة النظام، المنحنى من أبكر مدخلات نظامَي السيولة والمخاطر. فالتشدد الذي يقوده الطرف الطويل كثيراً ما يكون الحافة الأمامية لنظام يتحول إلى أقل دعماً، لذا يقرن المكتب قراءة المنحنى بشروط التمويل وعلاقة العائد الحقيقي بالذهب ليحكم على ما إذا كانت الأوضاع المالية تتشدّد فعلاً.',
+      ] },
+      misread: { en: [
+        'The common misread is to treat a steepening or flattening label as self-explanatory. A flattening can be benign (front-end policy pricing catching up) or ominous (long-end demand signalling growth fear), and the label alone hides which — so reacting to the spread without attributing the source is a frequent error.',
+        'The second error is assuming the curve forecasts recessions or rallies mechanically. The curve is an input into financial conditions, not a timing device; a desk reads what the specific move re-prices now rather than treating a shape as a deterministic prediction of the future.',
+      ], ar: [
+        'القراءة الخاطئة الشائعة هي معاملة تسمية التحدّب أو التسطّح بوصفها مفسِّرة لذاتها. فالتسطّح قد يكون حميداً (لحاق تسعير السياسة في الطرف القصير) أو منذراً (طلب الطرف الطويل يشير إلى خوف على النمو)، والتسمية وحدها تخفي أيّهما — فالتفاعل مع الفارق دون عزو المصدر خطأ متكرر.',
+        'والخطأ الثاني افتراض أن المنحنى يتنبأ بالركود أو الصعود آلياً. فالمنحنى مدخل للأوضاع المالية لا أداة توقيت؛ ويقرأ المكتب ما تعيد الحركة المحددة تسعيره الآن بدل معاملة الشكل تنبؤاً حتمياً بالمستقبل.',
+      ] },
+      framework: { en: [
+        'A practical framework attributes before it interprets: first locate the move (front end, long end, or both), then identify the driver (policy pricing, term premium, or supply), and only then read which assets it re-prices. The sequence prevents the headline spread from masking the mechanism.',
+        'The desk then checks coherence and persistence — whether the dollar, duration-sensitive equities, and gold confirm the implied tightening or easing, and whether the move holds across sessions. A curve move that the rest of the complex confirms is treated as a genuine change in financial conditions; an isolated one is held as provisional.',
+      ], ar: [
+        'يعزو الإطار العملي قبل أن يفسّر: أولاً يحدد موضع الحركة (الطرف القصير أو الطويل أو كليهما)، ثم يحدد المحرّك (تسعير السياسة أو علاوة الأجل أو المعروض)، وبعدها فقط يقرأ أي الأصول تعيد تسعيرها. ويمنع هذا التسلسل الفارق المعلن من إخفاء الآلية.',
+        'ثم يتحقق المكتب من الاتساق والاستمرارية — هل يؤكد الدولار والأسهم الحساسة للأجل والذهب التشدد أو التيسير الضمني، وهل تصمد الحركة عبر الجلسات. وحركة منحنى يؤكدها بقية المجمّع تُعامَل تغيّراً حقيقياً في الأوضاع المالية؛ والمعزولة تُحتفظ بها مؤقتة.',
+      ] },
+      visual: { en: [
+        'The curve-transmission visual maps how a move at a given point on the curve propagates to the assets it re-prices — duration, carry, and term-premium channels — without attaching levels or fabricated forecasts. Its purpose is to make the location-dependence legible, showing why where the move happens matters more than the headline spread.',
+        'Read it as a transmission map rather than a forecast: it depicts which channel a front-end versus a long-end move travels through, so the reader can attribute a curve change to its driver instead of reading a steepening or flattening label at face value.',
+      ], ar: [
+        'يرسم شكل انتقال المنحنى كيفية انتشار حركة عند نقطة معينة على المنحنى إلى الأصول التي تعيد تسعيرها — قنوات المدة والحمل وعلاوة الأجل — دون إلحاق مستويات أو تنبؤات مصطنعة. وغرضه جعل الاعتماد على الموضع مقروءاً، مُظهراً لماذا يهمّ مكان الحركة أكثر من الفارق المعلن.',
+        'اقرأه خريطة انتقال لا تنبؤاً: فهو يصوّر القناة التي تسلكها حركة الطرف القصير مقابل الطويل، ليعزو القارئ تغيّر المنحنى إلى محرّكه بدل قراءة تسمية التحدّب أو التسطّح على ظاهرها.',
+      ] },
+    },
   },
   {
     id: 'real-yields-gold', category: 'macro-liquidity',
