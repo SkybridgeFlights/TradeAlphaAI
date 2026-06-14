@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-13T23:58:26.021Z",
+  "generated_at": "2026-06-14T05:49:43.677Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
-  "calendar_updated_at": "2026-06-13T23:58:24.027Z",
+  "calendar_updated_at": "2026-06-14T05:49:42.085Z",
   "enrichment": {
     "fetch_attempted": true,
     "keys_present": {
@@ -37,9 +37,9 @@
     "archived"
   ],
   "counts": {
-    "total": 31,
-    "high_impact": 25,
-    "parsed": 4,
+    "total": 30,
+    "high_impact": 24,
+    "parsed": 3,
     "awaiting": 27,
     "delayed": 0,
     "surprise_ready": 0,
@@ -47,98 +47,17 @@
       "scheduled": 27,
       "awaiting_release": 0,
       "released": 0,
-      "parsed": 4,
+      "parsed": 3,
       "revised": 0,
       "delayed": 0,
       "archived": 0
     },
     "by_forecast_quality": {
-      "historical_proxy": 4,
+      "historical_proxy": 3,
       "unavailable": 27
     }
   },
   "events": [
-    {
-      "id": "economic-calendar::global_acquisition::de::germany-cpi::20260609T070000",
-      "event": "Germany CPI",
-      "category": "inflation",
-      "country": "DE",
-      "release_time": "2026-06-09T07:00:00.000Z",
-      "timezone": "UTC",
-      "actual": 333.979,
-      "forecast": null,
-      "previous": 332.407,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
-      "confidence": 90,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "release_state": "parsed",
-      "historical_context": {
-        "previous": 332.407,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": "2026-05-01",
-        "official_series": "CPIAUCSL"
-      },
-      "surprise": {
-        "surprise_score": 0,
-        "surprise_direction": "near_consensus",
-        "surprise_label": "in_line__proxy_based",
-        "policy_tone": "neutral",
-        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Germany CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
-        "forecast_basis": "historical_proxy",
-        "surprise_confidence": 25,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 25,
-      "forecast_basis": "historical_proxy",
-      "forecast_sources": [
-        "historical_proxy:previous_release"
-      ],
-      "forecast_source_count": 0,
-      "forecast_confidence": 25,
-      "forecast_quality": "historical_proxy",
-      "consensus_state": "proxy_only",
-      "forecast_dispersion": null,
-      "proxy_used": true,
-      "proxy_value": 332.407,
-      "cross_asset": {
-        "directional": {
-          "DXY": "+",
-          "US10Y": "+",
-          "GOLD": "-",
-          "SPY": "-",
-          "QQQ": "-",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "inflation",
-        "in_line"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "schedule_estimate": true
-      },
-      "enrichment_source": "FRED (St. Louis Fed)"
-    },
     {
       "id": "economic-calendar::schedule_fallback::us::cpi::20260610T123000",
       "event": "CPI",
