@@ -96,18 +96,21 @@ function buildSection(ar) {
   const outlook = latest('market-outlook', () => true);
   // Latest educational article — newest /articles/ page carrying the educational
   // marker (evergreen pillar; Phase 118 homepage integration).
-  const eduDir = path.join(ROOT, 'articles');
+  const eduDir = path.join(ROOT, ar ? 'ar' : '', 'articles');
   let educational = null;
   try {
-    const eduFiles = fs.readdirSync(eduDir).filter((f) => f.endsWith('.html') && f !== 'index.html' && fs.readFileSync(path.join(eduDir, f), 'utf8').includes('data-educational-article='));
-    if (eduFiles.length) {
-      // Newest by file mtime so the latest published concept surfaces.
-      eduFiles.sort((a, b) => fs.statSync(path.join(eduDir, b)).mtimeMs - fs.statSync(path.join(eduDir, a)).mtimeMs);
-      const f = eduFiles[0];
+    const memory = readJson(I('educational-topics.json'), { history: [] });
+    const record = (memory.history || [])
+      .filter((item) => item.status === 'published' && item.slug && item.published_at)
+      .sort((left, right) => Date.parse(right.published_at) - Date.parse(left.published_at))[0];
+    if (record) {
+      const f = `${record.slug}.html`;
+      const articlePath = path.join(eduDir, f);
+      if (!fs.existsSync(articlePath)) throw new Error('latest educational article missing');
       let title = f.replace(/\.html$/, '');
-      const m = fs.readFileSync(path.join(eduDir, f), 'utf8').match(/<h1>([\s\S]*?)<\/h1>/i);
+      const m = fs.readFileSync(articlePath, 'utf8').match(/<h1>([\s\S]*?)<\/h1>/i);
       if (m) title = m[1].replace(/<[^>]+>/g, '').trim();
-      educational = { href: `/articles/${f}`, title };
+      educational = { href: `${ar ? '/ar' : ''}/articles/${f}`, title };
     }
   } catch { /* none */ }
 

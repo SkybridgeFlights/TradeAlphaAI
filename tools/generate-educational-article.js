@@ -20,9 +20,11 @@ const fs = require('fs');
 const path = require('path');
 const { scoreArticle, QUALITY_FLOOR } = require('./editorial-quality');
 const { buildEducationalTopics } = require('./build-educational-topics');
+const { CONCEPT_LIBRARY } = require('./educational-concept-library');
 
 const ROOT = path.resolve(__dirname, '..');
 const TOPICS_PATH = path.join(ROOT, 'data', 'intelligence', 'educational-topics.json');
+const VISUALS_PATH = path.join(ROOT, 'data', 'visual', 'educational-explainers.json');
 const DATE = new Date().toISOString().slice(0, 10);
 const MIN_WORDS = { en: 360, ar: 300 };
 
@@ -35,7 +37,7 @@ function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf
 // Each section: [id, head_en, head_ar, [en paragraphs], [ar paragraphs]].
 // Concepts run 6 sections × 2 paragraphs so every article clears the
 // institutional depth bar (≥9 sections, ≥18 paragraphs) the validator enforces.
-const CONCEPT_LIBRARY = {
+const LEGACY_CONCEPT_LIBRARY = {
   'breadth-vs-index': {
     sections: [
       ['what-breadth-is', 'What market breadth actually measures', 'ما الذي يقيسه اتساع السوق فعلاً',
@@ -158,12 +160,32 @@ function connectsSection(ar) {
   return `<section class="market-section" id="where-this-connects"><div class="market-section-head"><span class="eyebrow">${esc(t('Where this connects', 'حيث يتصل هذا'))}</span><h2>${esc(t('Seeing the concept in the live desk', 'رؤية المفهوم في المكتب الحيّ'))}</h2></div><div class="market-panel"><p class="market-copy">${esc(t('This concept is not abstract — it runs through the desk’s live work, where the same structural logic is applied to the current tape rather than explained in the general case.', 'هذا المفهوم ليس مجرّداً — بل يجري في عمل المكتب الحيّ، حيث يُطبَّق المنطق الهيكلي نفسه على السوق الراهن بدل شرحه في الحالة العامة.'))}</p><p class="market-copy">${esc(t('See it applied in', 'شاهده مطبّقاً في'))} ${links}.</p></div></section>`;
 }
 
+function educationalVisual(locale, slug) {
+  const ar = locale === 'ar';
+  const manifest = readJson(VISUALS_PATH, { explainers: [] });
+  const visual = (manifest.explainers || []).find((item) =>
+    item.id === slug && item.verified === true && item.metric_free === true);
+  if (!visual || !visual.files || !visual.files[locale]) return '';
+  const svgPath = path.join(ROOT, visual.files[locale]);
+  let svg;
+  try { svg = fs.readFileSync(svgPath, 'utf8'); } catch { return ''; }
+  const purpose = ar ? visual.purpose_ar : visual.purpose_en;
+  const label = ar ? visual.title_ar : visual.title_en;
+  const caption = ar
+    ? `يوضح هذا المخطط التعليمي الدائم ${purpose} المصدر: مكتبة TradeAlphaAI للمفاهيم التعليمية.`
+    : `This evergreen educational explainer illustrates ${purpose.charAt(0).toLowerCase()}${purpose.slice(1)} Source: TradeAlphaAI educational concept library.`;
+  return `<figure class="article-evidence-panel" data-educational-visual="${esc(slug)}" data-chart-type="${esc(visual.visual_type)}">
+  <div class="aep-head"><span class="aep-kicker">${ar ? 'مخطط تعليمي مؤسسي' : 'Institutional concept explainer'}</span><h2>${esc(label)}</h2></div>
+  <div class="aep-svg">${svg}</div>
+  <figcaption><span class="aep-hook">${esc(caption)}</span></figcaption>
+</figure>`;
+}
+
 function render(locale, topic) {
   const ar = locale === 'ar';
   const slug = topic.id;
   const concept = CONCEPT_LIBRARY[slug];
   const title = ar ? topic.title_ar : topic.title_en;
-  const lead = concept.sections[0];
   const description = ar
     ? `شرح مؤسسي تعليمي لمفهوم ${title} — البنية والتفسير دون نصيحة استثمارية.`
     : `An institutional educational explainer of ${String(title).toLowerCase()} — structure and interpretation, without investment advice.`;
@@ -171,10 +193,12 @@ function render(locale, topic) {
   const other = `https://www.tradealphaai.com/${ar ? '' : 'ar/'}articles/${slug}.html`;
   const shell = pageShell(locale, slug);
 
-  const sections = concept.sections.map(([id, head_en, head_ar, enParas, arParas]) => {
-    const paras = (ar ? arParas : enParas).map((p) => `<p class="market-copy">${esc(p)}</p>`).join('');
+  const localeSections = ar ? concept.sections_ar : concept.sections_en;
+  const sections = localeSections.map((section, index) => {
+    const id = `concept-${index + 1}`;
+    const paras = section.paragraphs.map((p) => `<p class="market-copy">${esc(p)}</p>`).join('');
     return `<section class="market-section" id="${esc(id)}" data-reasoning-module="${esc(id)}">
-  <div class="market-section-head"><span class="eyebrow">${esc(ar ? 'قراءة هيكلية' : 'Structural reading')}</span><h2>${esc(ar ? head_ar : head_en)}</h2></div>
+  <div class="market-section-head"><span class="eyebrow">${esc(ar ? 'قراءة هيكلية' : 'Structural reading')}</span><h2>${esc(section.heading)}</h2></div>
   <div class="market-panel">${paras}</div>
 </section>`;
   }).join('\n');
@@ -194,6 +218,7 @@ function render(locale, topic) {
   <link rel="alternate" hreflang="${ar ? 'en' : 'ar'}" href="${other}" />
   <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/articles/${slug}.html" />
   <meta property="og:type" content="article" />
+  <meta property="og:locale" content="${ar ? 'ar_AR' : 'en_US'}" />
   <meta property="og:title" content="${esc(title)}" />
   <meta property="og:description" content="${esc(description)}" />
   <meta property="og:url" content="${url}" />
@@ -224,6 +249,7 @@ ${shell.header}
   </div></header>
   <section class="market-section" id="articles-distinction"><div class="market-panel"><p class="market-copy">${ar ? 'ينتمي هذا البحث إلى مكتب التعليم المؤسسي في بنية السوق. أما الأبحاث التطبيقية حول الصناديق والقطاعات والأسهم فتبقى ضمن مكتبة الرؤى.' : 'This research belongs to the institutional market-structure education desk. Applied ETF, sector, and stock research remains in the Insights library.'}</p></div></section>
 ${sections}
+${educationalVisual(locale, slug)}
 ${connectsSection(ar)}
   <section class="market-section" id="educational-disclaimer"><div class="market-panel"><h2>${ar ? 'إخلاء المسؤولية التعليمي' : 'Educational Disclaimer'}</h2><p class="market-copy">${ar ? 'هذا تحليل تعليمي لبنية السوق، وليس نصيحة استثمارية أو توصية تداول أو توقعاً لاتجاه الأسعار.' : 'This is educational market-structure analysis, not investment advice, a trading recommendation, or a directional forecast.'}</p></div></section>
 </div></main>

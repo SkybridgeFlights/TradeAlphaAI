@@ -23,6 +23,8 @@ const LISTICLE = /\b(top \d+|\d+ (best|reasons|ways|tips|stocks to))\b/i;
 const HYPE = /\b(get rich|make money fast|guaranteed returns?|millionaire|huge gains|you won'?t believe|secret to)\b/i;
 const SEO_SPAM = /\b(ultimate guide|complete guide|must[- ]read|game[- ]changer|unlock (the )?secret|everything you need to know)\b/i;
 const ADVICE = /\b(buy now|sell now|you should (buy|sell)|price target|will (rally|crash|soar|plunge))\b/i;
+const PLACEHOLDER = /\b(todo|tbd|placeholder|lorem ipsum|coming soon|sample text|insert (copy|text)|draft only)\b/i;
+const NULL_LEAK = /\b(null|undefined|nan)\b/i;
 
 function institutionalLanguageFailures(body, label) {
   const found = [];
@@ -31,6 +33,8 @@ function institutionalLanguageFailures(body, label) {
   if (HYPE.test(body)) found.push(`${label}: motivational/SEO-hype language detected`);
   if (SEO_SPAM.test(body)) found.push(`${label}: generic SEO-hype language detected`);
   if (ADVICE.test(body)) found.push(`${label}: advice/trading language detected`);
+  if (PLACEHOLDER.test(body)) found.push(`${label}: placeholder content detected`);
+  if (NULL_LEAK.test(body)) found.push(`${label}: null/undefined leak detected`);
   return found;
 }
 
@@ -41,6 +45,9 @@ if (negativeFixture) {
     listicle: '<main><h1>Top 10 market ideas</h1></main>',
     retail: '<main><p>Easy investing can help you get rich. Buy now.</p></main>',
     seo: '<main><h1>The ultimate guide: everything you need to know</h1></main>',
+    placeholder: '<main><h1>Market structure</h1><p>TODO placeholder copy.</p></main>',
+    null: '<main><h1>Market structure</h1><p>undefined</p></main>',
+    advice: '<main><h1>Market structure</h1><p>You should buy now.</p></main>',
   };
   const key = negativeFixture.split('=')[1];
   const fixture = fixtures[key];
@@ -136,6 +143,8 @@ for (const file of publishedEn) {
   if ((en.match(/<p\b/g) || []).length < 18 || (ar.match(/<p\b/g) || []).length < 18) failures.push(`${slug}: insufficient bilingual paragraph depth`);
   const enMain = (en.match(/<main[\s\S]*?<\/main>/i) || [''])[0];
   const arMain = (ar.match(/<main[\s\S]*?<\/main>/i) || [''])[0];
+  if (!/(?:institutional (?:desk|process|interpretation|reading|mistake|use)|desk (?:reads?|asks?|question|interpretation))/i.test(enMain)) failures.push(`${slug}: institutional desk interpretation missing`);
+  if (!/(?:\u0627\u0644\u0645\u0643\u062a\u0628|\u0627\u0644\u0645\u0624\u0633\u0633\u064a|\u0627\u0644\u0645\u0624\u0633\u0633\u064a\u0629)/.test(arMain)) failures.push(`${slug}: Arabic institutional desk interpretation missing`);
   failures.push(...institutionalLanguageFailures(enMain, `articles/${file}`));
   failures.push(...institutionalLanguageFailures(arMain, `ar/articles/${file}`));
   if (!(read('articles/index.html') || '').includes(`/articles/${file}`)) failures.push(`articles/index.html: ${file} not linked`);

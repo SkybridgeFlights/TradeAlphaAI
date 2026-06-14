@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: educational-intelligence-brain
@@ -49,25 +50,26 @@ jobs:
       - name: Refresh topic engine + publish educational article
         id: publish
         run: |
-          node tools/build-educational-topics.js --write || echo "[educational] topic refresh degraded — continuing"
+          node tools/build-educational-topics.js --write
+          node tools/build-educational-visuals.js --write
           # Capture the published slug (empty when self-gated) for controlled Telegram.
           PUB=$(node tools/generate-educational-article.js --write 2>&1); echo "$PUB"
           SLUG=$(echo "$PUB" | grep -oE 'published /articles/[^ ]+\.html' | head -1 | sed -E 's#.*/##; s#\.html$##') || true
           echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
-          node tools/generate-articles-index.js --write || echo "[educational] articles index degraded — continuing"
-          node tools/generate-seo-sitemaps.js || echo "[educational] sitemap regen degraded — continuing"
-          node tools/render-intelligence-feed.js --write || echo "[educational] homepage feed refresh degraded — continuing"
+          node tools/generate-articles-index.js --write
+          node tools/generate-seo-sitemaps.js
 
       - name: Refresh social distribution (preview-only)
         run: |
-          node tools/build-distribution-plan.js --write || echo "[educational] distribution plan degraded — continuing"
+          node tools/build-distribution-plan.js --write
 
       - name: Validate
         run: |
           npm run check:educational-articles
           npm run check:educational-rotation
+          npm run check:educational-concept-library
+          npm run check:educational-visuals
           npm run check:telegram-activation
-          npm run check:homepage-feed
           npm run check:article-pairs
           npm run check:bilingual-structure
           npm run check:ar-rtl
@@ -85,9 +87,13 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
 
           # Stage every path this brain may regenerate: the /articles/ pillar
-          # (EN + AR), the homepage feed, the topic memory + data tree, and all
-          # sitemaps + robots. Stage comprehensively + fail safe.
-          INTENDED="articles/ ar/articles/ index.html ar/index.html data/ \
+          # (EN + AR), educational topic/visual artifacts, distribution plan,
+          # article registry, and all sitemaps + robots. Homepage files remain
+          # exclusively owned by homepage-feed.yml.
+          INTENDED="articles/ ar/articles/ \
+            data/intelligence/educational-topics.json data/visual/educational-explainers.json \
+            data/visual/educational-explainers/ data/insights/article-registry.json \
+            data/social/distribution-plan.json \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
           stage_intended() { for p in $INTENDED; do [ -e "$p" ] && git add -A -- "$p" || true; done; }
@@ -98,7 +104,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              articles/*|ar/articles/*|index.html|ar/index.html|data/*|sitemap*.xml|robots.txt) ;;
+              articles/*|ar/articles/*|data/intelligence/educational-topics.json|data/visual/educational-explainers.json|data/visual/educational-explainers/*|data/insights/article-registry.json|data/social/distribution-plan.json|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"
@@ -120,9 +126,9 @@ jobs:
             if git rebase origin/main; then
               if ! git diff --quiet || ! git diff --cached --quiet; then
                 echo "[educational] residual changes after rebase — regenerating shared surfaces + restaging"
-                node tools/generate-articles-index.js --write || true
-                node tools/generate-seo-sitemaps.js || true
-                node tools/render-intelligence-feed.js --write || true
+                node tools/generate-articles-index.js --write
+                node tools/generate-seo-sitemaps.js
+                node tools/build-educational-visuals.js --write
                 stage_intended
                 git diff --cached --quiet || git commit --amend --no-edit
               fi
@@ -132,12 +138,22 @@ jobs:
               echo "[educational] push rejected (race) on attempt ${attempt} — retrying"
             else
               echo "[educational] rebase conflict on attempt ${attempt} — regenerating shared artifacts"
-              git checkout --theirs -- index.html ar/index.html sitemap-core.xml sitemap-ar.xml 2>/dev/null || true
-              node tools/generate-articles-index.js --write || true
-              node tools/generate-seo-sitemaps.js || true
-              node tools/render-intelligence-feed.js --write || true
+              node tools/build-educational-topics.js --write
+              node tools/build-educational-visuals.js --write
+              node tools/generate-articles-index.js --write
+              node tools/generate-seo-sitemaps.js
               stage_intended
-              git -c core.editor=true rebase --continue || git rebase --abort
+              if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+                echo "[educational] unresolved paths remain after deterministic regeneration"
+                git diff --name-only --diff-filter=U
+                git rebase --abort
+                exit 1
+              fi
+              if git diff --cached --quiet; then
+                git rebase --skip
+              else
+                git -c core.editor=true rebase --continue
+              fi
             fi
             sleep $((attempt * 3))
             if [ "$attempt" = "5" ]; then echo "[educational] push failed after retries"; exit 1; fi
@@ -157,4 +173,10 @@ jobs:
           if [ "$ENABLE_TELEGRAM_PUBLISH" = "true" ]; then FLAG="--send"; fi
           echo "[educational] controlled Telegram dispatch for article '${{ steps.publish.outputs.slug }}' (mode: $FLAG)"
           [ "$FLAG" = "--send" ] && sleep 45 || true
-          node tools/send-published-article-telegram.js --slug="${{ steps.publish.outputs.slug }}" --content-type=educational $FLAG || echo "[educational] Telegram dispatch non-fatal — continuing"
+          node tools/send-published-article-telegram.js --slug="${{ steps.publish.outputs.slug }}" --content-type=educational $FLAG
+
+      - name: Refresh homepage feed through its owning workflow
+        if: steps.publish.outputs.slug != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run homepage-feed.yml --ref main

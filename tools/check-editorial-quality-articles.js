@@ -16,6 +16,8 @@ const ROOT = path.resolve(__dirname, '..');
 const TARGETS = [
   { dir: path.join(ROOT, 'market-news'), lang: 'en' },
   { dir: path.join(ROOT, 'ar', 'market-news'), lang: 'ar' },
+  { dir: path.join(ROOT, 'articles'), lang: 'en', educationalOnly: true },
+  { dir: path.join(ROOT, 'ar', 'articles'), lang: 'ar', educationalOnly: true },
 ];
 
 const failures = [];
@@ -31,10 +33,14 @@ function bodyText(html) {
 }
 
 let scored = 0;
-for (const { dir, lang } of TARGETS) {
+for (const { dir, lang, educationalOnly } of TARGETS) {
   for (const f of articles(dir)) {
-    const rel = `${lang === 'ar' ? 'ar/' : ''}market-news/${f}`;
-    const text = bodyText(fs.readFileSync(path.join(dir, f), 'utf8'));
+    const html = fs.readFileSync(path.join(dir, f), 'utf8');
+    if (educationalOnly && !html.includes('data-educational-article=')) continue;
+    const rel = educationalOnly
+      ? `${lang === 'ar' ? 'ar/' : ''}articles/${f}`
+      : `${lang === 'ar' ? 'ar/' : ''}market-news/${f}`;
+    const text = bodyText(html);
     const s = scoreText(text, { lang });
     scored += 1;
     if (s.flags.length) fail(`${rel}: quality flags ${JSON.stringify(s.flags)}`);

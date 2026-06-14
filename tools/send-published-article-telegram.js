@@ -88,7 +88,7 @@ function cooldownActive() {
 function verifyUrl(url) {
   return new Promise((resolve) => {
     const req = https.request(url, { method: 'HEAD', timeout: 8000 }, (res) => {
-      resolve(res.statusCode >= 200 && res.statusCode < 400);
+      resolve(res.statusCode === 200);
       res.resume();
     });
     req.on('error', () => resolve(false));
@@ -435,12 +435,16 @@ async function main() {
     console.error(`[TELEGRAM DELIVERY] AR page missing on disk (${PATH_BY_TYPE[CONTENT_TYPE].ar}) — refusing to send bilingual post`);
     process.exit(1);
   }
-  const live = await verifyUrl(urls.url);
-  if (!live) {
+  const [enLive, arLive] = await Promise.all([verifyUrl(urls.url), verifyUrl(urls.ar_url)]);
+  if (!enLive) {
     console.error(`[TELEGRAM DELIVERY] EN URL not live (200) yet: ${urls.url} — refusing to send`);
     process.exit(1);
   }
-  console.log(`[TELEGRAM DELIVERY] URL-200 verified: ${urls.url}`);
+  if (!arLive) {
+    console.error(`[TELEGRAM DELIVERY] AR URL not live (200) yet: ${urls.ar_url} — refusing to send`);
+    process.exit(1);
+  }
+  console.log(`[TELEGRAM DELIVERY] bilingual URL-200 verified: ${urls.url} + ${urls.ar_url}`);
 
   const entry = {
     slug: SLUG,

@@ -8,7 +8,7 @@ const domain = "https://www.tradealphaai.com";
 const failures = [];
 const warnings = [];
 
-const scanDirs = [".", "stocks", "etfs", "compare", "ar/compare", "insights", "ar/insights", "en/insights"];
+const scanDirs = [".", "stocks", "etfs", "compare", "ar/compare", "insights", "ar/insights", "en/insights", "articles", "ar/articles"];
 
 const pages = [];
 for (const dir of scanDirs) {
@@ -27,6 +27,12 @@ let skipped = 0;
 for (const rel of pages) {
   const html = read(rel);
   if (!html) continue;
+  if ((rel.startsWith("articles/") || rel.startsWith("ar/articles/"))
+      && !html.includes("data-educational-article=")
+      && !rel.endsWith("index.html")) {
+    skipped++;
+    continue;
+  }
 
   const robots = metaContent(html, 'name="robots"');
   if (robots && /noindex/i.test(robots)) { skipped++; continue; }

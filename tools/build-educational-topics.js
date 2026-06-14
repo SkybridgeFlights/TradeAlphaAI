@@ -18,6 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { CONCEPT_FAMILIES: DEEP_CONCEPT_FAMILIES } = require('./educational-concept-library');
 
 const ROOT = path.resolve(__dirname, '..');
 const REGISTRY_PATH = path.join(ROOT, 'data', 'insights', 'article-registry.json');
@@ -27,61 +28,9 @@ const OUT_PATH = path.join(ROOT, 'data', 'intelligence', 'educational-topics.jso
 const MAX_ELIGIBLE = 4;
 const COOLDOWN_DAYS = 10; // a concept family just published cools down
 
-// Institutional market-structure concept families. Each carries candidate
-// angles (theses, not keywords) and a fingerprint used to detect existing
-// coverage. Topics deliberately teach how institutional markets behave.
-const CONCEPT_FAMILIES = [
-  {
-    id: 'breadth-vs-index', fingerprint: ['breadth', 'equal-weight', 'equal weight', 'participation', 'rsp'],
-    title_en: 'Why breadth deterioration matters more than headline index strength',
-    title_ar: 'لماذا يكون تدهور اتساع السوق أهم من قوة المؤشر الظاهرة',
-  },
-  {
-    id: 'duration-ai-pricing', fingerprint: ['duration', 'long-duration', 'rate sensitivity', 'discount rate'],
-    title_en: 'How duration sensitivity reshapes the pricing of AI-leadership equities',
-    title_ar: 'كيف تعيد حساسية الفائدة تشكيل تسعير أسهم قيادة الذكاء الاصطناعي',
-  },
-  {
-    id: 'volatility-compression', fingerprint: ['volatility compression', 'vol compression', 'compressed volatility', 'stored instability'],
-    title_en: 'Understanding volatility compression as stored instability before catalysts',
-    title_ar: 'فهم انضغاط التقلب بوصفه عدم استقرار مخزّن قبل المحفزات',
-  },
-  {
-    id: 'concentration-structure', fingerprint: ['concentration', 'narrow leadership', 'crowded'],
-    title_en: 'What concentration risk reveals about underlying market structure',
-    title_ar: 'ما الذي تكشفه مخاطر التركز عن بنية السوق الكامنة',
-  },
-  {
-    id: 'liquidity-regime', fingerprint: ['liquidity regime', 'funding conditions', 'liquidity expectations', 'marginal liquidity'],
-    title_en: 'How liquidity regimes shape cross-asset behavior and speculative appetite',
-    title_ar: 'كيف تشكّل أنظمة السيولة السلوك عبر الأصول وشهية المضاربة',
-  },
-  {
-    id: 'cross-asset-confirmation', fingerprint: ['cross-asset confirmation', 'cross asset confirmation', 'confirmation across', 'divergence persistence'],
-    title_en: 'Why cross-asset confirmation matters in institutional macro analysis',
-    title_ar: 'لماذا يهم التأكيد عبر الأصول في التحليل الكلي المؤسسي',
-  },
-  {
-    id: 'dollar-gold-comove', fingerprint: ['gold with the dollar', 'dollar and gold', 'gold dollar', 'real yields gold'],
-    title_en: 'Why gold sometimes rises alongside a firming dollar',
-    title_ar: 'لماذا يرتفع الذهب أحياناً بالتوازي مع تقوّي الدولار',
-  },
-  {
-    id: 'positioning-squeeze', fingerprint: ['positioning squeeze', 'short squeeze', 'crowded positioning', 'forced covering'],
-    title_en: 'Understanding positioning squeezes in institutional markets',
-    title_ar: 'فهم انضغاطات التمركز في الأسواق المؤسسية',
-  },
-  {
-    id: 'yield-pressure-growth', fingerprint: ['yield pressure', 'rising yields growth', 'term premium', 'curve and equities'],
-    title_en: 'Yield pressure and the sensitivity of long-duration growth equities',
-    title_ar: 'ضغط العوائد وحساسية أسهم النمو طويلة الأمد',
-  },
-  {
-    id: 'vol-suppression-fragility', fingerprint: ['volatility suppression', 'suppressed volatility', 'structural fragility', 'hidden fragility'],
-    title_en: 'How volatility suppression can mask structural fragility',
-    title_ar: 'كيف يمكن لكبت التقلب أن يخفي هشاشة هيكلية',
-  },
-];
+// The expanded deterministic contracts retain the established family shape
+// consumed by coverage, cooldown, history, and ranking logic.
+const CONCEPT_FAMILIES = DEEP_CONCEPT_FAMILIES;
 
 function readJson(p, fallback) {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return fallback; }

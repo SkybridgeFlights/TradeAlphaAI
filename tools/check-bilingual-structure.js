@@ -18,6 +18,8 @@ const DRAFTS_DIR    = path.join(ROOT, 'drafts', 'editorial');
 const EN_INSIGHTS   = path.join(ROOT, 'insights');
 const AR_INSIGHTS   = path.join(ROOT, 'ar', 'insights');
 const EN_LOC        = path.join(ROOT, 'en', 'insights');
+const EN_ARTICLES   = path.join(ROOT, 'articles');
+const AR_ARTICLES   = path.join(ROOT, 'ar', 'articles');
 
 const SLUG         = argValue('--slug')   || null;
 const DRAFTS_ONLY  = process.argv.includes('--drafts-only');
@@ -26,7 +28,12 @@ const VERBOSE      = process.argv.includes('--verbose');
 const FIXED_SECTION_IDS = new Set(['related-research', 'continue-learning', 'faq']);
 
 function main() {
-  const slugs = SLUG ? [SLUG] : getDraftSlugs();
+  const educationalSlugs = fs.existsSync(EN_ARTICLES)
+    ? fs.readdirSync(EN_ARTICLES)
+      .filter((file) => file.endsWith('.html') && file !== 'index.html' && fs.readFileSync(path.join(EN_ARTICLES, file), 'utf8').includes('data-educational-article='))
+      .map((file) => file.replace(/\.html$/, ''))
+    : [];
+  const slugs = SLUG ? [SLUG] : [...new Set([...getDraftSlugs(), ...educationalSlugs])];
   const results  = [];
   const failures = [];
   let totalChecked = 0;
@@ -61,6 +68,16 @@ function main() {
         results.push(result);
         if (!result.passed) failures.push(result);
         else if (VERBOSE) console.log(`[bilingual-check] PASS  en/insights/${slug}`);
+      }
+
+      const enArticle = path.join(EN_ARTICLES, `${slug}.html`);
+      const arArticle = path.join(AR_ARTICLES, `${slug}.html`);
+      if (fs.existsSync(enArticle) && fs.existsSync(arArticle)) {
+        totalChecked++;
+        const result = checkPair(slug, 'educational', enArticle, arArticle);
+        results.push(result);
+        if (!result.passed) failures.push(result);
+        else if (VERBOSE) console.log(`[bilingual-check] PASS  articles/${slug}`);
       }
     }
   }

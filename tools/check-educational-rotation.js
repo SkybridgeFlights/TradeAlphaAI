@@ -32,6 +32,88 @@ function shingles(text) {
 }
 function jaccard(a, b) { let i = 0; for (const x of a) if (b.has(x)) i += 1; const u = a.size + b.size - i; return u ? i / u : 0; }
 
+function validateRotation(articles, history, cooldownDays) {
+  const found = [];
+  const legacy = new Set(['breadth-vs-index', 'liquidity-regime']);
+  const seenRecords = new Set();
+  for (const record of history) {
+    const slug = record && (record.slug || record.id);
+    if (!slug) { found.push('publication history contains a record without slug/id'); continue; }
+    if (record.status === 'published') {
+      if (!record.published_at || !Number.isFinite(Date.parse(record.published_at))) found.push(`${slug}: publication history has invalid published_at`);
+      const key = `${slug}|${record.published_at || ''}|${record.status}`;
+      if (seenRecords.has(key)) found.push(`${slug}: duplicate publication history record`);
+      seenRecords.add(key);
+    }
+  }
+
+  for (const article of articles) {
+    if (!CONCEPT_LIBRARY[article.slug] && !legacy.has(article.slug)) found.push(`${article.slug}: published educational article has no concept-library entry (off-universe)`);
+    const records = history
+      .filter((item) => (item.slug || item.id) === article.slug && item.status === 'published')
+      .sort((a, b) => Date.parse(a.published_at) - Date.parse(b.published_at));
+    if (!records.length) found.push(`${article.slug}: no publication history record`);
+    for (let index = 1; index < records.length; index += 1) {
+      const gap = (Date.parse(records[index].published_at) - Date.parse(records[index - 1].published_at)) / 86400000;
+      if (gap < cooldownDays) found.push(`${article.slug}: republished after ${gap.toFixed(1)}d (< ${cooldownDays}d cooldown)`);
+    }
+  }
+
+  for (const record of history.filter((item) => item && item.status === 'published')) {
+    const slug = record.slug || record.id;
+    if (!articles.some((article) => article.slug === slug)) found.push(`${slug}: published history record has no educational article`);
+  }
+
+  for (let i = 0; i < articles.length; i += 1) {
+    for (let j = i + 1; j < articles.length; j += 1) {
+      const similarity = jaccard(shingles(articles[i].text), shingles(articles[j].text));
+      if (similarity > 0.55) found.push(`near-duplicate educational articles: ${articles[i].slug} ~ ${articles[j].slug} (similarity ${similarity.toFixed(2)})`);
+    }
+  }
+  return found;
+}
+
+const negativeFixture = process.argv.find((arg) => arg.startsWith('--negative-fixture='));
+if (negativeFixture) {
+  const key = negativeFixture.split('=')[1];
+  const baseText = 'Institutional desks read participation quality through liquidity transmission breadth confirmation volatility structure and cross asset coherence. '.repeat(12);
+  const fixtures = {
+    'missing-history': {
+      articles: [{ slug: 'breadth-vs-index', text: baseText }],
+      history: [],
+    },
+    cooldown: {
+      articles: [{ slug: 'breadth-vs-index', text: baseText }],
+      history: [
+        { slug: 'breadth-vs-index', status: 'published', published_at: '2026-06-01T00:00:00Z' },
+        { slug: 'breadth-vs-index', status: 'published', published_at: '2026-06-02T00:00:00Z' },
+      ],
+    },
+    'near-duplicate': {
+      articles: [
+        { slug: 'breadth-vs-index', text: baseText },
+        { slug: 'liquidity-regime', text: baseText },
+      ],
+      history: [
+        { slug: 'breadth-vs-index', status: 'published', published_at: '2026-05-01T00:00:00Z' },
+        { slug: 'liquidity-regime', status: 'published', published_at: '2026-05-02T00:00:00Z' },
+      ],
+    },
+  };
+  const fixture = fixtures[key];
+  if (!fixture) {
+    console.error(`[educational-rotation] unknown negative fixture: ${key}`);
+    process.exit(2);
+  }
+  const fixtureFailures = validateRotation(fixture.articles, fixture.history, 10);
+  if (!fixtureFailures.length) {
+    console.error(`[educational-rotation] FAIL: negative fixture "${key}" was accepted`);
+    process.exit(0);
+  }
+  fixtureFailures.forEach((message) => console.error(`[educational-rotation] FAIL: ${message}`));
+  process.exit(1);
+}
+
 const topics = readJson(TOPICS, { history: [], anti_repetition: {} });
 const cooldownDays = (topics.anti_repetition && topics.anti_repetition.cooldown_days) || 10;
 
@@ -48,32 +130,13 @@ if (!educational.length) {
   process.exit(0);
 }
 
-// Off-universe + history-record + cooldown integrity. (The single legacy
-// hand-authored concept volatility-compression predates the autonomous library;
-// it is exempt from the library-entry requirement but still history-checked.)
-const LEGACY = new Set(['volatility-compression']);
 const history = Array.isArray(topics.history) ? topics.history : [];
-for (const a of educational) {
-  if (!CONCEPT_LIBRARY[a.slug] && !LEGACY.has(a.slug)) fail(`${a.slug}: published educational article has no concept-library entry (off-universe)`);
-  const recs = history.filter((h) => h.slug === a.slug && h.status === 'published').sort((x, y) => Date.parse(x.published_at) - Date.parse(y.published_at));
-  if (!recs.length) fail(`${a.slug}: no publication history record`);
-  // Cooldown: the same concept must not have two publications within the window.
-  for (let i = 1; i < recs.length; i += 1) {
-    const gap = (Date.parse(recs[i].published_at) - Date.parse(recs[i - 1].published_at)) / 86400000;
-    if (gap < cooldownDays) fail(`${a.slug}: republished after ${gap.toFixed(1)}d (< ${cooldownDays}d cooldown)`);
-  }
-}
-
-// Near-duplicate detection across published educational articles.
-for (let i = 0; i < educational.length; i += 1) {
-  for (let j = i + 1; j < educational.length; j += 1) {
-    const sim = jaccard(shingles(educational[i].text), shingles(educational[j].text));
-    if (sim > 0.55) fail(`near-duplicate educational articles: ${educational[i].slug} ~ ${educational[j].slug} (similarity ${sim.toFixed(2)})`);
-  }
-}
+validateRotation(educational, history, cooldownDays).forEach(fail);
 
 if (failures.length) {
   failures.forEach((m) => console.error(`[educational-rotation] FAIL: ${m}`));
   process.exit(1);
 }
 console.log(`[educational-rotation] check:educational-rotation passed (${educational.length} article(s); on-universe, history-recorded, cooldown-respected, non-duplicate).`);
+
+module.exports = { validateRotation };

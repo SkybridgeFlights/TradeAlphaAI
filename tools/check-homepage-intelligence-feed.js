@@ -28,6 +28,10 @@ function feedBlock(html) {
 
 const regime = readJson(path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json'), {});
 const regimeFresh = regime.generated_at && ageHours(regime.generated_at) <= STALE_HOURS;
+const educationalTopics = readJson(path.join(ROOT, 'data', 'intelligence', 'educational-topics.json'), { history: [] });
+const latestEducational = (educationalTopics.history || [])
+  .filter((item) => item.status === 'published' && item.slug && item.published_at)
+  .sort((left, right) => Date.parse(right.published_at) - Date.parse(left.published_at))[0] || null;
 // English forms of the regime/liquidity values (with spaces) — used to detect
 // fake freshness: a determinate value displayed while the artifact is stale.
 const determinateEn = new Set(['broad risk support', 'healthy risk expansion', 'narrow leadership', 'crowded growth positioning', 'defensive rotation', 'liquidity stress', 'unstable rally', 'volatility transition', 'yield pressure regime', 'macro fragility', 'easing', 'tightening', 'yield pressure', 'defensive demand', 'volatility absorption', 'volatility rejection', 'neutral']);
@@ -62,6 +66,22 @@ for (const [rel, ar] of [['index.html', false], ['ar/index.html', true]]) {
   const hrefs = [...block.matchAll(/intel-feed-title"><a href="([^"]+)"/g)].map((m) => m[1]);
   const seen = new Set();
   for (const h of hrefs) { if (seen.has(h)) fail(`${rel}: duplicate latest-content card ${h}`); seen.add(h); }
+
+  // Latest educational content must follow publication history, not filesystem
+  // timestamps, and each locale must carry its native article title.
+  if (latestEducational) {
+    const expectedHref = `${ar ? '/ar' : ''}/articles/${latestEducational.slug}.html`;
+    if (!block.includes(`href="${expectedHref}"`)) fail(`${rel}: latest educational history article missing (${expectedHref})`);
+    const articlePath = path.join(ROOT, ar ? 'ar' : '', 'articles', `${latestEducational.slug}.html`);
+    try {
+      const article = fs.readFileSync(articlePath, 'utf8');
+      const title = (article.match(/<h1>([\s\S]*?)<\/h1>/i) || [])[1];
+      const cleanTitle = title && title.replace(/<[^>]+>/g, '').trim();
+      if (!cleanTitle || !block.includes(cleanTitle)) fail(`${rel}: latest educational title is not localized from ${articlePath}`);
+    } catch {
+      fail(`${rel}: latest educational article file missing (${articlePath})`);
+    }
+  }
 
   // State values.
   const values = [...block.matchAll(/intel-widget-value">([^<]*)</g)].map((m) => m[1].trim());

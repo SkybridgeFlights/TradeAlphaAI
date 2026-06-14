@@ -74,13 +74,35 @@ ${css.map((href) => `  <link rel="stylesheet" href="${href}" />`).join('\n')}
 function buildMain(ar, topics) {
   const t = (en, arT) => (ar ? arT : en);
   const families = (topics && topics.candidates) || [];
-  const displayFamilies = [...families].sort((left, right) => {
+  const familyIds = new Set(families.map((family) => family.id));
+  const publishedExtras = fs.readdirSync(path.join(ROOT, 'articles'))
+    .filter((file) => file.endsWith('.html') && file !== 'index.html')
+    .map((file) => file.replace(/\.html$/, ''))
+    .filter((slug) => !familyIds.has(slug))
+    .filter((slug) => {
+      const html = fs.readFileSync(path.join(ROOT, 'articles', `${slug}.html`), 'utf8');
+      return html.includes('data-educational-article=');
+    })
+    .map((slug) => {
+      const titleFrom = (localePath) => {
+        try {
+          const html = fs.readFileSync(localePath, 'utf8');
+          return ((html.match(/<h1>([\s\S]*?)<\/h1>/i) || [])[1] || slug).replace(/<[^>]+>/g, '').trim();
+        } catch { return slug; }
+      };
+      return {
+        id: slug,
+        title_en: titleFrom(path.join(ROOT, 'articles', `${slug}.html`)),
+        title_ar: titleFrom(path.join(ROOT, 'ar', 'articles', `${slug}.html`)),
+      };
+    });
+  const displayFamilies = [...families, ...publishedExtras].sort((left, right) => {
     const leftPublished = fs.existsSync(path.join(ROOT, 'articles', `${left.id}.html`));
     const rightPublished = fs.existsSync(path.join(ROOT, 'articles', `${right.id}.html`));
     return Number(rightPublished) - Number(leftPublished);
   });
   // Present the institutional education program as the editorial scope.
-  const scopeCards = displayFamilies.slice(0, 9).map((f) => {
+  const scopeCards = displayFamilies.map((f) => {
     const published = fs.existsSync(path.join(ROOT, ar ? 'ar/articles' : 'articles', `${f.id}.html`));
     const title = esc(ar ? f.title_ar : f.title_en);
     const heading = published ? `<a href="${ar ? '/ar' : ''}/articles/${f.id}.html">${title}</a>` : title;

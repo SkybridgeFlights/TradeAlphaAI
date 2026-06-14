@@ -30,7 +30,8 @@ for (const h of FOREIGN_HOSTS) if (src.includes(h)) fail(`sender references non-
 if (!src.includes('api.telegram.org')) fail('sender does not target api.telegram.org');
 if (!/DRY_RUN\s*=\s*!SMOKE_TEST\s*&&\s*\(.*!process\.argv\.includes\('--send'\)/.test(src)) fail('sender does not default to dry-run (must require --send)');
 if (!/TELEGRAM_BOT_TOKEN/.test(src) || !/TELEGRAM_CHANNEL_ID|TELEGRAM_CHAT_ID/.test(src)) fail('sender does not gate on TELEGRAM_BOT_TOKEN + channel/chat id');
-if (!/verifyUrl\(/.test(src)) fail('sender does not verify URL-200 before send');
+if (!/res\.statusCode === 200/.test(src)) fail('sender URL verification must require exact HTTP 200');
+if (!/Promise\.all\(\[verifyUrl\(urls\.url\), verifyUrl\(urls\.ar_url\)\]\)/.test(src)) fail('sender does not verify both EN and AR production URLs before send');
 if (!/isDuplicate\(/.test(src)) fail('sender does not enforce duplicate prevention');
 if (!/sentToday\(/.test(src) || !/PER_DAY_CAP/.test(src)) fail('sender does not enforce a per-day cap');
 if (!/cooldownActive\(/.test(src)) fail('sender does not enforce a per-type cooldown');
