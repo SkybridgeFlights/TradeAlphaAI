@@ -13,6 +13,7 @@ const core = [
 ].filter((rel) => exists(rel))
   .concat((marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists))
   .concat(existsDir("briefs") ? ["briefs/"] : [])
+  .concat(existsDir("economic-calendar") ? ["economic-calendar/"] : [])
   .concat(existsDir("market-news") ? ["market-news/"] : [])
   .concat(existsDir("market-news") ? htmlFiles("market-news").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("market-structure") ? ["market-structure/"] : [])
@@ -60,7 +61,7 @@ console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} com
 
 function arUrls() {
   const out = ["ar/"];
-  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "market-news/", "market-structure/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
+  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);

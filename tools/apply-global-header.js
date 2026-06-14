@@ -17,6 +17,7 @@ const { renderGlobalHeader, globalHeaderStyles, globalHeaderScripts, MARKER_STAR
 
 const ROOT   = path.resolve(__dirname, '..');
 const DRY    = process.argv.includes('--dry-run');
+const NAV_ONLY = process.argv.includes('--navigation-only');
 
 // All page roots to process
 const ROOTS = [
@@ -45,6 +46,8 @@ const ROOTS = [
   'ar/articles',
   'market-news',
   'ar/market-news',
+  'market-structure',
+  'ar/market-structure',
   'briefs',
   'ar/briefs',
   'intelligence',
@@ -83,10 +86,12 @@ const EXCLUDE = new Set([
 
 let changed = 0;
 let skipped = 0;
+let failures = 0;
 
 if (require.main === module) {
   for (const file of collectTargetFiles()) processFile(file);
-  console.log(`[global-header] ${DRY ? '[dry-run] ' : ''}Applied to ${changed} page(s), skipped ${skipped}.`);
+  console.log(`[global-header] ${DRY ? '[dry-run] ' : ''}${NAV_ONLY ? 'Navigation applied' : 'Applied'} to ${changed} page(s), skipped ${skipped}.`);
+  if (failures) process.exit(1);
 }
 
 function processFile(file) {
@@ -100,7 +105,15 @@ function processFile(file) {
 
   // Find and replace existing header region
   let newHtml;
-  if (html.includes(MARKER_START) && html.includes(MARKER_END)) {
+  if (NAV_ONLY) {
+    newHtml = replaceNavigationFragments(html, header, relative);
+    if (!newHtml) return;
+    if (html === newHtml) return;
+    if (!DRY) fs.writeFileSync(file, newHtml, 'utf8');
+    changed++;
+    if (DRY) console.log(`[global-header] [dry] would update: ${relative}`);
+    return;
+  } else if (html.includes(MARKER_START) && html.includes(MARKER_END)) {
     // Already has markers — replace the block
     const before = html.slice(0, html.indexOf(MARKER_START));
     const after  = html.slice(html.indexOf(MARKER_END) + MARKER_END.length);
@@ -172,6 +185,7 @@ function detectActive(relative) {
   if (/(?:^|[/\\])briefs[/\\]/.test(relative)) return 'briefs';
   if (/(?:^|[/\\])intelligence[/\\]/.test(relative)) return 'intelligence';
   if (/market-outlook[/\\]/.test(relative)) return 'market-outlook';
+  if (/market-structure[/\\]/.test(relative)) return 'market-structure';
   if (/economic-calendar[/\\]/.test(relative)) return 'economic-calendar';
   if (/^(?:ar\/)?stocks[/\\]/.test(relative)) return 'stocks';
   if (/^(?:ar\/)?etfs[/\\]/.test(relative)) return 'etfs';
@@ -204,7 +218,7 @@ function computeLocaleHrefs(relative, ar) {
   }
   // Phase 99: canonical editorial desks — point the locale switch at the
   // matching counterpart (index or specific article) so it never falls back home.
-  for (const sec of ['articles', 'market-news', 'briefs', 'intelligence']) {
+  for (const sec of ['articles', 'market-news', 'market-structure', 'briefs', 'intelligence']) {
     const m = relative.match(new RegExp(`^(?:ar\\/|en\\/)?${sec}\\/([^/]+\\.html)$`));
     if (m) {
       const slug = m[1] === 'index.html' ? '' : m[1];
@@ -213,6 +227,39 @@ function computeLocaleHrefs(relative, ar) {
   }
   // Default: let the renderer compute section-level counterpart
   return { arabicHref: undefined, englishHref: undefined };
+}
+
+function replaceNavigationFragments(html, expectedHeader, relative) {
+  const start = html.indexOf(MARKER_START);
+  const end = html.indexOf(MARKER_END);
+  if (start < 0 || end < start) {
+    console.error(`[global-header] ${relative}: navigation-only update requires canonical markers`);
+    failures++;
+    return null;
+  }
+
+  const before = html.slice(0, start);
+  const region = html.slice(start, end + MARKER_END.length);
+  const after = html.slice(end + MARKER_END.length);
+  const navPattern = /<nav class="nav-group"[\s\S]*?<\/nav>/;
+  const localePattern = /<div class="locale-links"[\s\S]*?<\/div>/;
+  const expectedNav = expectedHeader.match(navPattern);
+  const expectedLocale = expectedHeader.match(localePattern);
+
+  if (!expectedNav || !expectedLocale || !navPattern.test(region) || !localePattern.test(region)) {
+    console.error(`[global-header] ${relative}: canonical navigation fragments not found`);
+    failures++;
+    return null;
+  }
+
+  const active = expectedHeader.match(/data-active-section="([^"]*)"/);
+  let nextRegion = region
+    .replace(navPattern, expectedNav[0])
+    .replace(localePattern, expectedLocale[0]);
+  if (active) {
+    nextRegion = nextRegion.replace(/data-active-section="[^"]*"/, `data-active-section="${active[1]}"`);
+  }
+  return `${before}${nextRegion}${after}`;
 }
 
 function walkHtml(dir) {

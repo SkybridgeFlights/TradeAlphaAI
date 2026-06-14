@@ -16,7 +16,11 @@ const ROOT = path.resolve(__dirname, '..');
 const EN_PAGES = [
   ['index.html',                    'en', 'Homepage'],
   ['insights/index.html',           'en', 'Insights index'],
+  ['articles/index.html',           'en', 'Articles index'],
+  ['market-news/index.html',        'en', 'Market News index'],
+  ['market-structure/index.html',   'en', 'Market Structure index'],
   ['market-outlook/index.html',     'en', 'Market Outlook index'],
+  ['briefs/index.html',             'en', 'Briefs index'],
   ['economic-calendar/index.html',  'en', 'Economic Calendar'],
   ['stocks.html',                   'en', 'Stocks'],
   ['rankings.html',                 'en', 'Rankings'],
@@ -27,7 +31,11 @@ const EN_PAGES = [
 const AR_PAGES = [
   ['ar/index.html',                   'ar', 'Arabic Homepage'],
   ['ar/insights/index.html',          'ar', 'Arabic Insights index'],
+  ['ar/articles/index.html',          'ar', 'Arabic Articles index'],
+  ['ar/market-news/index.html',       'ar', 'Arabic Market News index'],
+  ['ar/market-structure/index.html',  'ar', 'Arabic Market Structure index'],
   ['ar/market-outlook/index.html',    'ar', 'Arabic Market Outlook index'],
+  ['ar/briefs/index.html',            'ar', 'Arabic Briefs index'],
   ['ar/economic-calendar/index.html', 'ar', 'Arabic Economic Calendar'],
   ['ar/stocks.html',                  'ar', 'Arabic Stocks'],
   ['ar/rankings.html',                'ar', 'Arabic Rankings'],
@@ -122,9 +130,12 @@ function buildSig(html, startIdx, rel) {
   }
 
   // Nav items
-  const navLinks = [...region.matchAll(/href="([^"]+)" class="nav-link/g)].map((m) =>
-    m[1].replace(/^\/ar/, '').replace(/#.*$/, '').replace(/\/$/, '') || '/'
-  );
+  const navRegion = region.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
+  const navLinks = navRegion
+    ? [...navRegion[0].matchAll(/<a\b[^>]*href="([^"]+)"/g)].map((m) =>
+      m[1].replace(/^\/ar/, '').replace(/#.*$/, '').replace(/\/$/, '') || '/'
+    )
+    : [];
 
   return {
     hasGlobalHeader: region.includes('data-global-header'),

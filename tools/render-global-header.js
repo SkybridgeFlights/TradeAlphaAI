@@ -88,75 +88,79 @@ function globalHeaderScripts() {
 function englishLinks() {
   return [
     { key: 'home',              href: '/',                       label: 'Home' },
-    { key: 'stocks',            href: '/stocks.html',            label: 'Global Stock Research' },
-    { key: 'etfs',              href: '/etfs.html',              label: 'ETF Analyzer' },
-    { key: 'screener',          href: '/ai-stock-screener.html', label: 'Market Screener' },
+    { key: 'stocks',            href: '/stocks.html',            label: 'Stocks' },
+    { key: 'etfs',              href: '/etfs.html',              label: 'ETFs' },
+    { key: 'screener',          href: '/ai-stock-screener.html', label: 'Screener' },
     {
-      key: 'rankings', href: '/rankings.html', label: 'Top Picks', badge: 'Hot',
+      key: 'rankings', href: '/rankings.html', label: 'Rankings',
       children: [
-        ['/rankings.html#top-stocks',          'Top 10 Stocks Right Now'],
-        ['/rankings.html#top-ai-stocks',       'Best AI Stocks'],
-        ['/rankings.html#top-semiconductor-stocks', 'Best Semiconductor Stocks'],
-        ['/rankings.html#top-growth-stocks',   'Best Growth Stocks'],
-        ['/rankings.html#top-dividend-etfs',   'Top Dividend ETFs'],
-        ['/rankings.html#top-broad-market-etfs','Best ETFs for 2026']
+        ['/rankings.html#top-stocks', 'Stock Rankings'],
+        ['/rankings.html#top-ai-stocks', 'AI Leadership'],
+        ['/rankings.html#top-semiconductor-stocks', 'Semiconductor Leadership'],
+        ['/rankings.html#top-growth-stocks', 'Growth Stocks'],
+        ['/rankings.html#top-dividend-etfs', 'Dividend ETFs'],
+        ['/rankings.html#top-broad-market-etfs', 'Broad-Market ETFs']
       ]
     },
     {
-      key: 'research', href: '/insights/', label: 'Research &amp; News',
+      key: 'research',
+      href: '/intelligence/',
+      label: 'Market Intelligence',
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs'],
       children: [
-        ['/articles/',       'Articles'],
-        ['/insights/',       'Insights'],
-        ['/market-news/',    'Market News'],
+        ['/market-news/', 'Market News'],
+        ['/market-structure/', 'Market Structure'],
         ['/market-outlook/', 'Market Outlook'],
-        ['/briefs/',         'Briefs'],
-        ['/intelligence/',   'Intelligence']
+        ['/briefs/', 'Market Briefs'],
+        ['/articles/', 'Educational Articles'],
+        ['/insights/', 'Applied Research']
       ]
     },
-    { key: 'economic-calendar', href: '/economic-calendar/',     label: 'Economic Calendar' },
-    { key: 'methodology',       href: '/methodology.html',       label: 'Methodology' }
+    { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
+    { key: 'methodology', href: '/methodology.html', label: 'Methodology' }
   ];
 }
 
 function arabicLinks() {
   return [
     { key: 'home',              href: '/ar/',                       label: 'الرئيسية' },
-    { key: 'stocks',            href: '/ar/stocks.html',            label: 'بحث الأسهم العالمي' },
-    { key: 'etfs',              href: '/ar/etfs.html',              label: 'محلل صناديق المؤشرات' },
+    { key: 'stocks',            href: '/ar/stocks.html',            label: 'الأسهم' },
+    { key: 'etfs',              href: '/ar/etfs.html',              label: 'الصناديق' },
     { key: 'screener',          href: '/ar/ai-stock-screener.html', label: 'ماسح السوق' },
     {
-      key: 'rankings', href: '/ar/rankings.html',
-      label: 'أفضل الاختيارات',
-      badge: 'رائج',
+      key: 'rankings', href: '/ar/rankings.html', label: 'التصنيفات',
       children: [
-        ['/ar/rankings.html#top-stocks',       'أفضل 10 أسهم حالياً'],
-        ['/ar/rankings.html#top-ai-stocks',    'أفضل أسهم الذكاء الاصطناعي'],
-        ['/ar/rankings.html#top-semiconductors','أفضل أسهم أشباه الموصلات'],
-        ['/ar/rankings.html#top-growth-stocks', 'أفضل أسهم النمو'],
-        ['/ar/rankings.html#top-dividend-etfs', 'أفضل صناديق توزيعات الأرباح'],
-        ['/ar/rankings.html#top-etfs',          'أفضل صناديق المؤشرات لعام 2026']
+        ['/ar/rankings.html#top-stocks', 'تصنيف الأسهم'],
+        ['/ar/rankings.html#top-ai-stocks', 'قيادة الذكاء الاصطناعي'],
+        ['/ar/rankings.html#top-semiconductor-stocks', 'قيادة أشباه الموصلات'],
+        ['/ar/rankings.html#top-growth-stocks', 'أسهم النمو'],
+        ['/ar/rankings.html#top-dividend-etfs', 'صناديق التوزيعات'],
+        ['/ar/rankings.html#top-broad-market-etfs', 'صناديق السوق الواسع']
       ]
     },
     {
-      key: 'research', href: '/ar/insights/', label: 'الأبحاث والأخبار',
+      key: 'research',
+      href: '/ar/intelligence/',
+      label: 'الأسواق والأبحاث',
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs'],
       children: [
-        ['/ar/articles/',       'المقالات'],
-        ['/ar/insights/',       'الرؤى'],
-        ['/ar/market-news/',    'أخبار السوق'],
-        ['/ar/market-outlook/', 'توقعات السوق'],
-        ['/ar/briefs/',         'الموجزات'],
-        ['/ar/intelligence/',   'الذكاء السوقي']
+        ['/ar/market-news/', 'أخبار الأسواق'],
+        ['/ar/market-structure/', 'بنية السوق'],
+        ['/ar/market-outlook/', 'آفاق السوق'],
+        ['/ar/briefs/', 'إحاطات السوق'],
+        ['/ar/articles/', 'المقالات التعليمية'],
+        ['/ar/insights/', 'الأبحاث التطبيقية']
       ]
     },
-    { key: 'economic-calendar', href: '/ar/economic-calendar/',     label: 'التقويم الاقتصادي' },
-    { key: 'methodology',       href: '/ar/methodology.html',       label: 'المنهجية' }
+    { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },
+    { key: 'methodology', href: '/ar/methodology.html', label: 'المنهجية' }
   ];
 }
 
 function renderNavItem(item, active) {
-  const isActive = item.key === active;
+  const isActive = item.key === active || (item.activeKeys || []).includes(active);
   const activeClass = isActive ? ' is-active' : '';
-  const current = isActive ? ' aria-current="page"' : '';
+  const current = item.key === active ? ' aria-current="page"' : '';
   if (!item.children) {
     return `<a href="${item.href}" class="nav-link${activeClass}"${current}>${item.label}</a>`;
   }
@@ -170,11 +174,33 @@ function renderNavItem(item, active) {
 }
 
 function counterpartEn(active) {
+  const section = {
+    articles: '/articles/',
+    insights: '/insights/',
+    'market-news': '/market-news/',
+    'market-structure': '/market-structure/',
+    'market-outlook': '/market-outlook/',
+    briefs: '/briefs/',
+    intelligence: '/intelligence/',
+    'economic-calendar': '/economic-calendar/'
+  }[active];
+  if (section) return section;
   const item = englishLinks().find((e) => e.key === active);
   return item ? item.href : '/';
 }
 
 function counterpartAr(active) {
+  const section = {
+    articles: '/ar/articles/',
+    insights: '/ar/insights/',
+    'market-news': '/ar/market-news/',
+    'market-structure': '/ar/market-structure/',
+    'market-outlook': '/ar/market-outlook/',
+    briefs: '/ar/briefs/',
+    intelligence: '/ar/intelligence/',
+    'economic-calendar': '/ar/economic-calendar/'
+  }[active];
+  if (section) return section;
   const item = arabicLinks().find((e) => e.key === active);
   return item ? item.href : '/ar/';
 }
