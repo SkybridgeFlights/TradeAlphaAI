@@ -48,6 +48,7 @@ jobs:
           node-version: '20'
 
       - name: Refresh structural intelligence + publish research note
+        id: publish
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
@@ -58,7 +59,11 @@ jobs:
           node tools/build-macro-reactions.js --write || echo "[daily-research] macro reactions degraded — continuing"
           node tools/build-liquidity-regime.js --write || echo "[daily-research] liquidity regime degraded — continuing"
           node tools/build-chart-intelligence.js --write || echo "[daily-research] chart intelligence degraded — continuing"
-          node tools/generate-daily-research-note.js --write || echo "[daily-research] research note self-gated (quiet/indeterminate) — continuing"
+          # Capture the published slug (empty when the note self-gates) so the
+          # controlled Telegram step fires ONLY on an actual publish.
+          PUB=$(node tools/generate-daily-research-note.js --write 2>&1); echo "$PUB"
+          SLUG=$(echo "$PUB" | grep -oE 'published /market-news/research-[^ ]+\.html' | head -1 | sed -E 's#.*/##; s#\.html$##') || true
+          echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
           node tools/generate-market-news-index.js --write || echo "[daily-research] surface regen degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[daily-research] sitemap regen degraded — continuing"
 
@@ -71,6 +76,7 @@ jobs:
       - name: Validate
         run: |
           npm run check:research-rotation
+          npm run check:telegram-activation
           npm run check:market-news
           npm run check:market-news-articles
           npm run check:editorial-quality-articles
@@ -151,3 +157,20 @@ jobs:
             sleep $((attempt * 3))
           done
           echo "[daily-research] push failed after retries"; exit 1
+
+      # Controlled Telegram delivery — AFTER push (live URL), ONLY on an actual
+      # publish, DRY-RUN by default. Real send requires repo var
+      # ENABLE_TELEGRAM_PUBLISH == 'true' + Telegram secrets; the sender enforces
+      # URL-200, duplicate, per-day cap and cooldown. Telegram only — no X/FB/IG/LI.
+      - name: Telegram delivery (controlled, dry-run unless activated)
+        if: steps.publish.outputs.slug != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          ENABLE_TELEGRAM_PUBLISH: ${{ vars.ENABLE_TELEGRAM_PUBLISH }}
+        run: |
+          FLAG="--dry-run"
+          if [ "$ENABLE_TELEGRAM_PUBLISH" = "true" ]; then FLAG="--send"; fi
+          echo "[daily-research] controlled Telegram dispatch for research note '${{ steps.publish.outputs.slug }}' (mode: $FLAG)"
+          [ "$FLAG" = "--send" ] && sleep 45 || true
+          node tools/send-published-article-telegram.js --slug="${{ steps.publish.outputs.slug }}" --content-type=daily-research $FLAG || echo "[daily-research] Telegram dispatch non-fatal — continuing"

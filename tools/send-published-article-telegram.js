@@ -23,7 +23,14 @@ const DRY_RUN      = !SMOKE_TEST && (process.argv.includes('--dry-run') || !proc
 
 // ── Validation ───────────────────────────────────────────────────────────────
 
-const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence'];
+// Phase 117 — daily-research notes (published under /market-news/) and
+// market-structure notes (published under /market-structure/) join the
+// controlled Telegram channel. Both are bilingual EN/AR.
+const SUPPORTED_TYPES = ['editorial', 'market-outlook', 'continuous-intelligence', 'daily-research', 'market-structure'];
+
+// Phase 117 — safety caps for controlled activation (ledger-enforced).
+const PER_DAY_CAP = Number(process.env.TELEGRAM_PER_DAY_CAP || 6);
+const PER_TYPE_COOLDOWN_HOURS = Number(process.env.TELEGRAM_TYPE_COOLDOWN_HOURS || 6);
 
 if (!SMOKE_TEST) {
   if (!SLUG) {
@@ -63,12 +70,41 @@ function isDuplicate() {
   );
 }
 
+// Phase 117 — ledger-enforced anti-spam: per-day cap + per-content-type cooldown.
+function sentToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  return readLedger().deliveries.filter(d => d.status === 'sent' && String(d.sent_at || '').slice(0, 10) === today).length;
+}
+function cooldownActive() {
+  const last = readLedger().deliveries
+    .filter(d => d.status === 'sent' && d.content_type === CONTENT_TYPE && d.sent_at)
+    .map(d => Date.parse(d.sent_at)).sort((a, b) => b - a)[0];
+  if (!last) return false;
+  return (Date.now() - last) < PER_TYPE_COOLDOWN_HOURS * 3600000;
+}
+
+// Phase 117 — controlled activation requires the live EN URL to return 200 and
+// (for bilingual content) the AR page to exist on disk before any send.
+function verifyUrl(url) {
+  return new Promise((resolve) => {
+    const req = https.request(url, { method: 'HEAD', timeout: 8000 }, (res) => {
+      resolve(res.statusCode >= 200 && res.statusCode < 400);
+      res.resume();
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.end();
+  });
+}
+
 // ── URL resolution ───────────────────────────────────────────────────────────
 
 const PATH_BY_TYPE = {
   'editorial':               { en: `insights/${SLUG}.html`,      ar: `ar/insights/${SLUG}.html` },
   'market-outlook':          { en: `market-outlook/${SLUG}.html`, ar: `ar/market-outlook/${SLUG}.html` },
   'continuous-intelligence': { en: `intelligence/${SLUG}.html`,   ar: `ar/intelligence/${SLUG}.html` },
+  'daily-research':          { en: `market-news/${SLUG}.html`,    ar: `ar/market-news/${SLUG}.html` },
+  'market-structure':        { en: `market-structure/${SLUG}.html`, ar: `ar/market-structure/${SLUG}.html` },
 };
 
 function resolveUrls() {
@@ -91,8 +127,23 @@ function extractHtmlMeta(htmlPath, name) {
   } catch { return null; }
 }
 
+function extractH1(htmlPath) {
+  try {
+    const m = fs.readFileSync(htmlPath, 'utf8').match(/<h1>([\s\S]*?)<\/h1>/i);
+    return m ? m[1].replace(/<[^>]+>/g, '').trim() : null;
+  } catch { return null; }
+}
+
 function resolveMeta() {
   let titleEn = null, titleAr = null, summaryEn = null, summaryAr = null, extra = {};
+
+  // Phase 117 — research / structure notes carry their title in the <h1> and the
+  // institutional summary in the description meta (bilingual EN/AR pages).
+  if (CONTENT_TYPE === 'daily-research' || CONTENT_TYPE === 'market-structure') {
+    titleEn = extractH1(path.join(ROOT, PATH_BY_TYPE[CONTENT_TYPE].en));
+    titleAr = extractH1(path.join(ROOT, PATH_BY_TYPE[CONTENT_TYPE].ar));
+    summaryEn = null; // the page description is just "title — disclaimer"; use a clean topic-named line instead
+  }
 
   if (CONTENT_TYPE === 'market-outlook') {
     const queue = readJson(path.join(ROOT, 'data', 'market-outlook-queue.json'));
@@ -278,6 +329,23 @@ function buildMessage(meta, urls) {
     return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();
   }
 
+  // Phase 117 — restrained institutional style for research / structure notes:
+  // type label, title, one-sentence summary, EN/AR links. No advice, no hype.
+  if (CONTENT_TYPE === 'daily-research' || CONTENT_TYPE === 'market-structure') {
+    const typeLabel = CONTENT_TYPE === 'daily-research' ? 'Research Note' : 'Market Structure';
+    const summary = takeaway || `A new TradeAlphaAI ${typeLabel.toLowerCase()} examines ${String(meta.titleEn || '').toLowerCase()}.`;
+    const parts = [
+      `${typeLabel} — ${meta.titleEn}`,
+      '',
+      summary,
+      '',
+      `EN: ${urls.url}`,
+    ];
+    if (meta.titleAr || urls.ar_url) parts.push(`AR: ${urls.ar_url}`);
+    parts.push('', 'Educational market analysis — not investment advice.');
+    return parts.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
   return `${meta.titleEn}\n\n${urls.url}`;
 }
 
@@ -331,6 +399,16 @@ async function main() {
   const meta = resolveMeta();
   const text = buildMessage(meta, urls);
 
+  // Anti-spam: per-day cap + per-type cooldown (skip green, never error).
+  if (sentToday() >= PER_DAY_CAP) {
+    console.log(`[TELEGRAM DELIVERY] per-day cap reached (${PER_DAY_CAP}) — skipping`);
+    process.exit(0);
+  }
+  if (cooldownActive()) {
+    console.log(`[TELEGRAM DELIVERY] per-type cooldown active (${PER_TYPE_COOLDOWN_HOURS}h for ${CONTENT_TYPE}) — skipping`);
+    process.exit(0);
+  }
+
   console.log(`[TELEGRAM DELIVERY] title="${meta.titleEn}"`);
   console.log(`[TELEGRAM DELIVERY] url=${urls.url}`);
   console.log('[TELEGRAM DELIVERY] message preview:\n---');
@@ -348,6 +426,20 @@ async function main() {
     console.log('[TELEGRAM DELIVERY] credentials unavailable — skipping send');
     process.exit(0);
   }
+
+  // URL-200 gate: never post a link that is not live. For bilingual content the
+  // AR page must also exist on disk before we advertise an AR link.
+  const arDiskPath = path.join(ROOT, PATH_BY_TYPE[CONTENT_TYPE].ar);
+  if (!fs.existsSync(arDiskPath)) {
+    console.error(`[TELEGRAM DELIVERY] AR page missing on disk (${PATH_BY_TYPE[CONTENT_TYPE].ar}) — refusing to send bilingual post`);
+    process.exit(1);
+  }
+  const live = await verifyUrl(urls.url);
+  if (!live) {
+    console.error(`[TELEGRAM DELIVERY] EN URL not live (200) yet: ${urls.url} — refusing to send`);
+    process.exit(1);
+  }
+  console.log(`[TELEGRAM DELIVERY] URL-200 verified: ${urls.url}`);
 
   const entry = {
     slug: SLUG,

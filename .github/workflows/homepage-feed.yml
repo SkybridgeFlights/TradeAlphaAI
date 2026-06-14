@@ -1,0 +1,112 @@
+name: Homepage Intelligence Feed
+
+# Phase 117 — refreshes the Homepage Intelligence Feed (the marker-delimited
+# section on index.html + ar/index.html) from the current intelligence
+# artifacts and published pages, so the homepage shows the platform is alive.
+# It owns index.html / ar/index.html commits for this module exclusively (a
+# dedicated workflow rather than each content brain, to avoid index.html commit
+# races) and validates honest freshness + bilingual + no-advice before pushing.
+# It publishes NO content and sends NO Telegram — feed refresh only.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # A few refreshes across the session so newly published notes surface.
+    - cron: '30 14,17,20 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: homepage-feed
+  cancel-in-progress: false
+
+jobs:
+  homepage-feed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh structure + render homepage intelligence feed
+        run: |
+          node tools/build-market-structure.js --write || echo "[homepage-feed] structure engine degraded — continuing"
+          node tools/render-intelligence-feed.js --write || echo "[homepage-feed] feed render degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:homepage-feed
+          npm run check:newsroom-ui
+          npm run check:responsive
+          npm run check:ar-rtl
+          npm run check:bilingual-structure
+          npm run check:language-purity
+          npm run check:header-runtime-integrity
+          npm run check:social-meta
+          npm run check:seo
+
+      - name: Commit refreshed feed (only when changed)
+        run: |
+          git config user.name "tradealphaai-homepage-feed"
+          git config user.email "actions@users.noreply.github.com"
+
+          # This workflow only ever touches the two homepage files and the
+          # structure artifact it derives the feed from. Stage exactly that set
+          # + fail safe on anything else.
+          INTENDED="index.html ar/index.html data/intelligence/market-structure.json"
+          stage_intended() { for p in $INTENDED; do [ -e "$p" ] && git add -A -- "$p" || true; done; }
+          stage_intended
+
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              index.html|ar/index.html|data/intelligence/market-structure.json) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[homepage-feed] ERROR: changes outside intended paths — refusing to push partial state:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          if git diff --cached --quiet; then
+            echo "[homepage-feed] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Homepage intelligence feed refresh: $(date -u +'%Y-%m-%d %H:%M') UTC"
+
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              if ! git diff --quiet || ! git diff --cached --quiet; then
+                echo "[homepage-feed] residual changes after rebase — re-rendering + restaging"
+                node tools/render-intelligence-feed.js --write || true
+                stage_intended
+                git diff --cached --quiet || git commit --amend --no-edit
+              fi
+              if git push origin main; then
+                echo "[homepage-feed] pushed on attempt ${attempt}"; exit 0
+              fi
+              echo "[homepage-feed] push rejected (race) on attempt ${attempt} — retrying"
+            else
+              echo "[homepage-feed] rebase conflict on attempt ${attempt} — re-rendering feed to reconcile"
+              git checkout --theirs -- index.html ar/index.html 2>/dev/null || true
+              node tools/build-market-structure.js --write || true
+              node tools/render-intelligence-feed.js --write || true
+              stage_intended
+              git -c core.editor=true rebase --continue || git rebase --abort
+            fi
+            sleep $((attempt * 3))
+          done
+          echo "[homepage-feed] push failed after retries"; exit 1

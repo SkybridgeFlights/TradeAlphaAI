@@ -52,6 +52,7 @@ jobs:
           node-version: '20'
 
       - name: Refresh structural intelligence + publish structure note
+        id: publish
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
@@ -61,7 +62,12 @@ jobs:
           node tools/build-chart-intelligence.js --write || echo "[tech-intel] chart intelligence degraded — continuing"
           node tools/build-market-structure.js --write || echo "[tech-intel] structure engine degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
-          node tools/generate-structure-note.js --write || echo "[tech-intel] structure note self-gated (quiet/indeterminate) — continuing"
+          # Capture the published slug (empty when the note self-gates) so the
+          # controlled Telegram step only fires on an ACTUAL publish — never on
+          # an artifact-only refresh.
+          PUB=$(node tools/generate-structure-note.js --write 2>&1); echo "$PUB"
+          SLUG=$(echo "$PUB" | grep -oE 'published /market-structure/[^ ]+\.html' | head -1 | sed -E 's#.*/##; s#\.html$##') || true
+          echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded — continuing"
 
@@ -75,6 +81,7 @@ jobs:
         run: |
           npm run check:market-structure
           npm run check:structure-articles
+          npm run check:telegram-activation
           npm run check:inline-visuals
           npm run check:embedded-intelligence
           npm run check:chart-intelligence
@@ -156,3 +163,23 @@ jobs:
             sleep $((attempt * 3))
           done
           echo "[tech-intel] push failed after retries"; exit 1
+
+      # Controlled Telegram delivery — runs AFTER push so the live URL exists,
+      # ONLY when a note was actually published this run, and DRY-RUN by default.
+      # It posts for real only when the repo variable ENABLE_TELEGRAM_PUBLISH is
+      # exactly 'true' AND the Telegram secrets are present; the sender itself
+      # additionally enforces URL-200, duplicate, per-day cap and cooldown gates.
+      # No X/Facebook/Instagram/LinkedIn activation here — Telegram only.
+      - name: Telegram delivery (controlled, dry-run unless activated)
+        if: steps.publish.outputs.slug != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          ENABLE_TELEGRAM_PUBLISH: ${{ vars.ENABLE_TELEGRAM_PUBLISH }}
+        run: |
+          FLAG="--dry-run"
+          if [ "$ENABLE_TELEGRAM_PUBLISH" = "true" ]; then FLAG="--send"; fi
+          echo "[tech-intel] controlled Telegram dispatch for structure note '${{ steps.publish.outputs.slug }}' (mode: $FLAG)"
+          # Allow time for the deployment of the just-pushed page before the URL-200 gate.
+          [ "$FLAG" = "--send" ] && sleep 45 || true
+          node tools/send-published-article-telegram.js --slug="${{ steps.publish.outputs.slug }}" --content-type=market-structure $FLAG || echo "[tech-intel] Telegram dispatch non-fatal — continuing"
