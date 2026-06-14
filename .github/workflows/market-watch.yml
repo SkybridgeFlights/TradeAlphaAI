@@ -59,6 +59,7 @@ jobs:
           node tools/build-economic-intelligence.js --fetch --write || echo "[market-watch] economic intelligence degraded — continuing"
           node tools/build-macro-reactions.js --write || echo "[market-watch] macro reactions degraded — continuing"
           node tools/build-liquidity-regime.js --write || echo "[market-watch] liquidity regime degraded — continuing"
+          node tools/build-chart-intelligence.js --write || echo "[market-watch] chart intelligence degraded — continuing"
           node tools/build-intelligence-monitor.js --write || echo "[market-watch] intelligence monitor degraded — continuing"
           node tools/build-intelligence-briefs.js --write || echo "[market-watch] daily product brief degraded — continuing"
           node tools/build-intraday-brief.js --write || echo "[market-watch] intraday brief degraded — continuing"
@@ -76,6 +77,7 @@ jobs:
           npm run check:macro-cognition
           npm run check:macro-reactions
           npm run check:liquidity-regime
+          npm run check:chart-intelligence
           npm run check:intelligence-monitor
           npm run check:narrative-convergence
           npm run test:editorial-memory

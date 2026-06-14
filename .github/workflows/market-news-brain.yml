@@ -55,6 +55,7 @@ jobs:
           node tools/build-economic-intelligence.js --fetch --write || echo "[market-news] economic intelligence degraded — continuing"
           node tools/build-macro-reactions.js --write || echo "[market-news] macro reactions degraded — continuing"
           node tools/build-liquidity-regime.js --write || echo "[market-news] liquidity regime degraded — continuing"
+          node tools/build-chart-intelligence.js --write || echo "[market-news] chart intelligence degraded — continuing"
           node tools/build-newswire-events.js --write || echo "[market-news] newswire degraded — continuing"
           node tools/build-news-eligibility.js --write || echo "[market-news] eligibility degraded — continuing"
           node tools/generate-market-news-article.js --write || echo "[market-news] article publish self-gated — continuing"
@@ -77,6 +78,7 @@ jobs:
           npm run check:forecast-consensus
           npm run check:macro-reactions
           npm run check:liquidity-regime
+          npm run check:chart-intelligence
           npm run check:intelligence-monitor
           npm run check:newsroom-intelligence
           npm run check:distribution-plan
