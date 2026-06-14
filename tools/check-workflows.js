@@ -25,6 +25,7 @@ const CANONICAL = new Set([
   'market-outlook-brain.yml',
   'briefs-brain.yml',
   'daily-research-brain.yml',        // Phase 115 — continuous Daily Research Brain (publishes on quiet tape)
+  'technical-intelligence-brain.yml', // Phase 116 — continuous Technical Structure Brain (/market-structure/)
   'social-approval-runner.yml',      // Phase 100 — manual controlled social delivery (no schedule)
 ]);
 

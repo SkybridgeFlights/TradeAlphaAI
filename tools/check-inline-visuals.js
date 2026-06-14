@@ -13,8 +13,11 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const TARGETS = [
-  { dir: path.join(ROOT, 'market-news'), lang: 'en' },
-  { dir: path.join(ROOT, 'ar', 'market-news'), lang: 'ar' },
+  { dir: path.join(ROOT, 'market-news'), lang: 'en', sub: 'market-news' },
+  { dir: path.join(ROOT, 'ar', 'market-news'), lang: 'ar', sub: 'market-news' },
+  // Phase 116 — the structure surface embeds the same inline panels.
+  { dir: path.join(ROOT, 'market-structure'), lang: 'en', sub: 'market-structure' },
+  { dir: path.join(ROOT, 'ar', 'market-structure'), lang: 'ar', sub: 'market-structure' },
 ];
 const MAX_PANELS = 2;
 const RETAIL = [/\bbuy\b/i, /\bsell\b/i, /\bRSI\b/, /\bMACD\b/, /\bbreakout\b/i, /\bprice target\b/i, /\bsignal\b/i, /\bto the moon\b/i];
@@ -31,9 +34,9 @@ function articles(dir) {
 }
 
 let scanned = 0;
-for (const { dir, lang } of TARGETS) {
+for (const { dir, lang, sub } of TARGETS) {
   for (const f of articles(dir)) {
-    const rel = `${lang === 'ar' ? 'ar/' : ''}market-news/${f}`;
+    const rel = `${lang === 'ar' ? 'ar/' : ''}${sub}/${f}`;
     const html = fs.readFileSync(path.join(dir, f), 'utf8');
     const figs = [...html.matchAll(/<figure class="article-evidence-panel"[\s\S]*?<\/figure>/gi)].map((m) => m[0]);
     if (!figs.length) continue; // no inline panels — clean article, allowed

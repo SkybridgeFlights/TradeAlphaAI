@@ -15,6 +15,8 @@ const core = [
   .concat(existsDir("briefs") ? ["briefs/"] : [])
   .concat(existsDir("market-news") ? ["market-news/"] : [])
   .concat(existsDir("market-news") ? htmlFiles("market-news").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
+  .concat(existsDir("market-structure") ? ["market-structure/"] : [])
+  .concat(existsDir("market-structure") ? htmlFiles("market-structure").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("intelligence") ? ["intelligence/"] : [])
   // Phase 68 intelligence dashboards, EN + AR (required in sitemap-core.xml by
   // check:visual-intelligence; previously omitted, which failed that gate).
@@ -58,18 +60,18 @@ console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} com
 
 function arUrls() {
   const out = ["ar/"];
-  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "market-news/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
+  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "market-news/", "market-structure/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
-  for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook", "market-news"]) {
+  for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook", "market-news", "market-structure"]) {
     const files = dir === "market-outlook"
       ? htmlFilesRecursive(path.join("ar", dir))
       : dir === "articles"
         ? educationalArticleFiles(path.join("ar", dir))
       : htmlFiles(path.join("ar", dir));
     for (const file of files) {
-      if (file.endsWith("/index.html") && (dir === "insights" || dir === "articles" || dir === "market-news")) continue;
+      if (file.endsWith("/index.html") && (dir === "insights" || dir === "articles" || dir === "market-news" || dir === "market-structure")) continue;
       out.push(toRel(file));
     }
   }

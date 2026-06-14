@@ -13,8 +13,11 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const TARGETS = [
-  { dir: path.join(ROOT, 'market-news'), lang: 'en' },
-  { dir: path.join(ROOT, 'ar', 'market-news'), lang: 'ar' },
+  { dir: path.join(ROOT, 'market-news'), lang: 'en', sub: 'market-news' },
+  { dir: path.join(ROOT, 'ar', 'market-news'), lang: 'ar', sub: 'market-news' },
+  // Phase 116 — the structure surface embeds the same research-desk rail.
+  { dir: path.join(ROOT, 'market-structure'), lang: 'en', sub: 'market-structure' },
+  { dir: path.join(ROOT, 'ar', 'market-structure'), lang: 'ar', sub: 'market-structure' },
 ];
 const REFERENCE = { en: /research-desk intelligence rail/i, ar: /استخبارات مكتب الأبحاث/ };
 const LIVE_WORDING = /\b(live|real-?time|streaming|up-to-the-second)\b/i;
@@ -34,9 +37,9 @@ function railBlock(html) {
 }
 
 let scanned = 0;
-for (const { dir, lang } of TARGETS) {
+for (const { dir, lang, sub } of TARGETS) {
   for (const f of articles(dir)) {
-    const rel = `${lang === 'ar' ? 'ar/' : ''}market-news/${f}`;
+    const rel = `${lang === 'ar' ? 'ar/' : ''}${sub}/${f}`;
     const html = fs.readFileSync(path.join(dir, f), 'utf8');
     const rail = railBlock(html);
     if (!rail) { fail(`${rel}: research-desk intelligence rail missing`); continue; }

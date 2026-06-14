@@ -34,6 +34,24 @@ const EN_INDEX = path.join(ROOT, 'market-news', 'index.html');
 const AR_INDEX = path.join(ROOT, 'ar', 'market-news', 'index.html');
 const MIN_WORDS = { en: 340, ar: 280 }; // institutional long-form floors (locale-aware)
 
+// Phase 116 — publishing surfaces. The market-news article wrapper is reused
+// verbatim for the dedicated market-structure surface; only paths, labels and
+// the schema section differ. Default stays market-news (zero behaviour change).
+const SURFACES = {
+  'market-news': {
+    dir: 'market-news', enIndex: EN_INDEX, arIndex: AR_INDEX,
+    labelEn: 'Market News', labelAr: 'أخبار السوق', section: 'Market News',
+    discEn: 'Educational analysis of market reaction and macro context. Not investment advice or a trading recommendation.',
+    discAr: 'تحليل تعليمي لتفاعل السوق وسياقه الكلي، وليس نصيحة استثمارية أو توصية تداول.',
+  },
+  'market-structure': {
+    dir: 'market-structure', enIndex: path.join(ROOT, 'market-structure', 'index.html'), arIndex: path.join(ROOT, 'ar', 'market-structure', 'index.html'),
+    labelEn: 'Market Structure', labelAr: 'بنية السوق', section: 'Market Structure',
+    discEn: 'Institutional market-structure interpretation for educational context. Not technical trading analysis, signals, price targets or investment advice.',
+    discAr: 'تفسير مؤسسي لبنية السوق لغرض تعليمي، وليس تحليلاً فنياً للتداول أو إشارات أو أهداف سعرية أو نصيحة استثمارية.',
+  },
+};
+
 function readJson(p, f) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function slugify(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60); }
@@ -416,9 +434,160 @@ function publishResearch(write) {
   return { published: true, slug, topic: topic.id };
 }
 
-function assembleHtml(ctx, locale, slug, bodyFn = renderArticle) {
+// ── Phase 116: Institutional Technical Structure Brain ────────────────────────
+// Publishes deterministic market-STRUCTURE notes (participation, volatility
+// structure, cross-asset coherence, rotation, concentration, persistence,
+// stability) from the structure engine artifact — institutional interpretation,
+// NOT retail TA. Reuses the article wrapper, rail, inline panels and quality
+// gate on the dedicated /market-structure/ surface.
+const STRUCTURE_ARTIFACT = path.join(ROOT, 'data', 'intelligence', 'market-structure.json');
+const STRUCTURE_COVERAGE = path.join(ROOT, 'data', 'intelligence', 'structure-coverage.json');
+const STRUCTURE_COOLDOWN_DAYS = 4;
+const STRUCTURE_TOPICS = [
+  { id: 'participation_breadth', focus: 'participation', en: 'Participation and breadth beneath the index', ar: 'المشاركة والاتساع تحت سطح المؤشر' },
+  { id: 'volatility_structure', focus: 'volatility_structure', en: 'Volatility structure and the absorption of stress', ar: 'بنية التذبذب وامتصاص الضغوط' },
+  { id: 'cross_asset_structure', focus: 'cross_asset', en: 'Cross-asset structure and coherence', ar: 'البنية عبر الأصول والاتساق' },
+  { id: 'rotation_concentration', focus: 'rotation', en: 'Leadership rotation and concentration structure', ar: 'تدوير القيادة وبنية التركّز' },
+  { id: 'structural_stability', focus: 'stability', en: 'Structural stability and liquidity participation', ar: 'الاستقرار الهيكلي ومشاركة السيولة' },
+];
+// Hard-blocked retail / signal vocabulary the structure desk must never emit.
+const STRUCTURE_FORBIDDEN = [
+  /\bbuy now\b/i, /\bsell now\b/i, /\bentry\b/i, /\bstop loss\b/i, /\btake profit\b/i,
+  /\bto the moon\b/i, /\bmoon\b/i, /\bbreakout trade\b/i, /\boversold\b/i, /\boverbought\b/i,
+  /\bbullish signal\b/i, /\bbearish signal\b/i, /\balpha call\b/i, /\bsniper\b/i,
+  /\btarget price\b/i, /\bprice target\b/i, /\bnext move guaranteed\b/i, /\bguaranteed\b/i,
+  /\bRSI\b/, /\bMACD\b/, /\bbuy signal\b/i, /\bsell signal\b/i,
+];
+
+function selectStructureTopic() {
+  const cov = readJson(STRUCTURE_COVERAGE, { published: [] });
+  const recent = new Map((cov.published || []).map((c) => [c.topic, c.published_at]));
+  const cutoff = Date.now() - STRUCTURE_COOLDOWN_DAYS * 86400000;
+  const start = dayOfYear(new Date()) % STRUCTURE_TOPICS.length;
+  for (let i = 0; i < STRUCTURE_TOPICS.length; i += 1) {
+    const topic = STRUCTURE_TOPICS[(start + i) % STRUCTURE_TOPICS.length];
+    const last = recent.get(topic.id);
+    if (!last || Date.parse(last) < cutoff) return topic;
+  }
+  return null; // all cooled — skip (no spam)
+}
+
+// Native-Arabic-aware label for a structure dimension state from the artifact.
+function sLabel(structure, dim, ar) {
+  const d = structure.dimensions && structure.dimensions[dim];
+  if (!d) return ar ? 'غير محدد' : 'indeterminate';
+  return ar ? d.label_ar : d.label_en;
+}
+
+function renderStructureBody(ctx, locale) {
   const ar = locale === 'ar';
-  const indexPath = ar ? AR_INDEX : EN_INDEX;
+  const t = (en, arT) => (ar ? arT : en);
+  const s = ctx.structure || {};
+  const topic = (ctx.structure_topic) || STRUCTURE_TOPICS[0];
+  const title = ar ? topic.ar : topic.en;
+  const eyebrow = t('Institutional Market Structure', 'بنية السوق المؤسسية');
+  const conf = s.structural_confidence != null ? s.structural_confidence : null;
+  const dom = s.dominant ? sLabel(s, s.dominant.dimension, ar) : null;
+  const L = (dim) => sLabel(s, dim, ar);
+
+  const sections = [];
+  const sec = (id, head, copy) => sections.push(`<section class="market-section" id="${id}"><div class="market-section-head"><span class="eyebrow">${esc(t('Structure desk', 'مكتب البنية'))}</span><h2>${esc(head)}</h2></div><div class="market-panel">${copy}</div></section>`);
+  const p = (str) => `<p class="market-copy">${esc(str)}</p>`;
+
+  // 1) Lead — the structural reading, led by the dominant dimension.
+  sec('lead', t('The structural reading', 'القراءة الهيكلية'),
+    p(t(`This note reads the structure of the tape rather than any single print. Across the participation, volatility, cross-asset, rotation and stability dimensions the desk tracks, the most salient feature is ${dom || 'an indeterminate structure'}, and the composite read carries a structural confidence of ${conf != null ? conf : 'n/a'}/100. Structure is the question of what the surface level is built on, not where it goes next; the analysis below works through participation and stability rather than forecasting price.`,
+      `تقرأ هذه المذكرة بنية السوق بدل أي إصدار منفرد. وعبر أبعاد المشاركة والتذبذب والأصول المتقاطعة والتدوير والاستقرار التي يتتبعها المكتب، فإن أبرز ملمح هو ${dom || 'بنية غير محددة'}، وتحمل القراءة المركبة ثقة هيكلية تبلغ ${conf != null ? conf : 'غير متاح'}/100. والبنية هي مسألة ما يستند إليه المستوى السطحي لا وجهته التالية؛ ويعمل التحليل أدناه على المشاركة والاستقرار بدل التنبؤ بالسعر.`))
+    + p(t('It is a deterministic composition of verified upstream signals — the liquidity-regime engine, the cross-asset coherence read, the structural-tension layer and multi-session memory. The research-desk intelligence rail alongside this note carries the regime snapshot the structure read is measured against, and where a dimension lacks sufficient evidence it is reported as indeterminate rather than inferred, so the note degrades honestly instead of manufacturing structure.',
+      'وهي تركيب حتمي لإشارات منبع موثّقة — محرك نظام السيولة، وقراءة الاتساق عبر الأصول، وطبقة التوتر الهيكلي، والذاكرة متعددة الجلسات. ويحمل مسار استخبارات مكتب الأبحاث المرافق لهذه المذكرة لقطة النظام التي تُقاس عليها قراءة البنية، وحين يفتقر بُعد إلى أدلة كافية يُذكر بوصفه غير محدد بدل استنتاجه، لتتراجع المذكرة بأمانة بدل تصنيع بنية.')));
+
+  // 2) Participation & breadth.
+  sec('participation', t('Participation and breadth', 'المشاركة والاتساع'),
+    p(t(`Participation reads ${L('participation')}. Breadth is the structural question of whether strength is shared across the market or carried by a narrow set of leaders — the same index level can sit on broad participation or on a handful of names, and the two structures behave very differently when stress arrives. The desk reads this through index-level leadership, the regime breadth sub-state and the multi-session breadth memory rather than any oscillator.`,
+      `تقرأ المشاركة ${L('participation')}. والاتساع هو السؤال الهيكلي عمّا إذا كانت القوة موزّعة عبر السوق أم محمولة على مجموعة ضيقة من القادة — فمستوى المؤشر نفسه قد يستند إلى مشاركة واسعة أو إلى حفنة من الأسماء، وتتصرف البنيتان تصرفاً مختلفاً تماماً عند وصول الضغط. ويقرأ المكتب ذلك عبر قيادة مستوى المؤشر وحالة اتساع النظام والذاكرة متعددة الجلسات بدل أي مذبذب.`)));
+
+  // 3) Volatility & cross-asset coherence.
+  sec('volatility-cross-asset', t('Volatility and cross-asset coherence', 'التذبذب والاتساق عبر الأصول'),
+    p(t(`Volatility structure reads ${L('volatility_structure')}, and cross-asset coherence reads ${L('cross_asset')}. These belong together: a coherent tape transmits a shock cleanly across rates, the dollar and equities, while a divergent one fragments it, and compression is not the same as stability — quiet can reflect genuine balance or a temporary absence of force ahead of a catalyst. The desk treats the difference between calm and stability as a structural question, not a reassurance.`,
+      `تقرأ بنية التذبذب ${L('volatility_structure')}، ويقرأ الاتساق عبر الأصول ${L('cross_asset')}. وهما يترافقان: فالسوق المتسق ينقل الصدمة بوضوح عبر العوائد والدولار والأسهم، بينما يُجزّئها السوق المتباعد، والانضغاط ليس كالاستقرار — فالهدوء قد يعكس توازناً حقيقياً أو غياباً مؤقتاً للقوة قبل محفز. ويعدّ المكتب الفرق بين الهدوء والاستقرار سؤالاً هيكلياً لا طمأنة.`)));
+
+  // 4) Rotation, concentration & momentum.
+  sec('rotation-concentration', t('Rotation, concentration and momentum', 'التدوير والتركّز والزخم'),
+    p(t(`Leadership rotation reads ${L('rotation')}, concentration reads ${L('concentration')}, and the momentum structure reads ${L('momentum')}. Rotation tells the desk whether defensive or cyclical leadership dominates; concentration measures how much of the move depends on a small set of names; and momentum structure asks whether that leadership is broadening or narrowing. Defensive rotation under otherwise broad participation is a classic mixed structure — the desk holds both readings rather than collapsing them into a single call.`,
+      `يقرأ تدوير القيادة ${L('rotation')}، ويقرأ التركّز ${L('concentration')}، وتقرأ بنية الزخم ${L('momentum')}. ويخبر التدوير المكتب بما إذا كانت القيادة دفاعية أم دورية؛ ويقيس التركّز مقدار اعتماد الحركة على مجموعة صغيرة من الأسماء؛ وتسأل بنية الزخم عمّا إذا كانت تلك القيادة تتسع أم تضيق. والتدوير الدفاعي في ظل مشاركة واسعة بقية الأبعاد بنية مختلطة كلاسيكية — ويحتفظ المكتب بالقراءتين بدل دمجهما في حكم واحد.`)));
+
+  // 5) Stability & liquidity participation.
+  sec('stability', t('Structural stability and liquidity', 'الاستقرار الهيكلي والسيولة'),
+    p(t(`The structural stability read is ${L('stability')}, with liquidity participation reading ${L('liquidity_participation')} and the persistence of the structure reading ${L('persistence')}. Stability frames how much stress the structure can absorb before it changes character; liquidity participation asks whether real flow is behind the move or whether it is thinning; and persistence is the honest record of how many verified sessions actually support the read. The desk weights a structure that has held across sessions differently from a single-session snapshot.`,
+      `قراءة الاستقرار الهيكلي هي ${L('stability')}، مع مشاركة سيولة تقرأ ${L('liquidity_participation')} واستمرارية للبنية تقرأ ${L('persistence')}. ويؤطّر الاستقرار مقدار الضغط الذي يمكن للبنية امتصاصه قبل أن تتغير طبيعتها؛ وتسأل مشاركة السيولة عمّا إذا كان تدفق حقيقي خلف الحركة أم أنها تترقّق؛ والاستمرارية هي السجل الأمين لعدد الجلسات الموثّقة التي تدعم القراءة فعلاً. ويرجّح المكتب بنية صمدت عبر الجلسات بصورة مختلفة عن لقطة جلسة واحدة.`)));
+
+  // 6) What the desk watches.
+  sec('watch-next', t('What the desk watches', 'ما يراقبه المكتب'),
+    p(t('From here the desk watches whether participation broadens or narrows, whether cross-asset coherence holds as catalysts arrive, and whether defensive leadership deepens into a rotation or fades. Structure analysis is continuous: this note is one reading in a sequence, and the value is in how participation, coherence and stability evolve across sessions rather than in any single snapshot.',
+      'ومن هنا يراقب المكتب ما إذا كانت المشاركة تتسع أم تضيق، وما إذا كان الاتساق عبر الأصول يصمد مع وصول المحفزات، وما إذا كانت القيادة الدفاعية تتعمّق إلى تدوير أم تتلاشى. وتحليل البنية مستمر: فهذه المذكرة قراءة ضمن سلسلة، والقيمة في كيفية تطوّر المشاركة والاتساق والاستقرار عبر الجلسات لا في أي لقطة منفردة.')));
+
+  const body = injectPanels(sections.join('\n'), ctx, locale);
+  const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  return { title, eyebrow, body, wordCount };
+}
+
+function publishStructure(write) {
+  const structure = readJson(STRUCTURE_ARTIFACT, {});
+  if (!structure.available) {
+    console.log('[market-structure] structure read unavailable / indeterminate — no honest structure note to publish, exiting green.');
+    return { published: false, reason: 'structure_unavailable' };
+  }
+  const topic = selectStructureTopic();
+  if (!topic) {
+    console.log('[market-structure] all structure topics within cooldown — exiting green with no publish (no spam).');
+    return { published: false, reason: 'all_topics_cooled' };
+  }
+  const regime = readJson(REGIME, {});
+  const reactions = readJson(REACTIONS, { reactions: [] });
+  const reaction = (reactions.reactions || []).find((r) => r.has_reaction_data) || null;
+  const ctx = { structure, structure_topic: topic, regime, cross: readJson(CROSS, { assets: [] }), reaction };
+  const slug = `structure-${topic.id.replace(/_/g, '-')}-${new Date().toISOString().slice(0, 10)}`;
+
+  const en = assembleHtml(ctx, 'en', slug, renderStructureBody, 'market-structure');
+  const arDoc = assembleHtml(ctx, 'ar', slug, renderStructureBody, 'market-structure');
+  if (en.wordCount < MIN_WORDS.en || arDoc.wordCount < MIN_WORDS.ar) {
+    console.log(`[market-structure] below word floor (en=${en.wordCount}/${MIN_WORDS.en}, ar=${arDoc.wordCount}/${MIN_WORDS.ar}) — not publishing.`);
+    return { published: false, reason: 'below_min_words' };
+  }
+  const enText = renderStructureBody(ctx, 'en').body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
+  const arText = renderStructureBody(ctx, 'ar').body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
+  // Hard guard: never publish retail/signal vocabulary (the validator enforces
+  // the same list on disk; this prevents an un-green publish in the first place).
+  for (const re of STRUCTURE_FORBIDDEN) {
+    if (re.test(enText) || re.test(arText)) {
+      console.log(`[market-structure] forbidden retail/signal language ${re} — not publishing.`);
+      return { published: false, reason: 'forbidden_language' };
+    }
+  }
+  const quality = scoreArticle({ en: enText, ar: arText });
+  if (quality.flags.length || quality.min_score < QUALITY_FLOOR) {
+    console.log(`[market-structure] editorial-quality gate failed (min_score=${quality.min_score}, flags=${JSON.stringify(quality.flags)}) — not publishing.`);
+    return { published: false, reason: 'below_quality_floor' };
+  }
+  console.log(`[market-structure] topic "${topic.id}" → ${slug} (en=${en.wordCount}w/${quality.en.score} ar=${arDoc.wordCount}w/${quality.ar.score})`);
+  if (!write) return { published: false, reason: 'dry_run', slug };
+
+  fs.mkdirSync(path.join(ROOT, 'market-structure'), { recursive: true });
+  fs.mkdirSync(path.join(ROOT, 'ar', 'market-structure'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'market-structure', `${slug}.html`), en.html, 'utf8');
+  fs.writeFileSync(path.join(ROOT, 'ar', 'market-structure', `${slug}.html`), arDoc.html, 'utf8');
+  const cov = readJson(STRUCTURE_COVERAGE, { version: '1.0', published: [] });
+  cov.published = (cov.published || []).concat([{ topic: topic.id, slug, published_at: new Date().toISOString() }]).slice(-120);
+  cov.updated_at = new Date().toISOString();
+  fs.writeFileSync(STRUCTURE_COVERAGE, JSON.stringify(cov, null, 2) + '\n', 'utf8');
+  console.log(`[market-structure] published /market-structure/${slug}.html + /ar/market-structure/${slug}.html`);
+  return { published: true, slug, topic: topic.id };
+}
+
+function assembleHtml(ctx, locale, slug, bodyFn = renderArticle, surfaceKey = 'market-news') {
+  const ar = locale === 'ar';
+  const surface = SURFACES[surfaceKey] || SURFACES['market-news'];
+  const indexPath = ar ? surface.arIndex : surface.enIndex;
   const tmpl = fs.readFileSync(indexPath, 'utf8');
   const hs = tmpl.indexOf('<!-- GLOBAL_HEADER_START -->');
   const he = tmpl.indexOf('<!-- GLOBAL_HEADER_END -->') + '<!-- GLOBAL_HEADER_END -->'.length;
@@ -426,13 +595,13 @@ function assembleHtml(ctx, locale, slug, bodyFn = renderArticle) {
   const footer = tmpl.slice(tmpl.indexOf('</main>') + '</main>'.length);
   const { title, eyebrow, body, wordCount } = bodyFn(ctx, locale);
 
-  const base = ar ? '/ar/market-news/' : '/market-news/';
-  const altEn = `https://www.tradealphaai.com/market-news/${slug}.html`;
-  const altAr = `https://www.tradealphaai.com/ar/market-news/${slug}.html`;
+  const base = ar ? `/ar/${surface.dir}/` : `/${surface.dir}/`;
+  const altEn = `https://www.tradealphaai.com/${surface.dir}/${slug}.html`;
+  const altAr = `https://www.tradealphaai.com/ar/${surface.dir}/${slug}.html`;
   const canonical = ar ? altAr : altEn;
-  const disc = ar ? 'تحليل تعليمي لتفاعل السوق وسياقه الكلي، وليس نصيحة استثمارية أو توصية تداول.' : 'Educational analysis of market reaction and macro context. Not investment advice or a trading recommendation.';
+  const disc = ar ? surface.discAr : surface.discEn;
   const home = ar ? '/ar/' : '/';
-  const newsLabel = ar ? 'أخبار السوق' : 'Market News';
+  const newsLabel = ar ? surface.labelAr : surface.labelEn;
   const homeLabel = ar ? 'الرئيسية' : 'Home';
   const dateISO = new Date().toISOString().slice(0, 10);
 
@@ -453,7 +622,7 @@ function assembleHtml(ctx, locale, slug, bodyFn = renderArticle) {
   <meta property="og:url" content="${canonical}" />
   <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
   <meta property="article:published_time" content="${dateISO}" />
-  <meta property="article:section" content="Market News" />
+  <meta property="article:section" content="${esc(surface.section)}" />
   <meta name="twitter:card" content="summary_large_image" />
   <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'NewsArticle', headline: title, description: disc, datePublished: dateISO, dateModified: dateISO, inLanguage: ar ? 'ar' : 'en', author: { '@type': 'Organization', name: 'TradeAlphaAI Markets Desk' }, publisher: { '@type': 'Organization', name: 'TradeAlphaAI', url: 'https://www.tradealphaai.com' }, mainEntityOfPage: canonical })}</script>
   <link rel="stylesheet" href="/css/global-header.css" />
@@ -532,4 +701,4 @@ if (require.main === module) {
   process.exit(0);
 }
 
-module.exports = { selectEvent, gatherContext, renderArticle, assembleHtml, publish, MIN_WORDS, publishResearch, renderResearchBody, selectResearchTopic, RESEARCH_TOPICS, RESEARCH_COOLDOWN_DAYS, RESEARCH_COVERAGE };
+module.exports = { selectEvent, gatherContext, renderArticle, assembleHtml, publish, MIN_WORDS, publishResearch, renderResearchBody, selectResearchTopic, RESEARCH_TOPICS, RESEARCH_COOLDOWN_DAYS, RESEARCH_COVERAGE, publishStructure, renderStructureBody, selectStructureTopic, STRUCTURE_TOPICS, STRUCTURE_COOLDOWN_DAYS, STRUCTURE_COVERAGE, STRUCTURE_FORBIDDEN, STRUCTURE_ARTIFACT };
