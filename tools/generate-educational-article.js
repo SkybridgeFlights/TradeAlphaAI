@@ -114,7 +114,52 @@ const LEGACY_CONCEPT_LIBRARY = {
 // are not already published; they are ranked by the deterministic educational-
 // priority engine (deep-first, with progression/cluster/anti-shallow-domination
 // weighting). The top-ranked concept wins; the reason is logged for governance.
-const { rankCandidates } = require('./educational-priority');
+const { rankCandidates, nextOf, SEQUENCES } = require('./educational-priority');
+
+// Published co-members of any progression chain the concept belongs to — these
+// are editorially connected by construction (same curated sequence).
+function chainPeers(slug) {
+  const peers = [];
+  for (const chain of SEQUENCES) if (chain.includes(slug)) for (const id of chain) if (id !== slug) peers.push(id);
+  return peers;
+}
+
+// ── Phase 124: institutional related-research resolver (deterministic). ───────
+// Given a concept, returns up to 4 PUBLISHED related educational articles drawn
+// from the concept graph — progression next-reading first (continuity), then
+// direct related concepts, then one cluster hop — deduped, never the concept
+// itself, and only when the target article actually exists (no dead links, no
+// fabricated relationships, no random recommendations).
+function relatedReading(slug) {
+  const lib = CONCEPT_LIBRARY;
+  if (!lib[slug]) return [];
+  const seen = new Set([slug]);
+  const out = [];
+  const add = (id) => {
+    if (seen.has(id) || !lib[id]) return;
+    seen.add(id);
+    if (fs.existsSync(path.join(ROOT, 'articles', `${id}.html`)) && fs.existsSync(path.join(ROOT, 'ar', 'articles', `${id}.html`))) {
+      out.push({ id, title_en: lib[id].title_en, title_ar: lib[id].title_ar, is_deep: !!lib[id].is_deep });
+    }
+  };
+  for (const n of nextOf(slug)) add(n);                                   // progression next-reading
+  for (const r of (lib[slug].related_concepts || [])) add(r);            // direct relationships
+  for (const p of chainPeers(slug)) add(p);                              // same-chain cluster continuity
+  for (const r of (lib[slug].related_concepts || [])) for (const r2 of (lib[r] && lib[r].related_concepts || [])) add(r2); // one cluster hop
+  return out.slice(0, 4);
+}
+
+function relatedReadingSection(ar, slug) {
+  const t = (en, arT) => (ar ? arT : en);
+  const related = relatedReading(slug);
+  if (related.length < 1) return ''; // no published relationships yet — omit honestly (no filler)
+  const base = ar ? '/ar/articles/' : '/articles/';
+  const cards = related.map((r) => `          <article class="market-card"><span class="market-card-kicker">${esc(r.is_deep ? t('Deep concept', 'مفهوم معمّق') : t('Related concept', 'مفهوم ذو صلة'))}</span><h3><a href="${esc(base + r.id + '.html')}">${esc(ar ? r.title_ar : r.title_en)}</a></h3></article>`).join('\n');
+  return `  <section class="market-section" id="related-research"><div class="market-section-head"><span class="eyebrow">${esc(t('Related research', 'أبحاث ذات صلة'))}</span><h2>${esc(t('Continue the framework', 'تابع الإطار'))}</h2><p class="market-copy">${esc(t('These concepts extend the same institutional reasoning — read in sequence, they build a connected framework rather than isolated notes.', 'تمدّد هذه المفاهيم التفكير المؤسسي نفسه — وقراءتها بالتسلسل تبني إطاراً متصلاً لا مذكرات منعزلة.'))}</p></div>
+        <div class="market-grid three">
+${cards}
+        </div></section>`;
+}
 
 function recentSlugs() {
   const topics = readJson(TOPICS_PATH, { history: [] });
@@ -264,6 +309,7 @@ ${shell.header}
 ${sections}
 ${educationalVisual(locale, slug)}
 ${connectsSection(ar)}
+${relatedReadingSection(ar, slug)}
   <section class="market-section" id="educational-disclaimer"><div class="market-panel"><h2>${ar ? 'إخلاء المسؤولية التعليمي' : 'Educational Disclaimer'}</h2><p class="market-copy">${ar ? 'هذا تحليل تعليمي لبنية السوق، وليس نصيحة استثمارية أو توصية تداول أو توقعاً لاتجاه الأسعار.' : 'This is educational market-structure analysis, not investment advice, a trading recommendation, or a directional forecast.'}</p></div></section>
 </div></main>
 ${shell.footer}`;
