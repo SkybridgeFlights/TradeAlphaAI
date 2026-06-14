@@ -1,0 +1,153 @@
+name: Daily Research Brain
+
+# Phase 115 — continuous Daily Research Brain.
+# Purpose: keep the institutional research desk publishing every day, including
+# quiet macro sessions when the event-driven Market News Brain stays silent. It
+# refreshes the regime / liquidity / cross-asset / chart-intelligence artifacts,
+# then publishes ONE deterministic bilingual research note from the current
+# structural read — with topic rotation + per-topic cooldown (no spam, no
+# duplicate topics) and honest degradation (skips green when the regime read is
+# indeterminate). Reuses the gated market-news wrapper, intelligence rail, inline
+# SVG panels and editorial-quality floor; it is NOT a signal service or SEO farm.
+#
+# Social posting preview-only by default (ENABLE_*_POSTING flags default false);
+# Telegram stays URL-200 gated in the publisher.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Once per session day, after the US open settles (independent of events).
+    - cron: '45 14 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-research-brain
+  cancel-in-progress: false
+
+env:
+  ENABLE_X_POSTING: 'false'
+  ENABLE_FACEBOOK_POSTING: 'false'
+  ENABLE_INSTAGRAM_POSTING: 'false'
+  ENABLE_LINKEDIN_POSTING: 'false'
+
+jobs:
+  daily-research-brain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh structural intelligence + publish research note
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          node tools/build-global-macro-events.js --write || echo "[daily-research] global macro acquisition degraded — continuing"
+          node tools/build-economic-intelligence.js --fetch --write || echo "[daily-research] economic intelligence degraded — continuing"
+          node tools/build-macro-reactions.js --write || echo "[daily-research] macro reactions degraded — continuing"
+          node tools/build-liquidity-regime.js --write || echo "[daily-research] liquidity regime degraded — continuing"
+          node tools/build-chart-intelligence.js --write || echo "[daily-research] chart intelligence degraded — continuing"
+          node tools/generate-daily-research-note.js --write || echo "[daily-research] research note self-gated (quiet/indeterminate) — continuing"
+          node tools/generate-market-news-index.js --write || echo "[daily-research] surface regen degraded — continuing"
+          node tools/generate-seo-sitemaps.js || echo "[daily-research] sitemap regen degraded — continuing"
+
+      - name: Refresh social distribution (preview-only)
+        run: |
+          node tools/build-social-intelligence.js --write || echo "[daily-research] social previews degraded — continuing"
+          node tools/build-distribution-plan.js --write || echo "[daily-research] distribution plan degraded — continuing"
+          node tools/build-intelligence-monitor.js --write || echo "[daily-research] intelligence monitor degraded — continuing"
+
+      - name: Validate
+        run: |
+          npm run check:research-rotation
+          npm run check:market-news
+          npm run check:market-news-articles
+          npm run check:editorial-quality-articles
+          npm run check:embedded-intelligence
+          npm run check:inline-visuals
+          npm run check:liquidity-regime
+          npm run check:chart-intelligence
+          npm run check:intelligence-monitor
+          npm run check:seo
+          npm run check:bilingual-structure
+
+      - name: Commit refreshed surface (only when changed)
+        run: |
+          git config user.name "tradealphaai-daily-research-brain"
+          git config user.email "actions@users.noreply.github.com"
+
+          # Stage every path this brain may regenerate. generate-seo-sitemaps
+          # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
+          # regenerated regime/liquidity/chart/coverage/social artifacts. Stage
+          # comprehensively + fail safe (mirrors market-news-brain).
+          INTENDED="market-news/ ar/market-news/ data/ \
+            sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
+            sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
+
+          stage_intended() {
+            for p in $INTENDED; do
+              [ -e "$p" ] && git add -A -- "$p" || true
+            done
+          }
+          stage_intended
+
+          # Refuse to push if anything changed OUTSIDE the intended set.
+          UNRELATED=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            f="${line:3}"
+            case "$f" in
+              market-news/*|ar/market-news/*|data/*|sitemap*.xml|robots.txt) ;;
+              *) UNRELATED="${UNRELATED}${f}\n" ;;
+            esac
+          done <<< "$(git status --porcelain --untracked-files=all)"
+          if [ -n "$UNRELATED" ]; then
+            echo "[daily-research] ERROR: changes outside intended paths — refusing to push partial state:"
+            printf '%b' "$UNRELATED" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          echo "[daily-research] === git status --short ==="; git status --short
+          echo "[daily-research] === staged diff summary ==="; git diff --cached --stat
+
+          if git diff --cached --quiet; then
+            echo "[daily-research] no changes — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Daily research brain: $(date -u +'%Y-%m-%d %H:%M') UTC"
+
+          # Robust push: rebase onto remote; on artifact drift regenerate shared
+          # deterministic artifacts, restage, continue. Rebase safety preserved.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main; then
+              if ! git diff --quiet || ! git diff --cached --quiet; then
+                echo "[daily-research] residual changes after rebase — restaging"; stage_intended
+                git diff --cached --quiet || git commit --amend --no-edit
+              fi
+              if git push origin main; then
+                echo "[daily-research] pushed on attempt ${attempt}"; exit 0
+              fi
+              echo "[daily-research] push rejected (race) on attempt ${attempt} — retrying"
+            else
+              echo "[daily-research] rebase conflict on attempt ${attempt} — regenerating shared artifacts to reconcile"
+              node tools/generate-seo-sitemaps.js || echo "[daily-research] sitemap regen degraded"
+              node tools/build-social-intelligence.js --write || echo "[daily-research] social regen degraded"
+              node tools/build-distribution-plan.js --write || echo "[daily-research] distribution regen degraded"
+              stage_intended
+              git -c core.editor=true rebase --continue || git rebase --abort
+            fi
+            sleep $((attempt * 3))
+          done
+          echo "[daily-research] push failed after retries"; exit 1

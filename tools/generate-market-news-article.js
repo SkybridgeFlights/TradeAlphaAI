@@ -292,7 +292,131 @@ function renderIntelligenceRail(ctx, locale) {
   </aside>`;
 }
 
-function assembleHtml(ctx, locale, slug) {
+// ── Phase 115: Daily Research Brain (continuous publishing during quiet tape) ──
+const RESEARCH_COVERAGE = path.join(ROOT, 'data', 'intelligence', 'research-coverage.json');
+const RESEARCH_COOLDOWN_DAYS = 4; // do not repeat the same research topic within this window
+const RESEARCH_TOPICS = [
+  { id: 'regime_structure', en: 'Market structure under the prevailing regime', ar: 'بنية السوق في ظل النظام السائد' },
+  { id: 'liquidity_conditions', en: 'Liquidity conditions and the risk backdrop', ar: 'أوضاع السيولة وخلفية المخاطر' },
+  { id: 'cross_asset_relationships', en: 'Cross-asset relationships in the current tape', ar: 'العلاقات عبر الأصول في السوق الراهن' },
+  { id: 'breadth_volatility', en: 'Breadth and volatility beneath the index', ar: 'الاتساع والتذبذب تحت سطح المؤشر' },
+];
+
+function dayOfYear(d) { const s = new Date(Date.UTC(d.getUTCFullYear(), 0, 0)); return Math.floor((d - s) / 86400000); }
+
+// Deterministic topic rotation that respects the cooldown memory.
+function selectResearchTopic() {
+  const cov = readJson(RESEARCH_COVERAGE, { published: [] });
+  const recent = new Map((cov.published || []).map((c) => [c.topic, c.published_at]));
+  const cutoff = Date.now() - RESEARCH_COOLDOWN_DAYS * 86400000;
+  const start = dayOfYear(new Date()) % RESEARCH_TOPICS.length;
+  for (let i = 0; i < RESEARCH_TOPICS.length; i += 1) {
+    const topic = RESEARCH_TOPICS[(start + i) % RESEARCH_TOPICS.length];
+    const last = recent.get(topic.id);
+    if (!last || Date.parse(last) < cutoff) return topic;
+  }
+  return null; // every topic covered within cooldown — skip (no spam)
+}
+
+// Compose a deterministic institutional research note from the regime / cross-
+// asset / reaction artifacts. Evidence-based, honest, bilingual. Mirrors the
+// article structure so it reuses the rail, inline panels and quality gate.
+function renderResearchBody(ctx, locale) {
+  const ar = locale === 'ar';
+  const t = (en, arT) => (ar ? arT : en);
+  const rg = ctx.regime || {};
+  const topic = (ctx.research && ctx.research.topic) || RESEARCH_TOPICS[0];
+  const title = ar ? topic.ar : topic.en;
+  const eyebrow = t('Institutional Research Note', 'مذكرة بحث مؤسسية');
+  const reg = (v) => riVal('regime', v, ar);
+  const liq = (v) => riVal('liquidity', v, ar);
+  const stb = (v) => riVal('stability', v, ar);
+  const coh = rg.cross_asset_coherence ? rg.cross_asset_coherence.score : null;
+  const sub = rg.sub_states || {};
+
+  const sections = [];
+  const sec = (id, head, copy) => sections.push(`<section class="market-section" id="${id}"><div class="market-section-head"><span class="eyebrow">${esc(t('Desk read', 'قراءة المكتب'))}</span><h2>${esc(head)}</h2></div><div class="market-panel">${copy}</div></section>`);
+  const p = (s) => `<p class="market-copy">${esc(s)}</p>`;
+
+  // 1. Lead — the structural reading the note exists to make (no event needed).
+  sec('lead', t('The structural reading', 'القراءة الهيكلية'),
+    p(t(`This research note steps back from any single release to read the structure of the tape itself. The prevailing regime is ${reg(rg.regime)}, with liquidity reading ${liq(rg.liquidity_state)} and stability ${stb(rg.stability)}. The research-desk intelligence rail alongside this note carries the same snapshot, and the analysis below works through what that structure means rather than forecasting where prices go next.`,
+      `تتراجع هذه المذكرة خطوة إلى الوراء بعيداً عن أي إصدار منفرد لتقرأ بنية السوق نفسها. النظام السائد هو ${reg(rg.regime)}، مع سيولة ${liq(rg.liquidity_state)} واستقرار ${stb(rg.stability)}. ويحمل مسار استخبارات مكتب الأبحاث المرافق اللقطة ذاتها، ويعمل التحليل أدناه على ما تعنيه هذه البنية بدلاً من التنبؤ بوجهة الأسعار.`))
+    + p(t('It is a deterministic reading drawn from the canonical liquidity-regime and cross-asset artifacts; where a dimension is unavailable it is stated plainly rather than inferred, so the note degrades honestly on a quiet tape instead of manufacturing a narrative.',
+      'وهي قراءة حتمية مستمدة من مرجعَي نظام السيولة والأصول المتقاطعة المعتمدين؛ وحين يغيب بُعد ما يُذكر ذلك صراحة بدل استنتاجه، لتتراجع المذكرة بأمانة في الأسواق الهادئة بدلاً من تصنيع سردية.')));
+
+  // 2. Regime / liquidity structure.
+  sec('regime', t('Regime and liquidity structure', 'بنية النظام والسيولة'),
+    p(rg.regime && rg.regime !== 'indeterminate'
+      ? t(`A ${reg(rg.regime)} regime with ${liq(rg.liquidity_state)} liquidity frames how any incoming surprise will be absorbed. ${rg.narrative || ''} Cross-asset coherence reads ${coh != null ? coh : 'n/a'}, which matters because a coherent tape transmits a shock cleanly while an incoherent one fragments it across rates, the dollar and equities.`,
+          `نظام ${reg(rg.regime)} مع سيولة ${liq(rg.liquidity_state)} يؤطّر كيفية امتصاص أي مفاجأة قادمة. ${rg.narrative || ''} ويقرأ الاتساق عبر الأصول ${coh != null ? coh : 'غير متاح'}، وهو ما يهمّ لأن السوق المتسق ينقل الصدمة بوضوح بينما يُجزّئها السوق غير المتسق عبر العوائد والدولار والأسهم.`)
+      : t('The structural regime is currently indeterminate on the observed dimensions, so the desk withholds a regime overlay rather than asserting one.', 'النظام الهيكلي غير محدد حالياً وفق الأبعاد المرصودة، لذا يمتنع المكتب عن إسقاط نظام بدل افتراضه.')));
+
+  // 3. Cross-asset structure.
+  sec('cross-asset', t('Cross-asset structure', 'البنية عبر الأصول'),
+    p(t(`Beneath the index, the desk reads participation through breadth (${riVal('', sub.breadth, ar)}), the dollar and yield posture, and whether defensive or cyclical leadership dominates (${riVal('', sub.defensive, ar)}). These dimensions decide whether strength is broad and absorbable or narrow and fragile — the same surface level can sit on very different structures.`,
+      `تحت سطح المؤشر، يقرأ المكتب المشاركة عبر الاتساع (${riVal('', sub.breadth, ar)})، ووضع الدولار والعوائد، وما إذا كانت القيادة دفاعية أم دورية (${riVal('', sub.defensive, ar)}). وتحدد هذه الأبعاد ما إذا كانت القوة واسعة وقابلة للامتصاص أم ضيقة وهشة — فالمستوى السطحي ذاته قد يستند إلى بنى مختلفة تماماً.`)));
+
+  // 4. Volatility / fragility.
+  sec('volatility', t('Volatility and fragility', 'التذبذب والهشاشة'),
+    p(t(`Volatility structure is reading ${riVal('', sub.volatility, ar)}. Compression is not the same as stability: a quiet tape can reflect genuine balance or a temporary absence of force ahead of a catalyst. The desk treats the difference as the central question rather than reading calm as safety.`,
+      `تقرأ بنية التذبذب ${riVal('', sub.volatility, ar)}. والانضغاط ليس كالاستقرار: فالسوق الهادئ قد يعكس توازناً حقيقياً أو غياباً مؤقتاً للقوة قبل محفز. ويعدّ المكتب هذا الفرق السؤال المركزي بدل قراءة الهدوء على أنه أمان.`)));
+
+  // 5. What the desk watches.
+  sec('watch-next', t('What the desk watches', 'ما يراقبه المكتب'),
+    p(t('The desk watches whether breadth confirms or undercuts the index, whether the dollar and yields move with or against risk, and whether the regime strengthens, holds or transitions as the next catalysts arrive. Continuity matters: this note is one reading in a sequence, and the value is in how the structure evolves, not in any single snapshot.',
+      'يراقب المكتب ما إذا كان الاتساع يؤكد المؤشر أم يقوّضه، وما إذا كان الدولار والعوائد يتحركان مع المخاطر أم ضدها، وما إذا كان النظام يتقوّى أو يثبت أو ينتقل مع وصول المحفزات التالية. وتهمّ الاستمرارية: فهذه المذكرة قراءة ضمن سلسلة، والقيمة في كيفية تطوّر البنية لا في أي لقطة منفردة.')));
+
+  const body = injectPanels(sections.join('\n'), ctx, locale);
+  const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  return { title, eyebrow, body, wordCount };
+}
+
+function publishResearch(write) {
+  const regime = readJson(REGIME, {});
+  // Honest gate: do not manufacture a note when the structural read is empty.
+  if (!regime.regime || regime.regime === 'indeterminate') {
+    console.log('[daily-research] regime indeterminate / unavailable — no honest research note to publish, exiting green.');
+    return { published: false, reason: 'regime_unavailable' };
+  }
+  const topic = selectResearchTopic();
+  if (!topic) {
+    console.log('[daily-research] all research topics within cooldown — exiting green with no publish (no spam).');
+    return { published: false, reason: 'all_topics_cooled' };
+  }
+  const reactions = readJson(REACTIONS, { reactions: [] });
+  const reaction = (reactions.reactions || []).find((r) => r.has_reaction_data) || null;
+  const ctx = { elig: { headline: topic.en, cluster: 'research' }, event: { event: topic.en, category: 'macro' }, reaction, regime, cross: readJson(CROSS, { assets: [] }), research: { topic } };
+  const slug = `research-${topic.id.replace(/_/g, '-')}-${new Date().toISOString().slice(0, 10)}`;
+
+  const en = assembleHtml(ctx, 'en', slug, renderResearchBody);
+  const arDoc = assembleHtml(ctx, 'ar', slug, renderResearchBody);
+  if (en.wordCount < MIN_WORDS.en || arDoc.wordCount < MIN_WORDS.ar) {
+    console.log(`[daily-research] below word floor (en=${en.wordCount}/${MIN_WORDS.en}, ar=${arDoc.wordCount}/${MIN_WORDS.ar}) — not publishing.`);
+    return { published: false, reason: 'below_min_words' };
+  }
+  const enText = renderResearchBody(ctx, 'en').body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
+  const arText = renderResearchBody(ctx, 'ar').body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ');
+  const quality = scoreArticle({ en: enText, ar: arText });
+  if (quality.flags.length || quality.min_score < QUALITY_FLOOR) {
+    console.log(`[daily-research] editorial-quality gate failed (min_score=${quality.min_score}, flags=${JSON.stringify(quality.flags)}) — not publishing.`);
+    return { published: false, reason: 'below_quality_floor' };
+  }
+  console.log(`[daily-research] topic "${topic.id}" → ${slug} (en=${en.wordCount}w/${quality.en.score} ar=${arDoc.wordCount}w/${quality.ar.score})`);
+  if (!write) return { published: false, reason: 'dry_run', slug };
+
+  fs.writeFileSync(path.join(ROOT, 'market-news', `${slug}.html`), en.html, 'utf8');
+  fs.mkdirSync(path.join(ROOT, 'ar', 'market-news'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'ar', 'market-news', `${slug}.html`), arDoc.html, 'utf8');
+  const cov = readJson(RESEARCH_COVERAGE, { version: '1.0', published: [] });
+  cov.published = (cov.published || []).concat([{ topic: topic.id, slug, published_at: new Date().toISOString() }]).slice(-120);
+  cov.updated_at = new Date().toISOString();
+  fs.writeFileSync(RESEARCH_COVERAGE, JSON.stringify(cov, null, 2) + '\n', 'utf8');
+  console.log(`[daily-research] published /market-news/${slug}.html + /ar/market-news/${slug}.html`);
+  return { published: true, slug, topic: topic.id };
+}
+
+function assembleHtml(ctx, locale, slug, bodyFn = renderArticle) {
   const ar = locale === 'ar';
   const indexPath = ar ? AR_INDEX : EN_INDEX;
   const tmpl = fs.readFileSync(indexPath, 'utf8');
@@ -300,7 +424,7 @@ function assembleHtml(ctx, locale, slug) {
   const he = tmpl.indexOf('<!-- GLOBAL_HEADER_END -->') + '<!-- GLOBAL_HEADER_END -->'.length;
   const headerBlock = tmpl.slice(hs, he);
   const footer = tmpl.slice(tmpl.indexOf('</main>') + '</main>'.length);
-  const { title, eyebrow, body, wordCount } = renderArticle(ctx, locale);
+  const { title, eyebrow, body, wordCount } = bodyFn(ctx, locale);
 
   const base = ar ? '/ar/market-news/' : '/market-news/';
   const altEn = `https://www.tradealphaai.com/market-news/${slug}.html`;
@@ -408,4 +532,4 @@ if (require.main === module) {
   process.exit(0);
 }
 
-module.exports = { selectEvent, gatherContext, renderArticle, assembleHtml, publish, MIN_WORDS };
+module.exports = { selectEvent, gatherContext, renderArticle, assembleHtml, publish, MIN_WORDS, publishResearch, renderResearchBody, selectResearchTopic, RESEARCH_TOPICS, RESEARCH_COOLDOWN_DAYS, RESEARCH_COVERAGE };
