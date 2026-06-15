@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-15T18:38:02.361Z",
+  "generated_at": "2026-06-15T19:09:05.385Z",
   "source_layer": "tactical-context",
   "available": true,
   "confidence_band": "high",
@@ -9,7 +9,7 @@
   "coverage_pct": 100,
   "dominant": {
     "dimension": "continuation",
-    "state": "fragile_continuation"
+    "state": "exhaustion_risk"
   },
   "dimensions": {
     "tactical_bias": {
@@ -17,38 +17,38 @@
       "label_en": "tactically cautious",
       "label_ar": "حذِر تكتيكياً",
       "evidence": [
-        "posture=defensive",
+        "posture=risk_seeking",
         "liquidity=draining",
         "confirmation=partial",
-        "fragility=contained"
+        "fragility=fragile"
       ]
     },
     "directional_pressure": {
-      "state": "fading",
-      "label_en": "fading",
-      "label_ar": "متلاشٍ",
+      "state": "steady",
+      "label_en": "steady",
+      "label_ar": "ثابت",
       "evidence": [
         "momentum=indeterminate",
-        "persistence=stabilizing",
-        "participation=narrowing"
+        "persistence=persistent",
+        "participation=mixed"
       ]
     },
     "continuation": {
-      "state": "fragile_continuation",
-      "label_en": "fragile continuation",
-      "label_ar": "استمرار هش",
+      "state": "exhaustion_risk",
+      "label_en": "exhaustion risk",
+      "label_ar": "مخاطر إنهاك",
       "evidence": [
-        "persistence=stabilizing",
-        "participation=narrowing",
-        "fragility=contained"
+        "persistence=persistent",
+        "participation=mixed",
+        "fragility=fragile"
       ]
     },
     "participation_quality": {
-      "state": "narrowing",
-      "label_en": "narrowing participation",
-      "label_ar": "مشاركة آخذة في التضيّق",
+      "state": "mixed",
+      "label_en": "mixed participation",
+      "label_ar": "مشاركة مختلطة",
       "evidence": [
-        "structure participation=broad_participation",
+        "structure participation=mixed_participation",
         "leadership=narrow"
       ]
     },
@@ -71,34 +71,34 @@
       ]
     },
     "posture": {
-      "state": "defensive",
-      "label_en": "defensive posture",
-      "label_ar": "موقف دفاعي",
+      "state": "risk_seeking",
+      "label_en": "risk-seeking posture",
+      "label_ar": "موقف باحث عن المخاطر",
       "evidence": [
-        "rotation=defensive_rotation",
+        "rotation=cyclical_leadership",
         "regime defensive=cyclical_leadership"
       ]
     },
     "positioning_fragility": {
-      "state": "contained",
-      "label_en": "contained fragility",
-      "label_ar": "هشاشة محتواة",
+      "state": "fragile",
+      "label_en": "fragile positioning",
+      "label_ar": "تموضع هش",
       "evidence": [
         "concentration=contained",
-        "structure stability=stable",
+        "structure stability=deteriorating",
         "tension=contained"
       ]
     }
   },
   "summary": {
     "tactical_bias": "cautious",
-    "directional_pressure": "fading",
-    "continuation": "fragile_continuation",
-    "participation_quality": "narrowing",
+    "directional_pressure": "steady",
+    "continuation": "exhaustion_risk",
+    "participation_quality": "mixed",
     "confidence_band": "high",
     "dominant": {
       "dimension": "continuation",
-      "state": "fragile_continuation"
+      "state": "exhaustion_risk"
     }
   },
   "attribution": {
@@ -109,7 +109,7 @@
       "cross-asset-state",
       "reaction-summary"
     ],
-    "market_state_age_hours": 2.5,
+    "market_state_age_hours": 3.6,
     "note": "Deterministic, conditional composition of verified upstream signals. Probabilistic institutional context, not advice, signals, price targets or forecasts. Insufficient evidence degrades to indeterminate."
   }
 }
