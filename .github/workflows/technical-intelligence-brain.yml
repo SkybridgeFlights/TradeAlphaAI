@@ -57,9 +57,13 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
         run: |
           node tools/build-liquidity-regime.js --write || echo "[tech-intel] liquidity regime degraded — continuing"
           node tools/build-chart-intelligence.js --write || echo "[tech-intel] chart intelligence degraded — continuing"
+          # Institutional OHLCV charts: attempt approved-provider fetch, else write
+          # an HONEST empty manifest (no fabricated bars). Never fails the run.
+          node tools/build-institutional-charts.js --fetch --write || node tools/build-institutional-charts.js --write || echo "[tech-intel] institutional charts unavailable — continuing"
           node tools/build-market-structure.js --write || echo "[tech-intel] structure engine degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
           # Capture the published slug (empty when the note self-gates) so the
@@ -84,6 +88,8 @@ jobs:
           npm run check:telegram-activation
           npm run check:inline-visuals
           npm run check:embedded-intelligence
+          npm run check:institutional-charts
+          npm run check:visual-composition
           npm run check:chart-intelligence
           npm run check:liquidity-regime
           npm run check:intelligence-monitor

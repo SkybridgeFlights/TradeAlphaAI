@@ -227,6 +227,10 @@ function educationalVisual(locale, slug) {
   const svgPath = path.join(ROOT, visual.files[locale]);
   let svg;
   try { svg = fs.readFileSync(svgPath, 'utf8'); } catch { return ''; }
+  // Phase 126: make the embedded SVG responsive — strip the fixed width/height
+  // from the <svg> root (keep viewBox) so it scales to the prose column and
+  // never clips or overflows, matching the market-news/structure panel pattern.
+  svg = svg.replace(/<svg\b[^>]*>/, (tag) => tag.replace(/\s+(?:width|height)="[\d.]+(?:px)?"/g, ''));
   const purpose = ar ? visual.purpose_ar : visual.purpose_en;
   const label = ar ? visual.title_ar : visual.title_en;
   const caption = ar

@@ -4399,3 +4399,44 @@ html[dir="rtl"] .figure-annotation { line-height: 1.85; }
 .aep-reason { font-size: 0.8rem; color: rgba(148, 163, 184, 0.85); font-style: italic; }
 .aep-attrib { font-size: 0.72rem; color: rgba(148, 163, 184, 0.7); letter-spacing: 0.01em; }
 @media print { .article-evidence-panel { break-inside: avoid; } }
+
+/* ── Phase 126: inline visual composition stabilization (additive, defensive).
+   Guarantees inline evidence panels and institutional OHLCV charts never clip,
+   overflow the prose column, or break RTL — on any article surface, at any
+   width. Additive only: it reinforces the existing responsive rules without
+   removing them. The SVGs are authored viewBox-only (no intrinsic width), so a
+   hard max-width:100% guard plus box-sizing keeps them inside their container. */
+.market-shell .article-evidence-panel,
+.market-shell figure.institutional-chart {
+  box-sizing: border-box;
+  max-width: min(74ch, 100%);
+  margin-inline: auto;
+  overflow: visible;            /* never clip the figure box / caption */
+}
+.market-shell .article-evidence-panel .aep-svg,
+.market-shell figure.institutional-chart .ic-svg {
+  max-width: 100%;
+  overflow: hidden;             /* rounds corners; the SVG already fits by viewBox */
+}
+.market-shell .article-evidence-panel svg,
+.market-shell figure.institutional-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;              /* hard guard against any intrinsic SVG width */
+}
+.market-shell figure.institutional-chart { margin: 1.75rem auto; padding: 0.75rem; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: rgba(255,255,255,.02); }
+.market-shell figure.institutional-chart .ic-svg { border-radius: 8px; }
+.market-shell figure.institutional-chart figcaption.ic-caption { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.75rem 0.5rem 0.25rem; }
+.market-shell figure.institutional-chart .ic-hook { font-size: 0.95rem; font-weight: 500; color: rgba(203,213,225,.92); line-height: 1.5; }
+.market-shell figure.institutional-chart .ic-attrib { font-size: 0.72rem; color: rgba(148,163,184,.7); letter-spacing: 0.01em; }
+/* RTL: keep figures centred in the column and captions right-aligned. */
+[dir="rtl"] .market-shell .article-evidence-panel,
+[dir="rtl"] .market-shell figure.institutional-chart { margin-inline: auto; }
+[dir="rtl"] .market-shell .aep-caption,
+[dir="rtl"] .market-shell figure.institutional-chart .ic-caption { text-align: right; }
+/* Mobile: full-width figures, no horizontal scroll. */
+@media (max-width: 640px) {
+  .market-shell .article-evidence-panel,
+  .market-shell figure.institutional-chart { max-width: 100%; padding: 0.5rem; }
+}
