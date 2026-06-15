@@ -44,10 +44,10 @@ function clean(s) { return String(s || '').replace(/_/g, ' '); }
 
 // Arabic value maps so regime/liquidity labels render natively (no English leak).
 const AR_VALUE = {
-  regime: { healthy_risk_expansion: 'توسّع مخاطر صحي', broad_risk_support: 'دعم مخاطر واسع', narrow_leadership: 'قيادة ضيقة', crowded_growth_positioning: 'تمركز نمو مزدحم', defensive_rotation: 'تدوير دفاعي', liquidity_stress: 'ضغط سيولة', unstable_rally: 'صعود غير مستقر', volatility_transition: 'تحوّل تذبذب', yield_pressure_regime: 'ضغط العوائد', macro_fragility: 'هشاشة كلية' },
-  liquidity: { easing: 'تيسير', tightening: 'تشديد', yield_pressure: 'ضغط العوائد', defensive_demand: 'طلب دفاعي', volatility_absorption: 'امتصاص تذبذب', volatility_rejection: 'رفض تذبذب', neutral: 'محايد' },
-  stability: { stable: 'مستقر', fragile: 'هش', deteriorating: 'يتدهور', unstable: 'غير مستقر', strengthening: 'يتقوّى', transition_state: 'انتقالي' },
-  breadth: { narrow: 'ضيق', broad: 'واسع', mixed: 'مختلط', flat: 'ثابت', broad_weakness: 'ضعف واسع' },
+  regime: { healthy_risk_expansion: 'توسّع مخاطر صحي', broad_risk_support: 'دعم مخاطر واسع', narrow_leadership: 'قيادة ضيقة', crowded_growth_positioning: 'تمركز نمو مزدحم', defensive_rotation: 'تدوير دفاعي', liquidity_stress: 'ضغط سيولة', unstable_rally: 'صعود غير مستقر', volatility_transition: 'تحوّل تذبذب', yield_pressure_regime: 'ضغط العوائد', macro_fragility: 'هشاشة كلية', indeterminate: 'غير محدد' },
+  liquidity: { easing: 'تيسير', tightening: 'تشديد', yield_pressure: 'ضغط العوائد', defensive_demand: 'طلب دفاعي', volatility_absorption: 'امتصاص تذبذب', volatility_rejection: 'رفض تذبذب', neutral: 'محايد', indeterminate: 'غير محدد' },
+  stability: { stable: 'مستقر', fragile: 'هش', deteriorating: 'يتدهور', unstable: 'غير مستقر', strengthening: 'يتقوّى', transition_state: 'انتقالي', indeterminate: 'غير محدد' },
+  breadth: { narrow: 'ضيق', broad: 'واسع', mixed: 'مختلط', flat: 'ثابت', broad_weakness: 'ضعف واسع', indeterminate: 'غير محدد' },
 };
 function arVal(cat, v) { return (AR_VALUE[cat] && AR_VALUE[cat][v]) || clean(v); }
 

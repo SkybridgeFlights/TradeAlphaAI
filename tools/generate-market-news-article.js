@@ -441,7 +441,29 @@ function publishResearch(write) {
 // NOT retail TA. Reuses the article wrapper, rail, inline panels and quality
 // gate on the dedicated /market-structure/ surface.
 const STRUCTURE_ARTIFACT = path.join(ROOT, 'data', 'intelligence', 'market-structure.json');
+const TACTICAL_ARTIFACT = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
 const STRUCTURE_COVERAGE = path.join(ROOT, 'data', 'intelligence', 'structure-coverage.json');
+
+// Phase 128 — concise institutional tactical-context section for the structure
+// note. Reads the tactical-context artifact (deterministic, conditional) and
+// renders an anti-certainty, advice-free snapshot. Returns '' (omits the
+// section) when the tactical read is unavailable — honest degradation. Topic
+// focus is woven in so the section is not identical across notes.
+function renderTacticalSection(focusName, locale) {
+  const ar = locale === 'ar';
+  const t = (en, arT) => (ar ? arT : en);
+  let tac; try { tac = JSON.parse(fs.readFileSync(TACTICAL_ARTIFACT, 'utf8')); } catch { return ''; }
+  if (!tac || !tac.available) return '';
+  const d = tac.dimensions || {};
+  const lab = (k) => (d[k] ? (ar ? d[k].label_ar : d[k].label_en) : (ar ? 'غير محدد' : 'indeterminate'));
+  const band = ar ? tac.confidence_band_ar : tac.confidence_band_en;
+  const head = t('Tactical context', 'السياق التكتيكي');
+  const copy = `<p class="market-copy">${esc(t(
+    `Set against this structure, the desk's tactical read is conditional, not directional. The environment reads ${lab('tactical_bias')} with ${lab('directional_pressure')} directional pressure and ${lab('continuation')}, while participation reads ${lab('participation_quality')} and liquidity is ${lab('liquidity_support')} — held on ${band} confidence. This is probabilistic context for how ${focusName.toLowerCase()} may be absorbed, not a forecast or a recommendation.`,
+    `في مقابل هذه البنية، تكون القراءة التكتيكية للمكتب مشروطة لا اتجاهية. تقرأ البيئة ${lab('tactical_bias')} مع ضغط اتجاهي ${lab('directional_pressure')} و${lab('continuation')}، فيما تقرأ المشاركة ${lab('participation_quality')} والسيولة ${lab('liquidity_support')} — بثقة ${band}. وهذا سياق احتمالي لكيفية امتصاص ${focusName}، لا توقعاً ولا توصية.`,
+  ))}</p>`;
+  return `<section class="market-section" id="tactical-context"><div class="market-section-head"><span class="eyebrow">${esc(t('Tactical desk', 'المكتب التكتيكي'))}</span><h2>${esc(head)}</h2></div><div class="market-panel">${copy}</div></section>`;
+}
 const STRUCTURE_COOLDOWN_DAYS = 4;
 const STRUCTURE_TOPICS = [
   { id: 'participation_breadth', focus: 'participation', en: 'Participation and breadth beneath the index', ar: 'المشاركة والاتساع تحت سطح المؤشر' },
@@ -574,6 +596,10 @@ function renderStructureBody(ctx, locale) {
   for (const dim of plan.supports) {
     sec(`support-${dim}`, ar ? STRUCTURE_HEADS[dim][1] : STRUCTURE_HEADS[dim][0], p(structureBrief(dim, L, t)));
   }
+
+  // 3b) Tactical context — conditional, advice-free institutional snapshot.
+  const tacticalSection = renderTacticalSection(focusName, locale);
+  if (tacticalSection) sections.push(tacticalSection);
 
   // 4) Watch — closes on the focus dimension specifically.
   sec('watch-next', t('What the desk watches', 'ما يراقبه المكتب'),

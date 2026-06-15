@@ -65,6 +65,7 @@ jobs:
           # an HONEST empty manifest (no fabricated bars). Never fails the run.
           node tools/build-institutional-charts.js --fetch --write || node tools/build-institutional-charts.js --write || echo "[tech-intel] institutional charts unavailable — continuing"
           node tools/build-market-structure.js --write || echo "[tech-intel] structure engine degraded — continuing"
+          node tools/build-tactical-context.js --write || echo "[tech-intel] tactical context degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
           # Capture the published slug (empty when the note self-gates) so the
           # controlled Telegram step only fires on an ACTUAL publish — never on
@@ -90,6 +91,7 @@ jobs:
           npm run check:embedded-intelligence
           npm run check:institutional-charts
           npm run check:visual-composition
+          npm run check:tactical-context
           npm run check:chart-intelligence
           npm run check:liquidity-regime
           npm run check:intelligence-monitor
