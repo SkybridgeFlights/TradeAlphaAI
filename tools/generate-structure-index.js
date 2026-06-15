@@ -175,7 +175,10 @@ function generate(ar) {
   const bodyOpenTagEnd = template.indexOf('>', bodyOpenIdx) + 1;
   const bodyTag = template.slice(bodyOpenIdx, bodyOpenTagEnd);
   const headerBlock = template.slice(bodyOpenTagEnd, headerEndIdx)
-    .replace('data-active-section="market-outlook"', 'data-active-section="market-structure"');
+    .replace('data-active-section="market-outlook"', 'data-active-section="market-structure"')
+    // Localize ONLY the language-switch links to this surface (preserve nav).
+    .replace(/(class="lang-switch"\s+data-locale-route="ar"\s+href=")[^"]*(")/, '$1/ar/market-structure/$2')
+    .replace(/(class="lang-switch"\s+data-locale-route="en"\s+href=")[^"]*(")/, '$1/market-structure/$2');
   const footer = template.slice(mainEndIdx);
   const structure = readJson(STRUCTURE_PATH);
   return `<!doctype html>

@@ -183,9 +183,15 @@ function selectTopic() {
 function pageShell(locale, slug) {
   const ar = locale === 'ar';
   const index = fs.readFileSync(path.join(ROOT, ar ? 'ar/articles/index.html' : 'articles/index.html'), 'utf8');
+  // Phase 127B: clone the canonical /articles/ header but rewrite ONLY the
+  // language-switch links to this article's bilingual counterpart — never the nav
+  // dropdown. The previous global "/articles/" → "/articles/<slug>" rewrite
+  // corrupted the Articles nav item, so the baked article page failed the
+  // canonical nav contract (check:public-surface-discovery). The breadcrumb,
+  // not the global header, carries the per-article path.
   const header = (index.match(/<!-- GLOBAL_HEADER_START -->[\s\S]*?<!-- GLOBAL_HEADER_END -->/) || [''])[0]
-    .replace(/href="\/ar\/articles\/"/g, `href="/ar/articles/${slug}.html"`)
-    .replace(/href="\/articles\/"/g, `href="/articles/${slug}.html"`);
+    .replace(/(class="lang-switch"\s+data-locale-route="ar"\s+href=")[^"]*(")/, `$1/ar/articles/${slug}.html$2`)
+    .replace(/(class="lang-switch"\s+data-locale-route="en"\s+href=")[^"]*(")/, `$1/articles/${slug}.html$2`);
   // Build the footer + closing scripts DETERMINISTICALLY (absolute paths, valid
   // from any depth) — the /articles/ index footer markup is not reliably
   // present across locales, so slicing it is fragile (it dropped global-header.js

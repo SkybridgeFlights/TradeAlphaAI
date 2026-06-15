@@ -43,7 +43,11 @@ jobs:
           node tools/build-graphic-exports.js --write || echo "[distribution] graphic exports degraded — continuing"
           node tools/build-distribution-plan.js --write || echo "[distribution] distribution plan degraded — continuing"
           node tools/build-social-approval-queue.js --write || echo "[distribution] approval queue degraded — continuing"
-          node tools/build-intelligence-monitor.js --write || echo "[distribution] intelligence monitor degraded — continuing"
+          # Phase 127B: removed build-intelligence-monitor — it writes
+          # data/system-status/ (the supervisor's artifact), which is outside this
+          # brain's staging allowlist and tripped the "changes outside intended
+          # paths" fail-safe. Monitoring is refreshed by the autonomous-publishing
+          # supervisor, not the distribution brain.
 
       - name: Validate distribution artifacts
         run: |

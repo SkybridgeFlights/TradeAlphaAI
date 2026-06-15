@@ -157,7 +157,11 @@ function generate(ar) {
   const headerBlock = template.slice(bodyOpenTagEnd, headerEndIdx)
     .replace('data-active-section="market-outlook"', 'data-active-section="articles"')
     .replace(/class="nav-link is-active" aria-current="page">Market Outlook/g, 'class="nav-link">Market Outlook')
-    .replace(/class="nav-link is-active" aria-current="page">توقعات السوق/g, 'class="nav-link">توقعات السوق');
+    .replace(/class="nav-link is-active" aria-current="page">توقعات السوق/g, 'class="nav-link">توقعات السوق')
+    // Localize ONLY the language-switch links to this surface (never the nav
+    // dropdown), so EN↔AR preserves /articles/ and the canonical nav stays intact.
+    .replace(/(class="lang-switch"\s+data-locale-route="ar"\s+href=")[^"]*(")/, '$1/ar/articles/$2')
+    .replace(/(class="lang-switch"\s+data-locale-route="en"\s+href=")[^"]*(")/, '$1/articles/$2');
   const footer = template.slice(mainEndIdx);
   const topics = readJson(TOPICS_PATH);
   return `<!doctype html>

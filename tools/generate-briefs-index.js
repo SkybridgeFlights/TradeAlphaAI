@@ -152,7 +152,10 @@ function generate(ar) {
   // Baked header, byte-identical to the canonical → parity/runtime safe.
   // Neutralize the active-section so no nav tab is wrongly highlighted.
   const headerBlock = template.slice(bodyOpenTagEnd, headerEndIdx)
-    .replace('data-active-section="market-outlook"', 'data-active-section="briefs"');
+    .replace('data-active-section="market-outlook"', 'data-active-section="briefs"')
+    // Localize ONLY the language-switch links to this surface (preserve nav).
+    .replace(/(class="lang-switch"\s+data-locale-route="ar"\s+href=")[^"]*(")/, '$1/ar/briefs/$2')
+    .replace(/(class="lang-switch"\s+data-locale-route="en"\s+href=")[^"]*(")/, '$1/briefs/$2');
   const footer = template.slice(mainEndIdx); // </main> already excluded; footer + scripts + </html>
 
   const brief = readJson(BRIEF_PATH);
