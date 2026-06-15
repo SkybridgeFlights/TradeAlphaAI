@@ -167,7 +167,12 @@ function generate(ar) {
   const bodyOpenTagEnd = template.indexOf('>', bodyOpenIdx) + 1;
   const bodyTag = template.slice(bodyOpenIdx, bodyOpenTagEnd);
   const headerBlock = template.slice(bodyOpenTagEnd, headerEndIdx)
-    .replace('data-active-section="market-outlook"', 'data-active-section="market-news"');
+    .replace('data-active-section="market-outlook"', 'data-active-section="market-news"')
+    // Localize ONLY the language-switch links to this surface (preserve nav) so
+    // regenerating this index keeps EN↔AR on /market-news/ instead of inheriting
+    // the market-outlook template's switch.
+    .replace(/(class="lang-switch"\s+data-locale-route="ar"\s+href=")[^"]*(")/, '$1/ar/market-news/$2')
+    .replace(/(class="lang-switch"\s+data-locale-route="en"\s+href=")[^"]*(")/, '$1/market-news/$2');
   const footer = template.slice(mainEndIdx);
   const eligibility = readJson(ELIGIBILITY_PATH);
   return `<!doctype html>
