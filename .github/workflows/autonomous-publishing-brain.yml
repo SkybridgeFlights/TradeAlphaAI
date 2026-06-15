@@ -295,8 +295,16 @@ jobs:
           node tools/generate-briefs-index.js --write || echo "[briefs] section regen degraded — continuing"
           node tools/build-news-eligibility.js --write || echo "[news] eligibility degraded — continuing"
           node tools/generate-market-news-index.js --write || echo "[market-news] section regen degraded — continuing"
+          # Phase 127C: bake the canonical header + localized nav into the freshly
+          # generated market-outlook (daily/weekly) pages and section indexes
+          # BEFORE the validation step below — apply-global-header is the canonical
+          # baker that check:surface-discovery validates against, so the pages must
+          # be baked before they are inspected (previously the bake only ran later,
+          # so surface-discovery saw un-baked daily pages and failed). Same bake
+          # already runs post-publish; this only corrects the ordering.
+          node tools/apply-global-header.js || echo "[header] outlook bake degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[sitemaps] regen degraded — continuing"
-          echo "[briefs/market-news] Section indexes regenerated."
+          echo "[briefs/market-news] Section indexes regenerated and canonical-header baked."
 
       - name: Validate intelligence and generated pages
         run: |
