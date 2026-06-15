@@ -28,6 +28,7 @@ const REACTIONS = path.join(ROOT, 'data', 'intelligence', 'macro-reactions.json'
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const CROSS = path.join(ROOT, 'data', 'intelligence', 'cross-asset-state.json');
 const CHART_INTEL = path.join(ROOT, 'data', 'visual', 'chart-intelligence.json');
+const INSTITUTIONAL_CHARTS = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const MAX_PANELS = 2;
 const COVERAGE = path.join(ROOT, 'data', 'intelligence', 'market-news-coverage.json');
 const EN_INDEX = path.join(ROOT, 'market-news', 'index.html');
@@ -165,6 +166,111 @@ function injectPanels(body, ctx, locale) {
     out = out.slice(0, insertAt) + `\n${fig}` + out.slice(insertAt);
   }
   return out;
+}
+
+function injectFigureAfterSection(body, sectionId, figure) {
+  if (!figure) return body;
+  const marker = `id="${sectionId}"`;
+  const idx = body.indexOf(marker);
+  if (idx < 0) return `${body}\n${figure}`;
+  const close = body.indexOf('</section>', idx);
+  if (close < 0) return `${body}\n${figure}`;
+  const insertAt = close + '</section>'.length;
+  return body.slice(0, insertAt) + `\n${figure}` + body.slice(insertAt);
+}
+
+// Phase 129 — embed a REAL sourced OHLCV institutional chart (when the manifest
+// has a verified one for this surface/topic) as chart-first evidence. Never
+// fabricates: if no verified chart applies, returns '' and the article stays
+// text-led. The SVG is authored viewBox-only (responsive); the figure carries
+// the symbol, chart type, series hash and as-of so the integrity validator can
+// prove the embedded chart maps to real sourced bars.
+const TACTICAL_ARTIFACT_PATH = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
+const LINK_LABELS = {
+  en: { supportive: 'supportive structure', fragile: 'fragile continuation', narrowing: 'narrowing participation', liquidity: 'liquidity pressure', fading: 'fading pressure', mixed: 'mixed confirmation', unavailable: 'evidence unavailable' },
+  ar: { supportive: 'بنية داعمة', fragile: 'استمرار هش', narrowing: 'مشاركة آخذة في التضيّق', liquidity: 'ضغط سيولة', fading: 'ضغط متلاشٍ', mixed: 'تأكيد مختلط', unavailable: 'الأدلة غير متاحة' },
+};
+const SUPPORT_STATE = {
+  en: { supported: 'chart-supported', mixed: 'mixed', unsupported: 'not chart-supported', unavailable: 'evidence unavailable' },
+  ar: { supported: 'مدعومة بالمخطط', mixed: 'مختلطة', unsupported: 'غير مدعومة بالمخطط', unavailable: 'الأدلة غير متاحة' },
+};
+
+function selectInstitutionalChart(surfaceKey, topicId, locale) {
+  let manifest; try { manifest = JSON.parse(fs.readFileSync(INSTITUTIONAL_CHARTS, 'utf8')); } catch { return null; }
+  if (!manifest || !['available', 'partial'].includes(manifest.status)) return null;
+  const charts = (manifest.charts || []).filter((c) => c && c.verified === true
+    && Array.isArray(c.allowed_surfaces) && c.allowed_surfaces.includes(surfaceKey)
+    && c.files && c.files[locale] && fs.existsSync(path.join(ROOT, c.files[locale]))
+    && Array.isArray(c.series) && c.series.length >= 35 && c.series_hash);
+  if (!charts.length) return null;
+  const norm = String(topicId || '').replace(/_/g, '-');
+  const topicAliases = {
+    'breadth-volatility': ['breadth-vs-index'],
+  };
+  const acceptedTopics = new Set([norm, ...(topicAliases[norm] || [])]);
+  const matched = charts.find((c) => (c.related_topics || [])
+    .some((rt) => acceptedTopics.has(String(rt).replace(/_/g, '-'))));
+  return matched ? { chart: matched, manifest } : null;
+}
+
+// Deterministic, advice-free linkage between the tactical read and the sourced
+// price structure: whether the structural read is chart-supported, mixed or not
+// chart-supported. Uses only allowed institutional labels — never a trade call.
+function tacticalChartLinkage(chart, locale) {
+  const SS = SUPPORT_STATE[locale]; const LL = LINK_LABELS[locale];
+  let tac; try { tac = JSON.parse(fs.readFileSync(TACTICAL_ARTIFACT_PATH, 'utf8')); } catch { tac = null; }
+  if (!tac || !tac.available) return { state: SS.unavailable, label: LL.unavailable };
+  const d = tac.dimensions || {};
+  const st = (k) => (d[k] ? d[k].state : null);
+  const structureOverlay = (chart.overlays || []).find((o) => o.type === 'structure');
+  const ostate = structureOverlay ? structureOverlay.state : 'inside';
+  const chartBias = ostate === 'expansion_up' ? 1 : ostate === 'expansion_down' ? -1 : 0;
+  const dp = st('directional_pressure'); const cont = st('continuation');
+  let tacBias = 0;
+  if (dp === 'building') tacBias = 1;
+  else if (dp === 'fading' || dp === 'stalling' || cont === 'fragile_continuation' || cont === 'exhaustion_risk') tacBias = -1;
+  let state;
+  if (chartBias === tacBias) state = SS.supported;
+  else if (chartBias === 0 || tacBias === 0) state = SS.mixed;
+  else state = SS.unsupported;
+  let label;
+  if (cont === 'fragile_continuation' || cont === 'exhaustion_risk') label = LL.fragile;
+  else if (st('participation_quality') === 'narrowing' || st('participation_quality') === 'narrow') label = LL.narrowing;
+  else if (st('liquidity_support') === 'draining') label = LL.liquidity;
+  else if (dp === 'fading' || dp === 'stalling') label = LL.fading;
+  else if (tacBias > 0 && chartBias >= 0) label = LL.supportive;
+  else label = LL.mixed;
+  return { state, label };
+}
+
+function institutionalChartFigure(surfaceKey, topicId, locale) {
+  const picked = selectInstitutionalChart(surfaceKey, topicId, locale);
+  if (!picked) return '';
+  const { chart } = picked;
+  const ar = locale === 'ar';
+  let svg = '';
+  try { svg = fs.readFileSync(path.join(ROOT, chart.files[locale]), 'utf8'); } catch { return ''; }
+  // Defensive: the SVG is authored viewBox-only, but strip any root width/height.
+  svg = svg.replace(/(<svg\b[^>]*?)\s+width="\d+"\s+height="\d+"/, '$1');
+  const title = ar ? chart.title_ar : chart.title_en;
+  const hook = chart.narrative_hook && chart.narrative_hook[locale];
+  const reason = chart.analytical_reason && chart.analytical_reason[locale];
+  const provider = (chart.attribution && chart.attribution.provider) || '—';
+  const srcWord = ar ? 'المصدر' : 'Source';
+  const asOfWord = ar ? 'بتاريخ' : 'As of';
+  const link = tacticalChartLinkage(chart, locale);
+  const linkLine = ar
+    ? `الارتباط التكتيكي: القراءة الهيكلية ${link.state} بهذه البنية السعرية (${link.label}).`
+    : `Tactical linkage: the structural read is ${link.state} by this price structure (${link.label}).`;
+  return `<figure class="institutional-chart" data-symbol="${esc(chart.symbol)}" data-chart-type="${esc(chart.chart_type || chart.visual_type)}" data-series-hash="${esc(chart.series_hash)}" data-as-of="${esc(chart.as_of)}">
+  <div class="ic-svg">${svg}</div>
+  <figcaption class="ic-caption">
+    <span class="ic-hook">${esc(hook || title)}</span>
+    ${reason ? `<span class="ic-reason">${esc(reason)}</span>` : ''}
+    <span class="ic-linkage" data-support="${esc(link.state)}">${esc(linkLine)}</span>
+    <span class="ic-attrib">${esc(`${srcWord}: ${provider} · ${asOfWord} ${chart.as_of}`)}</span>
+  </figcaption>
+</figure>`;
 }
 
 // ── Bilingual article rendering ───────────────────────────────────────────────
@@ -363,6 +469,11 @@ function renderResearchBody(ctx, locale) {
     + p(t('It is a deterministic reading drawn from the canonical liquidity-regime and cross-asset artifacts; where a dimension is unavailable it is stated plainly rather than inferred, so the note degrades honestly on a quiet tape instead of manufacturing a narrative.',
       'وهي قراءة حتمية مستمدة من مرجعَي نظام السيولة والأصول المتقاطعة المعتمدين؛ وحين يغيب بُعد ما يُذكر ذلك صراحة بدل استنتاجه، لتتراجع المذكرة بأمانة في الأسواق الهادئة بدلاً من تصنيع سردية.')));
 
+  // 1b) Real sourced OHLCV chart as chart-first evidence when one applies to the
+  // research topic. Omitted cleanly when no verified chart is available.
+  const researchTopicId = (topic && (topic.id || topic.slug)) || '';
+  const researchChart = institutionalChartFigure('market-news', researchTopicId, locale);
+
   // 2. Regime / liquidity structure.
   sec('regime', t('Regime and liquidity structure', 'بنية النظام والسيولة'),
     p(rg.regime && rg.regime !== 'indeterminate'
@@ -385,7 +496,7 @@ function renderResearchBody(ctx, locale) {
     p(t('The desk watches whether breadth confirms or undercuts the index, whether the dollar and yields move with or against risk, and whether the regime strengthens, holds or transitions as the next catalysts arrive. Continuity matters: this note is one reading in a sequence, and the value is in how the structure evolves, not in any single snapshot.',
       'يراقب المكتب ما إذا كان الاتساع يؤكد المؤشر أم يقوّضه، وما إذا كان الدولار والعوائد يتحركان مع المخاطر أم ضدها، وما إذا كان النظام يتقوّى أو يثبت أو ينتقل مع وصول المحفزات التالية. وتهمّ الاستمرارية: فهذه المذكرة قراءة ضمن سلسلة، والقيمة في كيفية تطوّر البنية لا في أي لقطة منفردة.')));
 
-  const body = injectPanels(sections.join('\n'), ctx, locale);
+  const body = injectFigureAfterSection(injectPanels(sections.join('\n'), ctx, locale), 'lead', researchChart);
   const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { title, eyebrow, body, wordCount };
 }
@@ -592,6 +703,11 @@ function renderStructureBody(ctx, locale) {
   // 2) Focus — the deep, topic-distinct treatment of the lead dimension.
   sec(plan.focus === 'stability' ? 'regime' : plan.focus, focusName, p(structureFocusDeep(plan.focus, L, t)));
 
+  // 2b) Real sourced OHLCV chart as chart-first structural evidence (when a
+  // verified institutional chart applies to this surface/topic). Omitted cleanly
+  // when no real chart is available — never a placeholder.
+  const chartFig = institutionalChartFigure('market-structure', topic.id, locale);
+
   // 3) Supporting reads — topic-specific selection of other dimensions.
   for (const dim of plan.supports) {
     sec(`support-${dim}`, ar ? STRUCTURE_HEADS[dim][1] : STRUCTURE_HEADS[dim][0], p(structureBrief(dim, L, t)));
@@ -606,7 +722,8 @@ function renderStructureBody(ctx, locale) {
     p(t(`From here the desk watches ${focusName.toLowerCase()} specifically — whether it strengthens, holds or breaks down as catalysts arrive — and how it interacts with the rest of the structure. Structure analysis is continuous: this note is one reading of ${focusName.toLowerCase()} in a sequence, and the value is in how it evolves across verified sessions rather than in any single snapshot.`,
       `ومن هنا يراقب المكتب ${focusName} تحديداً — ما إذا كانت تتقوّى أو تثبت أو تنهار مع وصول المحفزات — وكيف تتفاعل مع بقية البنية. وتحليل البنية مستمر: فهذه المذكرة قراءة لـ${focusName} ضمن سلسلة، والقيمة في كيفية تطوّرها عبر الجلسات الموثّقة لا في أي لقطة منفردة.`)));
 
-  const body = injectPanels(sections.join('\n'), ctx, locale);
+  const focusSectionId = plan.focus === 'stability' ? 'regime' : plan.focus;
+  const body = injectFigureAfterSection(injectPanels(sections.join('\n'), ctx, locale), focusSectionId, chartFig);
   const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { title, eyebrow, body, wordCount };
 }

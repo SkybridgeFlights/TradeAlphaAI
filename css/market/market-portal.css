@@ -4430,6 +4430,17 @@ html[dir="rtl"] .figure-annotation { line-height: 1.85; }
 .market-shell figure.institutional-chart figcaption.ic-caption { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.75rem 0.5rem 0.25rem; }
 .market-shell figure.institutional-chart .ic-hook { font-size: 0.95rem; font-weight: 500; color: rgba(203,213,225,.92); line-height: 1.5; }
 .market-shell figure.institutional-chart .ic-attrib { font-size: 0.72rem; color: rgba(148,163,184,.7); letter-spacing: 0.01em; }
+/* ── Phase 129: real-chart caption hierarchy (additive). The analytical reason
+   and the deterministic tactical linkage line sit between the hook and the
+   attribution; the linkage is colour-coded by support state without ever
+   implying a trade instruction. */
+.market-shell figure.institutional-chart .ic-reason { font-size: 0.8rem; color: rgba(148,163,184,.85); font-style: italic; line-height: 1.5; }
+.market-shell figure.institutional-chart .ic-linkage { font-size: 0.78rem; color: rgba(203,213,225,.82); line-height: 1.5; border-inline-start: 3px solid rgba(216,177,90,.55); padding-inline-start: 0.55rem; }
+.market-shell figure.institutional-chart .ic-linkage[data-support="not chart-supported"],
+.market-shell figure.institutional-chart .ic-linkage[data-support="غير مدعومة بالمخطط"] { border-inline-start-color: rgba(214,110,96,.6); }
+.market-shell figure.institutional-chart .ic-linkage[data-support="chart-supported"],
+.market-shell figure.institutional-chart .ic-linkage[data-support="مدعومة بالمخطط"] { border-inline-start-color: rgba(110,231,216,.5); }
+@media print { figure.institutional-chart { break-inside: avoid; } }
 /* RTL: keep figures centred in the column and captions right-aligned. */
 [dir="rtl"] .market-shell .article-evidence-panel,
 [dir="rtl"] .market-shell figure.institutional-chart { margin-inline: auto; }
