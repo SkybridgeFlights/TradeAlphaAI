@@ -1,27 +1,27 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-15T21:13:21.411Z",
+  "generated_at": "2026-06-15T21:51:36.707Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
-  "calendar_updated_at": "2026-06-15T18:03:31.025Z",
+  "calendar_updated_at": "2026-06-15T21:51:36.058Z",
   "enrichment": {
     "fetch_attempted": true,
     "keys_present": {
-      "fred": false,
+      "fred": true,
       "bls": false,
       "bea": false,
       "eia": false,
-      "fmp": false,
-      "finnhub": false
+      "fmp": true,
+      "finnhub": true
     },
     "forecast_providers": {
       "fmp": {
         "ok": false,
-        "reason": "missing_api_key"
+        "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar"
       },
       "finnhub": {
         "ok": false,
-        "reason": "missing_api_key"
+        "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic"
       }
     },
     "forecast_observations": 0,
@@ -39,21 +39,22 @@
   "counts": {
     "total": 28,
     "high_impact": 22,
-    "parsed": 0,
+    "parsed": 1,
     "awaiting": 27,
-    "delayed": 1,
+    "delayed": 0,
     "surprise_ready": 0,
     "by_state": {
       "scheduled": 27,
       "awaiting_release": 0,
       "released": 0,
-      "parsed": 0,
+      "parsed": 1,
       "revised": 0,
-      "delayed": 1,
+      "delayed": 0,
       "archived": 0
     },
     "by_forecast_quality": {
-      "unavailable": 28
+      "historical_proxy": 1,
+      "unavailable": 27
     }
   },
   "events": [
@@ -64,17 +65,17 @@
       "country": "US",
       "release_time": "2026-06-11T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": null,
+      "actual": 229000,
       "forecast": null,
-      "previous": null,
+      "previous": 225000,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "U.S. Dept. of Labor",
-      "source_url": "https://www.dol.gov/ui/data.pdf",
-      "confidence": 40,
+      "source": "FRED (St. Louis Fed)",
+      "source_url": "https://fred.stlouisfed.org/series/ICSA",
+      "confidence": 90,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -82,35 +83,37 @@
         "IWM",
         "VIX"
       ],
-      "release_state": "delayed",
+      "release_state": "parsed",
       "historical_context": {
-        "previous": null,
+        "previous": 225000,
         "revised": null,
         "revised_from": null,
-        "observation_date": null,
+        "observation_date": "2026-06-06",
         "official_series": "ICSA"
       },
       "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
+        "surprise_score": 2,
+        "surprise_direction": "near_consensus",
+        "surprise_label": "in_line__proxy_based",
+        "policy_tone": "event_specific",
+        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Initial Jobless Claims was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
+        "forecast_basis": "historical_proxy",
+        "surprise_confidence": 25,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
+      "surprise_confidence": 25,
+      "forecast_basis": "historical_proxy",
+      "forecast_sources": [
+        "historical_proxy:previous_release"
+      ],
       "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
+      "forecast_confidence": 25,
+      "forecast_quality": "historical_proxy",
+      "consensus_state": "proxy_only",
       "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
+      "proxy_used": true,
+      "proxy_value": 225000,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -126,7 +129,7 @@
       },
       "narrative_tags": [
         "labor",
-        "awaiting_data"
+        "in_line"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -134,7 +137,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "calendar"
+      "enrichment_source": "FRED (St. Louis Fed)"
     },
     {
       "id": "economic-calendar::global_acquisition::jp::boj-rate-decision::20260616T030000",
