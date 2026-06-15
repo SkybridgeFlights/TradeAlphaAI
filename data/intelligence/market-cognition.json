@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-13T23:10:48.768Z",
-  "run_date": "2026-06-13",
+  "updated_at": "2026-06-15T15:32:36.262Z",
+  "run_date": "2026-06-15",
   "verified": true,
-  "sessions_tracked": 2,
+  "sessions_tracked": 3,
   "regime_shifts": [
     {
       "dimension": "risk_state",
@@ -35,23 +35,26 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "balanced",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
-      "from": null
+      "state": "narrow-megacap",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "balanced",
+        "date": "2026-06-13"
+      }
     },
     {
       "dimension": "ai_concentration_risk",
       "state": "contained",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": null
     },
     {
       "dimension": "breadth_state",
       "state": "confirming",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": null
     },
     {
@@ -70,17 +73,20 @@
     },
     {
       "dimension": "speculative_appetite",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "expanding",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
       "dimension": "market_fragility",
-      "state": "contained",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
-      "from": null
+      "state": "building",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "contained",
+        "date": "2026-06-13"
+      }
     }
   ],
   "memory_observations": [],
@@ -144,8 +150,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": 0.1562,
-        "qqq": 0.5885
+        "nvda": 2.9046,
+        "qqq": 3.036
       }
     },
     {
@@ -171,8 +177,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": 0.5408,
-        "iwm": 0.8746
+        "spy": 1.82,
+        "iwm": 0.9217
       }
     },
     {
@@ -195,8 +201,8 @@
         "en": "AI leadership drives the growth complex",
         "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "nvda": 0.1562,
-          "qqq": 0.5885
+          "nvda": 2.9046,
+          "qqq": 3.036
         }
       },
       {
@@ -204,8 +210,8 @@
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": 0.5408,
-          "iwm": 0.8746
+          "spy": 1.82,
+          "iwm": 0.9217
         }
       },
       {
@@ -215,12 +221,47 @@
       }
     ],
     "contradiction": [],
-    "fragility": [],
+    "fragility": [
+      {
+        "source": "market_fragility",
+        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
+        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
+      }
+    ],
     "exhaustion": [],
     "liquidity": [],
-    "speculative": []
+    "speculative": [
+      {
+        "source": "speculative_appetite",
+        "en": "Speculative appetite is expanding across the high-beta complex.",
+        "ar": "شهية المضاربة تتوسع عبر الأصول عالية البيتا."
+      },
+      {
+        "source": "nvda_move",
+        "en": "An outsized sourced AI-leadership move (+2.90%) marks active speculative positioning.",
+        "ar": "تحرك موثق كبير في قيادة الذكاء الاصطناعي (+2.90%) يعكس تمركزاً مضاربياً نشطاً.",
+        "evidence": {
+          "nvda": 2.9046
+        }
+      }
+    ]
   },
   "alerts": [],
-  "timeline_tail": [],
-  "cognition_note": "Cognition state — 4/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 0 timeline event(s)."
+  "timeline_tail": [
+    {
+      "date": "2026-06-15",
+      "dimension": "market_fragility",
+      "from": "contained",
+      "to": "building",
+      "note": "market fragility: contained -> building"
+    },
+    {
+      "date": "2026-06-15",
+      "dimension": "momentum_concentration",
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
+    }
+  ],
+  "cognition_note": "Cognition state — 5/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 2 timeline event(s)."
 }
