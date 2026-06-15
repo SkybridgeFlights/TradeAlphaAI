@@ -459,8 +459,8 @@ function renderTacticalSection(focusName, locale) {
   const band = ar ? tac.confidence_band_ar : tac.confidence_band_en;
   const head = t('Tactical context', 'السياق التكتيكي');
   const copy = `<p class="market-copy">${esc(t(
-    `Set against this structure, the desk's tactical read is conditional, not directional. The environment reads ${lab('tactical_bias')} with ${lab('directional_pressure')} directional pressure and ${lab('continuation')}, while participation reads ${lab('participation_quality')} and liquidity is ${lab('liquidity_support')} — held on ${band} confidence. This is probabilistic context for how ${focusName.toLowerCase()} may be absorbed, not a forecast or a recommendation.`,
-    `في مقابل هذه البنية، تكون القراءة التكتيكية للمكتب مشروطة لا اتجاهية. تقرأ البيئة ${lab('tactical_bias')} مع ضغط اتجاهي ${lab('directional_pressure')} و${lab('continuation')}، فيما تقرأ المشاركة ${lab('participation_quality')} والسيولة ${lab('liquidity_support')} — بثقة ${band}. وهذا سياق احتمالي لكيفية امتصاص ${focusName}، لا توقعاً ولا توصية.`,
+    `Set against this structure, the desk's tactical read is conditional, not directional. The environment reads ${lab('tactical_bias')}, with ${lab('directional_pressure')} directional pressure and ${lab('continuation')}. Beneath the index, the read is ${lab('participation_quality')} alongside ${lab('liquidity_support')} — held on ${band} confidence. This is probabilistic context for how ${focusName.toLowerCase()} may be absorbed, not a forecast or a recommendation.`,
+    `في مقابل هذه البنية، تكون القراءة التكتيكية للمكتب مشروطة لا اتجاهية. تقرأ البيئة ${lab('tactical_bias')}، مع ضغط اتجاهي ${lab('directional_pressure')} و${lab('continuation')}. وتحت سطح المؤشر تظهر ${lab('participation_quality')} مع ${lab('liquidity_support')} — بثقة ${band}. وهذا سياق احتمالي لكيفية امتصاص ${focusName}، لا توقعاً ولا توصية.`,
   ))}</p>`;
   return `<section class="market-section" id="tactical-context"><div class="market-section-head"><span class="eyebrow">${esc(t('Tactical desk', 'المكتب التكتيكي'))}</span><h2>${esc(head)}</h2></div><div class="market-panel">${copy}</div></section>`;
 }
