@@ -148,12 +148,16 @@ function generate(ar) {
   const mainEndIdx = template.indexOf('</main>') + '</main>'.length;
   const bodyOpenTagEnd = template.indexOf('>', bodyOpenIdx) + 1;
   const bodyTag = template.slice(bodyOpenIdx, bodyOpenTagEnd);
+  // Phase 127A: clone the canonical market-outlook header and only de-activate
+  // the Market Outlook tab. The previous href rewrites (/market-outlook/ →
+  // /articles/) corrupted the GLOBAL nav dropdown — they dropped the legitimate
+  // Market Outlook nav item and duplicated /articles/, breaking header parity
+  // against the homepage. Page-specific links live in the breadcrumb, not the
+  // global header, so the nav hrefs must be preserved verbatim.
   const headerBlock = template.slice(bodyOpenTagEnd, headerEndIdx)
     .replace('data-active-section="market-outlook"', 'data-active-section="articles"')
     .replace(/class="nav-link is-active" aria-current="page">Market Outlook/g, 'class="nav-link">Market Outlook')
-    .replace(/class="nav-link is-active" aria-current="page">توقعات السوق/g, 'class="nav-link">توقعات السوق')
-    .replace(/href="\/ar\/market-outlook\/"/g, 'href="/ar/articles/"')
-    .replace(/href="\/market-outlook\/"/g, 'href="/articles/"');
+    .replace(/class="nav-link is-active" aria-current="page">توقعات السوق/g, 'class="nav-link">توقعات السوق');
   const footer = template.slice(mainEndIdx);
   const topics = readJson(TOPICS_PATH);
   return `<!doctype html>
