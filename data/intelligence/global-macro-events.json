@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-15T21:51:34.456Z",
+  "generated_at": "2026-06-16T18:12:12.262Z",
   "layer": "global-macro-acquisition",
   "window": {
-    "from": "2026-06-14",
-    "to": "2026-07-13"
+    "from": "2026-06-15",
+    "to": "2026-07-14"
   },
   "sources": [
     {
@@ -50,7 +50,8 @@
       "Australia": 3,
       "Switzerland": 1,
       "Eurozone": 2,
-      "Canada": 2
+      "Canada": 2,
+      "Germany": 1
     },
     "by_country": {
       "GB": 3,
@@ -58,18 +59,19 @@
       "AU": 3,
       "CH": 1,
       "EU": 2,
-      "CA": 2
+      "CA": 2,
+      "DE": 1
     },
     "by_method": {
       "official_schedule": 4,
-      "estimated_recurring": 9
+      "estimated_recurring": 10
     }
   },
   "min_coverage": 6,
   "source_outage": false,
   "counts": {
-    "total": 13,
-    "high_impact": 9
+    "total": 14,
+    "high_impact": 10
   },
   "events": [
     {
@@ -394,6 +396,35 @@
         "SPY",
         "IWM",
         "VIX"
+      ],
+      "source_confidence": 50,
+      "acquisition_method": "estimated_recurring",
+      "legal_status": "official_public_cadence"
+    },
+    {
+      "id": "economic-calendar::global_acquisition::de::germany-cpi::20260714T070000",
+      "country": "DE",
+      "region": "Germany",
+      "source": "Destatis (Federal Statistical Office)",
+      "source_url": "https://www.destatis.de/EN/Home/_node.html",
+      "event_name": "Germany CPI",
+      "event_type": "CPI",
+      "category": "inflation",
+      "importance": "high",
+      "release_time": "2026-07-14T07:00:00.000Z",
+      "timezone": "UTC",
+      "verified_time": false,
+      "estimated_date": true,
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",

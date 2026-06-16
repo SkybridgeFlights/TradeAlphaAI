@@ -1,18 +1,19 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T18:07:38.782Z",
+  "generated_at": "2026-06-16T18:12:14.925Z",
   "source_layer": "acquisition-health",
   "calendar_source": "schedule_fallback",
   "calendar_event_count": 28,
-  "calendar_age_hours": 20.3,
+  "calendar_age_hours": 0,
   "coverage_by_country": {
-    "US": 15,
     "JP": 2,
     "AU": 3,
     "CA": 2,
     "GB": 3,
+    "US": 14,
     "CH": 1,
-    "EU": 2
+    "EU": 2,
+    "DE": 1
   },
   "regions": {
     "United Kingdom": 3,
@@ -20,42 +21,42 @@
     "Australia": 3,
     "Switzerland": 1,
     "Eurozone": 2,
-    "Canada": 2
+    "Canada": 2,
+    "Germany": 1
   },
   "official_vs_estimated": {
     "official_schedule": 4,
-    "estimated_recurring": 9
+    "estimated_recurring": 10
   },
   "sources": [
     {
       "id": "fred",
       "kind": "official_actuals",
-      "available": false,
-      "note": "FRED key absent — actuals degrade to scheduled/awaiting."
+      "available": true,
+      "note": "FRED official enrichment active."
     },
     {
       "id": "fmp_forecast",
       "kind": "consensus_forecast",
       "available": false,
-      "note": "FMP forecast unavailable (missing_api_key)."
+      "note": "FMP forecast unavailable (HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar)."
     },
     {
       "id": "finnhub_forecast",
       "kind": "consensus_forecast",
       "available": false,
-      "note": "Finnhub forecast unavailable (missing_api_key)."
+      "note": "Finnhub forecast unavailable (HTTP 403 from https://finnhub.io/api/v1/calendar/economic)."
     },
     {
       "id": "global_official_schedules",
       "kind": "official_schedule",
       "available": true,
-      "note": "Global official schedules: 13 event(s) across 6 region(s)."
+      "note": "Global official schedules: 14 event(s) across 7 region(s)."
     }
   ],
   "degraded_sources": [
-    "fred",
     "fmp_forecast",
     "finnhub_forecast"
   ],
-  "overall": "degraded"
+  "overall": "warning"
 }
