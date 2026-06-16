@@ -5,6 +5,9 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const domain = "https://www.tradealphaai.com";
+let ASSET_SLUGS = [];
+try { ASSET_SLUGS = require("./asset-registry").SLUGS; } catch { ASSET_SLUGS = []; }
+const marketAssetDirs = (prefix) => ASSET_SLUGS.map((slug) => `${prefix}markets/${slug}/`).filter((rel) => existsDir(rel));
 const marketConfig = readJson("data/market-symbols.json", { symbols: [], hubs: [], comparisons: [] });
 
 const core = [
@@ -19,6 +22,7 @@ const core = [
   .concat(existsDir("market-structure") ? ["market-structure/"] : [])
   .concat(existsDir("market-structure") ? htmlFiles("market-structure").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("market-terminal") ? ["market-terminal/"] : [])
+  .concat(marketAssetDirs(""))
   .concat(existsDir("intelligence") ? ["intelligence/"] : [])
   // Phase 68 intelligence dashboards, EN + AR (required in sitemap-core.xml by
   // check:visual-intelligence; previously omitted, which failed that gate).
@@ -65,6 +69,7 @@ function arUrls() {
   for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
+  for (const rel of marketAssetDirs("ar/")) out.push(rel);
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
   for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook", "market-news", "market-structure"]) {
     const files = dir === "market-outlook"
