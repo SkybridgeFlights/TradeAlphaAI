@@ -29,6 +29,7 @@ const ZONE_TYPES = new Set(['support_resistance_zone']);
 const MIN_FONT = 11;
 const MIN_WIDTH = 960;
 const MIN_HEIGHT = 500;
+const AR_SAFE_RIGHT_GUTTER = 120;
 const MAX_OVERLAYS = 5;
 const FORBIDDEN = [
   /\bbuy\b/i, /\bsell\b/i, /\blong\b/i, /\bshort\b/i, /\bentry\b/i,
@@ -177,6 +178,9 @@ function validateFigure(figure, context) {
       if (y && (Number(y[1]) < 0 || Number(y[1]) > height)) failures.push(`${label}: SVG text y=${y[1]} off-canvas`);
       if (x && Number(x[1]) === 0 && anchor === 'end') failures.push(`${label}: end-anchored SVG text extends left of canvas`);
       if (x && Number(x[1]) === width && (!anchor || anchor === 'start')) failures.push(`${label}: start-anchored SVG text extends right of canvas`);
+      if (lang === 'ar' && x && anchor === 'end' && Number(x[1]) > width - AR_SAFE_RIGHT_GUTTER) {
+        failures.push(`${label}: AR end-anchored label too close to right canvas edge`);
+      }
       if (font && Number(font[1]) < MIN_FONT) failures.push(`${label}: microscopic SVG label font-size ${font[1]}`);
     }
   }
@@ -222,6 +226,12 @@ function run() {
       const arHtml = fs.existsSync(arPath) ? fs.readFileSync(arPath, 'utf8') : '';
       const arFigures = arHtml.match(FIG_RE) || [];
       if (!enFigures.length && !arFigures.length) continue;
+      if (enFigures.length && /class="article-evidence-panel"/i.test(enHtml)) {
+        failures.push(`${en}/${file}: legacy article-evidence-panel rendered with real institutional chart`);
+      }
+      if (arFigures.length && /class="article-evidence-panel"/i.test(arHtml)) {
+        failures.push(`${ar}/${file}: legacy article-evidence-panel rendered with real institutional chart`);
+      }
       if (enFigures.length !== arFigures.length) failures.push(`${en}/${file}: EN/AR chart count parity break`);
       scanned += enFigures.length;
       const topic = topicFromFile(file);
@@ -270,6 +280,7 @@ function runSelfTest() {
     ['unsupported tactical state', good.replace('<rect data-zone-type="support_resistance_zone" data-lower="99" data-upper="101" data-method="recent_extrema" data-evidence-refs="series:recent"/>', '<rect data-tactical-state="urgent_breakout" data-evidence-refs="tactical:1"/>')],
     ['unsupported rendered overlay', good.replace('<rect data-zone-type="support_resistance_zone" data-lower="99" data-upper="101" data-method="recent_extrema" data-evidence-refs="series:recent"/>', '<rect data-overlay-type="rsi" data-method="indicator"/>')],
     ['unsafe text anchor', good.replace('x="72"', 'x="0" text-anchor="end"')],
+    ['AR right-edge anchor', good.replace('x="72"', 'x="1120" text-anchor="end"')],
     ['forbidden language', good.replace('Mixed confirmation', 'Entry signal')],
   ];
   let passed = 0;

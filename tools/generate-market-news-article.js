@@ -524,7 +524,8 @@ function renderResearchBody(ctx, locale) {
     p(t('The desk watches whether breadth confirms or undercuts the index, whether the dollar and yields move with or against risk, and whether the regime strengthens, holds or transitions as the next catalysts arrive. Continuity matters: this note is one reading in a sequence, and the value is in how the structure evolves, not in any single snapshot.',
       'يراقب المكتب ما إذا كان الاتساع يؤكد المؤشر أم يقوّضه، وما إذا كان الدولار والعوائد يتحركان مع المخاطر أم ضدها، وما إذا كان النظام يتقوّى أو يثبت أو ينتقل مع وصول المحفزات التالية. وتهمّ الاستمرارية: فهذه المذكرة قراءة ضمن سلسلة، والقيمة في كيفية تطوّر البنية لا في أي لقطة منفردة.')));
 
-  const body = injectFigureAfterSection(injectPanels(sections.join('\n'), ctx, locale), 'lead', researchChart);
+  const baseBody = researchChart ? sections.join('\n') : injectPanels(sections.join('\n'), ctx, locale);
+  const body = injectFigureAfterSection(baseBody, 'lead', researchChart);
   const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { title, eyebrow, body, wordCount };
 }
@@ -751,7 +752,8 @@ function renderStructureBody(ctx, locale) {
       `ومن هنا يراقب المكتب ${focusName} تحديداً — ما إذا كانت تتقوّى أو تثبت أو تنهار مع وصول المحفزات — وكيف تتفاعل مع بقية البنية. وتحليل البنية مستمر: فهذه المذكرة قراءة لـ${focusName} ضمن سلسلة، والقيمة في كيفية تطوّرها عبر الجلسات الموثّقة لا في أي لقطة منفردة.`)));
 
   const focusSectionId = plan.focus === 'stability' ? 'regime' : plan.focus;
-  const body = injectFigureAfterSection(injectPanels(sections.join('\n'), ctx, locale), focusSectionId, chartFig);
+  const baseBody = chartFig ? sections.join('\n') : injectPanels(sections.join('\n'), ctx, locale);
+  const body = injectFigureAfterSection(baseBody, focusSectionId, chartFig);
   const wordCount = body.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { title, eyebrow, body, wordCount };
 }

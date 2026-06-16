@@ -14,6 +14,7 @@ const FIGURE_RE = /<figure class="(article-evidence-panel|institutional-chart)[^
 const MIN_CHART_WIDTH = 960;
 const MIN_CHART_HEIGHT = 500;
 const MIN_FONT = 11;
+const AR_SAFE_RIGHT_GUTTER = 120;
 
 function checkFigure(figure, label) {
   const issues = [];
@@ -54,6 +55,9 @@ function checkFigure(figure, label) {
       if (y && (Number(y[1]) < 0 || Number(y[1]) > height)) issues.push(`${label}: text y=${y[1]} is off-canvas`);
       if (x && Number(x[1]) === 0 && anchor === 'end') issues.push(`${label}: end-anchored text extends left of canvas`);
       if (x && Number(x[1]) === width && (!anchor || anchor === 'start')) issues.push(`${label}: start-anchored text extends right of canvas`);
+      if (isInstitutional && /direction="rtl"/i.test(svg) && x && anchor === 'end' && Number(x[1]) > width - AR_SAFE_RIGHT_GUTTER) {
+        issues.push(`${label}: RTL chart label too close to right canvas edge`);
+      }
       if (isInstitutional && font && Number(font[1]) < MIN_FONT) {
         issues.push(`${label}: chart label font-size ${font[1]} is unreadable`);
       }
@@ -101,6 +105,12 @@ function run() {
       const arHtml = fs.existsSync(arPath) ? fs.readFileSync(arPath, 'utf8') : '';
       const arFigures = arHtml.match(FIGURE_RE) || [];
       if (!enFigures.length && !arFigures.length) continue;
+      if (enFigures.some((figure) => /class="institutional-chart/.test(figure)) && /class="article-evidence-panel"/i.test(enHtml)) {
+        failures.push(`${surface}/${file}: legacy evidence panel rendered alongside institutional chart`);
+      }
+      if (arFigures.some((figure) => /class="institutional-chart/.test(figure)) && /class="article-evidence-panel"/i.test(arHtml)) {
+        failures.push(`ar/${surface}/${file}: legacy evidence panel rendered alongside institutional chart`);
+      }
       scanned += enFigures.length;
       if (enFigures.length !== arFigures.length) failures.push(`${surface}/${file}: EN/AR figure count mismatch`);
       if (arFigures.length && !/<html[^>]+dir="rtl"/i.test(arHtml)) failures.push(`ar/${surface}/${file}: AR article not RTL`);
@@ -121,6 +131,7 @@ function runSelfTest() {
     ['off-canvas x', good.replace('x="80"', 'x="1300"')],
     ['off-canvas y', good.replace('y="40"', 'y="700"')],
     ['unsafe text anchor', good.replace('x="80"', 'x="0" text-anchor="end"')],
+    ['RTL right-edge anchor', good.replace('<svg ', '<svg direction="rtl" ').replace('x="80"', 'x="1120" text-anchor="end"')],
     ['microscopic chart label', good.replace('font-size="14"', 'font-size="7"')],
     ['unsafe inline width', good.replace('<figure class="institutional-chart"', '<figure class="institutional-chart" style="min-width:1200px"')],
     ['missing caption', good.replace('<figcaption>Caption</figcaption>', '')],

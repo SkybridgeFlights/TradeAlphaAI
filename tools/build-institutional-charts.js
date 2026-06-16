@@ -415,7 +415,9 @@ function renderSvg(chart, locale) {
   const text = LABELS[locale];
   const width = 1400;
   const height = 900;
-  const plot = { x: 92, y: 142, width: 1216, height: 480 };
+  // Arabic labels are end-anchored. Keep the plot and all label anchors inside
+  // a wider safe gutter so RTL text never hugs the right edge of the canvas.
+  const plot = ar ? { x: 92, y: 142, width: 1088, height: 480 } : { x: 92, y: 142, width: 1216, height: 480 };
   const series = chart.series;
   const lows = series.map((bar) => bar.low);
   const highs = series.map((bar) => bar.high);
@@ -429,7 +431,7 @@ function renderSvg(chart, locale) {
   const points = series.map((bar, index) => `${x(index).toFixed(1)},${y(bar.close).toFixed(1)}`).join(' ');
   const title = ar ? chart.title_ar : chart.title_en;
   const anchor = ar ? 'end' : 'start';
-  const tx = ar ? 1308 : 92;
+  const tx = ar ? 1180 : 92;
   const direction = ar ? ' direction="rtl"' : '';
   const font = ar ? "'Tajawal','Cairo','Segoe UI',Arial,sans-serif" : "'Inter','Segoe UI',Arial,sans-serif";
   const tactical = chart.overlays.find((overlay) => overlay.type === 'tactical_context');
@@ -453,7 +455,7 @@ function renderSvg(chart, locale) {
       evidence_unavailable: '#626a70',
     }[tactical.state];
     parts.push(`<rect x="${plot.x}" y="${plot.y}" width="${plot.width}" height="${plot.height}" rx="8" fill="${tacticalFill}" opacity=".045"/>`);
-    const badgeWidth = ar ? 270 : 300;
+    const badgeWidth = ar ? 250 : 300;
     const badgeX = ar ? plot.x + plot.width - badgeWidth - 18 : plot.x + 18;
     parts.push(`<rect x="${badgeX}" y="${plot.y + 16}" width="${badgeWidth}" height="34" rx="5" fill="${tacticalFill}" opacity=".2" stroke="${tacticalFill}" stroke-opacity=".45"/>`);
     parts.push(`<text x="${ar ? badgeX + badgeWidth - 12 : badgeX + 12}" y="${plot.y + 39}" text-anchor="${anchor}"${direction} font-family="${font}" font-size="14" font-weight="650" fill="#dbe2dc">${esc(text.tactical[tactical.state])}</text>`);
@@ -504,8 +506,8 @@ function renderSvg(chart, locale) {
   });
   notes.slice(0, MAX_OVERLAYS).forEach(({ note, overlay }, index) => {
     const rowY = 690 + index * 22;
-    const markerX = ar ? 1302 : 92;
-    const textX = ar ? 1288 : 108;
+    const markerX = ar ? 1174 : 92;
+    const textX = ar ? 1160 : 108;
     let metadata = ` data-overlay-type="${esc(overlay.type)}" data-evidence-refs="${dataList(overlay.evidence_refs)}"`;
     if (overlay.type === 'support_resistance_zone') {
       metadata += ` data-zone-type="support_resistance_zone" data-zone-role="${esc(overlay.role)}" data-lower="${esc(overlay.lower)}" data-upper="${esc(overlay.upper)}" data-method="${esc(overlay.method)}"`;
@@ -658,7 +660,26 @@ async function sourceFor(spec) {
     const parsed = JSON.parse(body);
     return providerResult(parsed.provider || 'Approved fixture', parsed.source_url || 'local-source', body, parsed.series || parsed.rows || []);
   }
-  if (!FETCH) return null;
+  if (!FETCH) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+      const chart = (existing.charts || []).find((item) => item.symbol === spec.symbol && Array.isArray(item.series));
+      if (chart) {
+        return {
+          rows: chart.series,
+          source: chart.attribution || {
+            provider: 'Existing approved OHLCV manifest',
+            source_url: 'data/visual/institutional-charts.json',
+            fetched_at: existing.generated_at || null,
+            response_hash: hash(JSON.stringify(chart.series)),
+          },
+        };
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  }
   const now = Math.floor(Date.now() / 1000);
   const fromSeconds = now - 220 * 86400;
   const fromDate = new Date(fromSeconds * 1000).toISOString().slice(0, 10);
