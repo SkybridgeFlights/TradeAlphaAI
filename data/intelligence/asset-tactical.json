@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-16T19:27:26.033Z",
+  "source_layer": "asset-tactical",
+  "available": true,
+  "assets_total": 7,
+  "assets_available": 1,
+  "assets": [
+    {
+      "symbol": "SPY",
+      "available": true,
+      "confidence_band": "high",
+      "confidence_band_en": "high",
+      "confidence_band_ar": "عالية",
+      "dimensions": {
+        "directional_pressure": {
+          "state": "fading",
+          "label_en": "fading",
+          "label_ar": "متلاشٍ",
+          "evidence": [
+            "trend(5v5)=down"
+          ]
+        },
+        "continuation": {
+          "state": "fragile_continuation",
+          "label_en": "fragile continuation",
+          "label_ar": "استمرار هش",
+          "evidence": [
+            "structure=range_bound",
+            "compression=false"
+          ]
+        },
+        "participation_quality": {
+          "state": "mixed",
+          "label_en": "mixed",
+          "label_ar": "مختلطة",
+          "evidence": [
+            "volume ratio=1.27"
+          ]
+        },
+        "confirmation_quality": {
+          "state": "confirmed",
+          "label_en": "confirmed",
+          "label_ar": "مؤكَّد",
+          "evidence": [
+            "cross-asset change=-0.3736% vs tape risk_off"
+          ]
+        },
+        "liquidity_support": {
+          "state": "neutral",
+          "label_en": "neutral",
+          "label_ar": "محايدة",
+          "evidence": [
+            "volume ratio=1.27"
+          ]
+        },
+        "positioning_fragility": {
+          "state": "elevated",
+          "label_en": "elevated",
+          "label_ar": "مرتفعة",
+          "evidence": [
+            "ATR ratio=1.65"
+          ]
+        }
+      },
+      "evidence": [
+        "derived from SPY observed OHLCV (as of 2026-06-12)"
+      ]
+    },
+    {
+      "symbol": "QQQ",
+      "available": false,
+      "confidence_band": "indeterminate",
+      "confidence_band_en": "indeterminate",
+      "confidence_band_ar": "غير محددة",
+      "dimensions": {},
+      "evidence": [
+        "no verified OHLCV chart for this asset"
+      ]
+    },
+    {
+      "symbol": "IWM",
+      "available": false,
+      "confidence_band": "indeterminate",
+      "confidence_band_en": "indeterminate",
+      "confidence_band_ar": "غير محددة",
+      "dimensions": {},
+      "evidence": [
+        "no verified OHLCV chart for this asset"
+      ]
+    },
+    {
+      "symbol": "GLD",
+      "available": false,
+      "confidence_band": "indeterminate",
+      "confidence_band_en": "indeterminate",
+      "confidence_band_ar": "غير محددة",
+      "dimensions": {},
+      "evidence": [
+        "no verified OHLCV chart for this asset"
+      ]
+    },
+    {
+      "symbol": "TLT",
+      "available": false,
+      "confidence_band": "indeterminate",
+      "confidence_band_en": "indeterminate",
+      "confidence_band_ar": "غير محددة",
+      "dimensions": {},
+      "evidence": [
+        "no verified OHLCV chart for this asset"
+      ]
+    },
+    {
+      "symbol": "UUP",
+      "available": false,
+      "confidence_band": "indeterminate",
+      "confidence_band_en": "indeterminate",
+      "confidence_band_ar": "غير محددة",
+      "dimensions": {},
+      "evidence": [
+        "no verified OHLCV chart for this asset"
+      ]
+    },
+    {
+      "symbol": "VIXY",
+      "available": false,
+      "confidence_band": "indeterminate",
+      "confidence_band_en": "indeterminate",
+      "confidence_band_ar": "غير محددة",
+      "dimensions": {},
+      "evidence": [
+        "no verified OHLCV chart for this asset"
+      ]
+    }
+  ],
+  "availability_matrix": [
+    {
+      "symbol": "SPY",
+      "chart": true,
+      "structure": true,
+      "tactical": true,
+      "liquidity": true,
+      "cross_asset": true
+    },
+    {
+      "symbol": "QQQ",
+      "chart": false,
+      "structure": false,
+      "tactical": false,
+      "liquidity": false,
+      "cross_asset": true
+    },
+    {
+      "symbol": "IWM",
+      "chart": false,
+      "structure": false,
+      "tactical": false,
+      "liquidity": false,
+      "cross_asset": true
+    },
+    {
+      "symbol": "GLD",
+      "chart": false,
+      "structure": false,
+      "tactical": false,
+      "liquidity": false,
+      "cross_asset": true
+    },
+    {
+      "symbol": "TLT",
+      "chart": false,
+      "structure": false,
+      "tactical": false,
+      "liquidity": false,
+      "cross_asset": true
+    },
+    {
+      "symbol": "UUP",
+      "chart": false,
+      "structure": false,
+      "tactical": false,
+      "liquidity": false,
+      "cross_asset": false
+    },
+    {
+      "symbol": "VIXY",
+      "chart": false,
+      "structure": false,
+      "tactical": false,
+      "liquidity": false,
+      "cross_asset": false
+    }
+  ],
+  "attribution": {
+    "sources": [
+      "data/visual/institutional-charts.json",
+      "data/intelligence/cross-asset-state.json"
+    ],
+    "note": "Deterministic per-asset read from observed OHLCV. Educational context, not a recommendation, forecast or trade instruction."
+  }
+}
