@@ -145,6 +145,7 @@ ${published.map((a) => `          <article class="market-card"><span class="mark
           <span class="eyebrow">${esc(t('Institutional Market Structure', 'بنية السوق المؤسسية'))}</span>
           <h1>${esc(t('Structure beneath the level, not signals on top of it', 'البنية تحت المستوى، لا إشارات فوقه'))}</h1>
           <p class="market-lead">${esc(t('The structure desk reads participation, volatility structure, cross-asset coherence, rotation, concentration and stability — what the surface level is built on, not where it goes next. A deterministic composition of verified signals. Educational context, not technical trading analysis, signals or investment advice.', 'يقرأ مكتب البنية المشاركة وبنية التذبذب والاتساق عبر الأصول والتدوير والتركّز والاستقرار — ما يستند إليه المستوى السطحي لا وجهته التالية. تركيب حتمي لإشارات موثّقة. سياق تعليمي وليس تحليل تداول فنياً أو إشارات أو نصيحة استثمارية.'))}</p>
+          <p class="market-copy"><a href="${ar ? '/ar/market-terminal/' : '/market-terminal/'}">${esc(t('Open the institutional market terminal — regime, tactical context, structure and charts in one view →', 'افتح الطرفية المؤسسية للسوق — النظام والسياق التكتيكي والبنية والمخططات في عرض واحد ←'))}</a></p>
         </div>
       </section>
 
