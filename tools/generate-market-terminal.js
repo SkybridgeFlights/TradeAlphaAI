@@ -25,6 +25,9 @@ const CROSS_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-state.js
 const CHARTS_PATH = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const COGNITIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'cognitive-network.json');
 const ASSET_INTEL_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-intelligence.json');
+const ASSET_STRUCTURE_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-structure.json');
+const ASSET_TACTICAL_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-tactical.json');
+const ASSET_LIQUIDITY_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-liquidity.json');
 const STALE_HOURS = 72;
 const UNAVAIL_REASON_AR = {
   unavailable_offline: 'بانتظار بيانات مزوّد معتمدة', no_provider_keys: 'بانتظار بيانات مزوّد معتمدة',
@@ -370,6 +373,44 @@ ${available.concat(unavailable).join('\n')}
       </section>`;
 }
 
+// ── Per-asset layer tables (structure / tactical / liquidity) + availability. ──
+function layerTable(ar, id, eyebrow, heading, intro, artifact, cellFor) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!artifact || !Array.isArray(artifact.assets)) {
+    return `      <section class="market-section" id="${id}">
+        <div class="market-section-head"><span class="eyebrow">${esc(eyebrow)}</span><h2>${esc(heading)}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t('Not available right now and reported plainly.', 'غير متاح حالياً ويُذكر صراحة.'))}</p></div>
+      </section>`;
+  }
+  const cards = artifact.assets.map((a) => {
+    const cell = a.available ? cellFor(a) : t('indeterminate', 'غير محدد');
+    return `          <article class="market-card"><span class="market-card-kicker">${esc(a.symbol)}</span><h3>${esc(cell)}</h3></article>`;
+  }).join('\n');
+  return `      <section class="market-section" id="${id}">
+        <div class="market-section-head"><span class="eyebrow">${esc(eyebrow)}</span><h2>${esc(heading)}</h2></div>
+        <p class="market-copy">${esc(intro)}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
+function availabilityBlock(ar, structureArtifact) {
+  const t = (en, arT) => (ar ? arT : en);
+  const matrix = (structureArtifact && structureArtifact.availability_matrix) || [];
+  if (!matrix.length) return '';
+  const yes = ar ? 'متاح' : 'available';
+  const no = ar ? 'بانتظار البيانات' : 'awaiting data';
+  const cards = matrix.map((m) => `          <article class="market-card"><span class="market-card-kicker">${esc(m.symbol)}</span><h3>${esc(m.chart ? yes : no)}</h3><p class="market-copy">${esc(t('chart', 'مخطط'))}: ${m.chart ? '✓' : '—'} · ${esc(t('structure', 'بنية'))}: ${m.structure ? '✓' : '—'} · ${esc(t('cross-asset', 'عبر الأصول'))}: ${m.cross_asset ? '✓' : '—'}</p></article>`).join('\n');
+  return `      <section class="market-section" id="availability-matrix">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Availability matrix', 'مصفوفة التوافر'))}</span><h2>${esc(t('What real data backs each asset', 'ما البيانات الحقيقية التي تدعم كل أصل'))}</h2></div>
+        <p class="market-copy">${esc(t('Honest per-asset data availability — unavailable assets stay unavailable, never fabricated.', 'توافر بيانات نزيه لكل أصل — تبقى الأصول غير المتاحة كذلك، دون افتراض.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -379,6 +420,9 @@ function buildMain(ar) {
   const charts = readJson(CHARTS_PATH);
   const cognitive = readJson(COGNITIVE_PATH);
   const intel = readJson(ASSET_INTEL_PATH);
+  const assetStructure = readJson(ASSET_STRUCTURE_PATH);
+  const assetTactical = readJson(ASSET_TACTICAL_PATH);
+  const assetLiquidity = readJson(ASSET_LIQUIDITY_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -396,6 +440,10 @@ ${tacticalBlock(ar, tactical)}
 ${cognitiveBlock(ar, cognitive)}
 ${structureBlock(ar, structure)}
 ${assetIntelBlock(ar, intel)}
+${layerTable(ar, 'asset-structure-table', t('Asset structure', 'بنية الأصول'), t('Per-asset structure state', 'حالة بنية كل أصل'), t('Each read derived independently from that asset’s own observed price structure.', 'كل قراءة مشتقة باستقلال من البنية السعرية المرصودة لذلك الأصل.'), assetStructure, (a) => (ar ? a.label_ar : a.label_en))}
+${layerTable(ar, 'asset-tactical-table', t('Asset tactical', 'تكتيك الأصول'), t('Per-asset tactical pressure', 'الضغط التكتيكي لكل أصل'), t('Directional pressure and continuation derived per asset — conditional, not a forecast.', 'الضغط الاتجاهي والاستمرارية مشتقان لكل أصل — مشروطان، وليسا توقعاً.'), assetTactical, (a) => `${ar ? a.dimensions.directional_pressure.label_ar : a.dimensions.directional_pressure.label_en} · ${ar ? a.dimensions.continuation.label_ar : a.dimensions.continuation.label_en}`)}
+${layerTable(ar, 'asset-liquidity-table', t('Asset liquidity', 'سيولة الأصول'), t('Per-asset liquidity condition', 'حالة سيولة كل أصل'), t('Liquidity condition and support derived from each asset’s observed volume.', 'حالة السيولة والدعم مشتقة من حجم التداول المرصود لكل أصل.'), assetLiquidity, (a) => `${ar ? a.dimensions.condition.label_ar : a.dimensions.condition.label_en} · ${ar ? a.dimensions.support.label_ar : a.dimensions.support.label_en}`)}
+${availabilityBlock(ar, assetStructure)}
 ${chartsBlock(ar, charts, tactical)}
 ${providerHealthBlock(ar, charts)}
 ${latestBlock(ar)}
