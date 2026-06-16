@@ -23,7 +23,19 @@ const TACTICAL_PATH = path.join(ROOT, 'data', 'intelligence', 'tactical-context.
 const STRUCTURE_PATH = path.join(ROOT, 'data', 'intelligence', 'market-structure.json');
 const CROSS_PATH = path.join(ROOT, 'data', 'intelligence', 'cross-asset-state.json');
 const CHARTS_PATH = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
+const COGNITIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'cognitive-network.json');
+const ASSET_INTEL_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-intelligence.json');
 const STALE_HOURS = 72;
+const UNAVAIL_REASON_AR = {
+  unavailable_offline: 'بانتظار بيانات مزوّد معتمدة', no_provider_keys: 'بانتظار بيانات مزوّد معتمدة',
+  rate_limited: 'مؤجَّل بسبب حدود المزوّد', approved_ohlcv_unavailable: 'بيانات OHLCV المعتمدة غير متاحة',
+  insufficient_valid_bars: 'عدد الأشرطة الموثّقة غير كافٍ', fixture_missing: 'بيانات المصدر غير متاحة',
+};
+const UNAVAIL_REASON_EN = {
+  unavailable_offline: 'awaiting approved provider data', no_provider_keys: 'awaiting approved provider data',
+  rate_limited: 'deferred (provider limit)', approved_ohlcv_unavailable: 'approved OHLCV unavailable',
+  insufficient_valid_bars: 'insufficient verified bars', fixture_missing: 'source data unavailable',
+};
 
 function readJson(p, fallback = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return fallback; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -298,6 +310,66 @@ ${cards}
       </section>`;
 }
 
+// ── Asset intelligence table — per-asset score + link to the asset page. ──
+function assetIntelBlock(ar, intel) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!intel || intel.available !== true || !Array.isArray(intel.assets)) {
+    return `      <section class="market-section" id="asset-intelligence">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Asset intelligence', 'استخبارات الأصول'))}</span><h2>${esc(t('Asset intelligence', 'استخبارات الأصول'))}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t('Per-asset intelligence is not available right now and is reported plainly.', 'استخبارات الأصول غير متاحة حالياً وتُذكر صراحة.'))}</p></div>
+      </section>`;
+  }
+  const cards = intel.assets.map((a) => {
+    const score = ar ? a.score_label_ar : a.score_label_en;
+    const dq = ar ? a.data_quality_ar : a.data_quality_en;
+    return `          <article class="market-card"><span class="market-card-kicker">${esc(a.symbol)}</span><h3><a href="${ar ? '/ar/markets/' : '/markets/'}${esc(a.slug)}/">${esc(score)}</a></h3><p class="market-copy">${esc(t('data quality', 'جودة البيانات'))}: ${esc(dq)}</p></article>`;
+  }).join('\n');
+  return `      <section class="market-section" id="asset-intelligence">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Asset intelligence', 'استخبارات الأصول'))}</span><h2>${esc(t('Institutional read by asset', 'القراءة المؤسسية حسب الأصل'))}</h2></div>
+        <p class="market-copy">${esc(t('Qualitative institutional labels — not recommendations or trade instructions. Open an asset for its full read.', 'تسميات مؤسسية نوعية — ليست توصيات أو تعليمات تداول. افتح أي أصل لقراءته الكاملة.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
+// ── Cognitive network snapshot — dominant cross-asset state + relationships. ──
+function cognitiveBlock(ar, net) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!net || net.available !== true) {
+    return `      <section class="market-section" id="cognitive-network">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Cognitive network', 'الشبكة الإدراكية'))}</span><h2>${esc(t('Cognitive network', 'الشبكة الإدراكية'))}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t('Cross-asset network evidence is not available right now.', 'أدلة الشبكة عبر الأصول غير متاحة حالياً.'))}</p></div>
+      </section>`;
+  }
+  const dom = ar ? net.dominant_network_state.label_ar : net.dominant_network_state.label_en;
+  const band = ar ? net.confidence_band_ar : net.confidence_band_en;
+  const relCards = (net.relationships || []).map((r) => `          <article class="market-card"><span class="market-card-kicker">${esc(ar ? r.label_ar : r.label_en)}</span><h3>${esc(ar ? r.state_ar : r.state_en)}</h3></article>`).join('\n');
+  return `      <section class="market-section" id="cognitive-network">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Cognitive network', 'الشبكة الإدراكية'))}</span><h2>${esc(t('Dominant cross-asset state', 'الحالة المهيمنة عبر الأصول'))}: ${esc(dom)}</h2></div>
+        <p class="market-copy">${esc(t('Confidence', 'الثقة'))}: ${esc(band)} · ${esc(t('a deterministic read of how assets confirm or diverge — not a forecast.', 'قراءة حتمية لكيفية تأكيد الأصول أو تباعدها — وليست توقعاً.'))}</p>
+        <div class="market-grid three">
+${relCards}
+        </div>
+      </section>`;
+}
+
+// ── Provider health — honest per-asset availability + mode. ──
+function providerHealthBlock(ar, charts) {
+  const t = (en, arT) => (ar ? arT : en);
+  const ph = charts && charts.provider_health;
+  if (!ph) return '';
+  const available = (charts.charts || []).map((c) => `          <article class="market-card"><span class="market-card-kicker">${esc(c.symbol)}</span><h3>${esc(t('available', 'متاح'))}</h3><p class="market-copy">${esc(t('As of', 'بتاريخ'))} ${esc(c.as_of)}</p></article>`);
+  const unavailable = (charts.unavailable || []).map((u) => `          <article class="market-card"><span class="market-card-kicker">${esc(u.symbol)}</span><h3>${esc(t('unavailable', 'غير متاح'))}</h3><p class="market-copy">${esc(ar ? (UNAVAIL_REASON_AR[u.reason] || 'غير متاح') : (UNAVAIL_REASON_EN[u.reason] || 'unavailable'))}</p></article>`);
+  return `      <section class="market-section" id="provider-health">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Provider health', 'حالة المزوّدين'))}</span><h2>${esc(t('Data provider availability', 'توافر مزوّدي البيانات'))}</h2></div>
+        <p class="market-copy">${esc(t('Mode', 'الوضع'))}: ${esc(ph.mode)} · ${esc(ph.assets_available)}/${esc(ph.assets_total)} ${esc(t('assets with verified charts. Real sourced OHLCV only — no fabricated availability.', 'أصول لديها مخططات موثّقة. بيانات OHLCV موثّقة فقط — دون افتراض توافر.'))}</p>
+        <div class="market-grid three">
+${available.concat(unavailable).join('\n')}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -305,6 +377,8 @@ function buildMain(ar) {
   const structure = readJson(STRUCTURE_PATH);
   const cross = readJson(CROSS_PATH);
   const charts = readJson(CHARTS_PATH);
+  const cognitive = readJson(COGNITIVE_PATH);
+  const intel = readJson(ASSET_INTEL_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -319,8 +393,11 @@ function buildMain(ar) {
 
 ${environmentBlock(ar, regime, cross)}
 ${tacticalBlock(ar, tactical)}
+${cognitiveBlock(ar, cognitive)}
 ${structureBlock(ar, structure)}
+${assetIntelBlock(ar, intel)}
 ${chartsBlock(ar, charts, tactical)}
+${providerHealthBlock(ar, charts)}
 ${latestBlock(ar)}
 
       <section class="market-section" id="terminal-disclaimer">
