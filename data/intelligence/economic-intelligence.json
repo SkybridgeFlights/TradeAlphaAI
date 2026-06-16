@@ -1,27 +1,27 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T18:46:58.397Z",
+  "generated_at": "2026-06-16T21:30:21.862Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
   "calendar_updated_at": "2026-06-16T18:12:13.501Z",
   "enrichment": {
     "fetch_attempted": true,
     "keys_present": {
-      "fred": true,
+      "fred": false,
       "bls": false,
       "bea": false,
       "eia": false,
-      "fmp": true,
-      "finnhub": true
+      "fmp": false,
+      "finnhub": false
     },
     "forecast_providers": {
       "fmp": {
         "ok": false,
-        "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar"
+        "reason": "missing_api_key"
       },
       "finnhub": {
         "ok": false,
-        "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic"
+        "reason": "missing_api_key"
       }
     },
     "forecast_observations": 0,
@@ -39,22 +39,21 @@
   "counts": {
     "total": 28,
     "high_impact": 22,
-    "parsed": 1,
+    "parsed": 0,
     "awaiting": 25,
-    "delayed": 2,
+    "delayed": 3,
     "surprise_ready": 0,
     "by_state": {
       "scheduled": 25,
       "awaiting_release": 0,
       "released": 0,
-      "parsed": 1,
+      "parsed": 0,
       "revised": 0,
-      "delayed": 2,
+      "delayed": 3,
       "archived": 0
     },
     "by_forecast_quality": {
-      "unavailable": 27,
-      "historical_proxy": 1
+      "unavailable": 28
     }
   },
   "events": [
@@ -224,17 +223,17 @@
       "country": "CA",
       "release_time": "2026-06-16T13:00:00.000Z",
       "timezone": "UTC",
-      "actual": 333.979,
+      "actual": null,
       "forecast": null,
-      "previous": 332.407,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
-      "confidence": 90,
+      "source": "Statistics Canada",
+      "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -242,37 +241,35 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 332.407,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "CPIAUCSL"
       },
       "surprise": {
-        "surprise_score": 0,
-        "surprise_direction": "near_consensus",
-        "surprise_label": "in_line__proxy_based",
-        "policy_tone": "neutral",
-        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Canada CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
-        "forecast_basis": "historical_proxy",
-        "surprise_confidence": 25,
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 25,
-      "forecast_basis": "historical_proxy",
-      "forecast_sources": [
-        "historical_proxy:previous_release"
-      ],
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
       "forecast_source_count": 0,
-      "forecast_confidence": 25,
-      "forecast_quality": "historical_proxy",
-      "consensus_state": "proxy_only",
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
       "forecast_dispersion": null,
-      "proxy_used": true,
-      "proxy_value": 332.407,
+      "proxy_used": false,
+      "proxy_value": null,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -288,7 +285,7 @@
       },
       "narrative_tags": [
         "inflation",
-        "in_line"
+        "awaiting_data"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -296,7 +293,7 @@
         "precise_time": false,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::global_acquisition::gb::united-kingdom-cpi::20260617T070000",
