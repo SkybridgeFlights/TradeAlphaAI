@@ -1,23 +1,23 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-15T22:32:22.929Z",
+  "generated_at": "2026-06-16T18:42:16.382Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 73,
-  "coverage_pct": 89,
+  "structural_confidence": 67,
+  "coverage_pct": 78,
   "dominant": {
-    "dimension": "stability",
-    "state": "fragile"
+    "dimension": "concentration",
+    "state": "elevated"
   },
   "dimensions": {
     "participation": {
-      "state": "narrow_leadership",
-      "label_en": "narrow leadership",
-      "label_ar": "قيادة ضيقة",
+      "state": "mixed_participation",
+      "label_en": "mixed participation",
+      "label_ar": "مشاركة مختلطة",
       "evidence": [
         "leadership=narrow",
-        "breadth=narrow",
-        "session breadth=confirming"
+        "breadth=mixed",
+        "session breadth=mixed"
       ]
     },
     "volatility_structure": {
@@ -29,21 +29,21 @@
       ]
     },
     "cross_asset": {
-      "state": "mild_divergence",
-      "label_en": "mild cross-asset divergence",
-      "label_ar": "تباعد طفيف عبر الأصول",
+      "state": "coherent",
+      "label_en": "coherent",
+      "label_ar": "متسق",
       "evidence": [
-        "coherence=0.33",
+        "coherence=1",
         "tension cross_asset=coherent"
       ]
     },
     "concentration": {
-      "state": "contained",
-      "label_en": "contained concentration",
-      "label_ar": "تركّز محتوى",
+      "state": "elevated",
+      "label_en": "elevated concentration",
+      "label_ar": "تركّز مرتفع",
       "evidence": [
-        "ai_concentration=contained",
-        "momentum_concentration=narrow-megacap"
+        "ai_concentration=elevated",
+        "momentum_concentration=broadening"
       ]
     },
     "rotation": {
@@ -51,7 +51,7 @@
       "label_en": "cyclical leadership",
       "label_ar": "قيادة دورية",
       "evidence": [
-        "leaders=XLK/XLI/XLU",
+        "leaders=XLF/XLI/XLU",
         "regime defensive=cyclical_leadership"
       ]
     },
@@ -60,8 +60,8 @@
       "label_en": "persistent structure",
       "label_ar": "بنية مستمرة",
       "evidence": [
-        "direction=risk_on",
-        "verified_sessions=3",
+        "direction=risk_off",
+        "verified_sessions=4",
         "regime_condition=stable-regime"
       ]
     },
@@ -70,9 +70,9 @@
       "label_en": "indeterminate",
       "label_ar": "غير محدد",
       "evidence": [
-        "participation=narrow_leadership",
+        "participation=mixed_participation",
         "rotation=cyclical_leadership",
-        "concentration=contained"
+        "concentration=elevated"
       ]
     },
     "liquidity_participation": {
@@ -85,11 +85,11 @@
       ]
     },
     "stability": {
-      "state": "fragile",
-      "label_en": "fragile structure",
-      "label_ar": "بنية هشة",
+      "state": "indeterminate",
+      "label_en": "indeterminate",
+      "label_ar": "غير محدد",
       "evidence": [
-        "regime stability=fragile",
+        "regime stability=indeterminate",
         "tension=contained",
         "fragility=building"
       ]
@@ -97,14 +97,14 @@
   },
   "homepage_summary": {
     "dominant_structure": {
-      "dimension": "stability",
-      "state": "fragile"
+      "dimension": "concentration",
+      "state": "elevated"
     },
-    "participation": "narrow_leadership",
+    "participation": "mixed_participation",
     "volatility_structure": "contained",
-    "cross_asset": "mild_divergence",
-    "structural_stability": "fragile",
-    "structural_confidence": 73
+    "cross_asset": "coherent",
+    "structural_stability": "indeterminate",
+    "structural_confidence": 67
   },
   "attribution": {
     "sources": [
@@ -114,7 +114,7 @@
       "session-history",
       "live-market-state"
     ],
-    "market_state_age_hours": 0.6,
+    "market_state_age_hours": 0.1,
     "note": "Deterministic composition of verified upstream structure signals. No fabricated values; insufficient evidence degrades to indeterminate."
   }
 }
