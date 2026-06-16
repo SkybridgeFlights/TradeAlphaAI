@@ -72,6 +72,7 @@ jobs:
           node tools/build-cognitive-network.js --write || echo "[tech-intel] cognitive network degraded — continuing"
           node tools/build-asset-layers.js --write || echo "[tech-intel] asset layers degraded — continuing"
           node tools/build-asset-intelligence.js --write || echo "[tech-intel] asset intelligence degraded — continuing"
+          node tools/build-data-coverage.js --write || echo "[tech-intel] data coverage degraded — continuing"
           node tools/generate-asset-pages.js --write || echo "[tech-intel] asset pages degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
           # Capture the published slug (empty when the note self-gates) so the
@@ -108,6 +109,10 @@ jobs:
           npm run check:asset-tactical
           npm run check:asset-liquidity
           npm run check:asset-intelligence
+          npm run check:provider-coverage
+          npm run check:data-quality
+          npm run check:asset-activation
+          npm run check:chart-coverage
           npm run check:asset-pages
           npm run check:market-terminal
           npm run check:visual-composition
