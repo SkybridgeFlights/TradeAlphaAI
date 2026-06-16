@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-16T19:03:34.081Z",
+  "source_layer": "cognitive-network",
+  "available": true,
+  "dominant_network_state": {
+    "state": "defensive_rotation",
+    "label_en": "defensive rotation",
+    "label_ar": "تدوير دفاعي"
+  },
+  "confidence_band": "moderate",
+  "confidence_band_en": "moderate",
+  "confidence_band_ar": "متوسطة",
+  "coverage_pct": 60,
+  "confirmation_chains": [
+    {
+      "id": "spy_vs_tlt",
+      "label_en": "Equities vs Treasuries",
+      "label_ar": "الأسهم مقابل سندات الخزانة",
+      "evidence": [
+        "cross-asset-state: SPY=-0.3736% , TLT=0.7466% (risk_inverse)"
+      ]
+    },
+    {
+      "id": "qqq_vs_tlt",
+      "label_en": "Growth vs duration",
+      "label_ar": "النمو مقابل المدة",
+      "evidence": [
+        "cross-asset-state: QQQ=-1.3387% , TLT=0.7466% (risk_inverse)"
+      ]
+    },
+    {
+      "id": "spy_vs_iwm",
+      "label_en": "Large-cap vs small-cap breadth",
+      "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
+      "evidence": [
+        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (risk_same)"
+      ]
+    }
+  ],
+  "contradiction_chains": [],
+  "stress_chains": [],
+  "fragility_chains": [],
+  "relationships": [
+    {
+      "id": "spy_vs_tlt",
+      "mode": "risk_inverse",
+      "state": "confirmation",
+      "label_en": "Equities vs Treasuries",
+      "label_ar": "الأسهم مقابل سندات الخزانة",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "cross-asset-state: SPY=-0.3736% , TLT=0.7466% (risk_inverse)"
+      ]
+    },
+    {
+      "id": "qqq_vs_tlt",
+      "mode": "risk_inverse",
+      "state": "confirmation",
+      "label_en": "Growth vs duration",
+      "label_ar": "النمو مقابل المدة",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "cross-asset-state: QQQ=-1.3387% , TLT=0.7466% (risk_inverse)"
+      ]
+    },
+    {
+      "id": "spy_vs_iwm",
+      "mode": "risk_same",
+      "state": "confirmation",
+      "label_en": "Large-cap vs small-cap breadth",
+      "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (risk_same)"
+      ]
+    },
+    {
+      "id": "gld_vs_uup",
+      "mode": "macro_inverse",
+      "state": "evidence_unavailable",
+      "label_en": "Gold vs the dollar",
+      "label_ar": "الذهب مقابل الدولار",
+      "state_en": "evidence unavailable",
+      "state_ar": "الأدلة غير متاحة",
+      "evidence": [
+        "cross-asset-state: GOLD or DXY change unavailable"
+      ]
+    },
+    {
+      "id": "vixy_vs_spy",
+      "mode": "risk_inverse",
+      "state": "evidence_unavailable",
+      "label_en": "Volatility vs equities",
+      "label_ar": "التقلب مقابل الأسهم",
+      "state_en": "evidence unavailable",
+      "state_ar": "الأدلة غير متاحة",
+      "evidence": [
+        "cross-asset-state: VIX or SPY change unavailable"
+      ]
+    }
+  ],
+  "evidence": [
+    "cross-asset coherence: score=1 direction=risk_off n=3",
+    "liquidity-regime: regime=indeterminate liquidity=indeterminate stability=indeterminate",
+    "tactical-context: available=true fragile=true",
+    "relationships with data: 3/5"
+  ],
+  "attribution": {
+    "sources": [
+      "data/intelligence/cross-asset-state.json",
+      "data/intelligence/liquidity-regime.json",
+      "data/intelligence/tactical-context.json",
+      "data/intelligence/market-structure.json"
+    ],
+    "note": "Deterministic cross-asset relationship composition over verified artifacts. Educational context, not a forecast or recommendation."
+  }
+}
