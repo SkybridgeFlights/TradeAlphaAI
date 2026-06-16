@@ -11,7 +11,7 @@ const { MIN_BARS, MAX_OVERLAYS } = require('./build-institutional-charts');
 const ROOT = path.resolve(__dirname, '..');
 const MANIFEST = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const ARABIC = /[\u0600-\u06ff]/;
-const APPROVED_PROVIDERS = new Set(['FMP', 'Finnhub', 'AlphaVantage', 'Approved fixture']);
+const APPROVED_PROVIDERS = new Set(['FMP', 'Finnhub', 'AlphaVantage', 'Yahoo', 'Approved fixture']);
 const SUPPORTED_ASSETS = new Set(['SPY', 'QQQ', 'IWM', 'GLD', 'TLT', 'UUP', 'DXY', 'VIX', 'VIXY']);
 const OVERLAY_TYPES = new Set([
   'support_resistance_zone',

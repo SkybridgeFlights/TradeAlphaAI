@@ -29,7 +29,14 @@ function articles(dir) {
 }
 function bodyText(html) {
   const m = html.match(/<main[\s\S]*?<\/main>/i);
-  return (m ? m[0] : html).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  let body = m ? m[0] : html;
+  // Visual evidence (chart figures + SVGs) is NOT editorial prose — strip whole
+  // figure/svg blocks so chart captions, axis labels and price numbers do not
+  // inflate repetition/evidence-number metrics (esp. with multiple charts).
+  body = body
+    .replace(/<svg[\s\S]*?<\/svg>/gi, ' ')
+    .replace(/<figure[\s\S]*?<\/figure>/gi, ' ');
+  return body.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 let scored = 0;

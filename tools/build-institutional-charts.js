@@ -589,9 +589,10 @@ function buildChart(spec, rows, source, options = {}) {
   };
 }
 
-function requestJson(url) {
+function requestJson(url, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, { timeout: 20000, headers: { 'User-Agent': 'TradeAlphaAI-Institutional-Charts/1.0' } }, (res) => {
+    const headers = { 'User-Agent': 'TradeAlphaAI-Institutional-Charts/1.0', ...extraHeaders };
+    const req = https.get(url, { timeout: 20000, headers }, (res) => {
       const chunks = [];
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => {
@@ -638,6 +639,24 @@ async function fetchAlphaVantage(symbol, key) {
     close: values['4. close'], volume: values['5. volume'],
   }));
   return providerResult('AlphaVantage', 'https://www.alphavantage.co/', response.body, rows);
+}
+
+// Keyless real-data fallback: Yahoo Finance public daily chart endpoint. Returns
+// the same sourced OHLCV time series the keyed providers resell — no key, no
+// scraping of chart images, no synthetic bars. Used as the resilience tier so
+// coverage does not collapse to one asset when keyed providers rate-limit.
+async function fetchYahoo(symbol) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1y`;
+  const response = await requestJson(url, { 'User-Agent': 'Mozilla/5.0 (compatible; TradeAlphaAI/1.0)' });
+  const result = response.parsed && response.parsed.chart && Array.isArray(response.parsed.chart.result) ? response.parsed.chart.result[0] : null;
+  if (!result || !Array.isArray(result.timestamp) || !result.indicators || !Array.isArray(result.indicators.quote)) return null;
+  const q = result.indicators.quote[0] || {};
+  const rows = result.timestamp.map((ts, i) => ({
+    date: new Date(ts * 1000).toISOString().slice(0, 10),
+    open: q.open ? q.open[i] : null, high: q.high ? q.high[i] : null,
+    low: q.low ? q.low[i] : null, close: q.close ? q.close[i] : null, volume: q.volume ? q.volume[i] : null,
+  }));
+  return rows.length ? providerResult('Yahoo', 'https://finance.yahoo.com/', response.body, rows) : null;
 }
 
 function providerResult(provider, sourceUrl, body, rows) {
@@ -733,9 +752,12 @@ async function sourceFor(spec) {
     { name: 'FMP', key: process.env.FMP_API_KEY || process.env.FINANCIAL_MODELING_PREP_API_KEY, run: () => fetchFmp(spec.symbol, fromDate, toDate, process.env.FMP_API_KEY || process.env.FINANCIAL_MODELING_PREP_API_KEY) },
     { name: 'Finnhub', key: process.env.FINNHUB_API_KEY, run: () => fetchFinnhub(spec.symbol, fromSeconds, now, process.env.FINNHUB_API_KEY) },
     { name: 'AlphaVantage', key: process.env.ALPHAVANTAGE_API_KEY, run: () => fetchAlphaVantage(spec.symbol, process.env.ALPHAVANTAGE_API_KEY) },
+    // Keyless resilience tier — always attempted (no key gate) so coverage does
+    // not collapse when the keyed providers are absent or rate-limited.
+    { name: 'Yahoo', keyless: true, run: () => fetchYahoo(spec.symbol) },
   ];
   for (const provider of providers) {
-    if (!provider.key) { diagnostic.attempts.push({ provider: provider.name, outcome: 'no_key' }); continue; }
+    if (!provider.keyless && !provider.key) { diagnostic.attempts.push({ provider: provider.name, outcome: 'no_key' }); continue; }
     try {
       const result = await provider.run();
       const bars = result ? normalizeSeries(result.rows).length : 0;
