@@ -70,6 +70,7 @@ jobs:
           # freshly built charts/structure/tactical/cross-asset artifacts), then
           # the per-asset pages, in the required order.
           node tools/build-cognitive-network.js --write || echo "[tech-intel] cognitive network degraded — continuing"
+          node tools/build-asset-layers.js --write || echo "[tech-intel] asset layers degraded — continuing"
           node tools/build-asset-intelligence.js --write || echo "[tech-intel] asset intelligence degraded — continuing"
           node tools/generate-asset-pages.js --write || echo "[tech-intel] asset pages degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
@@ -102,6 +103,10 @@ jobs:
           npm run check:provider-reliability
           npm run check:embedded-charts
           npm run check:cognitive-network
+          npm run check:network-expansion
+          npm run check:asset-structure
+          npm run check:asset-tactical
+          npm run check:asset-liquidity
           npm run check:asset-intelligence
           npm run check:asset-pages
           npm run check:market-terminal
