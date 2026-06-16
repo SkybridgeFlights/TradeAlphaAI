@@ -4451,3 +4451,71 @@ html[dir="rtl"] .figure-annotation { line-height: 1.85; }
   .market-shell .article-evidence-panel,
   .market-shell figure.institutional-chart { max-width: 100%; padding: 0.5rem; }
 }
+
+/* Phase 130: give verified OHLCV charts the full institutional reading measure.
+   Evidence panels retain their compact prose width; only real charts expand. */
+.market-shell figure.institutional-chart {
+  width: min(96%, 1080px);
+  max-width: 100%;
+  padding: clamp(0.65rem, 1.25vw, 1rem);
+  overflow: visible;
+}
+.market-shell figure.institutional-chart .ic-svg {
+  width: 100%;
+  min-width: 0;
+  background: rgba(4, 10, 18, 0.34);
+}
+.market-shell figure.institutional-chart figcaption.ic-caption {
+  gap: 0.45rem;
+  padding: 0.9rem 0.65rem 0.3rem;
+  min-width: 0;
+}
+.market-shell figure.institutional-chart .ic-hook {
+  font-size: clamp(0.98rem, 1.25vw, 1.08rem);
+  line-height: 1.55;
+}
+.market-shell figure.institutional-chart .ic-reason,
+.market-shell figure.institutional-chart .ic-linkage {
+  font-size: clamp(0.8rem, 1vw, 0.88rem);
+  line-height: 1.6;
+}
+.market-shell figure.institutional-chart .ic-attrib {
+  font-size: clamp(0.72rem, 0.9vw, 0.78rem);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+[dir="rtl"] .market-shell figure.institutional-chart figcaption.ic-caption {
+  align-items: stretch;
+  direction: rtl;
+}
+[dir="rtl"] .market-shell figure.institutional-chart .ic-hook,
+[dir="rtl"] .market-shell figure.institutional-chart .ic-reason,
+[dir="rtl"] .market-shell figure.institutional-chart .ic-linkage,
+[dir="rtl"] .market-shell figure.institutional-chart .ic-attrib {
+  text-align: right;
+}
+@media (max-width: 900px) {
+  .market-shell figure.institutional-chart {
+    width: 100%;
+    padding: 0.65rem;
+  }
+}
+@media (max-width: 640px) {
+  .market-shell figure.institutional-chart {
+    margin-block: 1.35rem;
+    padding: 0.4rem;
+    border-radius: 10px;
+  }
+  .market-shell figure.institutional-chart figcaption.ic-caption {
+    gap: 0.38rem;
+    padding: 0.75rem 0.4rem 0.25rem;
+  }
+  .market-shell figure.institutional-chart .ic-hook {
+    font-size: 0.96rem;
+  }
+  .market-shell figure.institutional-chart .ic-reason,
+  .market-shell figure.institutional-chart .ic-linkage {
+    font-size: 0.79rem;
+    line-height: 1.55;
+  }
+}

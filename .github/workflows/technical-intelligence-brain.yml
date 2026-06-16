@@ -60,12 +60,12 @@ jobs:
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
         run: |
           node tools/build-liquidity-regime.js --write || echo "[tech-intel] liquidity regime degraded — continuing"
-          node tools/build-chart-intelligence.js --write || echo "[tech-intel] chart intelligence degraded — continuing"
+          node tools/build-market-structure.js --write || echo "[tech-intel] structure engine degraded — continuing"
+          node tools/build-tactical-context.js --write || echo "[tech-intel] tactical context degraded — continuing"
           # Institutional OHLCV charts: attempt approved-provider fetch, else write
           # an HONEST empty manifest (no fabricated bars). Never fails the run.
           node tools/build-institutional-charts.js --fetch --write || node tools/build-institutional-charts.js --write || echo "[tech-intel] institutional charts unavailable — continuing"
-          node tools/build-market-structure.js --write || echo "[tech-intel] structure engine degraded — continuing"
-          node tools/build-tactical-context.js --write || echo "[tech-intel] tactical context degraded — continuing"
+          node tools/build-chart-intelligence.js --write || echo "[tech-intel] chart intelligence degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
           # Capture the published slug (empty when the note self-gates) so the
           # controlled Telegram step only fires on an ACTUAL publish — never on
@@ -104,6 +104,10 @@ jobs:
           npm run check:header-runtime-integrity
 
       - name: Commit refreshed surface (only when changed)
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
         run: |
           git config user.name "tradealphaai-technical-intelligence-brain"
           git config user.email "actions@users.noreply.github.com"
@@ -163,9 +167,15 @@ jobs:
               echo "[tech-intel] push rejected (race) on attempt ${attempt} — retrying"
             else
               echo "[tech-intel] rebase conflict on attempt ${attempt} — regenerating shared artifacts to reconcile"
+              node tools/build-market-structure.js --write || echo "[tech-intel] structure regen degraded"
+              node tools/build-tactical-context.js --write || echo "[tech-intel] tactical context regen degraded"
+              node tools/build-institutional-charts.js --fetch --write || node tools/build-institutional-charts.js --write || echo "[tech-intel] institutional chart regen degraded"
+              node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
               node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded"
               node tools/build-social-intelligence.js --write || echo "[tech-intel] social regen degraded"
               node tools/build-distribution-plan.js --write || echo "[tech-intel] distribution regen degraded"
+              npm run check:institutional-charts
+              npm run check:embedded-charts
               stage_intended
               git -c core.editor=true rebase --continue || git rebase --abort
             fi

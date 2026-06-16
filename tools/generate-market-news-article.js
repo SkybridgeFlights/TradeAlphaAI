@@ -195,7 +195,19 @@ const SUPPORT_STATE = {
   ar: { supported: 'مدعومة بالمخطط', mixed: 'مختلطة', unsupported: 'غير مدعومة بالمخطط', unavailable: 'الأدلة غير متاحة' },
 };
 
-function selectInstitutionalChart(surfaceKey, topicId, locale) {
+const TOPIC_CHART_PREFERENCES = {
+  'participation-breadth': ['SPY', 'IWM'],
+  'breadth-volatility': ['SPY', 'IWM'],
+  'structural-stability': ['SPY'],
+  'volatility-structure': ['SPY', 'VIXY'],
+  'cross-asset-structure': ['QQQ', 'TLT'],
+  'rotation-concentration': ['QQQ', 'SPY'],
+  'regime-structure': ['SPY'],
+  'liquidity-conditions': ['UUP', 'SPY'],
+  'cross-asset-relationships': ['QQQ', 'TLT'],
+};
+
+function selectInstitutionalCharts(surfaceKey, topicId, locale) {
   let manifest; try { manifest = JSON.parse(fs.readFileSync(INSTITUTIONAL_CHARTS, 'utf8')); } catch { return null; }
   if (!manifest || !['available', 'partial'].includes(manifest.status)) return null;
   const charts = (manifest.charts || []).filter((c) => c && c.verified === true
@@ -208,9 +220,24 @@ function selectInstitutionalChart(surfaceKey, topicId, locale) {
     'breadth-volatility': ['breadth-vs-index'],
   };
   const acceptedTopics = new Set([norm, ...(topicAliases[norm] || [])]);
-  const matched = charts.find((c) => (c.related_topics || [])
-    .some((rt) => acceptedTopics.has(String(rt).replace(/_/g, '-'))));
-  return matched ? { chart: matched, manifest } : null;
+  const matched = charts.map((chart) => {
+    const relevanceTopic = (chart.related_topics || [])
+      .map((topic) => String(topic).replace(/_/g, '-'))
+      .find((topic) => acceptedTopics.has(topic));
+    return relevanceTopic ? { chart, relevanceTopic } : null;
+  }).filter(Boolean);
+  if (!matched.length) return null;
+  const preference = TOPIC_CHART_PREFERENCES[norm] || [];
+  matched.sort((left, right) => {
+    const leftRank = preference.indexOf(left.chart.symbol);
+    const rightRank = preference.indexOf(right.chart.symbol);
+    return (leftRank < 0 ? 99 : leftRank) - (rightRank < 0 ? 99 : rightRank)
+      || left.chart.id.localeCompare(right.chart.id);
+  });
+  return {
+    charts: matched.slice(0, Math.min(2, manifest.max_charts_per_article || 1)),
+    manifest,
+  };
 }
 
 // Deterministic, advice-free linkage between the tactical read and the sourced
@@ -243,26 +270,26 @@ function tacticalChartLinkage(chart, locale) {
   return { state, label };
 }
 
-function institutionalChartFigure(surfaceKey, topicId, locale) {
-  const picked = selectInstitutionalChart(surfaceKey, topicId, locale);
+function institutionalChartFigures(surfaceKey, topicId, locale) {
+  const picked = selectInstitutionalCharts(surfaceKey, topicId, locale);
   if (!picked) return '';
-  const { chart } = picked;
   const ar = locale === 'ar';
-  let svg = '';
-  try { svg = fs.readFileSync(path.join(ROOT, chart.files[locale]), 'utf8'); } catch { return ''; }
-  // Defensive: the SVG is authored viewBox-only, but strip any root width/height.
-  svg = svg.replace(/(<svg\b[^>]*?)\s+width="\d+"\s+height="\d+"/, '$1');
-  const title = ar ? chart.title_ar : chart.title_en;
-  const hook = chart.narrative_hook && chart.narrative_hook[locale];
-  const reason = chart.analytical_reason && chart.analytical_reason[locale];
-  const provider = (chart.attribution && chart.attribution.provider) || '—';
-  const srcWord = ar ? 'المصدر' : 'Source';
-  const asOfWord = ar ? 'بتاريخ' : 'As of';
-  const link = tacticalChartLinkage(chart, locale);
-  const linkLine = ar
-    ? `الارتباط التكتيكي: القراءة الهيكلية ${link.state} بهذه البنية السعرية (${link.label}).`
-    : `Tactical linkage: the structural read is ${link.state} by this price structure (${link.label}).`;
-  return `<figure class="institutional-chart" data-symbol="${esc(chart.symbol)}" data-chart-type="${esc(chart.chart_type || chart.visual_type)}" data-series-hash="${esc(chart.series_hash)}" data-as-of="${esc(chart.as_of)}">
+  return picked.charts.map(({ chart, relevanceTopic }) => {
+    let svg = '';
+    try { svg = fs.readFileSync(path.join(ROOT, chart.files[locale]), 'utf8'); } catch { return ''; }
+    // Defensive: the SVG is authored viewBox-only, but strip any root width/height.
+    svg = svg.replace(/(<svg\b[^>]*?)\s+width="\d+"\s+height="\d+"/, '$1');
+    const title = ar ? chart.title_ar : chart.title_en;
+    const hook = chart.narrative_hook && chart.narrative_hook[locale];
+    const reason = chart.analytical_reason && chart.analytical_reason[locale];
+    const provider = (chart.attribution && chart.attribution.provider) || '—';
+    const srcWord = ar ? 'المصدر' : 'Source';
+    const asOfWord = ar ? 'بتاريخ' : 'As of';
+    const link = tacticalChartLinkage(chart, locale);
+    const linkLine = ar
+      ? `الارتباط التكتيكي: القراءة الهيكلية ${link.state} بهذه البنية السعرية (${link.label}).`
+      : `Tactical linkage: the structural read is ${link.state} by this price structure (${link.label}).`;
+    return `<figure class="institutional-chart" data-symbol="${esc(chart.symbol)}" data-chart-type="${esc(chart.chart_type || chart.visual_type)}" data-series-hash="${esc(chart.series_hash)}" data-as-of="${esc(chart.as_of)}" data-relevance-topic="${esc(relevanceTopic)}">
   <div class="ic-svg">${svg}</div>
   <figcaption class="ic-caption">
     <span class="ic-hook">${esc(hook || title)}</span>
@@ -271,6 +298,7 @@ function institutionalChartFigure(surfaceKey, topicId, locale) {
     <span class="ic-attrib">${esc(`${srcWord}: ${provider} · ${asOfWord} ${chart.as_of}`)}</span>
   </figcaption>
 </figure>`;
+  }).filter(Boolean).join('\n');
 }
 
 // ── Bilingual article rendering ───────────────────────────────────────────────
@@ -472,7 +500,7 @@ function renderResearchBody(ctx, locale) {
   // 1b) Real sourced OHLCV chart as chart-first evidence when one applies to the
   // research topic. Omitted cleanly when no verified chart is available.
   const researchTopicId = (topic && (topic.id || topic.slug)) || '';
-  const researchChart = institutionalChartFigure('market-news', researchTopicId, locale);
+  const researchChart = institutionalChartFigures('market-news', researchTopicId, locale);
 
   // 2. Regime / liquidity structure.
   sec('regime', t('Regime and liquidity structure', 'بنية النظام والسيولة'),
@@ -706,7 +734,7 @@ function renderStructureBody(ctx, locale) {
   // 2b) Real sourced OHLCV chart as chart-first structural evidence (when a
   // verified institutional chart applies to this surface/topic). Omitted cleanly
   // when no real chart is available — never a placeholder.
-  const chartFig = institutionalChartFigure('market-structure', topic.id, locale);
+  const chartFig = institutionalChartFigures('market-structure', topic.id, locale);
 
   // 3) Supporting reads — topic-specific selection of other dimensions.
   for (const dim of plan.supports) {

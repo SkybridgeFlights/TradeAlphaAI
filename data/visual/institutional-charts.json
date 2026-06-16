@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-15T19:09:05.329Z",
+  "generated_at": "2026-06-15T20:21:58.217Z",
   "status": "partial",
   "source_policy": "Approved provider OHLCV only; no inferred or placeholder bars.",
   "max_charts_per_article": 2,
@@ -13,6 +13,7 @@
       "chart_type": "price_structure",
       "title_en": "SPY observed price structure",
       "title_ar": "البنية السعرية المرصودة لمؤشر SPY",
+      "proxy_for": null,
       "analytical_reason": {
         "en": "Shows the observed price structure and whether range, participation, and volatility are confirming the article thesis.",
         "ar": "يوضح البنية السعرية المرصودة وما إذا كان النطاق والمشاركة والتقلب يؤكدان أطروحة المقال."
@@ -30,24 +31,153 @@
         "structural_stability",
         "breadth-vs-index"
       ],
-      "overlays": [
+      "time_axis": {
+        "method": "deterministic_evenly_spaced_observation_ticks",
+        "ticks": [
+          {
+            "index": 0,
+            "date": "2026-02-04"
+          },
+          {
+            "index": 22,
+            "date": "2026-03-09"
+          },
+          {
+            "index": 45,
+            "date": "2026-04-10"
+          },
+          {
+            "index": 67,
+            "date": "2026-05-12"
+          },
+          {
+            "index": 89,
+            "date": "2026-06-12"
+          }
+        ]
+      },
+      "observed_zones": [
         {
-          "type": "support_resistance",
+          "type": "support_resistance_zone",
           "role": "floor",
-          "value": 722.59
+          "lower": 722.59,
+          "upper": 726.371,
+          "value": 724.4805,
+          "method": "20_session_extreme_atr_band",
+          "evidence": {
+            "basis": "observed_ohlcv",
+            "window_sessions": 20,
+            "start_date": "2026-05-15",
+            "end_date": "2026-06-12",
+            "low_field": "low",
+            "high_field": "high",
+            "observed_extreme": 722.59
+          },
+          "evidence_refs": [
+            "ohlcv:2026-05-15:2026-06-12:low"
+          ]
         },
         {
-          "type": "support_resistance",
+          "type": "support_resistance_zone",
           "role": "ceiling",
-          "value": 760.4
+          "lower": 756.619,
+          "upper": 760.4,
+          "value": 758.5095,
+          "method": "20_session_extreme_atr_band",
+          "evidence": {
+            "basis": "observed_ohlcv",
+            "window_sessions": 20,
+            "start_date": "2026-05-15",
+            "end_date": "2026-06-12",
+            "low_field": "low",
+            "high_field": "high",
+            "observed_extreme": 760.4
+          },
+          "evidence_refs": [
+            "ohlcv:2026-05-15:2026-06-12:high"
+          ]
+        }
+      ],
+      "overlays": [
+        {
+          "type": "support_resistance_zone",
+          "role": "floor",
+          "lower": 722.59,
+          "upper": 726.371,
+          "value": 724.4805,
+          "method": "20_session_extreme_atr_band",
+          "evidence": {
+            "basis": "observed_ohlcv",
+            "window_sessions": 20,
+            "start_date": "2026-05-15",
+            "end_date": "2026-06-12",
+            "low_field": "low",
+            "high_field": "high",
+            "observed_extreme": 722.59
+          },
+          "evidence_refs": [
+            "ohlcv:2026-05-15:2026-06-12:low"
+          ]
+        },
+        {
+          "type": "support_resistance_zone",
+          "role": "ceiling",
+          "lower": 756.619,
+          "upper": 760.4,
+          "value": 758.5095,
+          "method": "20_session_extreme_atr_band",
+          "evidence": {
+            "basis": "observed_ohlcv",
+            "window_sessions": 20,
+            "start_date": "2026-05-15",
+            "end_date": "2026-06-12",
+            "low_field": "low",
+            "high_field": "high",
+            "observed_extreme": 760.4
+          },
+          "evidence_refs": [
+            "ohlcv:2026-05-15:2026-06-12:high"
+          ]
         },
         {
           "type": "structure",
           "state": "inside",
-          "value": 741.75
+          "value": 741.75,
+          "method": "latest_close_vs_prior_20_session_range",
+          "evidence": {
+            "basis": "observed_ohlcv",
+            "prior_start_date": "2026-04-17",
+            "prior_end_date": "2026-05-14",
+            "prior_low": 702.2803,
+            "prior_high": 749.53,
+            "observed_close": 741.75,
+            "observed_date": "2026-06-12"
+          },
+          "evidence_refs": [
+            "ohlcv:2026-04-17:2026-05-14:range",
+            "ohlcv:2026-06-12:close"
+          ]
+        },
+        {
+          "type": "tactical_context",
+          "state": "fragile_continuation",
+          "evidence": [
+            "continuation:persistence=persistent",
+            "continuation:participation=mixed",
+            "continuation:fragility=fragile"
+          ],
+          "evidence_refs": [
+            "tactical-context:continuation:persistence=persistent",
+            "tactical-context:continuation:participation=mixed",
+            "tactical-context:continuation:fragility=fragile"
+          ],
+          "source_artifact": "data/intelligence/tactical-context.json",
+          "generated_at": "2026-06-15T19:09:05.385Z",
+          "as_of": "2026-06-15",
+          "affects_price_scale": false
         }
       ],
-      "overlay_count": 3,
+      "overlay_count": 4,
       "series": [
         {
           "date": "2026-02-04",
@@ -800,6 +930,18 @@
     },
     {
       "symbol": "TLT",
+      "reason": "approved_ohlcv_unavailable"
+    },
+    {
+      "symbol": "IWM",
+      "reason": "approved_ohlcv_unavailable"
+    },
+    {
+      "symbol": "UUP",
+      "reason": "approved_ohlcv_unavailable"
+    },
+    {
+      "symbol": "VIXY",
       "reason": "approved_ohlcv_unavailable"
     }
   ]

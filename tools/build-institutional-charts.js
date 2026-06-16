@@ -12,12 +12,25 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const OUT_DIR = path.join(ROOT, 'data', 'visual', 'institutional-charts');
+const TACTICAL_CONTEXT = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
 const WRITE = process.argv.includes('--write');
 const FETCH = process.argv.includes('--fetch');
 const SOURCE_DIR = argValue('--source-dir');
+const SELF_TEST = process.argv.includes('--self-test');
 const MAX_BARS = 90;
 const MIN_BARS = 35;
 const MAX_OVERLAYS = 5;
+const RANGE_WINDOW = 20;
+const TACTICAL_MAX_AGE_HOURS = 72;
+const TACTICAL_STATES = new Set([
+  'fragile_continuation',
+  'fading_pressure',
+  'narrowing_participation',
+  'liquidity_pressure',
+  'mixed_confirmation',
+  'supportive_structure',
+  'evidence_unavailable',
+]);
 
 const SPECS = [
   {
@@ -56,6 +69,35 @@ const SPECS = [
     allowed_surfaces: ['market-structure', 'market-news', 'articles'],
     related_topics: ['yield-curve-pressure', 'tlt-duration-sensitivity'],
   },
+  {
+    id: 'iwm-participation-structure',
+    symbol: 'IWM',
+    visual_type: 'participation_structure',
+    title_en: 'IWM participation and breadth structure',
+    title_ar: 'بنية المشاركة واتساع السوق في IWM',
+    allowed_surfaces: ['market-structure', 'market-news', 'articles'],
+    related_topics: ['participation_breadth', 'breadth-vs-index', 'narrow-leadership', 'participation-quality'],
+  },
+  {
+    id: 'uup-dollar-liquidity',
+    symbol: 'UUP',
+    proxy_for: 'US Dollar Index exposure',
+    visual_type: 'dollar_liquidity',
+    title_en: 'UUP dollar-liquidity proxy structure',
+    title_ar: 'بنية أداة UUP بوصفها مؤشراً بديلاً لسيولة الدولار',
+    allowed_surfaces: ['market-news', 'articles'],
+    related_topics: ['dollar-strength-global-liquidity', 'dxy-gold-relationship', 'liquidity-tightening'],
+  },
+  {
+    id: 'vixy-volatility-proxy',
+    symbol: 'VIXY',
+    proxy_for: 'front-month VIX futures exposure',
+    visual_type: 'volatility_proxy',
+    title_en: 'VIXY volatility-futures proxy structure',
+    title_ar: 'بنية أداة VIXY بوصفها مؤشراً بديلاً لعقود التقلب',
+    allowed_surfaces: ['market-structure', 'market-news', 'articles'],
+    related_topics: ['volatility-compression', 'volatility-expansion', 'vix-equity-breadth'],
+  },
 ];
 
 const LABELS = {
@@ -69,9 +111,18 @@ const LABELS = {
     expansion_down: 'Close below prior observed range',
     inside: 'Close remains inside prior observed range',
     liquidity: 'Recent volume participation is thinner',
+    tactical: {
+      fragile_continuation: 'Tactical context: fragile continuation',
+      fading_pressure: 'Tactical context: fading pressure',
+      narrowing_participation: 'Tactical context: narrowing participation',
+      liquidity_pressure: 'Tactical context: liquidity pressure',
+      mixed_confirmation: 'Tactical context: mixed confirmation',
+      supportive_structure: 'Tactical context: supportive structure',
+      evidence_unavailable: 'Tactical context: evidence unavailable',
+    },
     source: 'Source',
     asof: 'As of',
-    disclaimer: 'Observed market structure, not a forecast or trading signal',
+    disclaimer: 'Observed market structure, not a forecast or recommendation',
   },
   ar: {
     kicker: 'البنية السعرية المؤسسية',
@@ -83,9 +134,18 @@ const LABELS = {
     expansion_down: 'الإغلاق أدنى النطاق المرصود السابق',
     inside: 'الإغلاق ما زال داخل النطاق المرصود السابق',
     liquidity: 'مشاركة أحجام التداول الأخيرة أضعف',
+    tactical: {
+      fragile_continuation: 'السياق التكتيكي: استمرار هش',
+      fading_pressure: 'السياق التكتيكي: تراجع الضغط',
+      narrowing_participation: 'السياق التكتيكي: تضيق المشاركة',
+      liquidity_pressure: 'السياق التكتيكي: ضغط سيولة',
+      mixed_confirmation: 'السياق التكتيكي: تأكيدات مختلطة',
+      supportive_structure: 'السياق التكتيكي: بنية داعمة',
+      evidence_unavailable: 'السياق التكتيكي: الأدلة غير متاحة',
+    },
     source: 'المصدر',
     asof: 'حتى',
-    disclaimer: 'قراءة للبنية المرصودة، وليست توقعاً أو إشارة تداول',
+    disclaimer: 'قراءة للبنية المرصودة، وليست توقعاً أو توصية',
   },
 };
 
@@ -133,7 +193,126 @@ function trueRanges(series) {
   });
 }
 
-function deriveOverlays(series) {
+function deriveObservedZones(series) {
+  if (series.length < MIN_BARS) return [];
+  const recent = series.slice(-RANGE_WINDOW);
+  const recentHigh = Math.max(...recent.map((bar) => bar.high));
+  const recentLow = Math.min(...recent.map((bar) => bar.low));
+  const observedRange = recentHigh - recentLow;
+  if (!(observedRange > 0)) return [];
+  const recentAtr = average(trueRanges(series).slice(-10));
+  const bandDepth = Math.max(
+    Math.min((recentAtr || observedRange * 0.08) * 0.45, observedRange * 0.1),
+    observedRange * 0.025,
+  );
+  const evidence = {
+    basis: 'observed_ohlcv',
+    window_sessions: RANGE_WINDOW,
+    start_date: recent[0].date,
+    end_date: recent.at(-1).date,
+    low_field: 'low',
+    high_field: 'high',
+  };
+  return [
+    {
+      type: 'support_resistance_zone',
+      role: 'floor',
+      lower: recentLow,
+      upper: Math.min(recentHigh, recentLow + bandDepth),
+      value: recentLow + bandDepth / 2,
+      method: '20_session_extreme_atr_band',
+      evidence: { ...evidence, observed_extreme: recentLow },
+      evidence_refs: [`ohlcv:${recent[0].date}:${recent.at(-1).date}:low`],
+    },
+    {
+      type: 'support_resistance_zone',
+      role: 'ceiling',
+      lower: Math.max(recentLow, recentHigh - bandDepth),
+      upper: recentHigh,
+      value: recentHigh - bandDepth / 2,
+      method: '20_session_extreme_atr_band',
+      evidence: { ...evidence, observed_extreme: recentHigh },
+      evidence_refs: [`ohlcv:${recent[0].date}:${recent.at(-1).date}:high`],
+    },
+  ];
+}
+
+function normalizeTacticalOverlay(input) {
+  if (!input || typeof input !== 'object') return null;
+  const state = String(input.state || input.classification || '').trim();
+  if (!TACTICAL_STATES.has(state)) return null;
+  const evidence = (Array.isArray(input.evidence) ? input.evidence : [])
+    .map((item) => String(item || '').trim())
+    .filter(Boolean)
+    .slice(0, 4);
+  if (state !== 'evidence_unavailable' && evidence.length === 0) return null;
+  return {
+    type: 'tactical_context',
+    state,
+    evidence,
+    evidence_refs: evidence.map((item) => `tactical-context:${item}`),
+    source_artifact: String(input.source_artifact || 'data/intelligence/tactical-context.json'),
+    generated_at: Number.isFinite(Date.parse(String(input.generated_at || '')))
+      ? new Date(Date.parse(String(input.generated_at))).toISOString()
+      : null,
+    as_of: /^\d{4}-\d{2}-\d{2}/.test(String(input.as_of || ''))
+      ? String(input.as_of).slice(0, 10)
+      : null,
+    affects_price_scale: false,
+  };
+}
+
+function parseArtifactTimestamp(artifact) {
+  const value = artifact && (artifact.as_of || artifact.generated_at);
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function mapTacticalContextArtifact(artifact, now = Date.now()) {
+  if (!artifact || artifact.available !== true || artifact.source_layer !== 'tactical-context') return null;
+  const timestamp = parseArtifactTimestamp(artifact);
+  if (timestamp === null || !Number.isFinite(now) || timestamp > now + 5 * 60 * 1000) return null;
+  const ageHours = (now - timestamp) / 3600000;
+  if (ageHours > TACTICAL_MAX_AGE_HOURS) return null;
+  const marketStateAge = finite(artifact.attribution && artifact.attribution.market_state_age_hours);
+  if (marketStateAge !== null && marketStateAge > TACTICAL_MAX_AGE_HOURS) return null;
+  const dimensions = artifact.dimensions && typeof artifact.dimensions === 'object' ? artifact.dimensions : {};
+  const candidates = [
+    ['continuation', new Set(['exhaustion_risk', 'fragile_continuation']), 'fragile_continuation'],
+    ['directional_pressure', new Set(['fading', 'stalling']), 'fading_pressure'],
+    ['participation_quality', new Set(['narrowing', 'narrow']), 'narrowing_participation'],
+    ['liquidity_support', new Set(['draining']), 'liquidity_pressure'],
+    ['confirmation_quality', new Set(['partial']), 'mixed_confirmation'],
+    ['participation_quality', new Set(['mixed']), 'mixed_confirmation'],
+    ['tactical_bias', new Set(['supportive']), 'supportive_structure'],
+  ];
+  for (const [dimension, states, mappedState] of candidates) {
+    const value = dimensions[dimension];
+    const evidence = Array.isArray(value && value.evidence)
+      ? value.evidence.map((item) => String(item || '').trim()).filter(Boolean)
+      : [];
+    if (!value || !states.has(value.state) || evidence.length === 0) continue;
+    return normalizeTacticalOverlay({
+      state: mappedState,
+      evidence: evidence.map((item) => `${dimension}:${item}`),
+      source_artifact: 'data/intelligence/tactical-context.json',
+      generated_at: new Date(timestamp).toISOString(),
+      as_of: new Date(timestamp).toISOString().slice(0, 10),
+    });
+  }
+  return null;
+}
+
+function loadTacticalContextOverlay(now = Date.now()) {
+  try {
+    return mapTacticalContextArtifact(JSON.parse(fs.readFileSync(TACTICAL_CONTEXT, 'utf8')), now);
+  } catch {
+    return null;
+  }
+}
+
+function deriveOverlays(series, tacticalInput = null) {
   if (series.length < MIN_BARS) return [];
   const recent = series.slice(-20);
   const prior = series.slice(-40, -20);
@@ -148,21 +327,72 @@ function deriveOverlays(series) {
   const recentVolume = average(recent.slice(-10).map((bar) => bar.volume).filter((value) => value > 0));
   const priorVolume = average(series.slice(-40, -10).map((bar) => bar.volume).filter((value) => value > 0));
   const overlays = [
-    { type: 'support_resistance', role: 'floor', value: recentLow },
-    { type: 'support_resistance', role: 'ceiling', value: recentHigh },
+    ...deriveObservedZones(series),
     {
       type: 'structure',
       state: last.close > priorHigh ? 'expansion_up' : last.close < priorLow ? 'expansion_down' : 'inside',
       value: last.close,
+      method: 'latest_close_vs_prior_20_session_range',
+      evidence: {
+        basis: 'observed_ohlcv',
+        prior_start_date: prior[0].date,
+        prior_end_date: prior.at(-1).date,
+        prior_low: priorLow,
+        prior_high: priorHigh,
+        observed_close: last.close,
+        observed_date: last.date,
+      },
+      evidence_refs: [
+        `ohlcv:${prior[0].date}:${prior.at(-1).date}:range`,
+        `ohlcv:${last.date}:close`,
+      ],
     },
   ];
   if (recentAtr !== null && priorAtr !== null && priorAtr > 0 && recentAtr / priorAtr <= 0.72) {
-    overlays.push({ type: 'volatility_compression', start_date: series.at(-10).date, end_date: last.date });
+    overlays.push({
+      type: 'volatility_compression',
+      start_date: series.at(-10).date,
+      end_date: last.date,
+      method: '10_session_true_range_vs_prior_30_session_average',
+      evidence: { basis: 'observed_ohlcv', recent_atr: recentAtr, prior_atr: priorAtr, ratio: recentAtr / priorAtr },
+      evidence_refs: [`ohlcv:${series.at(-40).date}:${last.date}:true_range`],
+    });
   }
   if (recentVolume !== null && priorVolume !== null && priorVolume > 0 && recentVolume / priorVolume <= 0.72) {
-    overlays.push({ type: 'liquidity_zone', start_date: series.at(-10).date, end_date: last.date });
+    overlays.push({
+      type: 'liquidity_zone',
+      start_date: series.at(-10).date,
+      end_date: last.date,
+      method: '10_session_volume_vs_prior_30_session_average',
+      evidence: { basis: 'observed_ohlcv', recent_volume: recentVolume, prior_volume: priorVolume, ratio: recentVolume / priorVolume },
+      evidence_refs: [`ohlcv:${series.at(-40).date}:${last.date}:volume`],
+    });
   }
+  const tactical = normalizeTacticalOverlay(tacticalInput);
+  if (tactical) return overlays.slice(0, MAX_OVERLAYS - 1).concat(tactical);
   return overlays.slice(0, MAX_OVERLAYS);
+}
+
+function selectTimeTicks(series, maximum = 5) {
+  if (!Array.isArray(series) || series.length === 0) return [];
+  const count = Math.max(2, Math.min(5, Math.trunc(maximum) || 5, series.length));
+  const indexes = new Set();
+  for (let index = 0; index < count; index++) {
+    indexes.add(Math.round(index * (series.length - 1) / (count - 1)));
+  }
+  return [...indexes].sort((a, b) => a - b).map((index) => ({ index, date: series[index].date }));
+}
+
+function formatDateTick(date, locale) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(date || ''));
+  if (!match) return '';
+  const months = locale === 'ar'
+    ? ['ينا', 'فبر', 'مار', 'أبر', 'ماي', 'يون', 'يول', 'أغس', 'سبت', 'أكت', 'نوف', 'ديس']
+    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const year = match[1];
+  const month = months[Number(match[2]) - 1];
+  const day = String(Number(match[3]));
+  return locale === 'ar' ? `${day} ${month} ${year}` : `${month} ${day}, ${year}`;
 }
 
 function esc(value) {
@@ -176,12 +406,16 @@ function formatPrice(value) {
   return value >= 100 ? value.toFixed(2) : value.toFixed(3);
 }
 
+function dataList(values) {
+  return esc((Array.isArray(values) ? values : []).map((value) => String(value)).join('|'));
+}
+
 function renderSvg(chart, locale) {
   const ar = locale === 'ar';
   const text = LABELS[locale];
-  const width = 1200;
-  const height = 620;
-  const plot = { x: 72, y: 126, width: 1056, height: 330 };
+  const width = 1400;
+  const height = 900;
+  const plot = { x: 92, y: 142, width: 1216, height: 480 };
   const series = chart.series;
   const lows = series.map((bar) => bar.low);
   const highs = series.map((bar) => bar.high);
@@ -195,22 +429,41 @@ function renderSvg(chart, locale) {
   const points = series.map((bar, index) => `${x(index).toFixed(1)},${y(bar.close).toFixed(1)}`).join(' ');
   const title = ar ? chart.title_ar : chart.title_en;
   const anchor = ar ? 'end' : 'start';
-  const tx = ar ? 1128 : 72;
+  const tx = ar ? 1308 : 92;
   const direction = ar ? ' direction="rtl"' : '';
   const font = ar ? "'Tajawal','Cairo','Segoe UI',Arial,sans-serif" : "'Inter','Segoe UI',Arial,sans-serif";
+  const tactical = chart.overlays.find((overlay) => overlay.type === 'tactical_context');
+  const timeTicks = selectTimeTicks(series, 5);
   const parts = [
-    '<rect width="1200" height="620" fill="#0b0e13"/>',
-    '<rect width="1200" height="3" fill="#d8b15a" opacity=".88"/>',
-    `<text x="${tx}" y="48" text-anchor="${anchor}"${direction} font-family="${font}" font-size="17" font-weight="700" fill="#d8b15a">${esc(text.kicker)}</text>`,
-    `<text x="${tx}" y="86" text-anchor="${anchor}"${direction} font-family="${font}" font-size="30" font-weight="760" fill="#f4f7f1">${esc(title)}</text>`,
+    `<rect width="${width}" height="${height}" fill="#0b0e13"/>`,
+    `<rect width="${width}" height="3" fill="#d8b15a" opacity=".88"/>`,
+    `<text x="${tx}" y="52" text-anchor="${anchor}"${direction} font-family="${font}" font-size="18" font-weight="700" fill="#d8b15a">${esc(text.kicker)}</text>`,
+    `<text x="${tx}" y="96" text-anchor="${anchor}"${direction} font-family="${font}" font-size="34" font-weight="760" fill="#f4f7f1">${esc(title)}</text>`,
     `<rect x="${plot.x}" y="${plot.y}" width="${plot.width}" height="${plot.height}" rx="8" fill="#10151d" stroke="rgba(148,163,184,.2)"/>`,
   ];
 
-  for (let i = 0; i <= 4; i++) {
-    const value = yMin + ((yMax - yMin) * i / 4);
+  if (tactical) {
+    const tacticalFill = {
+      fragile_continuation: '#b58b56',
+      fading_pressure: '#7890a8',
+      narrowing_participation: '#9f7c63',
+      liquidity_pressure: '#8d6d79',
+      mixed_confirmation: '#8c8570',
+      supportive_structure: '#477e73',
+      evidence_unavailable: '#626a70',
+    }[tactical.state];
+    parts.push(`<rect x="${plot.x}" y="${plot.y}" width="${plot.width}" height="${plot.height}" rx="8" fill="${tacticalFill}" opacity=".045"/>`);
+    const badgeWidth = ar ? 270 : 300;
+    const badgeX = ar ? plot.x + plot.width - badgeWidth - 18 : plot.x + 18;
+    parts.push(`<rect x="${badgeX}" y="${plot.y + 16}" width="${badgeWidth}" height="34" rx="5" fill="${tacticalFill}" opacity=".2" stroke="${tacticalFill}" stroke-opacity=".45"/>`);
+    parts.push(`<text x="${ar ? badgeX + badgeWidth - 12 : badgeX + 12}" y="${plot.y + 39}" text-anchor="${anchor}"${direction} font-family="${font}" font-size="14" font-weight="650" fill="#dbe2dc">${esc(text.tactical[tactical.state])}</text>`);
+  }
+
+  for (let i = 0; i <= 5; i++) {
+    const value = yMin + ((yMax - yMin) * i / 5);
     const yy = y(value);
     parts.push(`<line x1="${plot.x}" y1="${yy.toFixed(1)}" x2="${plot.x + plot.width}" y2="${yy.toFixed(1)}" stroke="rgba(148,163,184,.12)"/>`);
-    parts.push(`<text x="${plot.x + plot.width - 8}" y="${(yy - 6).toFixed(1)}" text-anchor="end" font-family="'Inter','Segoe UI',Arial,sans-serif" font-size="13" fill="#8d978f">${formatPrice(value)}</text>`);
+    parts.push(`<text x="${plot.x + plot.width - 10}" y="${(yy - 7).toFixed(1)}" text-anchor="end" font-family="'Inter','Segoe UI',Arial,sans-serif" font-size="15" fill="#9aa49d">${formatPrice(value)}</text>`);
   }
 
   const compression = chart.overlays.find((overlay) => overlay.type === 'volatility_compression');
@@ -220,45 +473,69 @@ function renderSvg(chart, locale) {
     parts.push(`<rect x="${xx.toFixed(1)}" y="${plot.y}" width="${(plot.x + plot.width - xx).toFixed(1)}" height="${plot.height}" fill="#d8b15a" opacity=".055"/>`);
   }
 
-  for (const overlay of chart.overlays.filter((item) => item.type === 'support_resistance')) {
-    const yy = y(overlay.value);
+  for (const overlay of chart.overlays.filter((item) => item.type === 'support_resistance_zone')) {
+    const zoneTop = y(overlay.upper);
+    const zoneBottom = y(overlay.lower);
+    const zoneHeight = Math.max(2, zoneBottom - zoneTop);
     const color = overlay.role === 'floor' ? '#6ee7d8' : '#d8b15a';
-    parts.push(`<line x1="${plot.x}" y1="${yy.toFixed(1)}" x2="${plot.x + plot.width}" y2="${yy.toFixed(1)}" stroke="${color}" stroke-width="1.4" stroke-dasharray="7 7" opacity=".72"/>`);
+    parts.push(`<rect x="${plot.x}" y="${zoneTop.toFixed(1)}" width="${plot.width}" height="${zoneHeight.toFixed(1)}" fill="${color}" opacity=".09"/>`);
+    parts.push(`<line x1="${plot.x}" y1="${zoneTop.toFixed(1)}" x2="${plot.x + plot.width}" y2="${zoneTop.toFixed(1)}" stroke="${color}" stroke-width="1.2" opacity=".58"/>`);
+    parts.push(`<line x1="${plot.x}" y1="${zoneBottom.toFixed(1)}" x2="${plot.x + plot.width}" y2="${zoneBottom.toFixed(1)}" stroke="${color}" stroke-width="1.2" opacity=".58"/>`);
   }
 
-  parts.push(`<polyline points="${points}" fill="none" stroke="#d9e2dc" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`);
+  parts.push(`<polyline points="${points}" fill="none" stroke="#d9e2dc" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`);
   const last = series.at(-1);
-  parts.push(`<circle cx="${x(series.length - 1).toFixed(1)}" cy="${y(last.close).toFixed(1)}" r="4.5" fill="#f2d27b"/>`);
+  parts.push(`<circle cx="${x(series.length - 1).toFixed(1)}" cy="${y(last.close).toFixed(1)}" r="5.5" fill="#f2d27b"/>`);
+
+  for (const tick of timeTicks) {
+    const xx = x(tick.index);
+    const tickAnchor = tick.index === 0 ? 'start' : tick.index === series.length - 1 ? 'end' : 'middle';
+    parts.push(`<line x1="${xx.toFixed(1)}" y1="${plot.y + plot.height}" x2="${xx.toFixed(1)}" y2="${plot.y + plot.height + 8}" stroke="#69746d" stroke-width="1"/>`);
+    parts.push(`<text x="${xx.toFixed(1)}" y="${plot.y + plot.height + 30}" text-anchor="${tickAnchor}" font-family="${font}" font-size="14" fill="#9aa49d"${direction}>${esc(formatDateTick(tick.date, locale))}</text>`);
+  }
 
   const notes = chart.overlays.map((overlay) => {
-    if (overlay.type === 'support_resistance') return overlay.role === 'floor' ? text.floor : text.ceiling;
-    if (overlay.type === 'structure') return text[overlay.state];
-    if (overlay.type === 'volatility_compression') return text.compression;
-    return text.liquidity;
+    let note = text.liquidity;
+    if (overlay.type === 'support_resistance_zone') note = overlay.role === 'floor' ? text.floor : text.ceiling;
+    if (overlay.type === 'structure') note = text[overlay.state];
+    if (overlay.type === 'volatility_compression') note = text.compression;
+    if (overlay.type === 'tactical_context') note = text.tactical[overlay.state];
+    return { note, overlay };
   });
-  notes.slice(0, MAX_OVERLAYS).forEach((note, index) => {
-    const rowY = 492 + index * 20;
-    const markerX = ar ? 1122 : 72;
-    const textX = ar ? 1108 : 88;
-    parts.push(`<rect x="${markerX}" y="${rowY - 11}" width="5" height="13" fill="#d8b15a" opacity=".8"/>`);
-    parts.push(`<text x="${textX}" y="${rowY}" text-anchor="${anchor}"${direction} font-family="${font}" font-size="14" fill="#cad3c7">${esc(note)}</text>`);
+  notes.slice(0, MAX_OVERLAYS).forEach(({ note, overlay }, index) => {
+    const rowY = 690 + index * 22;
+    const markerX = ar ? 1302 : 92;
+    const textX = ar ? 1288 : 108;
+    let metadata = ` data-overlay-type="${esc(overlay.type)}" data-evidence-refs="${dataList(overlay.evidence_refs)}"`;
+    if (overlay.type === 'support_resistance_zone') {
+      metadata += ` data-zone-type="support_resistance_zone" data-zone-role="${esc(overlay.role)}" data-lower="${esc(overlay.lower)}" data-upper="${esc(overlay.upper)}" data-method="${esc(overlay.method)}"`;
+    } else if (overlay.type === 'tactical_context') {
+      metadata += ` data-tactical-state="${esc(overlay.state)}" data-source-artifact="${esc(overlay.source_artifact)}"`;
+    } else if (overlay.method) {
+      metadata += ` data-method="${esc(overlay.method)}"`;
+    }
+    parts.push(`<g${metadata}>`);
+    parts.push(`<rect x="${markerX}" y="${rowY - 12}" width="5" height="14" fill="#d8b15a" opacity=".8"/>`);
+    parts.push(`<text x="${textX}" y="${rowY}" text-anchor="${anchor}"${direction} font-family="${font}" font-size="15" fill="#cad3c7">${esc(note)}</text>`);
+    parts.push('</g>');
   });
 
   const source = ar ? chart.attribution.label_ar : chart.attribution.label_en;
-  parts.push(`<text x="${tx}" y="586" text-anchor="${anchor}"${direction} font-family="${font}" font-size="13" fill="#8d978f">${esc(`${text.source}: ${source} · ${text.asof} ${chart.as_of}`)}</text>`);
-  parts.push(`<text x="${tx}" y="606" text-anchor="${anchor}"${direction} font-family="${font}" font-size="12" fill="#5d675f">${esc(text.disclaimer)}</text>`);
+  parts.push(`<text x="${tx}" y="870" text-anchor="${anchor}"${direction} font-family="${font}" font-size="13" fill="#8d978f">${esc(`${text.source}: ${source} · ${text.asof} ${chart.as_of}`)}</text>`);
+  parts.push(`<text x="${tx}" y="890" text-anchor="${anchor}"${direction} font-family="${font}" font-size="12" fill="#5d675f">${esc(text.disclaimer)}</text>`);
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-label="${esc(title)}" preserveAspectRatio="xMidYMid meet"${direction} data-series-hash="${chart.series_hash}" data-bar-count="${series.length}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(title)}" preserveAspectRatio="xMidYMid meet"${direction} data-series-hash="${chart.series_hash}" data-bar-count="${series.length}" data-overlay-count="${chart.overlays.length}" data-time-axis="true" data-time-ticks="${timeTicks.length}" data-time-tick-dates="${dataList(timeTicks.map((tick) => tick.date))}">
 ${parts.join('\n')}
 </svg>
 `;
 }
 
-function buildChart(spec, rows, source) {
+function buildChart(spec, rows, source, options = {}) {
   const series = normalizeSeries(rows);
   if (series.length < MIN_BARS) return null;
   const seriesHash = hash(JSON.stringify(series));
-  const overlays = deriveOverlays(series);
+  const overlays = deriveOverlays(series, options.tactical_overlay);
+  const observedZones = overlays.filter((overlay) => overlay.type === 'support_resistance_zone');
   const asOf = series.at(-1).date;
   const chart = {
     id: spec.id,
@@ -267,6 +544,7 @@ function buildChart(spec, rows, source) {
     chart_type: spec.visual_type,
     title_en: spec.title_en,
     title_ar: spec.title_ar,
+    proxy_for: spec.proxy_for || null,
     analytical_reason: {
       en: 'Shows the observed price structure and whether range, participation, and volatility are confirming the article thesis.',
       ar: 'يوضح البنية السعرية المرصودة وما إذا كان النطاق والمشاركة والتقلب يؤكدان أطروحة المقال.',
@@ -277,6 +555,11 @@ function buildChart(spec, rows, source) {
     },
     allowed_surfaces: spec.allowed_surfaces,
     related_topics: spec.related_topics,
+    time_axis: {
+      method: 'deterministic_evenly_spaced_observation_ticks',
+      ticks: selectTimeTicks(series, 5),
+    },
+    observed_zones: observedZones,
     overlays,
     overlay_count: overlays.length,
     series,
@@ -396,16 +679,22 @@ async function sourceFor(spec) {
   return null;
 }
 
-async function build() {
+async function build(options = {}) {
   const rendered = [];
   const unavailable = [];
+  const sharedTacticalOverlay = Object.prototype.hasOwnProperty.call(options, 'tactical_overlay')
+    ? normalizeTacticalOverlay(options.tactical_overlay)
+    : loadTacticalContextOverlay(options.now);
   for (const spec of SPECS) {
     const sourced = await sourceFor(spec);
     if (!sourced) {
       unavailable.push({ symbol: spec.symbol, reason: 'approved_ohlcv_unavailable' });
       continue;
     }
-    const result = buildChart(spec, sourced.rows, sourced.source);
+    const tacticalOverlay = options.tactical_overlays
+      ? normalizeTacticalOverlay(options.tactical_overlays[spec.id] || options.tactical_overlays[spec.symbol])
+      : sharedTacticalOverlay;
+    const result = buildChart(spec, sourced.rows, sourced.source, { tactical_overlay: tacticalOverlay });
     if (result) rendered.push(result);
     else unavailable.push({ symbol: spec.symbol, reason: 'insufficient_valid_bars' });
   }
@@ -422,7 +711,131 @@ async function build() {
   };
 }
 
+function selfTestSeries(length = 60) {
+  const rows = [];
+  for (let index = 0; index < length; index++) {
+    const date = new Date(Date.UTC(2026, 0, 2 + index));
+    const base = 480 + index * 0.35 + Math.sin(index / 4) * 2.5;
+    rows.push({
+      date: date.toISOString().slice(0, 10),
+      open: base - 0.6,
+      high: base + 2.1,
+      low: base - 2.2,
+      close: base + 0.8,
+      volume: 1000000 - index * 2500,
+    });
+  }
+  return rows;
+}
+
+function runSelfTest() {
+  const source = {
+    provider: 'Approved deterministic fixture',
+    source_url: 'local-self-test',
+    fetched_at: '2026-03-02T00:00:00.000Z',
+    response_hash: hash('phase-130-self-test'),
+  };
+  const tactical = {
+    state: 'mixed_confirmation',
+    evidence: ['fixture:cross_asset_confirmation=mixed'],
+    source_artifact: 'self-test',
+    generated_at: '2026-03-02T00:00:00.000Z',
+    as_of: '2026-03-02',
+  };
+  const result = buildChart(SPECS[0], selfTestSeries(), source, { tactical_overlay: tactical });
+  if (!result) throw new Error('self-test chart was not built');
+  const zones = result.chart.observed_zones;
+  if (zones.length !== 2 || zones.some((zone) => zone.type !== 'support_resistance_zone' || !Number.isFinite(zone.lower) || !Number.isFinite(zone.upper) || zone.lower >= zone.upper)) {
+    throw new Error('observed support/resistance zones are malformed');
+  }
+  if (zones.some((zone) => !zone.method || zone.evidence?.basis !== 'observed_ohlcv' || !zone.evidence_refs?.length)) {
+    throw new Error('observed zones are missing method/evidence');
+  }
+  if (result.chart.overlays.length > MAX_OVERLAYS || !result.chart.overlays.some((overlay) => overlay.type === 'tactical_context')) {
+    throw new Error('tactical overlay governance failed');
+  }
+  if (result.chart.time_axis.ticks.length < 3 || !result.svg.en.includes('data-time-axis="true"')) {
+    throw new Error('deterministic time axis was not rendered');
+  }
+  if (!result.svg.en.includes(`data-overlay-count="${result.chart.overlay_count}"`)
+    || !result.svg.en.includes('data-time-ticks="5"')
+    || !result.svg.en.includes('data-time-tick-dates="')
+    || !result.svg.en.includes('data-zone-type="support_resistance_zone"')
+    || !result.svg.en.includes('data-zone-role="floor"')
+    || !result.svg.en.includes('data-lower="')
+    || !result.svg.en.includes('data-upper="')
+    || !result.svg.en.includes('data-method="20_session_extreme_atr_band"')
+    || !result.svg.en.includes('data-evidence-refs="ohlcv:')
+    || !result.svg.en.includes('data-overlay-type="tactical_context"')
+    || !result.svg.en.includes('data-tactical-state="mixed_confirmation"')) {
+    throw new Error('SVG overlay contract metadata was not rendered');
+  }
+  const renderedOverlayCount = (result.svg.en.match(/\sdata-overlay-type="/g) || []).length;
+  if (renderedOverlayCount !== result.chart.overlay_count) {
+    throw new Error(`rendered overlay metadata count ${renderedOverlayCount} does not match ${result.chart.overlay_count}`);
+  }
+  for (const overlay of result.chart.overlays) {
+    if (!result.svg.en.includes(`data-overlay-type="${esc(overlay.type)}"`)) {
+      throw new Error(`rendered overlay metadata missing for ${overlay.type}`);
+    }
+  }
+  if (!/viewBox="0 0 1400 900"/.test(result.svg.en) || /<svg[^>]*\s(?:width|height)=/.test(result.svg.en)) {
+    throw new Error('SVG must be viewBox-only');
+  }
+  if (!result.svg.ar.includes('direction="rtl"') || result.svg.en !== renderSvg(result.chart, 'en')) {
+    throw new Error('bilingual or deterministic rendering failed');
+  }
+  const freshAt = Date.parse('2026-03-02T12:00:00.000Z');
+  const artifact = {
+    source_layer: 'tactical-context',
+    available: true,
+    generated_at: '2026-03-02T00:00:00.000Z',
+    dimensions: {
+      continuation: { state: 'exhaustion_risk', evidence: ['persistence=persistent', 'fragility=fragile'] },
+      directional_pressure: { state: 'fading', evidence: ['momentum=early_deterioration'] },
+    },
+  };
+  const mapped = mapTacticalContextArtifact(artifact, freshAt);
+  if (mapped?.state !== 'fragile_continuation' || mapped.source_artifact !== 'data/intelligence/tactical-context.json' || !mapped.evidence_refs?.length) {
+    throw new Error('verified tactical artifact mapping failed');
+  }
+  if (mapTacticalContextArtifact(artifact, Date.parse('2026-03-06T00:00:01.000Z')) !== null) {
+    throw new Error('stale tactical artifact was not omitted');
+  }
+  const mappingCases = [
+    ['directional_pressure', 'stalling', 'fading_pressure'],
+    ['participation_quality', 'narrow', 'narrowing_participation'],
+    ['liquidity_support', 'draining', 'liquidity_pressure'],
+    ['confirmation_quality', 'partial', 'mixed_confirmation'],
+    ['tactical_bias', 'supportive', 'supportive_structure'],
+  ];
+  for (const [dimension, state, expected] of mappingCases) {
+    const mappedCase = mapTacticalContextArtifact({
+      source_layer: 'tactical-context',
+      available: true,
+      as_of: '2026-03-02T00:00:00.000Z',
+      dimensions: { [dimension]: { state, evidence: [`fixture:${dimension}=${state}`] } },
+    }, freshAt);
+    if (mappedCase?.state !== expected) throw new Error(`tactical mapping failed for ${dimension}:${state}`);
+  }
+  const staleMarketState = { ...artifact, attribution: { market_state_age_hours: TACTICAL_MAX_AGE_HOURS + 1 } };
+  if (mapTacticalContextArtifact(staleMarketState, freshAt) !== null) {
+    throw new Error('artifact backed by stale market state was not omitted');
+  }
+  const missingEvidence = JSON.parse(JSON.stringify(artifact));
+  missingEvidence.dimensions.continuation.evidence = [];
+  missingEvidence.dimensions.directional_pressure.evidence = [];
+  if (mapTacticalContextArtifact(missingEvidence, freshAt) !== null) {
+    throw new Error('evidence-free tactical artifact was not omitted');
+  }
+  console.log('[institutional-charts] self-test passed (zones, time axis, tactical mapping/staleness, RTL, deterministic SVG)');
+}
+
 async function main() {
+  if (SELF_TEST) {
+    runSelfTest();
+    return;
+  }
   const result = await build();
   console.log(`[institutional-charts] status=${result.status} charts=${result.charts.length} unavailable=${result.unavailable.length}`);
   if (!WRITE) return;
@@ -451,6 +864,8 @@ if (require.main === module) {
 }
 
 module.exports = {
-  SPECS, MAX_BARS, MIN_BARS, MAX_OVERLAYS,
-  normalizeSeries, deriveOverlays, renderSvg, buildChart, build,
+  SPECS, MAX_BARS, MIN_BARS, MAX_OVERLAYS, RANGE_WINDOW, TACTICAL_STATES, TACTICAL_MAX_AGE_HOURS,
+  normalizeSeries, deriveObservedZones, normalizeTacticalOverlay, deriveOverlays,
+  parseArtifactTimestamp, mapTacticalContextArtifact, loadTacticalContextOverlay,
+  selectTimeTicks, formatDateTick, renderSvg, buildChart, build, runSelfTest,
 };
