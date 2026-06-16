@@ -1,15 +1,15 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T14:51:55.472Z",
+  "generated_at": "2026-06-16T18:07:38.783Z",
   "source_layer": "intelligence-monitor",
-  "overall_health": "warning",
+  "overall_health": "degraded",
   "regime": {
-    "regime": "crowded_growth_positioning",
+    "regime": "indeterminate",
     "liquidity_state": "indeterminate",
-    "stability": "fragile",
+    "stability": "indeterminate",
     "confidence": 56,
-    "coherence": 0.33,
-    "health": "healthy",
+    "coherence": 1,
+    "health": "warning",
     "stale_warning": false
   },
   "publishing": {
@@ -20,6 +20,7 @@
     "calendar_source": "schedule_fallback",
     "event_count": 28,
     "degraded_sources": [
+      "fred",
       "fmp_forecast",
       "finnhub_forecast"
     ],
@@ -31,19 +32,19 @@
       "Eurozone": 2,
       "Canada": 2
     },
-    "health": "warning"
+    "health": "degraded"
   },
   "reaction_capture": {
-    "considered": 1,
+    "considered": 4,
     "reaction_ready": 0,
-    "awaiting": 1,
+    "awaiting": 4,
     "health": "warning"
   },
   "workflows": [
     {
       "name": "Market News Brain",
       "health": "healthy",
-      "age_hours": 0
+      "age_hours": 3.3
     },
     {
       "name": "Market Outlook Brain",
@@ -53,22 +54,22 @@
     {
       "name": "Briefs Brain",
       "health": "healthy",
-      "age_hours": 0
+      "age_hours": 3.3
     },
     {
       "name": "Articles Brain",
       "health": "healthy",
-      "age_hours": 0
+      "age_hours": 3.3
     },
     {
       "name": "Distribution Brain",
       "health": "healthy",
-      "age_hours": 0
+      "age_hours": 2.1
     },
     {
       "name": "Intraday Market Watch",
       "health": "healthy",
-      "age_hours": 17.6
+      "age_hours": 0
     }
   ]
 }

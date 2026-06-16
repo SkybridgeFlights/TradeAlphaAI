@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-16T14:51:44.165Z",
+  "updated_at": "2026-06-16T18:07:38.458Z",
   "run_date": "2026-06-16",
   "verified": true,
   "sessions_tracked": 4,
@@ -35,27 +35,33 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "narrow-megacap",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "broadening",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "balanced",
-        "date": "2026-06-13"
+        "state": "narrow-megacap",
+        "date": "2026-06-15"
       }
     },
     {
       "dimension": "ai_concentration_risk",
-      "state": "contained",
-      "phase": "established",
-      "sessions_in_state": 4,
-      "from": null
+      "state": "elevated",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "contained",
+        "date": "2026-06-15"
+      }
     },
     {
       "dimension": "breadth_state",
-      "state": "confirming",
-      "phase": "established",
-      "sessions_in_state": 4,
-      "from": null
+      "state": "mixed",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "confirming",
+        "date": "2026-06-15"
+      }
     },
     {
       "dimension": "defensive_rotation",
@@ -73,9 +79,9 @@
     },
     {
       "dimension": "speculative_appetite",
-      "state": "expanding",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "unverified",
+      "phase": "unverified",
+      "sessions_in_state": 0,
       "from": null
     },
     {
@@ -90,22 +96,6 @@
     }
   ],
   "memory_observations": [
-    {
-      "kind": "streak",
-      "dimension": "momentum_concentration",
-      "state": "narrow-megacap",
-      "sessions": 2,
-      "en": "Megacap leadership narrowing extends to a second consecutive session beneath headline strength.",
-      "ar": "تركّز القيادة في الأسهم الكبرى يمتد للجلسة الثانية على التوالي تحت القوة الظاهرة للمؤشرات."
-    },
-    {
-      "kind": "streak",
-      "dimension": "speculative_appetite",
-      "state": "expanding",
-      "sessions": 2,
-      "en": "Speculative appetite expands for a second straight session — risk-seeking behavior is persistent, not episodic.",
-      "ar": "شهية المضاربة تتوسع للجلسة الثانية على التوالي — سلوك السعي للمخاطرة مستمر وليس عابراً."
-    },
     {
       "kind": "streak",
       "dimension": "market_fragility",
@@ -175,8 +165,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": 3.5382,
-        "qqq": 3.1414
+        "nvda": -1.3556,
+        "qqq": -1.3387
       }
     },
     {
@@ -202,8 +192,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": 1.7634,
-        "iwm": 0.5769
+        "spy": -0.3736,
+        "iwm": -0.3021
       }
     },
     {
@@ -226,8 +216,8 @@
         "en": "AI leadership drives the growth complex",
         "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "nvda": 3.5382,
-          "qqq": 3.1414
+          "nvda": -1.3556,
+          "qqq": -1.3387
         }
       },
       {
@@ -235,14 +225,9 @@
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": 1.7634,
-          "iwm": 0.5769
+          "spy": -0.3736,
+          "iwm": -0.3021
         }
-      },
-      {
-        "source": "breadth_state",
-        "en": "Breadth confirms the advance beyond megacap leadership.",
-        "ar": "اتساع السوق يؤكد الصعود خارج قيادة الأسهم الكبرى."
       }
     ],
     "contradiction": [],
@@ -255,24 +240,48 @@
     ],
     "exhaustion": [],
     "liquidity": [],
-    "speculative": [
-      {
-        "source": "speculative_appetite",
-        "en": "Speculative appetite is expanding across the high-beta complex.",
-        "ar": "شهية المضاربة تتوسع عبر الأصول عالية البيتا."
-      },
-      {
-        "source": "nvda_move",
-        "en": "An outsized sourced AI-leadership move (+3.54%) marks active speculative positioning.",
-        "ar": "تحرك موثق كبير في قيادة الذكاء الاصطناعي (+3.54%) يعكس تمركزاً مضاربياً نشطاً.",
-        "evidence": {
-          "nvda": 3.5382
-        }
-      }
-    ]
+    "speculative": []
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "positioning-crowding-2026-06-16",
+      "type": "positioning-crowding",
+      "severity": "watch",
+      "date": "2026-06-16",
+      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
+      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+      "derived_from": [
+        {
+          "dimension": "ai_concentration_risk",
+          "from": "contained",
+          "to": "elevated",
+          "date": "2026-06-16"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
+    {
+      "date": "2026-06-16",
+      "dimension": "breadth_state",
+      "from": "confirming",
+      "to": "mixed",
+      "note": "breadth state: confirming -> mixed"
+    },
+    {
+      "date": "2026-06-16",
+      "dimension": "ai_concentration_risk",
+      "from": "contained",
+      "to": "elevated",
+      "note": "ai concentration risk: contained -> elevated"
+    },
+    {
+      "date": "2026-06-16",
+      "dimension": "momentum_concentration",
+      "from": "narrow-megacap",
+      "to": "broadening",
+      "note": "momentum concentration: narrow-megacap -> broadening"
+    },
     {
       "date": "2026-06-15",
       "dimension": "market_fragility",
@@ -288,5 +297,5 @@
       "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
-  "cognition_note": "Cognition state — 5/11 dimensions verified; 0 alert(s); 3 cross-session observation(s); 2 timeline event(s)."
+  "cognition_note": "Cognition state — 4/11 dimensions verified; 1 alert(s); 1 cross-session observation(s); 5 timeline event(s)."
 }
