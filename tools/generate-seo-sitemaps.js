@@ -18,6 +18,7 @@ const core = [
   .concat(existsDir("market-news") ? htmlFiles("market-news").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("market-structure") ? ["market-structure/"] : [])
   .concat(existsDir("market-structure") ? htmlFiles("market-structure").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
+  .concat(existsDir("market-terminal") ? ["market-terminal/"] : [])
   .concat(existsDir("intelligence") ? ["intelligence/"] : [])
   // Phase 68 intelligence dashboards, EN + AR (required in sitemap-core.xml by
   // check:visual-intelligence; previously omitted, which failed that gate).
@@ -61,7 +62,7 @@ console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} com
 
 function arUrls() {
   const out = ["ar/"];
-  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
+  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);

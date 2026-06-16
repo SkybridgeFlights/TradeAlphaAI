@@ -74,6 +74,9 @@ jobs:
           SLUG=$(echo "$PUB" | grep -oE 'published /market-structure/[^ ]+\.html' | head -1 | sed -E 's#.*/##; s#\.html$##') || true
           echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded — continuing"
+          # Phase 200 — refresh the institutional market terminal from the freshly
+          # rebuilt regime/tactical/structure/cross-asset/chart artifacts.
+          node tools/generate-market-terminal.js --write || echo "[tech-intel] market terminal degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded — continuing"
 
       - name: Refresh social distribution (preview-only)
@@ -92,6 +95,7 @@ jobs:
           npm run check:institutional-charts
           npm run check:provider-reliability
           npm run check:embedded-charts
+          npm run check:market-terminal
           npm run check:visual-composition
           npm run check:tactical-context
           npm run check:chart-intelligence
@@ -117,7 +121,7 @@ jobs:
           # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
           # regenerated structure/regime/chart/coverage/social artifacts. Stage
           # comprehensively + fail safe (mirrors the other publishing brains).
-          INTENDED="market-structure/ ar/market-structure/ data/ \
+          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ data/ \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
 
@@ -134,7 +138,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              market-structure/*|ar/market-structure/*|data/*|sitemap*.xml|robots.txt) ;;
+              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|data/*|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"
