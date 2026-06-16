@@ -11,7 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { RELATIONSHIPS, BY_SYMBOL } = require('./asset-registry');
+const { RELATIONSHIPS, BY_SYMBOL, RISK_LEG, DEFENSIVE_LEG } = require('./asset-registry');
 
 const ROOT = path.resolve(__dirname, '..');
 const CROSS = path.join(ROOT, 'data', 'intelligence', 'cross-asset-state.json');
@@ -60,7 +60,7 @@ function classify(aChg, bChg, mode) {
     if (same && aChg < 0 && bChg < 0 && (Math.abs(aChg) >= SIG || Math.abs(bChg) >= SIG)) return 'stress';
     return 'contradiction';
   }
-  if (mode === 'risk_same') {
+  if (mode === 'risk_same' || mode === 'leadership' || mode === 'haven') {
     if (same) return 'confirmation';
     return 'contradiction';
   }
@@ -108,6 +108,30 @@ function build() {
   const contradiction_chains = chainOf('contradiction');
   const stress_chains = chainOf('stress');
 
+  // Defensive chains — a defensive leg bid while its risk leg is offered (a
+  // flight-to-safety read). Leadership chains — which cohort leads on relative
+  // strength. Both deterministic from observed change_pct; skip when unavailable.
+  const defensive_chains = [];
+  const leadership_chains = [];
+  for (const rel of RELATIONSHIPS) {
+    const a = BY_SYMBOL.get(rel.a); const b = BY_SYMBOL.get(rel.b);
+    const aChg = changeFor(cross, a.cross_key); const bChg = changeFor(cross, b.cross_key);
+    if (aChg === null || bChg === null) continue;
+    if (rel.defensive) {
+      const defSym = DEFENSIVE_LEG.has(rel.a) ? rel.a : DEFENSIVE_LEG.has(rel.b) ? rel.b : null;
+      const riskSym = RISK_LEG.has(rel.a) ? rel.a : RISK_LEG.has(rel.b) ? rel.b : null;
+      if (defSym && riskSym) {
+        const defChg = defSym === rel.a ? aChg : bChg;
+        const riskChg = riskSym === rel.a ? aChg : bChg;
+        if (defChg > 0 && riskChg < 0) defensive_chains.push({ id: `defensive:${rel.id}`, label_en: rel.en, label_ar: rel.ar, evidence: [`${defSym}=${defChg}% (defensive bid) vs ${riskSym}=${riskChg}% (risk offered)`] });
+      }
+    }
+    if (rel.mode === 'leadership') {
+      const leader = aChg >= bChg ? rel.a : rel.b;
+      leadership_chains.push({ id: `leadership:${rel.id}`, label_en: rel.en, label_ar: rel.ar, leader, evidence: [`${rel.a}=${aChg}% , ${rel.b}=${bChg}% → leader ${leader}`] });
+    }
+  }
+
   const fragile = tacticalFragile(tactical);
   const structureStability = structure && structure.dimensions && structure.dimensions.stability ? structure.dimensions.stability.state : null;
   const fragility_chains = (fragile || ['deteriorating', 'fragile'].includes(structureStability))
@@ -150,6 +174,8 @@ function build() {
     contradiction_chains,
     stress_chains,
     fragility_chains,
+    defensive_chains,
+    leadership_chains,
     relationships,
     evidence,
     attribution: {

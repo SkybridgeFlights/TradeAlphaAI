@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T19:03:34.081Z",
+  "generated_at": "2026-06-16T19:30:49.557Z",
   "source_layer": "cognitive-network",
   "available": true,
   "dominant_network_state": {
@@ -11,7 +11,7 @@
   "confidence_band": "moderate",
   "confidence_band_en": "moderate",
   "confidence_band_ar": "متوسطة",
-  "coverage_pct": 60,
+  "coverage_pct": 67,
   "confirmation_chains": [
     {
       "id": "spy_vs_tlt",
@@ -34,13 +34,84 @@
       "label_en": "Large-cap vs small-cap breadth",
       "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
       "evidence": [
-        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (risk_same)"
+        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (leadership)"
+      ]
+    },
+    {
+      "id": "qqq_vs_spy",
+      "label_en": "Growth vs broad-market leadership",
+      "label_ar": "قيادة النمو مقابل السوق العريض",
+      "evidence": [
+        "cross-asset-state: QQQ=-1.3387% , SPY=-0.3736% (leadership)"
+      ]
+    },
+    {
+      "id": "iwm_vs_qqq",
+      "label_en": "Small-cap vs growth leadership",
+      "label_ar": "قيادة صغيرة رأس المال مقابل النمو",
+      "evidence": [
+        "cross-asset-state: IWM=-0.3021% , QQQ=-1.3387% (leadership)"
+      ]
+    },
+    {
+      "id": "gld_vs_tlt",
+      "label_en": "Gold vs Treasuries (haven)",
+      "label_ar": "الذهب مقابل سندات الخزانة (ملاذ)",
+      "evidence": [
+        "cross-asset-state: GOLD=0.4615% , TLT=0.7466% (haven)"
       ]
     }
   ],
   "contradiction_chains": [],
   "stress_chains": [],
   "fragility_chains": [],
+  "defensive_chains": [
+    {
+      "id": "defensive:spy_vs_tlt",
+      "label_en": "Equities vs Treasuries",
+      "label_ar": "الأسهم مقابل سندات الخزانة",
+      "evidence": [
+        "TLT=0.7466% (defensive bid) vs SPY=-0.3736% (risk offered)"
+      ]
+    },
+    {
+      "id": "defensive:qqq_vs_tlt",
+      "label_en": "Growth vs duration",
+      "label_ar": "النمو مقابل المدة",
+      "evidence": [
+        "TLT=0.7466% (defensive bid) vs QQQ=-1.3387% (risk offered)"
+      ]
+    }
+  ],
+  "leadership_chains": [
+    {
+      "id": "leadership:spy_vs_iwm",
+      "label_en": "Large-cap vs small-cap breadth",
+      "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
+      "leader": "IWM",
+      "evidence": [
+        "SPY=-0.3736% , IWM=-0.3021% → leader IWM"
+      ]
+    },
+    {
+      "id": "leadership:qqq_vs_spy",
+      "label_en": "Growth vs broad-market leadership",
+      "label_ar": "قيادة النمو مقابل السوق العريض",
+      "leader": "SPY",
+      "evidence": [
+        "QQQ=-1.3387% , SPY=-0.3736% → leader SPY"
+      ]
+    },
+    {
+      "id": "leadership:iwm_vs_qqq",
+      "label_en": "Small-cap vs growth leadership",
+      "label_ar": "قيادة صغيرة رأس المال مقابل النمو",
+      "leader": "IWM",
+      "evidence": [
+        "IWM=-0.3021% , QQQ=-1.3387% → leader IWM"
+      ]
+    }
+  ],
   "relationships": [
     {
       "id": "spy_vs_tlt",
@@ -68,14 +139,38 @@
     },
     {
       "id": "spy_vs_iwm",
-      "mode": "risk_same",
+      "mode": "leadership",
       "state": "confirmation",
       "label_en": "Large-cap vs small-cap breadth",
       "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (risk_same)"
+        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (leadership)"
+      ]
+    },
+    {
+      "id": "qqq_vs_spy",
+      "mode": "leadership",
+      "state": "confirmation",
+      "label_en": "Growth vs broad-market leadership",
+      "label_ar": "قيادة النمو مقابل السوق العريض",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "cross-asset-state: QQQ=-1.3387% , SPY=-0.3736% (leadership)"
+      ]
+    },
+    {
+      "id": "iwm_vs_qqq",
+      "mode": "leadership",
+      "state": "confirmation",
+      "label_en": "Small-cap vs growth leadership",
+      "label_ar": "قيادة صغيرة رأس المال مقابل النمو",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "cross-asset-state: IWM=-0.3021% , QQQ=-1.3387% (leadership)"
       ]
     },
     {
@@ -88,6 +183,30 @@
       "state_ar": "الأدلة غير متاحة",
       "evidence": [
         "cross-asset-state: GOLD or DXY change unavailable"
+      ]
+    },
+    {
+      "id": "gld_vs_tlt",
+      "mode": "haven",
+      "state": "confirmation",
+      "label_en": "Gold vs Treasuries (haven)",
+      "label_ar": "الذهب مقابل سندات الخزانة (ملاذ)",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "cross-asset-state: GOLD=0.4615% , TLT=0.7466% (haven)"
+      ]
+    },
+    {
+      "id": "uup_vs_spy",
+      "mode": "risk_inverse",
+      "state": "evidence_unavailable",
+      "label_en": "Dollar vs equities",
+      "label_ar": "الدولار مقابل الأسهم",
+      "state_en": "evidence unavailable",
+      "state_ar": "الأدلة غير متاحة",
+      "evidence": [
+        "cross-asset-state: DXY or SPY change unavailable"
       ]
     },
     {
@@ -107,7 +226,7 @@
     "cross-asset coherence: score=1 direction=risk_off n=3",
     "liquidity-regime: regime=indeterminate liquidity=indeterminate stability=indeterminate",
     "tactical-context: available=true fragile=true",
-    "relationships with data: 3/5"
+    "relationships with data: 6/9"
   ],
   "attribution": {
     "sources": [

@@ -58,15 +58,25 @@ const ASSETS = [
 //   risk_same     → the two legs normally move TOGETHER (large vs small-cap breadth,
 //                   growth vs broad equity).
 //   macro_inverse → gold vs dollar (normally opposite).
+// mode: risk_inverse (legs normally opposite), risk_same / leadership / haven
+// (legs normally together), macro_inverse (gold vs dollar). `defensive` flags a
+// pair that, when it confirms in a risk-off tape, evidences a defensive bid;
+// `leadership` pairs feed the leadership chains (relative-strength read).
 const RELATIONSHIPS = [
-  { id: 'spy_vs_tlt', a: 'SPY', b: 'TLT', mode: 'risk_inverse', en: 'Equities vs Treasuries', ar: 'الأسهم مقابل سندات الخزانة' },
-  { id: 'qqq_vs_tlt', a: 'QQQ', b: 'TLT', mode: 'risk_inverse', en: 'Growth vs duration', ar: 'النمو مقابل المدة' },
-  { id: 'spy_vs_iwm', a: 'SPY', b: 'IWM', mode: 'risk_same', en: 'Large-cap vs small-cap breadth', ar: 'كبيرة مقابل صغيرة رأس المال (الاتساع)' },
+  { id: 'spy_vs_tlt', a: 'SPY', b: 'TLT', mode: 'risk_inverse', defensive: true, en: 'Equities vs Treasuries', ar: 'الأسهم مقابل سندات الخزانة' },
+  { id: 'qqq_vs_tlt', a: 'QQQ', b: 'TLT', mode: 'risk_inverse', defensive: true, en: 'Growth vs duration', ar: 'النمو مقابل المدة' },
+  { id: 'spy_vs_iwm', a: 'SPY', b: 'IWM', mode: 'leadership', en: 'Large-cap vs small-cap breadth', ar: 'كبيرة مقابل صغيرة رأس المال (الاتساع)' },
+  { id: 'qqq_vs_spy', a: 'QQQ', b: 'SPY', mode: 'leadership', en: 'Growth vs broad-market leadership', ar: 'قيادة النمو مقابل السوق العريض' },
+  { id: 'iwm_vs_qqq', a: 'IWM', b: 'QQQ', mode: 'leadership', en: 'Small-cap vs growth leadership', ar: 'قيادة صغيرة رأس المال مقابل النمو' },
   { id: 'gld_vs_uup', a: 'GLD', b: 'UUP', mode: 'macro_inverse', en: 'Gold vs the dollar', ar: 'الذهب مقابل الدولار' },
-  { id: 'vixy_vs_spy', a: 'VIXY', b: 'SPY', mode: 'risk_inverse', en: 'Volatility vs equities', ar: 'التقلب مقابل الأسهم' },
+  { id: 'gld_vs_tlt', a: 'GLD', b: 'TLT', mode: 'haven', defensive: true, en: 'Gold vs Treasuries (haven)', ar: 'الذهب مقابل سندات الخزانة (ملاذ)' },
+  { id: 'uup_vs_spy', a: 'UUP', b: 'SPY', mode: 'risk_inverse', defensive: true, en: 'Dollar vs equities', ar: 'الدولار مقابل الأسهم' },
+  { id: 'vixy_vs_spy', a: 'VIXY', b: 'SPY', mode: 'risk_inverse', defensive: true, en: 'Volatility vs equities', ar: 'التقلب مقابل الأسهم' },
 ];
+const RISK_LEG = new Set(['SPY', 'QQQ', 'IWM']);
+const DEFENSIVE_LEG = new Set(['TLT', 'GLD', 'UUP', 'VIXY']);
 
 const BY_SYMBOL = new Map(ASSETS.map((a) => [a.symbol, a]));
 const SLUGS = ASSETS.map((a) => a.slug);
 
-module.exports = { ASSETS, RELATIONSHIPS, BY_SYMBOL, SLUGS };
+module.exports = { ASSETS, RELATIONSHIPS, BY_SYMBOL, SLUGS, RISK_LEG, DEFENSIVE_LEG };
