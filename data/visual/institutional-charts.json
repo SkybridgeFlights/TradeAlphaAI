@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-15T20:21:58.217Z",
+  "generated_at": "2026-06-16T17:42:05.405Z",
   "status": "partial",
   "source_policy": "Approved provider OHLCV only; no inferred or placeholder bars.",
   "max_charts_per_article": 2,
@@ -922,27 +922,139 @@
   "unavailable": [
     {
       "symbol": "QQQ",
-      "reason": "approved_ohlcv_unavailable"
+      "reason": "unavailable_offline"
     },
     {
       "symbol": "GLD",
-      "reason": "approved_ohlcv_unavailable"
+      "reason": "unavailable_offline"
     },
     {
       "symbol": "TLT",
-      "reason": "approved_ohlcv_unavailable"
+      "reason": "unavailable_offline"
     },
     {
       "symbol": "IWM",
-      "reason": "approved_ohlcv_unavailable"
+      "reason": "unavailable_offline"
     },
     {
       "symbol": "UUP",
-      "reason": "approved_ohlcv_unavailable"
+      "reason": "unavailable_offline"
     },
     {
       "symbol": "VIXY",
-      "reason": "approved_ohlcv_unavailable"
+      "reason": "unavailable_offline"
+    }
+  ],
+  "provider_health": {
+    "mode": "offline",
+    "checked_at": "2026-06-16T17:42:05.405Z",
+    "assets_total": 7,
+    "assets_available": 1,
+    "assets_unavailable": 6,
+    "rate_limited": false
+  },
+  "diagnostics": [
+    {
+      "symbol": "SPY",
+      "id": "spy-market-structure",
+      "attempts": [
+        {
+          "provider": "cached manifest",
+          "outcome": "cached",
+          "bars_found": 90
+        }
+      ],
+      "resolved": {
+        "provider": "AlphaVantage",
+        "bars_found": 90,
+        "cached": true
+      },
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.392Z"
+    },
+    {
+      "symbol": "QQQ",
+      "id": "qqq-duration-structure",
+      "attempts": [
+        {
+          "provider": "offline",
+          "outcome": "not_attempted"
+        }
+      ],
+      "resolved": null,
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.403Z",
+      "reason": "unavailable_offline"
+    },
+    {
+      "symbol": "GLD",
+      "id": "gld-real-yield-context",
+      "attempts": [
+        {
+          "provider": "offline",
+          "outcome": "not_attempted"
+        }
+      ],
+      "resolved": null,
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.403Z",
+      "reason": "unavailable_offline"
+    },
+    {
+      "symbol": "TLT",
+      "id": "tlt-yield-pressure",
+      "attempts": [
+        {
+          "provider": "offline",
+          "outcome": "not_attempted"
+        }
+      ],
+      "resolved": null,
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.404Z",
+      "reason": "unavailable_offline"
+    },
+    {
+      "symbol": "IWM",
+      "id": "iwm-participation-structure",
+      "attempts": [
+        {
+          "provider": "offline",
+          "outcome": "not_attempted"
+        }
+      ],
+      "resolved": null,
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.404Z",
+      "reason": "unavailable_offline"
+    },
+    {
+      "symbol": "UUP",
+      "id": "uup-dollar-liquidity",
+      "attempts": [
+        {
+          "provider": "offline",
+          "outcome": "not_attempted"
+        }
+      ],
+      "resolved": null,
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.404Z",
+      "reason": "unavailable_offline"
+    },
+    {
+      "symbol": "VIXY",
+      "id": "vixy-volatility-proxy",
+      "attempts": [
+        {
+          "provider": "offline",
+          "outcome": "not_attempted"
+        }
+      ],
+      "resolved": null,
+      "rate_limited": false,
+      "checked_at": "2026-06-16T17:42:05.405Z",
+      "reason": "unavailable_offline"
     }
   ]
 }

@@ -652,52 +652,112 @@ function providerResult(provider, sourceUrl, body, rows) {
   };
 }
 
+// Workstream A — classify a provider failure into an honest, bounded outcome
+// class for the diagnostics manifest. Never fabricates a success.
+function classifyProviderError(message) {
+  const text = String(message || '');
+  if (/\b429\b|rate|limit|too many/i.test(text)) return 'rate_limited';
+  if (/\b401\b|\b403\b|auth|invalid api|apikey|unauthorized/i.test(text)) return 'auth_failed';
+  if (/timeout/i.test(text)) return 'timeout';
+  if (/HTTP \d+/i.test(text)) return 'http_error';
+  if (/non-JSON/i.test(text)) return 'bad_response';
+  return 'error';
+}
+
+// Returns { result, diagnostic }. `diagnostic` is always populated so the
+// manifest can report — per asset — which providers were attempted, the
+// outcome class, bars found, the resolved source and any rate-limit state,
+// EVEN when no chart could be produced (honest unavailability, never a
+// placeholder chart).
 async function sourceFor(spec) {
+  const diagnostic = {
+    symbol: spec.symbol,
+    id: spec.id,
+    attempts: [],
+    resolved: null,
+    rate_limited: false,
+    checked_at: new Date().toISOString(),
+  };
+
   if (SOURCE_DIR) {
     const file = path.resolve(ROOT, SOURCE_DIR, `${spec.symbol}.json`);
-    if (!fs.existsSync(file)) return null;
+    if (!fs.existsSync(file)) {
+      diagnostic.attempts.push({ provider: 'Approved fixture', outcome: 'missing_fixture' });
+      diagnostic.reason = 'fixture_missing';
+      return { result: null, diagnostic };
+    }
     const body = fs.readFileSync(file, 'utf8');
     const parsed = JSON.parse(body);
-    return providerResult(parsed.provider || 'Approved fixture', parsed.source_url || 'local-source', body, parsed.series || parsed.rows || []);
+    const result = providerResult(parsed.provider || 'Approved fixture', parsed.source_url || 'local-source', body, parsed.series || parsed.rows || []);
+    const bars = normalizeSeries(result.rows).length;
+    diagnostic.attempts.push({ provider: result.source.provider, outcome: bars >= MIN_BARS ? 'ok' : 'insufficient_bars', bars_found: bars });
+    diagnostic.resolved = bars >= MIN_BARS ? { provider: result.source.provider, bars_found: bars, response_hash: result.source.response_hash } : null;
+    if (!diagnostic.resolved) diagnostic.reason = 'insufficient_valid_bars';
+    return { result: bars >= MIN_BARS ? result : null, diagnostic };
   }
+
   if (!FETCH) {
+    // Offline: reuse the committed manifest's sourced series (no network, no
+    // fabrication). Assets not already in the manifest stay honestly unavailable.
     try {
       const existing = JSON.parse(fs.readFileSync(OUT, 'utf8'));
       const chart = (existing.charts || []).find((item) => item.symbol === spec.symbol && Array.isArray(item.series));
       if (chart) {
+        const bars = chart.series.length;
+        diagnostic.attempts.push({ provider: 'cached manifest', outcome: 'cached', bars_found: bars });
+        diagnostic.resolved = { provider: (chart.attribution && chart.attribution.provider) || 'cached', bars_found: bars, cached: true };
         return {
-          rows: chart.series,
-          source: chart.attribution || {
-            provider: 'Existing approved OHLCV manifest',
-            source_url: 'data/visual/institutional-charts.json',
-            fetched_at: existing.generated_at || null,
-            response_hash: hash(JSON.stringify(chart.series)),
+          result: {
+            rows: chart.series,
+            source: chart.attribution || {
+              provider: 'Existing approved OHLCV manifest',
+              source_url: 'data/visual/institutional-charts.json',
+              fetched_at: existing.generated_at || null,
+              response_hash: hash(JSON.stringify(chart.series)),
+            },
           },
+          diagnostic,
         };
       }
-    } catch {
-      return null;
-    }
-    return null;
+    } catch { /* no manifest yet */ }
+    diagnostic.attempts.push({ provider: 'offline', outcome: 'not_attempted' });
+    diagnostic.reason = 'unavailable_offline';
+    return { result: null, diagnostic };
   }
+
   const now = Math.floor(Date.now() / 1000);
   const fromSeconds = now - 220 * 86400;
   const fromDate = new Date(fromSeconds * 1000).toISOString().slice(0, 10);
   const toDate = new Date(now * 1000).toISOString().slice(0, 10);
-  const attempts = [
-    () => fetchFmp(spec.symbol, fromDate, toDate, process.env.FMP_API_KEY || process.env.FINANCIAL_MODELING_PREP_API_KEY),
-    () => fetchFinnhub(spec.symbol, fromSeconds, now, process.env.FINNHUB_API_KEY),
-    () => fetchAlphaVantage(spec.symbol, process.env.ALPHAVANTAGE_API_KEY),
+  const providers = [
+    { name: 'FMP', key: process.env.FMP_API_KEY || process.env.FINANCIAL_MODELING_PREP_API_KEY, run: () => fetchFmp(spec.symbol, fromDate, toDate, process.env.FMP_API_KEY || process.env.FINANCIAL_MODELING_PREP_API_KEY) },
+    { name: 'Finnhub', key: process.env.FINNHUB_API_KEY, run: () => fetchFinnhub(spec.symbol, fromSeconds, now, process.env.FINNHUB_API_KEY) },
+    { name: 'AlphaVantage', key: process.env.ALPHAVANTAGE_API_KEY, run: () => fetchAlphaVantage(spec.symbol, process.env.ALPHAVANTAGE_API_KEY) },
   ];
-  for (const attempt of attempts) {
+  for (const provider of providers) {
+    if (!provider.key) { diagnostic.attempts.push({ provider: provider.name, outcome: 'no_key' }); continue; }
     try {
-      const result = await attempt();
-      if (result && normalizeSeries(result.rows).length >= MIN_BARS) return result;
+      const result = await provider.run();
+      const bars = result ? normalizeSeries(result.rows).length : 0;
+      if (result && bars >= MIN_BARS) {
+        diagnostic.attempts.push({ provider: provider.name, outcome: 'ok', bars_found: bars });
+        diagnostic.resolved = { provider: provider.name, bars_found: bars, response_hash: result.source.response_hash };
+        return { result, diagnostic };
+      }
+      diagnostic.attempts.push({ provider: provider.name, outcome: bars > 0 ? 'insufficient_bars' : 'empty', bars_found: bars });
     } catch (error) {
-      console.warn(`[institutional-charts] ${spec.symbol}: provider attempt degraded (${error.message})`);
+      const outcome = classifyProviderError(error.message);
+      if (outcome === 'rate_limited') diagnostic.rate_limited = true;
+      diagnostic.attempts.push({ provider: provider.name, outcome, note: String(error.message || '').slice(0, 100) });
+      console.warn(`[institutional-charts] ${spec.symbol}: ${provider.name} attempt degraded (${error.message})`);
     }
   }
-  return null;
+  diagnostic.reason = diagnostic.rate_limited
+    ? 'rate_limited'
+    : diagnostic.attempts.every((a) => a.outcome === 'no_key')
+      ? 'no_provider_keys'
+      : 'approved_ohlcv_unavailable';
+  return { result: null, diagnostic };
 }
 
 async function build(options = {}) {
@@ -706,10 +766,12 @@ async function build(options = {}) {
   const sharedTacticalOverlay = Object.prototype.hasOwnProperty.call(options, 'tactical_overlay')
     ? normalizeTacticalOverlay(options.tactical_overlay)
     : loadTacticalContextOverlay(options.now);
+  const diagnostics = [];
   for (const spec of SPECS) {
-    const sourced = await sourceFor(spec);
+    const { result: sourced, diagnostic } = await sourceFor(spec);
+    diagnostics.push(diagnostic);
     if (!sourced) {
-      unavailable.push({ symbol: spec.symbol, reason: 'approved_ohlcv_unavailable' });
+      unavailable.push({ symbol: spec.symbol, reason: diagnostic.reason || 'approved_ohlcv_unavailable' });
       continue;
     }
     const tacticalOverlay = options.tactical_overlays
@@ -717,7 +779,10 @@ async function build(options = {}) {
       : sharedTacticalOverlay;
     const result = buildChart(spec, sourced.rows, sourced.source, { tactical_overlay: tacticalOverlay });
     if (result) rendered.push(result);
-    else unavailable.push({ symbol: spec.symbol, reason: 'insufficient_valid_bars' });
+    else {
+      diagnostic.reason = 'insufficient_valid_bars';
+      unavailable.push({ symbol: spec.symbol, reason: 'insufficient_valid_bars' });
+    }
   }
   return {
     schema_version: '1.0',
@@ -728,6 +793,19 @@ async function build(options = {}) {
     max_overlays_per_chart: MAX_OVERLAYS,
     charts: rendered.map((item) => item.chart),
     unavailable,
+    // Workstream A — honest per-asset provider diagnostics (attempted providers,
+    // outcome class, bars found, resolved source, rate-limit state). Mode is
+    // 'fetch' (live providers) or 'offline'/'fixture' (no network) so a reader
+    // can tell whether unavailability is a real provider failure or just offline.
+    provider_health: {
+      mode: SOURCE_DIR ? 'fixture' : (FETCH ? 'fetch' : 'offline'),
+      checked_at: new Date().toISOString(),
+      assets_total: SPECS.length,
+      assets_available: rendered.length,
+      assets_unavailable: unavailable.length,
+      rate_limited: diagnostics.some((d) => d.rate_limited),
+    },
+    diagnostics,
     _svg: rendered.map((item) => ({ files: item.chart.files, svg: item.svg })),
   };
 }
