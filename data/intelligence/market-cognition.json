@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-16T21:30:21.652Z",
-  "run_date": "2026-06-16",
+  "updated_at": "2026-06-17T12:58:17.179Z",
+  "run_date": "2026-06-17",
   "verified": true,
-  "sessions_tracked": 4,
+  "sessions_tracked": 5,
   "regime_shifts": [
     {
       "dimension": "risk_state",
@@ -36,8 +36,8 @@
     {
       "dimension": "momentum_concentration",
       "state": "broadening",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-06-15"
@@ -46,8 +46,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-06-15"
@@ -56,8 +56,8 @@
     {
       "dimension": "breadth_state",
       "state": "mixed",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "confirming",
         "date": "2026-06-15"
@@ -87,8 +87,8 @@
     {
       "dimension": "market_fragility",
       "state": "building",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
         "state": "contained",
         "date": "2026-06-13"
@@ -100,9 +100,17 @@
       "kind": "streak",
       "dimension": "market_fragility",
       "state": "building",
+      "sessions": 3,
+      "en": "Market fragility signals build for a third straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثالثة على التوالي عبر مدخلات التقلب والاتساع والتركز."
+    },
+    {
+      "kind": "streak",
+      "dimension": "ai_concentration_risk",
+      "state": "elevated",
       "sessions": 2,
-      "en": "Market fragility signals build for a second straight session across volatility, breadth, and concentration inputs.",
-      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثانية على التوالي عبر مدخلات التقلب والاتساع والتركز."
+      "en": "AI concentration risk holds elevated for a second straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثانية على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
     }
   ],
   "causal_links": [
@@ -242,24 +250,7 @@
     "liquidity": [],
     "speculative": []
   },
-  "alerts": [
-    {
-      "id": "positioning-crowding-2026-06-16",
-      "type": "positioning-crowding",
-      "severity": "watch",
-      "date": "2026-06-16",
-      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
-      "derived_from": [
-        {
-          "dimension": "ai_concentration_risk",
-          "from": "contained",
-          "to": "elevated",
-          "date": "2026-06-16"
-        }
-      ]
-    }
-  ],
+  "alerts": [],
   "timeline_tail": [
     {
       "date": "2026-06-16",
@@ -297,5 +288,5 @@
       "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
-  "cognition_note": "Cognition state — 4/11 dimensions verified; 1 alert(s); 1 cross-session observation(s); 5 timeline event(s)."
+  "cognition_note": "Cognition state — 4/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 5 timeline event(s)."
 }
