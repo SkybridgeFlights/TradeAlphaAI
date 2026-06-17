@@ -74,6 +74,13 @@ jobs:
           # on the per-asset layers; cognitive network reads the charts + macro.
           node tools/build-macro-layers.js --write || echo "[tech-intel] macro layers degraded — continuing"
           node tools/build-cognitive-network.js --write || echo "[tech-intel] cognitive network degraded — continuing"
+          # Phase 205 — sector intelligence network (real sector OHLCV via the
+          # keyless Yahoo tier, else honest unavailable; never placeholders).
+          node tools/build-sector-charts.js --fetch --write || node tools/build-sector-charts.js --write || echo "[tech-intel] sector charts unavailable — continuing"
+          node tools/build-sector-layers.js --write || echo "[tech-intel] sector layers degraded — continuing"
+          node tools/build-sector-rotation.js --write || echo "[tech-intel] sector rotation degraded — continuing"
+          node tools/build-sector-cognitive-network.js --write || echo "[tech-intel] sector cognitive network degraded — continuing"
+          node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
           node tools/build-asset-intelligence.js --write || echo "[tech-intel] asset intelligence degraded — continuing"
           node tools/build-data-coverage.js --write || echo "[tech-intel] data coverage degraded — continuing"
           node tools/generate-asset-pages.js --write || echo "[tech-intel] asset pages degraded — continuing"
@@ -113,6 +120,11 @@ jobs:
           npm run check:yield-intelligence
           npm run check:volatility-intelligence
           npm run check:macro-regime
+          npm run check:sector-registry
+          npm run check:sector-intelligence
+          npm run check:sector-rotation
+          npm run check:sector-cognitive-network
+          npm run check:sector-pages
           npm run check:asset-structure
           npm run check:asset-tactical
           npm run check:asset-liquidity
@@ -148,7 +160,7 @@ jobs:
           # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
           # regenerated structure/regime/chart/coverage/social artifacts. Stage
           # comprehensively + fail safe (mirrors the other publishing brains).
-          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ markets/ ar/markets/ data/ \
+          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ markets/ ar/markets/ sectors/ ar/sectors/ data/ \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
 
@@ -165,7 +177,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|markets/*|ar/markets/*|data/*|sitemap*.xml|robots.txt) ;;
+              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|data/*|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"

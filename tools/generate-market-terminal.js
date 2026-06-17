@@ -30,6 +30,11 @@ const ASSET_TACTICAL_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-tacti
 const ASSET_LIQUIDITY_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-liquidity.json');
 const PROVIDER_COVERAGE_PATH = path.join(ROOT, 'data', 'intelligence', 'provider-coverage.json');
 const DATA_QUALITY_PATH = path.join(ROOT, 'data', 'intelligence', 'data-quality.json');
+const SECTOR_ROTATION_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-rotation.json');
+const SECTOR_COGNITIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-cognitive-network.json');
+const SECTOR_STRUCTURE_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-structure.json');
+const SECTOR_CHARTS_PATH = path.join(ROOT, 'data', 'visual', 'sector-charts.json');
+const SECTOR_REG = require('./sector-registry');
 const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
 const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
@@ -482,6 +487,38 @@ ${cards}
       </section>`;
 }
 
+// ── Sector rotation + leadership/weakness + cognitive + availability/links. ──
+function sectorBlock(ar, rotation, cognitive, sectorCharts, sectorStructure) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!rotation && !sectorCharts) return '';
+  const bySlug = new Map(SECTOR_REG.SECTORS.map((s) => [s.symbol, s]));
+  const name = (sym) => { const s = bySlug.get(sym); return s ? (ar ? s.name_ar : s.name_en) : sym; };
+  const slug = (sym) => { const s = bySlug.get(sym); return s ? s.slug : ''; };
+  let rotationLine = t('indeterminate', 'غير محدد');
+  if (rotation && rotation.available) rotationLine = ar ? rotation.rotation_state_ar : rotation.rotation_state_en;
+  const leaders = (rotation && rotation.leadership_sectors || []).map((x) => `          <article class="market-card"><span class="market-card-kicker">${esc(t('Leading', 'يقود'))}</span><h3><a href="${ar ? '/ar/sectors/' : '/sectors/'}${esc(slug(x.symbol))}/">${esc(name(x.symbol))}</a></h3></article>`);
+  const laggards = (rotation && rotation.weakening_sectors || []).map((x) => `          <article class="market-card"><span class="market-card-kicker">${esc(t('Lagging', 'يتخلّف'))}</span><h3><a href="${ar ? '/ar/sectors/' : '/sectors/'}${esc(slug(x.symbol))}/">${esc(name(x.symbol))}</a></h3></article>`);
+  const dom = cognitive && cognitive.dominant_sector_state ? (ar ? cognitive.dominant_sector_state.label_ar : cognitive.dominant_sector_state.label_en) : t('indeterminate', 'غير محدد');
+  const availCount = sectorCharts && Array.isArray(sectorCharts.charts) ? sectorCharts.charts.length : 0;
+  const total = SECTOR_REG.SECTORS.length;
+  // All-sector link grid (each sector page).
+  const linkCards = SECTOR_REG.SECTORS.map((s) => `          <article class="market-card"><span class="market-card-kicker">${esc(s.symbol)}</span><h3><a href="${ar ? '/ar/sectors/' : '/sectors/'}${esc(s.slug)}/">${esc(ar ? s.name_ar : s.name_en)}</a></h3><p class="market-copy">${esc(stateOfSector(sectorStructure, s.symbol, ar))}</p></article>`).join('\n');
+  return `      <section class="market-section" id="sector-rotation">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Sector rotation', 'تدوير القطاعات'))}</span><h2>${esc(t('Where capital is rotating', 'إلى أين يتحرّك رأس المال'))}: ${esc(rotationLine)}</h2></div>
+        <p class="market-copy">${esc(t('Sector cognitive read', 'القراءة الإدراكية للقطاعات'))}: ${esc(dom)} · ${esc(availCount)}/${esc(total)} ${esc(t('sectors charted. Observed relative strength — not a forecast or recommendation.', 'قطاعات مرسومة. قوة نسبية مرصودة — وليست توقعاً أو توصية.'))}</p>
+        <div class="market-grid three">
+${leaders.concat(laggards).join('\n') || `          <article class="market-card"><span class="market-card-kicker">${esc(t('Rotation', 'تدوير'))}</span><h3>${esc(t('indeterminate', 'غير محدد'))}</h3></article>`}
+        </div>
+      </section>
+      <section class="market-section" id="sector-network">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Sectors', 'القطاعات'))}</span><h2>${esc(t('All sectors', 'كل القطاعات'))}</h2></div>
+        <div class="market-grid three">
+${linkCards}
+        </div>
+      </section>`;
+}
+function stateOfSector(art, symbol, ar) { const s = art && Array.isArray(art.sectors) ? art.sectors.find((x) => x.symbol === symbol) : null; return s ? (ar ? s.label_ar : s.label_en) : (ar ? 'غير محدد' : 'indeterminate'); }
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -500,6 +537,10 @@ function buildMain(ar) {
   const yieldArt = readJson(YIELD_PATH);
   const volatility = readJson(VOLATILITY_PATH);
   const macro = readJson(MACRO_REGIME_PATH);
+  const sectorRotation = readJson(SECTOR_ROTATION_PATH);
+  const sectorCognitive = readJson(SECTOR_COGNITIVE_PATH);
+  const sectorCharts = readJson(SECTOR_CHARTS_PATH);
+  const sectorStructure = readJson(SECTOR_STRUCTURE_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -518,6 +559,7 @@ ${tacticalBlock(ar, tactical)}
 ${cognitiveBlock(ar, cognitive)}
 ${transmissionBlock(ar, cognitive)}
 ${structureBlock(ar, structure)}
+${sectorBlock(ar, sectorRotation, sectorCognitive, sectorCharts, sectorStructure)}
 ${assetIntelBlock(ar, intel)}
 ${layerTable(ar, 'asset-structure-table', t('Asset structure', 'بنية الأصول'), t('Per-asset structure state', 'حالة بنية كل أصل'), t('Each read derived independently from that asset’s own observed price structure.', 'كل قراءة مشتقة باستقلال من البنية السعرية المرصودة لذلك الأصل.'), assetStructure, (a) => (ar ? a.label_ar : a.label_en))}
 ${layerTable(ar, 'asset-tactical-table', t('Asset tactical', 'تكتيك الأصول'), t('Per-asset tactical pressure', 'الضغط التكتيكي لكل أصل'), t('Directional pressure and continuation derived per asset — conditional, not a forecast.', 'الضغط الاتجاهي والاستمرارية مشتقان لكل أصل — مشروطان، وليسا توقعاً.'), assetTactical, (a) => `${ar ? a.dimensions.directional_pressure.label_ar : a.dimensions.directional_pressure.label_en} · ${ar ? a.dimensions.continuation.label_ar : a.dimensions.continuation.label_en}`)}
