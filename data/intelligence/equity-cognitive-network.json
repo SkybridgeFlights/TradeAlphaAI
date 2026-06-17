@@ -1,0 +1,401 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-17T12:15:19.038Z",
+  "source_layer": "equity-cognitive-network",
+  "available": true,
+  "dominant_equity_state": {
+    "state": "broad_confirmation",
+    "label_en": "broad equity confirmation",
+    "label_ar": "تأكيد واسع بين الأسهم"
+  },
+  "confidence_band": "high",
+  "confidence_band_en": "high",
+  "confidence_band_ar": "عالية",
+  "coverage_pct": 100,
+  "confirmation_chains": [
+    {
+      "id": "nvda_amd",
+      "label_en": "NVIDIA vs AMD (semis)",
+      "label_ar": "إنفيديا مقابل إيه إم دي (أشباه الموصلات)",
+      "state": "confirmation",
+      "evidence": [
+        "NVDA=-2.3723% , AMD=-7.3037% (equity-chart:AMD) [peer]"
+      ]
+    },
+    {
+      "id": "nvda_avgo",
+      "label_en": "NVIDIA vs Broadcom",
+      "label_ar": "إنفيديا مقابل برودكوم",
+      "state": "confirmation",
+      "evidence": [
+        "NVDA=-2.3723% , AVGO=-4.3738% (equity-chart:AVGO) [peer]"
+      ]
+    },
+    {
+      "id": "nvda_qqq",
+      "label_en": "NVIDIA vs Nasdaq growth",
+      "label_ar": "إنفيديا مقابل نمو ناسداك",
+      "state": "confirmation",
+      "evidence": [
+        "NVDA=-2.3723% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "meta_googl",
+      "label_en": "Meta vs Alphabet",
+      "label_ar": "ميتا مقابل ألفابت",
+      "state": "confirmation",
+      "evidence": [
+        "META=1.134% , GOOGL=1.0559% (equity-chart:GOOGL) [peer]"
+      ]
+    },
+    {
+      "id": "tsla_qqq",
+      "label_en": "Tesla vs Nasdaq growth",
+      "label_ar": "تسلا مقابل نمو ناسداك",
+      "state": "confirmation",
+      "evidence": [
+        "TSLA=-1.5785% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "tsla_iwm",
+      "label_en": "Tesla vs small-caps (risk appetite)",
+      "label_ar": "تسلا مقابل صغيرة رأس المال (الإقبال على المخاطر)",
+      "state": "confirmation",
+      "evidence": [
+        "TSLA=-1.5785% , IWM=-0.7738% (chart:IWM) [macro]"
+      ]
+    },
+    {
+      "id": "pltr_qqq",
+      "label_en": "Palantir vs Nasdaq growth",
+      "label_ar": "بالانتير مقابل نمو ناسداك",
+      "state": "confirmation",
+      "evidence": [
+        "PLTR=-1.0838% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "smci_nvda",
+      "label_en": "Super Micro vs NVIDIA (AI hardware)",
+      "label_ar": "سوبر مايكرو مقابل إنفيديا (أجهزة الذكاء الاصطناعي)",
+      "state": "confirmation",
+      "evidence": [
+        "SMCI=-5.2836% , NVDA=-2.3723% (equity-chart:NVDA) [peer]"
+      ]
+    }
+  ],
+  "contradiction_chains": [
+    {
+      "id": "aapl_msft",
+      "label_en": "Apple vs Microsoft",
+      "label_ar": "آبل مقابل مايكروسوفت",
+      "state": "contradiction",
+      "evidence": [
+        "AAPL=0.9513% , MSFT=-1.4834% (equity-chart:MSFT) [peer]"
+      ]
+    },
+    {
+      "id": "aapl_qqq",
+      "label_en": "Apple vs Nasdaq growth",
+      "label_ar": "آبل مقابل نمو ناسداك",
+      "state": "contradiction",
+      "evidence": [
+        "AAPL=0.9513% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "meta_spy",
+      "label_en": "Meta vs the broad market",
+      "label_ar": "ميتا مقابل السوق العريض",
+      "state": "contradiction",
+      "evidence": [
+        "META=1.134% , SPY=-0.5551% (chart:SPY) [macro]"
+      ]
+    }
+  ],
+  "leadership_chains": [
+    {
+      "id": "nvda_qqq",
+      "label_en": "NVIDIA vs Nasdaq growth",
+      "label_ar": "إنفيديا مقابل نمو ناسداك",
+      "state": "confirmation",
+      "evidence": [
+        "NVDA=-2.3723% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "aapl_qqq",
+      "label_en": "Apple vs Nasdaq growth",
+      "label_ar": "آبل مقابل نمو ناسداك",
+      "state": "contradiction",
+      "evidence": [
+        "AAPL=0.9513% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "tsla_qqq",
+      "label_en": "Tesla vs Nasdaq growth",
+      "label_ar": "تسلا مقابل نمو ناسداك",
+      "state": "confirmation",
+      "evidence": [
+        "TSLA=-1.5785% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "pltr_qqq",
+      "label_en": "Palantir vs Nasdaq growth",
+      "label_ar": "بالانتير مقابل نمو ناسداك",
+      "state": "confirmation",
+      "evidence": [
+        "PLTR=-1.0838% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    }
+  ],
+  "sector_sensitivity_chains": [
+    {
+      "id": "nvda_amd",
+      "label_en": "NVIDIA vs AMD (semis)",
+      "label_ar": "إنفيديا مقابل إيه إم دي (أشباه الموصلات)",
+      "state": "confirmation",
+      "evidence": [
+        "NVDA=-2.3723% , AMD=-7.3037% (equity-chart:AMD) [peer]"
+      ]
+    },
+    {
+      "id": "nvda_avgo",
+      "label_en": "NVIDIA vs Broadcom",
+      "label_ar": "إنفيديا مقابل برودكوم",
+      "state": "confirmation",
+      "evidence": [
+        "NVDA=-2.3723% , AVGO=-4.3738% (equity-chart:AVGO) [peer]"
+      ]
+    },
+    {
+      "id": "aapl_msft",
+      "label_en": "Apple vs Microsoft",
+      "label_ar": "آبل مقابل مايكروسوفت",
+      "state": "contradiction",
+      "evidence": [
+        "AAPL=0.9513% , MSFT=-1.4834% (equity-chart:MSFT) [peer]"
+      ]
+    },
+    {
+      "id": "meta_googl",
+      "label_en": "Meta vs Alphabet",
+      "label_ar": "ميتا مقابل ألفابت",
+      "state": "confirmation",
+      "evidence": [
+        "META=1.134% , GOOGL=1.0559% (equity-chart:GOOGL) [peer]"
+      ]
+    },
+    {
+      "id": "smci_nvda",
+      "label_en": "Super Micro vs NVIDIA (AI hardware)",
+      "label_ar": "سوبر مايكرو مقابل إنفيديا (أجهزة الذكاء الاصطناعي)",
+      "state": "confirmation",
+      "evidence": [
+        "SMCI=-5.2836% , NVDA=-2.3723% (equity-chart:NVDA) [peer]"
+      ]
+    }
+  ],
+  "macro_sensitivity_chains": [
+    {
+      "id": "meta_spy",
+      "label_en": "Meta vs the broad market",
+      "label_ar": "ميتا مقابل السوق العريض",
+      "state": "contradiction",
+      "evidence": [
+        "META=1.134% , SPY=-0.5551% (chart:SPY) [macro]"
+      ]
+    },
+    {
+      "id": "tsla_iwm",
+      "label_en": "Tesla vs small-caps (risk appetite)",
+      "label_ar": "تسلا مقابل صغيرة رأس المال (الإقبال على المخاطر)",
+      "state": "confirmation",
+      "evidence": [
+        "TSLA=-1.5785% , IWM=-0.7738% (chart:IWM) [macro]"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "nvda_amd",
+      "equity": "NVDA",
+      "counterpart": "AMD",
+      "type": "equity",
+      "kind": "peer",
+      "state": "confirmation",
+      "label_en": "NVIDIA vs AMD (semis)",
+      "label_ar": "إنفيديا مقابل إيه إم دي (أشباه الموصلات)",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "NVDA=-2.3723% , AMD=-7.3037% (equity-chart:AMD) [peer]"
+      ]
+    },
+    {
+      "id": "nvda_avgo",
+      "equity": "NVDA",
+      "counterpart": "AVGO",
+      "type": "equity",
+      "kind": "peer",
+      "state": "confirmation",
+      "label_en": "NVIDIA vs Broadcom",
+      "label_ar": "إنفيديا مقابل برودكوم",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "NVDA=-2.3723% , AVGO=-4.3738% (equity-chart:AVGO) [peer]"
+      ]
+    },
+    {
+      "id": "nvda_qqq",
+      "equity": "NVDA",
+      "counterpart": "QQQ",
+      "type": "asset",
+      "kind": "leadership",
+      "state": "confirmation",
+      "label_en": "NVIDIA vs Nasdaq growth",
+      "label_ar": "إنفيديا مقابل نمو ناسداك",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "NVDA=-2.3723% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "aapl_msft",
+      "equity": "AAPL",
+      "counterpart": "MSFT",
+      "type": "equity",
+      "kind": "peer",
+      "state": "contradiction",
+      "label_en": "Apple vs Microsoft",
+      "label_ar": "آبل مقابل مايكروسوفت",
+      "state_en": "contradiction",
+      "state_ar": "تناقض",
+      "evidence": [
+        "AAPL=0.9513% , MSFT=-1.4834% (equity-chart:MSFT) [peer]"
+      ]
+    },
+    {
+      "id": "aapl_qqq",
+      "equity": "AAPL",
+      "counterpart": "QQQ",
+      "type": "asset",
+      "kind": "leadership",
+      "state": "contradiction",
+      "label_en": "Apple vs Nasdaq growth",
+      "label_ar": "آبل مقابل نمو ناسداك",
+      "state_en": "contradiction",
+      "state_ar": "تناقض",
+      "evidence": [
+        "AAPL=0.9513% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "meta_googl",
+      "equity": "META",
+      "counterpart": "GOOGL",
+      "type": "equity",
+      "kind": "peer",
+      "state": "confirmation",
+      "label_en": "Meta vs Alphabet",
+      "label_ar": "ميتا مقابل ألفابت",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "META=1.134% , GOOGL=1.0559% (equity-chart:GOOGL) [peer]"
+      ]
+    },
+    {
+      "id": "meta_spy",
+      "equity": "META",
+      "counterpart": "SPY",
+      "type": "asset",
+      "kind": "macro",
+      "state": "contradiction",
+      "label_en": "Meta vs the broad market",
+      "label_ar": "ميتا مقابل السوق العريض",
+      "state_en": "contradiction",
+      "state_ar": "تناقض",
+      "evidence": [
+        "META=1.134% , SPY=-0.5551% (chart:SPY) [macro]"
+      ]
+    },
+    {
+      "id": "tsla_qqq",
+      "equity": "TSLA",
+      "counterpart": "QQQ",
+      "type": "asset",
+      "kind": "leadership",
+      "state": "confirmation",
+      "label_en": "Tesla vs Nasdaq growth",
+      "label_ar": "تسلا مقابل نمو ناسداك",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "TSLA=-1.5785% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "tsla_iwm",
+      "equity": "TSLA",
+      "counterpart": "IWM",
+      "type": "asset",
+      "kind": "macro",
+      "state": "confirmation",
+      "label_en": "Tesla vs small-caps (risk appetite)",
+      "label_ar": "تسلا مقابل صغيرة رأس المال (الإقبال على المخاطر)",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "TSLA=-1.5785% , IWM=-0.7738% (chart:IWM) [macro]"
+      ]
+    },
+    {
+      "id": "pltr_qqq",
+      "equity": "PLTR",
+      "counterpart": "QQQ",
+      "type": "asset",
+      "kind": "leadership",
+      "state": "confirmation",
+      "label_en": "Palantir vs Nasdaq growth",
+      "label_ar": "بالانتير مقابل نمو ناسداك",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "PLTR=-1.0838% , QQQ=-1.6546% (chart:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "smci_nvda",
+      "equity": "SMCI",
+      "counterpart": "NVDA",
+      "type": "equity",
+      "kind": "peer",
+      "state": "confirmation",
+      "label_en": "Super Micro vs NVIDIA (AI hardware)",
+      "label_ar": "سوبر مايكرو مقابل إنفيديا (أجهزة الذكاء الاصطناعي)",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
+      "evidence": [
+        "SMCI=-5.2836% , NVDA=-2.3723% (equity-chart:NVDA) [peer]"
+      ]
+    }
+  ],
+  "evidence": [
+    "11/11 equity↔counterpart relationships with data"
+  ],
+  "attribution": {
+    "sources": [
+      "data/visual/equity-charts.json",
+      "data/visual/institutional-charts.json",
+      "data/intelligence/cross-asset-state.json"
+    ],
+    "note": "Deterministic equity↔counterpart relationship composition. Educational context, not a forecast or recommendation."
+  }
+}
