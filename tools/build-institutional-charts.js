@@ -989,4 +989,6 @@ module.exports = {
   normalizeSeries, deriveObservedZones, normalizeTacticalOverlay, deriveOverlays,
   parseArtifactTimestamp, mapTacticalContextArtifact, loadTacticalContextOverlay,
   selectTimeTicks, formatDateTick, renderSvg, buildChart, build, runSelfTest,
+  // Phase 205 — reusable fetch primitives for the isolated sector chart pipeline.
+  fetchYahoo, fetchFmp, fetchFinnhub, fetchAlphaVantage, requestJson, hash, classifyProviderError,
 };
