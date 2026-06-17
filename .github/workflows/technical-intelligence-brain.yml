@@ -69,8 +69,11 @@ jobs:
           # Phase 201 — cognitive network + per-asset intelligence (depend on the
           # freshly built charts/structure/tactical/cross-asset artifacts), then
           # the per-asset pages, in the required order.
-          node tools/build-cognitive-network.js --write || echo "[tech-intel] cognitive network degraded — continuing"
           node tools/build-asset-layers.js --write || echo "[tech-intel] asset layers degraded — continuing"
+          # Phase 204 — macro layers (dollar/yield/volatility/macro-regime) depend
+          # on the per-asset layers; cognitive network reads the charts + macro.
+          node tools/build-macro-layers.js --write || echo "[tech-intel] macro layers degraded — continuing"
+          node tools/build-cognitive-network.js --write || echo "[tech-intel] cognitive network degraded — continuing"
           node tools/build-asset-intelligence.js --write || echo "[tech-intel] asset intelligence degraded — continuing"
           node tools/build-data-coverage.js --write || echo "[tech-intel] data coverage degraded — continuing"
           node tools/generate-asset-pages.js --write || echo "[tech-intel] asset pages degraded — continuing"
@@ -105,6 +108,11 @@ jobs:
           npm run check:embedded-charts
           npm run check:cognitive-network
           npm run check:network-expansion
+          npm run check:transmission-network
+          npm run check:dollar-intelligence
+          npm run check:yield-intelligence
+          npm run check:volatility-intelligence
+          npm run check:macro-regime
           npm run check:asset-structure
           npm run check:asset-tactical
           npm run check:asset-liquidity

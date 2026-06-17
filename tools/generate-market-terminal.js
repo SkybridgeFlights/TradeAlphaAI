@@ -30,6 +30,10 @@ const ASSET_TACTICAL_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-tacti
 const ASSET_LIQUIDITY_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-liquidity.json');
 const PROVIDER_COVERAGE_PATH = path.join(ROOT, 'data', 'intelligence', 'provider-coverage.json');
 const DATA_QUALITY_PATH = path.join(ROOT, 'data', 'intelligence', 'data-quality.json');
+const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
+const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
+const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
+const MACRO_REGIME_PATH = path.join(ROOT, 'data', 'intelligence', 'macro-regime.json');
 const STALE_HOURS = 72;
 const UNAVAIL_REASON_AR = {
   unavailable_offline: 'بانتظار بيانات مزوّد معتمدة', no_provider_keys: 'بانتظار بيانات مزوّد معتمدة',
@@ -441,6 +445,43 @@ ${cards}
       </section>`;
 }
 
+// ── Macro intelligence: dollar / yield / volatility / macro regime. ──
+function macroBlock(ar, dollar, yieldArt, volatility, macro) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!macro) return '';
+  const reg = (a, key) => (a ? (ar ? a[`${key}_ar`] : a[`${key}_en`]) : t('indeterminate', 'غير محدد'));
+  const cards = [
+    [t('Dollar regime', 'نظام الدولار'), reg(dollar, 'dollar_regime')],
+    [t('Yield regime', 'نظام العوائد'), reg(yieldArt, 'yield_regime')],
+    [t('Volatility regime', 'نظام التقلب'), reg(volatility, 'volatility_regime')],
+  ];
+  const macroLabel = ar ? macro.macro_regime_ar : macro.macro_regime_en;
+  const band = ar ? macro.confidence_band_ar : macro.confidence_band_en;
+  return `      <section class="market-section" id="macro-regime">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Macro regime', 'النظام الكلي'))}</span><h2>${esc(t('Why the tape looks like this', 'لماذا يبدو السوق هكذا'))}: ${esc(macroLabel)}</h2></div>
+        <p class="market-copy">${esc(t('Confidence', 'الثقة'))}: ${esc(band)} · ${esc(t('a deterministic composition of the dollar, yield and volatility regimes — context, not a forecast.', 'تركيب حتمي لأنظمة الدولار والعوائد والتقلب — سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid three">
+${cards.map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n')}
+        </div>
+      </section>`;
+}
+
+// ── Transmission network snapshot (macro → risk). ──
+function transmissionBlock(ar, net) {
+  const t = (en, arT) => (ar ? arT : en);
+  const chains = net && Array.isArray(net.transmission_chains) ? net.transmission_chains : [];
+  if (!chains.length) return '';
+  const stateLabel = (s) => ({ confirmation: t('confirmation', 'تأكيد'), contradiction: t('contradiction', 'تناقض'), stress: t('stress', 'ضغط'), evidence_unavailable: t('evidence unavailable', 'الأدلة غير متاحة') }[s] || s);
+  const cards = chains.map((c) => `          <article class="market-card"><span class="market-card-kicker">${esc(c.from)} → ${esc(c.to)}</span><h3>${esc(stateLabel(c.state))}</h3></article>`).join('\n');
+  return `      <section class="market-section" id="transmission-network">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Transmission network', 'شبكة الانتقال'))}</span><h2>${esc(t('How macro pressure reaches equities', 'كيف يصل الضغط الكلي إلى الأسهم'))}</h2></div>
+        <p class="market-copy">${esc(t('Observed macro-to-risk transmission — confirmation, contradiction or stress. Mechanism, not prediction.', 'انتقال مرصود من الكلي إلى المخاطر — تأكيد أو تناقض أو ضغط. آلية، وليست تنبؤاً.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -455,6 +496,10 @@ function buildMain(ar) {
   const assetLiquidity = readJson(ASSET_LIQUIDITY_PATH);
   const providerCoverage = readJson(PROVIDER_COVERAGE_PATH);
   const dataQuality = readJson(DATA_QUALITY_PATH);
+  const dollar = readJson(DOLLAR_PATH);
+  const yieldArt = readJson(YIELD_PATH);
+  const volatility = readJson(VOLATILITY_PATH);
+  const macro = readJson(MACRO_REGIME_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -468,8 +513,10 @@ function buildMain(ar) {
       </section>
 
 ${environmentBlock(ar, regime, cross)}
+${macroBlock(ar, dollar, yieldArt, volatility, macro)}
 ${tacticalBlock(ar, tactical)}
 ${cognitiveBlock(ar, cognitive)}
+${transmissionBlock(ar, cognitive)}
 ${structureBlock(ar, structure)}
 ${assetIntelBlock(ar, intel)}
 ${layerTable(ar, 'asset-structure-table', t('Asset structure', 'بنية الأصول'), t('Per-asset structure state', 'حالة بنية كل أصل'), t('Each read derived independently from that asset’s own observed price structure.', 'كل قراءة مشتقة باستقلال من البنية السعرية المرصودة لذلك الأصل.'), assetStructure, (a) => (ar ? a.label_ar : a.label_en))}

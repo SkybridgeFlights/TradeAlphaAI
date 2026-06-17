@@ -17,6 +17,10 @@ const { ASSETS, RELATIONSHIPS, BY_SYMBOL } = require('./asset-registry');
 const ROOT = path.resolve(__dirname, '..');
 const ASSET_INTEL = path.join(ROOT, 'data', 'intelligence', 'asset-intelligence.json');
 const COGNITIVE = path.join(ROOT, 'data', 'intelligence', 'cognitive-network.json');
+const DOLLAR_INTEL = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
+const YIELD_INTEL = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
+const VOLATILITY_INTEL = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
+const MACRO_REGIME = path.join(ROOT, 'data', 'intelligence', 'macro-regime.json');
 const CHARTS = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const TACTICAL = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
@@ -163,6 +167,27 @@ ${relCards}
       </section>`
     : '';
 
+  // 4b) Macro influence — the dollar / yield / volatility / regime backdrop this
+  // asset sits within (context, not a recommendation).
+  const { dollar, yieldArt, volatility, macro } = ctx;
+  let macroBlock = '';
+  if (macro) {
+    const reg = (art, key) => (art ? (ar ? art[`${key}_ar`] : art[`${key}_en`]) : t('indeterminate', 'غير محدد'));
+    const cards = [
+      [t('Dollar', 'الدولار'), reg(dollar, 'dollar_regime')],
+      [t('Yields', 'العوائد'), reg(yieldArt, 'yield_regime')],
+      [t('Volatility', 'التقلب'), reg(volatility, 'volatility_regime')],
+      [t('Macro regime', 'النظام الكلي'), reg(macro, 'macro_regime')],
+    ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+    macroBlock = `      <section class="market-section" id="asset-macro-influence">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Macro influence', 'التأثير الكلي'))}</span><h2>${esc(t('The macro backdrop around this asset', 'الخلفية الكلية المحيطة بهذا الأصل'))}</h2></div>
+        <p class="market-copy">${esc(t('The dollar, yield and volatility regimes that shape how this asset behaves — context only, not a recommendation.', 'أنظمة الدولار والعوائد والتقلب التي تُشكّل سلوك هذا الأصل — سياق فقط، وليست توصية.'))}</p>
+        <div class="market-grid">
+${cards}
+        </div>
+      </section>`;
+  }
+
   // 5) Related links.
   const linksBlock = `      <section class="market-section" id="asset-links">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Across the desk', 'عبر المكتب'))}</span><h2>${esc(t('Related institutional intelligence', 'استخبارات مؤسسية ذات صلة'))}</h2></div>
@@ -189,6 +214,7 @@ ${scoreBlock}
 ${chartBlock}
 ${contextBlock}
 ${relBlock}
+${macroBlock}
 ${linksBlock}
 
       <section class="market-section" id="asset-disclaimer">
@@ -228,10 +254,14 @@ function main() {
   const chartsManifest = readJson(CHARTS, {});
   const regime = readJson(REGIME);
   const tactical = readJson(TACTICAL);
+  const dollar = readJson(DOLLAR_INTEL);
+  const yieldArt = readJson(YIELD_INTEL);
+  const volatility = readJson(VOLATILITY_INTEL);
+  const macro = readJson(MACRO_REGIME);
   const chartBySymbol = new Map(((chartsManifest && chartsManifest.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
   let count = 0;
   for (const asset of ASSETS) {
-    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical };
+    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro };
     for (const [ar, dir] of [[false, `markets/${asset.slug}`], [true, `ar/markets/${asset.slug}`]]) {
       const html = generate(ar, asset, ctx);
       if (write) {
