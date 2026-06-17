@@ -1,24 +1,24 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T19:48:39.075Z",
+  "generated_at": "2026-06-17T04:22:51.802Z",
   "source_layer": "cognitive-network",
   "available": true,
   "dominant_network_state": {
-    "state": "defensive_rotation",
-    "label_en": "defensive rotation",
-    "label_ar": "تدوير دفاعي"
+    "state": "liquidity_stress",
+    "label_en": "liquidity stress",
+    "label_ar": "ضغط سيولة"
   },
-  "confidence_band": "moderate",
-  "confidence_band_en": "moderate",
-  "confidence_band_ar": "متوسطة",
-  "coverage_pct": 67,
+  "confidence_band": "high",
+  "confidence_band_en": "high",
+  "confidence_band_ar": "عالية",
+  "coverage_pct": 100,
   "confirmation_chains": [
     {
       "id": "spy_vs_tlt",
       "label_en": "Equities vs Treasuries",
       "label_ar": "الأسهم مقابل سندات الخزانة",
       "evidence": [
-        "cross-asset-state: SPY=-0.3736% , TLT=0.7466% (risk_inverse)"
+        "SPY=-0.5962% (cross-asset-state:SPY) , TLT=0.5483% (cross-asset-state:TLT) [risk_inverse]"
       ]
     },
     {
@@ -26,7 +26,7 @@
       "label_en": "Growth vs duration",
       "label_ar": "النمو مقابل المدة",
       "evidence": [
-        "cross-asset-state: QQQ=-1.3387% , TLT=0.7466% (risk_inverse)"
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , TLT=0.5483% (cross-asset-state:TLT) [risk_inverse]"
       ]
     },
     {
@@ -34,7 +34,7 @@
       "label_en": "Large-cap vs small-cap breadth",
       "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
       "evidence": [
-        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (leadership)"
+        "SPY=-0.5962% (cross-asset-state:SPY) , IWM=-0.8689% (cross-asset-state:IWM) [leadership]"
       ]
     },
     {
@@ -42,7 +42,7 @@
       "label_en": "Growth vs broad-market leadership",
       "label_ar": "قيادة النمو مقابل السوق العريض",
       "evidence": [
-        "cross-asset-state: QQQ=-1.3387% , SPY=-0.3736% (leadership)"
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , SPY=-0.5962% (cross-asset-state:SPY) [leadership]"
       ]
     },
     {
@@ -50,7 +50,15 @@
       "label_en": "Small-cap vs growth leadership",
       "label_ar": "قيادة صغيرة رأس المال مقابل النمو",
       "evidence": [
-        "cross-asset-state: IWM=-0.3021% , QQQ=-1.3387% (leadership)"
+        "IWM=-0.8689% (cross-asset-state:IWM) , QQQ=-1.9005% (cross-asset-state:QQQ) [leadership]"
+      ]
+    },
+    {
+      "id": "gld_vs_uup",
+      "label_en": "Gold vs the dollar",
+      "label_ar": "الذهب مقابل الدولار",
+      "evidence": [
+        "GLD=0.2723% (cross-asset-state:GOLD) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [macro_inverse]"
       ]
     },
     {
@@ -58,20 +66,85 @@
       "label_en": "Gold vs Treasuries (haven)",
       "label_ar": "الذهب مقابل سندات الخزانة (ملاذ)",
       "evidence": [
-        "cross-asset-state: GOLD=0.4615% , TLT=0.7466% (haven)"
+        "GLD=0.2723% (cross-asset-state:GOLD) , TLT=0.5483% (cross-asset-state:TLT) [haven]"
+      ]
+    },
+    {
+      "id": "vixy_vs_spy",
+      "label_en": "Volatility vs equities",
+      "label_ar": "التقلب مقابل الأسهم",
+      "evidence": [
+        "VIXY=0.3917% (chart:VIXY:last_vs_prior_close) , SPY=-0.5962% (cross-asset-state:SPY) [risk_inverse]"
       ]
     }
   ],
-  "contradiction_chains": [],
-  "stress_chains": [],
-  "fragility_chains": [],
+  "contradiction_chains": [
+    {
+      "id": "tlt_vs_uup",
+      "label_en": "Treasuries vs the dollar",
+      "label_ar": "سندات الخزانة مقابل الدولار",
+      "evidence": [
+        "TLT=0.5483% (cross-asset-state:TLT) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [haven]"
+      ]
+    }
+  ],
+  "stress_chains": [
+    {
+      "id": "uup_vs_spy",
+      "label_en": "Dollar vs equities",
+      "label_ar": "الدولار مقابل الأسهم",
+      "evidence": [
+        "UUP=-0.1609% (chart:UUP:last_vs_prior_close) , SPY=-0.5962% (cross-asset-state:SPY) [risk_inverse]"
+      ]
+    },
+    {
+      "id": "qqq_vs_uup",
+      "label_en": "Growth vs the dollar",
+      "label_ar": "النمو مقابل الدولار",
+      "evidence": [
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [risk_inverse]"
+      ]
+    }
+  ],
+  "fragility_chains": [
+    {
+      "id": "fragility:tlt_vs_uup",
+      "label_en": "Treasuries vs the dollar",
+      "label_ar": "سندات الخزانة مقابل الدولار",
+      "evidence": [
+        "TLT=0.5483% (cross-asset-state:TLT) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [haven]",
+        "tactical-context: fragile=true",
+        "market-structure: stability=indeterminate"
+      ]
+    },
+    {
+      "id": "fragility:uup_vs_spy",
+      "label_en": "Dollar vs equities",
+      "label_ar": "الدولار مقابل الأسهم",
+      "evidence": [
+        "UUP=-0.1609% (chart:UUP:last_vs_prior_close) , SPY=-0.5962% (cross-asset-state:SPY) [risk_inverse]",
+        "tactical-context: fragile=true",
+        "market-structure: stability=indeterminate"
+      ]
+    },
+    {
+      "id": "fragility:qqq_vs_uup",
+      "label_en": "Growth vs the dollar",
+      "label_ar": "النمو مقابل الدولار",
+      "evidence": [
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [risk_inverse]",
+        "tactical-context: fragile=true",
+        "market-structure: stability=indeterminate"
+      ]
+    }
+  ],
   "defensive_chains": [
     {
       "id": "defensive:spy_vs_tlt",
       "label_en": "Equities vs Treasuries",
       "label_ar": "الأسهم مقابل سندات الخزانة",
       "evidence": [
-        "TLT=0.7466% (defensive bid) vs SPY=-0.3736% (risk offered)"
+        "TLT=0.5483% (defensive bid) vs SPY=-0.5962% (risk offered)"
       ]
     },
     {
@@ -79,7 +152,15 @@
       "label_en": "Growth vs duration",
       "label_ar": "النمو مقابل المدة",
       "evidence": [
-        "TLT=0.7466% (defensive bid) vs QQQ=-1.3387% (risk offered)"
+        "TLT=0.5483% (defensive bid) vs QQQ=-1.9005% (risk offered)"
+      ]
+    },
+    {
+      "id": "defensive:vixy_vs_spy",
+      "label_en": "Volatility vs equities",
+      "label_ar": "التقلب مقابل الأسهم",
+      "evidence": [
+        "VIXY=0.3917% (defensive bid) vs SPY=-0.5962% (risk offered)"
       ]
     }
   ],
@@ -88,9 +169,9 @@
       "id": "leadership:spy_vs_iwm",
       "label_en": "Large-cap vs small-cap breadth",
       "label_ar": "كبيرة مقابل صغيرة رأس المال (الاتساع)",
-      "leader": "IWM",
+      "leader": "SPY",
       "evidence": [
-        "SPY=-0.3736% , IWM=-0.3021% → leader IWM"
+        "SPY=-0.5962% , IWM=-0.8689% → leader SPY"
       ]
     },
     {
@@ -99,7 +180,7 @@
       "label_ar": "قيادة النمو مقابل السوق العريض",
       "leader": "SPY",
       "evidence": [
-        "QQQ=-1.3387% , SPY=-0.3736% → leader SPY"
+        "QQQ=-1.9005% , SPY=-0.5962% → leader SPY"
       ]
     },
     {
@@ -108,7 +189,64 @@
       "label_ar": "قيادة صغيرة رأس المال مقابل النمو",
       "leader": "IWM",
       "evidence": [
-        "IWM=-0.3021% , QQQ=-1.3387% → leader IWM"
+        "IWM=-0.8689% , QQQ=-1.9005% → leader IWM"
+      ]
+    }
+  ],
+  "transmission_chains": [
+    {
+      "id": "transmission:spy_vs_tlt",
+      "from": "TLT",
+      "to": "SPY",
+      "state": "confirmation",
+      "label_en": "Equities vs Treasuries",
+      "label_ar": "الأسهم مقابل سندات الخزانة",
+      "evidence": [
+        "SPY=-0.5962% , TLT=0.5483% → confirmation (TLT→SPY)"
+      ]
+    },
+    {
+      "id": "transmission:qqq_vs_tlt",
+      "from": "TLT",
+      "to": "QQQ",
+      "state": "confirmation",
+      "label_en": "Growth vs duration",
+      "label_ar": "النمو مقابل المدة",
+      "evidence": [
+        "QQQ=-1.9005% , TLT=0.5483% → confirmation (TLT→QQQ)"
+      ]
+    },
+    {
+      "id": "transmission:uup_vs_spy",
+      "from": "UUP",
+      "to": "SPY",
+      "state": "stress",
+      "label_en": "Dollar vs equities",
+      "label_ar": "الدولار مقابل الأسهم",
+      "evidence": [
+        "UUP=-0.1609% , SPY=-0.5962% → stress (UUP→SPY)"
+      ]
+    },
+    {
+      "id": "transmission:qqq_vs_uup",
+      "from": "UUP",
+      "to": "QQQ",
+      "state": "stress",
+      "label_en": "Growth vs the dollar",
+      "label_ar": "النمو مقابل الدولار",
+      "evidence": [
+        "QQQ=-1.9005% , UUP=-0.1609% → stress (UUP→QQQ)"
+      ]
+    },
+    {
+      "id": "transmission:vixy_vs_spy",
+      "from": "VIXY",
+      "to": "SPY",
+      "state": "confirmation",
+      "label_en": "Volatility vs equities",
+      "label_ar": "التقلب مقابل الأسهم",
+      "evidence": [
+        "VIXY=0.3917% , SPY=-0.5962% → confirmation (VIXY→SPY)"
       ]
     }
   ],
@@ -122,7 +260,7 @@
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: SPY=-0.3736% , TLT=0.7466% (risk_inverse)"
+        "SPY=-0.5962% (cross-asset-state:SPY) , TLT=0.5483% (cross-asset-state:TLT) [risk_inverse]"
       ]
     },
     {
@@ -134,7 +272,7 @@
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: QQQ=-1.3387% , TLT=0.7466% (risk_inverse)"
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , TLT=0.5483% (cross-asset-state:TLT) [risk_inverse]"
       ]
     },
     {
@@ -146,7 +284,7 @@
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: SPY=-0.3736% , IWM=-0.3021% (leadership)"
+        "SPY=-0.5962% (cross-asset-state:SPY) , IWM=-0.8689% (cross-asset-state:IWM) [leadership]"
       ]
     },
     {
@@ -158,7 +296,7 @@
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: QQQ=-1.3387% , SPY=-0.3736% (leadership)"
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , SPY=-0.5962% (cross-asset-state:SPY) [leadership]"
       ]
     },
     {
@@ -170,19 +308,19 @@
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: IWM=-0.3021% , QQQ=-1.3387% (leadership)"
+        "IWM=-0.8689% (cross-asset-state:IWM) , QQQ=-1.9005% (cross-asset-state:QQQ) [leadership]"
       ]
     },
     {
       "id": "gld_vs_uup",
       "mode": "macro_inverse",
-      "state": "evidence_unavailable",
+      "state": "confirmation",
       "label_en": "Gold vs the dollar",
       "label_ar": "الذهب مقابل الدولار",
-      "state_en": "evidence unavailable",
-      "state_ar": "الأدلة غير متاحة",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: GOLD or DXY change unavailable"
+        "GLD=0.2723% (cross-asset-state:GOLD) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [macro_inverse]"
       ]
     },
     {
@@ -194,31 +332,55 @@
       "state_en": "confirmation",
       "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: GOLD=0.4615% , TLT=0.7466% (haven)"
+        "GLD=0.2723% (cross-asset-state:GOLD) , TLT=0.5483% (cross-asset-state:TLT) [haven]"
       ]
     },
     {
       "id": "uup_vs_spy",
       "mode": "risk_inverse",
-      "state": "evidence_unavailable",
+      "state": "stress",
       "label_en": "Dollar vs equities",
       "label_ar": "الدولار مقابل الأسهم",
-      "state_en": "evidence unavailable",
-      "state_ar": "الأدلة غير متاحة",
+      "state_en": "stress",
+      "state_ar": "ضغط",
       "evidence": [
-        "cross-asset-state: DXY or SPY change unavailable"
+        "UUP=-0.1609% (chart:UUP:last_vs_prior_close) , SPY=-0.5962% (cross-asset-state:SPY) [risk_inverse]"
+      ]
+    },
+    {
+      "id": "qqq_vs_uup",
+      "mode": "risk_inverse",
+      "state": "stress",
+      "label_en": "Growth vs the dollar",
+      "label_ar": "النمو مقابل الدولار",
+      "state_en": "stress",
+      "state_ar": "ضغط",
+      "evidence": [
+        "QQQ=-1.9005% (cross-asset-state:QQQ) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [risk_inverse]"
+      ]
+    },
+    {
+      "id": "tlt_vs_uup",
+      "mode": "haven",
+      "state": "contradiction",
+      "label_en": "Treasuries vs the dollar",
+      "label_ar": "سندات الخزانة مقابل الدولار",
+      "state_en": "contradiction",
+      "state_ar": "تناقض",
+      "evidence": [
+        "TLT=0.5483% (cross-asset-state:TLT) , UUP=-0.1609% (chart:UUP:last_vs_prior_close) [haven]"
       ]
     },
     {
       "id": "vixy_vs_spy",
       "mode": "risk_inverse",
-      "state": "evidence_unavailable",
+      "state": "confirmation",
       "label_en": "Volatility vs equities",
       "label_ar": "التقلب مقابل الأسهم",
-      "state_en": "evidence unavailable",
-      "state_ar": "الأدلة غير متاحة",
+      "state_en": "confirmation",
+      "state_ar": "تأكيد",
       "evidence": [
-        "cross-asset-state: VIX or SPY change unavailable"
+        "VIXY=0.3917% (chart:VIXY:last_vs_prior_close) , SPY=-0.5962% (cross-asset-state:SPY) [risk_inverse]"
       ]
     }
   ],
@@ -226,7 +388,7 @@
     "cross-asset coherence: score=1 direction=risk_off n=3",
     "liquidity-regime: regime=indeterminate liquidity=indeterminate stability=indeterminate",
     "tactical-context: available=true fragile=true",
-    "relationships with data: 6/9"
+    "relationships with data: 11/11"
   ],
   "attribution": {
     "sources": [

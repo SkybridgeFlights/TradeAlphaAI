@@ -11,13 +11,14 @@
 
 const fs = require('fs');
 const path = require('path');
-const { RELATIONSHIPS, BY_SYMBOL, RISK_LEG, DEFENSIVE_LEG } = require('./asset-registry');
+const { RELATIONSHIPS, BY_SYMBOL, RISK_LEG, DEFENSIVE_LEG, MACRO_LEG } = require('./asset-registry');
 
 const ROOT = path.resolve(__dirname, '..');
 const CROSS = path.join(ROOT, 'data', 'intelligence', 'cross-asset-state.json');
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const TACTICAL = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
 const STRUCTURE = path.join(ROOT, 'data', 'intelligence', 'market-structure.json');
+const CHARTS = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const OUT = path.join(ROOT, 'data', 'intelligence', 'cognitive-network.json');
 const WRITE = process.argv.includes('--write');
 
@@ -45,10 +46,22 @@ const SIG = 0.5; // % move treated as a meaningful leg
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function sign(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }
 
-function changeFor(cross, crossKey) {
+// Observed daily % change. Primary: cross-asset-state by macro key (SPY/GOLD/…).
+// Fallback: the asset's institutional chart series (last close vs prior close) —
+// this fills DXY/VIX (UUP/VIXY) which cross-asset-state leaves null, using REAL
+// sourced bars. Returns { value, source } or null.
+function changeFor(cross, crossKey, charts, symbol) {
   const row = ((cross && cross.assets) || []).find((a) => a.asset === crossKey);
-  if (!row || typeof row.change_pct !== 'number' || !Number.isFinite(row.change_pct)) return null;
-  return row.change_pct;
+  if (row && typeof row.change_pct === 'number' && Number.isFinite(row.change_pct)) return { value: row.change_pct, source: `cross-asset-state:${crossKey}` };
+  const chart = charts && charts.get && charts.get(symbol);
+  const s = chart && Array.isArray(chart.series) ? chart.series : null;
+  if (s && s.length >= 2) {
+    const last = s.at(-1).close; const prior = s.at(-2).close;
+    if (Number.isFinite(last) && Number.isFinite(prior) && prior !== 0) {
+      return { value: Number((((last - prior) / prior) * 100).toFixed(4)), source: `chart:${symbol}:last_vs_prior_close` };
+    }
+  }
+  return null;
 }
 
 function classify(aChg, bChg, mode) {
@@ -85,15 +98,17 @@ function build() {
   const structure = readJson(STRUCTURE, {});
   const coherence = (cross && cross.coherence) || {};
   const direction = coherence.direction || 'indeterminate';
+  const chartsManifest = readJson(CHARTS, {});
+  const charts = new Map(((chartsManifest && chartsManifest.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
+  const chg = (sym) => changeFor(cross, BY_SYMBOL.get(sym).cross_key, charts, sym);
 
   const relationships = RELATIONSHIPS.map((rel) => {
-    const a = BY_SYMBOL.get(rel.a); const b = BY_SYMBOL.get(rel.b);
-    const aChg = changeFor(cross, a.cross_key);
-    const bChg = changeFor(cross, b.cross_key);
+    const aC = chg(rel.a); const bC = chg(rel.b);
+    const aChg = aC ? aC.value : null; const bChg = bC ? bC.value : null;
     const state = classify(aChg, bChg, rel.mode);
     const evidence = state === 'evidence_unavailable'
-      ? [`cross-asset-state: ${a.cross_key} or ${b.cross_key} change unavailable`]
-      : [`cross-asset-state: ${a.cross_key}=${aChg}% , ${b.cross_key}=${bChg}% (${rel.mode})`];
+      ? [`${rel.a} or ${rel.b} observed change unavailable`]
+      : [`${rel.a}=${aChg}% (${aC.source}) , ${rel.b}=${bChg}% (${bC.source}) [${rel.mode}]`];
     return {
       id: rel.id, mode: rel.mode, state,
       label_en: rel.en, label_ar: rel.ar,
@@ -113,10 +128,19 @@ function build() {
   // strength. Both deterministic from observed change_pct; skip when unavailable.
   const defensive_chains = [];
   const leadership_chains = [];
+  const transmission_chains = [];
   for (const rel of RELATIONSHIPS) {
-    const a = BY_SYMBOL.get(rel.a); const b = BY_SYMBOL.get(rel.b);
-    const aChg = changeFor(cross, a.cross_key); const bChg = changeFor(cross, b.cross_key);
-    if (aChg === null || bChg === null) continue;
+    const aC = chg(rel.a); const bC = chg(rel.b);
+    if (aC === null || bC === null) continue;
+    const aChg = aC.value; const bChg = bC.value;
+    const relState = classify(aChg, bChg, rel.mode);
+    // Transmission: a macro leg (dollar/rates/vol/gold) interacting with a risk
+    // leg — the mechanism through which macro pressure reaches equities.
+    const macroSym = MACRO_LEG.has(rel.a) ? rel.a : MACRO_LEG.has(rel.b) ? rel.b : null;
+    const riskTxSym = RISK_LEG.has(rel.a) ? rel.a : RISK_LEG.has(rel.b) ? rel.b : null;
+    if (macroSym && riskTxSym) {
+      transmission_chains.push({ id: `transmission:${rel.id}`, from: macroSym, to: riskTxSym, state: relState, label_en: rel.en, label_ar: rel.ar, evidence: [`${rel.a}=${aChg}% , ${rel.b}=${bChg}% → ${relState} (${macroSym}→${riskTxSym})`] });
+    }
     if (rel.defensive) {
       const defSym = DEFENSIVE_LEG.has(rel.a) ? rel.a : DEFENSIVE_LEG.has(rel.b) ? rel.b : null;
       const riskSym = RISK_LEG.has(rel.a) ? rel.a : RISK_LEG.has(rel.b) ? rel.b : null;
@@ -176,6 +200,7 @@ function build() {
     fragility_chains,
     defensive_chains,
     leadership_chains,
+    transmission_chains,
     relationships,
     evidence,
     attribution: {

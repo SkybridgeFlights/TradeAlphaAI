@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-17T04:22:51.737Z",
+  "source_layer": "volatility-intelligence",
+  "available": true,
+  "volatility_regime": "calm",
+  "volatility_regime_en": "calm",
+  "volatility_regime_ar": "هادئ",
+  "confidence_band": "high",
+  "confidence_band_en": "high",
+  "confidence_band_ar": "عالية",
+  "dimensions": {
+    "compression": {
+      "state": "calm",
+      "label_en": "calm",
+      "label_ar": "هادئ",
+      "evidence": [
+        "VIXY state=breakdown trend=down"
+      ]
+    },
+    "expansion": {
+      "state": "calm",
+      "label_en": "calm",
+      "label_ar": "هادئ",
+      "evidence": [
+        "VIXY trend=down"
+      ]
+    },
+    "fragility": {
+      "state": "elevated",
+      "label_en": "elevated",
+      "label_ar": "مرتفعة",
+      "evidence": [
+        "SPY positioning fragility=elevated"
+      ]
+    },
+    "stress_state": {
+      "state": "calm",
+      "label_en": "calm",
+      "label_ar": "هادئ",
+      "evidence": [
+        "VIXY regime=calm, SPY state=expansion"
+      ]
+    }
+  },
+  "evidence": [
+    "derived from VIXY observed level direction (state=breakdown, trend=down)"
+  ],
+  "attribution": {
+    "sources": [
+      "data/intelligence/asset-structure.json",
+      "data/intelligence/asset-tactical.json"
+    ],
+    "note": "Volatility regime via VIXY proxy. Institutional context, not a forecast."
+  }
+}

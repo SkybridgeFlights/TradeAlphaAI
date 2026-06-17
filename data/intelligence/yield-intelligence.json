@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-17T04:22:51.737Z",
+  "source_layer": "yield-intelligence",
+  "available": true,
+  "yield_regime": "supportive",
+  "yield_regime_en": "supportive",
+  "yield_regime_ar": "داعم",
+  "confidence_band": "high",
+  "confidence_band_en": "high",
+  "confidence_band_ar": "عالية",
+  "dimensions": {
+    "duration_pressure": {
+      "state": "supportive",
+      "label_en": "supportive",
+      "label_ar": "داعم",
+      "evidence": [
+        "TLT directional pressure=building"
+      ]
+    },
+    "curve_pressure": {
+      "state": "indeterminate",
+      "label_en": "indeterminate",
+      "label_ar": "غير محدد",
+      "evidence": [
+        "yield_spread_bps unavailable in cross-asset-state"
+      ]
+    },
+    "rate_sensitivity": {
+      "state": "mixed",
+      "label_en": "mixed",
+      "label_ar": "مختلط",
+      "evidence": [
+        "TLT trend=up vs QQQ trend=flat"
+      ]
+    }
+  },
+  "evidence": [
+    "derived from TLT observed structure (trend=up); TLT rising implies easing yields"
+  ],
+  "attribution": {
+    "sources": [
+      "data/intelligence/asset-structure.json",
+      "data/intelligence/cross-asset-state.json"
+    ],
+    "note": "Yield/duration regime via TLT (inverse to yields). Institutional context, not a forecast."
+  }
+}

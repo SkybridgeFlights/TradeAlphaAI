@@ -71,12 +71,15 @@ const RELATIONSHIPS = [
   { id: 'gld_vs_uup', a: 'GLD', b: 'UUP', mode: 'macro_inverse', en: 'Gold vs the dollar', ar: 'الذهب مقابل الدولار' },
   { id: 'gld_vs_tlt', a: 'GLD', b: 'TLT', mode: 'haven', defensive: true, en: 'Gold vs Treasuries (haven)', ar: 'الذهب مقابل سندات الخزانة (ملاذ)' },
   { id: 'uup_vs_spy', a: 'UUP', b: 'SPY', mode: 'risk_inverse', defensive: true, en: 'Dollar vs equities', ar: 'الدولار مقابل الأسهم' },
+  { id: 'qqq_vs_uup', a: 'QQQ', b: 'UUP', mode: 'risk_inverse', defensive: true, en: 'Growth vs the dollar', ar: 'النمو مقابل الدولار' },
+  { id: 'tlt_vs_uup', a: 'TLT', b: 'UUP', mode: 'haven', defensive: true, en: 'Treasuries vs the dollar', ar: 'سندات الخزانة مقابل الدولار' },
   { id: 'vixy_vs_spy', a: 'VIXY', b: 'SPY', mode: 'risk_inverse', defensive: true, en: 'Volatility vs equities', ar: 'التقلب مقابل الأسهم' },
 ];
+const MACRO_LEG = new Set(['UUP', 'TLT', 'VIXY', 'GLD']);
 const RISK_LEG = new Set(['SPY', 'QQQ', 'IWM']);
 const DEFENSIVE_LEG = new Set(['TLT', 'GLD', 'UUP', 'VIXY']);
 
 const BY_SYMBOL = new Map(ASSETS.map((a) => [a.symbol, a]));
 const SLUGS = ASSETS.map((a) => a.slug);
 
-module.exports = { ASSETS, RELATIONSHIPS, BY_SYMBOL, SLUGS, RISK_LEG, DEFENSIVE_LEG };
+module.exports = { ASSETS, RELATIONSHIPS, BY_SYMBOL, SLUGS, RISK_LEG, DEFENSIVE_LEG, MACRO_LEG };
