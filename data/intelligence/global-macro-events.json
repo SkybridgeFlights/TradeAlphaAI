@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T18:46:57.056Z",
+  "generated_at": "2026-06-17T13:03:41.115Z",
   "layer": "global-macro-acquisition",
   "window": {
-    "from": "2026-06-15",
-    "to": "2026-07-14"
+    "from": "2026-06-16",
+    "to": "2026-07-15"
   },
   "sources": [
     {
@@ -45,7 +45,7 @@
       "Switzerland"
     ],
     "by_region": {
-      "United Kingdom": 3,
+      "United Kingdom": 5,
       "Japan": 2,
       "Australia": 3,
       "Switzerland": 1,
@@ -54,7 +54,7 @@
       "Germany": 1
     },
     "by_country": {
-      "GB": 3,
+      "GB": 5,
       "JP": 2,
       "AU": 3,
       "CH": 1,
@@ -64,14 +64,14 @@
     },
     "by_method": {
       "official_schedule": 4,
-      "estimated_recurring": 10
+      "estimated_recurring": 12
     }
   },
   "min_coverage": 6,
   "source_outage": false,
   "counts": {
-    "total": 14,
-    "high_impact": 10
+    "total": 16,
+    "high_impact": 11
   },
   "events": [
     {
@@ -431,6 +431,35 @@
       "legal_status": "official_public_cadence"
     },
     {
+      "id": "economic-calendar::global_acquisition::gb::united-kingdom-cpi::20260715T070000",
+      "country": "GB",
+      "region": "United Kingdom",
+      "source": "UK Office for National Statistics",
+      "source_url": "https://www.ons.gov.uk/releasecalendar",
+      "event_name": "United Kingdom CPI",
+      "event_type": "CPI",
+      "category": "inflation",
+      "importance": "high",
+      "release_time": "2026-07-15T07:00:00.000Z",
+      "timezone": "UTC",
+      "verified_time": false,
+      "estimated_date": true,
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "source_confidence": 50,
+      "acquisition_method": "estimated_recurring",
+      "legal_status": "official_public_cadence"
+    },
+    {
       "id": "economic-calendar::global_acquisition::eu::eurozone-unemployment-rate::20260702T100000",
       "country": "EU",
       "region": "Eurozone",
@@ -441,6 +470,35 @@
       "category": "labor",
       "importance": "medium",
       "release_time": "2026-07-02T10:00:00.000Z",
+      "timezone": "UTC",
+      "verified_time": false,
+      "estimated_date": true,
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "source_confidence": 50,
+      "acquisition_method": "estimated_recurring",
+      "legal_status": "official_public_cadence"
+    },
+    {
+      "id": "economic-calendar::global_acquisition::gb::united-kingdom-unemployment-rate::20260715T070000",
+      "country": "GB",
+      "region": "United Kingdom",
+      "source": "UK Office for National Statistics",
+      "source_url": "https://www.ons.gov.uk/releasecalendar",
+      "event_name": "United Kingdom Unemployment Rate",
+      "event_type": "Unemployment Rate",
+      "category": "labor",
+      "importance": "medium",
+      "release_time": "2026-07-15T07:00:00.000Z",
       "timezone": "UTC",
       "verified_time": false,
       "estimated_date": true,

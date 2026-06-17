@@ -1,22 +1,22 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-17T12:58:27.732Z",
+  "generated_at": "2026-06-17T13:03:43.515Z",
   "source_layer": "acquisition-health",
   "calendar_source": "schedule_fallback",
-  "calendar_event_count": 31,
-  "calendar_age_hours": 0,
+  "calendar_event_count": 28,
+  "calendar_age_hours": 18.9,
   "coverage_by_country": {
     "JP": 2,
     "AU": 3,
     "CA": 2,
-    "GB": 5,
-    "US": 15,
+    "GB": 3,
+    "US": 14,
     "CH": 1,
     "EU": 2,
     "DE": 1
   },
   "regions": {
-    "United Kingdom": 3,
+    "United Kingdom": 5,
     "Japan": 2,
     "Australia": 3,
     "Switzerland": 1,
@@ -26,14 +26,14 @@
   },
   "official_vs_estimated": {
     "official_schedule": 4,
-    "estimated_recurring": 10
+    "estimated_recurring": 12
   },
   "sources": [
     {
       "id": "fred",
       "kind": "official_actuals",
-      "available": false,
-      "note": "FRED key absent — actuals degrade to scheduled/awaiting."
+      "available": true,
+      "note": "FRED official enrichment active."
     },
     {
       "id": "fmp_forecast",
@@ -45,19 +45,18 @@
       "id": "finnhub_forecast",
       "kind": "consensus_forecast",
       "available": false,
-      "note": "Finnhub forecast unavailable (missing_api_key)."
+      "note": "Finnhub forecast unavailable (HTTP 403 from https://finnhub.io/api/v1/calendar/economic)."
     },
     {
       "id": "global_official_schedules",
       "kind": "official_schedule",
       "available": true,
-      "note": "Global official schedules: 14 event(s) across 7 region(s)."
+      "note": "Global official schedules: 16 event(s) across 7 region(s)."
     }
   ],
   "degraded_sources": [
-    "fred",
     "fmp_forecast",
     "finnhub_forecast"
   ],
-  "overall": "degraded"
+  "overall": "warning"
 }
