@@ -61,4 +61,23 @@ function seriesHistory(series) {
   return { now, windows: w, overall, band, resolved };
 }
 
-module.exports = { WINDOWS, MIN_BARS, TREND, BAND, windowFeatures, strengthScore, classifyTrend, seriesHistory };
+// Per-dimension historical trends (now vs 1M-ago window) from a series.
+function dimensionTrends(series) {
+  const now = features(series);
+  const ago = windowFeatures(series, WINDOWS['1M']);
+  if (!now || !ago) return null;
+  const structVal = (f) => ({ expansion: 1, range_bound: 0, breakdown: -1 }[f.structure] ?? 0);
+  const trendVal = (f) => ({ up: 1, flat: 0, down: -1 }[f.trend] ?? 0);
+  const liqVal = (f) => (f.thinning ? -1 : 1);
+  const partVal = (f) => (Number.isFinite(f.volRatio) ? f.volRatio - 1 : 0);
+  return {
+    structure: classifyTrend(structVal(now), structVal(ago)),
+    tactical: classifyTrend(trendVal(now), trendVal(ago)),
+    liquidity: classifyTrend(liqVal(now), liqVal(ago)),
+    participation: classifyTrend(partVal(now), partVal(ago)),
+    score: classifyTrend(strengthScore(now), strengthScore(ago)),
+    _evidence: `now(${now.as_of}): structure=${now.structure} trend=${now.trend} volRatio=${now.volRatio} | 1M-ago(${ago.as_of}): structure=${ago.structure} trend=${ago.trend} volRatio=${ago.volRatio}`,
+  };
+}
+
+module.exports = { WINDOWS, MIN_BARS, TREND, BAND, windowFeatures, strengthScore, classifyTrend, seriesHistory, dimensionTrends };
