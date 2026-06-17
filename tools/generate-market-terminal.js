@@ -35,6 +35,9 @@ const SECTOR_COGNITIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-co
 const SECTOR_STRUCTURE_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-structure.json');
 const SECTOR_CHARTS_PATH = path.join(ROOT, 'data', 'visual', 'sector-charts.json');
 const SECTOR_REG = require('./sector-registry');
+const EQUITY_REG = require('./equity-registry');
+const EQUITY_INTEL_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-intelligence.json');
+const EQUITY_NETWORK_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-cognitive-network.json');
 const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
 const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
@@ -519,6 +522,27 @@ ${linkCards}
 }
 function stateOfSector(art, symbol, ar) { const s = art && Array.isArray(art.sectors) ? art.sectors.find((x) => x.symbol === symbol) : null; return s ? (ar ? s.label_ar : s.label_en) : (ar ? 'غير محدد' : 'indeterminate'); }
 
+// ── Equity intelligence panel — per-equity score + dominant state + links. ──
+function equityBlock(ar, intel, network) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!intel || !Array.isArray(intel.equities)) return '';
+  const bySym = new Map(EQUITY_REG.EQUITIES.map((e) => [e.symbol, e]));
+  const dom = network && network.dominant_equity_state ? (ar ? network.dominant_equity_state.label_ar : network.dominant_equity_state.label_en) : t('indeterminate', 'غير محدد');
+  const cards = intel.equities.map((e) => {
+    const eq = bySym.get(e.symbol); const slug = eq ? eq.slug : e.slug;
+    const name = eq ? (ar ? eq.name_ar : eq.name_en) : e.symbol;
+    const score = ar ? e.score_label_ar : e.score_label_en;
+    return `          <article class="market-card"><span class="market-card-kicker">${esc(e.symbol)}</span><h3><a href="${ar ? '/ar/equities/' : '/equities/'}${esc(slug)}/">${esc(score)}</a></h3><p class="market-copy">${esc(name)}</p></article>`;
+  }).join('\n');
+  return `      <section class="market-section" id="equity-intelligence-panel">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Equity intelligence', 'استخبارات الأسهم'))}</span><h2>${esc(t('Single-name read', 'قراءة الأسهم المنفردة'))}: ${esc(dom)}</h2></div>
+        <p class="market-copy">${esc(t('Qualitative institutional labels along the macro → sector → equity chain — not recommendations or trade instructions. Open an equity for its full read.', 'تسميات مؤسسية نوعية على سلسلة الكلي ← القطاع ← السهم — ليست توصيات أو تعليمات تداول. افتح أي سهم لقراءته الكاملة.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -541,6 +565,8 @@ function buildMain(ar) {
   const sectorCognitive = readJson(SECTOR_COGNITIVE_PATH);
   const sectorCharts = readJson(SECTOR_CHARTS_PATH);
   const sectorStructure = readJson(SECTOR_STRUCTURE_PATH);
+  const equityIntel = readJson(EQUITY_INTEL_PATH);
+  const equityNetwork = readJson(EQUITY_NETWORK_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -560,6 +586,7 @@ ${cognitiveBlock(ar, cognitive)}
 ${transmissionBlock(ar, cognitive)}
 ${structureBlock(ar, structure)}
 ${sectorBlock(ar, sectorRotation, sectorCognitive, sectorCharts, sectorStructure)}
+${equityBlock(ar, equityIntel, equityNetwork)}
 ${assetIntelBlock(ar, intel)}
 ${layerTable(ar, 'asset-structure-table', t('Asset structure', 'بنية الأصول'), t('Per-asset structure state', 'حالة بنية كل أصل'), t('Each read derived independently from that asset’s own observed price structure.', 'كل قراءة مشتقة باستقلال من البنية السعرية المرصودة لذلك الأصل.'), assetStructure, (a) => (ar ? a.label_ar : a.label_en))}
 ${layerTable(ar, 'asset-tactical-table', t('Asset tactical', 'تكتيك الأصول'), t('Per-asset tactical pressure', 'الضغط التكتيكي لكل أصل'), t('Directional pressure and continuation derived per asset — conditional, not a forecast.', 'الضغط الاتجاهي والاستمرارية مشتقان لكل أصل — مشروطان، وليسا توقعاً.'), assetTactical, (a) => `${ar ? a.dimensions.directional_pressure.label_ar : a.dimensions.directional_pressure.label_en} · ${ar ? a.dimensions.continuation.label_ar : a.dimensions.continuation.label_en}`)}
