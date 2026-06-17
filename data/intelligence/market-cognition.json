@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-17T16:41:17.976Z",
+  "updated_at": "2026-06-17T19:27:53.561Z",
   "run_date": "2026-06-17",
   "verified": false,
   "sessions_tracked": 5,
@@ -154,10 +154,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "nvda": -0.0289,
-        "qqq": 0.4193
+        "nvda": -1.1234,
+        "qqq": -0.3987
       }
     },
     {
@@ -181,10 +181,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "spy": -0.0347,
-        "iwm": 1.034
+        "spy": -0.9542,
+        "iwm": -0.3321
       }
     },
     {
@@ -201,7 +201,26 @@
     }
   ],
   "signals": {
-    "confirmation": [],
+    "confirmation": [
+      {
+        "source": "causal:ai-growth",
+        "en": "AI leadership drives the growth complex",
+        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
+        "evidence": {
+          "nvda": -1.1234,
+          "qqq": -0.3987
+        }
+      },
+      {
+        "source": "causal:breadth-link",
+        "en": "Healthy advances carry small caps with the index",
+        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
+        "evidence": {
+          "spy": -0.9542,
+          "iwm": -0.3321
+        }
+      }
+    ],
     "contradiction": [],
     "fragility": [],
     "exhaustion": [],
