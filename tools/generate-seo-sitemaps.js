@@ -11,6 +11,9 @@ const marketAssetDirs = (prefix) => ASSET_SLUGS.map((slug) => `${prefix}markets/
 let SECTOR_SLUGS = [];
 try { SECTOR_SLUGS = require("./sector-registry").SLUGS; } catch { SECTOR_SLUGS = []; }
 const sectorDirs = (prefix) => SECTOR_SLUGS.map((slug) => `${prefix}sectors/${slug}/`).filter((rel) => existsDir(rel));
+let EQUITY_SLUGS = [];
+try { EQUITY_SLUGS = require("./equity-registry").SLUGS; } catch { EQUITY_SLUGS = []; }
+const equityDirs = (prefix) => EQUITY_SLUGS.map((slug) => `${prefix}equities/${slug}/`).filter((rel) => existsDir(rel));
 const marketConfig = readJson("data/market-symbols.json", { symbols: [], hubs: [], comparisons: [] });
 
 const core = [
@@ -27,6 +30,7 @@ const core = [
   .concat(existsDir("market-terminal") ? ["market-terminal/"] : [])
   .concat(marketAssetDirs(""))
   .concat(sectorDirs(""))
+  .concat(equityDirs(""))
   .concat(existsDir("intelligence") ? ["intelligence/"] : [])
   // Phase 68 intelligence dashboards, EN + AR (required in sitemap-core.xml by
   // check:visual-intelligence; previously omitted, which failed that gate).
@@ -75,6 +79,7 @@ function arUrls() {
   }
   for (const rel of marketAssetDirs("ar/")) out.push(rel);
   for (const rel of sectorDirs("ar/")) out.push(rel);
+  for (const rel of equityDirs("ar/")) out.push(rel);
   for (const hub of marketConfig.hubs || []) if (exists(`ar/${hub.pagePath}`)) out.push(`ar/${hub.pagePath}`);
   for (const dir of ["stocks", "etfs", "compare", "insights", "articles", "market-outlook", "market-news", "market-structure"]) {
     const files = dir === "market-outlook"
