@@ -1,40 +1,36 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-16T22:26:52.964Z",
+  "generated_at": "2026-06-17T17:27:37.089Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 67,
-  "coverage_pct": 78,
+  "structural_confidence": 56,
+  "coverage_pct": 56,
   "dominant": {
-    "dimension": "participation",
-    "state": "narrow_leadership"
+    "dimension": "stability",
+    "state": "deteriorating"
   },
   "dimensions": {
     "participation": {
-      "state": "narrow_leadership",
-      "label_en": "narrow leadership",
-      "label_ar": "قيادة ضيقة",
+      "state": "indeterminate",
+      "label_en": "indeterminate",
+      "label_ar": "غير محدد",
       "evidence": [
-        "leadership=narrow",
-        "breadth=broad_weakness",
+        "breadth=flat",
         "session breadth=mixed"
       ]
     },
     "volatility_structure": {
-      "state": "contained",
-      "label_en": "contained volatility",
-      "label_ar": "تذبذب محتوى",
-      "evidence": [
-        "alignment=aligned"
-      ]
+      "state": "indeterminate",
+      "label_en": "indeterminate",
+      "label_ar": "غير محدد",
+      "evidence": []
     },
     "cross_asset": {
-      "state": "coherent",
-      "label_en": "coherent",
-      "label_ar": "متسق",
+      "state": "mild_divergence",
+      "label_en": "mild cross-asset divergence",
+      "label_ar": "تباعد طفيف عبر الأصول",
       "evidence": [
-        "coherence=1",
-        "tension cross_asset=coherent"
+        "coherence=0.33"
       ]
     },
     "concentration": {
@@ -51,18 +47,18 @@
       "label_en": "cyclical leadership",
       "label_ar": "قيادة دورية",
       "evidence": [
-        "leaders=XLF/XLU/XLI",
+        "leaders=XLK/XLI/XLF",
         "regime defensive=cyclical_leadership"
       ]
     },
     "persistence": {
-      "state": "persistent",
-      "label_en": "persistent structure",
-      "label_ar": "بنية مستمرة",
+      "state": "transitioning",
+      "label_en": "transitioning structure",
+      "label_ar": "بنية في طور التحوّل",
       "evidence": [
         "direction=risk_off",
         "verified_sessions=4",
-        "regime_condition=stable-regime"
+        "regime_condition=unverified"
       ]
     },
     "momentum": {
@@ -70,41 +66,40 @@
       "label_en": "indeterminate",
       "label_ar": "غير محدد",
       "evidence": [
-        "participation=narrow_leadership",
+        "participation=indeterminate",
         "rotation=cyclical_leadership",
         "concentration=elevated"
       ]
     },
     "liquidity_participation": {
-      "state": "uncertain",
-      "label_en": "uncertain liquidity participation",
-      "label_ar": "مشاركة سيولة غير مؤكدة",
-      "evidence": [
-        "liquidity_participation=uncertain",
-        "liquidity_state=indeterminate"
-      ]
-    },
-    "stability": {
       "state": "indeterminate",
       "label_en": "indeterminate",
       "label_ar": "غير محدد",
       "evidence": [
-        "regime stability=indeterminate",
-        "tension=contained",
+        "liquidity_state=indeterminate"
+      ]
+    },
+    "stability": {
+      "state": "deteriorating",
+      "label_en": "deteriorating structure",
+      "label_ar": "بنية متدهورة",
+      "evidence": [
+        "regime stability=deteriorating",
+        "tension=unverified",
         "fragility=building"
       ]
     }
   },
   "homepage_summary": {
     "dominant_structure": {
-      "dimension": "participation",
-      "state": "narrow_leadership"
+      "dimension": "stability",
+      "state": "deteriorating"
     },
-    "participation": "narrow_leadership",
-    "volatility_structure": "contained",
-    "cross_asset": "coherent",
-    "structural_stability": "indeterminate",
-    "structural_confidence": 67
+    "participation": "indeterminate",
+    "volatility_structure": "indeterminate",
+    "cross_asset": "mild_divergence",
+    "structural_stability": "deteriorating",
+    "structural_confidence": 56
   },
   "attribution": {
     "sources": [
