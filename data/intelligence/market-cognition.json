@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-17T13:03:43.198Z",
+  "updated_at": "2026-06-17T16:41:17.976Z",
   "run_date": "2026-06-17",
-  "verified": true,
+  "verified": false,
   "sessions_tracked": 5,
   "regime_shifts": [
     {
@@ -35,22 +35,22 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "broadening",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "balanced",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "narrow-megacap",
-        "date": "2026-06-15"
+        "state": "broadening",
+        "date": "2026-06-16"
       }
     },
     {
       "dimension": "ai_concentration_risk",
-      "state": "elevated",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "contained",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "contained",
-        "date": "2026-06-15"
+        "state": "elevated",
+        "date": "2026-06-16"
       }
     },
     {
@@ -86,33 +86,16 @@
     },
     {
       "dimension": "market_fragility",
-      "state": "building",
-      "phase": "established",
-      "sessions_in_state": 3,
+      "state": "contained",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "contained",
-        "date": "2026-06-13"
+        "state": "building",
+        "date": "2026-06-16"
       }
     }
   ],
-  "memory_observations": [
-    {
-      "kind": "streak",
-      "dimension": "market_fragility",
-      "state": "building",
-      "sessions": 3,
-      "en": "Market fragility signals build for a third straight session across volatility, breadth, and concentration inputs.",
-      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثالثة على التوالي عبر مدخلات التقلب والاتساع والتركز."
-    },
-    {
-      "kind": "streak",
-      "dimension": "ai_concentration_risk",
-      "state": "elevated",
-      "sessions": 2,
-      "en": "AI concentration risk holds elevated for a second straight session — crowding pressure is building, not resetting.",
-      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثانية على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
-    }
-  ],
+  "memory_observations": [],
   "causal_links": [
     {
       "id": "yields-growth",
@@ -171,10 +154,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "nvda": -2.3723,
-        "qqq": -1.9005
+        "nvda": -0.0289,
+        "qqq": 0.4193
       }
     },
     {
@@ -198,10 +181,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "spy": -0.5962,
-        "iwm": -0.8689
+        "spy": -0.0347,
+        "iwm": 1.034
       }
     },
     {
@@ -218,40 +201,36 @@
     }
   ],
   "signals": {
-    "confirmation": [
-      {
-        "source": "causal:ai-growth",
-        "en": "AI leadership drives the growth complex",
-        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-        "evidence": {
-          "nvda": -2.3723,
-          "qqq": -1.9005
-        }
-      },
-      {
-        "source": "causal:breadth-link",
-        "en": "Healthy advances carry small caps with the index",
-        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-        "evidence": {
-          "spy": -0.5962,
-          "iwm": -0.8689
-        }
-      }
-    ],
+    "confirmation": [],
     "contradiction": [],
-    "fragility": [
-      {
-        "source": "market_fragility",
-        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
-        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
-      }
-    ],
+    "fragility": [],
     "exhaustion": [],
     "liquidity": [],
     "speculative": []
   },
   "alerts": [],
   "timeline_tail": [
+    {
+      "date": "2026-06-17",
+      "dimension": "market_fragility",
+      "from": "building",
+      "to": "contained",
+      "note": "market fragility: building -> contained"
+    },
+    {
+      "date": "2026-06-17",
+      "dimension": "ai_concentration_risk",
+      "from": "elevated",
+      "to": "contained",
+      "note": "ai concentration risk: elevated -> contained"
+    },
+    {
+      "date": "2026-06-17",
+      "dimension": "momentum_concentration",
+      "from": "broadening",
+      "to": "balanced",
+      "note": "momentum concentration: broadening -> balanced"
+    },
     {
       "date": "2026-06-16",
       "dimension": "breadth_state",
@@ -272,21 +251,7 @@
       "from": "narrow-megacap",
       "to": "broadening",
       "note": "momentum concentration: narrow-megacap -> broadening"
-    },
-    {
-      "date": "2026-06-15",
-      "dimension": "market_fragility",
-      "from": "contained",
-      "to": "building",
-      "note": "market fragility: contained -> building"
-    },
-    {
-      "date": "2026-06-15",
-      "dimension": "momentum_concentration",
-      "from": "balanced",
-      "to": "narrow-megacap",
-      "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
-  "cognition_note": "Cognition state — 4/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 5 timeline event(s)."
+  "cognition_note": "Cognition state — 4/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 8 timeline event(s)."
 }

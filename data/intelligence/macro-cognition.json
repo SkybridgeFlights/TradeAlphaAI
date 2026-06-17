@@ -1,21 +1,21 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-17T13:03:43.236Z",
+  "updated_at": "2026-06-17T16:41:18.013Z",
   "run_date": "2026-06-17",
-  "verified": true,
+  "verified": false,
   "conviction": {
-    "state": "strengthening-conviction",
-    "regime_confidence": "moderate",
-    "confirmations": 2,
+    "state": "unverified",
+    "regime_confidence": "unverified",
+    "confirmations": 0,
     "contradictions": 0,
-    "en": "Conviction is strengthening — confirmations outweigh contradictions, with persistence still building.",
-    "ar": "القناعة تتعزز — التأكيدات تفوق التناقضات مع استمرارية لا تزال تتكون."
+    "en": "Conviction analysis resumes with the next verified data cycle.",
+    "ar": "يستأنف تحليل القناعة مع دورة البيانات الموثقة التالية."
   },
   "contradictions": [],
   "structure": {
-    "class": "stable-structure",
-    "en": "Stable structure — no fragility pattern dominates the verified picture.",
-    "ar": "بنية مستقرة — لا نمط هشاشة يهيمن على الصورة الموثقة."
+    "class": "unverified",
+    "en": "Structure classification resumes with verified inputs.",
+    "ar": "يستأنف تصنيف البنية مع المدخلات الموثقة."
   },
   "pressure": {
     "tracks": {
@@ -43,14 +43,14 @@
       "speculative_pressure": {
         "score": 0,
         "base_score": 0,
-        "state": "dormant",
+        "state": "unverified",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
       "concentration_pressure": {
-        "score": 3,
+        "score": 2,
         "base_score": 2,
-        "state": "accumulating",
+        "state": "steady",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
@@ -62,77 +62,24 @@
         "ar": "تراكم ضغط العوائد"
       }
     },
-    "elevated": [
-      "concentration_pressure"
-    ],
-    "note": "Stored pressure elevated on: concentration pressure."
+    "elevated": [],
+    "note": "No pressure track has accumulated to an elevated level."
   },
   "scenarios": [
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with strengthening conviction; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع القناعة تتعزز؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Monitoring base case — regime inputs await the next sourced data cycle; no structural scenario is asserted.",
+      "ar": "الحالة الأساسية للمراقبة — مدخلات النظام بانتظار دورة البيانات الموثقة التالية؛ لا سيناريو هيكلي مطروح.",
       "derived_from": [
-        "structure",
-        "conviction"
-      ]
-    },
-    {
-      "id": "bullish-continuation",
-      "status": "watch",
-      "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
-      "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
-      "derived_from": [
-        "breadth_state",
-        "contradictions"
-      ]
-    },
-    {
-      "id": "fragile-upside",
-      "status": "dormant",
-      "en": "Fragile upside — the index can extend while participation thins; deteriorating breadth alongside new highs would confirm this path, broadening would invalidate it.",
-      "ar": "صعود هش — يمكن للمؤشر أن يمتد بينما تضيق المشاركة؛ تدهور الاتساع مع قمم جديدة يؤكد هذا المسار، واتساع المشاركة يبطله.",
-      "derived_from": [
-        "structure",
-        "breadth_state"
-      ]
-    },
-    {
-      "id": "defensive-rotation",
-      "status": "dormant",
-      "en": "Defensive rotation — accumulating protection demand would rotate leadership toward defensives; gold bid plus widening credit-sensitive weakness would confirm.",
-      "ar": "التناوب الدفاعي — تراكم الطلب على الحماية سيحوّل القيادة نحو الأصول الدفاعية؛ يؤكد ذلك إقبال على الذهب مع اتساع ضعف الأصول الحساسة للائتمان.",
-      "derived_from": [
-        "defensive_rotation",
-        "defensive_pressure"
-      ]
-    },
-    {
-      "id": "volatility-expansion",
-      "status": "dormant",
-      "en": "Volatility expansion — stored compression is the fuel; a catalyst that breaks the range would release it. VIX regime change is the confirming signal.",
-      "ar": "توسع التقلب — الانضغاط المخزّن هو الوقود؛ ومحفز يكسر النطاق سيطلقه. تغير نظام VIX هو إشارة التأكيد.",
-      "derived_from": [
-        "volatility_pressure",
-        "volatility_regime"
-      ]
-    },
-    {
-      "id": "invalidation-path",
-      "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
-      "derived_from": [
-        "breadth_state",
-        "volatility_regime"
+        "unverified_session"
       ]
     },
     {
       "id": "catalyst-dependency",
       "status": "monitor",
-      "en": "Catalyst dependency — United Kingdom CPI is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
-      "ar": "اعتماد على المحفز — United Kingdom CPI هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
+      "en": "Catalyst dependency — the next verified read hinges on United Kingdom CPI.",
+      "ar": "اعتماد على المحفز — القراءة الموثقة التالية مرهونة بـUnited Kingdom CPI.",
       "derived_from": [
         "calendar"
       ],
@@ -140,9 +87,9 @@
     }
   ],
   "desk_focus": {
-    "focus": "balanced",
-    "reason_en": "no dominant stress pattern",
-    "reason_ar": "لا نمط ضغط مهيمن"
+    "focus": "monitoring",
+    "reason_en": "awaiting verified data cycle",
+    "reason_ar": "بانتظار دورة بيانات موثقة"
   },
-  "macro_note": "Macro cognition — conviction: strengthening-conviction; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 1."
+  "macro_note": "Macro cognition holding prior state — no verified inputs this run."
 }

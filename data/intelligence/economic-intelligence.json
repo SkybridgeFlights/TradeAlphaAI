@@ -1,18 +1,18 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-17T13:03:43.046Z",
+  "generated_at": "2026-06-17T16:41:18.177Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "schedule_fallback",
   "calendar_updated_at": "2026-06-16T18:12:13.501Z",
   "enrichment": {
     "fetch_attempted": true,
     "keys_present": {
-      "fred": true,
+      "fred": false,
       "bls": false,
       "bea": false,
       "eia": false,
       "fmp": false,
-      "finnhub": true
+      "finnhub": false
     },
     "forecast_providers": {
       "fmp": {
@@ -21,7 +21,7 @@
       },
       "finnhub": {
         "ok": false,
-        "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic"
+        "reason": "missing_api_key"
       }
     },
     "forecast_observations": 0,
@@ -39,22 +39,21 @@
   "counts": {
     "total": 28,
     "high_impact": 22,
-    "parsed": 4,
+    "parsed": 0,
     "awaiting": 22,
-    "delayed": 2,
+    "delayed": 5,
     "surprise_ready": 0,
     "by_state": {
       "scheduled": 22,
       "awaiting_release": 0,
-      "released": 0,
-      "parsed": 4,
+      "released": 1,
+      "parsed": 0,
       "revised": 0,
-      "delayed": 2,
+      "delayed": 5,
       "archived": 0
     },
     "by_forecast_quality": {
-      "unavailable": 24,
-      "historical_proxy": 4
+      "unavailable": 28
     }
   },
   "events": [
@@ -224,17 +223,17 @@
       "country": "CA",
       "release_time": "2026-06-16T13:00:00.000Z",
       "timezone": "UTC",
-      "actual": 333.979,
+      "actual": null,
       "forecast": null,
-      "previous": 332.407,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
-      "confidence": 90,
+      "source": "Statistics Canada",
+      "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -242,37 +241,35 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 332.407,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "CPIAUCSL"
       },
       "surprise": {
-        "surprise_score": 0,
-        "surprise_direction": "near_consensus",
-        "surprise_label": "in_line__proxy_based",
-        "policy_tone": "neutral",
-        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Canada CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
-        "forecast_basis": "historical_proxy",
-        "surprise_confidence": 25,
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 25,
-      "forecast_basis": "historical_proxy",
-      "forecast_sources": [
-        "historical_proxy:previous_release"
-      ],
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
       "forecast_source_count": 0,
-      "forecast_confidence": 25,
-      "forecast_quality": "historical_proxy",
-      "consensus_state": "proxy_only",
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
       "forecast_dispersion": null,
-      "proxy_used": true,
-      "proxy_value": 332.407,
+      "proxy_used": false,
+      "proxy_value": null,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -288,7 +285,7 @@
       },
       "narrative_tags": [
         "inflation",
-        "in_line"
+        "awaiting_data"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -296,7 +293,7 @@
         "precise_time": false,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::global_acquisition::gb::united-kingdom-cpi::20260617T070000",
@@ -305,17 +302,17 @@
       "country": "GB",
       "release_time": "2026-06-17T07:00:00.000Z",
       "timezone": "UTC",
-      "actual": 333.979,
+      "actual": null,
       "forecast": null,
-      "previous": 332.407,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
-      "confidence": 90,
+      "source": "UK Office for National Statistics",
+      "source_url": "https://www.ons.gov.uk/releasecalendar",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -323,37 +320,35 @@
         "QQQ",
         "TLT"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 332.407,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "CPIAUCSL"
       },
       "surprise": {
-        "surprise_score": 0,
-        "surprise_direction": "near_consensus",
-        "surprise_label": "in_line__proxy_based",
-        "policy_tone": "neutral",
-        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): United Kingdom CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
-        "forecast_basis": "historical_proxy",
-        "surprise_confidence": 25,
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 25,
-      "forecast_basis": "historical_proxy",
-      "forecast_sources": [
-        "historical_proxy:previous_release"
-      ],
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
       "forecast_source_count": 0,
-      "forecast_confidence": 25,
-      "forecast_quality": "historical_proxy",
-      "consensus_state": "proxy_only",
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
       "forecast_dispersion": null,
-      "proxy_used": true,
-      "proxy_value": 332.407,
+      "proxy_used": false,
+      "proxy_value": null,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -369,7 +364,7 @@
       },
       "narrative_tags": [
         "inflation",
-        "in_line"
+        "awaiting_data"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -377,7 +372,7 @@
         "precise_time": false,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::global_acquisition::gb::united-kingdom-unemployment-rate::20260617T070000",
@@ -386,17 +381,17 @@
       "country": "GB",
       "release_time": "2026-06-17T07:00:00.000Z",
       "timezone": "UTC",
-      "actual": 4.3,
+      "actual": null,
       "forecast": null,
-      "previous": 4.3,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "medium",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/UNRATE",
-      "confidence": 90,
+      "source": "UK Office for National Statistics",
+      "source_url": "https://www.ons.gov.uk/releasecalendar",
+      "confidence": 45,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -404,37 +399,35 @@
         "IWM",
         "VIX"
       ],
-      "release_state": "parsed",
+      "release_state": "released",
       "historical_context": {
-        "previous": 4.3,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "UNRATE"
       },
       "surprise": {
-        "surprise_score": 0,
-        "surprise_direction": "near_consensus",
-        "surprise_label": "in_line__proxy_based",
-        "policy_tone": "neutral",
-        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): United Kingdom Unemployment Rate was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
-        "forecast_basis": "historical_proxy",
-        "surprise_confidence": 25,
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 25,
-      "forecast_basis": "historical_proxy",
-      "forecast_sources": [
-        "historical_proxy:previous_release"
-      ],
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
       "forecast_source_count": 0,
-      "forecast_confidence": 25,
-      "forecast_quality": "historical_proxy",
-      "consensus_state": "proxy_only",
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
       "forecast_dispersion": null,
-      "proxy_used": true,
-      "proxy_value": 4.3,
+      "proxy_used": false,
+      "proxy_value": null,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -450,7 +443,7 @@
       },
       "narrative_tags": [
         "labor",
-        "in_line"
+        "awaiting_data"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -458,7 +451,7 @@
         "precise_time": false,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::retail-sales::20260617T123000",
@@ -467,17 +460,17 @@
       "country": "US",
       "release_time": "2026-06-17T12:30:00.000Z",
       "timezone": "UTC",
-      "actual": 763705,
+      "actual": null,
       "forecast": null,
-      "previous": 757036,
+      "previous": null,
       "revised": null,
       "revised_from": null,
       "status": "confirmed",
       "estimated_vs_verified": "estimated",
       "importance": "high",
-      "source": "FRED (St. Louis Fed)",
-      "source_url": "https://fred.stlouisfed.org/series/RSAFS",
-      "confidence": 90,
+      "source": "U.S. Census Bureau",
+      "source_url": "https://www.census.gov/retail/index.html",
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "SPY",
@@ -485,37 +478,35 @@
         "Oil",
         "Defensive sectors"
       ],
-      "release_state": "parsed",
+      "release_state": "delayed",
       "historical_context": {
-        "previous": 757036,
+        "previous": null,
         "revised": null,
         "revised_from": null,
-        "observation_date": "2026-05-01",
+        "observation_date": null,
         "official_series": "RSAFS"
       },
       "surprise": {
-        "surprise_score": 1,
-        "surprise_direction": "near_consensus",
-        "surprise_label": "in_line__proxy_based",
-        "policy_tone": "neutral",
-        "macro_interpretation": "Proxy-based read (prior print used as baseline, NOT consensus): Retail Sales was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone.",
-        "forecast_basis": "historical_proxy",
-        "surprise_confidence": 25,
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
         "surprise_ready": false
       },
       "surprise_ready": false,
-      "surprise_confidence": 25,
-      "forecast_basis": "historical_proxy",
-      "forecast_sources": [
-        "historical_proxy:previous_release"
-      ],
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
       "forecast_source_count": 0,
-      "forecast_confidence": 25,
-      "forecast_quality": "historical_proxy",
-      "consensus_state": "proxy_only",
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
       "forecast_dispersion": null,
-      "proxy_used": true,
-      "proxy_value": 757036,
+      "proxy_used": false,
+      "proxy_value": null,
       "cross_asset": {
         "directional": {
           "DXY": "+",
@@ -531,7 +522,7 @@
       },
       "narrative_tags": [
         "growth",
-        "in_line"
+        "awaiting_data"
       ],
       "data_capabilities": {
         "forecasts": false,
@@ -539,7 +530,7 @@
         "precise_time": true,
         "schedule_estimate": true
       },
-      "enrichment_source": "FRED (St. Louis Fed)"
+      "enrichment_source": "calendar"
     },
     {
       "id": "economic-calendar::schedule_fallback::us::fomc-rate-decision::20260617T180000",

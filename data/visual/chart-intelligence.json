@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-17T13:03:43.133Z",
+  "generated_at": "2026-06-17T16:41:18.278Z",
   "source_layer": "chart-intelligence",
   "preview_only": true,
   "chart_types": [
@@ -18,7 +18,68 @@
     "breadth_fragility",
     "catalyst_window"
   ],
-  "count": 0,
-  "note": "No reaction/regime evidence available — chart intelligence intentionally empty (no fabricated overlays).",
-  "visuals": []
+  "count": 1,
+  "note": null,
+  "visuals": [
+    {
+      "id": "liquidity_regime_snapshot",
+      "chart_type": "liquidity_regime_snapshot",
+      "analytical_reason": {
+        "regime": "macro_fragility",
+        "question": "What is the structural environment macro reactions are landing in?"
+      },
+      "narrative_hook": {
+        "en": "The liquidity snapshot frames the environment: a macro fragility regime with indeterminate liquidity and deteriorating stability.",
+        "ar": "يؤطّر مشهد السيولة البيئة: نظام هشاشة كلية مع سيولة غير محدد واستقرار يتدهور."
+      },
+      "evidence": {
+        "regime": "macro_fragility",
+        "liquidity_state": "indeterminate",
+        "stability": "deteriorating",
+        "coherence": 0.33,
+        "sub_states": {
+          "breadth": "flat",
+          "volatility": "indeterminate",
+          "yield": "indeterminate",
+          "dollar": "indeterminate",
+          "defensive": "cyclical_leadership"
+        }
+      },
+      "assets": [],
+      "source_artifacts": [
+        "data/intelligence/liquidity-regime.json"
+      ],
+      "graphic": {
+        "visual_type": "regime-snapshot",
+        "headline_en": "macro fragility",
+        "headline_ar": "هشاشة كلية",
+        "narrative_context": {
+          "en": "Liquidity indeterminate · stability deteriorating · coherence 0.33.",
+          "ar": "سيولة غير محدد · استقرار يتدهور · اتساق 0.33."
+        },
+        "annotations": [
+          {
+            "label_en": "Liquidity — indeterminate",
+            "label_ar": "السيولة — غير محدد",
+            "type": "evidence"
+          },
+          {
+            "label_en": "Stability — deteriorating",
+            "label_ar": "الاستقرار — يتدهور",
+            "type": "divergence-highlight"
+          },
+          {
+            "label_en": "Breadth — flat",
+            "label_ar": "الاتساع — ثابت",
+            "type": "evidence"
+          }
+        ],
+        "attribution": "Source: TradeAlphaAI macro-reactions + liquidity-regime artifacts"
+      },
+      "files": {
+        "en": "data/visual/chart-intelligence/liquidity_regime_snapshot-en.svg",
+        "ar": "data/visual/chart-intelligence/liquidity_regime_snapshot-ar.svg"
+      }
+    }
+  ]
 }
