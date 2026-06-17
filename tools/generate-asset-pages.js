@@ -21,6 +21,7 @@ const DOLLAR_INTEL = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligenc
 const YIELD_INTEL = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_INTEL = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
 const MACRO_REGIME = path.join(ROOT, 'data', 'intelligence', 'macro-regime.json');
+const ASSET_HISTORY = path.join(ROOT, 'data', 'intelligence', 'asset-history.json');
 const CHARTS = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const TACTICAL = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
@@ -188,6 +189,26 @@ ${cards}
       </section>`;
   }
 
+  // 4c) Historical context — observed trend through time (real OHLCV windows).
+  const hist = ctx.history && Array.isArray(ctx.history.items) ? ctx.history.items.find((x) => x.symbol === asset.symbol) : null;
+  let historyBlock = '';
+  if (hist && hist.available) {
+    const dt = hist.dimension_trends || {};
+    const cards = [
+      [t('Overall', 'الإجمالي'), ar ? hist.overall.label_ar : hist.overall.label_en],
+      [t('Structure', 'البنية'), dt.structure ? (ar ? dt.structure.label_ar : dt.structure.label_en) : t('indeterminate', 'غير محدد')],
+      [t('Participation', 'المشاركة'), dt.participation ? (ar ? dt.participation.label_ar : dt.participation.label_en) : t('indeterminate', 'غير محدد')],
+      [t('Liquidity', 'السيولة'), dt.liquidity ? (ar ? dt.liquidity.label_ar : dt.liquidity.label_en) : t('indeterminate', 'غير محدد')],
+    ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+    historyBlock = `      <section class="market-section" id="asset-history-context">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Historical context', 'السياق التاريخي'))}</span><h2>${esc(t('How this asset is changing through time', 'كيف يتغيّر هذا الأصل عبر الزمن'))}</h2></div>
+        <p class="market-copy">${esc(t('Observed trends derived from this asset’s own price history (vs ~1 month ago) — improvement, deterioration or persistence. Context, not a forecast.', 'اتجاهات مرصودة مستمدة من تاريخ سعر هذا الأصل (مقابل نحو شهر مضى) — تحسّن أو تدهور أو استمرار. سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid">
+${cards}
+        </div>
+      </section>`;
+  }
+
   // 5) Related links.
   const linksBlock = `      <section class="market-section" id="asset-links">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Across the desk', 'عبر المكتب'))}</span><h2>${esc(t('Related institutional intelligence', 'استخبارات مؤسسية ذات صلة'))}</h2></div>
@@ -215,6 +236,7 @@ ${chartBlock}
 ${contextBlock}
 ${relBlock}
 ${macroBlock}
+${historyBlock}
 ${linksBlock}
 
       <section class="market-section" id="asset-disclaimer">
@@ -258,10 +280,11 @@ function main() {
   const yieldArt = readJson(YIELD_INTEL);
   const volatility = readJson(VOLATILITY_INTEL);
   const macro = readJson(MACRO_REGIME);
+  const history = readJson(ASSET_HISTORY);
   const chartBySymbol = new Map(((chartsManifest && chartsManifest.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
   let count = 0;
   for (const asset of ASSETS) {
-    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro };
+    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history };
     for (const [ar, dir] of [[false, `markets/${asset.slug}`], [true, `ar/markets/${asset.slug}`]]) {
       const html = generate(ar, asset, ctx);
       if (write) {

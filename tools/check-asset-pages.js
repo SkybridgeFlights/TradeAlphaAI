@@ -16,7 +16,7 @@ const { ASSETS } = require('./asset-registry');
 
 const ROOT = path.resolve(__dirname, '..');
 const MANIFEST = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
-const REQUIRED = ['asset-score', 'asset-chart', 'asset-context', 'asset-macro-influence', 'asset-disclaimer'];
+const REQUIRED = ['asset-score', 'asset-chart', 'asset-context', 'asset-macro-influence', 'asset-history-context', 'asset-disclaimer'];
 const FIG_RE = /<figure class="institutional-chart"[\s\S]*?<\/figure>/gi;
 const FORBIDDEN = [
   /\bbuy\b/i, /\bsell\b/i, /\bentry\b/i, /\bstop[- ]?loss\b/i, /\btake[- ]?profit\b/i,

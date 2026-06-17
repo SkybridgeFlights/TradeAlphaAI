@@ -80,16 +80,23 @@ jobs:
           node tools/build-sector-layers.js --write || echo "[tech-intel] sector layers degraded — continuing"
           node tools/build-sector-rotation.js --write || echo "[tech-intel] sector rotation degraded — continuing"
           node tools/build-sector-cognitive-network.js --write || echo "[tech-intel] sector cognitive network degraded — continuing"
-          node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
           # Phase 206 — equity intelligence (real equity OHLCV via the keyless
           # Yahoo tier, else honest unavailable; never placeholders).
           node tools/build-equity-charts.js --fetch --write || node tools/build-equity-charts.js --write || echo "[tech-intel] equity charts unavailable — continuing"
           node tools/build-equity-layers.js --write || echo "[tech-intel] equity layers degraded — continuing"
           node tools/build-equity-intelligence.js --write || echo "[tech-intel] equity intelligence degraded — continuing"
           node tools/build-equity-cognitive-network.js --write || echo "[tech-intel] equity cognitive network degraded — continuing"
-          node tools/generate-equity-pages.js --write || echo "[tech-intel] equity pages degraded — continuing"
           node tools/build-asset-intelligence.js --write || echo "[tech-intel] asset intelligence degraded — continuing"
           node tools/build-data-coverage.js --write || echo "[tech-intel] data coverage degraded — continuing"
+          # Phase 207 — historical intelligence (all charts now built): snapshot
+          # ledger, per-entity history engines, regime transitions, momentum scores.
+          node tools/build-historical-snapshots.js --write || echo "[tech-intel] historical snapshots degraded — continuing"
+          node tools/build-history-engines.js --write || echo "[tech-intel] history engines degraded — continuing"
+          node tools/build-regime-transitions.js --write || echo "[tech-intel] regime transitions degraded — continuing"
+          node tools/build-historical-intelligence.js --write || echo "[tech-intel] historical intelligence degraded — continuing"
+          # Pages last, so every page embeds the freshest current + historical state.
+          node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
+          node tools/generate-equity-pages.js --write || echo "[tech-intel] equity pages degraded — continuing"
           node tools/generate-asset-pages.js --write || echo "[tech-intel] asset pages degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
           # Capture the published slug (empty when the note self-gates) so the
@@ -137,6 +144,12 @@ jobs:
           npm run check:equity-intelligence
           npm run check:equity-network
           npm run check:equity-pages
+          npm run check:historical-snapshots
+          npm run check:asset-history
+          npm run check:sector-history
+          npm run check:equity-history
+          npm run check:regime-transitions
+          npm run check:historical-scores
           npm run check:asset-structure
           npm run check:asset-tactical
           npm run check:asset-liquidity

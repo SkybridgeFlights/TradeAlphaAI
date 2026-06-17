@@ -38,6 +38,11 @@ const SECTOR_REG = require('./sector-registry');
 const EQUITY_REG = require('./equity-registry');
 const EQUITY_INTEL_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-intelligence.json');
 const EQUITY_NETWORK_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-cognitive-network.json');
+const REGIME_TRANSITIONS_PATH = path.join(ROOT, 'data', 'intelligence', 'regime-transitions.json');
+const ASSET_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-history.json');
+const SECTOR_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-history.json');
+const EQUITY_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-history.json');
+const SNAPSHOTS_PATH = path.join(ROOT, 'data', 'intelligence', 'historical-snapshots.json');
 const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
 const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
@@ -543,6 +548,38 @@ ${cards}
       </section>`;
 }
 
+// ── Historical intelligence — what changed (regime transition + improving/
+// deteriorating across assets/sectors/equities + ledger depth). ──
+function historicalBlock(ar, transitions, assetH, sectorH, equityH, snapshots) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!transitions && !assetH) return '';
+  const trans = transitions && transitions.available ? (ar ? transitions.transition_state_ar : transitions.transition_state_en) : t('indeterminate', 'غير محدد');
+  const collect = (arts, kind) => {
+    const out = [];
+    for (const h of arts) for (const x of ((h && h.items) || [])) {
+      if (kind === 'up' && (x.overall.state === 'improving' || x.overall.state === 'accelerating')) out.push(x.symbol);
+      if (kind === 'down' && (x.overall.state === 'deteriorating' || x.overall.state === 'weakening')) out.push(x.symbol);
+    }
+    return out;
+  };
+  const arts = [assetH, sectorH, equityH].filter(Boolean);
+  const improving = collect(arts, 'up'); const deteriorating = collect(arts, 'down');
+  const ledger = snapshots && snapshots.count ? snapshots.count : 0;
+  const cards = [
+    [t('Regime transition', 'تحوّل النظام'), trans],
+    [t('Improving', 'يتحسّن'), improving.length ? improving.slice(0, 8).join(' · ') : t('none', 'لا يوجد')],
+    [t('Deteriorating', 'يتدهور'), deteriorating.length ? deteriorating.slice(0, 8).join(' · ') : t('none', 'لا يوجد')],
+    [t('History depth', 'عمق التاريخ'), `${ledger} ${t('snapshot(s)', 'لقطة')}`],
+  ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+  return `      <section class="market-section" id="historical-intelligence">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Historical intelligence', 'الاستخبارات التاريخية'))}</span><h2>${esc(t('What changed', 'ما الذي تغيّر'))}</h2></div>
+        <p class="market-copy">${esc(t('Observed trends through time — improvement, deterioration and regime transition derived from real price history. Context, not a forecast.', 'اتجاهات مرصودة عبر الزمن — تحسّن وتدهور وتحوّل في النظام مستمدة من تاريخ سعري حقيقي. سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -567,6 +604,11 @@ function buildMain(ar) {
   const sectorStructure = readJson(SECTOR_STRUCTURE_PATH);
   const equityIntel = readJson(EQUITY_INTEL_PATH);
   const equityNetwork = readJson(EQUITY_NETWORK_PATH);
+  const regimeTransitions = readJson(REGIME_TRANSITIONS_PATH);
+  const assetHistory = readJson(ASSET_HISTORY_PATH);
+  const sectorHistory = readJson(SECTOR_HISTORY_PATH);
+  const equityHistory = readJson(EQUITY_HISTORY_PATH);
+  const snapshots = readJson(SNAPSHOTS_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -581,6 +623,7 @@ function buildMain(ar) {
 
 ${environmentBlock(ar, regime, cross)}
 ${macroBlock(ar, dollar, yieldArt, volatility, macro)}
+${historicalBlock(ar, regimeTransitions, assetHistory, sectorHistory, equityHistory, snapshots)}
 ${tacticalBlock(ar, tactical)}
 ${cognitiveBlock(ar, cognitive)}
 ${transmissionBlock(ar, cognitive)}

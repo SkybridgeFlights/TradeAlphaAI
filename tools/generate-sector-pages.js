@@ -130,6 +130,26 @@ ${cards}
         <p class="market-copy">${esc(t(`Macro sensitivity: ${sector.macro_sensitivity_en}. This sector is read against`, `الحساسية الكلية: ${sector.macro_sensitivity_ar}. يُقرأ هذا القطاع مقابل`))} ${related || esc(t('the broad market', 'السوق العريض'))}.</p>
       </section>`;
 
+  // 4b) Historical context — observed trend through time.
+  const sh = ctx.history && Array.isArray(ctx.history.items) ? ctx.history.items.find((x) => x.symbol === sector.symbol) : null;
+  let historyBlock = '';
+  if (sh && sh.available) {
+    const dt = sh.dimension_trends || {};
+    const cards = [
+      [t('Overall', 'الإجمالي'), ar ? sh.overall.label_ar : sh.overall.label_en],
+      [t('Structure', 'البنية'), dt.structure ? (ar ? dt.structure.label_ar : dt.structure.label_en) : t('indeterminate', 'غير محدد')],
+      [t('Participation', 'المشاركة'), dt.participation ? (ar ? dt.participation.label_ar : dt.participation.label_en) : t('indeterminate', 'غير محدد')],
+      [t('Score', 'الدرجة'), dt.score ? (ar ? dt.score.label_ar : dt.score.label_en) : t('indeterminate', 'غير محدد')],
+    ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+    historyBlock = `      <section class="market-section" id="sector-history-context">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Historical context', 'السياق التاريخي'))}</span><h2>${esc(t('How this sector is changing through time', 'كيف يتغيّر هذا القطاع عبر الزمن'))}</h2></div>
+        <p class="market-copy">${esc(t('Observed trends derived from this sector’s own price history (vs ~1 month ago). Context, not a forecast.', 'اتجاهات مرصودة مستمدة من تاريخ سعر هذا القطاع (مقابل نحو شهر مضى). سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid">
+${cards}
+        </div>
+      </section>`;
+  }
+
   // 5) Related links.
   const linksBlock = `      <section class="market-section" id="sector-links">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Across the desk', 'عبر المكتب'))}</span><h2>${esc(t('Related institutional intelligence', 'استخبارات مؤسسية ذات صلة'))}</h2></div>
@@ -156,6 +176,7 @@ ${intelBlock}
 ${chartBlock}
 ${rotationBlock}
 ${macroBlock}
+${historyBlock}
 ${linksBlock}
 
       <section class="market-section" id="sector-disclaimer">
@@ -198,9 +219,10 @@ function main() {
   const participation = readJson(J('sector-participation.json'));
   const rotation = readJson(J('sector-rotation.json'));
   const cognitive = readJson(J('sector-cognitive-network.json'));
+  const history = readJson(J('sector-history.json'));
   let count = 0;
   for (const sector of SECTORS) {
-    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive };
+    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history };
     for (const [ar, dir] of [[false, `sectors/${sector.slug}`], [true, `ar/sectors/${sector.slug}`]]) {
       const html = generate(ar, sector, ctx);
       if (write) { const outPath = path.join(ROOT, dir, 'index.html'); fs.mkdirSync(path.dirname(outPath), { recursive: true }); fs.writeFileSync(outPath, html, 'utf8'); count += 1; }
