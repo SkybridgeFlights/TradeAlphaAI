@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-18T16:38:50.972Z",
+  "updated_at": "2026-06-18T19:33:54.549Z",
   "run_date": "2026-06-18",
   "verified": true,
   "status": "verified",
@@ -11,19 +11,16 @@
     {
       "id": "narrow-leadership",
       "family": "leadership",
-      "state": "dominant",
+      "state": "invalidated",
       "sessions": 3,
       "inactive_sessions": 0,
       "first_seen": "2026-06-15",
       "last_seen": "2026-06-18",
       "last_evaluated": "2026-06-18",
-      "active": true,
+      "active": false,
       "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
       "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": [
-        "pulse:momentum_concentration=narrow-megacap",
-        "pulse:breadth_state=confirming"
-      ]
+      "evidence": []
     },
     {
       "id": "speculative-momentum",
@@ -91,23 +88,7 @@
       "evidence": []
     }
   ],
-  "expectations": [
-    {
-      "id": "narrow-leadership:breadth-broadening",
-      "narrative_id": "narrow-leadership",
-      "status": "fulfilled",
-      "opened_on": "2026-06-18",
-      "opened_at_session": 3,
-      "evaluated_on": "2026-06-18",
-      "expected_dimension": "breadth_state",
-      "expected_values": [
-        "confirming"
-      ],
-      "observed_value": "confirming",
-      "en": "Breadth confirmation materialized in the verified state.",
-      "ar": "تحقق تأكيد اتساع المشاركة في الحالة الموثقة."
-    }
-  ],
+  "expectations": [],
   "failed_expectations": [],
   "unresolved_tensions": [
     {
@@ -145,9 +126,9 @@
   ],
   "underpriced_memory": [],
   "market_character": {
-    "id": "fragile-optimism",
-    "en": "Fragile optimism",
-    "ar": "تفاؤل هش"
+    "id": "unresolved-tension",
+    "en": "Unresolved tension",
+    "ar": "توتر غير محسوم"
   },
   "current_focus": [
     {
@@ -173,14 +154,6 @@
       "sessions": 3,
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي."
-    },
-    {
-      "kind": "narrative",
-      "id": "narrow-leadership",
-      "state": "dominant",
-      "sessions": 3,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة."
     }
   ],
   "timeline": [
@@ -351,6 +324,17 @@
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
         "convergence:liquidity-beta"
+      ]
+    },
+    {
+      "id": "2026-06-18:repriced:narrow-leadership",
+      "date": "2026-06-18",
+      "kind": "repriced",
+      "narrative_id": "narrow-leadership",
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": [
+        "state-transition:repriced:narrow-leadership"
       ]
     }
   ],
