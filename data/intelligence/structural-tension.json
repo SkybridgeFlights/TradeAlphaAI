@@ -1,34 +1,95 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-18T12:45:14.477Z",
+  "updated_at": "2026-06-18T16:38:51.012Z",
   "run_date": "2026-06-18",
-  "verified": false,
-  "status": "holding_unverified",
-  "regime_condition": "unverified",
-  "tension_level": "unverified",
-  "tension_score": null,
+  "verified": true,
+  "status": "verified",
+  "regime_condition": "pressured-regime",
+  "tension_level": "contained",
+  "tension_score": 18,
   "tracks": {
+    "participation-strain": {
+      "id": "participation-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-06-18",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-06-18",
+      "en": "Participation remains narrower than the headline tape.",
+      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
+    },
     "positioning-strain": {
       "id": "positioning-strain",
       "active": true,
-      "state": "accumulating",
-      "sessions": 2,
+      "state": "persistent",
+      "sessions": 3,
       "severity": 1,
       "first_seen": "2026-06-16",
-      "last_seen": "2026-06-17",
-      "last_evaluated": "2026-06-17",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-06-18",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
+    },
+    "cross-asset-strain": {
+      "id": "cross-asset-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-06-18",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-06-18",
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
     }
   },
-  "active_strains": [],
-  "internal_stability": null,
-  "narrative_stability": "unverified",
-  "catalyst_fragility": {
-    "level": "unverified",
-    "next": null
+  "active_strains": [
+    "participation-strain",
+    "positioning-strain",
+    "cross-asset-strain"
+  ],
+  "internal_stability": {
+    "leadership": "narrow",
+    "cross_asset": "strained",
+    "volatility_alignment": "aligned",
+    "risk_appetite": "unverified",
+    "liquidity_participation": "uncertain"
   },
-  "strain_map": [],
+  "narrative_stability": "strained",
+  "catalyst_fragility": {
+    "level": "none",
+    "next": null,
+    "en": "No major catalyst sits inside the 72-hour structural window.",
+    "ar": "لا يوجد محفز رئيسي ضمن نافذة الحساسية الهيكلية البالغة 72 ساعة."
+  },
+  "strain_map": [
+    {
+      "id": "positioning-strain",
+      "state": "persistent",
+      "sessions": 3,
+      "severity": 1,
+      "en": "Positioning remains concentrated rather than broadly distributed.",
+      "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
+    },
+    {
+      "id": "participation-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Participation remains narrower than the headline tape.",
+      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
+    },
+    {
+      "id": "cross-asset-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    }
+  ],
   "pressure_memory": [
     {
       "date": "2026-06-12",
@@ -59,8 +120,14 @@
       "condition": "stable-regime",
       "score": 6,
       "change": "intensified"
+    },
+    {
+      "date": "2026-06-18",
+      "condition": "pressured-regime",
+      "score": 18,
+      "change": "intensified"
     }
   ],
-  "summary_en": "Structural tension assessment is held until the intelligence stack is fully verified.",
-  "summary_ar": "يظل تقييم التوتر الهيكلي معلقاً إلى حين اكتمال توثيق منظومة الاستخبارات."
+  "summary_en": "Structural pressure is building, but the regime has not entered an unstable condition. Positioning remains concentrated rather than broadly distributed.",
+  "summary_ar": "تتراكم ضغوط هيكلية، إلا أن النظام لم يدخل حالة عدم استقرار. تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
 }

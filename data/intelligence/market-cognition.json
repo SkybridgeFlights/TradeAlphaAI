@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-18T12:45:14.320Z",
+  "updated_at": "2026-06-18T16:38:50.838Z",
   "run_date": "2026-06-18",
-  "verified": false,
+  "verified": true,
   "sessions_tracked": 6,
   "regime_shifts": [
     {
@@ -35,32 +35,32 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "balanced",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "narrow-megacap",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "broadening",
-        "date": "2026-06-16"
+        "state": "balanced",
+        "date": "2026-06-17"
       }
     },
     {
       "dimension": "ai_concentration_risk",
-      "state": "contained",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "elevated",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "elevated",
-        "date": "2026-06-16"
+        "state": "contained",
+        "date": "2026-06-17"
       }
     },
     {
       "dimension": "breadth_state",
-      "state": "mixed",
-      "phase": "established",
-      "sessions_in_state": 3,
+      "state": "confirming",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "confirming",
-        "date": "2026-06-15"
+        "state": "mixed",
+        "date": "2026-06-17"
       }
     },
     {
@@ -79,19 +79,19 @@
     },
     {
       "dimension": "speculative_appetite",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "expanding",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
       "dimension": "market_fragility",
-      "state": "contained",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "building",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "building",
-        "date": "2026-06-16"
+        "state": "contained",
+        "date": "2026-06-17"
       }
     }
   ],
@@ -156,8 +156,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": -1.3307,
-        "qqq": -1.007
+        "nvda": 2.9318,
+        "qqq": 2.3405
       }
     },
     {
@@ -169,8 +169,11 @@
       "expected": "direct",
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-      "state": "unobserved",
-      "evidence": null
+      "state": "diverging",
+      "evidence": {
+        "btc": -5.1556,
+        "qqq": 2.3405
+      }
     },
     {
       "id": "breadth-link",
@@ -183,8 +186,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": -1.2488,
-        "iwm": -0.7532
+        "spy": 0.803,
+        "iwm": 1.4454
       }
     },
     {
@@ -207,8 +210,8 @@
         "en": "AI leadership drives the growth complex",
         "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "nvda": -1.3307,
-          "qqq": -1.007
+          "nvda": 2.9318,
+          "qqq": 2.3405
         }
       },
       {
@@ -216,19 +219,99 @@
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": -1.2488,
-          "iwm": -0.7532
+          "spy": 0.803,
+          "iwm": 1.4454
+        }
+      },
+      {
+        "source": "breadth_state",
+        "en": "Breadth confirms the advance beyond megacap leadership.",
+        "ar": "اتساع السوق يؤكد الصعود خارج قيادة الأسهم الكبرى."
+      }
+    ],
+    "contradiction": [
+      {
+        "source": "causal:liquidity-beta",
+        "en": "Divergence on the btc/qqq link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة btc/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "btc": -5.1556,
+          "qqq": 2.3405
         }
       }
     ],
-    "contradiction": [],
-    "fragility": [],
+    "fragility": [
+      {
+        "source": "market_fragility",
+        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
+        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
+      }
+    ],
     "exhaustion": [],
     "liquidity": [],
-    "speculative": []
+    "speculative": [
+      {
+        "source": "speculative_appetite",
+        "en": "Speculative appetite is expanding across the high-beta complex.",
+        "ar": "شهية المضاربة تتوسع عبر الأصول عالية البيتا."
+      },
+      {
+        "source": "nvda_move",
+        "en": "An outsized sourced AI-leadership move (+2.93%) marks active speculative positioning.",
+        "ar": "تحرك موثق كبير في قيادة الذكاء الاصطناعي (+2.93%) يعكس تمركزاً مضاربياً نشطاً.",
+        "evidence": {
+          "nvda": 2.9318
+        }
+      }
+    ]
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "positioning-crowding-2026-06-18",
+      "type": "positioning-crowding",
+      "severity": "watch",
+      "date": "2026-06-18",
+      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
+      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+      "derived_from": [
+        {
+          "dimension": "ai_concentration_risk",
+          "from": "contained",
+          "to": "elevated",
+          "date": "2026-06-18"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
+    {
+      "date": "2026-06-18",
+      "dimension": "market_fragility",
+      "from": "contained",
+      "to": "building",
+      "note": "market fragility: contained -> building"
+    },
+    {
+      "date": "2026-06-18",
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "confirming",
+      "note": "breadth state: mixed -> confirming"
+    },
+    {
+      "date": "2026-06-18",
+      "dimension": "ai_concentration_risk",
+      "from": "contained",
+      "to": "elevated",
+      "note": "ai concentration risk: contained -> elevated"
+    },
+    {
+      "date": "2026-06-18",
+      "dimension": "momentum_concentration",
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
+    },
     {
       "date": "2026-06-17",
       "dimension": "market_fragility",
@@ -242,35 +325,7 @@
       "from": "elevated",
       "to": "contained",
       "note": "ai concentration risk: elevated -> contained"
-    },
-    {
-      "date": "2026-06-17",
-      "dimension": "momentum_concentration",
-      "from": "broadening",
-      "to": "balanced",
-      "note": "momentum concentration: broadening -> balanced"
-    },
-    {
-      "date": "2026-06-16",
-      "dimension": "breadth_state",
-      "from": "confirming",
-      "to": "mixed",
-      "note": "breadth state: confirming -> mixed"
-    },
-    {
-      "date": "2026-06-16",
-      "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "note": "ai concentration risk: contained -> elevated"
-    },
-    {
-      "date": "2026-06-16",
-      "dimension": "momentum_concentration",
-      "from": "narrow-megacap",
-      "to": "broadening",
-      "note": "momentum concentration: narrow-megacap -> broadening"
     }
   ],
-  "cognition_note": "Cognition state — 4/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 8 timeline event(s)."
+  "cognition_note": "Cognition state — 5/11 dimensions verified; 1 alert(s); 0 cross-session observation(s); 12 timeline event(s)."
 }
