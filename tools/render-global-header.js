@@ -106,7 +106,7 @@ function englishLinks() {
       key: 'research',
       href: '/intelligence/',
       label: 'Market Intelligence',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map'],
       children: [
         ['/market-terminal/', 'Market Terminal'],
         ['/market-regime/', 'Market Regime'],
@@ -119,7 +119,13 @@ function englishLinks() {
         ['/equities/', 'Equities'],
         ['/briefs/', 'Market Briefs'],
         ['/articles/', 'Educational Articles'],
-        ['/insights/', 'Applied Research']
+        ['/insights/', 'Applied Research'],
+        ['/market-map/assets/', 'Asset Map'],
+        ['/market-map/sectors/', 'Sector Map'],
+        ['/market-map/equities/', 'Equity Map'],
+        ['/market-map/regime/', 'Regime Map'],
+        ['/market-map/network/', 'Network Map'],
+        ['/market-map/history/', 'History Map']
       ]
     },
     { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
@@ -148,7 +154,7 @@ function arabicLinks() {
       key: 'research',
       href: '/ar/intelligence/',
       label: 'الأسواق والأبحاث',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map'],
       children: [
         ['/ar/market-terminal/', 'الطرفية المؤسسية'],
         ['/ar/market-regime/', 'نظام السوق'],
@@ -161,7 +167,13 @@ function arabicLinks() {
         ['/ar/equities/', 'الأسهم الفردية'],
         ['/ar/briefs/', 'إحاطات السوق'],
         ['/ar/articles/', 'المقالات التعليمية'],
-        ['/ar/insights/', 'الأبحاث التطبيقية']
+        ['/ar/insights/', 'الأبحاث التطبيقية'],
+        ['/ar/market-map/assets/', 'خريطة الأصول'],
+        ['/ar/market-map/sectors/', 'خريطة القطاعات'],
+        ['/ar/market-map/equities/', 'خريطة الأسهم'],
+        ['/ar/market-map/regime/', 'خريطة نظام السوق'],
+        ['/ar/market-map/network/', 'خريطة الشبكة'],
+        ['/ar/market-map/history/', 'الخريطة التاريخية']
       ]
     },
     { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },

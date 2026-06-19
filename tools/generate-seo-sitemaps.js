@@ -16,6 +16,7 @@ try { EQUITY_SLUGS = require("./equity-registry").SLUGS; } catch { EQUITY_SLUGS 
 const equityDirs = (prefix) => EQUITY_SLUGS.map((slug) => `${prefix}equities/${slug}/`).filter((rel) => existsDir(rel));
 const rankingDirs = (prefix) => ["rankings/", "rankings/assets/", "rankings/sectors/", "rankings/equities/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketRegimeDirs = (prefix) => ["market-regime/", "market-regime/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+const marketMapDirs = (prefix) => ["market-map/assets/", "market-map/sectors/", "market-map/equities/", "market-map/regime/", "market-map/network/", "market-map/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketConfig = readJson("data/market-symbols.json", { symbols: [], hubs: [], comparisons: [] });
 
 const core = [
@@ -31,6 +32,7 @@ const core = [
   .concat(existsDir("market-structure") ? htmlFiles("market-structure").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("market-terminal") ? ["market-terminal/"] : [])
   .concat(marketRegimeDirs(""))
+  .concat(marketMapDirs(""))
   .concat(rankingDirs(""))
   .concat(existsDir("markets") ? ["markets/"] : [])
   .concat(marketAssetDirs(""))
@@ -85,6 +87,7 @@ function arUrls() {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const rel of marketRegimeDirs("ar/")) out.push(rel);
+  for (const rel of marketMapDirs("ar/")) out.push(rel);
   for (const rel of rankingDirs("ar/")) out.push(rel);
   for (const b of ["markets/","sectors/","equities/"]) if (existsDir(`ar/${b}`)) out.push(`ar/${b}`);
   for (const rel of marketAssetDirs("ar/")) out.push(rel);

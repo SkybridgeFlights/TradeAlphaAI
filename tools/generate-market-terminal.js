@@ -666,6 +666,27 @@ ${cards || `          <article class="market-card"><span class="market-card-kick
       </section>`;
 }
 
+function visualIntelligenceBlock(ar) {
+  const t = (en, arT) => (ar ? arT : en);
+  const base = ar ? '/ar/market-map/' : '/market-map/';
+  const maps = [
+    [`${base}assets/`, t('Asset map', 'خريطة الأصول'), t('Cross-asset strength grid', 'شبكة القوة عبر الأصول')],
+    [`${base}sectors/`, t('Sector map', 'خريطة القطاعات'), t('Sector leadership grid', 'شبكة قيادة القطاعات')],
+    [`${base}equities/`, t('Equity map', 'خريطة الأسهم'), t('Equity positioning grid', 'شبكة مواقع الأسهم')],
+    [`${base}regime/`, t('Regime map', 'خريطة النظام'), t('Macro, dollar, yield and volatility context', 'سياق الماكرو والدولار والعائد والتقلب')],
+    [`${base}network/`, t('Network map', 'خريطة الشبكة'), t('Confirmation and contradiction links', 'روابط التأكيد والتناقض')],
+    [`${base}history/`, t('History map', 'الخريطة التاريخية'), t('Improving, stable and deteriorating over time', 'التحسن والثبات والتدهور عبر الوقت')],
+  ];
+  const cards = maps.map(([href, title, sub]) => `          <a class="market-card" href="${href}"><span class="market-card-kicker">${esc(t('Visual map', 'خريطة بصرية'))}</span><h3>${esc(title)}</h3><p class="market-copy">${esc(sub)}</p></a>`).join('\n');
+  return `      <section class="market-section" id="visual-intelligence">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Visual intelligence', 'الاستخبارات البصرية'))}</span><h2>${esc(t('See the same intelligence as a map', 'انظر إلى نفس الاستخبارات كخريطة'))}</h2></div>
+        <p class="market-copy">${esc(t('The visual market maps render the existing ranking, regime, network and historical intelligence as colour-encoded grids so relative position is readable within seconds. Colour encodes observed qualitative strength only — not a recommendation, forecast or trade instruction.', 'تعرض خرائط السوق البصرية استخبارات الترتيب والنظام والشبكة والتاريخ القائمة كشبكات ملوّنة بحيث يمكن قراءة الموضع النسبي خلال ثوانٍ. يرمز اللون إلى القوة النوعية المرصودة فقط — وليس توصية أو توقعاً أو تعليمات تداول.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -732,6 +753,7 @@ ${chartsBlock(ar, charts, tactical)}
 ${providerCoverageBlock(ar, providerCoverage)}
 ${dataQualityBlock(ar, dataQuality)}
 ${providerHealthBlock(ar, charts)}
+${visualIntelligenceBlock(ar)}
 ${latestBlock(ar)}
 
       <section class="market-section" id="terminal-disclaimer">
