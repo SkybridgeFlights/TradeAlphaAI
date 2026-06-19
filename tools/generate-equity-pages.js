@@ -19,6 +19,7 @@ const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
 const EQUITY_CHARTS = path.join(ROOT, 'data', 'visual', 'equity-charts.json');
 const EQUITY_RANKINGS = J('equity-rankings.json');
 const RANKING_HISTORY = J('ranking-history.json');
+const MARKET_REGIME_DASHBOARD = J('market-regime-dashboard.json');
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -105,9 +106,31 @@ function rankingPositionBlock(ar, eq, rankings, history) {
       </section>`;
 }
 
+function regimeFitBlock(ar, eq, dashboard) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!dashboard || dashboard.source_layer !== 'market-regime-dashboard') return '';
+  const node = (key, fallback) => dashboard[key] || { label_en: fallback, label_ar: 'غير محدد', state: fallback };
+  const current = node('current_regime', 'indeterminate');
+  const risk = node('risk_state', 'indeterminate');
+  const confirmation = node('dominant_confirmation_state', 'indeterminate');
+  const transition = node('historical_transition_state', 'indeterminate');
+  const evidence = (dashboard.evidence_refs || []).slice(0, 3).map((ref) => `${ref.source || 'source'}: ${ref.value || 'observed'}`).join(' · ');
+  return `      <section class="market-section" id="equity-regime-fit">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Regime context', 'سياق النظام'))}</span><h2>${esc(t('How this fits the current regime', 'كيف ينسجم هذا مع النظام الحالي'))}</h2></div>
+        <p class="market-copy">${esc(t(`${eq.name_en} is read through the current command-center regime, market risk state and confirmation backdrop. This is context classification only.`, `يُقرأ سهم ${eq.name_ar} عبر نظام مركز القيادة الحالي وحالة مخاطر السوق وخلفية التأكيد. هذا تصنيف سياقي فقط.`))}</p>
+        <div class="market-grid">
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Current regime', 'النظام الحالي'))}</span><h3>${esc(ar ? current.label_ar : current.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Risk state', 'حالة المخاطر'))}</span><h3>${esc(ar ? risk.label_ar : risk.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Confirmation state', 'حالة التأكيد'))}</span><h3>${esc(ar ? confirmation.label_ar : confirmation.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Transition state', 'حالة الانتقال'))}</span><h3>${esc(ar ? transition.label_ar : transition.label_en)}</h3></article>
+        </div>
+        <p class="market-copy">${esc(t('Evidence', 'الأدلة'))}: ${esc(evidence || t('awaiting evidence', 'بانتظار الأدلة'))}</p>
+      </section>`;
+}
+
 function buildMain(ar, eq, ctx) {
   const t = (en, arT) => (ar ? arT : en);
-  const { chart, structure, tactical, liquidity, participation, intelligence, macro, sectorStructure, rankings, rankingHistory } = ctx;
+  const { chart, structure, tactical, liquidity, participation, intelligence, macro, sectorStructure, rankings, rankingHistory, marketRegime } = ctx;
   const sector = SECTOR_BY_SLUG.get(eq.sector);
   const scored = intelligence && Array.isArray(intelligence.equities) ? intelligence.equities.find((e) => e.symbol === eq.symbol) : null;
   const scoreLabel = scored ? (ar ? scored.score_label_ar : scored.score_label_en) : t('indeterminate', 'غير محدد');
@@ -210,6 +233,7 @@ ${ncards}
 
 ${scoreBlock}
 ${rankingPositionBlock(ar, eq, rankings, rankingHistory)}
+${regimeFitBlock(ar, eq, marketRegime)}
 ${chartBlock}
 ${contextBlock}
 ${macroBlock}
@@ -257,6 +281,7 @@ function main() {
     intelligence: readJson(J('equity-intelligence.json')), macro: readJson(J('macro-regime.json')), sectorStructure: readJson(J('sector-structure.json')),
     history: readJson(J('equity-history.json')), narrative: readJson(J('market-narrative.json')),
     rankings: readJson(EQUITY_RANKINGS), rankingHistory: readJson(RANKING_HISTORY),
+    marketRegime: readJson(MARKET_REGIME_DASHBOARD),
   };
   let count = 0;
   for (const eq of EQUITIES) {

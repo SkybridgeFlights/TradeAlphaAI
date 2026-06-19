@@ -28,6 +28,7 @@ const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const TACTICAL = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
 const ASSET_RANKINGS = path.join(ROOT, 'data', 'intelligence', 'asset-rankings.json');
 const RANKING_HISTORY = path.join(ROOT, 'data', 'intelligence', 'ranking-history.json');
+const MARKET_REGIME_DASHBOARD = path.join(ROOT, 'data', 'intelligence', 'market-regime-dashboard.json');
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -126,9 +127,31 @@ function rankingPositionBlock(ar, asset, rankings, history) {
       </section>`;
 }
 
+function regimeFitBlock(ar, symbol, dashboard) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!dashboard || dashboard.source_layer !== 'market-regime-dashboard') return '';
+  const node = (key, fallback) => dashboard[key] || { label_en: fallback, label_ar: 'غير محدد', state: fallback, evidence_refs: [] };
+  const current = node('current_regime', 'indeterminate');
+  const risk = node('risk_state', 'indeterminate');
+  const confidence = node('confidence_band', 'indeterminate');
+  const transition = node('historical_transition_state', 'indeterminate');
+  const evidence = (dashboard.evidence_refs || []).slice(0, 3).map((ref) => `${ref.source || 'source'}: ${ref.value || 'observed'}`).join(' · ');
+  return `      <section class="market-section" id="asset-regime-fit">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Regime context', 'سياق النظام'))}</span><h2>${esc(t('How this fits the current regime', 'كيف ينسجم هذا مع النظام الحالي'))}</h2></div>
+        <p class="market-copy">${esc(t(`${symbol} is read against the current command-center regime, risk state and historical transition context. This is classification context only, not a direction call.`, `تُقرأ ${symbol} مقابل نظام مركز القيادة الحالي وحالة المخاطر وسياق الانتقال التاريخي. هذا سياق تصنيفي فقط وليس حكماً اتجاهياً.`))}</p>
+        <div class="market-grid">
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Current regime', 'النظام الحالي'))}</span><h3>${esc(ar ? current.label_ar : current.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Risk state', 'حالة المخاطر'))}</span><h3>${esc(ar ? risk.label_ar : risk.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Confidence', 'الثقة'))}</span><h3>${esc(ar ? confidence.label_ar : confidence.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Transition state', 'حالة الانتقال'))}</span><h3>${esc(ar ? transition.label_ar : transition.label_en)}</h3></article>
+        </div>
+        <p class="market-copy">${esc(t('Evidence', 'الأدلة'))}: ${esc(evidence || t('awaiting evidence', 'بانتظار الأدلة'))}</p>
+      </section>`;
+}
+
 function buildMain(ar, asset, ctx) {
   const t = (en, arT) => (ar ? arT : en);
-  const { intel, cognitive, chart, regime, tactical, rankings, rankingHistory } = ctx;
+  const { intel, cognitive, chart, regime, tactical, rankings, rankingHistory, marketRegime } = ctx;
   const a = ((intel && intel.assets) || []).find((x) => x.symbol === asset.symbol) || null;
 
   // 1) Score block.
@@ -276,6 +299,7 @@ ${cards}
 
 ${scoreBlock}
 ${rankingPositionBlock(ar, asset, rankings, rankingHistory)}
+${regimeFitBlock(ar, asset.symbol, marketRegime)}
 ${chartBlock}
 ${contextBlock}
 ${relBlock}
@@ -329,10 +353,11 @@ function main() {
   const narrative = readJson(MARKET_NARRATIVE);
   const rankings = readJson(ASSET_RANKINGS);
   const rankingHistory = readJson(RANKING_HISTORY);
+  const marketRegime = readJson(MARKET_REGIME_DASHBOARD);
   const chartBySymbol = new Map(((chartsManifest && chartsManifest.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
   let count = 0;
   for (const asset of ASSETS) {
-    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history, narrative, rankings, rankingHistory };
+    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history, narrative, rankings, rankingHistory, marketRegime };
     for (const [ar, dir] of [[false, `markets/${asset.slug}`], [true, `ar/markets/${asset.slug}`]]) {
       const html = generate(ar, asset, ctx);
       if (write) {

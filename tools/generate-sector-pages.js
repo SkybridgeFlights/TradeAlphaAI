@@ -18,6 +18,7 @@ const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
 const SECTOR_CHARTS = path.join(ROOT, 'data', 'visual', 'sector-charts.json');
 const SECTOR_RANKINGS = J('sector-rankings.json');
 const RANKING_HISTORY = J('ranking-history.json');
+const MARKET_REGIME_DASHBOARD = J('market-regime-dashboard.json');
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -109,9 +110,31 @@ function rankingPositionBlock(ar, sector, rankings, history) {
       </section>`;
 }
 
+function regimeFitBlock(ar, sector, dashboard) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!dashboard || dashboard.source_layer !== 'market-regime-dashboard') return '';
+  const node = (key, fallback) => dashboard[key] || { label_en: fallback, label_ar: 'غير محدد', state: fallback };
+  const current = node('current_regime', 'indeterminate');
+  const risk = node('risk_state', 'indeterminate');
+  const confidence = node('confidence_band', 'indeterminate');
+  const contradiction = node('dominant_contradiction_state', 'indeterminate');
+  const evidence = (dashboard.evidence_refs || []).slice(0, 3).map((ref) => `${ref.source || 'source'}: ${ref.value || 'observed'}`).join(' · ');
+  return `      <section class="market-section" id="sector-regime-fit">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Regime context', 'سياق النظام'))}</span><h2>${esc(t('How this fits the current regime', 'كيف ينسجم هذا مع النظام الحالي'))}</h2></div>
+        <p class="market-copy">${esc(t(`${sector.name_en} is framed against the current command-center regime, risk state and contradiction backdrop. This is classification context only.`, `يُقرأ قطاع ${sector.name_ar} مقابل نظام مركز القيادة الحالي وحالة المخاطر وخلفية التعارض. هذا سياق تصنيفي فقط.`))}</p>
+        <div class="market-grid">
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Current regime', 'النظام الحالي'))}</span><h3>${esc(ar ? current.label_ar : current.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Risk state', 'حالة المخاطر'))}</span><h3>${esc(ar ? risk.label_ar : risk.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Confidence', 'الثقة'))}</span><h3>${esc(ar ? confidence.label_ar : confidence.label_en)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Contradiction state', 'حالة التعارض'))}</span><h3>${esc(ar ? contradiction.label_ar : contradiction.label_en)}</h3></article>
+        </div>
+        <p class="market-copy">${esc(t('Evidence', 'الأدلة'))}: ${esc(evidence || t('awaiting evidence', 'بانتظار الأدلة'))}</p>
+      </section>`;
+}
+
 function buildMain(ar, sector, ctx) {
   const t = (en, arT) => (ar ? arT : en);
-  const { chart, structure, tactical, liquidity, participation, rotation, cognitive, rankings, rankingHistory } = ctx;
+  const { chart, structure, tactical, liquidity, participation, rotation, cognitive, rankings, rankingHistory, marketRegime } = ctx;
 
   // 1) Intelligence states.
   const cards = [
@@ -216,6 +239,7 @@ ${cards}
 
 ${intelBlock}
 ${rankingPositionBlock(ar, sector, rankings, rankingHistory)}
+${regimeFitBlock(ar, sector, marketRegime)}
 ${chartBlock}
 ${rotationBlock}
 ${macroBlock}
@@ -267,9 +291,10 @@ function main() {
   const narrative = readJson(J('market-narrative.json'));
   const rankings = readJson(SECTOR_RANKINGS);
   const rankingHistory = readJson(RANKING_HISTORY);
+  const marketRegime = readJson(MARKET_REGIME_DASHBOARD);
   let count = 0;
   for (const sector of SECTORS) {
-    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history, narrative, rankings, rankingHistory };
+    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history, narrative, rankings, rankingHistory, marketRegime };
     for (const [ar, dir] of [[false, `sectors/${sector.slug}`], [true, `ar/sectors/${sector.slug}`]]) {
       const html = generate(ar, sector, ctx);
       if (write) { const outPath = path.join(ROOT, dir, 'index.html'); fs.mkdirSync(path.dirname(outPath), { recursive: true }); fs.writeFileSync(outPath, html, 'utf8'); count += 1; }
