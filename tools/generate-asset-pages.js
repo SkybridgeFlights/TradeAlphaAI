@@ -307,7 +307,7 @@ ${relBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
-${relatedResearchBlock(ar, 'asset')}
+${relatedResearchBlock(ar, 'asset', asset.symbol)}
 ${linksBlock}
 
       <section class="market-section" id="asset-disclaimer">

@@ -128,7 +128,11 @@ function englishLinks() {
         ['/market-map/history/', 'History Map'],
         ['/research/', 'Research Hub'],
         ['/research/feed/', 'Research Feed'],
-        ['/research/regime/', 'Regime Research']
+        ['/research/regime/', 'Regime Research'],
+        ['/research/assets/', 'Assets Research'],
+        ['/research/sectors/', 'Sectors Research'],
+        ['/research/equities/', 'Equities Research'],
+        ['/research/history/', 'Research History']
       ]
     },
     { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
@@ -179,7 +183,11 @@ function arabicLinks() {
         ['/ar/market-map/history/', 'الخريطة التاريخية'],
         ['/ar/research/', 'مركز الأبحاث'],
         ['/ar/research/feed/', 'تغذية الأبحاث'],
-        ['/ar/research/regime/', 'أبحاث النظام']
+        ['/ar/research/regime/', 'أبحاث النظام'],
+        ['/ar/research/assets/', 'أبحاث الأصول'],
+        ['/ar/research/sectors/', 'أبحاث القطاعات'],
+        ['/ar/research/equities/', 'أبحاث الأسهم'],
+        ['/ar/research/history/', 'سجل الأبحاث']
       ]
     },
     { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },

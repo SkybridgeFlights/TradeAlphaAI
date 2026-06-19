@@ -246,7 +246,7 @@ ${rotationBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
-${relatedResearchBlock(ar, 'sector')}
+${relatedResearchBlock(ar, 'sector', sector.symbol)}
 ${linksBlock}
 
       <section class="market-section" id="sector-disclaimer">

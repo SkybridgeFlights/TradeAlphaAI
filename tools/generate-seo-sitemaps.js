@@ -17,7 +17,15 @@ const equityDirs = (prefix) => EQUITY_SLUGS.map((slug) => `${prefix}equities/${s
 const rankingDirs = (prefix) => ["rankings/", "rankings/assets/", "rankings/sectors/", "rankings/equities/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketRegimeDirs = (prefix) => ["market-regime/", "market-regime/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketMapDirs = (prefix) => ["market-map/assets/", "market-map/sectors/", "market-map/equities/", "market-map/regime/", "market-map/network/", "market-map/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
-const researchDirs = (prefix) => ["research/", "research/feed/", "research/regime/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+const researchDirs = (prefix) => ["research/", "research/feed/", "research/regime/", "research/history/", "research/assets/", "research/sectors/", "research/equities/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+const ASSET_RSLUGS = (() => { try { return require("./asset-registry").SLUGS; } catch { return []; } })();
+const SECTOR_RSLUGS = (() => { try { return require("./sector-registry").SLUGS; } catch { return []; } })();
+const EQUITY_RSLUGS = (() => { try { return require("./equity-registry").SLUGS; } catch { return []; } })();
+const entityResearchDirs = (prefix) => [
+  ...ASSET_RSLUGS.map((s) => `research/assets/${s}/`),
+  ...SECTOR_RSLUGS.map((s) => `research/sectors/${s}/`),
+  ...EQUITY_RSLUGS.map((s) => `research/equities/${s}/`),
+].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketConfig = readJson("data/market-symbols.json", { symbols: [], hubs: [], comparisons: [] });
 
 const core = [
@@ -35,6 +43,7 @@ const core = [
   .concat(marketRegimeDirs(""))
   .concat(marketMapDirs(""))
   .concat(researchDirs(""))
+  .concat(entityResearchDirs(""))
   .concat(rankingDirs(""))
   .concat(existsDir("markets") ? ["markets/"] : [])
   .concat(marketAssetDirs(""))
@@ -91,6 +100,7 @@ function arUrls() {
   for (const rel of marketRegimeDirs("ar/")) out.push(rel);
   for (const rel of marketMapDirs("ar/")) out.push(rel);
   for (const rel of researchDirs("ar/")) out.push(rel);
+  for (const rel of entityResearchDirs("ar/")) out.push(rel);
   for (const rel of rankingDirs("ar/")) out.push(rel);
   for (const b of ["markets/","sectors/","equities/"]) if (existsDir(`ar/${b}`)) out.push(`ar/${b}`);
   for (const rel of marketAssetDirs("ar/")) out.push(rel);

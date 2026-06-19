@@ -240,7 +240,7 @@ ${contextBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
-${relatedResearchBlock(ar, 'equity')}
+${relatedResearchBlock(ar, 'equity', eq.symbol)}
 ${linksBlock}
 
       <section class="market-section" id="equity-disclaimer">
