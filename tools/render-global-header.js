@@ -106,11 +106,15 @@ function englishLinks() {
       key: 'research',
       href: '/intelligence/',
       label: 'Market Intelligence',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'markets', 'sectors', 'equities'],
       children: [
+        ['/market-terminal/', 'Market Terminal'],
         ['/market-news/', 'Market News'],
         ['/market-structure/', 'Market Structure'],
         ['/market-outlook/', 'Market Outlook'],
+        ['/markets/', 'Assets'],
+        ['/sectors/', 'Sectors'],
+        ['/equities/', 'Equities'],
         ['/briefs/', 'Market Briefs'],
         ['/articles/', 'Educational Articles'],
         ['/insights/', 'Applied Research']
@@ -142,11 +146,15 @@ function arabicLinks() {
       key: 'research',
       href: '/ar/intelligence/',
       label: 'الأسواق والأبحاث',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'markets', 'sectors', 'equities'],
       children: [
+        ['/ar/market-terminal/', 'الطرفية المؤسسية'],
         ['/ar/market-news/', 'أخبار الأسواق'],
         ['/ar/market-structure/', 'بنية السوق'],
         ['/ar/market-outlook/', 'آفاق السوق'],
+        ['/ar/markets/', 'الأصول'],
+        ['/ar/sectors/', 'القطاعات'],
+        ['/ar/equities/', 'الأسهم الفردية'],
         ['/ar/briefs/', 'إحاطات السوق'],
         ['/ar/articles/', 'المقالات التعليمية'],
         ['/ar/insights/', 'الأبحاث التطبيقية']

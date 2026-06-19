@@ -28,8 +28,11 @@ const core = [
   .concat(existsDir("market-structure") ? ["market-structure/"] : [])
   .concat(existsDir("market-structure") ? htmlFiles("market-structure").filter((rel) => !rel.endsWith("/index.html")).map(toRel) : [])
   .concat(existsDir("market-terminal") ? ["market-terminal/"] : [])
+  .concat(existsDir("markets") ? ["markets/"] : [])
   .concat(marketAssetDirs(""))
+  .concat(existsDir("sectors") ? ["sectors/"] : [])
   .concat(sectorDirs(""))
+  .concat(existsDir("equities") ? ["equities/"] : [])
   .concat(equityDirs(""))
   .concat(existsDir("intelligence") ? ["intelligence/"] : [])
   // Phase 68 intelligence dashboards, EN + AR (required in sitemap-core.xml by
@@ -77,6 +80,7 @@ function arUrls() {
   for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
+  for (const b of ["markets/","sectors/","equities/"]) if (existsDir(`ar/${b}`)) out.push(`ar/${b}`);
   for (const rel of marketAssetDirs("ar/")) out.push(rel);
   for (const rel of sectorDirs("ar/")) out.push(rel);
   for (const rel of equityDirs("ar/")) out.push(rel);
