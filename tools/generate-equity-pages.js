@@ -17,6 +17,8 @@ const { BY_SYMBOL: SECTOR_BY_SLUG } = (() => { const r = require('./sector-regis
 const ROOT = path.resolve(__dirname, '..');
 const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
 const EQUITY_CHARTS = path.join(ROOT, 'data', 'visual', 'equity-charts.json');
+const EQUITY_RANKINGS = J('equity-rankings.json');
+const RANKING_HISTORY = J('ranking-history.json');
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -81,9 +83,31 @@ function chartFigure(chart, ar) {
 
 function layerState(art, sym, ar) { const x = art && Array.isArray(art.equities) ? art.equities.find((e) => e.symbol === sym) : null; return x ? (ar ? x.label_ar : x.label_en) : (ar ? 'غير محدد' : 'indeterminate'); }
 
+function rankingPositionBlock(ar, eq, rankings, history) {
+  const t = (en, arT) => (ar ? arT : en);
+  const item = rankings && Array.isArray(rankings.items) ? rankings.items.find((x) => x.symbol === eq.symbol) : null;
+  if (!item) return '';
+  const movement = (((history || {}).groups || {}).equity || []).find((x) => x.symbol === eq.symbol);
+  const rank = ar ? item.rank_label_ar : item.rank_label_en;
+  const direction = ar ? item.direction_ar : item.direction_en;
+  const confirmation = ar ? item.confirmation_ar : item.confirmation_en;
+  const move = ar ? (movement?.movement_ar || 'لا لقطة سابقة') : (movement?.movement_en || 'no prior snapshot');
+  const evidence = (item.evidence || []).slice(0, 3).join(' · ');
+  return `      <section class="market-section" id="equity-ranking-position">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Ranking context', 'سياق الترتيب'))}</span><h2>${esc(t('Relative position within the market', 'الموضع النسبي داخل السوق'))}: ${esc(rank)}</h2></div>
+        <p class="market-copy">${esc(t('This ranking compares observed single-name structure, historical direction and confirmation state across the equity universe. It is relative context only, not a recommendation or trade instruction.', 'يقارن هذا الترتيب بنية السهم المرصودة والاتجاه التاريخي وحالة التأكيد عبر عالم الأسهم. وهو سياق نسبي فقط، وليس توصية أو تعليمات تداول.'))}</p>
+        <div class="market-grid">
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Current position', 'الموضع الحالي'))}</span><h3>${esc(rank)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Historical direction', 'الاتجاه التاريخي'))}</span><h3>${esc(direction)} · ${esc(move)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Confirmation', 'التأكيد'))}</span><h3>${esc(confirmation)}</h3></article>
+        </div>
+        <p class="market-copy">${esc(t('Evidence', 'الأدلة'))}: ${esc(evidence || t('awaiting evidence', 'بانتظار الأدلة'))}</p>
+      </section>`;
+}
+
 function buildMain(ar, eq, ctx) {
   const t = (en, arT) => (ar ? arT : en);
-  const { chart, structure, tactical, liquidity, participation, intelligence, macro, sectorStructure } = ctx;
+  const { chart, structure, tactical, liquidity, participation, intelligence, macro, sectorStructure, rankings, rankingHistory } = ctx;
   const sector = SECTOR_BY_SLUG.get(eq.sector);
   const scored = intelligence && Array.isArray(intelligence.equities) ? intelligence.equities.find((e) => e.symbol === eq.symbol) : null;
   const scoreLabel = scored ? (ar ? scored.score_label_ar : scored.score_label_en) : t('indeterminate', 'غير محدد');
@@ -185,6 +209,7 @@ ${ncards}
       </section>
 
 ${scoreBlock}
+${rankingPositionBlock(ar, eq, rankings, rankingHistory)}
 ${chartBlock}
 ${contextBlock}
 ${macroBlock}
@@ -231,6 +256,7 @@ function main() {
     liquidity: readJson(J('equity-liquidity.json')), participation: readJson(J('equity-participation.json')),
     intelligence: readJson(J('equity-intelligence.json')), macro: readJson(J('macro-regime.json')), sectorStructure: readJson(J('sector-structure.json')),
     history: readJson(J('equity-history.json')), narrative: readJson(J('market-narrative.json')),
+    rankings: readJson(EQUITY_RANKINGS), rankingHistory: readJson(RANKING_HISTORY),
   };
   let count = 0;
   for (const eq of EQUITIES) {

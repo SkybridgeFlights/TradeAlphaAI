@@ -26,6 +26,8 @@ const MARKET_NARRATIVE = path.join(ROOT, 'data', 'intelligence', 'market-narrati
 const CHARTS = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const TACTICAL = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
+const ASSET_RANKINGS = path.join(ROOT, 'data', 'intelligence', 'asset-rankings.json');
+const RANKING_HISTORY = path.join(ROOT, 'data', 'intelligence', 'ranking-history.json');
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -102,9 +104,31 @@ function chartFigure(chart, ar) {
 </figure>`;
 }
 
+function rankingPositionBlock(ar, asset, rankings, history) {
+  const t = (en, arT) => (ar ? arT : en);
+  const item = rankings && Array.isArray(rankings.items) ? rankings.items.find((x) => x.symbol === asset.symbol) : null;
+  if (!item) return '';
+  const movement = (((history || {}).groups || {}).asset || []).find((x) => x.symbol === asset.symbol);
+  const rank = ar ? item.rank_label_ar : item.rank_label_en;
+  const direction = ar ? item.direction_ar : item.direction_en;
+  const confirmation = ar ? item.confirmation_ar : item.confirmation_en;
+  const move = ar ? (movement?.movement_ar || 'لا لقطة سابقة') : (movement?.movement_en || 'no prior snapshot');
+  const evidence = (item.evidence || []).slice(0, 3).join(' · ');
+  return `      <section class="market-section" id="asset-ranking-position">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Ranking context', 'سياق الترتيب'))}</span><h2>${esc(t('How this asset ranks', 'كيف يترتب هذا الأصل'))}: ${esc(rank)}</h2></div>
+        <p class="market-copy">${esc(t('This ranking compares observed structure, historical direction and confirmation state across the asset universe. It is relative context only, not a recommendation or trade instruction.', 'يقارن هذا الترتيب البنية المرصودة والاتجاه التاريخي وحالة التأكيد عبر عالم الأصول. وهو سياق نسبي فقط، وليس توصية أو تعليمات تداول.'))}</p>
+        <div class="market-grid">
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Current position', 'الموضع الحالي'))}</span><h3>${esc(rank)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Historical direction', 'الاتجاه التاريخي'))}</span><h3>${esc(direction)} · ${esc(move)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Confirmation', 'التأكيد'))}</span><h3>${esc(confirmation)}</h3></article>
+        </div>
+        <p class="market-copy">${esc(t('Evidence', 'الأدلة'))}: ${esc(evidence || t('awaiting evidence', 'بانتظار الأدلة'))}</p>
+      </section>`;
+}
+
 function buildMain(ar, asset, ctx) {
   const t = (en, arT) => (ar ? arT : en);
-  const { intel, cognitive, chart, regime, tactical } = ctx;
+  const { intel, cognitive, chart, regime, tactical, rankings, rankingHistory } = ctx;
   const a = ((intel && intel.assets) || []).find((x) => x.symbol === asset.symbol) || null;
 
   // 1) Score block.
@@ -251,6 +275,7 @@ ${cards}
       </section>
 
 ${scoreBlock}
+${rankingPositionBlock(ar, asset, rankings, rankingHistory)}
 ${chartBlock}
 ${contextBlock}
 ${relBlock}
@@ -302,10 +327,12 @@ function main() {
   const macro = readJson(MACRO_REGIME);
   const history = readJson(ASSET_HISTORY);
   const narrative = readJson(MARKET_NARRATIVE);
+  const rankings = readJson(ASSET_RANKINGS);
+  const rankingHistory = readJson(RANKING_HISTORY);
   const chartBySymbol = new Map(((chartsManifest && chartsManifest.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
   let count = 0;
   for (const asset of ASSETS) {
-    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history, narrative };
+    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history, narrative, rankings, rankingHistory };
     for (const [ar, dir] of [[false, `markets/${asset.slug}`], [true, `ar/markets/${asset.slug}`]]) {
       const html = generate(ar, asset, ctx);
       if (write) {

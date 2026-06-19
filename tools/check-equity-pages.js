@@ -14,7 +14,7 @@ const { EQUITIES } = require('./equity-registry');
 
 const ROOT = path.resolve(__dirname, '..');
 const MANIFEST = path.join(ROOT, 'data', 'visual', 'equity-charts.json');
-const REQUIRED = ['equity-score', 'equity-chart', 'equity-context', 'equity-macro', 'equity-history-context', 'equity-narrative-context', 'equity-disclaimer'];
+const REQUIRED = ['equity-score', 'equity-ranking-position', 'equity-chart', 'equity-context', 'equity-macro', 'equity-history-context', 'equity-narrative-context', 'equity-disclaimer'];
 const FIG_RE = /<figure class="institutional-chart"[\s\S]*?<\/figure>/gi;
 const FORBIDDEN = [/\bbuy\b/i, /\bsell\b/i, /\bentry\b/i, /\bstop[- ]?loss\b/i, /\bprice target\b/i, /\bbuy signal\b/i, /\bgo (long|short)\b/i, /\bRSI\b/, /\bMACD\b/, /(?:\bشراء\b|\bبيع\b|وقف\s*الخسارة|هدف\s*سعري)/];
 const RAW_ARTIFACT = [/href="[^"]*\.json/i, /href="\/data\//i, /href="\/runtime\//i, /system-status/i];

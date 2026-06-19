@@ -16,6 +16,8 @@ const { SECTORS } = require('./sector-registry');
 const ROOT = path.resolve(__dirname, '..');
 const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
 const SECTOR_CHARTS = path.join(ROOT, 'data', 'visual', 'sector-charts.json');
+const SECTOR_RANKINGS = J('sector-rankings.json');
+const RANKING_HISTORY = J('ranking-history.json');
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -85,9 +87,31 @@ function stateOf(layerArt, symbol, ar) {
   return s ? (ar ? s.label_ar : s.label_en) : (ar ? 'غير محدد' : 'indeterminate');
 }
 
+function rankingPositionBlock(ar, sector, rankings, history) {
+  const t = (en, arT) => (ar ? arT : en);
+  const item = rankings && Array.isArray(rankings.items) ? rankings.items.find((x) => x.symbol === sector.symbol) : null;
+  if (!item) return '';
+  const movement = (((history || {}).groups || {}).sector || []).find((x) => x.symbol === sector.symbol);
+  const rank = ar ? item.rank_label_ar : item.rank_label_en;
+  const direction = ar ? item.direction_ar : item.direction_en;
+  const confirmation = ar ? item.confirmation_ar : item.confirmation_en;
+  const move = ar ? (movement?.movement_ar || 'لا لقطة سابقة') : (movement?.movement_en || 'no prior snapshot');
+  const evidence = (item.evidence || []).slice(0, 3).join(' · ');
+  return `      <section class="market-section" id="sector-ranking-position">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Ranking context', 'سياق الترتيب'))}</span><h2>${esc(t('Sector leadership position', 'موضع قيادة القطاع'))}: ${esc(rank)}</h2></div>
+        <p class="market-copy">${esc(t('This ranking compares observed sector structure, historical direction and confirmation state across the sector universe. It is relative context only, not a recommendation or forecast.', 'يقارن هذا الترتيب بنية القطاع المرصودة والاتجاه التاريخي وحالة التأكيد عبر عالم القطاعات. وهو سياق نسبي فقط، وليس توصية أو توقعاً.'))}</p>
+        <div class="market-grid">
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Current position', 'الموضع الحالي'))}</span><h3>${esc(rank)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Historical direction', 'الاتجاه التاريخي'))}</span><h3>${esc(direction)} · ${esc(move)}</h3></article>
+          <article class="market-card"><span class="market-card-kicker">${esc(t('Confirmation', 'التأكيد'))}</span><h3>${esc(confirmation)}</h3></article>
+        </div>
+        <p class="market-copy">${esc(t('Evidence', 'الأدلة'))}: ${esc(evidence || t('awaiting evidence', 'بانتظار الأدلة'))}</p>
+      </section>`;
+}
+
 function buildMain(ar, sector, ctx) {
   const t = (en, arT) => (ar ? arT : en);
-  const { chart, structure, tactical, liquidity, participation, rotation, cognitive } = ctx;
+  const { chart, structure, tactical, liquidity, participation, rotation, cognitive, rankings, rankingHistory } = ctx;
 
   // 1) Intelligence states.
   const cards = [
@@ -191,6 +215,7 @@ ${cards}
       </section>
 
 ${intelBlock}
+${rankingPositionBlock(ar, sector, rankings, rankingHistory)}
 ${chartBlock}
 ${rotationBlock}
 ${macroBlock}
@@ -240,9 +265,11 @@ function main() {
   const cognitive = readJson(J('sector-cognitive-network.json'));
   const history = readJson(J('sector-history.json'));
   const narrative = readJson(J('market-narrative.json'));
+  const rankings = readJson(SECTOR_RANKINGS);
+  const rankingHistory = readJson(RANKING_HISTORY);
   let count = 0;
   for (const sector of SECTORS) {
-    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history, narrative };
+    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history, narrative, rankings, rankingHistory };
     for (const [ar, dir] of [[false, `sectors/${sector.slug}`], [true, `ar/sectors/${sector.slug}`]]) {
       const html = generate(ar, sector, ctx);
       if (write) { const outPath = path.join(ROOT, dir, 'index.html'); fs.mkdirSync(path.dirname(outPath), { recursive: true }); fs.writeFileSync(outPath, html, 'utf8'); count += 1; }
