@@ -20,7 +20,7 @@ const PAGES = [
   { rel: 'market-terminal/index.html', lang: 'en', canonical: 'https://www.tradealphaai.com/market-terminal/' },
   { rel: 'ar/market-terminal/index.html', lang: 'ar', canonical: 'https://www.tradealphaai.com/ar/market-terminal/' },
 ];
-const REQUIRED_SECTIONS = ['market-environment', 'macro-regime', 'historical-intelligence', 'tactical-context', 'cognitive-network', 'transmission-network', 'market-structure', 'sector-rotation', 'sector-network', 'equity-intelligence-panel', 'asset-intelligence', 'asset-structure-table', 'asset-tactical-table', 'asset-liquidity-table', 'availability-matrix', 'institutional-charts', 'provider-coverage', 'data-quality', 'provider-health', 'terminal-disclaimer'];
+const REQUIRED_SECTIONS = ['institutional-narrative', 'market-environment', 'macro-regime', 'historical-intelligence', 'tactical-context', 'cognitive-network', 'transmission-network', 'market-structure', 'sector-rotation', 'sector-network', 'equity-intelligence-panel', 'asset-intelligence', 'asset-structure-table', 'asset-tactical-table', 'asset-liquidity-table', 'availability-matrix', 'institutional-charts', 'provider-coverage', 'data-quality', 'provider-health', 'terminal-disclaimer'];
 // Retail/advice/signal language — scoped to avoid false positives on the
 // disclaimer ("not ... signals") and institutional labels ("supportive
 // structure", "liquidity support").

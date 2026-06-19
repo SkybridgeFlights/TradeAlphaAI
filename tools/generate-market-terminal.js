@@ -43,6 +43,7 @@ const ASSET_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-histor
 const SECTOR_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-history.json');
 const EQUITY_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-history.json');
 const SNAPSHOTS_PATH = path.join(ROOT, 'data', 'intelligence', 'historical-snapshots.json');
+const NARRATIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'market-narrative.json');
 const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
 const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
@@ -580,6 +581,31 @@ ${cards}
       </section>`;
 }
 
+// ── Institutional market narrative — the integrated story (near the top). ──
+function narrativeBlock(ar, n) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!n || !n.available) return '';
+  const story = ar ? n.dominant_story.label_ar : n.dominant_story.label_en;
+  const band = ar ? n.confidence_band_ar : n.confidence_band_en;
+  const prose = ar ? n.narrative.ar : n.narrative.en;
+  const cards = [
+    [t('Macro driver', 'المحرّك الكلي'), ar ? n.drivers.macro_driver.label_ar : n.drivers.macro_driver.label_en],
+    [t('Sector driver', 'محرّك القطاعات'), ar ? n.drivers.sector_driver.label_ar : n.drivers.sector_driver.label_en],
+    [t('Single-name driver', 'محرّك الأسهم'), ar ? n.drivers.equity_driver.label_ar : n.drivers.equity_driver.label_en],
+    [t('Historical change', 'التغيّر التاريخي'), ar ? n.drivers.historical_change.label_ar : n.drivers.historical_change.label_en],
+    [t('Confirmation', 'التأكيد'), ar ? n.confirmation_story.label_ar : n.confirmation_story.label_en],
+    [t('Contradiction', 'التناقض'), ar ? n.contradiction_story.label_ar : n.contradiction_story.label_en],
+  ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+  return `      <section class="market-section" id="institutional-narrative">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Institutional market narrative', 'السردية المؤسسية للسوق'))}</span><h2>${esc(t('The integrated story', 'القصة المتكاملة'))}: ${esc(story)}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(prose)}</p></div>
+        <p class="market-copy">${esc(t('Confidence', 'الثقة'))}: ${esc(band)} · ${esc(t('connects macro → sectors → equities → historical change. Context, not a forecast.', 'يربط الكلي ← القطاعات ← الأسهم ← التغيّر التاريخي. سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -609,6 +635,7 @@ function buildMain(ar) {
   const sectorHistory = readJson(SECTOR_HISTORY_PATH);
   const equityHistory = readJson(EQUITY_HISTORY_PATH);
   const snapshots = readJson(SNAPSHOTS_PATH);
+  const narrative = readJson(NARRATIVE_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -621,6 +648,7 @@ function buildMain(ar) {
         </div>
       </section>
 
+${narrativeBlock(ar, narrative)}
 ${environmentBlock(ar, regime, cross)}
 ${macroBlock(ar, dollar, yieldArt, volatility, macro)}
 ${historicalBlock(ar, regimeTransitions, assetHistory, sectorHistory, equityHistory, snapshots)}
