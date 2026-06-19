@@ -44,6 +44,10 @@ const SECTOR_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-hist
 const EQUITY_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-history.json');
 const SNAPSHOTS_PATH = path.join(ROOT, 'data', 'intelligence', 'historical-snapshots.json');
 const NARRATIVE_PATH = path.join(ROOT, 'data', 'intelligence', 'market-narrative.json');
+const ASSET_RANKINGS_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-rankings.json');
+const SECTOR_RANKINGS_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-rankings.json');
+const EQUITY_RANKINGS_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-rankings.json');
+const RANKING_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'ranking-history.json');
 const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
 const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
@@ -606,6 +610,62 @@ ${cards}
       </section>`;
 }
 
+// ── Rankings intelligence — strongest/weakest lists with observed movement. ──
+function rankingIntelligenceBlock(ar, assetRanks, sectorRanks, equityRanks, rankingHistory) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!assetRanks?.available && !sectorRanks?.available && !equityRanks?.available) return '';
+  const historyMap = (type) => new Map((((rankingHistory || {}).groups || {})[type] || []).map((x) => [x.symbol, x]));
+  const histories = { asset: historyMap('asset'), sector: historyMap('sector'), equity: historyMap('equity') };
+  const sectorBySymbol = new Map(SECTOR_REG.SECTORS.map((s) => [s.symbol, s]));
+  const equityBySymbol = new Map(EQUITY_REG.EQUITIES.map((e) => [e.symbol, e]));
+  const hrefFor = (type, item) => {
+    if (type === 'asset') return `${ar ? '/ar/markets/' : '/markets/'}${esc(item.slug || String(item.symbol).toLowerCase())}/`;
+    if (type === 'sector') return `${ar ? '/ar/sectors/' : '/sectors/'}${esc(item.slug || sectorBySymbol.get(item.symbol)?.slug || '')}/`;
+    return `${ar ? '/ar/equities/' : '/equities/'}${esc(item.slug || equityBySymbol.get(item.symbol)?.slug || '')}/`;
+  };
+  const displayName = (type, item) => {
+    if (type === 'sector') {
+      const s = sectorBySymbol.get(item.symbol);
+      return s ? (ar ? s.name_ar : s.name_en) : item.symbol;
+    }
+    if (type === 'equity') {
+      const e = equityBySymbol.get(item.symbol);
+      return e ? `${item.symbol} · ${ar ? e.name_ar : e.name_en}` : item.symbol;
+    }
+    return item.symbol;
+  };
+  const itemBySymbol = (artifact, sym) => ((artifact && artifact.items) || []).find((x) => x.symbol === sym);
+  const cardsFor = (type, artifact, side) => {
+    const symbols = (artifact && artifact[side]) || [];
+    return symbols.slice(0, 3).map((sym) => {
+      const item = itemBySymbol(artifact, sym);
+      if (!item) return '';
+      const hist = histories[type].get(item.symbol) || {};
+      const rank = ar ? item.rank_label_ar : item.rank_label_en;
+      const dir = ar ? item.direction_ar : item.direction_en;
+      const conf = ar ? item.confirmation_ar : item.confirmation_en;
+      const move = ar ? (hist.movement_ar || t('no prior snapshot', 'لا لقطة سابقة')) : (hist.movement_en || 'no prior snapshot');
+      const sideLabel = side === 'strongest' ? t('Strongest', 'الأقوى') : t('Weakest', 'الأضعف');
+      return `          <article class="market-card" data-ranking-kind="${esc(type)}" data-ranking-side="${esc(side)}"><span class="market-card-kicker">${esc(sideLabel)} · ${esc(item.symbol)}</span><h3><a href="${hrefFor(type, item)}">${esc(displayName(type, item))}</a></h3><p class="market-copy">${esc(t('rank', 'الترتيب'))}: ${esc(rank)} · ${esc(t('direction', 'الاتجاه'))}: ${esc(dir)} · ${esc(t('movement', 'الحركة'))}: ${esc(move)} · ${esc(t('confirmation', 'التأكيد'))}: ${esc(conf)}</p></article>`;
+    }).filter(Boolean);
+  };
+  const groups = [
+    [t('Assets', 'الأصول'), 'asset', assetRanks],
+    [t('Sectors', 'القطاعات'), 'sector', sectorRanks],
+    [t('Equities', 'الأسهم'), 'equity', equityRanks],
+  ];
+  const cards = groups.flatMap(([, type, artifact]) => cardsFor(type, artifact, 'strongest').concat(cardsFor(type, artifact, 'weakest'))).join('\n');
+  const summary = groups.map(([label, , artifact]) => `${label}: ${artifact?.ranked_count ?? 0}/${artifact?.total ?? 0}`).join(' · ');
+  return `      <section class="market-section" id="ranking-intelligence">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Ranking intelligence', 'استخبارات الترتيب'))}</span><h2>${esc(t('Strongest and weakest observed leadership', 'أقوى وأضعف القيادة المرصودة'))}</h2></div>
+        <p class="market-copy">${esc(t('Rankings compare observed structure, historical direction and confirmation state across assets, sectors and equities. They describe relative position only — not recommendations, forecasts or trade instructions.', 'تقارن الترتيبات البنية المرصودة والاتجاه التاريخي وحالة التأكيد عبر الأصول والقطاعات والأسهم. وهي تصف الموضع النسبي فقط — وليست توصيات أو توقعات أو تعليمات تداول.'))}</p>
+        <p class="market-copy">${esc(summary)} · ${esc(t('history', 'السجل'))}: ${esc(rankingHistory?.has_prior ? t('two-snapshot comparison', 'مقارنة بين لقطتين') : t('single snapshot; movement marked honestly', 'لقطة واحدة؛ تُذكر الحركة بأمانة'))}</p>
+        <div class="market-grid three">
+${cards || `          <article class="market-card"><span class="market-card-kicker">${esc(t('Rankings', 'الترتيبات'))}</span><h3>${esc(t('unavailable', 'غير متاحة'))}</h3></article>`}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -636,6 +696,10 @@ function buildMain(ar) {
   const equityHistory = readJson(EQUITY_HISTORY_PATH);
   const snapshots = readJson(SNAPSHOTS_PATH);
   const narrative = readJson(NARRATIVE_PATH);
+  const assetRanks = readJson(ASSET_RANKINGS_PATH);
+  const sectorRanks = readJson(SECTOR_RANKINGS_PATH);
+  const equityRanks = readJson(EQUITY_RANKINGS_PATH);
+  const rankingHistory = readJson(RANKING_HISTORY_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -652,6 +716,7 @@ ${narrativeBlock(ar, narrative)}
 ${environmentBlock(ar, regime, cross)}
 ${macroBlock(ar, dollar, yieldArt, volatility, macro)}
 ${historicalBlock(ar, regimeTransitions, assetHistory, sectorHistory, equityHistory, snapshots)}
+${rankingIntelligenceBlock(ar, assetRanks, sectorRanks, equityRanks, rankingHistory)}
 ${tacticalBlock(ar, tactical)}
 ${cognitiveBlock(ar, cognitive)}
 ${transmissionBlock(ar, cognitive)}
