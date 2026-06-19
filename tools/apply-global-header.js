@@ -178,7 +178,7 @@ function detectActive(relative) {
   if (/^(?:ar\/)?index\.html$/.test(relative)) return 'home';
   if (/^(?:ar\/)?stocks\.html$/.test(relative)) return 'stocks';
   if (/^(?:ar\/)?rankings\.html$/.test(relative)) return 'rankings';
-  if (/^(?:ar\/)?etfs\.html$/.test(relative)) return 'etfs';
+  if (/^(?:ar\/)?etfs(?:\.html|\/)/.test(relative)) return 'etfs';
   if (/^(?:ar\/)?ai-stock-screener\.html$/.test(relative)) return 'screener';
   if (/^(?:ar\/)?methodology\.html$/.test(relative)) return 'methodology';
   if (/(?:^|[/\\])insights[/\\]/.test(relative) || /^(?:ar\/|en\/)?insights\//.test(relative)) return 'insights';
@@ -187,6 +187,8 @@ function detectActive(relative) {
   if (/(?:^|[/\\])rankings[/\\]/.test(relative)) return 'relative-rankings';
   if (/(?:^|[/\\])briefs[/\\]/.test(relative)) return 'briefs';
   if (/(?:^|[/\\])intelligence[/\\]/.test(relative)) return 'intelligence';
+  if (/(?:^|[/\\])research[/\\]/.test(relative)) return 'research';
+  if (/(?:^|[/\\])market-map[/\\]/.test(relative)) return 'market-map';
   if (/market-outlook[/\\]/.test(relative)) return 'market-outlook';
   if (/market-structure[/\\]/.test(relative)) return 'market-structure';
   if (/economic-calendar[/\\]/.test(relative)) return 'economic-calendar';
