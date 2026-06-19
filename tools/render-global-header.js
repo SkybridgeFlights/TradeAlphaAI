@@ -106,9 +106,10 @@ function englishLinks() {
       key: 'research',
       href: '/intelligence/',
       label: 'Market Intelligence',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'markets', 'sectors', 'equities'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'markets', 'sectors', 'equities', 'relative-rankings'],
       children: [
         ['/market-terminal/', 'Market Terminal'],
+        ['/rankings/', 'Relative Rankings'],
         ['/market-news/', 'Market News'],
         ['/market-structure/', 'Market Structure'],
         ['/market-outlook/', 'Market Outlook'],
@@ -146,9 +147,10 @@ function arabicLinks() {
       key: 'research',
       href: '/ar/intelligence/',
       label: 'الأسواق والأبحاث',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'markets', 'sectors', 'equities'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'markets', 'sectors', 'equities', 'relative-rankings'],
       children: [
         ['/ar/market-terminal/', 'الطرفية المؤسسية'],
+        ['/ar/rankings/', 'الترتيب النسبي'],
         ['/ar/market-news/', 'أخبار الأسواق'],
         ['/ar/market-structure/', 'بنية السوق'],
         ['/ar/market-outlook/', 'آفاق السوق'],
@@ -190,6 +192,7 @@ function counterpartEn(active) {
     'market-outlook': '/market-outlook/',
     briefs: '/briefs/',
     intelligence: '/intelligence/',
+    'relative-rankings': '/rankings/',
     'economic-calendar': '/economic-calendar/'
   }[active];
   if (section) return section;
@@ -206,6 +209,7 @@ function counterpartAr(active) {
     'market-outlook': '/ar/market-outlook/',
     briefs: '/ar/briefs/',
     intelligence: '/ar/intelligence/',
+    'relative-rankings': '/ar/rankings/',
     'economic-calendar': '/ar/economic-calendar/'
   }[active];
   if (section) return section;

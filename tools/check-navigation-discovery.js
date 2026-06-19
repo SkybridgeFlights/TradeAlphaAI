@@ -9,7 +9,7 @@
 
 const { renderGlobalHeader } = require('./render-global-header');
 
-const REQUIRED = ['/market-terminal/', '/markets/', '/sectors/', '/equities/', '/market-news/', '/market-structure/', '/market-outlook/', '/articles/', '/insights/', '/briefs/', '/economic-calendar/'];
+const REQUIRED = ['/market-terminal/', '/rankings/', '/markets/', '/sectors/', '/equities/', '/market-news/', '/market-structure/', '/market-outlook/', '/articles/', '/insights/', '/briefs/', '/economic-calendar/'];
 const FORBIDDEN = [/\/system-status(\/|$)/, /^\/data\//, /^\/runtime\//, /\.json(\b|$)/];
 const TOP_LEVEL_CAP = 8;
 

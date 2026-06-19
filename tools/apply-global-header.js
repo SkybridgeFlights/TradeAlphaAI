@@ -48,6 +48,8 @@ const ROOTS = [
   'ar/market-news',
   'market-structure',
   'ar/market-structure',
+  'rankings',
+  'ar/rankings',
   'briefs',
   'ar/briefs',
   'intelligence',
@@ -182,6 +184,7 @@ function detectActive(relative) {
   if (/(?:^|[/\\])insights[/\\]/.test(relative) || /^(?:ar\/|en\/)?insights\//.test(relative)) return 'insights';
   if (/(?:^|[/\\])articles[/\\]/.test(relative)) return 'articles';
   if (/(?:^|[/\\])market-news[/\\]/.test(relative)) return 'market-news';
+  if (/(?:^|[/\\])rankings[/\\]/.test(relative)) return 'relative-rankings';
   if (/(?:^|[/\\])briefs[/\\]/.test(relative)) return 'briefs';
   if (/(?:^|[/\\])intelligence[/\\]/.test(relative)) return 'intelligence';
   if (/market-outlook[/\\]/.test(relative)) return 'market-outlook';
@@ -215,6 +218,11 @@ function computeLocaleHrefs(relative, ar) {
   // For economic-calendar index, point to the counterpart section
   if (relative.match(/^(?:ar\/)?economic-calendar\//)) {
     return { arabicHref: '/ar/economic-calendar/', englishHref: '/economic-calendar/' };
+  }
+  const rankingMatch = relative.match(/^(?:ar\/)?rankings(?:\/(assets|sectors|equities))?\/index\.html$/);
+  if (rankingMatch) {
+    const child = rankingMatch[1] ? `${rankingMatch[1]}/` : '';
+    return { arabicHref: `/ar/rankings/${child}`, englishHref: `/rankings/${child}` };
   }
   // Phase 99: canonical editorial desks — point the locale switch at the
   // matching counterpart (index or specific article) so it never falls back home.

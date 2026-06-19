@@ -8,6 +8,7 @@ const { collectTargetFiles } = require('./apply-global-header');
 const ROOT = path.resolve(__dirname, '..');
 const DOMAIN = 'https://www.tradealphaai.com';
 const PUBLIC_SURFACES = [
+  ['rankings', '/rankings/', '/ar/rankings/'],
   ['articles', '/articles/', '/ar/articles/'],
   ['market-news', '/market-news/', '/ar/market-news/'],
   ['market-structure', '/market-structure/', '/ar/market-structure/'],
@@ -37,7 +38,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`[surface-discovery] passed (${collectTargetFiles().length} canonical pages; 7 EN/AR public surfaces; links live; internal routes excluded; negative cases detected).`);
+console.log(`[surface-discovery] passed (${collectTargetFiles().length} canonical pages; ${PUBLIC_SURFACES.length} EN/AR public surfaces; links live; internal routes excluded; negative cases detected).`);
 
 function validateCanonicalContract(en, ar, out, checkFiles) {
   if (!en || !ar) {
