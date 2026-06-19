@@ -97,10 +97,14 @@ jobs:
           # Phase 208 — institutional narrative engine (composes the full stack);
           # must precede page generation so pages embed the narrative.
           node tools/build-market-narrative-engine.js --write || echo "[tech-intel] market narrative degraded — continuing"
+          node tools/build-rankings.js --write || echo "[tech-intel] rankings degraded — continuing"
+          node tools/build-relative-strength.js --write || echo "[tech-intel] relative strength degraded — continuing"
+          node tools/build-ranking-history.js --write || echo "[tech-intel] ranking history degraded — continuing"
           # Pages last, so every page embeds the freshest current + historical state.
           node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
           node tools/generate-equity-pages.js --write || echo "[tech-intel] equity pages degraded — continuing"
           node tools/generate-asset-pages.js --write || echo "[tech-intel] asset pages degraded — continuing"
+          node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages degraded — continuing"
           node tools/generate-intelligence-indexes.js --write || echo "[tech-intel] intelligence indexes degraded — continuing"
           node tools/generate-structure-index.js --write || echo "[tech-intel] structure index degraded — continuing"
           # Capture the published slug (empty when the note self-gates) so the
@@ -156,6 +160,11 @@ jobs:
           npm run check:historical-scores
           npm run check:market-narrative
           npm run check:narrative-prose
+          npm run check:rankings
+          npm run check:relative-strength
+          npm run check:ranking-history
+          npm run check:ranking-pages
+          npm run check:ranking-discovery
           npm run check:navigation-discovery
           npm run check:intelligence-indexes
           npm run check:asset-structure
@@ -193,7 +202,7 @@ jobs:
           # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
           # regenerated structure/regime/chart/coverage/social artifacts. Stage
           # comprehensively + fail safe (mirrors the other publishing brains).
-          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
+          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ rankings/ ar/rankings/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
 
@@ -210,7 +219,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
+              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|rankings/*|ar/rankings/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"
@@ -247,6 +256,10 @@ jobs:
               node tools/build-market-structure.js --write || echo "[tech-intel] structure regen degraded"
               node tools/build-tactical-context.js --write || echo "[tech-intel] tactical context regen degraded"
               node tools/build-institutional-charts.js --fetch --write || node tools/build-institutional-charts.js --write || echo "[tech-intel] institutional chart regen degraded"
+              node tools/build-rankings.js --write || echo "[tech-intel] ranking regen degraded"
+              node tools/build-relative-strength.js --write || echo "[tech-intel] relative strength regen degraded"
+              node tools/build-ranking-history.js --write || echo "[tech-intel] ranking history regen degraded"
+              node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages regen degraded"
               node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
               node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded"
               node tools/build-social-intelligence.js --write || echo "[tech-intel] social regen degraded"
