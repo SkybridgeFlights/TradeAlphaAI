@@ -100,6 +100,13 @@ jobs:
           node tools/build-rankings.js --write || echo "[tech-intel] rankings degraded — continuing"
           node tools/build-relative-strength.js --write || echo "[tech-intel] relative strength degraded — continuing"
           node tools/build-ranking-history.js --write || echo "[tech-intel] ranking history degraded — continuing"
+          # Phase 210 — Market Regime Command Center composes the full macro,
+          # asset, sector, equity, ranking and historical stack before pages.
+          node tools/build-market-regime-dashboard.js --write || echo "[tech-intel] market regime dashboard degraded — continuing"
+          node tools/build-confirmation-matrix.js --write || echo "[tech-intel] confirmation matrix degraded — continuing"
+          node tools/build-leadership-dashboard.js --write || echo "[tech-intel] leadership dashboard degraded — continuing"
+          node tools/build-regime-history.js --write || echo "[tech-intel] regime history degraded — continuing"
+          node tools/generate-market-regime-pages.js --write || echo "[tech-intel] market regime pages degraded — continuing"
           # Pages last, so every page embeds the freshest current + historical state.
           node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
           node tools/generate-equity-pages.js --write || echo "[tech-intel] equity pages degraded — continuing"
@@ -163,6 +170,11 @@ jobs:
           npm run check:rankings
           npm run check:relative-strength
           npm run check:ranking-history
+          npm run check:regime-dashboard
+          npm run check:confirmation-matrix
+          npm run check:leadership-dashboard
+          npm run check:regime-history
+          npm run check:market-regime
           npm run check:ranking-pages
           npm run check:ranking-discovery
           npm run check:navigation-discovery
@@ -202,7 +214,7 @@ jobs:
           # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
           # regenerated structure/regime/chart/coverage/social artifacts. Stage
           # comprehensively + fail safe (mirrors the other publishing brains).
-          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ rankings/ ar/rankings/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
+          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ market-regime/ ar/market-regime/ rankings/ ar/rankings/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
 
@@ -219,7 +231,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|rankings/*|ar/rankings/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
+              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|market-regime/*|ar/market-regime/*|rankings/*|ar/rankings/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"
@@ -259,6 +271,11 @@ jobs:
               node tools/build-rankings.js --write || echo "[tech-intel] ranking regen degraded"
               node tools/build-relative-strength.js --write || echo "[tech-intel] relative strength regen degraded"
               node tools/build-ranking-history.js --write || echo "[tech-intel] ranking history regen degraded"
+              node tools/build-market-regime-dashboard.js --write || echo "[tech-intel] market regime dashboard regen degraded"
+              node tools/build-confirmation-matrix.js --write || echo "[tech-intel] confirmation matrix regen degraded"
+              node tools/build-leadership-dashboard.js --write || echo "[tech-intel] leadership dashboard regen degraded"
+              node tools/build-regime-history.js --write || echo "[tech-intel] regime history regen degraded"
+              node tools/generate-market-regime-pages.js --write || echo "[tech-intel] market regime page regen degraded"
               node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages regen degraded"
               node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
               node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded"
@@ -266,6 +283,11 @@ jobs:
               node tools/build-distribution-plan.js --write || echo "[tech-intel] distribution regen degraded"
               npm run check:institutional-charts
               npm run check:embedded-charts
+              npm run check:regime-dashboard
+              npm run check:confirmation-matrix
+              npm run check:leadership-dashboard
+              npm run check:regime-history
+              npm run check:market-regime
               stage_intended
               git -c core.editor=true rebase --continue || git rebase --abort
             fi
