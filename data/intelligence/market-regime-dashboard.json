@@ -1,0 +1,329 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-19T15:19:23.174Z",
+  "source_layer": "market-regime-dashboard",
+  "available": true,
+  "current_regime": {
+    "state": "defensive_rotation",
+    "label_en": "defensive rotation",
+    "label_ar": "تدوير دفاعي"
+  },
+  "confidence_band": {
+    "state": "high",
+    "label_en": "high",
+    "label_ar": "عالية"
+  },
+  "risk_state": {
+    "state": "calm",
+    "label_en": "calm",
+    "label_ar": "هادئ",
+    "evidence_refs": [
+      {
+        "source": "macro-regime",
+        "field": "inputs.volatility_regime",
+        "value": "calm",
+        "evidence": [
+          "dollar=stable, yield=supportive, volatility=calm",
+          "cross-asset coherence direction=risk_off",
+          "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+        ]
+      },
+      {
+        "source": "cognitive-network",
+        "field": "dominant_network_state",
+        "value": "liquidity_stress",
+        "evidence": [
+          "cross-asset coherence: score=1 direction=risk_off n=3",
+          "liquidity-regime: regime=indeterminate liquidity=indeterminate stability=indeterminate",
+          "tactical-context: available=true fragile=true",
+          "relationships with data: 11/11"
+        ]
+      },
+      {
+        "source": "regime-transitions",
+        "field": "transition_state",
+        "value": "stable_regime",
+        "evidence": [
+          "risk(SPY) stable, rates(TLT) accelerating, volatility(VIXY) stable, dollar(UUP) improving",
+          "current macro regime: defensive_rotation",
+          "cross-run ledger is building (window-derived trends used)"
+        ]
+      }
+    ]
+  },
+  "dollar_state": {
+    "state": "stable",
+    "label_en": "stable",
+    "label_ar": "حالة الدولار",
+    "evidence_refs": [
+      {
+        "source": "macro-regime",
+        "field": "inputs.dollar_regime",
+        "value": "stable",
+        "evidence": [
+          "dollar=stable, yield=supportive, volatility=calm",
+          "cross-asset coherence direction=risk_off",
+          "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+        ]
+      }
+    ]
+  },
+  "yield_state": {
+    "state": "supportive",
+    "label_en": "supportive",
+    "label_ar": "حالة العوائد",
+    "evidence_refs": [
+      {
+        "source": "macro-regime",
+        "field": "inputs.yield_regime",
+        "value": "supportive",
+        "evidence": [
+          "dollar=stable, yield=supportive, volatility=calm",
+          "cross-asset coherence direction=risk_off",
+          "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+        ]
+      }
+    ]
+  },
+  "volatility_state": {
+    "state": "calm",
+    "label_en": "calm",
+    "label_ar": "حالة التقلب",
+    "evidence_refs": [
+      {
+        "source": "macro-regime",
+        "field": "inputs.volatility_regime",
+        "value": "calm",
+        "evidence": [
+          "dollar=stable, yield=supportive, volatility=calm",
+          "cross-asset coherence direction=risk_off",
+          "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+        ]
+      }
+    ]
+  },
+  "dominant_story": {
+    "state": "defensive_rotation_with_selective_leadership",
+    "label_en": "defensive rotation with selective leadership",
+    "label_ar": "تدوير دفاعي مع قيادة انتقائية"
+  },
+  "dominant_confirmation_state": {
+    "state": "confirming",
+    "label_en": "confirming",
+    "label_ar": "مؤكد",
+    "evidence_refs": [
+      {
+        "source": "cognitive-network",
+        "field": "confirmation_chains",
+        "value": 8,
+        "evidence": [
+          "confirmation_chains=8"
+        ]
+      },
+      {
+        "source": "cognitive-network",
+        "field": "contradiction_chains",
+        "value": 1,
+        "evidence": [
+          "contradiction_chains=1"
+        ]
+      },
+      {
+        "source": "rankings",
+        "field": "confirmed_items",
+        "value": 18,
+        "evidence": [
+          "confirmed_rank_items=18"
+        ]
+      },
+      {
+        "source": "rankings",
+        "field": "mixed_items",
+        "value": 2,
+        "evidence": [
+          "mixed_rank_items=2"
+        ]
+      },
+      {
+        "source": "market-narrative",
+        "field": "confirmation_story",
+        "value": "8 cross-asset confirmation chain(s)",
+        "evidence": [
+          "confirmation_chains=8"
+        ]
+      }
+    ]
+  },
+  "dominant_contradiction_state": {
+    "state": "elevated",
+    "label_en": "elevated",
+    "label_ar": "مرتفعة",
+    "evidence_refs": [
+      {
+        "source": "cognitive-network",
+        "field": "contradiction_chains",
+        "value": 1,
+        "evidence": [
+          "contradiction_chains=1"
+        ]
+      },
+      {
+        "source": "cognitive-network",
+        "field": "fragility_chains",
+        "value": 3,
+        "evidence": [
+          "fragility_chains=3"
+        ]
+      },
+      {
+        "source": "market-narrative",
+        "field": "contradiction_story",
+        "value": "1 cross-asset contradiction chain(s)",
+        "evidence": [
+          "contradiction_chains=1"
+        ]
+      }
+    ]
+  },
+  "historical_transition_state": {
+    "state": "stable_regime",
+    "label_en": "stable regime",
+    "label_ar": "نظام مستقر"
+  },
+  "leadership_snapshot": {
+    "strongest_assets": [
+      "IWM",
+      "SPY",
+      "QQQ"
+    ],
+    "weakest_assets": [
+      "VIXY",
+      "GLD",
+      "UUP"
+    ],
+    "strongest_sectors": [
+      "XLF",
+      "XLV",
+      "XLI"
+    ],
+    "weakest_sectors": [
+      "XLE",
+      "XLK",
+      "XLB"
+    ],
+    "strongest_equities": [
+      "AMD",
+      "NVDA",
+      "AAPL"
+    ],
+    "weakest_equities": [
+      "AVGO",
+      "AMZN",
+      "MSFT"
+    ],
+    "evidence_refs": [
+      {
+        "source": "rankings",
+        "field": "groups.asset.strongest",
+        "value": "IWM,SPY,QQQ",
+        "evidence": [
+          "rankings.groups.asset"
+        ]
+      },
+      {
+        "source": "relative-strength",
+        "field": "available",
+        "value": true,
+        "evidence": [
+          "relative-strength available"
+        ]
+      },
+      {
+        "source": "ranking-history",
+        "field": "snapshot_count",
+        "value": 1,
+        "evidence": []
+      }
+    ]
+  },
+  "evidence_refs": [
+    {
+      "source": "macro-regime",
+      "field": "macro_regime",
+      "value": "defensive_rotation",
+      "evidence": [
+        "dollar=stable, yield=supportive, volatility=calm",
+        "cross-asset coherence direction=risk_off",
+        "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+      ]
+    },
+    {
+      "source": "market-narrative",
+      "field": "dominant_story",
+      "value": "defensive_rotation_with_selective_leadership",
+      "evidence": [
+        "macro-regime=defensive_rotation",
+        "sector-rotation=broad_risk_participation",
+        "cognitive-network=liquidity_stress",
+        "sector-network=defensive_tilt"
+      ]
+    },
+    {
+      "source": "cognitive-network",
+      "field": "dominant_network_state",
+      "value": "liquidity_stress",
+      "evidence": [
+        "cross-asset coherence: score=1 direction=risk_off n=3",
+        "liquidity-regime: regime=indeterminate liquidity=indeterminate stability=indeterminate",
+        "tactical-context: available=true fragile=true",
+        "relationships with data: 11/11"
+      ]
+    },
+    {
+      "source": "rankings",
+      "field": "source_layer",
+      "value": "rankings",
+      "evidence": [
+        "rankings.json"
+      ]
+    },
+    {
+      "source": "relative-strength",
+      "field": "source_layer",
+      "value": "relative-strength",
+      "evidence": [
+        "relative-strength.json"
+      ]
+    },
+    {
+      "source": "ranking-history",
+      "field": "source_layer",
+      "value": "ranking-history",
+      "evidence": [
+        "ranking-history.json"
+      ]
+    },
+    {
+      "source": "regime-transitions",
+      "field": "transition_state",
+      "value": "stable_regime",
+      "evidence": [
+        "risk(SPY) stable, rates(TLT) accelerating, volatility(VIXY) stable, dollar(UUP) improving",
+        "current macro regime: defensive_rotation",
+        "cross-run ledger is building (window-derived trends used)"
+      ]
+    }
+  ],
+  "attribution": {
+    "sources": [
+      "macro-regime.json",
+      "cognitive-network.json",
+      "market-narrative.json",
+      "rankings.json",
+      "relative-strength.json",
+      "ranking-history.json",
+      "regime-transitions.json"
+    ],
+    "note": "Deterministic command-center composition from verified intelligence artifacts. Educational context only; not a directional call, recommendation, execution level or trade instruction."
+  }
+}
