@@ -16,15 +16,17 @@ try { EQUITY_SLUGS = require("./equity-registry").SLUGS; } catch { EQUITY_SLUGS 
 const equityDirs = (prefix) => EQUITY_SLUGS.map((slug) => `${prefix}equities/${slug}/`).filter((rel) => existsDir(rel));
 const rankingDirs = (prefix) => ["rankings/", "rankings/assets/", "rankings/sectors/", "rankings/equities/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketRegimeDirs = (prefix) => ["market-regime/", "market-regime/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
-const marketMapDirs = (prefix) => ["market-map/assets/", "market-map/sectors/", "market-map/equities/", "market-map/regime/", "market-map/network/", "market-map/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
-const researchDirs = (prefix) => ["research/", "research/feed/", "research/regime/", "research/history/", "research/assets/", "research/sectors/", "research/equities/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+const marketMapDirs = (prefix) => ["market-map/assets/", "market-map/sectors/", "market-map/equities/", "market-map/regime/", "market-map/network/", "market-map/history/", "market-map/etfs/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+const researchDirs = (prefix) => ["research/", "research/feed/", "research/regime/", "research/history/", "research/assets/", "research/sectors/", "research/equities/", "research/etfs/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const ASSET_RSLUGS = (() => { try { return require("./asset-registry").SLUGS; } catch { return []; } })();
 const SECTOR_RSLUGS = (() => { try { return require("./sector-registry").SLUGS; } catch { return []; } })();
 const EQUITY_RSLUGS = (() => { try { return require("./equity-registry").SLUGS; } catch { return []; } })();
+const ETF_RSLUGS = (() => { try { return require("./etf-registry").SLUGS; } catch { return []; } })();
 const entityResearchDirs = (prefix) => [
   ...ASSET_RSLUGS.map((s) => `research/assets/${s}/`),
   ...SECTOR_RSLUGS.map((s) => `research/sectors/${s}/`),
   ...EQUITY_RSLUGS.map((s) => `research/equities/${s}/`),
+  ...ETF_RSLUGS.map((s) => `research/etfs/${s}/`),
 ].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const marketConfig = readJson("data/market-symbols.json", { symbols: [], hubs: [], comparisons: [] });
 
@@ -45,6 +47,7 @@ const core = [
   .concat(researchDirs(""))
   .concat(entityResearchDirs(""))
   .concat(rankingDirs(""))
+  .concat(existsDir("etfs") ? ["etfs/"] : [])
   .concat(existsDir("markets") ? ["markets/"] : [])
   .concat(marketAssetDirs(""))
   .concat(existsDir("sectors") ? ["sectors/"] : [])
@@ -94,7 +97,7 @@ console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} com
 
 function arUrls() {
   const out = ["ar/"];
-  for (const rel of ["stocks.html", "etfs.html", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
+  for (const rel of ["stocks.html", "etfs.html", "etfs/", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const rel of marketRegimeDirs("ar/")) out.push(rel);
