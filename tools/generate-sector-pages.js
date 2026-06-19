@@ -150,6 +150,24 @@ ${cards}
       </section>`;
   }
 
+  // 4c) How this fits the market narrative.
+  const nar = ctx.narrative;
+  let narrativeBlock = '';
+  if (nar && nar.available) {
+    const cards = [
+      [t('Market story', 'سردية السوق'), ar ? nar.dominant_story.label_ar : nar.dominant_story.label_en],
+      [t('Sector driver', 'محرّك القطاعات'), ar ? nar.drivers.sector_driver.label_ar : nar.drivers.sector_driver.label_en],
+      [t('Macro driver', 'المحرّك الكلي'), ar ? nar.drivers.macro_driver.label_ar : nar.drivers.macro_driver.label_en],
+    ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+    narrativeBlock = `      <section class="market-section" id="sector-narrative-context">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Market narrative', 'سردية السوق'))}</span><h2>${esc(t('How this fits the market narrative', 'كيف يندرج هذا ضمن سردية السوق'))}</h2></div>
+        <p class="market-copy">${esc(t('This sector sits inside the integrated market story — see the', 'يقع هذا القطاع ضمن قصة السوق المتكاملة — انظر'))} <a href="${ar ? '/ar/market-terminal/' : '/market-terminal/'}">${esc(t('market terminal', 'الطرفية المؤسسية'))}</a>. ${esc(t('Context, not a forecast.', 'سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+  }
+
   // 5) Related links.
   const linksBlock = `      <section class="market-section" id="sector-links">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Across the desk', 'عبر المكتب'))}</span><h2>${esc(t('Related institutional intelligence', 'استخبارات مؤسسية ذات صلة'))}</h2></div>
@@ -177,6 +195,7 @@ ${chartBlock}
 ${rotationBlock}
 ${macroBlock}
 ${historyBlock}
+${narrativeBlock}
 ${linksBlock}
 
       <section class="market-section" id="sector-disclaimer">
@@ -220,9 +239,10 @@ function main() {
   const rotation = readJson(J('sector-rotation.json'));
   const cognitive = readJson(J('sector-cognitive-network.json'));
   const history = readJson(J('sector-history.json'));
+  const narrative = readJson(J('market-narrative.json'));
   let count = 0;
   for (const sector of SECTORS) {
-    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history };
+    const ctx = { chart: chartBySymbol.get(sector.symbol) || null, structure, tactical, liquidity, participation, rotation, cognitive, history, narrative };
     for (const [ar, dir] of [[false, `sectors/${sector.slug}`], [true, `ar/sectors/${sector.slug}`]]) {
       const html = generate(ar, sector, ctx);
       if (write) { const outPath = path.join(ROOT, dir, 'index.html'); fs.mkdirSync(path.dirname(outPath), { recursive: true }); fs.writeFileSync(outPath, html, 'utf8'); count += 1; }

@@ -22,6 +22,7 @@ const YIELD_INTEL = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.
 const VOLATILITY_INTEL = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
 const MACRO_REGIME = path.join(ROOT, 'data', 'intelligence', 'macro-regime.json');
 const ASSET_HISTORY = path.join(ROOT, 'data', 'intelligence', 'asset-history.json');
+const MARKET_NARRATIVE = path.join(ROOT, 'data', 'intelligence', 'market-narrative.json');
 const CHARTS = path.join(ROOT, 'data', 'visual', 'institutional-charts.json');
 const REGIME = path.join(ROOT, 'data', 'intelligence', 'liquidity-regime.json');
 const TACTICAL = path.join(ROOT, 'data', 'intelligence', 'tactical-context.json');
@@ -209,6 +210,24 @@ ${cards}
       </section>`;
   }
 
+  // 4d) How this fits the market narrative (compact, links to the terminal story).
+  const nar = ctx.narrative;
+  let narrativeBlock = '';
+  if (nar && nar.available) {
+    const cards = [
+      [t('Market story', 'سردية السوق'), ar ? nar.dominant_story.label_ar : nar.dominant_story.label_en],
+      [t('Macro driver', 'المحرّك الكلي'), ar ? nar.drivers.macro_driver.label_ar : nar.drivers.macro_driver.label_en],
+      [t('Cross-asset', 'عبر الأصول'), ar ? nar.drivers.asset_driver.label_ar : nar.drivers.asset_driver.label_en],
+    ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+    narrativeBlock = `      <section class="market-section" id="asset-narrative-context">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Market narrative', 'سردية السوق'))}</span><h2>${esc(t('How this fits the market narrative', 'كيف يندرج هذا ضمن سردية السوق'))}</h2></div>
+        <p class="market-copy">${esc(t('This asset sits inside the integrated market story below — see the', 'يقع هذا الأصل ضمن قصة السوق المتكاملة أدناه — انظر'))} <a href="${ar ? '/ar/market-terminal/' : '/market-terminal/'}">${esc(t('market terminal', 'الطرفية المؤسسية'))}</a>. ${esc(t('Context, not a forecast.', 'سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+  }
+
   // 5) Related links.
   const linksBlock = `      <section class="market-section" id="asset-links">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Across the desk', 'عبر المكتب'))}</span><h2>${esc(t('Related institutional intelligence', 'استخبارات مؤسسية ذات صلة'))}</h2></div>
@@ -237,6 +256,7 @@ ${contextBlock}
 ${relBlock}
 ${macroBlock}
 ${historyBlock}
+${narrativeBlock}
 ${linksBlock}
 
       <section class="market-section" id="asset-disclaimer">
@@ -281,10 +301,11 @@ function main() {
   const volatility = readJson(VOLATILITY_INTEL);
   const macro = readJson(MACRO_REGIME);
   const history = readJson(ASSET_HISTORY);
+  const narrative = readJson(MARKET_NARRATIVE);
   const chartBySymbol = new Map(((chartsManifest && chartsManifest.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
   let count = 0;
   for (const asset of ASSETS) {
-    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history };
+    const ctx = { intel, cognitive, chart: chartBySymbol.get(asset.symbol) || null, regime, tactical, dollar, yieldArt, volatility, macro, history, narrative };
     for (const [ar, dir] of [[false, `markets/${asset.slug}`], [true, `ar/markets/${asset.slug}`]]) {
       const html = generate(ar, asset, ctx);
       if (write) {

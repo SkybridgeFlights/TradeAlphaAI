@@ -143,6 +143,24 @@ ${hcards}
       </section>`;
   }
 
+  // How this fits the market narrative.
+  const nar = ctx.narrative;
+  let narrativeBlock = '';
+  if (nar && nar.available) {
+    const ncards = [
+      [t('Market story', 'سردية السوق'), ar ? nar.dominant_story.label_ar : nar.dominant_story.label_en],
+      [t('Single-name driver', 'محرّك الأسهم'), ar ? nar.drivers.equity_driver.label_ar : nar.drivers.equity_driver.label_en],
+      [t('Macro driver', 'المحرّك الكلي'), ar ? nar.drivers.macro_driver.label_ar : nar.drivers.macro_driver.label_en],
+    ].map(([k, v]) => `          <article class="market-card"><span class="market-card-kicker">${esc(k)}</span><h3>${esc(v)}</h3></article>`).join('\n');
+    narrativeBlock = `      <section class="market-section" id="equity-narrative-context">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Market narrative', 'سردية السوق'))}</span><h2>${esc(t('How this fits the market narrative', 'كيف يندرج هذا ضمن سردية السوق'))}</h2></div>
+        <p class="market-copy">${esc(t('This equity sits inside the integrated macro → sector → equity story — see the', 'يقع هذا السهم ضمن قصة الكلي ← القطاع ← السهم المتكاملة — انظر'))} <a href="${ar ? '/ar/market-terminal/' : '/market-terminal/'}">${esc(t('market terminal', 'الطرفية المؤسسية'))}</a>. ${esc(t('Context, not a forecast.', 'سياق، وليس توقعاً.'))}</p>
+        <div class="market-grid three">
+${ncards}
+        </div>
+      </section>`;
+  }
+
   const relAssets = `<a href="${ar ? '/ar/markets/' : '/markets/'}${eq.related_asset.toLowerCase()}/">${esc(eq.related_asset)}</a>`;
   const relEquities = (eq.related_equities || []).map((s) => `<a href="${ar ? '/ar/equities/' : '/equities/'}${s.toLowerCase()}/">${esc(s)}</a>`).join(' · ') || esc(t('none', 'لا يوجد'));
   const linksBlock = `      <section class="market-section" id="equity-relations">
@@ -171,6 +189,7 @@ ${chartBlock}
 ${contextBlock}
 ${macroBlock}
 ${historyBlock}
+${narrativeBlock}
 ${linksBlock}
 
       <section class="market-section" id="equity-disclaimer">
@@ -211,7 +230,7 @@ function main() {
     structure: readJson(J('equity-structure.json')), tactical: readJson(J('equity-tactical.json')),
     liquidity: readJson(J('equity-liquidity.json')), participation: readJson(J('equity-participation.json')),
     intelligence: readJson(J('equity-intelligence.json')), macro: readJson(J('macro-regime.json')), sectorStructure: readJson(J('sector-structure.json')),
-    history: readJson(J('equity-history.json')),
+    history: readJson(J('equity-history.json')), narrative: readJson(J('market-narrative.json')),
   };
   let count = 0;
   for (const eq of EQUITIES) {

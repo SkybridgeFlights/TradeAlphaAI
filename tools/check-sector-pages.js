@@ -14,7 +14,7 @@ const { SECTORS } = require('./sector-registry');
 
 const ROOT = path.resolve(__dirname, '..');
 const MANIFEST = path.join(ROOT, 'data', 'visual', 'sector-charts.json');
-const REQUIRED = ['sector-intelligence', 'sector-chart', 'sector-rotation', 'sector-macro', 'sector-history-context', 'sector-disclaimer'];
+const REQUIRED = ['sector-intelligence', 'sector-chart', 'sector-rotation', 'sector-macro', 'sector-history-context', 'sector-narrative-context', 'sector-disclaimer'];
 const FIG_RE = /<figure class="institutional-chart"[\s\S]*?<\/figure>/gi;
 const FORBIDDEN = [/\bbuy\b/i, /\bsell\b/i, /\bentry\b/i, /\bstop[- ]?loss\b/i, /\bprice target\b/i, /\bbuy signal\b/i, /\bgo (long|short)\b/i, /\bRSI\b/, /\bMACD\b/, /(?:\bشراء\b|\bبيع\b|وقف\s*الخسارة|هدف\s*سعري)/];
 const RAW_ARTIFACT = [/href="[^"]*\.json/i, /href="\/data\//i, /href="\/runtime\//i, /system-status/i];
