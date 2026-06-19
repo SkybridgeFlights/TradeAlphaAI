@@ -123,6 +123,17 @@ jobs:
           # research pages.
           node tools/build-entity-research.js --write || echo "[tech-intel] entity research degraded — continuing"
           node tools/build-change-intelligence.js --write || echo "[tech-intel] change intelligence degraded — continuing"
+          # Phase 214 — ETF Intelligence Universe: direct ETF registry, approved
+          # provider chart coverage, ETF intelligence/rankings/history, research,
+          # map and discovery pages. No proxy substitution or fabricated charts.
+          node tools/build-etf-charts.js --fetch --write || node tools/build-etf-charts.js --write || echo "[tech-intel] ETF charts unavailable — continuing"
+          node tools/build-etf-intelligence.js --write || echo "[tech-intel] ETF intelligence degraded — continuing"
+          node tools/build-etf-rankings.js --write || echo "[tech-intel] ETF rankings degraded — continuing"
+          node tools/build-etf-history.js --write || echo "[tech-intel] ETF history degraded — continuing"
+          node tools/build-etf-map.js --write || echo "[tech-intel] ETF map degraded — continuing"
+          node tools/generate-etf-research-pages.js --write || echo "[tech-intel] ETF research pages degraded — continuing"
+          node tools/generate-etf-map-pages.js --write || echo "[tech-intel] ETF map pages degraded — continuing"
+          node tools/generate-etf-discovery-pages.js --write || echo "[tech-intel] ETF discovery pages degraded — continuing"
           node tools/generate-entity-research-pages.js --write || echo "[tech-intel] entity research pages degraded — continuing"
           # Pages last, so every page embeds the freshest current + historical state.
           node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
@@ -224,6 +235,14 @@ jobs:
           npm run check:entity-changelog
           npm run check:entity-research-pages
           npm run check:research-history
+          npm run check:etf-registry
+          npm run check:etf-charts
+          npm run check:etf-intelligence
+          npm run check:etf-rankings
+          npm run check:etf-history
+          npm run check:etf-research
+          npm run check:etf-map
+          npm run check:etf-discovery
           npm run check:visual-composition
           npm run check:tactical-context
           npm run check:chart-intelligence
@@ -249,7 +268,7 @@ jobs:
           # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
           # regenerated structure/regime/chart/coverage/social artifacts. Stage
           # comprehensively + fail safe (mirrors the other publishing brains).
-          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ market-regime/ ar/market-regime/ market-map/ ar/market-map/ research/ ar/research/ rankings/ ar/rankings/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
+          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ market-regime/ ar/market-regime/ market-map/ ar/market-map/ research/ ar/research/ rankings/ ar/rankings/ etfs/ ar/etfs/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
 
@@ -266,7 +285,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|market-regime/*|ar/market-regime/*|market-map/*|ar/market-map/*|research/*|ar/research/*|rankings/*|ar/rankings/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
+              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|market-regime/*|ar/market-regime/*|market-map/*|ar/market-map/*|research/*|ar/research/*|rankings/*|ar/rankings/*|etfs/*|ar/etfs/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"
@@ -317,6 +336,14 @@ jobs:
               node tools/generate-research-pages.js --write || echo "[tech-intel] research pages regen degraded"
               node tools/build-entity-research.js --write || echo "[tech-intel] entity research regen degraded"
               node tools/build-change-intelligence.js --write || echo "[tech-intel] change intelligence regen degraded"
+              node tools/build-etf-charts.js --fetch --write || node tools/build-etf-charts.js --write || echo "[tech-intel] ETF chart regen degraded"
+              node tools/build-etf-intelligence.js --write || echo "[tech-intel] ETF intelligence regen degraded"
+              node tools/build-etf-rankings.js --write || echo "[tech-intel] ETF rankings regen degraded"
+              node tools/build-etf-history.js --write || echo "[tech-intel] ETF history regen degraded"
+              node tools/build-etf-map.js --write || echo "[tech-intel] ETF map regen degraded"
+              node tools/generate-etf-research-pages.js --write || echo "[tech-intel] ETF research pages regen degraded"
+              node tools/generate-etf-map-pages.js --write || echo "[tech-intel] ETF map pages regen degraded"
+              node tools/generate-etf-discovery-pages.js --write || echo "[tech-intel] ETF discovery pages regen degraded"
               node tools/generate-entity-research-pages.js --write || echo "[tech-intel] entity research pages regen degraded"
               node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages regen degraded"
               node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
@@ -330,6 +357,14 @@ jobs:
               npm run check:leadership-dashboard
               npm run check:regime-history
               npm run check:market-regime
+              npm run check:etf-registry
+              npm run check:etf-charts
+              npm run check:etf-intelligence
+              npm run check:etf-rankings
+              npm run check:etf-history
+              npm run check:etf-research
+              npm run check:etf-map
+              npm run check:etf-discovery
               stage_intended
               git -c core.editor=true rebase --continue || git rebase --abort
             fi
