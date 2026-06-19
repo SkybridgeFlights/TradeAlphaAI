@@ -13,6 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ASSETS, RELATIONSHIPS, BY_SYMBOL } = require('./asset-registry');
+const { relatedResearchBlock } = require('./related-research');
 
 const ROOT = path.resolve(__dirname, '..');
 const ASSET_INTEL = path.join(ROOT, 'data', 'intelligence', 'asset-intelligence.json');
@@ -306,6 +307,7 @@ ${relBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
+${relatedResearchBlock(ar, 'asset')}
 ${linksBlock}
 
       <section class="market-section" id="asset-disclaimer">

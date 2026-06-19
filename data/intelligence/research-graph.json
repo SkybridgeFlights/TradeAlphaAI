@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-19T20:36:55.823Z",
+  "source_layer": "research-graph",
+  "available": true,
+  "node_count": 6,
+  "edge_count": 6,
+  "nodes": [
+    {
+      "id": "macro",
+      "label_en": "Macro",
+      "label_ar": "الماكرو",
+      "href": "/market-map/regime/"
+    },
+    {
+      "id": "regime",
+      "label_en": "Regime",
+      "label_ar": "النظام",
+      "href": "/research/regime/"
+    },
+    {
+      "id": "assets",
+      "label_en": "Assets",
+      "label_ar": "الأصول",
+      "href": "/rankings/assets/"
+    },
+    {
+      "id": "sectors",
+      "label_en": "Sectors",
+      "label_ar": "القطاعات",
+      "href": "/rankings/sectors/"
+    },
+    {
+      "id": "equities",
+      "label_en": "Equities",
+      "label_ar": "الأسهم",
+      "href": "/rankings/equities/"
+    },
+    {
+      "id": "historical",
+      "label_en": "Historical Intelligence",
+      "label_ar": "الاستخبارات التاريخية",
+      "href": "/market-map/history/"
+    }
+  ],
+  "edges": [
+    {
+      "from": "macro",
+      "to": "regime",
+      "relation_en": "composes the regime",
+      "relation_ar": "يكوّن النظام",
+      "evidence": [
+        "macro_regime=defensive rotation",
+        "dollar=stable",
+        "yield=supportive"
+      ]
+    },
+    {
+      "from": "regime",
+      "to": "assets",
+      "relation_en": "frames asset leadership",
+      "relation_ar": "يؤطّر قيادة الأصول",
+      "evidence": [
+        "regime=defensive rotation with selective leadership",
+        "assets_ranked=7"
+      ]
+    },
+    {
+      "from": "assets",
+      "to": "sectors",
+      "relation_en": "sets the broad-market baseline for rotation",
+      "relation_ar": "يضع خط الأساس للتدوير",
+      "evidence": [
+        "assets_ranked=7",
+        "sectors_ranked=10"
+      ]
+    },
+    {
+      "from": "sectors",
+      "to": "equities",
+      "relation_en": "conditions single-name leadership",
+      "relation_ar": "يهيّئ قيادة الأسهم الفردية",
+      "evidence": [
+        "sectors_ranked=10",
+        "equities_ranked=11"
+      ]
+    },
+    {
+      "from": "equities",
+      "to": "historical",
+      "relation_en": "accumulates into historical change",
+      "relation_ar": "يتراكم في التغيّر التاريخي",
+      "evidence": [
+        "historical_scored=28"
+      ]
+    },
+    {
+      "from": "historical",
+      "to": "regime",
+      "relation_en": "informs regime transition",
+      "relation_ar": "يُعلِم تحوّل النظام",
+      "evidence": [
+        "transition=stable regime"
+      ]
+    }
+  ],
+  "attribution": {
+    "sources": [
+      "macro-regime.json",
+      "market-regime-dashboard.json",
+      "asset-rankings.json",
+      "sector-rankings.json",
+      "equity-rankings.json",
+      "historical-intelligence.json",
+      "regime-transitions.json"
+    ],
+    "note": "Evidence-backed relationships only; no fabricated links. Educational context, not signals or forecasts."
+  }
+}

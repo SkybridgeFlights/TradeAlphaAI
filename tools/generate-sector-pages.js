@@ -12,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const { SECTORS } = require('./sector-registry');
+const { relatedResearchBlock } = require('./related-research');
 
 const ROOT = path.resolve(__dirname, '..');
 const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
@@ -245,6 +246,7 @@ ${rotationBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
+${relatedResearchBlock(ar, 'sector')}
 ${linksBlock}
 
       <section class="market-section" id="sector-disclaimer">

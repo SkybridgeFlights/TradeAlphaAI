@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const { EQUITIES } = require('./equity-registry');
 const { BY_SYMBOL: SECTOR_BY_SLUG } = (() => { const r = require('./sector-registry'); return { BY_SYMBOL: new Map(r.SECTORS.map((s) => [s.slug, s])) }; })();
+const { relatedResearchBlock } = require('./related-research');
 
 const ROOT = path.resolve(__dirname, '..');
 const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
@@ -239,6 +240,7 @@ ${contextBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
+${relatedResearchBlock(ar, 'equity')}
 ${linksBlock}
 
       <section class="market-section" id="equity-disclaimer">

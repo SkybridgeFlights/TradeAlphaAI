@@ -112,6 +112,11 @@ jobs:
           # precede sitemap regen so the maps are indexed.
           node tools/build-visual-market-maps.js --write || echo "[tech-intel] visual market maps degraded — continuing"
           node tools/generate-market-map-pages.js --write || echo "[tech-intel] market map pages degraded — continuing"
+          # Phase 212 — research network: aggregate the existing intelligence into
+          # research-hub/graph/briefs/authority, then render the research pages.
+          # MUST precede entity pages (they embed Related Research from the graph).
+          node tools/build-research-hub.js --write || echo "[tech-intel] research hub degraded — continuing"
+          node tools/generate-research-pages.js --write || echo "[tech-intel] research pages degraded — continuing"
           # Pages last, so every page embeds the freshest current + historical state.
           node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
           node tools/generate-equity-pages.js --write || echo "[tech-intel] equity pages degraded — continuing"
@@ -201,6 +206,11 @@ jobs:
           npm run check:regime-map
           npm run check:network-map
           npm run check:history-map
+          npm run check:research-graph
+          npm run check:research-authority
+          npm run check:research-hub
+          npm run check:research-feed
+          npm run check:research-discovery
           npm run check:visual-composition
           npm run check:tactical-context
           npm run check:chart-intelligence
@@ -226,7 +236,7 @@ jobs:
           # rewrites ALL sitemaps + robots.txt, and the whole data/ tree holds the
           # regenerated structure/regime/chart/coverage/social artifacts. Stage
           # comprehensively + fail safe (mirrors the other publishing brains).
-          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ market-regime/ ar/market-regime/ market-map/ ar/market-map/ rankings/ ar/rankings/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
+          INTENDED="market-structure/ ar/market-structure/ market-terminal/ ar/market-terminal/ market-regime/ ar/market-regime/ market-map/ ar/market-map/ research/ ar/research/ rankings/ ar/rankings/ markets/ ar/markets/ sectors/ ar/sectors/ equities/ ar/equities/ data/ \
             sitemap.xml sitemap-core.xml sitemap-ar.xml sitemap-stocks.xml sitemap-etfs.xml \
             sitemap-compare.xml sitemap-insights.xml sitemap-market.xml robots.txt"
 
@@ -243,7 +253,7 @@ jobs:
             [ -z "$line" ] && continue
             f="${line:3}"
             case "$f" in
-              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|market-regime/*|ar/market-regime/*|market-map/*|ar/market-map/*|rankings/*|ar/rankings/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
+              market-structure/*|ar/market-structure/*|market-terminal/*|ar/market-terminal/*|market-regime/*|ar/market-regime/*|market-map/*|ar/market-map/*|research/*|ar/research/*|rankings/*|ar/rankings/*|markets/*|ar/markets/*|sectors/*|ar/sectors/*|equities/*|ar/equities/*|data/*|sitemap*.xml|robots.txt) ;;
               *) UNRELATED="${UNRELATED}${f}\n" ;;
             esac
           done <<< "$(git status --porcelain --untracked-files=all)"
@@ -290,6 +300,8 @@ jobs:
               node tools/generate-market-regime-pages.js --write || echo "[tech-intel] market regime page regen degraded"
               node tools/build-visual-market-maps.js --write || echo "[tech-intel] visual market maps regen degraded"
               node tools/generate-market-map-pages.js --write || echo "[tech-intel] market map pages regen degraded"
+              node tools/build-research-hub.js --write || echo "[tech-intel] research hub regen degraded"
+              node tools/generate-research-pages.js --write || echo "[tech-intel] research pages regen degraded"
               node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages regen degraded"
               node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
               node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded"
