@@ -1,0 +1,942 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-19T13:11:06.392Z",
+  "source_layer": "confirmation-matrix",
+  "available": true,
+  "matrix_state": "mixed",
+  "classification_counts": {
+    "confirming": 2,
+    "contradicting": 0,
+    "mixed": 4,
+    "indeterminate": 0
+  },
+  "layers": [
+    {
+      "layer": "macro",
+      "title_en": "Macro confirmation",
+      "title_ar": "تأكيدات الاقتصاد الكلي",
+      "state": "mixed",
+      "label_en": "mixed",
+      "label_ar": "مختلط",
+      "counts": {
+        "confirming": 2,
+        "contradicting": 2,
+        "mixed": 1,
+        "indeterminate": 0
+      },
+      "evidence_refs": [
+        {
+          "source": "macro-regime.json",
+          "field": "macro_regime",
+          "value": "defensive_rotation",
+          "refs": [
+            "dollar=stable, yield=supportive, volatility=calm",
+            "cross-asset coherence direction=risk_off",
+            "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+          ]
+        },
+        {
+          "source": "regime-transitions.json",
+          "field": "transition_state",
+          "value": "stable_regime",
+          "refs": [
+            "risk(SPY) stable, rates(TLT) accelerating, volatility(VIXY) stable, dollar(UUP) improving",
+            "current macro regime: defensive_rotation",
+            "cross-run ledger is building (window-derived trends used)"
+          ]
+        },
+        {
+          "source": "market-narrative.json",
+          "field": "confirmation_story",
+          "value": "[object Object]",
+          "refs": [
+            "macro-regime=defensive_rotation",
+            "sector-rotation=broad_risk_participation",
+            "cognitive-network=liquidity_stress",
+            "sector-network=defensive_tilt",
+            "equity-network=broad_confirmation"
+          ]
+        },
+        {
+          "source": "market-narrative.json",
+          "field": "contradiction_story",
+          "value": "[object Object]",
+          "refs": [
+            "macro-regime=defensive_rotation",
+            "sector-rotation=broad_risk_participation",
+            "cognitive-network=liquidity_stress",
+            "sector-network=defensive_tilt",
+            "equity-network=broad_confirmation"
+          ]
+        },
+        {
+          "source": "cognitive-network.json",
+          "field": "contradiction_chains",
+          "value": "1",
+          "refs": []
+        }
+      ],
+      "detail": {
+        "macro_regime": "defensive_rotation",
+        "transition_state": "stable_regime"
+      }
+    },
+    {
+      "layer": "assets",
+      "title_en": "Asset confirmation",
+      "title_ar": "تأكيدات الأصول",
+      "state": "confirming",
+      "label_en": "confirming",
+      "label_ar": "مؤكد",
+      "counts": {
+        "confirming": 5,
+        "contradicting": 1,
+        "mixed": 1,
+        "indeterminate": 0
+      },
+      "evidence_refs": [
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.SPY",
+          "value": "constructive",
+          "refs": [
+            "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset: SPY=-0.5962% vs tape risk_off (risk role)"
+          ]
+        },
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.QQQ",
+          "value": "constructive",
+          "refs": [
+            "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset: QQQ=-1.9005% vs tape risk_off (risk role)"
+          ]
+        },
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.IWM",
+          "value": "constructive",
+          "refs": [
+            "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset: IWM=-0.8689% vs tape risk_off (risk role)"
+          ]
+        },
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.GLD",
+          "value": "neutral",
+          "refs": [
+            "institutional-chart structure overlay: expansion_down (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset: GOLD=0.2723% vs tape risk_off (defensive role)"
+          ]
+        },
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.TLT",
+          "value": "constructive",
+          "refs": [
+            "institutional-chart structure overlay: inside (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset: TLT=0.5483% vs tape risk_off (defensive role)"
+          ]
+        },
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.UUP",
+          "value": "constructive",
+          "refs": [
+            "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset change/direction unavailable for DXY"
+          ]
+        },
+        {
+          "source": "asset-intelligence.json",
+          "field": "assets.VIXY",
+          "value": "weak",
+          "refs": [
+            "institutional-chart structure overlay: expansion_down (as of 2026-06-16)",
+            "tactical-context bias: cautious",
+            "liquidity-regime: indeterminate",
+            "liquidity-regime breadth: broad_weakness",
+            "cross-asset change/direction unavailable for VIX"
+          ]
+        }
+      ],
+      "detail": {
+        "observed": 7
+      }
+    },
+    {
+      "layer": "sectors",
+      "title_en": "Sector confirmation",
+      "title_ar": "تأكيدات القطاعات",
+      "state": "confirming",
+      "label_en": "confirming",
+      "label_ar": "مؤكد",
+      "counts": {
+        "confirming": 37,
+        "contradicting": 3,
+        "mixed": 0,
+        "indeterminate": 0
+      },
+      "evidence_refs": [
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLK",
+          "value": "constructive",
+          "refs": [
+            "derived from XLK observed OHLCV (as of 2026-06-16); structure=expansion, trend=down, volRatio=1.44"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLF",
+          "value": "strong",
+          "refs": [
+            "derived from XLF observed OHLCV (as of 2026-06-16); structure=expansion, trend=up, volRatio=1.26"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLE",
+          "value": "weak",
+          "refs": [
+            "derived from XLE observed OHLCV (as of 2026-06-16); structure=range_bound, trend=down, volRatio=0.95"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLV",
+          "value": "strong",
+          "refs": [
+            "derived from XLV observed OHLCV (as of 2026-06-16); structure=expansion, trend=up, volRatio=1.21"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLI",
+          "value": "strong",
+          "refs": [
+            "derived from XLI observed OHLCV (as of 2026-06-16); structure=expansion, trend=up, volRatio=1.03"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLP",
+          "value": "constructive",
+          "refs": [
+            "derived from XLP observed OHLCV (as of 2026-06-16); structure=range_bound, trend=up, volRatio=1.08"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLU",
+          "value": "constructive",
+          "refs": [
+            "derived from XLU observed OHLCV (as of 2026-06-16); structure=range_bound, trend=up, volRatio=0.92"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLY",
+          "value": "constructive",
+          "refs": [
+            "derived from XLY observed OHLCV (as of 2026-06-16); structure=range_bound, trend=up, volRatio=0.87"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLB",
+          "value": "constructive",
+          "refs": [
+            "derived from XLB observed OHLCV (as of 2026-06-16); structure=range_bound, trend=up, volRatio=1.07"
+          ]
+        },
+        {
+          "source": "sector-structure.json",
+          "field": "sectors.XLRE",
+          "value": "strong",
+          "refs": [
+            "derived from XLRE observed OHLCV (as of 2026-06-16); structure=expansion, trend=up, volRatio=0.98"
+          ]
+        },
+        {
+          "source": "sector-tactical.json",
+          "field": "sectors.XLK",
+          "value": "weak",
+          "refs": [
+            "derived from XLK observed OHLCV (as of 2026-06-16); structure=expansion, trend=down, volRatio=1.44"
+          ]
+        },
+        {
+          "source": "sector-tactical.json",
+          "field": "sectors.XLF",
+          "value": "constructive",
+          "refs": [
+            "derived from XLF observed OHLCV (as of 2026-06-16); structure=expansion, trend=up, volRatio=1.26"
+          ]
+        }
+      ],
+      "detail": {
+        "observed": 40
+      }
+    },
+    {
+      "layer": "equities",
+      "title_en": "Equity confirmation",
+      "title_ar": "تأكيدات الأسهم",
+      "state": "mixed",
+      "label_en": "mixed",
+      "label_ar": "مختلط",
+      "counts": {
+        "confirming": 1,
+        "contradicting": 0,
+        "mixed": 10,
+        "indeterminate": 0
+      },
+      "evidence_refs": [
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.NVDA",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.MSFT",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=fragile",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.AAPL",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.AMZN",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=fragile",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.META",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.GOOGL",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.TSLA",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.AMD",
+          "value": "constructive",
+          "refs": [
+            "equity-structure=constructive",
+            "equity-tactical=neutral",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.AVGO",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=fragile",
+            "equity-tactical=fragile",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.PLTR",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        },
+        {
+          "source": "equity-intelligence.json",
+          "field": "equities.SMCI",
+          "value": "neutral",
+          "refs": [
+            "equity-structure=weak",
+            "equity-tactical=weak",
+            "equity-liquidity=constructive",
+            "equity-participation=constructive",
+            "macro-regime=defensive_rotation"
+          ]
+        }
+      ],
+      "detail": {
+        "observed": 11
+      }
+    },
+    {
+      "layer": "rankings",
+      "title_en": "Ranking confirmation",
+      "title_ar": "تأكيدات الترتيب النسبي",
+      "state": "mixed",
+      "label_en": "mixed",
+      "label_ar": "مختلط",
+      "counts": {
+        "confirming": 5,
+        "contradicting": 7,
+        "mixed": 2,
+        "indeterminate": 0
+      },
+      "evidence_refs": [
+        {
+          "source": "rankings.json",
+          "field": "asset.IWM",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=2.5 (from IWM OHLCV)",
+            "historical improving",
+            "cognitive confirmed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "asset.SPY",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=1.5 (from SPY OHLCV)",
+            "historical stable",
+            "cognitive confirmed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "asset.QQQ",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=1.5 (from QQQ OHLCV)",
+            "historical deteriorating",
+            "cognitive confirmed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "asset.TLT",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=1.5 (from TLT OHLCV)",
+            "historical improving",
+            "cognitive confirmed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "asset.UUP",
+          "value": "mixed",
+          "refs": [
+            "observed strength scalar=1.5 (from UUP OHLCV)",
+            "historical improving",
+            "cognitive mixed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "asset.GLD",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=-1.5 (from GLD OHLCV)",
+            "historical deteriorating",
+            "cognitive confirmed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "sector.XLF",
+          "value": "divergent",
+          "refs": [
+            "observed strength scalar=2.5 (from XLF OHLCV)",
+            "historical improving",
+            "cognitive divergent"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "sector.XLV",
+          "value": "divergent",
+          "refs": [
+            "observed strength scalar=2.5 (from XLV OHLCV)",
+            "historical improving",
+            "cognitive divergent"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "sector.XLI",
+          "value": "divergent",
+          "refs": [
+            "observed strength scalar=2.5 (from XLI OHLCV)",
+            "historical improving",
+            "cognitive divergent"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "sector.XLRE",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=2.5 (from XLRE OHLCV)",
+            "historical improving",
+            "cognitive confirmed"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "sector.XLP",
+          "value": "indeterminate",
+          "refs": [
+            "observed strength scalar=1.5 (from XLP OHLCV)",
+            "historical deteriorating",
+            "cognitive indeterminate"
+          ]
+        },
+        {
+          "source": "rankings.json",
+          "field": "sector.XLU",
+          "value": "confirmed",
+          "refs": [
+            "observed strength scalar=1.5 (from XLU OHLCV)",
+            "historical improving",
+            "cognitive confirmed"
+          ]
+        }
+      ],
+      "detail": {
+        "observed_refs": 42
+      }
+    },
+    {
+      "layer": "historical",
+      "title_en": "Historical confirmation",
+      "title_ar": "التأكيد التاريخي",
+      "state": "mixed",
+      "label_en": "mixed",
+      "label_ar": "مختلط",
+      "counts": {
+        "confirming": 4,
+        "contradicting": 8,
+        "mixed": 14,
+        "indeterminate": 1
+      },
+      "evidence_refs": [
+        {
+          "source": "historical-intelligence.json",
+          "field": "asset.SPY",
+          "value": "neutral/mixed",
+          "refs": [
+            "overall trend stable",
+            "window dispersion 2.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "asset.QQQ",
+          "value": "negative/mixed",
+          "refs": [
+            "overall trend deteriorating",
+            "window dispersion 3.00",
+            "dimension consensus 2/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "asset.IWM",
+          "value": "positive/persistent",
+          "refs": [
+            "overall trend improving",
+            "window dispersion 2.00",
+            "dimension consensus 4/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "asset.GLD",
+          "value": "negative/mixed",
+          "refs": [
+            "overall trend deteriorating",
+            "window dispersion 2.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "asset.TLT",
+          "value": "strong_positive/mixed",
+          "refs": [
+            "overall trend accelerating",
+            "window dispersion 1.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "sector.XLK",
+          "value": "negative/mixed",
+          "refs": [
+            "overall trend deteriorating",
+            "window dispersion 2.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "sector.XLF",
+          "value": "strong_positive/mixed",
+          "refs": [
+            "overall trend accelerating",
+            "window dispersion 2.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "sector.XLE",
+          "value": "negative/mixed",
+          "refs": [
+            "overall trend deteriorating",
+            "window dispersion 2.00",
+            "dimension consensus 2/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "sector.XLV",
+          "value": "positive/mixed",
+          "refs": [
+            "overall trend improving",
+            "window dispersion 4.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "sector.XLI",
+          "value": "strong_positive/persistent",
+          "refs": [
+            "overall trend accelerating",
+            "window dispersion 2.00",
+            "dimension consensus 4/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "equity.NVDA",
+          "value": "negative/mixed",
+          "refs": [
+            "overall trend deteriorating",
+            "window dispersion 3.00",
+            "dimension consensus 3/5"
+          ]
+        },
+        {
+          "source": "historical-intelligence.json",
+          "field": "equity.MSFT",
+          "value": "negative/mixed",
+          "refs": [
+            "overall trend deteriorating",
+            "window dispersion 3.00",
+            "dimension consensus 3/5"
+          ]
+        }
+      ],
+      "detail": {
+        "has_prior": false
+      }
+    }
+  ],
+  "evidence_refs": [
+    {
+      "source": "macro-regime.json",
+      "field": "macro_regime",
+      "value": "defensive_rotation",
+      "refs": [
+        "dollar=stable, yield=supportive, volatility=calm",
+        "cross-asset coherence direction=risk_off",
+        "liquidity-regime: indeterminate / stability indeterminate / breadth broad_weakness"
+      ]
+    },
+    {
+      "source": "regime-transitions.json",
+      "field": "transition_state",
+      "value": "stable_regime",
+      "refs": [
+        "risk(SPY) stable, rates(TLT) accelerating, volatility(VIXY) stable, dollar(UUP) improving",
+        "current macro regime: defensive_rotation",
+        "cross-run ledger is building (window-derived trends used)"
+      ]
+    },
+    {
+      "source": "market-narrative.json",
+      "field": "confirmation_story",
+      "value": "[object Object]",
+      "refs": [
+        "macro-regime=defensive_rotation",
+        "sector-rotation=broad_risk_participation",
+        "cognitive-network=liquidity_stress",
+        "sector-network=defensive_tilt",
+        "equity-network=broad_confirmation"
+      ]
+    },
+    {
+      "source": "asset-intelligence.json",
+      "field": "assets.SPY",
+      "value": "constructive",
+      "refs": [
+        "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+        "tactical-context bias: cautious",
+        "liquidity-regime: indeterminate",
+        "liquidity-regime breadth: broad_weakness",
+        "cross-asset: SPY=-0.5962% vs tape risk_off (risk role)"
+      ]
+    },
+    {
+      "source": "asset-intelligence.json",
+      "field": "assets.QQQ",
+      "value": "constructive",
+      "refs": [
+        "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+        "tactical-context bias: cautious",
+        "liquidity-regime: indeterminate",
+        "liquidity-regime breadth: broad_weakness",
+        "cross-asset: QQQ=-1.9005% vs tape risk_off (risk role)"
+      ]
+    },
+    {
+      "source": "asset-intelligence.json",
+      "field": "assets.IWM",
+      "value": "constructive",
+      "refs": [
+        "institutional-chart structure overlay: expansion_up (as of 2026-06-16)",
+        "tactical-context bias: cautious",
+        "liquidity-regime: indeterminate",
+        "liquidity-regime breadth: broad_weakness",
+        "cross-asset: IWM=-0.8689% vs tape risk_off (risk role)"
+      ]
+    },
+    {
+      "source": "sector-structure.json",
+      "field": "sectors.XLK",
+      "value": "constructive",
+      "refs": [
+        "derived from XLK observed OHLCV (as of 2026-06-16); structure=expansion, trend=down, volRatio=1.44"
+      ]
+    },
+    {
+      "source": "sector-structure.json",
+      "field": "sectors.XLF",
+      "value": "strong",
+      "refs": [
+        "derived from XLF observed OHLCV (as of 2026-06-16); structure=expansion, trend=up, volRatio=1.26"
+      ]
+    },
+    {
+      "source": "sector-structure.json",
+      "field": "sectors.XLE",
+      "value": "weak",
+      "refs": [
+        "derived from XLE observed OHLCV (as of 2026-06-16); structure=range_bound, trend=down, volRatio=0.95"
+      ]
+    },
+    {
+      "source": "equity-intelligence.json",
+      "field": "equities.NVDA",
+      "value": "neutral",
+      "refs": [
+        "equity-structure=weak",
+        "equity-tactical=weak",
+        "equity-liquidity=constructive",
+        "equity-participation=constructive",
+        "macro-regime=defensive_rotation"
+      ]
+    },
+    {
+      "source": "equity-intelligence.json",
+      "field": "equities.MSFT",
+      "value": "neutral",
+      "refs": [
+        "equity-structure=weak",
+        "equity-tactical=fragile",
+        "equity-liquidity=constructive",
+        "equity-participation=constructive",
+        "macro-regime=defensive_rotation"
+      ]
+    },
+    {
+      "source": "equity-intelligence.json",
+      "field": "equities.AAPL",
+      "value": "neutral",
+      "refs": [
+        "equity-structure=weak",
+        "equity-tactical=weak",
+        "equity-liquidity=constructive",
+        "equity-participation=constructive",
+        "macro-regime=defensive_rotation"
+      ]
+    },
+    {
+      "source": "rankings.json",
+      "field": "asset.IWM",
+      "value": "confirmed",
+      "refs": [
+        "observed strength scalar=2.5 (from IWM OHLCV)",
+        "historical improving",
+        "cognitive confirmed"
+      ]
+    },
+    {
+      "source": "rankings.json",
+      "field": "asset.SPY",
+      "value": "confirmed",
+      "refs": [
+        "observed strength scalar=1.5 (from SPY OHLCV)",
+        "historical stable",
+        "cognitive confirmed"
+      ]
+    },
+    {
+      "source": "rankings.json",
+      "field": "asset.QQQ",
+      "value": "confirmed",
+      "refs": [
+        "observed strength scalar=1.5 (from QQQ OHLCV)",
+        "historical deteriorating",
+        "cognitive confirmed"
+      ]
+    },
+    {
+      "source": "historical-intelligence.json",
+      "field": "asset.SPY",
+      "value": "neutral/mixed",
+      "refs": [
+        "overall trend stable",
+        "window dispersion 2.00",
+        "dimension consensus 3/5"
+      ]
+    },
+    {
+      "source": "historical-intelligence.json",
+      "field": "asset.QQQ",
+      "value": "negative/mixed",
+      "refs": [
+        "overall trend deteriorating",
+        "window dispersion 3.00",
+        "dimension consensus 2/5"
+      ]
+    },
+    {
+      "source": "historical-intelligence.json",
+      "field": "asset.IWM",
+      "value": "positive/persistent",
+      "refs": [
+        "overall trend improving",
+        "window dispersion 2.00",
+        "dimension consensus 4/5"
+      ]
+    }
+  ],
+  "source_hash": "6fedc4d2935d7dd078ed904108033310115571616864bc91e3d35ab880f863ca",
+  "attribution": {
+    "sources": [
+      "macro-regime.json",
+      "cognitive-network.json",
+      "market-narrative.json",
+      "asset-intelligence.json",
+      "equity-intelligence.json",
+      "rankings.json",
+      "relative-strength.json",
+      "ranking-history.json",
+      "historical-intelligence.json",
+      "regime-transitions.json",
+      "sector-structure.json",
+      "sector-tactical.json",
+      "sector-liquidity.json",
+      "sector-participation.json"
+    ],
+    "note": "Evidence-backed classification of existing intelligence layers. Educational context only; no directional call, recommendation, execution level or trade instruction."
+  }
+}
