@@ -1,6 +1,9 @@
 'use strict';
 
-// Phase 214 CP7 - ETF visual map artifact.
+// Phase 214 CP7 + Phase 215 CP8 — ETF visual map artifact.
+// Now carries quality_tier / provider_confidence / resolved_provider so the
+// map can visualise available vs unavailable ETFs and the quality
+// distribution. Honest — unavailable ETFs remain unavailable.
 
 const fs = require('fs');
 const path = require('path');
@@ -23,13 +26,16 @@ function build() {
   const rankings = readJson('etf-rankings.json', {});
   const intelligence = readJson('etf-intelligence.json', {});
   const history = readJson('etf-history.json', {});
+  const quality = readJson('etf-data-quality.json', {});
   const rankingBy = new Map((rankings.items || []).map((item) => [item.symbol, item]));
   const intelBy = new Map((intelligence.etfs || []).map((item) => [item.symbol, item]));
+  const qualityBy = new Map((quality.etfs || []).map((item) => [item.symbol, item]));
   const histBy = history.entities || {};
   const nodes = ETFS.map((etf) => {
     const rank = rankingBy.get(etf.symbol) || {};
     const intel = intelBy.get(etf.symbol) || {};
     const hist = histBy[etf.symbol] || {};
+    const q = qualityBy.get(etf.symbol) || {};
     return {
       symbol: etf.symbol,
       slug: etf.slug,
@@ -48,15 +54,34 @@ function build() {
       confirmation_ar: rank.confirmation_ar || (intel.regime_alignment && intel.regime_alignment.label_ar) || 'غير محدد',
       chart_available: Boolean(intel.chart_available),
       available: Boolean(rank.available),
+      quality_tier: q.quality_tier || 'unavailable',
+      quality_tier_en: q.quality_tier_en || 'unavailable',
+      quality_tier_ar: q.quality_tier_ar || 'غير متاحة',
+      provider_confidence: q.provider_confidence || 'unavailable',
+      provider_confidence_en: q.provider_confidence_en || 'unavailable',
+      provider_confidence_ar: q.provider_confidence_ar || 'غير متاح',
+      resolved_provider: q.resolved_provider || null,
+      bars: q.bars || 0,
       evidence: [
         `rank=${rank.rank_label || 'indeterminate'}`,
         `direction=${rank.direction || hist.current_state || 'indeterminate'}`,
         `confirmation=${rank.confirmation || 'indeterminate'}`,
-        `chart_available=${Boolean(intel.chart_available)}`
+        `chart_available=${Boolean(intel.chart_available)}`,
+        `quality_tier=${q.quality_tier || 'unavailable'}`,
+        `provider=${q.resolved_provider || 'none'}`,
       ],
-      visual_weight: stateRank(rank.rank_label || 'indeterminate')
+      visual_weight: stateRank(rank.rank_label || 'indeterminate'),
     };
   }).sort((a, b) => (b.visual_weight - a.visual_weight) || a.symbol.localeCompare(b.symbol));
+  const summary = {
+    available: nodes.filter((n) => n.available).length,
+    unavailable: nodes.filter((n) => !n.available).length,
+    quality_high: nodes.filter((n) => n.quality_tier === 'high').length,
+    quality_medium: nodes.filter((n) => n.quality_tier === 'medium').length,
+    quality_low: nodes.filter((n) => n.quality_tier === 'low').length,
+    quality_unavailable: nodes.filter((n) => n.quality_tier === 'unavailable').length,
+    chart_verified: nodes.filter((n) => n.chart_available).length,
+  };
   const sourceHash = crypto.createHash('sha256').update(JSON.stringify(nodes)).digest('hex');
   return {
     schema_version: '1.0',
@@ -64,13 +89,14 @@ function build() {
     source_layer: 'etf-map',
     available: true,
     nodes_total: nodes.length,
+    summary,
     nodes,
     groups: [...new Set(nodes.map((node) => node.category))],
     source_hash: sourceHash,
     attribution: {
-      sources: ['etf-rankings', 'etf-intelligence', 'etf-history'],
-      note: 'Visual ETF map uses existing ETF rankings, intelligence and history only.'
-    }
+      sources: ['etf-rankings', 'etf-intelligence', 'etf-history', 'etf-data-quality'],
+      note: 'Visual ETF map composes existing ETF rankings, intelligence, history and the data-quality layer. Available, unavailable and quality tiers are shown honestly; no proxy substitution.',
+    },
   };
 }
 
