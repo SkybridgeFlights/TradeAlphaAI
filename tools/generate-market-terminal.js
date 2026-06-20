@@ -744,6 +744,26 @@ ${cards}
       </section>`;
 }
 
+function workspaceBlock(ar) {
+  const t = (en, arT) => (ar ? arT : en);
+  const base = ar ? '/ar/workspace/' : '/workspace/';
+  const links = [
+    [base, t('Workspace Home', 'واجهة مساحة المتابعة'), t('Personal monitoring foundation', 'أساس متابعة شخصي')],
+    [base + 'watchlists/', t('Watchlists', 'قوائم المتابعة'), t('Default monitored groups', 'مجموعات متابعة افتراضية')],
+    [base + 'monitoring/', t('Monitoring Feed', 'تغذية المتابعة'), t('Latest watched changes', 'أحدث التغيرات المتابعة')],
+    [base + 'research/', t('Workspace Research', 'أبحاث المتابعة'), t('Research paths for watched entities', 'مسارات بحث للكيانات المتابعة')],
+    [base + 'regime/', t('Regime Monitoring', 'متابعة النظام'), t('Regime context for the workspace', 'سياق النظام لمساحة المتابعة')],
+  ];
+  const cards = links.map(([href, title, sub]) => `          <a class="market-card" href="${href}"><span class="market-card-kicker">${esc(t('Workspace', 'مساحة المتابعة'))}</span><h3>${esc(title)}</h3><p class="market-copy">${esc(sub)}</p></a>`).join('\n');
+  return `      <section class="market-section" id="intelligence-workspace">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Intelligence Workspace', 'مساحة المتابعة الاستخباراتية'))}</span><h2>${esc(t('Monitor the entities that matter', 'متابعة الكيانات الأهم'))}</h2></div>
+        <p class="market-copy">${esc(t('The workspace groups existing rankings, changes, research and regime context around monitored entities. It is a monitoring layer only, with no execution instructions.', 'تجمع مساحة المتابعة الترتيبات والتغيرات والأبحاث وسياق النظام القائمة حول الكيانات المرصودة. وهي طبقة متابعة فقط، بلا تعليمات تنفيذ.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -815,6 +835,7 @@ ${dataQualityBlock(ar, dataQuality)}
 ${providerHealthBlock(ar, charts)}
 ${visualIntelligenceBlock(ar)}
 ${explorerBlock(ar)}
+${workspaceBlock(ar)}
 ${latestBlock(ar)}
 
       <section class="market-section" id="terminal-disclaimer">

@@ -75,6 +75,8 @@ const ROOTS = [
   'ar/market-replay',
   'explorer',
   'ar/explorer',
+  'workspace',
+  'ar/workspace',
 ];
 
 // Phase 99: legacy pre-canonical pages that predate the global-header markers
@@ -192,6 +194,7 @@ function detectActive(relative) {
   if (/(?:^|[/\\])research[/\\]/.test(relative)) return 'research';
   if (/(?:^|[/\\])market-map[/\\]/.test(relative)) return 'market-map';
   if (/(?:^|[/\\])explorer[/\\]/.test(relative)) return 'explorer';
+  if (/(?:^|[/\\])workspace[/\\]/.test(relative)) return 'workspace';
   if (/market-outlook[/\\]/.test(relative)) return 'market-outlook';
   if (/market-structure[/\\]/.test(relative)) return 'market-structure';
   if (/economic-calendar[/\\]/.test(relative)) return 'economic-calendar';
@@ -233,6 +236,11 @@ function computeLocaleHrefs(relative, ar) {
   if (explorerMatch) {
     const child = explorerMatch[1] || '';
     return { arabicHref: `/ar/explorer/${child}`, englishHref: `/explorer/${child}` };
+  }
+  const workspaceMatch = relative.match(/^(?:ar\/)?workspace\/(.+\/)?index\.html$/);
+  if (workspaceMatch) {
+    const child = workspaceMatch[1] || '';
+    return { arabicHref: `/ar/workspace/${child}`, englishHref: `/workspace/${child}` };
   }
   // Phase 99: canonical editorial desks — point the locale switch at the
   // matching counterpart (index or specific article) so it never falls back home.
