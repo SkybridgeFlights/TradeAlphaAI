@@ -12,7 +12,9 @@ const HIST_FILE = path.join(ROOT, 'data', 'intelligence', 'etf-history.json');
 const CHANGE_FILE = path.join(ROOT, 'data', 'intelligence', 'etf-changelog.json');
 const SYMBOLS = new Set(ETFS.map((etf) => etf.symbol));
 const STATES = new Set(['improving', 'weakening', 'stable', 'deteriorating', 'indeterminate']);
-const MOVEMENTS = new Set(['improving', 'weakening', 'stable', 'deteriorating', 'indeterminate', 'no_prior']);
+// Phase 215 CP6 extended movement set to include accelerating (window-derived).
+const MOVEMENTS = new Set(['improving', 'weakening', 'stable', 'deteriorating', 'accelerating', 'indeterminate', 'no_prior']);
+const WINDOW_TRENDS = new Set(['improving', 'accelerating', 'weakening', 'deteriorating', 'stable', 'indeterminate']);
 const ARABIC = /[\u0600-\u06ff]/;
 const FORBIDDEN = [
   /\bfabricated\b/i, /\bplaceholder\b/i, /\bbuy\b/i, /\bsell\b/i, /\btarget\b/i,
@@ -39,6 +41,8 @@ function validateEntries(entries, failures, context) {
     if (!entry.summary_en || !ARABIC.test(String(entry.summary_ar || ''))) failures.push(`${context}: ${id} missing bilingual summary`);
     if (!Array.isArray(entry.evidence) || entry.evidence.length < 2) failures.push(`${context}: ${id} missing evidence`);
     if (entry.history_available !== true && entry.movement !== 'no_prior') failures.push(`${context}: ${id} unavailable history not no_prior`);
+    // Phase 215 CP6 — window_trend field is optional but, when present, must be a known label.
+    if (entry.window_trend !== undefined && !WINDOW_TRENDS.has(entry.window_trend)) failures.push(`${context}: ${id} invalid window_trend ${entry.window_trend}`);
   }
 }
 
@@ -54,7 +58,14 @@ function validatePair(history, changelog) {
   if (history.has_prior !== (history.snapshot_count > 1)) failures.push('has_prior inconsistent with snapshot_count');
   if (history.has_prior === false) {
     for (const entry of entities) {
-      if (entry.prior_state !== 'no_prior' || entry.movement !== 'no_prior') failures.push(`${entry.symbol}: prior state fabricated while has_prior=false`);
+      // prior_state must remain no_prior when has_prior=false (only ledger
+      // entries justify a non-no_prior prior_state).
+      if (entry.prior_state !== 'no_prior') failures.push(`${entry.symbol}: prior state fabricated while has_prior=false`);
+      // Phase 215 CP6 — movement may differ from no_prior ONLY when backed by
+      // a determinate window_trend (real intraseries history from the ETF's
+      // own OHLCV). Otherwise must be no_prior.
+      const determinateWindow = entry.window_trend && entry.window_trend !== 'indeterminate';
+      if (entry.movement !== 'no_prior' && !determinateWindow) failures.push(`${entry.symbol}: movement set without window_trend evidence while has_prior=false`);
     }
   }
   for (const bucketName of ['improving', 'weakening', 'stable', 'indeterminate']) {
