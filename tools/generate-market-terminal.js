@@ -48,6 +48,9 @@ const ASSET_RANKINGS_PATH = path.join(ROOT, 'data', 'intelligence', 'asset-ranki
 const SECTOR_RANKINGS_PATH = path.join(ROOT, 'data', 'intelligence', 'sector-rankings.json');
 const EQUITY_RANKINGS_PATH = path.join(ROOT, 'data', 'intelligence', 'equity-rankings.json');
 const RANKING_HISTORY_PATH = path.join(ROOT, 'data', 'intelligence', 'ranking-history.json');
+// Phase 216 — Change Intelligence Alerts & Monitoring layer.
+const CHANGE_EVENTS_PATH = path.join(ROOT, 'data', 'intelligence', 'change-events.json');
+const CHANGE_CLASS_PATH = path.join(ROOT, 'data', 'intelligence', 'change-classifications.json');
 const DOLLAR_PATH = path.join(ROOT, 'data', 'intelligence', 'dollar-intelligence.json');
 const YIELD_PATH = path.join(ROOT, 'data', 'intelligence', 'yield-intelligence.json');
 const VOLATILITY_PATH = path.join(ROOT, 'data', 'intelligence', 'volatility-intelligence.json');
@@ -666,6 +669,39 @@ ${cards || `          <article class="market-card"><span class="market-card-kick
       </section>`;
 }
 
+// Phase 216 CP8 — Latest Changes panel composed from change-events +
+// change-classifications. Honest — surfaces real, evidence-backed events.
+function changeEventsBlock(ar, events, classifications) {
+  const t = (en, arT) => (ar ? arT : en);
+  if (!events || !Array.isArray(events.events) || events.events.length === 0) {
+    return `      <section class="market-section" id="terminal-latest-changes">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Latest Changes', 'أحدث التغيّرات'))}</span><h2>${esc(t('Change events panel', 'لوحة أحداث التغيير'))}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t('No change events observed yet.', 'لا توجد أحداث تغيير مرصودة بعد.'))}</p></div></section>`;
+  }
+  const sigIds = new Set(events.significant || []);
+  const significant = (events.events || []).filter((e) => sigIds.has(e.id)).slice(0, 6);
+  const improving = (events.events || []).filter((e) => e.change_type === 'improving').slice(0, 4);
+  const deteriorating = (events.events || []).filter((e) => e.change_type === 'deteriorating').slice(0, 4);
+  const regime = (events.events || []).filter((e) => e.change_type === 'regime_shift').slice(0, 3);
+  const counts = (classifications && classifications.counts) || {};
+  const cell = (ev) => {
+    const href = ev.href || ev.research_href || '/changes/';
+    const label = ar ? (ev.label_ar || ev.change_type) : (ev.label_en || ev.change_type);
+    return `<li><strong>${esc(label)}</strong> · <a href="${esc((ar ? '/ar' : '') + href)}">${esc(ev.entity)}</a> · ${esc(ev.entity_type)}</li>`;
+  };
+  return `      <section class="market-section" id="terminal-latest-changes">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Latest Changes', 'أحدث التغيّرات'))}</span><h2>${esc(t('Live change intelligence', 'استخبارات التغيير الحيّة'))}</h2></div>
+        <p class="market-copy">${esc(t('Composed from change-events. Total observed: ' + (events.events.length) + ' (improving=' + (counts.improving || 0) + ', deteriorating=' + (counts.deteriorating || 0) + ', leadership_gain=' + (counts.leadership_gain || 0) + ', regime_shift=' + (counts.regime_shift || 0) + ').', 'مركّبة من أحداث التغيير. الإجمالي المرصود: ' + (events.events.length) + ' (يتحسّن=' + (counts.improving || 0) + '، يتدهور=' + (counts.deteriorating || 0) + '، اكتساب قيادة=' + (counts.leadership_gain || 0) + '، تحوّل نظام=' + (counts.regime_shift || 0) + ').'))}</p>
+        <div class="market-grid three">
+          <div class="market-panel"><h3>${esc(t('Most significant', 'الأكثر أهمية'))}</h3><ul class="market-copy">${significant.map(cell).join('\n') || '<li>' + esc(t('none yet', 'لا يوجد بعد')) + '</li>'}</ul></div>
+          <div class="market-panel"><h3>${esc(t('Strongest improvements', 'أقوى التحسّن'))}</h3><ul class="market-copy">${improving.map(cell).join('\n') || '<li>' + esc(t('none yet', 'لا يوجد بعد')) + '</li>'}</ul></div>
+          <div class="market-panel"><h3>${esc(t('Strongest deteriorations', 'أقوى التدهور'))}</h3><ul class="market-copy">${deteriorating.map(cell).join('\n') || '<li>' + esc(t('none yet', 'لا يوجد بعد')) + '</li>'}</ul></div>
+        </div>
+        <div class="market-panel"><h3>${esc(t('Recent regime shifts', 'تحوّلات النظام الأخيرة'))}</h3><ul class="market-copy">${regime.map(cell).join('\n') || '<li>' + esc(t('none yet', 'لا يوجد بعد')) + '</li>'}</ul>
+          <p class="market-copy"><a href="${ar ? '/ar/changes/' : '/changes/'}">${esc(t('Open the Changes Hub', 'افتح مركز التغيّرات'))}</a> · <a href="${ar ? '/ar/changes/regime/' : '/changes/regime/'}">${esc(t('Regime Change Center', 'مركز تحوّلات النظام'))}</a></p>
+        </div></section>`;
+}
+
 function visualIntelligenceBlock(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const base = ar ? '/ar/market-map/' : '/market-map/';
@@ -721,6 +757,8 @@ function buildMain(ar) {
   const sectorRanks = readJson(SECTOR_RANKINGS_PATH);
   const equityRanks = readJson(EQUITY_RANKINGS_PATH);
   const rankingHistory = readJson(RANKING_HISTORY_PATH);
+  const changeEvents = readJson(CHANGE_EVENTS_PATH);
+  const changeClass = readJson(CHANGE_CLASS_PATH);
   return `  <main class="market-shell">
     <div class="wrap">
       <nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><span>${esc(t('Market Terminal', 'الطرفية المؤسسية'))}</span></nav>
@@ -734,6 +772,7 @@ function buildMain(ar) {
       </section>
 
 ${narrativeBlock(ar, narrative)}
+${changeEventsBlock(ar, changeEvents, changeClass)}
 ${environmentBlock(ar, regime, cross)}
 ${macroBlock(ar, dollar, yieldArt, volatility, macro)}
 ${historicalBlock(ar, regimeTransitions, assetHistory, sectorHistory, equityHistory, snapshots)}

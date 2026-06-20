@@ -63,11 +63,30 @@ function feedBody(ar, t) {
   if (snap.weakest_assets) items.push(card(t('Weakening', 'يضعف'), (snap.weakest_assets || []).join(' · '), '/rankings/', '#b5523f', ar));
   const prior = readJson(J('ranking-history.json'), {});
   const histNote = prior && prior.has_prior === true ? t('Ranking movement is measured against the prior snapshot.', 'تُقاس حركة الترتيب مقابل اللقطة السابقة.') : t('Ranking history begins accumulating; movement is reported honestly as it builds.', 'بدأ تاريخ الترتيب بالتراكم؛ وتُذكر الحركة بصدق مع تكوّنها.');
+  // Phase 216 CP7 — Latest Intelligence Changes panel from change-events.
+  const changeEvents = readJson(J('change-events.json'), { events: [], significant: [] });
+  const sigIds = new Set(changeEvents.significant || []);
+  const sigEvents = (changeEvents.events || []).filter((e) => sigIds.has(e.id)).slice(0, 6);
+  const sigCards = sigEvents.map((e) => {
+    const labelEn = e.label_en || e.change_type;
+    const labelAr = e.label_ar || e.change_type;
+    const title = `${e.entity} · ${e.entity_type}`;
+    const href = e.href || e.research_href || '/changes/';
+    return card(t(labelEn, labelAr), title, href, '#1f6f5c', ar);
+  }).join('\n');
+  const totalChanges = (changeEvents.events || []).length;
   return `      <section class="market-section" id="research-feed"><div class="market-section-head"><span class="eyebrow">${esc(t('Latest', 'الأحدث'))}</span><h2>${esc(t('Latest research and changes', 'أحدث الأبحاث والتغيّرات'))}</h2></div>
         <p class="market-copy">${esc(histNote)}</p>
         <div class="market-grid three">
 ${items.join('\n')}
-        </div></section>`;
+        </div></section>
+      <section class="market-section" id="research-feed-changes"><div class="market-section-head"><span class="eyebrow">${esc(t('Latest Intelligence Changes', 'أحدث تغيّرات الاستخبارات'))}</span><h2>${esc(t('Significant change events', 'أحداث التغيّر المهمّة'))}</h2></div>
+        <p class="market-copy">${esc(t('Composed from the change-events artifact (total ' + totalChanges + ' events). Each event carries an allowed change class and observed evidence. Educational context only.', 'مركّبة من بيان أحداث التغيير (إجمالي ' + totalChanges + ' حدث). يحمل كل حدث صنف تغيير مسموحاً به وأدلة مرصودة. سياق تعليمي فقط.'))}</p>
+        <div class="market-grid three">
+${sigCards || `          <p class="market-copy">${esc(t('No significant changes observed yet.', 'لا توجد تغيّرات مهمّة مرصودة بعد.'))}</p>`}
+        </div>
+        <p class="market-copy"><a href="${ar ? '/ar/changes/' : '/changes/'}">${esc(t('Open the Changes Hub', 'افتح مركز التغيّرات'))}</a> · <a href="${ar ? '/ar/changes/history/' : '/changes/history/'}">${esc(t('View change timeline', 'عرض الجدول الزمني'))}</a></p>
+      </section>`;
 }
 
 function regimeBody(ar, t) {
