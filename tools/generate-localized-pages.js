@@ -1461,7 +1461,7 @@ function preserveEdgeSpace(original, translated) {
 
 function finalArabicCleanup(html) {
   html = html
-    .replace(/>Free Signals</g, ">تنبيهات السوق<")
+    .replace(/>Free Signals</g, ">موجزات السوق<")
     .replace(/View Strategy/g, "عرض الاستراتيجية")
     .replace(/&amp;nbsp;/g, " ");
   return html
@@ -1491,8 +1491,8 @@ function localizeArabicLandingCopy(html) {
     ["TRADING &amp; أبحاث السوق PLATFORM", "منصة التداول وأبحاث السوق"],
     ["TRADING &amp;amp; أبحاث السوق PLATFORM", "منصة التداول وأبحاث السوق"],
     ["Gold Trading System", "منصة التداول وأبحاث السوق"],
-    ["Free Signals", "إشارات مجانية"],
-    ["تنبيهات السوق", "إشارات مجانية"],
+    ["Free Signals", "موجزات السوق"],
+    ["تنبيهات السوق", "موجزات السوق"],
     ["Trading Signals &amp; Market Research", "إشارات تداول وأبحاث سوق"],
     ["Trading Signals & Market Research", "إشارات تداول وأبحاث سوق"],
     ["Trading Signals &amp; أبحاث السوق", "إشارات تداول وأبحاث سوق"],

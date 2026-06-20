@@ -22,7 +22,7 @@ function renderSiteHeader(options = {}) {
         <nav class="nav-group" aria-label="${ar ? '&#1575;&#1604;&#1578;&#1606;&#1602;&#1604; &#1575;&#1604;&#1585;&#1574;&#1610;&#1587;&#1610;' : 'Primary'}">
           ${nav}
         </nav>
-        <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">${ar ? '&#1573;&#1588;&#1575;&#1585;&#1575;&#1578; &#1605;&#1580;&#1575;&#1606;&#1610;&#1577;' : 'Free Signals'}</a>
+        <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">${ar ? '&#1605;&#1608;&#1580;&#1586;&#1575;&#1578; &#1575;&#1604;&#1587;&#1608;&#1602;' : 'Market Briefs'}</a>
         <div class="locale-links" aria-label="${ar ? '&#1575;&#1582;&#1578;&#1610;&#1575;&#1585; &#1575;&#1604;&#1604;&#1594;&#1577;' : 'Language'}">
           <a class="lang-switch" data-locale-route="ar" href="${ar ? escapeHtml(options.arabicHref || currentArabicHref(active)) : escapeHtml(languageHref)}">${ar ? '&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;' : 'Arabic'}</a>
           <a class="lang-switch" data-locale-route="en" href="${ar ? escapeHtml(languageHref) : escapeHtml(options.englishHref || currentEnglishHref(active))}">English</a>

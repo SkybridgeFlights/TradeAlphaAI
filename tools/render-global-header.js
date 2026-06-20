@@ -32,7 +32,7 @@ function renderGlobalHeader({ locale, activePage = '', basePath = '', arabicHref
     : 'TRADING &amp; MARKET RESEARCH PLATFORM';
 
   const navLabel  = ar ? 'التنقل الرئيسي' : 'Primary';
-  const ctaText   = ar ? 'إشارات مجانية' : 'Free Signals';
+  const ctaText   = ar ? 'موجزات السوق' : 'Market Briefs';
   const langLabel = ar ? 'اختيار اللغة' : 'Language';
   const arText    = ar ? 'العربية' : 'Arabic';
   const menuLabel = ar ? 'فتح القائمة' : 'Open menu';
