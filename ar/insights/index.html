@@ -115,6 +115,7 @@
               <a href="/ar/account/sign-in/">تسجيل الدخول</a>
               <a href="/ar/account/sign-up/">إنشاء حساب</a>
               <a href="/ar/account/profile/">الملف الشخصي للحساب</a>
+              <a href="/ar/account/mobile/">تطبيق الجوال</a>
             </div>
           </div>
           <a href="/ar/economic-calendar/" class="nav-link">التقويم الاقتصادي</a>
@@ -197,6 +198,7 @@
     renderRecentlyViewed("[data-recently-viewed-strip]");
   </script>
 <script>function insightFilter(btn,cat){document.querySelectorAll(".insight-filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.querySelectorAll("#insight-grid .market-card").forEach(c=>{c.style.display=(cat==="all"||c.dataset.category===cat)?"":"none";});}</script>
-  <script src="/js/global-header.js" defer></script>
+<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
 </body>
 </html>

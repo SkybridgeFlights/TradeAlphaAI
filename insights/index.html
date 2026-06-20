@@ -115,6 +115,7 @@
               <a href="/account/sign-in/">Sign In</a>
               <a href="/account/sign-up/">Sign Up</a>
               <a href="/account/profile/">Account Profile</a>
+              <a href="/account/mobile/">Mobile App</a>
             </div>
           </div>
           <a href="/economic-calendar/" class="nav-link">Economic Calendar</a>
@@ -201,6 +202,7 @@
     renderRecentlyViewed("[data-recently-viewed-strip]");
   </script>
 <script>function insightFilter(btn,cat){document.querySelectorAll(".insight-filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.querySelectorAll("#insight-grid .market-card").forEach(c=>{c.style.display=(cat==="all"||c.dataset.category===cat)?"":"none";});}</script>
-  <script src="/js/global-header.js" defer></script>
+<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
 </body>
 </html>

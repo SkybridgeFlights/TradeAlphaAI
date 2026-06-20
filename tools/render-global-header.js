@@ -82,7 +82,12 @@ function globalHeaderHead() {
 }
 
 function globalHeaderScripts() {
-  return '<script src="/js/global-header.js" defer></script>';
+  // Phase 227 — register the service worker (PWA offline shell). The
+  // service worker is the contract layer for push notifications; no
+  // subscription is registered today. Manifest + theme are emitted via
+  // the inline <link>/<meta> in the page <head> by page generators.
+  return '<script src="/js/global-header.js" defer></script>'
+    + '<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>';
 }
 
 function englishLinks() {
@@ -161,7 +166,8 @@ function englishLinks() {
         ['/account/workspace/', 'Account Workspace'],
         ['/account/sign-in/', 'Sign In'],
         ['/account/sign-up/', 'Sign Up'],
-        ['/account/profile/', 'Account Profile']
+        ['/account/profile/', 'Account Profile'],
+        ['/account/mobile/', 'Mobile App']
       ]
     },
     { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
@@ -245,7 +251,8 @@ function arabicLinks() {
         ['/ar/account/workspace/', 'مساحة عمل الحساب'],
         ['/ar/account/sign-in/', 'تسجيل الدخول'],
         ['/ar/account/sign-up/', 'إنشاء حساب'],
-        ['/ar/account/profile/', 'الملف الشخصي للحساب']
+        ['/ar/account/profile/', 'الملف الشخصي للحساب'],
+        ['/ar/account/mobile/', 'تطبيق الجوال']
       ]
     },
     { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },

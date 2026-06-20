@@ -116,6 +116,7 @@
               <a href="/account/sign-in/">Sign In</a>
               <a href="/account/sign-up/">Sign Up</a>
               <a href="/account/profile/">Account Profile</a>
+              <a href="/account/mobile/">Mobile App</a>
             </div>
           </div>
           <a href="/economic-calendar/" class="nav-link">Economic Calendar</a>
@@ -161,6 +162,6 @@
       <div class="market-panel"><p class="market-copy">Authentication is foundation-only in this phase — no provider SDK is installed, no passwords or session tokens are stored in the repository, and the surface is informational. Future activation will redirect to the hosted provider UI. Not investment advice.</p></div>
     </section>
   </main>
-  <script src="/js/global-header.js" defer></script>
+  <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
 </body>
 </html>
