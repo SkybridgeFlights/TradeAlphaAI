@@ -14,6 +14,7 @@ const path = require('path');
 const { EQUITIES } = require('./equity-registry');
 const { BY_SYMBOL: SECTOR_BY_SLUG } = (() => { const r = require('./sector-registry'); return { BY_SYMBOL: new Map(r.SECTORS.map((s) => [s.slug, s])) }; })();
 const { relatedResearchBlock } = require('./related-research');
+const { recentChangesBlock } = require('./recent-changes');
 
 const ROOT = path.resolve(__dirname, '..');
 const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
@@ -240,6 +241,7 @@ ${contextBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
+${recentChangesBlock(ar, 'equity', eq.symbol)}
 ${relatedResearchBlock(ar, 'equity', eq.symbol)}
 ${linksBlock}
 

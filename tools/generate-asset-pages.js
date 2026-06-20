@@ -14,6 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const { ASSETS, RELATIONSHIPS, BY_SYMBOL } = require('./asset-registry');
 const { relatedResearchBlock } = require('./related-research');
+const { recentChangesBlock } = require('./recent-changes');
 
 const ROOT = path.resolve(__dirname, '..');
 const ASSET_INTEL = path.join(ROOT, 'data', 'intelligence', 'asset-intelligence.json');
@@ -307,6 +308,7 @@ ${relBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
+${recentChangesBlock(ar, 'asset', asset.symbol)}
 ${relatedResearchBlock(ar, 'asset', asset.symbol)}
 ${linksBlock}
 

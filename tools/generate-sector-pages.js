@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const { SECTORS } = require('./sector-registry');
 const { relatedResearchBlock } = require('./related-research');
+const { recentChangesBlock } = require('./recent-changes');
 
 const ROOT = path.resolve(__dirname, '..');
 const J = (rel) => path.join(ROOT, 'data', 'intelligence', rel);
@@ -246,6 +247,7 @@ ${rotationBlock}
 ${macroBlock}
 ${historyBlock}
 ${narrativeBlock}
+${recentChangesBlock(ar, 'sector', sector.symbol)}
 ${relatedResearchBlock(ar, 'sector', sector.symbol)}
 ${linksBlock}
 
