@@ -22,6 +22,10 @@ const STEPS = [
   ['auth-foundation',     ['tools/build-auth-foundation.js', '--write']],
   ['account-foundation',  ['tools/build-account-foundation.js', '--write']],
   ['auth-pages',          ['tools/generate-auth-pages.js', '--write']],
+  // Phase 221-Pg — apply Postgres migrations. Idempotent + advisory-
+  // locked so concurrent deploys cannot race. Skips gracefully when
+  // DATABASE_URL is missing (e.g. preview deploy without Neon branch).
+  ['db-migrate',          ['tools/apply-migrations.js']],
 ];
 
 let failed = false;

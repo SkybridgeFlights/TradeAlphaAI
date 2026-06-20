@@ -104,7 +104,17 @@ function checkClosure() {
   // The two foundations must AGREE on mode — drift is a bug.
   if (auth.mode !== authMode) fails.push(`mode drift: account-foundation.auth.mode=${authMode} vs auth-foundation.mode=${auth.mode}`);
   if (ident.accounts_count !== 0) fails.push('account-identity.accounts_count must be 0');
-  if (personal.write_enabled !== false) fails.push('personal-state.write_enabled must be false');
+  // Phase 221-Pg — personal-state.write_enabled is mode-aware. In v1
+  // (file-based contract) it had to be false. In v2 (postgres-backed)
+  // it MUST be true — Postgres writes are the whole point. The mode
+  // field disambiguates.
+  const personalMode = personal.mode || 'contract';
+  if (personalMode === 'contract' && personal.write_enabled !== false) fails.push('personal-state v1 (contract): write_enabled must be false');
+  if (personalMode === 'postgres' && personal.write_enabled !== true) fails.push('personal-state v2 (postgres): write_enabled must be true');
+  if (personalMode === 'postgres') {
+    if (!personal.storage || personal.storage.backend !== 'neon-postgres') fails.push('personal-state v2: storage.backend must be neon-postgres');
+    if (!personal.storage || personal.storage.legacy_repo_path_forbidden !== 'data/accounts/') fails.push('personal-state v2: legacy_repo_path_forbidden must be data/accounts/');
+  }
   if (dispatch.dispatch_enabled !== false) fails.push('alert-dispatch.dispatch_enabled must be false');
   if (pres.accounts && pres.accounts.real_count !== 0) fails.push('personalized-research.accounts.real_count must be 0');
   if (billing.enabled !== false) fails.push('billing-contracts.enabled must be false');
@@ -119,7 +129,12 @@ function checkClosure() {
     ['auth-foundation', auth.governance, authMode === 'contract'
       ? ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only', 'contract_only']
       : ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only']],
-    ['personal-state-contracts', personal.governance, ['no_real_account_ids_in_repo', 'no_email_addresses_in_repo', 'no_session_tokens_in_repo', 'gitignored_accounts_dir', 'validator_enforced_writes']],
+    // Mode-aware: v1 (file-based) keeps the original 5 flags; v2
+    // (postgres) keeps the no-leak invariants but swaps the
+    // gitignored_accounts_dir flag for the postgres-specific ones.
+    ['personal-state-contracts', personal.governance, personalMode === 'postgres'
+      ? ['no_real_account_ids_in_repo', 'no_email_addresses_in_repo', 'no_session_tokens_in_repo', 'no_per_account_files_in_repo', 'validator_enforces_postgres_backend', 'validator_enforces_no_data_accounts_dir', 'api_routes_require_clerk_token', 'cross_account_reads_disallowed', 'cascading_delete_via_foreign_keys']
+      : ['no_real_account_ids_in_repo', 'no_email_addresses_in_repo', 'no_session_tokens_in_repo', 'gitignored_accounts_dir', 'validator_enforced_writes']],
     ['alert-dispatch', dispatch.governance, ['no_signals', 'no_forecasts', 'no_price_targets', 'no_dispatch_in_contract_phase', 'url_200_gated', 'opt_in_only', 'respects_existing_telegram_gates', 'no_fabricated_alerts']],
     ['personalized-research', pres.governance, ['no_signals', 'no_forecasts', 'no_price_targets', 'no_fabricated_edges', 'registry_bounded', 'evidence_backed_only']],
     ['billing-contracts', billing.governance, ['no_payments_collected', 'no_subscriptions_stored', 'no_public_content_gates', 'public_intelligence_free_forever', 'no_dark_patterns', 'stripe_only_via_hosted_checkout', 'no_card_numbers_in_repo']],

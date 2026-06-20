@@ -50,6 +50,32 @@
       const signedIn = !!user;
       showStatus(signedIn ? 'signed-in' : 'signed-out', '');
 
+      // Phase 221-Pg — once signed in, POST /api/account/init to upsert
+      // the per-account row in Postgres. Idempotent: bumps last_seen_at
+      // on repeat calls. We hash the primary email client-side so the
+      // raw email never crosses the wire to our server (Clerk holds it).
+      if (signedIn) {
+        try {
+          const token = await window.Clerk.session.getToken();
+          const primaryEmail = (user.primaryEmailAddress && user.primaryEmailAddress.emailAddress) || '';
+          let emailHash = null;
+          if (primaryEmail && window.crypto && window.crypto.subtle) {
+            const enc = new TextEncoder().encode(primaryEmail.trim().toLowerCase());
+            const buf = await window.crypto.subtle.digest('SHA-256', enc);
+            emailHash = Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+          }
+          const locale = (document.documentElement.lang === 'ar') ? 'ar' : 'en';
+          await fetch('/api/account/init', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+            body: JSON.stringify({ primary_email_hash: emailHash, locale }),
+            cache: 'no-store',
+          });
+        } catch (initError) {
+          console.warn('[account] init failed:', initError);
+        }
+      }
+
       // Mount per-page UI components onto declared containers.
       const mounts = document.querySelectorAll('[data-clerk-mount]');
       mounts.forEach((node) => {
