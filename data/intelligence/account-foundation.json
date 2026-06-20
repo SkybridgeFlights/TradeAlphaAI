@@ -1,13 +1,18 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-20T11:45:04.241Z",
+  "generated_at": "2026-06-20T12:17:29.854Z",
   "source_layer": "account-foundation",
   "contracts_version": "1.0.0",
   "auth": {
     "enabled": false,
-    "providers": [],
-    "note_en": "Authentication is intentionally NOT enabled. Foundation phase only.",
-    "note_ar": "لم تُفعّل المصادقة عمداً. مرحلة التأسيس فقط."
+    "mode": "contract",
+    "providers": [
+      "clerk"
+    ],
+    "contract": "data/intelligence/auth-foundation.json",
+    "identity_contract": "data/intelligence/account-identity.json",
+    "note_en": "Authentication contract exists (Phase 220) but no live provider is wired. mode=contract.",
+    "note_ar": "عقد المصادقة موجود (Phase 220) لكن لم يُربط مزوّد حيّ. mode=contract."
   },
   "user_database": {
     "enabled": false,
@@ -20,6 +25,21 @@
     "note_ar": "لا توجد مدفوعات، ولا اشتراكات، ولا حواجز للوصول المميز."
   },
   "contracts": {
+    "auth": {
+      "artifact": "data/intelligence/auth-foundation.json",
+      "summary": {
+        "mode": "contract",
+        "primary_provider": "clerk",
+        "env_vars": 5
+      }
+    },
+    "identity": {
+      "artifact": "data/intelligence/account-identity.json",
+      "summary": {
+        "accounts": 0,
+        "scopes": 6
+      }
+    },
     "watchlists": {
       "artifact": "data/intelligence/watchlist-contracts.json",
       "summary": {
@@ -61,14 +81,22 @@
       "/account/watchlists/",
       "/account/preferences/",
       "/account/alerts/",
-      "/account/workspace/"
+      "/account/workspace/",
+      "/account/sign-in/",
+      "/account/sign-up/",
+      "/account/verify/",
+      "/account/profile/"
     ],
     "ar": [
       "/ar/account/",
       "/ar/account/watchlists/",
       "/ar/account/preferences/",
       "/ar/account/alerts/",
-      "/ar/account/workspace/"
+      "/ar/account/workspace/",
+      "/ar/account/sign-in/",
+      "/ar/account/sign-up/",
+      "/ar/account/verify/",
+      "/ar/account/profile/"
     ]
   },
   "governance": {
@@ -76,7 +104,9 @@
     "no_forecasts": true,
     "no_price_targets": true,
     "no_user_state_fabrication": true,
-    "contracts_only": true
+    "contracts_only": true,
+    "no_passwords_in_repo": true,
+    "no_session_tokens_in_repo": true
   },
   "attribution": {
     "sources": [
@@ -84,8 +114,10 @@
       "data/intelligence/workspace.json",
       "data/intelligence/watchlist-monitoring.json",
       "data/intelligence/change-events.json",
-      "data/intelligence/research-hub.json"
+      "data/intelligence/research-hub.json",
+      "data/intelligence/auth-foundation.json",
+      "data/intelligence/account-identity.json"
     ],
-    "note": "Account foundation is the canonical account-ready structure. Authentication, billing and the recommendation/copilot engines are explicitly disabled. Future phases plug into these contracts."
+    "note": "Account foundation is the canonical account-ready structure. Authentication CONTRACT exists (Phase 220) but auth.enabled stays false; billing and the recommendation/copilot engines remain disabled. Future phases flip auth.mode contract -> hosted -> live."
   }
 }

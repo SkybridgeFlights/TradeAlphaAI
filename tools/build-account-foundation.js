@@ -251,10 +251,24 @@ function build() {
     generated_at: stamp,
     source_layer: 'account-foundation',
     contracts_version: '1.0.0',
-    auth: { enabled: false, providers: [], note_en: 'Authentication is intentionally NOT enabled. Foundation phase only.', note_ar: 'لم تُفعّل المصادقة عمداً. مرحلة التأسيس فقط.' },
+    // Phase 220 — auth.enabled stays false (no live wiring) but the auth
+    // FOUNDATION contract now exists and is referenced here. mode='contract'
+    // means the contract is declared; future phases flip it to 'hosted' then
+    // 'live'. providers list is populated from auth-foundation.json.
+    auth: {
+      enabled: false,
+      mode: 'contract',
+      providers: ['clerk'],
+      contract: 'data/intelligence/auth-foundation.json',
+      identity_contract: 'data/intelligence/account-identity.json',
+      note_en: 'Authentication contract exists (Phase 220) but no live provider is wired. mode=contract.',
+      note_ar: 'عقد المصادقة موجود (Phase 220) لكن لم يُربط مزوّد حيّ. mode=contract.',
+    },
     user_database: { enabled: false, note_en: 'No user database; no per-user state is stored or fabricated.', note_ar: 'لا توجد قاعدة بيانات للمستخدمين؛ ولا يُخزَّن أو يُصطنع أي حالة لكل مستخدم.' },
     billing: { enabled: false, note_en: 'No payments, no subscriptions, no premium gating.', note_ar: 'لا توجد مدفوعات، ولا اشتراكات، ولا حواجز للوصول المميز.' },
     contracts: {
+      auth: { artifact: 'data/intelligence/auth-foundation.json', summary: { mode: 'contract', primary_provider: 'clerk', env_vars: 5 } },
+      identity: { artifact: 'data/intelligence/account-identity.json', summary: { accounts: 0, scopes: 6 } },
       watchlists: { artifact: 'data/intelligence/watchlist-contracts.json', summary: { saved: watchlistContracts.saved_watchlists.count, personal: watchlistContracts.personal_watchlists.count } },
       preferences: { artifact: 'data/intelligence/preferences.json', summary: { defaults: Object.keys(preferences.defaults).length, overrides: preferences.overrides.count } },
       alerts: { artifact: 'data/intelligence/alert-contracts.json', summary: { classes: alertContracts.allowed_classes.length, dispatch_enabled: alertContracts.dispatch.enabled } },
@@ -262,8 +276,8 @@ function build() {
       personalization: { artifact: 'data/intelligence/personalization.json', summary: { capabilities_enabled: Object.values(personalization.capabilities).filter((c) => c.enabled).length } },
     },
     pages: {
-      en: ['/account/', '/account/watchlists/', '/account/preferences/', '/account/alerts/', '/account/workspace/'],
-      ar: ['/ar/account/', '/ar/account/watchlists/', '/ar/account/preferences/', '/ar/account/alerts/', '/ar/account/workspace/'],
+      en: ['/account/', '/account/watchlists/', '/account/preferences/', '/account/alerts/', '/account/workspace/', '/account/sign-in/', '/account/sign-up/', '/account/verify/', '/account/profile/'],
+      ar: ['/ar/account/', '/ar/account/watchlists/', '/ar/account/preferences/', '/ar/account/alerts/', '/ar/account/workspace/', '/ar/account/sign-in/', '/ar/account/sign-up/', '/ar/account/verify/', '/ar/account/profile/'],
     },
     governance: {
       no_signals: true,
@@ -271,10 +285,12 @@ function build() {
       no_price_targets: true,
       no_user_state_fabrication: true,
       contracts_only: true,
+      no_passwords_in_repo: true,
+      no_session_tokens_in_repo: true,
     },
     attribution: {
-      sources: ['data/intelligence/watchlists.json', 'data/intelligence/workspace.json', 'data/intelligence/watchlist-monitoring.json', 'data/intelligence/change-events.json', 'data/intelligence/research-hub.json'],
-      note: 'Account foundation is the canonical account-ready structure. Authentication, billing and the recommendation/copilot engines are explicitly disabled. Future phases plug into these contracts.',
+      sources: ['data/intelligence/watchlists.json', 'data/intelligence/workspace.json', 'data/intelligence/watchlist-monitoring.json', 'data/intelligence/change-events.json', 'data/intelligence/research-hub.json', 'data/intelligence/auth-foundation.json', 'data/intelligence/account-identity.json'],
+      note: 'Account foundation is the canonical account-ready structure. Authentication CONTRACT exists (Phase 220) but auth.enabled stays false; billing and the recommendation/copilot engines remain disabled. Future phases flip auth.mode contract -> hosted -> live.',
     },
   };
   return { foundation, watchlistContracts, preferences, alertContracts, workspaceState, personalization };

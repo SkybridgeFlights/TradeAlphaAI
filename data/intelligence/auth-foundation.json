@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-20T12:14:29.108Z",
+  "source_layer": "auth-foundation",
+  "contracts_version": "1.0.0",
+  "mode": "contract",
+  "enabled": false,
+  "allowed_providers": [
+    "clerk",
+    "auth0",
+    "descope"
+  ],
+  "allowed_flows": [
+    "hosted_ui",
+    "embedded_ui",
+    "api_only"
+  ],
+  "allowed_modes": [
+    "contract",
+    "hosted",
+    "live"
+  ],
+  "primary_provider": "clerk",
+  "providers": [
+    {
+      "id": "clerk",
+      "label_en": "Clerk",
+      "label_ar": "Clerk",
+      "flow": "hosted_ui",
+      "marketplace": "vercel",
+      "docs_url": "https://clerk.com/docs",
+      "env_vars": [
+        {
+          "name": "CLERK_PUBLISHABLE_KEY",
+          "required": true,
+          "surface": "client",
+          "value_present": false
+        },
+        {
+          "name": "CLERK_SECRET_KEY",
+          "required": true,
+          "surface": "server",
+          "value_present": false
+        },
+        {
+          "name": "CLERK_INSTANCE_URL",
+          "required": true,
+          "surface": "both",
+          "value_present": false
+        },
+        {
+          "name": "CLERK_SIGN_IN_URL",
+          "required": false,
+          "surface": "client",
+          "value_present": false
+        },
+        {
+          "name": "CLERK_SIGN_UP_URL",
+          "required": false,
+          "surface": "client",
+          "value_present": false
+        }
+      ],
+      "endpoints": {
+        "sign_in_local": "/account/sign-in/",
+        "sign_up_local": "/account/sign-up/",
+        "verify_local": "/account/verify/",
+        "profile_local": "/account/profile/",
+        "sign_in_hosted_placeholder": "https://<your-clerk-frontend>/sign-in",
+        "sign_up_hosted_placeholder": "https://<your-clerk-frontend>/sign-up"
+      },
+      "flow_description_en": "Future live wiring: the local /account/sign-in/ page redirects to Clerk's hosted sign-in UI, which authenticates the user and redirects back to /account/verify/ with a session. Account state then lives behind Clerk; the platform only reads scopes it has been granted.",
+      "flow_description_ar": "الربط الحيّ المستقبلي: تعيد الصفحة المحلية /account/sign-in/ التوجيه إلى واجهة تسجيل دخول Clerk المستضافة، التي تصادق المستخدم ثم تعيد التوجيه إلى /account/verify/ مع جلسة. حالة الحساب تبقى لدى Clerk؛ والمنصّة تقرأ فقط الصلاحيات الممنوحة لها."
+    }
+  ],
+  "governance": {
+    "no_passwords_in_repo": true,
+    "no_session_tokens_in_repo": true,
+    "no_user_state_fabrication": true,
+    "hosted_ui_only": true,
+    "contract_only": true
+  },
+  "attribution": {
+    "sources": [
+      "tools/build-auth-foundation.js"
+    ],
+    "note": "Authentication foundation contract. Declares the first auth provider (Clerk via hosted UI) without installing an SDK or storing credentials. The future live wiring sets mode to hosted then live; until then sign-in flows render informational shells only."
+  }
+}

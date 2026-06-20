@@ -21,12 +21,21 @@ const PAGE_DIRS = [
   ['EN', 'account/', 'account/watchlists/', 'account/preferences/', 'account/alerts/', 'account/workspace/'],
   ['AR', 'ar/account/', 'ar/account/watchlists/', 'ar/account/preferences/', 'ar/account/alerts/', 'ar/account/workspace/'],
 ];
+const AUTH_PAGE_DIRS = [
+  ['EN', 'account/sign-in/', 'account/sign-up/', 'account/verify/', 'account/profile/'],
+  ['AR', 'ar/account/sign-in/', 'ar/account/sign-up/', 'ar/account/verify/', 'ar/account/profile/'],
+];
 const REQUIRED_SECTIONS = {
   'account/': ['account-status', 'account-contracts', 'account-governance', 'account-disclaimer'],
   'account/watchlists/': ['account-watchlists-personal', 'account-watchlists-saved', 'account-watchlists-favorites', 'account-disclaimer'],
   'account/preferences/': ['account-preferences-allowed', 'account-preferences-overrides', 'account-disclaimer'],
   'account/alerts/': ['account-alerts-classes', 'account-alerts-dispatch', 'account-disclaimer'],
   'account/workspace/': ['account-workspace-saved', 'account-workspace-followed', 'account-workspace-monitored', 'account-disclaimer'],
+  // Phase 220 — auth surfaces.
+  'account/sign-in/': ['auth-status', 'auth-flow', 'auth-alt', 'auth-disclaimer'],
+  'account/sign-up/': ['auth-status', 'auth-fields', 'auth-alt', 'auth-disclaimer'],
+  'account/verify/': ['auth-status', 'auth-endpoints', 'auth-disclaimer'],
+  'account/profile/': ['profile-status', 'profile-fields', 'profile-scopes', 'auth-disclaimer'],
 };
 
 // Anti-signal / anti-forecast scoped to account artifacts. Bare 'signal',
@@ -52,18 +61,26 @@ function checkFoundation(found) {
   if (!found) return ['account-foundation artifact missing'];
   if (found.source_layer !== 'account-foundation') fails.push('source_layer mismatch');
   // Hard governance — no live user features may slip in.
-  if (!found.auth || found.auth.enabled !== false) fails.push('auth must be disabled');
+  if (!found.auth || found.auth.enabled !== false) fails.push('auth.enabled must be false');
   if (!found.user_database || found.user_database.enabled !== false) fails.push('user_database must be disabled');
   if (!found.billing || found.billing.enabled !== false) fails.push('billing must be disabled');
-  for (const flag of ['no_signals', 'no_forecasts', 'no_price_targets', 'no_user_state_fabrication', 'contracts_only']) {
+  // Phase 220 — auth.mode now expresses the contract layer. Must be 'contract'
+  // in this phase; later phases flip to 'hosted' then 'live'.
+  if (!found.auth || found.auth.mode !== 'contract') fails.push("auth.mode must be 'contract' in this phase");
+  if (!found.auth || !Array.isArray(found.auth.providers) || found.auth.providers.length === 0) fails.push('auth.providers must be a non-empty list');
+  if (!found.auth || !found.auth.contract) fails.push('auth.contract artifact path missing');
+  if (!found.auth || !found.auth.identity_contract) fails.push('auth.identity_contract artifact path missing');
+  // Governance flags — extended with Phase 220 password / token guards.
+  for (const flag of ['no_signals', 'no_forecasts', 'no_price_targets', 'no_user_state_fabrication', 'contracts_only', 'no_passwords_in_repo', 'no_session_tokens_in_repo']) {
     if (!found.governance || found.governance[flag] !== true) fails.push(`governance.${flag} must be true`);
   }
-  const required = ['watchlists', 'preferences', 'alerts', 'workspace', 'personalization'];
+  const required = ['auth', 'identity', 'watchlists', 'preferences', 'alerts', 'workspace', 'personalization'];
   for (const k of required) {
     if (!found.contracts || !found.contracts[k] || !found.contracts[k].artifact) fails.push(`contracts.${k}.artifact missing`);
   }
-  // Page registry must match the 5 EN + 5 AR pages exactly.
-  const expectedEn = ['/account/', '/account/watchlists/', '/account/preferences/', '/account/alerts/', '/account/workspace/'];
+  // Page registry — Phase 220 extends to 9 EN + 9 AR (added sign-in/sign-up/
+  // verify/profile). Exact-match enforcement so silent drift is impossible.
+  const expectedEn = ['/account/', '/account/watchlists/', '/account/preferences/', '/account/alerts/', '/account/workspace/', '/account/sign-in/', '/account/sign-up/', '/account/verify/', '/account/profile/'];
   const expectedAr = expectedEn.map((p) => '/ar' + p);
   if (!found.pages || JSON.stringify((found.pages.en || []).slice().sort()) !== JSON.stringify(expectedEn.slice().sort())) fails.push('pages.en mismatch');
   if (!found.pages || JSON.stringify((found.pages.ar || []).slice().sort()) !== JSON.stringify(expectedAr.slice().sort())) fails.push('pages.ar mismatch');
@@ -188,7 +205,10 @@ function checkPersonalization(pz) {
 function checkPages() {
   const fails = [];
   const sectionsByPath = {};
-  for (const [loc, ...dirs] of PAGE_DIRS) {
+  // Phase 220 — both the Phase 219 account pages AND the new auth pages
+  // share the same structural rules. Walk them together.
+  const allDirs = PAGE_DIRS.map((r) => r.slice()).map((r, i) => r.concat(AUTH_PAGE_DIRS[i].slice(1)));
+  for (const [loc, ...dirs] of allDirs) {
     for (const dir of dirs) {
       const file = path.join(ROOT, dir, 'index.html');
       if (!fs.existsSync(file)) { fails.push(`${loc}: ${dir}index.html missing`); continue; }

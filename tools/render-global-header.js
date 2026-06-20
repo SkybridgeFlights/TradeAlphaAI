@@ -158,7 +158,10 @@ function englishLinks() {
         ['/account/watchlists/', 'Account Watchlists'],
         ['/account/preferences/', 'Account Preferences'],
         ['/account/alerts/', 'Account Alerts'],
-        ['/account/workspace/', 'Account Workspace']
+        ['/account/workspace/', 'Account Workspace'],
+        ['/account/sign-in/', 'Sign In'],
+        ['/account/sign-up/', 'Sign Up'],
+        ['/account/profile/', 'Account Profile']
       ]
     },
     { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
@@ -239,7 +242,10 @@ function arabicLinks() {
         ['/ar/account/watchlists/', 'قوائم متابعة الحساب'],
         ['/ar/account/preferences/', 'تفضيلات الحساب'],
         ['/ar/account/alerts/', 'تنبيهات الحساب'],
-        ['/ar/account/workspace/', 'مساحة عمل الحساب']
+        ['/ar/account/workspace/', 'مساحة عمل الحساب'],
+        ['/ar/account/sign-in/', 'تسجيل الدخول'],
+        ['/ar/account/sign-up/', 'إنشاء حساب'],
+        ['/ar/account/profile/', 'الملف الشخصي للحساب']
       ]
     },
     { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },

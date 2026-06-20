@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-20T12:14:29.108Z",
+  "source_layer": "account-identity",
+  "contracts_version": "1.0.0",
+  "mode": "contract",
+  "accounts_count": 0,
+  "fields": {
+    "account_id": {
+      "type": "string",
+      "source": "auth provider sub claim",
+      "example_shape": "user_*",
+      "validator": "non-empty string, opaque"
+    },
+    "session_id": {
+      "type": "string",
+      "source": "auth provider session token",
+      "example_shape": "sess_*",
+      "validator": "non-empty string, opaque"
+    },
+    "primary_email_hash": {
+      "type": "string",
+      "source": "sha256 of primary email at auth provider",
+      "validator": "64-char hex",
+      "note_en": "Email itself is never stored — only the hash for joining alert subscriptions.",
+      "note_ar": "البريد الإلكتروني نفسه لا يُخزَّن — فقط التجزئة لربط اشتراكات التنبيهات."
+    },
+    "locale": {
+      "type": "string",
+      "allowed": [
+        "en",
+        "ar"
+      ],
+      "default": "en"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "iso8601"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "iso8601"
+    },
+    "scopes": {
+      "type": "array<string>",
+      "allowed_values": [
+        "account.read",
+        "preferences.read",
+        "preferences.write",
+        "watchlists.read",
+        "watchlists.write",
+        "alerts.subscribe"
+      ],
+      "default": [
+        "account.read",
+        "preferences.read"
+      ]
+    },
+    "tier": {
+      "type": "string",
+      "allowed": [
+        "free",
+        "premium",
+        "institutional"
+      ],
+      "default": "free",
+      "note_en": "Tier is reserved for Phase 225; default free until billing is enabled.",
+      "note_ar": "الطبقة محجوزة لـ Phase 225؛ الافتراضي free حتى تفعيل الفوترة."
+    }
+  },
+  "allowed_scopes": [
+    "account.read",
+    "preferences.read",
+    "preferences.write",
+    "watchlists.read",
+    "watchlists.write",
+    "alerts.subscribe"
+  ],
+  "sample_template": {
+    "account_id": "__PLACEHOLDER_account_id__",
+    "session_id": "__PLACEHOLDER_session_id__",
+    "primary_email_hash": "__PLACEHOLDER_email_hash__",
+    "locale": "en",
+    "created_at": "__PLACEHOLDER_iso8601__",
+    "last_seen_at": "__PLACEHOLDER_iso8601__",
+    "scopes": [
+      "account.read",
+      "preferences.read"
+    ],
+    "tier": "free"
+  },
+  "attribution": {
+    "sources": [
+      "tools/build-auth-foundation.js"
+    ],
+    "note": "Account identity schema contract. accounts_count is 0 because no live sessions exist; sample_template uses literal __PLACEHOLDER_*__ values so a validator can prove no real account leaked. Email is hashed at auth provider before reaching this contract — the platform never sees raw emails."
+  }
+}
