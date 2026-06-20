@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-20T11:45:04.241Z",
+  "source_layer": "account-foundation",
+  "contracts_version": "1.0.0",
+  "auth": {
+    "enabled": false,
+    "providers": [],
+    "note_en": "Authentication is intentionally NOT enabled. Foundation phase only.",
+    "note_ar": "لم تُفعّل المصادقة عمداً. مرحلة التأسيس فقط."
+  },
+  "user_database": {
+    "enabled": false,
+    "note_en": "No user database; no per-user state is stored or fabricated.",
+    "note_ar": "لا توجد قاعدة بيانات للمستخدمين؛ ولا يُخزَّن أو يُصطنع أي حالة لكل مستخدم."
+  },
+  "billing": {
+    "enabled": false,
+    "note_en": "No payments, no subscriptions, no premium gating.",
+    "note_ar": "لا توجد مدفوعات، ولا اشتراكات، ولا حواجز للوصول المميز."
+  },
+  "contracts": {
+    "watchlists": {
+      "artifact": "data/intelligence/watchlist-contracts.json",
+      "summary": {
+        "saved": 4,
+        "personal": 0
+      }
+    },
+    "preferences": {
+      "artifact": "data/intelligence/preferences.json",
+      "summary": {
+        "defaults": 6,
+        "overrides": 0
+      }
+    },
+    "alerts": {
+      "artifact": "data/intelligence/alert-contracts.json",
+      "summary": {
+        "classes": 7,
+        "dispatch_enabled": false
+      }
+    },
+    "workspace": {
+      "artifact": "data/intelligence/workspace-state.json",
+      "summary": {
+        "saved_workspaces": 1,
+        "monitored": 14
+      }
+    },
+    "personalization": {
+      "artifact": "data/intelligence/personalization.json",
+      "summary": {
+        "capabilities_enabled": 0
+      }
+    }
+  },
+  "pages": {
+    "en": [
+      "/account/",
+      "/account/watchlists/",
+      "/account/preferences/",
+      "/account/alerts/",
+      "/account/workspace/"
+    ],
+    "ar": [
+      "/ar/account/",
+      "/ar/account/watchlists/",
+      "/ar/account/preferences/",
+      "/ar/account/alerts/",
+      "/ar/account/workspace/"
+    ]
+  },
+  "governance": {
+    "no_signals": true,
+    "no_forecasts": true,
+    "no_price_targets": true,
+    "no_user_state_fabrication": true,
+    "contracts_only": true
+  },
+  "attribution": {
+    "sources": [
+      "data/intelligence/watchlists.json",
+      "data/intelligence/workspace.json",
+      "data/intelligence/watchlist-monitoring.json",
+      "data/intelligence/change-events.json",
+      "data/intelligence/research-hub.json"
+    ],
+    "note": "Account foundation is the canonical account-ready structure. Authentication, billing and the recommendation/copilot engines are explicitly disabled. Future phases plug into these contracts."
+  }
+}

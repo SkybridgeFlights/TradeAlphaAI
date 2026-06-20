@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-20T11:45:04.241Z",
+  "source_layer": "personalization",
+  "contracts_version": "1.0.0",
+  "inputs": {
+    "preferences": "data/intelligence/preferences.json",
+    "watchlist_contracts": "data/intelligence/watchlist-contracts.json",
+    "workspace_state": "data/intelligence/workspace-state.json",
+    "alert_contracts": "data/intelligence/alert-contracts.json",
+    "change_events": "data/intelligence/change-events.json",
+    "research_hub": "data/intelligence/research-hub.json",
+    "research_graph": "data/intelligence/research-graph.json",
+    "entity_research_graph": "data/intelligence/entity-research-graph.json"
+  },
+  "capabilities": {
+    "recommendations": {
+      "enabled": false,
+      "note_en": "Recommendation engine is not implemented. Future scope.",
+      "note_ar": "محرّك التوصيات غير مُنفّذ. ضمن نطاق مستقبلي."
+    },
+    "copilot_context": {
+      "enabled": false,
+      "note_en": "Copilot context contract is reserved; no AI copilot is wired.",
+      "note_ar": "عقد سياق المساعد محجوز؛ لا يوجد مساعد ذكاء اصطناعي مفعّل."
+    },
+    "personalized_research": {
+      "enabled": false,
+      "note_en": "Personalized research will compose research-hub + watchlist + preferences once accounts exist.",
+      "note_ar": "الأبحاث الشخصية ستجمع بين مركز الأبحاث وقوائم المتابعة والتفضيلات بمجرد توفّر الحسابات."
+    },
+    "personalized_monitoring": {
+      "enabled": false,
+      "note_en": "Personalized monitoring will filter watchlist-monitoring by the user's followed entities.",
+      "note_ar": "المراقبة الشخصية ستصفّي مراقبة قوائم المتابعة وفق الكيانات التي يتبعها المستخدم."
+    }
+  },
+  "entity_universe_size": 48,
+  "attribution": {
+    "sources": [
+      "data/intelligence/workspace.json",
+      "data/intelligence/watchlists.json",
+      "data/intelligence/research-hub.json",
+      "data/intelligence/change-events.json"
+    ],
+    "note": "Personalization is a contract framework. No recommendation engine is built; future phases will plug into these inputs."
+  }
+}

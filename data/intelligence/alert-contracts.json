@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-20T11:45:04.241Z",
+  "source_layer": "alert-contracts",
+  "contracts_version": "1.0.0",
+  "allowed_classes": [
+    "regime_change",
+    "ranking_change",
+    "leadership_change",
+    "narrative_change",
+    "watchlist_change",
+    "research_change",
+    "change_event"
+  ],
+  "classes": {
+    "regime_change": {
+      "source": "regime-history.json + regime-transitions.json",
+      "trigger_en": "A real prior → current regime transition is recorded.",
+      "trigger_ar": "تسجيل تحول حقيقي بين النظام السابق والحالي."
+    },
+    "ranking_change": {
+      "source": "ranking-history.json (snapshot_count > 1 required)",
+      "trigger_en": "An entity rank label changes between consecutive snapshots.",
+      "trigger_ar": "تغير تصنيف رتبة كيان بين لقطتين متتاليتين."
+    },
+    "leadership_change": {
+      "source": "leadership-dashboard.json + change-events.json",
+      "trigger_en": "A leadership_gain or leadership_loss event is emitted.",
+      "trigger_ar": "إصدار حدث اكتساب أو فقدان قيادة."
+    },
+    "narrative_change": {
+      "source": "market-narrative.json + market-narrative-state.json (prior_stances required)",
+      "trigger_en": "The dominant market narrative shifts vs a prior recorded stance.",
+      "trigger_ar": "تحول السردية المهيمنة مقابل موقف سابق مسجل."
+    },
+    "watchlist_change": {
+      "source": "watchlist-monitoring.json",
+      "trigger_en": "A watchlist entity's monitor_state, rank or recent_change_count changes.",
+      "trigger_ar": "تغير حالة المتابعة أو الرتبة أو عدد التغيرات الأخيرة لكيان في قائمة المتابعة."
+    },
+    "research_change": {
+      "source": "research-hub.json + research-coverage.json",
+      "trigger_en": "A research category or item composition changes.",
+      "trigger_ar": "تغير تكوين فئة أبحاث أو بند بحثي."
+    },
+    "change_event": {
+      "source": "change-events.json",
+      "trigger_en": "Any new change event of the closed allowed class set is emitted.",
+      "trigger_ar": "إصدار أي حدث تغيير جديد من مجموعة الأصناف المغلقة المسموح بها."
+    }
+  },
+  "dispatch": {
+    "enabled": false,
+    "channels": [],
+    "note_en": "Alert dispatch is intentionally disabled in this phase. Contracts only.",
+    "note_ar": "إرسال التنبيهات معطّل عمداً في هذه المرحلة. عقود فقط."
+  },
+  "metrics": {
+    "available_change_events": 57
+  },
+  "attribution": {
+    "sources": [
+      "data/intelligence/change-events.json",
+      "data/intelligence/regime-history.json",
+      "data/intelligence/leadership-dashboard.json",
+      "data/intelligence/watchlist-monitoring.json",
+      "data/intelligence/market-narrative.json"
+    ],
+    "note": "Allowed alert classes match real source artifacts. Triggers are observed transitions only — never forecasts, never signals, never recommendations."
+  }
+}

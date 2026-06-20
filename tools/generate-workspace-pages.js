@@ -36,6 +36,8 @@ function load() {
     regime: readJson(J('market-regime-dashboard.json'), {}),
     regimeHistory: readJson(J('regime-history.json'), { timeline_entries: [] }),
     researchHub: readJson(J('research-hub.json'), { categories: [] }),
+    // Phase 219 CP8 — surface the account-ready contracts on /workspace/.
+    accountFoundation: readJson(J('account-foundation.json'), { contracts: {} }),
   };
 }
 
@@ -190,6 +192,15 @@ ${navCards(ar)}
       <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Watchlists', 'قوائم المتابعة'))}</span><h2>${esc(t(ar, 'Default monitored groups', 'مجموعات المتابعة الافتراضية'))}</h2></div>
       <div class="market-grid three">
 ${lists}
+      </div>
+    </section>
+    <section class="market-section" id="workspace-account-ready">
+      <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Account-ready capabilities', 'قدرات جاهزة للحساب'))}</span><h2>${esc(t(ar, 'Future personal layer', 'الطبقة الشخصية المستقبلية'))}</h2></div>
+      <p class="market-copy">${esc(t(ar, 'The platform now exposes account-ready contracts for watchlists, preferences and alerts. Authentication is not yet enabled — these surfaces describe what personal accounts will plug into.', 'تعرض المنصة الآن عقوداً جاهزة للحساب لقوائم المتابعة والتفضيلات والتنبيهات. لم تُفعَّل المصادقة بعد — تصف هذه الأسطح ما ستتصل به الحسابات الشخصية.'))}</p>
+      <div class="market-grid three">
+${card(ar, t(ar, 'Watchlists', 'قوائم المتابعة'), t(ar, 'Saved + personal watchlists', 'قوائم محفوظة وشخصية'), t(ar, 'Account watchlist contracts — saved defaults are public; personal lists require an account.', 'عقود قوائم المتابعة للحساب — القوائم الافتراضية المحفوظة عامة؛ القوائم الشخصية تحتاج إلى حساب.'), '/account/watchlists/')}
+${card(ar, t(ar, 'Preferences', 'التفضيلات'), t(ar, 'Language, homepage, focus', 'اللغة والصفحة الرئيسية والتركيز'), t(ar, 'Allowed preference enums and defaults; per-user overrides require an account.', 'قيم التفضيلات المسموح بها والافتراضية؛ تجاوزات كل مستخدم تحتاج إلى حساب.'), '/account/preferences/')}
+${card(ar, t(ar, 'Alerts', 'التنبيهات'), t(ar, 'Contracts, no dispatch', 'عقود، لا إرسال'), t(ar, 'Seven allowed alert classes — observed transitions only, never forecasts or signals.', 'سبعة أصناف تنبيهات مسموح بها — تحوّلات مرصودة فقط، لا توقعات ولا إشارات.'), '/account/alerts/')}
       </div>
     </section>`;
 }
