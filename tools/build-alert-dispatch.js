@@ -36,7 +36,10 @@ function build() {
     dispatch_enabled: false,
     primary_class: 'regime_change',
     allowed_channels: ALLOWED_CHANNELS,
-    classes_with_dispatch: ['regime_change'],
+    // Phase 222 shipped regime_change first. Phase 224 extends to all 7
+    // allowed classes — each with its own confidence + throttle contract.
+    // dispatch_enabled stays false; this just defines per-class rules.
+    classes_with_dispatch: ['regime_change', 'ranking_change', 'leadership_change', 'narrative_change', 'watchlist_change', 'research_change', 'change_event'],
     channels: {
       telegram: {
         enabled: false,
@@ -69,14 +72,53 @@ function build() {
           class: 'regime_change',
           account_id: '__PLACEHOLDER_account_id__',
           event_id: '__PLACEHOLDER_event_id__',
-          from_state: 'string',
-          to_state: 'string',
-          confidence: 'high',
-          generated_at: 'iso8601',
+          from_state: 'string', to_state: 'string', confidence: 'high', generated_at: 'iso8601',
           href: '/changes/regime/',
         },
         sample_event_id: sampleEvent ? sampleEvent.id : null,
         sample_evidence: sampleEvent ? (sampleEvent.evidence || []).slice(0, 2) : ['no regime_shift event in current change-events.json — sample left empty (honest)'],
+      },
+      ranking_change: {
+        source: 'data/intelligence/change-events.json (filtered to entity_type in [asset,sector,equity,etf] + change_type in [improving,weakening,deteriorating])',
+        trigger_en: 'An entity ranking transitions to a meaningfully different label between snapshots.',
+        trigger_ar: 'انتقال ترتيب كيان إلى تصنيف مختلف بشكل ملموس بين لقطتين.',
+        min_confidence: 'high', throttle: { per_account_per_day: 5, per_account_per_week: 20, global_cooldown_minutes: 30 },
+        payload_shape: { alert_id: 'sha256', class: 'ranking_change', account_id: '__PLACEHOLDER_account_id__', entity: 'symbol', entity_type: 'asset|sector|equity|etf', from_state: 'string', to_state: 'string', confidence: 'high', generated_at: 'iso8601', href: '/changes/<entity_type>s/' },
+      },
+      leadership_change: {
+        source: 'data/intelligence/change-events.json (filtered to change_type in [leadership_gain,leadership_loss])',
+        trigger_en: 'A leadership_gain or leadership_loss event for a watchlist entity is emitted.',
+        trigger_ar: 'إصدار حدث اكتساب أو فقدان قيادة لكيان من قائمة المتابعة.',
+        min_confidence: 'high', throttle: { per_account_per_day: 3, per_account_per_week: 12, global_cooldown_minutes: 45 },
+        payload_shape: { alert_id: 'sha256', class: 'leadership_change', account_id: '__PLACEHOLDER_account_id__', entity: 'symbol', entity_type: 'asset|sector|equity', change_type: 'leadership_gain|leadership_loss', confidence: 'high', generated_at: 'iso8601' },
+      },
+      narrative_change: {
+        source: 'data/intelligence/change-events.json (filtered to change_type=narrative_shift)',
+        trigger_en: 'The dominant market narrative transitions vs a recorded prior stance.',
+        trigger_ar: 'انتقال السردية المهيمنة في السوق مقابل موقف سابق مسجّل.',
+        min_confidence: 'high', throttle: { per_account_per_day: 1, per_account_per_week: 2, global_cooldown_minutes: 120 },
+        payload_shape: { alert_id: 'sha256', class: 'narrative_change', account_id: '__PLACEHOLDER_account_id__', from_state: 'string', to_state: 'string', confidence: 'high', generated_at: 'iso8601', href: '/research/regime/' },
+      },
+      watchlist_change: {
+        source: 'data/intelligence/watchlist-monitoring.json (per-entity monitor_state/rank/recent_change_count deltas)',
+        trigger_en: 'A watchlist entity\'s monitor_state, rank or recent_change_count changes between runs.',
+        trigger_ar: 'تغيّر حالة المتابعة أو الرتبة أو عدد التغيرات الأخيرة لكيان في قائمة المتابعة بين تشغيلين.',
+        min_confidence: 'moderate', throttle: { per_account_per_day: 8, per_account_per_week: 35, global_cooldown_minutes: 20 },
+        payload_shape: { alert_id: 'sha256', class: 'watchlist_change', account_id: '__PLACEHOLDER_account_id__', watchlist_id: 'string', entity: 'symbol', from_state: 'string', to_state: 'string', confidence: 'moderate', generated_at: 'iso8601' },
+      },
+      research_change: {
+        source: 'data/intelligence/research-hub.json + data/intelligence/research-coverage.json (category/item composition deltas)',
+        trigger_en: 'A research category or item composition changes between runs.',
+        trigger_ar: 'تغيّر تكوين فئة أبحاث أو عنصر بحثي بين تشغيلين.',
+        min_confidence: 'moderate', throttle: { per_account_per_day: 4, per_account_per_week: 15, global_cooldown_minutes: 60 },
+        payload_shape: { alert_id: 'sha256', class: 'research_change', account_id: '__PLACEHOLDER_account_id__', category: 'string', delta: 'string', confidence: 'moderate', generated_at: 'iso8601', href: '/research/feed/' },
+      },
+      change_event: {
+        source: 'data/intelligence/change-events.json (any allowed change_type that does not match a more specific class above)',
+        trigger_en: 'Catch-all — any new change event emitted that did not match a more specific class.',
+        trigger_ar: 'فئة شاملة — أي حدث تغيير جديد لم يطابق فئة أكثر تحديداً أعلاه.',
+        min_confidence: 'moderate', throttle: { per_account_per_day: 10, per_account_per_week: 50, global_cooldown_minutes: 15 },
+        payload_shape: { alert_id: 'sha256', class: 'change_event', account_id: '__PLACEHOLDER_account_id__', event_id: '__PLACEHOLDER_event_id__', change_type: 'string', confidence: 'moderate', generated_at: 'iso8601' },
       },
     },
     governance: {
