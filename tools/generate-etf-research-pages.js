@@ -119,11 +119,34 @@ ${cards}
         </div></section>`;
 }
 
-function detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history) {
+function chartFigure(ar, etf, intel, chart, audit) {
+  const t = (en, arText) => (ar ? arText : en);
+  if (!chart || intel.chart_available !== true) {
+    const reason = (audit && audit.failure_reason) || (intel.unavailable_reason || 'approved_ohlcv_unavailable');
+    return `<figure class="market-chart"><figcaption class="ic-caption">${esc(t('Verified OHLCV chart unavailable (' + reason + '); honestly omitted rather than substituted.', 'رسم OHLCV الموثق غير متاح (' + reason + ')؛ تم حذفه بصدق بدلا من استبداله.'))}</figcaption></figure>`;
+  }
+  const svgRel = '/data/visual/etf-charts/' + etf.slug + '-etf-' + (ar ? 'ar' : 'en') + '.svg';
+  const provider = (chart.attribution && chart.attribution.provider) || (audit && audit.selected_source && audit.selected_source.provider) || 'unknown';
+  const asOf = chart.as_of || 'unknown';
+  const bars = chart.bar_count || (chart.series || []).length;
+  const hashShort = (chart.series_hash || '').slice(0, 12);
+  const captionEn = 'Verified OHLCV — ' + bars + ' bars from ' + provider + ', as of ' + asOf + '. series_hash=' + hashShort + '.';
+  const captionAr = 'OHLCV موثق — ' + bars + ' شمعة من ' + provider + '، بتاريخ ' + asOf + '. series_hash=' + hashShort + '.';
+  return `<figure class="market-chart"><img src="${esc(svgRel)}" alt="${esc(etf.symbol)} ${esc(t('verified OHLCV', 'OHLCV موثق'))}" loading="lazy" /><figcaption class="ic-caption">${esc(ar ? captionAr : captionEn)}</figcaption></figure>`;
+}
+
+function qBadge(label, valueEn, valueAr, ar) {
+  return `<div class="market-grid-card"><span class="eyebrow">${esc(label)}</span><strong>${esc(ar ? valueAr : valueEn)}</strong></div>`;
+}
+
+function detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history, chartsBySymbol, auditBySymbol, qualityBySymbol) {
   const t = (en, arText) => (ar ? arText : en);
   const intel = intelligenceBySymbol.get(etf.symbol) || {};
   const rank = rankingBySymbol.get(etf.symbol) || {};
   const historyState = (history.entities && history.entities[etf.symbol]) || null;
+  const chart = chartsBySymbol.get(etf.symbol) || null;
+  const audit = auditBySymbol.get(etf.symbol) || null;
+  const quality = qualityBySymbol.get(etf.symbol) || null;
   const related = (etf.related || []).map((symbol) => {
     const rel = BY_SYMBOL.get(symbol);
     return rel ? `<a href="${detailHref(rel, ar)}">${esc(symbol)}</a>` : `<span>${esc(symbol)}</span>`;
@@ -133,7 +156,20 @@ function detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history) {
   const chartNote = intel.chart_available
     ? t('A verified OHLCV chart is available for this ETF in the chart manifest.', 'يتوافر لهذا الصندوق رسم OHLCV موثق ضمن سجل الرسوم.')
     : t('Verified ETF OHLCV chart coverage is not available in the current local manifest, so no chart is rendered here.', 'لا تتوافر تغطية رسم OHLCV موثقة لهذا الصندوق ضمن السجل المحلي الحالي، لذلك لا يتم عرض رسم هنا.');
-  return `      <section class="market-section" id="etf-current-state"><div class="market-section-head"><span class="eyebrow">${esc(etf.symbol)}</span><h2>${esc(t('Current ETF state', 'الحالة الحالية للصندوق'))}</h2></div>
+  const auditText = quality ? t('Audit: ' + quality.bars + ' bars from ' + (quality.resolved_provider || 'no provider') + ' as of ' + (quality.as_of || 'no chart') + '. Observed coverage transparency, not a trading recommendation.', 'التدقيق: ' + quality.bars + ' شمعة من ' + (quality.resolved_provider || 'لا يوجد مزود') + ' بتاريخ ' + (quality.as_of || 'لا يوجد رسم') + '. شفافية تغطية مرصودة، وليست توصية تداول.') : '';
+  const dataQualitySection = quality ? `      <section class="market-section" id="etf-data-quality"><div class="market-section-head"><span class="eyebrow">${esc(t('Data quality and provider status', 'جودة البيانات وحالة المزود'))}</span><h2>${esc(t('Verified coverage transparency', 'شفافية التغطية الموثقة'))}</h2></div>
+        ${chartFigure(ar, etf, intel, chart, audit)}
+        <div class="market-grid three">
+${qBadge(t('Quality tier', 'مستوى الجودة'), quality.quality_tier_en, quality.quality_tier_ar, ar)}
+${qBadge(t('Chart availability', 'توفر الرسم'), quality.chart_quality_en, quality.chart_quality_ar, ar)}
+${qBadge(t('Coverage', 'التغطية'), quality.coverage_en, quality.coverage_ar, ar)}
+${qBadge(t('Provider confidence', 'ثقة المزود'), quality.provider_confidence_en, quality.provider_confidence_ar, ar)}
+${qBadge(t('Historical depth', 'العمق التاريخي'), quality.historical_depth_en, quality.historical_depth_ar, ar)}
+${qBadge(t('Selected provider', 'المزود المختار'), quality.resolved_provider || t('unavailable', 'غير متاح'), quality.resolved_provider || 'غير متاح', ar)}
+        </div>
+        <p class="market-copy">${esc(auditText)}</p></section>` : '';
+  return `${dataQualitySection}
+      <section class="market-section" id="etf-current-state"><div class="market-section-head"><span class="eyebrow">${esc(etf.symbol)}</span><h2>${esc(t('Current ETF state', 'الحالة الحالية للصندوق'))}</h2></div>
         <p class="market-copy">${esc(ar ? etf.role_ar : etf.role_en)} ${esc(t('This page composes existing intelligence only; it does not create a separate ETF signal model.', 'تجمع هذه الصفحة مصادر الاستخبارات القائمة فقط؛ ولا تنشئ نموذج إشارات منفصلا لصناديق المؤشرات.'))}</p>
         <div class="market-grid three">
 ${card(t('Structure', 'البنية'), labelNode(intel.structure, ar), chartNote, null, COLOR[intel.structure && intel.structure.state] || COLOR.indeterminate)}
@@ -182,8 +218,14 @@ function buildPages() {
   const intelligence = readJson('etf-intelligence.json', {});
   const rankings = readJson('etf-rankings.json', {});
   const history = readJson('etf-history.json', {});
+  const charts = readJson('etf-charts.json', {});
+  const audit = readJson('etf-provider-audit.json', {});
+  const quality = readJson('etf-data-quality.json', {});
   const intelligenceBySymbol = bySymbol(intelligence.etfs);
   const rankingBySymbol = bySymbol(rankings.items);
+  const chartsBySymbol = new Map(((charts.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
+  const auditBySymbol = new Map(((audit.etfs) || []).map((e) => [e.symbol, e]));
+  const qualityBySymbol = new Map(((quality.etfs) || []).map((e) => [e.symbol, e]));
   const pages = [];
   for (const ar of [false, true]) {
     const slugPath = 'research/etfs/';
@@ -201,7 +243,7 @@ function buildPages() {
       const descAr = `قراءة بحثية مؤسسية لصندوق ${etf.symbol}: مواءمة النظام، موقع الترتيب، التاريخ، السيولة والأبحاث ذات الصلة.`;
       pages.push({
         out: path.join(ROOT, ar ? `ar/research/etfs/${etf.slug}/index.html` : `research/etfs/${etf.slug}/index.html`),
-        html: page(ar, slugPath, `${etf.symbol} ETF Research`, `أبحاث ${etf.symbol}`, descEn, descAr, detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history))
+        html: page(ar, slugPath, `${etf.symbol} ETF Research`, `أبحاث ${etf.symbol}`, descEn, descAr, detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history, chartsBySymbol, auditBySymbol, qualityBySymbol))
       });
     }
   }
