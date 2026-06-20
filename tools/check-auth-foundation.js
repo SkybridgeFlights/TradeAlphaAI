@@ -40,7 +40,9 @@ const REQUIRED_AUTH_SECTIONS = {
   'account/sign-in/': ['auth-status', 'auth-flow', 'auth-alt', 'auth-disclaimer'],
   'account/sign-up/': ['auth-status', 'auth-fields', 'auth-alt', 'auth-disclaimer'],
   'account/verify/': ['auth-status', 'auth-endpoints', 'auth-disclaimer'],
-  'account/profile/': ['profile-status', 'profile-fields', 'profile-scopes', 'auth-disclaimer'],
+  // Phase 221 — profile gains a profile-state section surfacing the
+  // per-account file layout.
+  'account/profile/': ['profile-status', 'profile-fields', 'profile-scopes', 'profile-state', 'auth-disclaimer'],
 };
 
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }

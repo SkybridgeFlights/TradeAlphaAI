@@ -176,6 +176,11 @@ ${Object.entries(fields).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v.type
       <section class="market-section" id="profile-scopes"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Scopes', 'الصلاحيات'))}</span><h2>${esc(t(ar, 'Allowed scopes', 'الصلاحيات المسموح بها'))}</h2></div>
         <div class="market-panel"><ul class="market-copy">
 ${((data.identity && data.identity.allowed_scopes) || []).map((s) => `<li><code>${esc(s)}</code></li>`).join('\n')}
+        </ul></div></section>
+      <section class="market-section" id="profile-state"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Personal state', 'الحالة الشخصية'))}</span><h2>${esc(t(ar, 'Future per-account file layout', 'تخطيط ملفات كل حساب المستقبلي'))}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t(ar, 'When the live wiring activates, each account will own a directory under ' + ((data.personalState && data.personalState.storage && data.personalState.storage.root_dir) || 'data/accounts/') + '<account_id>/ holding the following files. The directory is gitignored so per-account state is never committed.', 'عند تفعيل الربط الحيّ سيمتلك كل حساب دليلاً تحت ' + ((data.personalState && data.personalState.storage && data.personalState.storage.root_dir) || 'data/accounts/') + '<account_id>/ يحوي الملفات التالية. الدليل مُستبعَد عبر gitignore لذا لا يُحفظ بحالة حساب في المستودع.'))}</p>
+        <ul class="market-copy">
+${((data.personalState && data.personalState.storage && data.personalState.storage.file_layout) || []).map((f) => `<li><code>${esc(f)}</code></li>`).join('\n')}
         </ul></div></section>`;
 }
 
@@ -183,6 +188,8 @@ function load() {
   return {
     auth: readJson(J('auth-foundation.json'), { providers: [{}] }),
     identity: readJson(J('account-identity.json'), { fields: {}, allowed_scopes: [] }),
+    // Phase 221 — Personal state contracts (file layout future account writes).
+    personalState: readJson(J('personal-state-contracts.json'), { storage: {}, example_template: { files: {} } }),
   };
 }
 

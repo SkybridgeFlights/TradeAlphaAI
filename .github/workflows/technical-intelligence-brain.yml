@@ -158,6 +158,7 @@ jobs:
           # Phase 220 — Auth foundation + Account identity (contract phase
           # only: no SDK, no keys, hosted-UI flow declared but not active).
           node tools/build-auth-foundation.js --write || echo "[tech-intel] auth foundation degraded — continuing"
+          node tools/build-personal-state.js --write || echo "[tech-intel] personal state degraded — continuing"
           node tools/build-account-foundation.js --write || echo "[tech-intel] account foundation degraded — continuing"
           node tools/generate-account-pages.js --write || echo "[tech-intel] account pages degraded — continuing"
           node tools/generate-auth-pages.js --write || echo "[tech-intel] auth pages degraded — continuing"
@@ -304,6 +305,7 @@ jobs:
           npm run check:auth-foundation
           npm run check:account-identity
           npm run check:auth-pages
+          npm run check:personal-state
           npm run check:monitoring
           npm run check:watchlist-research
           npm run check:workspace-discovery
@@ -474,6 +476,7 @@ jobs:
               npm run check:auth-foundation
               npm run check:account-identity
               npm run check:auth-pages
+          npm run check:personal-state
               npm run check:monitoring
               npm run check:watchlist-research
               npm run check:workspace-discovery
