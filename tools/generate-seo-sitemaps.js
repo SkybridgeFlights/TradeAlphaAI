@@ -20,6 +20,7 @@ const marketMapDirs = (prefix) => ["market-map/assets/", "market-map/sectors/", 
 const researchDirs = (prefix) => ["research/", "research/feed/", "research/regime/", "research/history/", "research/assets/", "research/sectors/", "research/equities/", "research/etfs/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 // Phase 216 — Change Intelligence Alerts & Monitoring layer
 const changesDirs = (prefix) => ["changes/", "changes/assets/", "changes/sectors/", "changes/equities/", "changes/etfs/", "changes/regime/", "changes/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+const explorerDirs = (prefix) => ["explorer/", "explorer/events/", "explorer/entity/", "explorer/network/", "explorer/research/", "explorer/search/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const ASSET_RSLUGS = (() => { try { return require("./asset-registry").SLUGS; } catch { return []; } })();
 const SECTOR_RSLUGS = (() => { try { return require("./sector-registry").SLUGS; } catch { return []; } })();
 const EQUITY_RSLUGS = (() => { try { return require("./equity-registry").SLUGS; } catch { return []; } })();
@@ -48,6 +49,7 @@ const core = [
   .concat(marketMapDirs(""))
   .concat(researchDirs(""))
   .concat(changesDirs(""))
+  .concat(explorerDirs(""))
   .concat(entityResearchDirs(""))
   .concat(rankingDirs(""))
   .concat(existsDir("etfs") ? ["etfs/"] : [])
@@ -108,6 +110,7 @@ function arUrls() {
   for (const rel of marketMapDirs("ar/")) out.push(rel);
   for (const rel of researchDirs("ar/")) out.push(rel);
   for (const rel of changesDirs("ar/")) out.push(rel);
+  for (const rel of explorerDirs("ar/")) out.push(rel);
   for (const rel of entityResearchDirs("ar/")) out.push(rel);
   for (const rel of rankingDirs("ar/")) out.push(rel);
   for (const b of ["markets/","sectors/","equities/"]) if (existsDir(`ar/${b}`)) out.push(`ar/${b}`);

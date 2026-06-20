@@ -73,6 +73,8 @@ const ROOTS = [
   // Phase 69: market replay
   'market-replay',
   'ar/market-replay',
+  'explorer',
+  'ar/explorer',
 ];
 
 // Phase 99: legacy pre-canonical pages that predate the global-header markers
@@ -189,6 +191,7 @@ function detectActive(relative) {
   if (/(?:^|[/\\])intelligence[/\\]/.test(relative)) return 'intelligence';
   if (/(?:^|[/\\])research[/\\]/.test(relative)) return 'research';
   if (/(?:^|[/\\])market-map[/\\]/.test(relative)) return 'market-map';
+  if (/(?:^|[/\\])explorer[/\\]/.test(relative)) return 'explorer';
   if (/market-outlook[/\\]/.test(relative)) return 'market-outlook';
   if (/market-structure[/\\]/.test(relative)) return 'market-structure';
   if (/economic-calendar[/\\]/.test(relative)) return 'economic-calendar';
@@ -225,6 +228,11 @@ function computeLocaleHrefs(relative, ar) {
   if (rankingMatch) {
     const child = rankingMatch[1] ? `${rankingMatch[1]}/` : '';
     return { arabicHref: `/ar/rankings/${child}`, englishHref: `/rankings/${child}` };
+  }
+  const explorerMatch = relative.match(/^(?:ar\/)?explorer\/(.+\/)?index\.html$/);
+  if (explorerMatch) {
+    const child = explorerMatch[1] || '';
+    return { arabicHref: `/ar/explorer/${child}`, englishHref: `/explorer/${child}` };
   }
   // Phase 99: canonical editorial desks — point the locale switch at the
   // matching counterpart (index or specific article) so it never falls back home.

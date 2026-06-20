@@ -723,6 +723,27 @@ ${cards}
       </section>`;
 }
 
+function explorerBlock(ar) {
+  const t = (en, arT) => (ar ? arT : en);
+  const base = ar ? '/ar/explorer/' : '/explorer/';
+  const links = [
+    [base, t('Explorer Home', 'واجهة المستكشف'), t('Connected intelligence navigation', 'تنقل استخباراتي مترابط')],
+    [base + 'events/', t('Event Explorer', 'مستكشف الأحداث'), t('Observed changes and related entities', 'التغيّرات المرصودة والكيانات المرتبطة')],
+    [base + 'entity/', t('Entity Explorer', 'مستكشف الكيانات'), t('Assets, sectors, equities and ETFs in one view', 'الأصول والقطاعات والأسهم والصناديق في عرض واحد')],
+    [base + 'research/', t('Research Explorer', 'مستكشف الأبحاث'), t('Research graph traversal', 'عبور مخطط الأبحاث')],
+    [base + 'network/', t('Network Explorer', 'مستكشف الشبكة'), t('Evidence-backed relationships', 'علاقات مدعومة بالأدلة')],
+    [base + 'search/', t('Search Explorer', 'مستكشف البحث'), t('Static generated discovery index', 'فهرس اكتشاف ثابت مولّد')],
+  ];
+  const cards = links.map(([href, title, sub]) => `          <a class="market-card" href="${href}"><span class="market-card-kicker">${esc(t('Explorer', 'المستكشف'))}</span><h3>${esc(title)}</h3><p class="market-copy">${esc(sub)}</p></a>`).join('\n');
+  return `      <section class="market-section" id="intelligence-explorer">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Intelligence Explorer', 'مستكشف الاستخبارات'))}</span><h2>${esc(t('Move through connected intelligence', 'العبور عبر الاستخبارات المترابطة'))}</h2></div>
+        <p class="market-copy">${esc(t('The explorer connects research, changes, rankings, regimes, entities, ETFs, narrative and historical intelligence without exposing internal artifacts.', 'يربط المستكشف الأبحاث والتغيّرات والترتيبات والأنظمة والكيانات وصناديق المؤشرات والسردية والاستخبارات التاريخية دون كشف الملفات الداخلية.'))}</p>
+        <div class="market-grid three">
+${cards}
+        </div>
+      </section>`;
+}
+
 function buildMain(ar) {
   const t = (en, arT) => (ar ? arT : en);
   const regime = readJson(REGIME_PATH);
@@ -793,6 +814,7 @@ ${providerCoverageBlock(ar, providerCoverage)}
 ${dataQualityBlock(ar, dataQuality)}
 ${providerHealthBlock(ar, charts)}
 ${visualIntelligenceBlock(ar)}
+${explorerBlock(ar)}
 ${latestBlock(ar)}
 
       <section class="market-section" id="terminal-disclaimer">
