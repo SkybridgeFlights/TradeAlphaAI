@@ -123,17 +123,22 @@ jobs:
           # research pages.
           node tools/build-entity-research.js --write || echo "[tech-intel] entity research degraded — continuing"
           node tools/build-change-intelligence.js --write || echo "[tech-intel] change intelligence degraded — continuing"
-          # Phase 214 — ETF Intelligence Universe: direct ETF registry, approved
-          # provider chart coverage, ETF intelligence/rankings/history, research,
-          # map and discovery pages. No proxy substitution or fabricated charts.
+          # Phase 214 + Phase 215 — ETF Intelligence Universe + Provider Coverage
+          # Activation: direct ETF registry, approved provider chart coverage,
+          # provider audit, data quality, ETF intelligence/rankings/history,
+          # research, map, discovery and coverage dashboard. No proxy
+          # substitution or fabricated charts.
           node tools/build-etf-charts.js --fetch --write || node tools/build-etf-charts.js --write || echo "[tech-intel] ETF charts unavailable — continuing"
+          node tools/build-etf-provider-audit.js --write || echo "[tech-intel] ETF provider audit degraded — continuing"
           node tools/build-etf-intelligence.js --write || echo "[tech-intel] ETF intelligence degraded — continuing"
           node tools/build-etf-rankings.js --write || echo "[tech-intel] ETF rankings degraded — continuing"
           node tools/build-etf-history.js --write || echo "[tech-intel] ETF history degraded — continuing"
+          node tools/build-etf-data-quality.js --write || echo "[tech-intel] ETF data quality degraded — continuing"
           node tools/build-etf-map.js --write || echo "[tech-intel] ETF map degraded — continuing"
           node tools/generate-etf-research-pages.js --write || echo "[tech-intel] ETF research pages degraded — continuing"
           node tools/generate-etf-map-pages.js --write || echo "[tech-intel] ETF map pages degraded — continuing"
           node tools/generate-etf-discovery-pages.js --write || echo "[tech-intel] ETF discovery pages degraded — continuing"
+          node tools/generate-etf-coverage-pages.js --write || echo "[tech-intel] ETF coverage dashboard degraded — continuing"
           node tools/generate-entity-research-pages.js --write || echo "[tech-intel] entity research pages degraded — continuing"
           # Pages last, so every page embeds the freshest current + historical state.
           node tools/generate-sector-pages.js --write || echo "[tech-intel] sector pages degraded — continuing"
@@ -243,6 +248,12 @@ jobs:
           npm run check:etf-research
           npm run check:etf-map
           npm run check:etf-discovery
+          # Phase 215 — ETF provider coverage activation validators.
+          npm run check:etf-provider-audit
+          npm run check:etf-data-quality
+          npm run check:etf-coverage
+          npm run check:etf-activation
+          npm run check:etf-provider-integrity
           npm run check:visual-composition
           npm run check:tactical-context
           npm run check:chart-intelligence
@@ -337,13 +348,16 @@ jobs:
               node tools/build-entity-research.js --write || echo "[tech-intel] entity research regen degraded"
               node tools/build-change-intelligence.js --write || echo "[tech-intel] change intelligence regen degraded"
               node tools/build-etf-charts.js --fetch --write || node tools/build-etf-charts.js --write || echo "[tech-intel] ETF chart regen degraded"
+              node tools/build-etf-provider-audit.js --write || echo "[tech-intel] ETF provider audit regen degraded"
               node tools/build-etf-intelligence.js --write || echo "[tech-intel] ETF intelligence regen degraded"
               node tools/build-etf-rankings.js --write || echo "[tech-intel] ETF rankings regen degraded"
               node tools/build-etf-history.js --write || echo "[tech-intel] ETF history regen degraded"
+              node tools/build-etf-data-quality.js --write || echo "[tech-intel] ETF data quality regen degraded"
               node tools/build-etf-map.js --write || echo "[tech-intel] ETF map regen degraded"
               node tools/generate-etf-research-pages.js --write || echo "[tech-intel] ETF research pages regen degraded"
               node tools/generate-etf-map-pages.js --write || echo "[tech-intel] ETF map pages regen degraded"
               node tools/generate-etf-discovery-pages.js --write || echo "[tech-intel] ETF discovery pages regen degraded"
+              node tools/generate-etf-coverage-pages.js --write || echo "[tech-intel] ETF coverage dashboard regen degraded"
               node tools/generate-entity-research-pages.js --write || echo "[tech-intel] entity research pages regen degraded"
               node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages regen degraded"
               node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
@@ -365,6 +379,11 @@ jobs:
               npm run check:etf-research
               npm run check:etf-map
               npm run check:etf-discovery
+              npm run check:etf-provider-audit
+              npm run check:etf-data-quality
+              npm run check:etf-coverage
+              npm run check:etf-activation
+              npm run check:etf-provider-integrity
               stage_intended
               git -c core.editor=true rebase --continue || git rebase --abort
             fi
