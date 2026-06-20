@@ -48,6 +48,7 @@ const core = [
   .concat(entityResearchDirs(""))
   .concat(rankingDirs(""))
   .concat(existsDir("etfs") ? ["etfs/"] : [])
+  .concat(existsDir("etfs/coverage") ? ["etfs/coverage/"] : [])
   .concat(existsDir("markets") ? ["markets/"] : [])
   .concat(marketAssetDirs(""))
   .concat(existsDir("sectors") ? ["sectors/"] : [])
@@ -97,7 +98,7 @@ console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} com
 
 function arUrls() {
   const out = ["ar/"];
-  for (const rel of ["stocks.html", "etfs.html", "etfs/", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
+  for (const rel of ["stocks.html", "etfs.html", "etfs/", "etfs/coverage/", "ai-stock-screener.html", "rankings.html", "insights/", "briefs/", "economic-calendar/", "market-news/", "market-structure/", "market-terminal/", "intelligence/", "market-dashboard/", "macro-dashboard/", "etf-dashboard/", "articles/", "methodology.html", "market-data-status.html"]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
   for (const rel of marketRegimeDirs("ar/")) out.push(rel);

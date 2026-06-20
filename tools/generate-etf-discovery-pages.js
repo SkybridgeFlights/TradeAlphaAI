@@ -104,6 +104,7 @@ function page(ar) {
 ${card(t('ETF analysis', 'تحليل الصناديق'), t('Legacy ETF analyzer', 'محلل الصناديق القائم'), t('The existing static ETF analysis and screening surface remains available.', 'يبقى سطح التحليل والفرز الثابت لصناديق المؤشرات متاحا.'), ar ? '/ar/etfs.html' : '/etfs.html')}
 ${card(t('ETF research', 'أبحاث الصناديق'), t('ETF Research Network', 'شبكة أبحاث الصناديق'), t('Institutional ETF research pages for each covered ETF.', 'صفحات أبحاث مؤسسية لكل صندوق مشمول.'), ar ? '/ar/research/etfs/' : '/research/etfs/')}
 ${card(t('Visual map', 'خريطة مرئية'), t('ETF Map', 'خريطة الصناديق'), t('Visual ETF universe based on rankings and confirmation context.', 'عالم مرئي للصناديق بناء على الترتيب وسياق التأكيد.'), ar ? '/ar/market-map/etfs/' : '/market-map/etfs/')}
+${card(t('Coverage', 'التغطية'), t('ETF Coverage', 'تغطية الصناديق'), t('Provider status, availability and quality distribution.', 'حالة المزود والتوفر وتوزيع الجودة.'), ar ? '/ar/etfs/coverage/' : '/etfs/coverage/')}
         </div></section>
       <section class="market-section" id="etf-universe-list"><div class="market-section-head"><span class="eyebrow">${esc(t('ETF universe', 'عالم الصناديق'))}</span><h2>${esc(t('Research coverage', 'تغطية الأبحاث'))}</h2></div><div class="market-grid three">
 ${cards}
