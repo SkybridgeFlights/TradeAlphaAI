@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-20T12:36:21.484Z",
+  "source_layer": "alert-dispatch",
+  "contracts_version": "1.0.0",
+  "mode": "contract",
+  "dispatch_enabled": false,
+  "primary_class": "regime_change",
+  "allowed_channels": [
+    "telegram",
+    "email",
+    "in_app"
+  ],
+  "classes_with_dispatch": [
+    "regime_change"
+  ],
+  "channels": {
+    "telegram": {
+      "enabled": false,
+      "path": ".github/workflows/distribution-brain.yml (existing controlled path)",
+      "gate_en": "URL-200-gated. ENABLE_TELEGRAM_PUBLISH must be exactly \"true\" AND TELEGRAM_* secrets must be present. The dispatch layer NEVER bypasses these gates.",
+      "gate_ar": "محكوم بشرط URL=200. يجب أن يكون ENABLE_TELEGRAM_PUBLISH بالضبط \"true\" وأن تكون أسرار TELEGRAM_* موجودة. لا تتجاوز طبقة الإرسال هذه الشروط أبداً.",
+      "rate_limit_per_account": "1 message per regime transition per account"
+    },
+    "email": {
+      "enabled": false,
+      "path": "Reserved for future provider (e.g. Resend via Vercel Marketplace)",
+      "env_vars_needed": [
+        "EMAIL_PROVIDER_API_KEY",
+        "EMAIL_FROM_ADDRESS"
+      ],
+      "rate_limit_per_account": "1 message per regime transition per account"
+    },
+    "in_app": {
+      "enabled": false,
+      "path": "/account/alerts/inbox/ (built by Phase 224)",
+      "rate_limit_per_account": "no rate limit (in_app inbox is pull, not push)"
+    }
+  },
+  "classes": {
+    "regime_change": {
+      "source": "data/intelligence/change-events.json (filtered to entity_type=regime)",
+      "trigger_en": "A regime_shift event with confidence=high is emitted by build-change-events.",
+      "trigger_ar": "إصدار حدث regime_shift بثقة عالية من build-change-events.",
+      "min_confidence": "high",
+      "throttle": {
+        "per_account_per_day": 1,
+        "per_account_per_week": 3,
+        "global_cooldown_minutes": 60
+      },
+      "payload_shape": {
+        "alert_id": "sha256(class|account_id|event_id|date) — 16-char short id",
+        "class": "regime_change",
+        "account_id": "__PLACEHOLDER_account_id__",
+        "event_id": "__PLACEHOLDER_event_id__",
+        "from_state": "string",
+        "to_state": "string",
+        "confidence": "high",
+        "generated_at": "iso8601",
+        "href": "/changes/regime/"
+      },
+      "sample_event_id": "a1602e3198a62b25",
+      "sample_evidence": [
+        "regime transitioned risk-off → growth_momentum on 2026-06-18",
+        "market_regime=growth_momentum"
+      ]
+    }
+  },
+  "governance": {
+    "no_signals": true,
+    "no_forecasts": true,
+    "no_price_targets": true,
+    "no_dispatch_in_contract_phase": true,
+    "url_200_gated": true,
+    "opt_in_only": true,
+    "respects_existing_telegram_gates": true,
+    "no_fabricated_alerts": true
+  },
+  "integration_points": {
+    "alert_contracts": "data/intelligence/alert-contracts.json",
+    "change_events": "data/intelligence/change-events.json",
+    "personal_state": "data/intelligence/personal-state-contracts.json",
+    "account_identity": "data/intelligence/account-identity.json"
+  },
+  "attribution": {
+    "sources": [
+      "data/intelligence/alert-contracts.json",
+      "data/intelligence/change-events.json",
+      "tools/build-alert-dispatch.js"
+    ],
+    "note": "Alert dispatch CONTRACT for regime_change only. dispatch_enabled=false; no message is ever sent. The existing controlled Telegram pipeline is not touched."
+  }
+}
