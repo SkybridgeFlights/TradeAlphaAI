@@ -135,7 +135,14 @@ function englishLinks() {
         ['/research/assets/', 'Assets Research'],
         ['/research/sectors/', 'Sectors Research'],
         ['/research/equities/', 'Equities Research'],
-        ['/research/history/', 'Research History']
+        ['/research/history/', 'Research History'],
+        ['/changes/', 'Changes Hub'],
+        ['/changes/assets/', 'Asset Changes'],
+        ['/changes/sectors/', 'Sector Changes'],
+        ['/changes/equities/', 'Equity Changes'],
+        ['/changes/etfs/', 'ETF Changes'],
+        ['/changes/regime/', 'Regime Changes'],
+        ['/changes/history/', 'Change Timeline']
       ]
     },
     { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
@@ -193,7 +200,14 @@ function arabicLinks() {
         ['/ar/research/assets/', 'أبحاث الأصول'],
         ['/ar/research/sectors/', 'أبحاث القطاعات'],
         ['/ar/research/equities/', 'أبحاث الأسهم'],
-        ['/ar/research/history/', 'سجل الأبحاث']
+        ['/ar/research/history/', 'سجل الأبحاث'],
+        ['/ar/changes/', 'مركز التغيّرات'],
+        ['/ar/changes/assets/', 'تغيّرات الأصول'],
+        ['/ar/changes/sectors/', 'تغيّرات القطاعات'],
+        ['/ar/changes/equities/', 'تغيّرات الأسهم'],
+        ['/ar/changes/etfs/', 'تغيّرات الصناديق'],
+        ['/ar/changes/regime/', 'تحوّلات النظام'],
+        ['/ar/changes/history/', 'الجدول الزمني للتغيّرات']
       ]
     },
     { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },
