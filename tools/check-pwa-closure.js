@@ -91,10 +91,18 @@ function checkClosure() {
   const pres = readJson(J('personalized-research.json'), {});
   const billing = readJson(J('billing-contracts.json'), {});
   const copilot = readJson(J('copilot-contracts.json'), {});
-  if (af.auth && af.auth.enabled !== false) fails.push('account-foundation.auth.enabled must be false');
+  // Mode-aware auth — flips with the foundation's mode. Hosted mode is a
+  // legitimate, validator-approved live state. user_database / billing /
+  // dispatch / etc. remain disabled until their own activation phases.
+  const authMode = (af.auth && af.auth.mode) || 'contract';
+  if (authMode === 'contract' && af.auth && af.auth.enabled !== false) fails.push('contract mode: account-foundation.auth.enabled must be false');
+  if (authMode === 'hosted' && af.auth && af.auth.enabled !== true) fails.push('hosted mode: account-foundation.auth.enabled must be true');
   if (af.billing && af.billing.enabled !== false) fails.push('account-foundation.billing.enabled must be false');
   if (af.user_database && af.user_database.enabled !== false) fails.push('account-foundation.user_database.enabled must be false');
-  if (auth.enabled !== false) fails.push('auth-foundation.enabled must be false');
+  if (authMode === 'contract' && auth.enabled !== false) fails.push('contract mode: auth-foundation.enabled must be false');
+  if (authMode === 'hosted' && auth.enabled !== true) fails.push('hosted mode: auth-foundation.enabled must be true');
+  // The two foundations must AGREE on mode — drift is a bug.
+  if (auth.mode !== authMode) fails.push(`mode drift: account-foundation.auth.mode=${authMode} vs auth-foundation.mode=${auth.mode}`);
   if (ident.accounts_count !== 0) fails.push('account-identity.accounts_count must be 0');
   if (personal.write_enabled !== false) fails.push('personal-state.write_enabled must be false');
   if (dispatch.dispatch_enabled !== false) fails.push('alert-dispatch.dispatch_enabled must be false');
@@ -106,7 +114,11 @@ function checkClosure() {
   // catches drift in any single contract.
   const govPairs = [
     ['account-foundation', af.governance, ['no_signals', 'no_forecasts', 'no_price_targets', 'no_user_state_fabrication', 'contracts_only', 'no_passwords_in_repo', 'no_session_tokens_in_repo']],
-    ['auth-foundation', auth.governance, ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only', 'contract_only']],
+    // auth-foundation contract_only flag is mode-dependent — required in
+    // contract mode, forbidden in hosted mode. Other 4 flags survive both.
+    ['auth-foundation', auth.governance, authMode === 'contract'
+      ? ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only', 'contract_only']
+      : ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only']],
     ['personal-state-contracts', personal.governance, ['no_real_account_ids_in_repo', 'no_email_addresses_in_repo', 'no_session_tokens_in_repo', 'gitignored_accounts_dir', 'validator_enforced_writes']],
     ['alert-dispatch', dispatch.governance, ['no_signals', 'no_forecasts', 'no_price_targets', 'no_dispatch_in_contract_phase', 'url_200_gated', 'opt_in_only', 'respects_existing_telegram_gates', 'no_fabricated_alerts']],
     ['personalized-research', pres.governance, ['no_signals', 'no_forecasts', 'no_price_targets', 'no_fabricated_edges', 'registry_bounded', 'evidence_backed_only']],

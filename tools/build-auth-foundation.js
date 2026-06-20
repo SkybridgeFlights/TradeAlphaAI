@@ -42,8 +42,31 @@ function readJson(p, f = null) {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; }
 }
 
+// Read the build-time Clerk config (written by tools/inject-clerk-config.js).
+// When js/clerk-config.js declares mode='hosted' AND a publishable key, the
+// auth foundation flips to mode='hosted' + enabled=true. Otherwise stays in
+// contract phase. This keeps the foundation honest — it never claims hosted
+// when no key is wired.
+function readClerkConfig() {
+  const cfgPath = path.join(ROOT, 'js', 'clerk-config.js');
+  try {
+    const src = fs.readFileSync(cfgPath, 'utf8');
+    const m = src.match(/window\.__CLERK_CONFIG__\s*=\s*(\{[\s\S]*?\});/);
+    if (!m) return null;
+    const parsed = JSON.parse(m[1]);
+    return parsed;
+  } catch { return null; }
+}
+
 // ─── CP1 — auth-foundation.json ───────────────────────────────────────────
 function buildAuthFoundation(stamp) {
+  const clerk = readClerkConfig();
+  // Live flip: when js/clerk-config.js declares mode='hosted' with a real
+  // publishable key, the foundation reports hosted + enabled. Otherwise we
+  // stay in the original contract phase.
+  const live = clerk && clerk.mode === 'hosted' && /^pk_(test|live)_/.test(clerk.publishable_key || '');
+  const mode = live ? 'hosted' : 'contract';
+  const enabled = !!live;
   const primary = {
     id: 'clerk',
     label_en: 'Clerk',
@@ -55,9 +78,15 @@ function buildAuthFoundation(stamp) {
     // will read. Values must NEVER appear here. The validator enforces that
     // every var has a string name and no string-looking key value.
     env_vars: [
-      { name: 'CLERK_PUBLISHABLE_KEY', required: true, surface: 'client', value_present: false },
-      { name: 'CLERK_SECRET_KEY', required: true, surface: 'server', value_present: false },
-      { name: 'CLERK_INSTANCE_URL', required: true, surface: 'both', value_present: false },
+      // value_present reports whether Vercel actually injected the key at
+      // build time — true only when js/clerk-config.js declares a real
+      // publishable key. The SECRET key is always reported as
+      // value_present=true in hosted mode (Vercel injects it server-side),
+      // false in contract. INSTANCE_URL likewise. The optional URLs default
+      // to false because they are not required.
+      { name: 'CLERK_PUBLISHABLE_KEY', required: true, surface: 'client', value_present: live },
+      { name: 'CLERK_SECRET_KEY', required: true, surface: 'server', value_present: live },
+      { name: 'CLERK_INSTANCE_URL', required: true, surface: 'both', value_present: !!(clerk && clerk.instance_url) },
       { name: 'CLERK_SIGN_IN_URL', required: false, surface: 'client', value_present: false },
       { name: 'CLERK_SIGN_UP_URL', required: false, surface: 'client', value_present: false },
     ],
@@ -77,20 +106,27 @@ function buildAuthFoundation(stamp) {
     generated_at: stamp,
     source_layer: 'auth-foundation',
     contracts_version: '1.0.0',
-    mode: 'contract',
-    enabled: false,
+    mode,
+    enabled,
+    live_detected: live,
+    instance_url_present: !!(clerk && clerk.instance_url),
+    publishable_key_present: live,
     allowed_providers: ALLOWED_PROVIDERS,
     allowed_flows: ALLOWED_FLOWS,
     allowed_modes: ALLOWED_MODES,
     primary_provider: primary.id,
     providers: [primary],
-    governance: {
-      no_passwords_in_repo: true,
-      no_session_tokens_in_repo: true,
-      no_user_state_fabrication: true,
-      hosted_ui_only: true,
-      contract_only: true,
-    },
+    governance: Object.assign(
+      {
+        no_passwords_in_repo: true,
+        no_session_tokens_in_repo: true,
+        no_user_state_fabrication: true,
+        hosted_ui_only: true,
+      },
+      // contract_only flag only present in contract mode — hosted mode
+      // legitimately is NOT contract-only.
+      mode === 'contract' ? { contract_only: true } : { hosted_live: true }
+    ),
     attribution: {
       sources: ['tools/build-auth-foundation.js'],
       note: 'Authentication foundation contract. Declares the first auth provider (Clerk via hosted UI) without installing an SDK or storing credentials. The future live wiring sets mode to hosted then live; until then sign-in flows render informational shells only.',

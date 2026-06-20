@@ -80,7 +80,7 @@ ${css.map((href) => `  <link rel="stylesheet" href="${href}" />`).join('\n')}
 </head>`;
 }
 
-function shell(ar, surface, body, relPath) {
+function shell(ar, surface, body, relPath, mode) {
   const lang = ar ? 'ar' : 'en';
   const header = renderGlobalHeader({
     locale: lang,
@@ -88,12 +88,25 @@ function shell(ar, surface, body, relPath) {
     arabicHref: `/ar/${relPath}`,
     englishHref: `/${relPath}`,
   });
+  const hosted = mode === 'hosted';
+  // Clerk bootstrap is included on every auth page ONLY when the auth
+  // mode is hosted. In contract mode the page stays a pure shell.
+  const clerkScripts = hosted
+    ? '\n  <script src="/js/clerk-config.js"></script>\n  <script src="/js/clerk-bootstrap.js" defer></script>'
+    : '';
+  const disclaimer = hosted
+    ? t(ar,
+        'Authentication is LIVE via the hosted Clerk UI. Clerk holds the session; this site reads only the granted scopes (account.read + preferences.read by default). The PUBLIC publishable key is embedded by design; the SECRET key never leaves Vercel server env. Not investment advice.',
+        'المصادقة مفعّلة عبر واجهة Clerk المستضافة. يحتفظ Clerk بالجلسة؛ يقرأ هذا الموقع الصلاحيات الممنوحة فقط (account.read + preferences.read افتراضياً). المفتاح العام (publishable) مضمَّن بحكم التصميم؛ المفتاح السرّي لا يغادر بيئة Vercel أبداً. ليست نصيحة استثمارية.')
+    : t(ar,
+        'Authentication is foundation-only in this phase — no provider SDK is installed, no passwords or session tokens are stored in the repository, and the surface is informational. Future activation will redirect to the hosted provider UI. Not investment advice.',
+        'المصادقة في مرحلة التأسيس فقط ضمن هذه المرحلة — لا توجد SDK مُثبَّتة، ولا تُخزَّن كلمات مرور أو رموز جلسة في المستودع، والصفحة تعريفية فقط. التفعيل المستقبلي سيعيد التوجيه إلى واجهة المزوّد المستضافة. ليست نصيحة استثمارية.');
   return `<!doctype html>
 <html lang="${lang}"${ar ? ' dir="rtl"' : ''}>
 ${head(ar, surface, relPath)}
 <body>
 ${header}
-  <main class="market-shell" data-account-surface="${esc(surface.rel)}">
+  <main class="market-shell" data-account-surface="${esc(surface.rel)}" data-auth-mode="${esc(mode || 'contract')}">
     <section class="market-hero">
       <div class="market-hero-copy">
         <span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span>
@@ -103,10 +116,10 @@ ${header}
     </section>
 ${body}
     <section class="market-section" id="auth-disclaimer">
-      <div class="market-panel"><p class="market-copy">${esc(t(ar, 'Authentication is foundation-only in this phase — no provider SDK is installed, no passwords or session tokens are stored in the repository, and the surface is informational. Future activation will redirect to the hosted provider UI. Not investment advice.', 'المصادقة في مرحلة التأسيس فقط ضمن هذه المرحلة — لا توجد SDK مُثبَّتة، ولا تُخزَّن كلمات مرور أو رموز جلسة في المستودع، والصفحة تعريفية فقط. التفعيل المستقبلي سيعيد التوجيه إلى واجهة المزوّد المستضافة. ليست نصيحة استثمارية.'))}</p></div>
+      <div class="market-panel"><p class="market-copy">${esc(disclaimer)}</p></div>
     </section>
   </main>
-  ${globalHeaderScripts()}
+  ${globalHeaderScripts()}${clerkScripts}
 </body>
 </html>
 `;
@@ -118,10 +131,25 @@ function card(ar, kicker, title, copy, href) {
   return `          <article class="market-card"><span class="market-card-kicker">${esc(kicker)}</span><h3>${titleHtml}</h3>${copy ? `<p class="market-copy">${esc(copy)}</p>` : ''}</article>`;
 }
 
+function clerkMountSection(ar, kind, titleEn, titleAr) {
+  // Renders a Clerk mount container with status pill + unconfigured
+  // fallback. The bootstrap script unhides the mount node once Clerk
+  // loads; until then a status message appears in its place.
+  return `      <section class="market-section" id="auth-mount">
+        <div class="market-section-head"><span class="eyebrow">${esc(ar ? titleAr : titleEn)}</span><h2>${esc(ar ? titleAr : titleEn)}</h2></div>
+        <div class="market-panel">
+          <div data-clerk-status="loading" style="margin-bottom:12px;font-size:13px;color:#7a808a">${esc(ar ? 'يتم تحميل واجهة المصادقة…' : 'Loading authentication UI…')}</div>
+          <div data-clerk-mount="${esc(kind)}" hidden></div>
+          <noscript><p class="market-copy">${esc(ar ? 'يتطلب تسجيل الدخول JavaScript مُفعَّلاً.' : 'Sign-in requires JavaScript enabled.')}</p></noscript>
+        </div></section>`;
+}
+
 function signInBody(ar, data) {
   const provider = (data.auth && data.auth.providers && data.auth.providers[0]) || { id: 'clerk', label_en: 'Clerk', label_ar: 'Clerk' };
   const mode = (data.auth && data.auth.mode) || 'contract';
-  return `      <section class="market-section" id="auth-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Sign-in status', 'حالة تسجيل الدخول'))}</span><h2>${esc(t(ar, 'Foundation phase', 'مرحلة التأسيس'))}</h2></div>
+  const mountSection = mode === 'hosted' ? clerkMountSection(ar, 'sign-in', 'Sign in', 'تسجيل الدخول') : '';
+  return `${mountSection}
+      <section class="market-section" id="auth-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Sign-in status', 'حالة تسجيل الدخول'))}</span><h2>${esc(t(ar, mode === 'hosted' ? 'Live via Clerk hosted UI' : 'Foundation phase', mode === 'hosted' ? 'مفعّلة عبر واجهة Clerk المستضافة' : 'مرحلة التأسيس'))}</h2></div>
         <div class="market-grid three">
           <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Mode', 'الوضع'))}</span><h3>${esc(mode)}</h3><p class="market-copy">${esc(t(ar, 'No live provider is wired yet — sign-in returns to this informational page.', 'لم يُربط مزوّد حيّ بعد — يعود تسجيل الدخول إلى هذه الصفحة التعريفية.'))}</p></article>
           <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Provider', 'المزوّد'))}</span><h3>${esc(ar ? provider.label_ar : provider.label_en)}</h3><p class="market-copy">${esc(t(ar, 'Hosted UI flow planned for the live wiring.', 'تدفّق واجهة مستضافة مخطّط للربط الحيّ.'))}</p></article>
@@ -139,7 +167,9 @@ ${card(ar, t(ar, 'Account overview', 'نظرة عامة على الحساب'), t
 
 function signUpBody(ar, data) {
   const mode = (data.auth && data.auth.mode) || 'contract';
-  return `      <section class="market-section" id="auth-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Sign-up status', 'حالة إنشاء الحساب'))}</span><h2>${esc(t(ar, 'Foundation phase', 'مرحلة التأسيس'))}</h2></div>
+  const mountSection = mode === 'hosted' ? clerkMountSection(ar, 'sign-up', 'Create your account', 'أنشئ حسابك') : '';
+  return `${mountSection}
+      <section class="market-section" id="auth-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Sign-up status', 'حالة إنشاء الحساب'))}</span><h2>${esc(t(ar, mode === 'hosted' ? 'Live via Clerk hosted UI' : 'Foundation phase', mode === 'hosted' ? 'مفعّلة عبر واجهة Clerk المستضافة' : 'مرحلة التأسيس'))}</h2></div>
         <div class="market-panel"><p class="market-copy">${esc(t(ar, 'Account creation runs through the same hosted-UI flow as sign-in. mode=' + mode + '. No personal data is collected here today.', 'يمرّ إنشاء الحساب بنفس تدفّق الواجهة المستضافة كتسجيل الدخول. mode=' + mode + '. لا تُجمع بيانات شخصية هنا اليوم.'))}</p></div></section>
       <section class="market-section" id="auth-fields"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Future shape', 'الهيكل المستقبلي'))}</span><h2>${esc(t(ar, 'Account identity fields', 'حقول هوية الحساب'))}</h2></div>
         <div class="market-grid three">
@@ -157,8 +187,19 @@ ${card(ar, t(ar, 'Account overview', 'نظرة عامة'), t(ar, 'Foundation sta
 
 function verifyBody(ar, data) {
   const endpoint = (data.auth && data.auth.providers && data.auth.providers[0] && data.auth.providers[0].endpoints) || {};
-  return `      <section class="market-section" id="auth-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Verify status', 'حالة التحقق'))}</span><h2>${esc(t(ar, 'Callback endpoint contract', 'عقد نقطة الاستدعاء'))}</h2></div>
-        <div class="market-panel"><p class="market-copy">${esc(t(ar, 'When live wiring activates, the hosted UI redirects here after sign-in or sign-up. Today this page is informational and contains no callback-handling logic.', 'عند تفعيل الربط الحيّ، تعيد الواجهة المستضافة التوجيه إلى هنا بعد تسجيل الدخول أو إنشاء الحساب. اليوم هذه الصفحة تعريفية ولا تتضمّن أي منطق معالجة استدعاء.'))}</p></div></section>
+  const mode = (data.auth && data.auth.mode) || 'contract';
+  const callbackHook = mode === 'hosted'
+    ? `      <section class="market-section" id="auth-callback">
+        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Callback', 'الاستدعاء'))}</span><h2>${esc(t(ar, 'Processing sign-in', 'معالجة تسجيل الدخول'))}</h2></div>
+        <div class="market-panel">
+          <div data-clerk-status="loading" style="margin-bottom:8px;font-size:13px;color:#7a808a">${esc(t(ar, 'Verifying session…', 'يتم التحقق من الجلسة…'))}</div>
+          <p class="market-copy" data-clerk-verify-callback data-not-signed-in-text="${esc(t(ar, 'Not signed in. Open the sign-in page to start.', 'لم يتم تسجيل الدخول. افتح صفحة تسجيل الدخول للبدء.'))}">${esc(t(ar, 'Verifying…', 'يتم التحقق…'))}</p>
+          <p class="market-copy"><a href="${esc((ar ? '/ar' : '') + '/account/sign-in/')}">${esc(t(ar, 'Sign in', 'تسجيل الدخول'))}</a> · <a href="${esc((ar ? '/ar' : '') + '/account/profile/')}">${esc(t(ar, 'Open profile', 'افتح الملف الشخصي'))}</a></p>
+        </div></section>`
+    : '';
+  return `${callbackHook}
+      <section class="market-section" id="auth-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Verify status', 'حالة التحقق'))}</span><h2>${esc(t(ar, mode === 'hosted' ? 'Live callback endpoint' : 'Callback endpoint contract', mode === 'hosted' ? 'نقطة استدعاء مفعّلة' : 'عقد نقطة الاستدعاء'))}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t(ar, mode === 'hosted' ? 'The hosted Clerk UI redirects here after sign-in or sign-up. The Clerk SDK reads the URL params, creates the session, and the callback block above forwards you to /account/profile/.' : 'When live wiring activates, the hosted UI redirects here after sign-in or sign-up. Today this page is informational and contains no callback-handling logic.', mode === 'hosted' ? 'تعيد واجهة Clerk المستضافة التوجيه إلى هنا بعد تسجيل الدخول أو إنشاء الحساب. تقرأ Clerk SDK معاملات الرابط وتُنشئ الجلسة ويعيد البلوك أعلاه التوجيه إلى /account/profile/.' : 'عند تفعيل الربط الحيّ، تعيد الواجهة المستضافة التوجيه إلى هنا بعد تسجيل الدخول أو إنشاء الحساب. اليوم هذه الصفحة تعريفية ولا تتضمّن أي منطق معالجة استدعاء.'))}</p></div></section>
       <section class="market-section" id="auth-endpoints"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Endpoints', 'النقاط'))}</span><h2>${esc(t(ar, 'Local + hosted endpoint registry', 'سجلّ النقاط المحلية + المستضافة'))}</h2></div>
         <div class="market-panel"><table class="market-table" style="width:100%;border-collapse:collapse"><thead><tr><th>${esc(t(ar, 'Endpoint', 'النقطة'))}</th><th>${esc(t(ar, 'URL', 'العنوان'))}</th></tr></thead><tbody>
 ${Object.entries(endpoint).map(([k, v]) => `<tr><td>${esc(k)}</td><td><code>${esc(v)}</code></td></tr>`).join('\n')}
@@ -167,8 +208,18 @@ ${Object.entries(endpoint).map(([k, v]) => `<tr><td>${esc(k)}</td><td><code>${es
 
 function profileBody(ar, data) {
   const fields = (data.identity && data.identity.fields) || {};
-  return `      <section class="market-section" id="profile-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Profile status', 'حالة الملف الشخصي'))}</span><h2>${esc(t(ar, 'Foundation phase', 'مرحلة التأسيس'))}</h2></div>
-        <div class="market-panel"><p class="market-copy">${esc(t(ar, 'No live account exists. The profile surface describes the fields a future account will carry; values are placeholders until the provider issues real session data.', 'لا يوجد حساب حيّ. يصف سطح الملف الشخصي الحقول التي سيحملها الحساب المستقبلي؛ والقيم نوائب حتى يصدر المزوّد بيانات جلسة حقيقية.'))}</p></div></section>
+  const mode = (data.auth && data.auth.mode) || 'contract';
+  const mountSection = mode === 'hosted' ? `      <section class="market-section" id="profile-mount">
+        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Live profile', 'الملف الشخصي الحيّ'))}</span><h2>${esc(t(ar, 'Your Clerk profile', 'ملفك الشخصي عبر Clerk'))}</h2></div>
+        <div class="market-panel">
+          <div data-clerk-status="loading" style="margin-bottom:12px;font-size:13px;color:#7a808a">${esc(t(ar, 'Loading…', 'يتم التحميل…'))}</div>
+          <div data-clerk-mount="user-profile" hidden></div>
+          <div data-clerk-mount="user-button" hidden style="margin-top:12px"></div>
+          <p class="market-copy" data-not-signed-in-message hidden>${esc(t(ar, 'Sign in to view your live profile.', 'سجّل الدخول لعرض ملفك الحيّ.'))} <a href="${esc((ar ? '/ar' : '') + '/account/sign-in/')}">${esc(t(ar, 'Sign in', 'تسجيل الدخول'))}</a></p>
+        </div></section>` : '';
+  return `${mountSection}
+      <section class="market-section" id="profile-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Profile status', 'حالة الملف الشخصي'))}</span><h2>${esc(t(ar, mode === 'hosted' ? 'Live via Clerk' : 'Foundation phase', mode === 'hosted' ? 'مفعّل عبر Clerk' : 'مرحلة التأسيس'))}</h2></div>
+        <div class="market-panel"><p class="market-copy">${esc(t(ar, mode === 'hosted' ? 'Your live Clerk profile renders above when signed in. The field schema below documents which fields the platform reads (always: account_id + primary_email_hash + locale + scopes + tier; never: raw email or session tokens).' : 'No live account exists. The profile surface describes the fields a future account will carry; values are placeholders until the provider issues real session data.', mode === 'hosted' ? 'يظهر ملفك الحيّ عبر Clerk أعلاه عند تسجيل الدخول. يوثّق مخطط الحقول أدناه الحقول التي تقرأها المنصّة (دائماً: account_id + primary_email_hash + locale + scopes + tier؛ أبداً: البريد الخام أو رموز الجلسة).' : 'لا يوجد حساب حيّ. يصف سطح الملف الشخصي الحقول التي سيحملها الحساب المستقبلي؛ والقيم نوائب حتى يصدر المزوّد بيانات جلسة حقيقية.'))}</p></div></section>
       <section class="market-section" id="profile-fields"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Field schema', 'مخطّط الحقول'))}</span><h2>${esc(t(ar, 'Account identity fields', 'حقول هوية الحساب'))}</h2></div>
         <div class="market-panel"><table class="market-table" style="width:100%;border-collapse:collapse"><thead><tr><th>${esc(t(ar, 'Field', 'الحقل'))}</th><th>${esc(t(ar, 'Type', 'النوع'))}</th><th>${esc(t(ar, 'Description', 'الوصف'))}</th></tr></thead><tbody>
 ${Object.entries(fields).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v.type || '')}</td><td>${esc(ar ? (v.note_ar || v.source || '') : (v.note_en || v.source || ''))}</td></tr>`).join('\n')}
@@ -206,7 +257,7 @@ function main() {
   let count = 0;
   for (const [key, surface] of Object.entries(SURFACES)) {
     for (const ar of [false, true]) {
-      const html = shell(ar, surface, bodyFor(key, ar, data), surface.rel);
+      const html = shell(ar, surface, bodyFor(key, ar, data), surface.rel, (data.auth && data.auth.mode) || 'contract');
       if (WRITE) {
         const out = path.join(ROOT, ar ? `ar/${surface.rel}` : surface.rel, 'index.html');
         fs.mkdirSync(path.dirname(out), { recursive: true });

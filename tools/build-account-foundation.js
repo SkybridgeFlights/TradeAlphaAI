@@ -241,6 +241,14 @@ function buildPersonalization(stamp) {
 // ─── CP1 — Account Foundation (umbrella manifest) ─────────────────────────
 function build() {
   const stamp = new Date().toISOString();
+  // Phase 220 activation — mirror auth-foundation's mode/enabled into the
+  // umbrella. When auth-foundation.json has not yet been rebuilt (e.g. first
+  // run), default to contract phase so the validator stays satisfied.
+  const af = (function () {
+    try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'intelligence', 'auth-foundation.json'), 'utf8')); } catch { return null; }
+  })();
+  const authMode = (af && af.mode) || 'contract';
+  const authEnabled = !!(af && af.enabled === true);
   const watchlistContracts = buildWatchlistContracts(stamp);
   const preferences = buildPreferences(stamp);
   const alertContracts = buildAlertContracts(stamp);
@@ -256,18 +264,22 @@ function build() {
     // means the contract is declared; future phases flip it to 'hosted' then
     // 'live'. providers list is populated from auth-foundation.json.
     auth: {
-      enabled: false,
-      mode: 'contract',
+      enabled: authEnabled,
+      mode: authMode,
       providers: ['clerk'],
       contract: 'data/intelligence/auth-foundation.json',
       identity_contract: 'data/intelligence/account-identity.json',
-      note_en: 'Authentication contract exists (Phase 220) but no live provider is wired. mode=contract.',
-      note_ar: 'عقد المصادقة موجود (Phase 220) لكن لم يُربط مزوّد حيّ. mode=contract.',
+      note_en: authMode === 'hosted'
+        ? 'Authentication is LIVE via Clerk hosted UI. The publishable key is injected at Vercel build time; the secret key never leaves Vercel env.'
+        : 'Authentication contract exists but no live provider is wired. mode=contract.',
+      note_ar: authMode === 'hosted'
+        ? 'المصادقة مفعّلة عبر واجهة Clerk المستضافة. يُحقن المفتاح العام عند بناء Vercel؛ ولا يغادر المفتاح السرّي بيئة Vercel أبداً.'
+        : 'عقد المصادقة موجود لكن لم يُربط مزوّد حيّ. mode=contract.',
     },
     user_database: { enabled: false, note_en: 'No user database; no per-user state is stored or fabricated.', note_ar: 'لا توجد قاعدة بيانات للمستخدمين؛ ولا يُخزَّن أو يُصطنع أي حالة لكل مستخدم.' },
     billing: { enabled: false, note_en: 'No payments, no subscriptions, no premium gating.', note_ar: 'لا توجد مدفوعات، ولا اشتراكات، ولا حواجز للوصول المميز.' },
     contracts: {
-      auth: { artifact: 'data/intelligence/auth-foundation.json', summary: { mode: 'contract', primary_provider: 'clerk', env_vars: 5 } },
+      auth: { artifact: 'data/intelligence/auth-foundation.json', summary: { mode: authMode, enabled: authEnabled, primary_provider: 'clerk', env_vars: 5 } },
       identity: { artifact: 'data/intelligence/account-identity.json', summary: { accounts: 0, scopes: 6 } },
       watchlists: { artifact: 'data/intelligence/watchlist-contracts.json', summary: { saved: watchlistContracts.saved_watchlists.count, personal: watchlistContracts.personal_watchlists.count } },
       preferences: { artifact: 'data/intelligence/preferences.json', summary: { defaults: Object.keys(preferences.defaults).length, overrides: preferences.overrides.count } },

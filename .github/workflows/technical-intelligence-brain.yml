@@ -157,6 +157,11 @@ jobs:
           # no billing, no recommendation engine, no live alert dispatch).
           # Phase 220 — Auth foundation + Account identity (contract phase
           # only: no SDK, no keys, hosted-UI flow declared but not active).
+          # Phase 220 activation — inject the Clerk publishable key from
+          # Vercel/GitHub env into js/clerk-config.js BEFORE the auth-
+          # foundation builder reads it, so the artifact flips to hosted
+          # mode when the key is present.
+          node tools/inject-clerk-config.js || echo "[tech-intel] clerk config inject degraded — continuing"
           node tools/build-auth-foundation.js --write || echo "[tech-intel] auth foundation degraded — continuing"
           node tools/build-personal-state.js --write || echo "[tech-intel] personal state degraded — continuing"
           node tools/build-alert-dispatch.js --write || echo "[tech-intel] alert dispatch degraded — continuing"

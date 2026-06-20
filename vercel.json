@@ -1,4 +1,5 @@
 {
+  "buildCommand": "node tools/inject-clerk-config.js",
   "functions": {
     "api/market-data.js": {
       "maxDuration": 10
@@ -13,6 +14,12 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
+      ]
+    },
+    {
+      "source": "/js/clerk-config.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
     }
   ]

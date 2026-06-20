@@ -58,12 +58,20 @@ function looksLikeSecret(text) {
 }
 
 // ─── check:auth-foundation ────────────────────────────────────────────────
+//
+// Mode-aware (stricter, never weaker). In `contract` mode the rules are
+// IDENTICAL to the original Phase 220 validator. In `hosted` mode some
+// rules INVERT — value_present must be true (the publishable key IS
+// wired), `contract_only` is replaced by `hosted_live` — but the secret
+// leakage scan + governance discipline remain.
 function checkAuthFoundation(a) {
   const fails = [];
   if (!a) return ['auth-foundation artifact missing'];
   if (a.source_layer !== 'auth-foundation') fails.push('source_layer mismatch');
-  if (a.mode !== 'contract') fails.push("mode must be 'contract' in this phase");
-  if (a.enabled !== false) fails.push('enabled must be false in this phase');
+  const mode = a.mode;
+  if (mode !== 'contract' && mode !== 'hosted') fails.push(`mode must be 'contract' or 'hosted' (got ${mode})`);
+  if (mode === 'contract' && a.enabled !== false) fails.push("contract mode: enabled must be false");
+  if (mode === 'hosted' && a.enabled !== true) fails.push("hosted mode: enabled must be true");
   // Allowed enums must match canonical sets (no silent provider drift).
   if (JSON.stringify((a.allowed_providers || []).slice().sort()) !== JSON.stringify(ALLOWED_PROVIDERS.slice().sort())) fails.push('allowed_providers drift');
   if (JSON.stringify((a.allowed_flows || []).slice().sort()) !== JSON.stringify(ALLOWED_FLOWS.slice().sort())) fails.push('allowed_flows drift');
@@ -77,18 +85,28 @@ function checkAuthFoundation(a) {
     if (!Array.isArray(p.env_vars) || p.env_vars.length === 0) fails.push(`provider ${p.id}: env_vars missing`);
     for (const v of p.env_vars || []) {
       if (!v.name || typeof v.name !== 'string') fails.push(`provider ${p.id}: env var missing name`);
-      // CRITICAL: env vars in the contract must NEVER carry a value. The
-      // contract advertises NAMES + presence flags only.
+      // CRITICAL: env vars in the contract must NEVER carry a value field
+      // — regardless of mode. The contract advertises NAMES + a presence
+      // flag only; the actual values live in Vercel env.
       if (Object.prototype.hasOwnProperty.call(v, 'value')) fails.push(`provider ${p.id}: env var ${v.name} must not carry a value field`);
-      if (v.value_present !== false) fails.push(`provider ${p.id}: env var ${v.name} value_present must be false in contract phase`);
+      // Mode-aware: in contract mode value_present is always false; in
+      // hosted mode REQUIRED env vars must report value_present=true (the
+      // proof that Vercel actually injected the key at build time).
+      if (mode === 'contract' && v.value_present !== false) fails.push(`provider ${p.id}: env var ${v.name} value_present must be false in contract mode`);
+      if (mode === 'hosted' && v.required === true && v.value_present !== true) fails.push(`provider ${p.id}: env var ${v.name} value_present must be true in hosted mode (Vercel must inject required keys)`);
     }
     if (!p.endpoints || !p.endpoints.sign_in_local || !p.endpoints.sign_up_local || !p.endpoints.verify_local || !p.endpoints.profile_local) fails.push(`provider ${p.id}: endpoints missing local set`);
   }
-  // Governance flags — all must be true.
-  for (const flag of ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only', 'contract_only']) {
+  // Governance flags — mode-aware. `contract_only` is required in contract
+  // mode and FORBIDDEN in hosted mode (it would lie). All other invariants
+  // (no_passwords_in_repo, no_session_tokens_in_repo, no_user_state_
+  // fabrication, hosted_ui_only) survive both modes.
+  for (const flag of ['no_passwords_in_repo', 'no_session_tokens_in_repo', 'no_user_state_fabrication', 'hosted_ui_only']) {
     if (!a.governance || a.governance[flag] !== true) fails.push(`governance.${flag} must be true`);
   }
-  // Secret leakage scan over the whole artifact.
+  if (mode === 'contract' && (!a.governance || a.governance.contract_only !== true)) fails.push('contract mode: governance.contract_only must be true');
+  if (mode === 'hosted' && a.governance && a.governance.contract_only === true) fails.push('hosted mode: governance.contract_only must NOT be true');
+  // Secret leakage scan over the whole artifact (mode-independent).
   const text = JSON.stringify(a);
   const sec = looksLikeSecret(text);
   if (sec) fails.push(`secret-like content matched ${sec}`);
@@ -132,9 +150,18 @@ function checkAccountIdentity(i) {
 }
 
 // ─── check:auth-pages ─────────────────────────────────────────────────────
+// Mode-aware. In contract mode, every original Phase 220 rule applies
+// unchanged. In hosted mode, the <form> rule flips (Clerk mounts a real
+// form into the data-clerk-mount container) and the Clerk SDK rule flips
+// (the bootstrap MUST be loaded). New hosted-only rules require: the
+// page must declare data-auth-mode="hosted", must reference
+// /js/clerk-config.js + /js/clerk-bootstrap.js, must NOT inline any
+// secret-looking content (the secret-leak scan stays in both modes).
 function checkAuthPages() {
   const fails = [];
   const sectionsByPath = {};
+  const af = readJson(J('auth-foundation.json'), {});
+  const mode = af.mode || 'contract';
   for (const [loc, ...dirs] of AUTH_PAGES) {
     for (const dir of dirs) {
       const file = path.join(ROOT, dir, 'index.html');
@@ -149,16 +176,42 @@ function checkAuthPages() {
       if (!html.includes('noindex')) fails.push(`${loc} ${dir}: missing noindex robots directive`);
       if (/\b(undefined|NaN)\b/.test(html)) fails.push(`${loc} ${dir}: leaks undefined/NaN`);
       if (html.includes('data/intelligence/') && html.includes('.json')) fails.push(`${loc} ${dir}: leaks raw artifact URL`);
-      // Foundation phase forbids <form> elements (no simulated live auth).
-      if (/<form[\s>]/i.test(html)) fails.push(`${loc} ${dir}: form element forbidden in foundation phase`);
-      // Forbid loading an actual Clerk SDK in the foundation phase.
-      if (/clerk[._-]?(js|browser|sdk)\b/i.test(html) || /<script[^>]+clerk/i.test(html)) fails.push(`${loc} ${dir}: Clerk SDK must not be loaded in contract phase`);
+      // Mode-aware <form> + Clerk SDK rules.
+      if (mode === 'contract') {
+        // Foundation phase forbids <form> elements (no simulated live auth).
+        if (/<form[\s>]/i.test(html)) fails.push(`${loc} ${dir}: form element forbidden in contract mode`);
+        // Forbid loading an actual Clerk SDK in the foundation phase.
+        if (/clerk[._-]?(js|browser|sdk)\b/i.test(html) || /<script[^>]+clerk/i.test(html)) fails.push(`${loc} ${dir}: Clerk SDK must not be loaded in contract mode`);
+      } else if (mode === 'hosted') {
+        // Hosted mode: the page MUST advertise hosted mode AND load both the
+        // injected config + bootstrap. Clerk's own mountSignIn() injects its
+        // own <form> at runtime (which is the legitimate auth form — not a
+        // fake one). We do NOT require <form> in the static HTML; Clerk
+        // injects it after load.
+        if (!html.includes('data-auth-mode="hosted"')) fails.push(`${loc} ${dir}: hosted mode: missing data-auth-mode="hosted"`);
+        if (!html.includes('/js/clerk-config.js')) fails.push(`${loc} ${dir}: hosted mode: missing /js/clerk-config.js script`);
+        if (!html.includes('/js/clerk-bootstrap.js')) fails.push(`${loc} ${dir}: hosted mode: missing /js/clerk-bootstrap.js script`);
+        // Sign-in / sign-up / profile pages must include the Clerk mount
+        // container. Verify must include the callback hook.
+        const baseDir = dir.replace(/^ar\//, '');
+        if (baseDir === 'account/sign-in/' && !/data-clerk-mount="sign-in"/.test(html)) fails.push(`${loc} ${dir}: hosted mode: missing sign-in mount`);
+        if (baseDir === 'account/sign-up/' && !/data-clerk-mount="sign-up"/.test(html)) fails.push(`${loc} ${dir}: hosted mode: missing sign-up mount`);
+        if (baseDir === 'account/profile/' && !/data-clerk-mount="user-profile"/.test(html)) fails.push(`${loc} ${dir}: hosted mode: missing user-profile mount`);
+        if (baseDir === 'account/verify/' && !/data-clerk-verify-callback/.test(html)) fails.push(`${loc} ${dir}: hosted mode: missing verify callback hook`);
+      }
       // Secret-looking content scan.
       const sec = looksLikeSecret(html);
       if (sec) fails.push(`${loc} ${dir}: secret-like content matched ${sec}`);
       for (const re of FORBIDDEN_LANG) if (re.test(html)) fails.push(`${loc} ${dir}: forbidden language ${re}`);
       const baseDir = dir.replace(/^ar\//, '');
-      const required = REQUIRED_AUTH_SECTIONS[baseDir] || [];
+      const required = (REQUIRED_AUTH_SECTIONS[baseDir] || []).slice();
+      // Hosted-mode adds a mount section to sign-in/sign-up/profile +
+      // a callback hook section to verify.
+      if (mode === 'hosted') {
+        if (baseDir === 'account/sign-in/' || baseDir === 'account/sign-up/') required.push('auth-mount');
+        if (baseDir === 'account/verify/') required.push('auth-callback');
+        if (baseDir === 'account/profile/') required.push('profile-mount');
+      }
       for (const sec2 of required) {
         if (!html.includes('id="' + sec2 + '"')) fails.push(`${loc} ${dir}: missing section ${sec2}`);
       }

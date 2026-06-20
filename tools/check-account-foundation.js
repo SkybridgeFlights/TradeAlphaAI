@@ -60,13 +60,16 @@ function checkFoundation(found) {
   const fails = [];
   if (!found) return ['account-foundation artifact missing'];
   if (found.source_layer !== 'account-foundation') fails.push('source_layer mismatch');
-  // Hard governance — no live user features may slip in.
-  if (!found.auth || found.auth.enabled !== false) fails.push('auth.enabled must be false');
+  // Mode-aware governance — `auth.enabled` flips with mode but
+  // user_database + billing remain disabled until their own phases
+  // activate. Hosted-mode rules are STRICTER (require providers list,
+  // contract paths, instance_url) — never weaker.
+  const authMode = found.auth && found.auth.mode;
+  if (authMode !== 'contract' && authMode !== 'hosted') fails.push(`auth.mode must be 'contract' or 'hosted' (got ${authMode})`);
+  if (authMode === 'contract' && (!found.auth || found.auth.enabled !== false)) fails.push('contract mode: auth.enabled must be false');
+  if (authMode === 'hosted' && (!found.auth || found.auth.enabled !== true)) fails.push('hosted mode: auth.enabled must be true');
   if (!found.user_database || found.user_database.enabled !== false) fails.push('user_database must be disabled');
   if (!found.billing || found.billing.enabled !== false) fails.push('billing must be disabled');
-  // Phase 220 — auth.mode now expresses the contract layer. Must be 'contract'
-  // in this phase; later phases flip to 'hosted' then 'live'.
-  if (!found.auth || found.auth.mode !== 'contract') fails.push("auth.mode must be 'contract' in this phase");
   if (!found.auth || !Array.isArray(found.auth.providers) || found.auth.providers.length === 0) fails.push('auth.providers must be a non-empty list');
   if (!found.auth || !found.auth.contract) fails.push('auth.contract artifact path missing');
   if (!found.auth || !found.auth.identity_contract) fails.push('auth.identity_contract artifact path missing');
