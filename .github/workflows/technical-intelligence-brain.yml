@@ -161,6 +161,8 @@ jobs:
           node tools/build-personal-state.js --write || echo "[tech-intel] personal state degraded — continuing"
           node tools/build-alert-dispatch.js --write || echo "[tech-intel] alert dispatch degraded — continuing"
           node tools/generate-account-alerts-pages.js --write || echo "[tech-intel] alerts pages degraded — continuing"
+          node tools/build-personalized-research.js --write || echo "[tech-intel] personalized research degraded — continuing"
+          node tools/generate-account-research-page.js --write || echo "[tech-intel] account research page degraded — continuing"
           node tools/build-account-foundation.js --write || echo "[tech-intel] account foundation degraded — continuing"
           node tools/generate-account-pages.js --write || echo "[tech-intel] account pages degraded — continuing"
           node tools/generate-auth-pages.js --write || echo "[tech-intel] auth pages degraded — continuing"
@@ -309,6 +311,7 @@ jobs:
           npm run check:auth-pages
           npm run check:personal-state
           npm run check:alert-dispatch
+          npm run check:personalized-research
           npm run check:monitoring
           npm run check:watchlist-research
           npm run check:workspace-discovery
@@ -481,6 +484,7 @@ jobs:
               npm run check:auth-pages
           npm run check:personal-state
           npm run check:alert-dispatch
+          npm run check:personalized-research
               npm run check:monitoring
               npm run check:watchlist-research
               npm run check:workspace-discovery
