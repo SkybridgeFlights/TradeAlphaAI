@@ -139,7 +139,7 @@
   <main class="market-shell" data-account-surface="account/preferences/">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">أساس الحساب</span>
+        <span class="eyebrow">الحساب</span>
         <h1>تفضيلات الحساب</h1>
         <p>قيم التفضيلات المسموح بها وقيمها الافتراضية — اللغة والصفحة الرئيسية ونوع الكيان وعرض الأبحاث وتخطيط مساحة العمل وتركيز السوق. تحتاج تجاوزات كل مستخدم إلى حساب.</p>
       </div>
@@ -151,12 +151,16 @@
 <tr><td>preferred_research_view</td><td>hub · feed · regime · history</td><td><strong>hub</strong></td></tr>
 <tr><td>preferred_workspace_layout</td><td>default · compact · expanded</td><td><strong>default</strong></td></tr>
 <tr><td>preferred_market_focus</td><td>broad · growth · defensive · cyclical · all</td><td><strong>broad</strong></td></tr></tbody></table></div></section>
-      <section class="market-section" id="account-preferences-overrides"><div class="market-section-head"><span class="eyebrow">التجاوزات</span><h2>تجاوزات لكل مستخدم</h2></div>
-        <div class="market-panel"><p class="market-copy">تجاوزات التفضيلات الخاصة بكل مستخدم تتطلب حساباً؛ ولم تُفعَّل الحسابات بعد.</p></div></section>
+      <section class="market-section" id="account-preferences-overrides"><div class="market-section-head"><span class="eyebrow">التجاوزات</span><h2>تجاوزاتك الشخصية</h2></div>
+        <div data-account-app="preferences"><p class="market-copy">يتم التحميل…</p></div></section>
     <section class="market-section" id="account-disclaimer">
-      <div class="market-panel"><p class="market-copy">عقود الحساب تأسيسية فقط — لا توجد مصادقة ولا مدفوعات ولا إرسال تنبيهات حيّ. تصف ما ستقوم عليه ميزات Premium المستقبلية، مشتقّة من ملفات الاستخبارات القائمة. ليست نصيحة استثمارية.</p></div>
+      <div class="market-panel"><p class="market-copy">تُحمَّل البيانات الشخصية على هذه الصفحة من حسابك المُصادَق في Neon Postgres بمجرد تسجيل الدخول. تبقى الاستخبارات العامة للمراحل 200–227 متاحة دون حساب. ليست نصيحة استثمارية.</p></div>
     </section>
   </main>
   <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script>
+  <script src="/js/clerk-bootstrap.js" defer></script>
+  <script src="/js/account-shared.js" defer></script>
+  <script src="/js/account-preferences.js" defer></script>
 </body>
 </html>

@@ -139,13 +139,13 @@
   <main class="market-shell" data-account-surface="account/watchlists/">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">Account Foundation</span>
+        <span class="eyebrow">Account</span>
         <h1>Account Watchlists</h1>
         <p>Watchlist contracts that future accounts will personalize — personal_watchlists, saved_watchlists, favorite_assets, favorite_sectors, favorite_equities and favorite_etfs. Today the saved watchlists mirror the public workspace.</p>
       </div>
     </section>
       <section class="market-section" id="account-watchlists-personal"><div class="market-section-head"><span class="eyebrow">Personal</span><h2>Personal watchlists</h2></div>
-        <div class="market-panel"><p class="market-copy">Personal watchlists are stored per-account; accounts are not yet enabled.</p></div></section>
+        <div data-account-app="watchlists"><p class="market-copy">Loading…</p></div></section>
       <section class="market-section" id="account-watchlists-saved"><div class="market-section-head"><span class="eyebrow">Saved</span><h2>Saved watchlists (public defaults)</h2></div>
         <div class="market-grid three">
           <article class="market-card"><span class="market-card-kicker">Saved watchlist</span><h3><a href="/workspace/watchlists/market-core/">Market Core · 3</a></h3><p class="market-copy">Broad equity participation and index leadership monitored through SPY, QQQ and IWM.</p></article>
@@ -161,9 +161,13 @@
           <article class="market-card"><span class="market-card-kicker">Future shape</span><h3>favorite_etfs</h3><p class="market-copy">count=0 — populated per account.</p></article>
         </div></section>
     <section class="market-section" id="account-disclaimer">
-      <div class="market-panel"><p class="market-copy">Account contracts are foundational only — no authentication, no payments, no live alert dispatch. They describe what future Premium features will sit on, derived from existing intelligence artifacts. Not investment advice.</p></div>
+      <div class="market-panel"><p class="market-copy">Personal data on this surface loads from your authenticated account in Neon Postgres once you sign in. Public Phase 200–227 intelligence stays accessible without an account. Not investment advice.</p></div>
     </section>
   </main>
   <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script>
+  <script src="/js/clerk-bootstrap.js" defer></script>
+  <script src="/js/account-shared.js" defer></script>
+  <script src="/js/account-watchlists.js" defer></script>
 </body>
 </html>

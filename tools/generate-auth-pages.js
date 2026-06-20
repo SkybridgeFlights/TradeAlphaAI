@@ -91,8 +91,13 @@ function shell(ar, surface, body, relPath, mode) {
   const hosted = mode === 'hosted';
   // Clerk bootstrap is included on every auth page ONLY when the auth
   // mode is hosted. In contract mode the page stays a pure shell.
+  // The profile surface additionally loads the account-app modules
+  // (shared helpers + profile-specific renderer) to surface the Clerk
+  // identity + Neon account row side-by-side.
+  const isProfilePage = /profile\/$/.test(relPath);
   const clerkScripts = hosted
     ? '\n  <script src="/js/clerk-config.js"></script>\n  <script src="/js/clerk-bootstrap.js" defer></script>'
+      + (isProfilePage ? '\n  <script src="/js/account-shared.js" defer></script>\n  <script src="/js/account-profile.js" defer></script>' : '')
     : '';
   const disclaimer = hosted
     ? t(ar,
@@ -216,7 +221,10 @@ function profileBody(ar, data) {
           <div data-clerk-mount="user-profile" hidden></div>
           <div data-clerk-mount="user-button" hidden style="margin-top:12px"></div>
           <p class="market-copy" data-not-signed-in-message hidden>${esc(t(ar, 'Sign in to view your live profile.', 'سجّل الدخول لعرض ملفك الحيّ.'))} <a href="${esc((ar ? '/ar' : '') + '/account/sign-in/')}">${esc(t(ar, 'Sign in', 'تسجيل الدخول'))}</a></p>
-        </div></section>` : '';
+        </div></section>
+      <section class="market-section" id="profile-server-truth">
+        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Server truth', 'الحقيقة على الخادم'))}</span><h2>${esc(t(ar, 'Clerk identity + Neon account row', 'هوية Clerk + صفّ Neon'))}</h2></div>
+        <div data-account-app="profile"><p class="market-copy">${esc(t(ar, 'Loading…', 'يتم التحميل…'))}</p></div></section>` : '';
   return `${mountSection}
       <section class="market-section" id="profile-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Profile status', 'حالة الملف الشخصي'))}</span><h2>${esc(t(ar, mode === 'hosted' ? 'Live via Clerk' : 'Foundation phase', mode === 'hosted' ? 'مفعّل عبر Clerk' : 'مرحلة التأسيس'))}</h2></div>
         <div class="market-panel"><p class="market-copy">${esc(t(ar, mode === 'hosted' ? 'Your live Clerk profile renders above when signed in. The field schema below documents which fields the platform reads (always: account_id + primary_email_hash + locale + scopes + tier; never: raw email or session tokens).' : 'No live account exists. The profile surface describes the fields a future account will carry; values are placeholders until the provider issues real session data.', mode === 'hosted' ? 'يظهر ملفك الحيّ عبر Clerk أعلاه عند تسجيل الدخول. يوثّق مخطط الحقول أدناه الحقول التي تقرأها المنصّة (دائماً: account_id + primary_email_hash + locale + scopes + tier؛ أبداً: البريد الخام أو رموز الجلسة).' : 'لا يوجد حساب حيّ. يصف سطح الملف الشخصي الحقول التي سيحملها الحساب المستقبلي؛ والقيم نوائب حتى يصدر المزوّد بيانات جلسة حقيقية.'))}</p></div></section>

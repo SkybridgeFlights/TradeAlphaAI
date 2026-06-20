@@ -16,13 +16,26 @@ const ALLOWED_LOCALES = new Set(['en', 'ar']);
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (req.method !== 'POST') {
+  // GET → read current account row without upserting (used by profile UI).
+  // POST → upsert (first-sign-in flow + last_seen bump).
+  if (req.method !== 'POST' && req.method !== 'GET') {
     res.statusCode = 405;
     res.end();
     return;
   }
   try {
-    const { accountId } = await requireAccount(req);
+    const { accountId, claims } = await requireAccount(req);
+    if (req.method === 'GET') {
+      const sql = getSql();
+      const rows = await sql`SELECT account_id, locale, tier, primary_email_hash, created_at, last_seen_at FROM accounts WHERE account_id = ${accountId} LIMIT 1`;
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({
+        account: rows[0] || null,
+        clerk: { sub: accountId, iss: claims && claims.iss || null },
+      }));
+      return;
+    }
     let body = req.body;
     if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
     body = body || {};

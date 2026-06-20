@@ -210,7 +210,7 @@ function checkAuthPages() {
       if (mode === 'hosted') {
         if (baseDir === 'account/sign-in/' || baseDir === 'account/sign-up/') required.push('auth-mount');
         if (baseDir === 'account/verify/') required.push('auth-callback');
-        if (baseDir === 'account/profile/') required.push('profile-mount');
+        if (baseDir === 'account/profile/') { required.push('profile-mount'); required.push('profile-server-truth'); }
       }
       for (const sec2 of required) {
         if (!html.includes('id="' + sec2 + '"')) fails.push(`${loc} ${dir}: missing section ${sec2}`);

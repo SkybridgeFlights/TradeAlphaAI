@@ -94,7 +94,7 @@ function card(ar, kicker, title, copy, href) {
   return `          <article class="market-card"><span class="market-card-kicker">${esc(kicker)}</span><h3>${titleHtml}</h3>${copy ? `<p class="market-copy">${esc(copy)}</p>` : ''}</article>`;
 }
 
-function shell(ar, surface, body, relPath) {
+function shell(ar, surface, body, relPath, surfaceKey) {
   const lang = ar ? 'ar' : 'en';
   const header = renderGlobalHeader({
     locale: lang,
@@ -102,6 +102,22 @@ function shell(ar, surface, body, relPath) {
     arabicHref: `/ar/${relPath}`,
     englishHref: `/${relPath}`,
   });
+  // Phase 221-Pg — live-data surfaces (preferences, watchlists) load the
+  // Clerk SDK + the per-surface app module. clerk-bootstrap.js is a no-op
+  // when auth.mode !== 'hosted', so this is safe locally and in hosted
+  // production. The overview page does not need the SDK (it's purely
+  // contract-summary HTML).
+  const liveSurfaces = new Set(['preferences', 'watchlists']);
+  const liveScripts = liveSurfaces.has(surfaceKey)
+    ? '\n  <script src="/js/clerk-config.js"></script>\n  <script src="/js/clerk-bootstrap.js" defer></script>\n  <script src="/js/account-shared.js" defer></script>\n  <script src="/js/account-' + surfaceKey + '.js" defer></script>'
+    : '';
+  const disclaimer = liveSurfaces.has(surfaceKey)
+    ? t(ar,
+        'Personal data on this surface loads from your authenticated account in Neon Postgres once you sign in. Public Phase 200–227 intelligence stays accessible without an account. Not investment advice.',
+        'تُحمَّل البيانات الشخصية على هذه الصفحة من حسابك المُصادَق في Neon Postgres بمجرد تسجيل الدخول. تبقى الاستخبارات العامة للمراحل 200–227 متاحة دون حساب. ليست نصيحة استثمارية.')
+    : t(ar,
+        'Account surfaces describe contracts the platform supports. Public intelligence stays free at every tier. Not investment advice.',
+        'تصف صفحات الحساب العقود التي تدعمها المنصّة. تبقى الاستخبارات العامة مجانية في كل طبقة. ليست نصيحة استثمارية.');
   return `<!doctype html>
 <html lang="${lang}"${ar ? ' dir="rtl"' : ''}>
 ${head(ar, surface, relPath)}
@@ -110,17 +126,17 @@ ${header}
   <main class="market-shell" data-account-surface="${esc(surface.rel)}">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span>
+        <span class="eyebrow">${esc(t(ar, 'Account', 'الحساب'))}</span>
         <h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1>
         <p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p>
       </div>
     </section>
 ${body}
     <section class="market-section" id="account-disclaimer">
-      <div class="market-panel"><p class="market-copy">${esc(t(ar, 'Account contracts are foundational only — no authentication, no payments, no live alert dispatch. They describe what future Premium features will sit on, derived from existing intelligence artifacts. Not investment advice.', 'عقود الحساب تأسيسية فقط — لا توجد مصادقة ولا مدفوعات ولا إرسال تنبيهات حيّ. تصف ما ستقوم عليه ميزات Premium المستقبلية، مشتقّة من ملفات الاستخبارات القائمة. ليست نصيحة استثمارية.'))}</p></div>
+      <div class="market-panel"><p class="market-copy">${esc(disclaimer)}</p></div>
     </section>
   </main>
-  ${globalHeaderScripts()}
+  ${globalHeaderScripts()}${liveScripts}
 </body>
 </html>
 `;
@@ -156,7 +172,7 @@ function watchlistsBody(ar, data) {
   const saved = (wc.saved_watchlists && wc.saved_watchlists.items) || [];
   const savedHtml = saved.map((w) => card(ar, t(ar, 'Saved watchlist', 'قائمة محفوظة'), `${esc(ar ? w.title_ar : w.title_en)} · ${w.entity_count}`, t(ar, w.thesis_en, w.thesis_ar), w.href)).join('\n');
   return `      <section class="market-section" id="account-watchlists-personal"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Personal', 'شخصية'))}</span><h2>${esc(t(ar, 'Personal watchlists', 'قوائم المتابعة الشخصية'))}</h2></div>
-        <div class="market-panel"><p class="market-copy">${esc(t(ar, (wc.personal_watchlists && wc.personal_watchlists.note_en) || 'Personal watchlists require an account.', (wc.personal_watchlists && wc.personal_watchlists.note_ar) || 'تتطلب قوائم المتابعة الشخصية حساباً.'))}</p></div></section>
+        <div data-account-app="watchlists"><p class="market-copy">${esc(t(ar, 'Loading…', 'يتم التحميل…'))}</p></div></section>
       <section class="market-section" id="account-watchlists-saved"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Saved', 'محفوظة'))}</span><h2>${esc(t(ar, 'Saved watchlists (public defaults)', 'قوائم المتابعة المحفوظة (الافتراضات العامة)'))}</h2></div>
         <div class="market-grid three">
 ${savedHtml || `<p class="market-copy">${esc(t(ar, 'No saved watchlists available.', 'لا توجد قوائم متابعة محفوظة.'))}</p>`}
@@ -174,8 +190,8 @@ function preferencesBody(ar, data) {
   const rows = Object.entries(enums).map(([key, vals]) => `<tr><td>${esc(key)}</td><td>${esc((vals || []).join(' · '))}</td><td><strong>${esc(defaults[key] || '')}</strong></td></tr>`).join('\n');
   return `      <section class="market-section" id="account-preferences-allowed"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Allowed values', 'القيم المسموح بها'))}</span><h2>${esc(t(ar, 'Preference enums', 'قيم التفضيلات'))}</h2></div>
         <div class="market-panel"><table class="market-table" style="width:100%;border-collapse:collapse"><thead><tr><th>${esc(t(ar, 'Preference', 'التفضيل'))}</th><th>${esc(t(ar, 'Allowed', 'المسموح'))}</th><th>${esc(t(ar, 'Default', 'الافتراضي'))}</th></tr></thead><tbody>${rows}</tbody></table></div></section>
-      <section class="market-section" id="account-preferences-overrides"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Overrides', 'التجاوزات'))}</span><h2>${esc(t(ar, 'Per-user overrides', 'تجاوزات لكل مستخدم'))}</h2></div>
-        <div class="market-panel"><p class="market-copy">${esc(t(ar, (p.overrides && p.overrides.note_en) || 'Per-user overrides require an account.', (p.overrides && p.overrides.note_ar) || 'تتطلب التجاوزات حساباً.'))}</p></div></section>`;
+      <section class="market-section" id="account-preferences-overrides"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Overrides', 'التجاوزات'))}</span><h2>${esc(t(ar, 'Your personal overrides', 'تجاوزاتك الشخصية'))}</h2></div>
+        <div data-account-app="preferences"><p class="market-copy">${esc(t(ar, 'Loading…', 'يتم التحميل…'))}</p></div></section>`;
 }
 
 function alertsBody(ar, data) {
@@ -221,7 +237,7 @@ function main() {
   let count = 0;
   for (const [key, surface] of Object.entries(SURFACES)) {
     for (const ar of [false, true]) {
-      const html = shell(ar, surface, bodyFor(key, ar, data), surface.rel);
+      const html = shell(ar, surface, bodyFor(key, ar, data), surface.rel, key);
       if (WRITE) {
         const out = path.join(ROOT, ar ? `ar/${surface.rel}` : surface.rel, 'index.html');
         fs.mkdirSync(path.dirname(out), { recursive: true });

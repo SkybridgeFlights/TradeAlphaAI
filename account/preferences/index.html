@@ -139,7 +139,7 @@
   <main class="market-shell" data-account-surface="account/preferences/">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">Account Foundation</span>
+        <span class="eyebrow">Account</span>
         <h1>Account Preferences</h1>
         <p>Allowed preference enums and defaults — preferred language, homepage, entity type, research view, workspace layout and market focus. Per-user overrides require an account.</p>
       </div>
@@ -151,12 +151,16 @@
 <tr><td>preferred_research_view</td><td>hub · feed · regime · history</td><td><strong>hub</strong></td></tr>
 <tr><td>preferred_workspace_layout</td><td>default · compact · expanded</td><td><strong>default</strong></td></tr>
 <tr><td>preferred_market_focus</td><td>broad · growth · defensive · cyclical · all</td><td><strong>broad</strong></td></tr></tbody></table></div></section>
-      <section class="market-section" id="account-preferences-overrides"><div class="market-section-head"><span class="eyebrow">Overrides</span><h2>Per-user overrides</h2></div>
-        <div class="market-panel"><p class="market-copy">Per-user preference overrides require an account; accounts are not yet enabled.</p></div></section>
+      <section class="market-section" id="account-preferences-overrides"><div class="market-section-head"><span class="eyebrow">Overrides</span><h2>Your personal overrides</h2></div>
+        <div data-account-app="preferences"><p class="market-copy">Loading…</p></div></section>
     <section class="market-section" id="account-disclaimer">
-      <div class="market-panel"><p class="market-copy">Account contracts are foundational only — no authentication, no payments, no live alert dispatch. They describe what future Premium features will sit on, derived from existing intelligence artifacts. Not investment advice.</p></div>
+      <div class="market-panel"><p class="market-copy">Personal data on this surface loads from your authenticated account in Neon Postgres once you sign in. Public Phase 200–227 intelligence stays accessible without an account. Not investment advice.</p></div>
     </section>
   </main>
   <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script>
+  <script src="/js/clerk-bootstrap.js" defer></script>
+  <script src="/js/account-shared.js" defer></script>
+  <script src="/js/account-preferences.js" defer></script>
 </body>
 </html>

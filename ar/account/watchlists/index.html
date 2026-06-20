@@ -139,13 +139,13 @@
   <main class="market-shell" data-account-surface="account/watchlists/">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">أساس الحساب</span>
+        <span class="eyebrow">الحساب</span>
         <h1>قوائم المتابعة للحساب</h1>
         <p>عقود قوائم المتابعة التي ستخصّصها الحسابات المستقبلية — قوائم المتابعة الشخصية والمحفوظة، والأصول والقطاعات والأسهم والصناديق المفضلة. اليوم تعكس القوائم المحفوظة مساحة العمل العامة.</p>
       </div>
     </section>
       <section class="market-section" id="account-watchlists-personal"><div class="market-section-head"><span class="eyebrow">شخصية</span><h2>قوائم المتابعة الشخصية</h2></div>
-        <div class="market-panel"><p class="market-copy">قوائم المتابعة الشخصية تُحفظ لكل حساب؛ ولم تُفعَّل الحسابات بعد.</p></div></section>
+        <div data-account-app="watchlists"><p class="market-copy">يتم التحميل…</p></div></section>
       <section class="market-section" id="account-watchlists-saved"><div class="market-section-head"><span class="eyebrow">محفوظة</span><h2>قوائم المتابعة المحفوظة (الافتراضات العامة)</h2></div>
         <div class="market-grid three">
           <article class="market-card"><span class="market-card-kicker">قائمة محفوظة</span><h3><a href="/ar/workspace/watchlists/market-core/">محور السوق · 3</a></h3><p class="market-copy">متابعة مشاركة الأسهم وقيادة المؤشرات عبر SPY وQQQ وIWM.</p></article>
@@ -161,9 +161,13 @@
           <article class="market-card"><span class="market-card-kicker">هيكل مستقبلي</span><h3>favorite_etfs</h3><p class="market-copy">العدد=0 — يُملأ لكل حساب.</p></article>
         </div></section>
     <section class="market-section" id="account-disclaimer">
-      <div class="market-panel"><p class="market-copy">عقود الحساب تأسيسية فقط — لا توجد مصادقة ولا مدفوعات ولا إرسال تنبيهات حيّ. تصف ما ستقوم عليه ميزات Premium المستقبلية، مشتقّة من ملفات الاستخبارات القائمة. ليست نصيحة استثمارية.</p></div>
+      <div class="market-panel"><p class="market-copy">تُحمَّل البيانات الشخصية على هذه الصفحة من حسابك المُصادَق في Neon Postgres بمجرد تسجيل الدخول. تبقى الاستخبارات العامة للمراحل 200–227 متاحة دون حساب. ليست نصيحة استثمارية.</p></div>
     </section>
   </main>
   <script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script>
+  <script src="/js/clerk-bootstrap.js" defer></script>
+  <script src="/js/account-shared.js" defer></script>
+  <script src="/js/account-watchlists.js" defer></script>
 </body>
 </html>
