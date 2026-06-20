@@ -21,6 +21,8 @@ const researchDirs = (prefix) => ["research/", "research/feed/", "research/regim
 // Phase 216 — Change Intelligence Alerts & Monitoring layer
 const changesDirs = (prefix) => ["changes/", "changes/assets/", "changes/sectors/", "changes/equities/", "changes/etfs/", "changes/regime/", "changes/history/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const explorerDirs = (prefix) => ["explorer/", "explorer/events/", "explorer/entity/", "explorer/network/", "explorer/research/", "explorer/search/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+// Phase 219 — Account-ready personal intelligence foundation surfaces.
+const accountDirs = (prefix) => ["account/", "account/watchlists/", "account/preferences/", "account/alerts/", "account/workspace/"].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
 const workspaceDirs = (prefix) => [
   "workspace/",
   "workspace/watchlists/",
@@ -62,6 +64,7 @@ const core = [
   .concat(changesDirs(""))
   .concat(explorerDirs(""))
   .concat(workspaceDirs(""))
+  .concat(accountDirs(""))
   .concat(entityResearchDirs(""))
   .concat(rankingDirs(""))
   .concat(existsDir("etfs") ? ["etfs/"] : [])
@@ -124,6 +127,7 @@ function arUrls() {
   for (const rel of changesDirs("ar/")) out.push(rel);
   for (const rel of explorerDirs("ar/")) out.push(rel);
   for (const rel of workspaceDirs("ar/")) out.push(rel);
+  for (const rel of accountDirs("ar/")) out.push(rel);
   for (const rel of entityResearchDirs("ar/")) out.push(rel);
   for (const rel of rankingDirs("ar/")) out.push(rel);
   for (const b of ["markets/","sectors/","equities/"]) if (existsDir(`ar/${b}`)) out.push(`ar/${b}`);

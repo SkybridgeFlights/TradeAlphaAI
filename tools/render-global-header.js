@@ -106,7 +106,7 @@ function englishLinks() {
       key: 'research',
       href: '/intelligence/',
       label: 'Market Intelligence',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map', 'explorer', 'workspace'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map', 'explorer', 'workspace', 'account'],
       children: [
         ['/market-terminal/', 'Market Terminal'],
         ['/explorer/', 'Explorer'],
@@ -153,7 +153,12 @@ function englishLinks() {
         ['/changes/equities/', 'Equity Changes'],
         ['/changes/etfs/', 'ETF Changes'],
         ['/changes/regime/', 'Regime Changes'],
-        ['/changes/history/', 'Change Timeline']
+        ['/changes/history/', 'Change Timeline'],
+        ['/account/', 'Account Overview'],
+        ['/account/watchlists/', 'Account Watchlists'],
+        ['/account/preferences/', 'Account Preferences'],
+        ['/account/alerts/', 'Account Alerts'],
+        ['/account/workspace/', 'Account Workspace']
       ]
     },
     { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
@@ -182,7 +187,7 @@ function arabicLinks() {
       key: 'research',
       href: '/ar/intelligence/',
       label: 'الأسواق والأبحاث',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map', 'explorer', 'workspace'],
+      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map', 'explorer', 'workspace', 'account'],
       children: [
         ['/ar/market-terminal/', 'الطرفية المؤسسية'],
         ['/ar/explorer/', 'مستكشف الاستخبارات'],
@@ -229,7 +234,12 @@ function arabicLinks() {
         ['/ar/changes/equities/', 'تغيّرات الأسهم'],
         ['/ar/changes/etfs/', 'تغيّرات الصناديق'],
         ['/ar/changes/regime/', 'تحوّلات النظام'],
-        ['/ar/changes/history/', 'الجدول الزمني للتغيّرات']
+        ['/ar/changes/history/', 'الجدول الزمني للتغيّرات'],
+        ['/ar/account/', 'نظرة عامة على الحساب'],
+        ['/ar/account/watchlists/', 'قوائم متابعة الحساب'],
+        ['/ar/account/preferences/', 'تفضيلات الحساب'],
+        ['/ar/account/alerts/', 'تنبيهات الحساب'],
+        ['/ar/account/workspace/', 'مساحة عمل الحساب']
       ]
     },
     { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },
