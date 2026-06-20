@@ -165,6 +165,8 @@ jobs:
           node tools/generate-account-research-page.js --write || echo "[tech-intel] account research page degraded — continuing"
           node tools/build-billing-contracts.js --write || echo "[tech-intel] billing contracts degraded — continuing"
           node tools/generate-account-billing-pages.js --write || echo "[tech-intel] account billing pages degraded — continuing"
+          node tools/build-copilot-contracts.js --write || echo "[tech-intel] copilot contracts degraded — continuing"
+          node tools/generate-account-copilot-page.js --write || echo "[tech-intel] account copilot page degraded — continuing"
           node tools/build-account-foundation.js --write || echo "[tech-intel] account foundation degraded — continuing"
           node tools/generate-account-pages.js --write || echo "[tech-intel] account pages degraded — continuing"
           node tools/generate-auth-pages.js --write || echo "[tech-intel] auth pages degraded — continuing"
@@ -315,6 +317,7 @@ jobs:
           npm run check:alert-dispatch
           npm run check:personalized-research
           npm run check:billing-contracts
+          npm run check:copilot-contracts
           npm run check:monitoring
           npm run check:watchlist-research
           npm run check:workspace-discovery
@@ -489,6 +492,7 @@ jobs:
           npm run check:alert-dispatch
           npm run check:personalized-research
           npm run check:billing-contracts
+          npm run check:copilot-contracts
               npm run check:monitoring
               npm run check:watchlist-research
               npm run check:workspace-discovery
