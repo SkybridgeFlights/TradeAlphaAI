@@ -422,6 +422,75 @@
 .engine-node-3 { animation: engine-node-glow 11s ease-in-out 3.6s infinite, engine-node-float-c 23s ease-in-out -7s infinite; }
 .engine-node-4 { animation: engine-node-glow 11s ease-in-out 5.4s infinite, engine-node-float-b 20s ease-in-out -10s infinite; }
 .engine-node-5 { animation: engine-node-glow 11s ease-in-out 7.2s infinite, engine-node-float-a 22s ease-in-out -12s infinite; }
+.engine-node-6 { animation: engine-node-glow 11s ease-in-out 8.4s infinite, engine-node-float-c 24s ease-in-out -8s infinite; }
+.engine-node-7 { animation: engine-node-glow 11s ease-in-out 9.6s infinite, engine-node-float-a 25s ease-in-out -14s infinite; }
+.engine-node-8 { animation: engine-node-glow 11s ease-in-out 10.8s infinite, engine-node-float-b 26s ease-in-out -17s infinite; }
+
+.engine-hub-group,
+.engine-market-node {
+  pointer-events: none;
+}
+
+.engine-hub-label,
+.engine-hub-sub,
+.engine-node-label {
+  font-family: Inter, "IBM Plex Sans Arabic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(5, 11, 19, 0.62);
+  stroke-width: 2.4px;
+  stroke-linejoin: round;
+  fill: rgba(244, 247, 241, 0.9);
+  letter-spacing: 0.08em;
+}
+
+.engine-hub-label {
+  font-size: 12px;
+  font-weight: 900;
+  fill: rgba(255, 242, 191, 0.98);
+}
+
+.engine-hub-sub {
+  font-size: 6.6px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  fill: rgba(190, 244, 238, 0.86);
+}
+
+.engine-hub-sub-ar {
+  font-size: 7.6px;
+  letter-spacing: 0;
+}
+
+.engine-node-label {
+  font-size: 10px;
+  font-weight: 850;
+  fill: rgba(229, 238, 244, 0.84);
+  opacity: 0.9;
+}
+
+.engine-spoke {
+  stroke-width: 0.95;
+  stroke-dasharray: 1 10;
+  opacity: 0.46;
+  animation: engine-spoke-pulse 8.8s ease-in-out infinite;
+}
+
+.engine-orbit-field {
+  transform-origin: 310px 150px;
+  transform-box: view-box;
+  animation: engine-field-orbit 88s linear infinite;
+}
+
+@keyframes engine-field-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes engine-spoke-pulse {
+  0%, 100% { opacity: 0.24; stroke-dashoffset: 0; }
+  48% { opacity: 0.62; stroke-dashoffset: -24; }
+}
 
 @keyframes engine-node-float-a {
   0%, 100% { transform: translate(0, 0); }
@@ -469,11 +538,30 @@
     max-height: 145px;
     padding: 3px;
   }
+
+  .engine-mobile-extra {
+    display: none;
+  }
+
+  .engine-node-label {
+    font-size: 8.5px;
+    opacity: 0.78;
+  }
+
+  .engine-hub-label {
+    font-size: 10px;
+  }
+
+  .engine-hub-sub {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cross-asset-engine-visual::before,
   .engine-network-orbit,
+  .engine-orbit-field,
+  .engine-spoke,
   .engine-link,
   .engine-halo,
   .engine-hub,
@@ -484,6 +572,120 @@
 
   .engine-flow-dot {
     display: none;
+  }
+}
+
+/* Final node-map composition: visible market entities inside one unified card. */
+.cross-asset-engine-panel {
+  grid-template-columns: minmax(0, 0.72fr) minmax(360px, 0.78fr);
+  align-items: center;
+}
+
+.cross-asset-engine-copy h2 {
+  font-size: clamp(28px, 3.1vw, 42px);
+  max-width: 720px;
+}
+
+.cross-asset-engine-visual {
+  min-height: 210px;
+  max-width: 520px;
+  justify-self: end;
+  width: 100%;
+}
+
+.engine-network-svg {
+  height: 210px;
+  max-height: 210px;
+}
+
+.engine-halo {
+  fill: rgba(87, 221, 255, 0.19);
+  stroke: rgba(246, 211, 107, 0.48);
+}
+
+.engine-hub {
+  stroke-width: 1.9;
+  filter: drop-shadow(0 0 14px rgba(246, 211, 107, 0.42));
+}
+
+.engine-node {
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 10px rgba(110, 231, 216, 0.42));
+}
+
+.engine-node-label {
+  font-size: 12px;
+  fill: rgba(246, 250, 255, 0.95);
+  stroke-width: 3px;
+  opacity: 1;
+}
+
+.engine-hub-label {
+  font-size: 13.5px;
+}
+
+.engine-hub-sub {
+  font-size: 7.4px;
+  opacity: 0.96;
+}
+
+.engine-spoke {
+  stroke-width: 1.25;
+  opacity: 0.56;
+}
+
+.cross-asset-engine-chips {
+  display: none !important;
+}
+
+@media (min-width: 901px) {
+  .engine-market-node .engine-node {
+    r: 13px;
+  }
+
+  .engine-hub {
+    r: 29px;
+  }
+
+  .engine-halo {
+    r: 48px;
+  }
+}
+
+@media (max-width: 900px) {
+  .cross-asset-engine-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .cross-asset-engine-visual {
+    justify-self: stretch;
+    max-width: none;
+    min-height: 155px;
+  }
+
+  .engine-network-svg {
+    height: 155px;
+    max-height: 155px;
+  }
+}
+
+@media (max-width: 520px) {
+  .cross-asset-engine-visual {
+    min-height: 136px;
+  }
+
+  .engine-network-svg {
+    height: 136px;
+    max-height: 136px;
+  }
+
+  .engine-node-label {
+    font-size: 7.8px;
+    stroke-width: 2.2px;
+  }
+
+  .engine-market-node .engine-node {
+    r: 9px;
   }
 }
 
