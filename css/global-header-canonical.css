@@ -995,3 +995,299 @@ body.mobile-nav-open { overflow: hidden; }
   box-shadow: 0 0 12px rgba(216, 177, 90, 0.15);
 }
 .header-account-fallback-pill:hover { border-color: rgba(216, 177, 90, 0.7); color: #ffe9a8; }
+
+/* ────────────────────────────────────────────────────────────────────
+ * REDESIGN 2026-06 — Compact dropdowns + card-based mobile drawer
+ * --------------------------------------------------------------------
+ * Replaces the legacy mega-menu (groups + columns + footer) and the
+ * flat 50+ link mobile drawer with: (a) clean single-column desktop
+ * dropdowns ending in a "View all" terminal link, and (b) a grouped
+ * 6-card mobile drawer where each card lists 3-5 key links + "View
+ * all". The data lives in tools/render-global-header.js.
+ * ──────────────────────────────────────────────────────────────────── */
+
+/* ── Compact desktop dropdown ───────────────────────────────────── */
+.nav-dropdown.nav-dropdown-compact {
+  width: 240px;
+  padding: 6px;
+  background: linear-gradient(180deg, #0c1a2c 0%, #091523 100%);
+  border: 1px solid rgba(216, 177, 90, 0.16);
+  border-radius: 10px;
+  box-shadow:
+    0 20px 60px rgba(2, 8, 23, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+}
+.nav-dropdown-compact a {
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+.nav-dropdown-compact a:hover,
+.nav-dropdown-compact a:focus-visible {
+  background: rgba(216, 177, 90, 0.08);
+  color: #ffe9a8;
+  transform: translateX(2px);
+}
+[dir="rtl"] .nav-dropdown-compact a:hover,
+[dir="rtl"] .nav-dropdown-compact a:focus-visible {
+  transform: translateX(-2px);
+}
+
+/* "View all" terminal link */
+.nav-dropdown-viewall {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0 0 6px 6px;
+  color: rgba(216, 177, 90, 0.9) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: linear-gradient(180deg, transparent, rgba(216, 177, 90, 0.04));
+  transition: background 140ms ease, color 140ms ease;
+}
+.nav-dropdown-viewall:hover,
+.nav-dropdown-viewall:focus-visible {
+  background: rgba(216, 177, 90, 0.1) !important;
+  color: #ffe9a8 !important;
+}
+.nav-dropdown-viewall span {
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 140ms ease;
+}
+.nav-dropdown-viewall:hover span { transform: translateX(3px); }
+[dir="rtl"] .nav-dropdown-viewall:hover span { transform: translateX(-3px); }
+
+/* Caret icon stays compact */
+.nav-dropdown-compact { font-feature-settings: "ss01"; }
+
+/* ── Card-based mobile drawer ───────────────────────────────────── */
+.mobile-nav-cards {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 14px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mobile-nav-cards::-webkit-scrollbar { width: 6px; }
+.mobile-nav-cards::-webkit-scrollbar-thumb {
+  background: rgba(216, 177, 90, 0.18);
+  border-radius: 6px;
+}
+.mobile-nav-cards { scrollbar-width: thin; scrollbar-color: rgba(216, 177, 90, 0.18) transparent; }
+
+.m-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  animation: m-card-in 280ms ease both;
+}
+.m-card:nth-child(1) { animation-delay: 20ms; }
+.m-card:nth-child(2) { animation-delay: 50ms; }
+.m-card:nth-child(3) { animation-delay: 80ms; }
+.m-card:nth-child(4) { animation-delay: 110ms; }
+.m-card:nth-child(5) { animation-delay: 140ms; }
+.m-card:nth-child(6) { animation-delay: 170ms; }
+.m-card:hover,
+.m-card:focus-within {
+  border-color: rgba(216, 177, 90, 0.22);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+.m-card:active {
+  transform: scale(0.995);
+}
+
+@keyframes m-card-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.m-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
+}
+.m-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(216, 177, 90, 0.18), rgba(216, 177, 90, 0.05));
+  border: 1px solid rgba(216, 177, 90, 0.22);
+  color: #f4d77a;
+  flex-shrink: 0;
+}
+.m-card-icon svg { width: 16px; height: 16px; }
+.m-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #f1f5fb;
+  flex: 1;
+}
+.m-card-head::after {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(216, 177, 90, 0.7);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 200ms ease, background 160ms ease;
+}
+.m-card.is-expanded .m-card-head::after {
+  content: "−";
+  background: rgba(216, 177, 90, 0.12);
+  transform: rotate(180deg);
+}
+
+.m-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 260ms ease, margin-top 200ms ease;
+}
+.m-card.is-expanded .m-card-list {
+  max-height: 320px;
+  margin-top: 10px;
+}
+.m-card-list li {
+  margin: 0;
+}
+.m-card-link {
+  display: block;
+  padding: 10px 10px;
+  border-radius: 8px;
+  color: #dbe7f5;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 140ms ease, color 140ms ease;
+}
+.m-card-link:hover,
+.m-card-link:focus-visible {
+  background: rgba(110, 231, 216, 0.08);
+  color: #fff;
+}
+.m-card-link.is-active {
+  color: #f4d77a;
+}
+
+.m-card-viewall {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.05);
+  color: rgba(216, 177, 90, 0.9);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.m-card.is-expanded .m-card-viewall {
+  display: flex;
+}
+.m-card-viewall:hover,
+.m-card-viewall:focus-visible {
+  background: rgba(216, 177, 90, 0.08);
+  color: #ffe9a8;
+}
+
+/* Account card — CTA buttons row */
+.m-card-actions {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.m-card.is-expanded .m-card-actions {
+  display: flex;
+}
+.m-card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+.m-card-cta-signin {
+  background: linear-gradient(145deg, rgba(216, 177, 90, 0.22), rgba(216, 177, 90, 0.06));
+  border-color: rgba(216, 177, 90, 0.45);
+  color: #ffe9a8;
+}
+.m-card-cta-signin:hover { border-color: rgba(216, 177, 90, 0.7); color: #fff5d8; }
+.m-card-cta-dashboard {
+  background: rgba(110, 231, 216, 0.08);
+  border-color: rgba(110, 231, 216, 0.25);
+  color: rgba(110, 231, 216, 0.95);
+}
+.m-card-cta-dashboard:hover { background: rgba(110, 231, 216, 0.14); color: #fff; }
+.m-card-cta-signout {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(229, 231, 235, 0.7);
+}
+.m-card-cta-signout:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
+
+/* Open the first card by default so users see immediate content */
+.m-card:first-of-type { /* opened by JS too, here just a default look */ }
+
+/* RTL caret offset for viewall arrows */
+[dir="rtl"] .m-card-viewall span,
+[dir="rtl"] .nav-dropdown-viewall span {
+  transform: scaleX(1);
+}
+
+/* ── Hide legacy mega-menu artifacts (no longer rendered) ───────── */
+.nav-mega-grid,
+.nav-mega-column,
+.nav-mega-footer,
+.nav-mega-footer-row {
+  /* Defensive: in case any cached page still uses these, keep layout sane */
+}
+
+/* On the mobile breakpoint, hide the desktop hover dropdowns entirely —
+ * mobile uses the drawer cards. */
+@media (max-width: 1023px) {
+  .nav-dropdown.nav-dropdown-compact,
+  .nav-mega-dropdown { display: none !important; }
+}

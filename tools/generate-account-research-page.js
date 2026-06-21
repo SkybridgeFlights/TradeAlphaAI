@@ -69,7 +69,7 @@ ${head(ar)}
 <body>
 ${header}
   <main class="market-shell">
-    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span><h1>${esc(t(ar, 'Personal Research', 'الأبحاث الشخصية'))}</h1><p>${esc(t(ar, 'Cards derived from per-account watchlist symbols + evidence-backed graph neighbours. Per-account results require an account.', 'بطاقات مشتقّة من رموز قوائم متابعة كل حساب وجيران مدعومين بأدلة. تتطلب نتائج كل حساب حساباً.'))}</p></div></section>
+    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span><h1>${esc(t(ar, 'Personal Research', 'الأبحاث الشخصية'))}</h1><p>${esc(t(ar, 'Cards derived from per-account watchlist symbols + evidence-backed graph neighbours. Per-account results require an account.', 'بطاقات مشتقّة من رموز قوائم متابعة كل حساب وجيران مدعومين بأدلة. تتطلب نتائج كل حساب حساباً.'))}</p></div></section>
 ${body(ar, data)}
   </main>
   ${globalHeaderScripts()}

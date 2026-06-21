@@ -1,0 +1,132 @@
+{
+  "schema_version": "2.0",
+  "generated_at": "2026-06-07T17:32:36.885Z",
+  "data_quality": "structural",
+  "freshness_score": 100,
+  "classifications": {
+    "risk_appetite": {
+      "label": "neutral",
+      "confidence": 76,
+      "evidence": [],
+      "data_quality": "structural",
+      "freshness_score": null,
+      "reason_en": "Mixed signals — no decisive risk-on or risk-off bias confirmed.",
+      "reason_ar": "إشارات متضاربة — لا يوجد تحيز حاسم نحو المخاطرة أو الابتعاد عنها."
+    },
+    "inflation_regime": {
+      "label": "uncertain",
+      "confidence": 56,
+      "evidence": [
+        "Fed stance: data-dependent — inflation trajectory unresolved",
+        "Hold probability: 70% — inflation not hot enough for hikes"
+      ],
+      "data_quality": "structural",
+      "freshness_score": null,
+      "reason_en": "Inflation trajectory unclear — Fed maintains data-dependent stance with no strong directional signal.",
+      "reason_ar": "مسار التضخم غير واضح — الاحتياطي الفيدرالي يحافظ على نهج مرتبط بالبيانات."
+    },
+    "rate_path": {
+      "label": "hold_bias",
+      "confidence": 73,
+      "evidence": [
+        "Fed bias: data_dependent",
+        "Hold: 70%",
+        "Cut: 10%",
+        "Hike: 5%"
+      ],
+      "data_quality": "structural",
+      "freshness_score": null,
+      "reason_en": "Market pricing 70% hold probability — rates expected stable near-term.",
+      "reason_ar": "السوق يسعّر احتمالية 70% للثبات — الفائدة متوقعة مستقرة على المدى القريب."
+    },
+    "growth_regime": {
+      "label": "uncertain",
+      "confidence": 15,
+      "evidence": [
+        "No growth indicators available"
+      ],
+      "data_quality": "insufficient",
+      "freshness_score": null,
+      "reason_en": "growth_regime: No growth indicators available",
+      "reason_ar": "growth_regime: بيانات غير كافية"
+    },
+    "volatility_regime": {
+      "label": "uncertain",
+      "confidence": 15,
+      "evidence": [
+        "VIX level not available for precise classification"
+      ],
+      "data_quality": "insufficient",
+      "freshness_score": null,
+      "reason_en": "volatility_regime: VIX level not available for precise classification",
+      "reason_ar": "volatility_regime: بيانات غير كافية"
+    },
+    "dollar_regime": {
+      "label": "uncertain",
+      "confidence": 15,
+      "evidence": [
+        "DXY data unavailable"
+      ],
+      "data_quality": "insufficient",
+      "freshness_score": null,
+      "reason_en": "dollar_regime: DXY data unavailable",
+      "reason_ar": "dollar_regime: بيانات غير كافية"
+    },
+    "duration_regime": {
+      "label": "uncertain",
+      "confidence": 40,
+      "evidence": [
+        "Fed bias: data_dependent",
+        "Cut probability: 10%"
+      ],
+      "data_quality": "structural",
+      "freshness_score": null,
+      "reason_en": "Duration regime unclear — yield curve positioning and rate path signals mixed.",
+      "reason_ar": "نظام المدة غير واضح — إشارات وضع منحنى العائد ومسار الفائدة متضاربة."
+    }
+  },
+  "summary": {
+    "risk_appetite": "neutral (76%)",
+    "rate_path": "hold_bias (73%)",
+    "volatility_regime": "uncertain (15%)",
+    "growth_regime": "uncertain (15%)",
+    "inflation_regime": "uncertain (56%)",
+    "dollar_regime": "uncertain (15%)",
+    "duration_regime": "uncertain (40%)",
+    "headline_en": "Market tone: neutral · Volatility: uncertain · Rate path: hold bias",
+    "headline_ar": "نبرة السوق: محايد · التقلب: غير مؤكد · مسار الفائدة: ثبات"
+  },
+  "upcoming_catalysts": [],
+  "transmission_signals": [
+    {
+      "trigger": "CPI_hot",
+      "channel": "rate_repricing",
+      "chain_length": 8
+    },
+    {
+      "trigger": "CPI_cool",
+      "channel": "rate_relief",
+      "chain_length": 7
+    },
+    {
+      "trigger": "NFP_strong",
+      "channel": "hawkish_labor_repricing",
+      "chain_length": 7
+    },
+    {
+      "trigger": "NFP_weak",
+      "channel": "dual_response_risk",
+      "chain_length": 7
+    },
+    {
+      "trigger": "FOMC_hawkish",
+      "channel": "terminal_rate_repricing",
+      "chain_length": 7
+    },
+    {
+      "trigger": "FOMC_dovish",
+      "channel": "easing_expectation_pull_forward",
+      "chain_length": 7
+    }
+  ]
+}

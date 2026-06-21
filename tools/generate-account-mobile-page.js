@@ -65,7 +65,7 @@ ${head(ar)}
 <body>
 ${header}
   <main class="market-shell">
-    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span><h1>${esc(t(ar, 'Mobile App (PWA)', 'تطبيق الجوال (PWA)'))}</h1><p>${esc(t(ar, 'Install TradeAlphaAI to your home screen. Offline shell + push notification contract. No subscription registered today.', 'ثبّت TradeAlphaAI على شاشتك الرئيسية. هيكل بدون اتصال وعقد إشعارات. لا اشتراك مسجَّل اليوم.'))}</p></div></section>
+    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span><h1>${esc(t(ar, 'Mobile App (PWA)', 'تطبيق الجوال (PWA)'))}</h1><p>${esc(t(ar, 'Install TradeAlphaAI to your home screen. Offline shell + push notification contract. No subscription registered today.', 'ثبّت TradeAlphaAI على شاشتك الرئيسية. هيكل بدون اتصال وعقد إشعارات. لا اشتراك مسجَّل اليوم.'))}</p></div></section>
 ${body(ar)}
   </main>
   ${globalHeaderScripts()}

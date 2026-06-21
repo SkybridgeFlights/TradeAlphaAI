@@ -1,0 +1,290 @@
+{
+  "generated_at": "2026-06-07T17:32:37.588Z",
+  "data_quality": "structural",
+  "assets": [
+    {
+      "id": "spy",
+      "name": "S&P 500",
+      "name_ar": "ستاندرد آند بورز 500",
+      "category": "equity",
+      "trend": "unverified",
+      "change_pct": null,
+      "data_quality": "structural"
+    },
+    {
+      "id": "qqq",
+      "name": "NASDAQ",
+      "name_ar": "ناسداك",
+      "category": "equity",
+      "trend": "unverified",
+      "change_pct": null,
+      "data_quality": "structural"
+    },
+    {
+      "id": "xlk",
+      "name": "Tech ETF (XLK)",
+      "name_ar": "تقنية (XLK)",
+      "category": "equity",
+      "trend": "unverified",
+      "change_pct": null,
+      "data_quality": "structural"
+    },
+    {
+      "id": "soxx",
+      "name": "Semis (SOXX)",
+      "name_ar": "رقائق (SOXX)",
+      "category": "equity",
+      "trend": "unverified",
+      "change_pct": null,
+      "data_quality": "structural"
+    },
+    {
+      "id": "tlt",
+      "name": "Long Bonds (TLT)",
+      "name_ar": "سندات طويلة (TLT)",
+      "category": "bonds",
+      "trend": "unverified",
+      "change_pct": null,
+      "data_quality": "structural"
+    },
+    {
+      "id": "dxy",
+      "name": "USD Index (DXY)",
+      "name_ar": "الدولار (DXY)",
+      "category": "currency",
+      "trend": "unverified",
+      "change_pct": null,
+      "data_quality": "structural"
+    }
+  ],
+  "transmission_chains": [
+    {
+      "trigger": "CPI_hot",
+      "trigger_ar": "تضخم مرتفع",
+      "primary_channel": "rate_repricing",
+      "mechanism": "An above-consensus CPI reading compresses the probability of near-term Fed rate cuts. Markets reprice the terminal rate higher — or delay the first cut — which flows through the short-end of the Treasury curve. The 2-year yield is particularly sensitive because it most directly prices near-term Fed expectations. This rise in real yields increases the discount rate applied to all future cash flows.",
+      "chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_rises",
+          "reason": "Directly pricing near-term Fed expectations — hot CPI = delayed cuts = higher 2Y yield"
+        },
+        {
+          "asset": "10Y Treasury / TLT",
+          "direction": "yield_rises_price_falls",
+          "reason": "Rising short-end pulls long-end higher, though long-end also factors in growth and term premium"
+        },
+        {
+          "asset": "DXY (Dollar)",
+          "direction": "strengthens",
+          "reason": "Higher US rates attract capital inflows, increasing demand for dollars relative to lower-yielding currencies"
+        },
+        {
+          "asset": "GLD (Gold)",
+          "direction": "weakens",
+          "reason": "Gold has no yield — rising real yields raise its opportunity cost. DXY strength amplifies the headwind via commodity pricing mechanism"
+        }
+      ]
+    },
+    {
+      "trigger": "CPI_cool",
+      "trigger_ar": "تضخم منخفض",
+      "primary_channel": "rate_relief",
+      "mechanism": "A below-consensus inflation reading increases the probability that the Fed has achieved or is approaching its inflation target, potentially pulling forward the first rate cut. This eases the real-yield pressure that has been a headwind for duration-sensitive assets. The short-end of the Treasury curve leads the relief rally as rate-cut probabilities are repriced higher.",
+      "chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_falls",
+          "reason": "Repricing closer easing — cut probability rises, compressing 2Y yield"
+        },
+        {
+          "asset": "TLT",
+          "direction": "price_rises",
+          "reason": "Relief from rate pressure — duration assets benefit from falling yield environment"
+        },
+        {
+          "asset": "DXY (Dollar)",
+          "direction": "weakens",
+          "reason": "Lower rate expectations reduce yield differential advantage vs other currencies"
+        },
+        {
+          "asset": "GLD (Gold)",
+          "direction": "benefits",
+          "reason": "Falling real yields reduce gold opportunity cost. DXY weakness provides additional support via inverse commodity pricing relationship"
+        }
+      ]
+    },
+    {
+      "trigger": "NFP_strong",
+      "trigger_ar": "وظائف قوية",
+      "primary_channel": "hawkish_labor_repricing",
+      "mechanism": "A strong NFP reading reinforces the Fed's higher-for-longer framework. A tight labor market means wages are at risk of reacceleration, which complicates inflation normalization. The Fed's dual mandate means strong employment reduces urgency to ease. The market must reprice a later first cut and a higher terminal rate path.",
+      "chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_rises",
+          "reason": "Strong labor data delays Fed easing expectations directly"
+        },
+        {
+          "asset": "DXY",
+          "direction": "strengthens",
+          "reason": "Hawkish re-pricing supports dollar via rate differential expansion"
+        },
+        {
+          "asset": "IWM (Small Cap)",
+          "direction": "mixed_sensitive",
+          "reason": "Small caps benefit from economic strength but are penalized by higher financing costs — net depends on which factor dominates"
+        },
+        {
+          "asset": "XLF (Financials)",
+          "direction": "benefits",
+          "reason": "Banks benefit from higher-for-longer rate environment — net interest margins expand with sustained elevated short rates"
+        }
+      ]
+    },
+    {
+      "trigger": "NFP_weak",
+      "trigger_ar": "وظائف ضعيفة",
+      "primary_channel": "dual_response_risk",
+      "mechanism": "A weak NFP creates competing narratives simultaneously: (1) the dovish case — labor market slack increases, Fed has more room to cut; (2) the recession-risk case — growth is deteriorating, earnings estimates will face revision. The net market reaction depends on which narrative dominates, which is why weak NFP has historically been the most volatile macro release.",
+      "chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_falls",
+          "reason": "Easing expectation pulled forward as labor market slack builds"
+        },
+        {
+          "asset": "TLT",
+          "direction": "rallies",
+          "reason": "Bond market bids on both easing expectations and flight-to-safety"
+        },
+        {
+          "asset": "GLD",
+          "direction": "benefits",
+          "reason": "Falling real yields and dollar weakness support gold — unless recession risk dominates, in which case gold is also bid as a safe haven"
+        },
+        {
+          "asset": "QQQ",
+          "direction": "depends",
+          "reason": "Easing scenario: QQQ benefits from lower discount rates. Recession scenario: QQQ pressured by earnings downgrades. First 30 minutes of reaction is frequently reversed."
+        }
+      ]
+    },
+    {
+      "trigger": "FOMC_hawkish",
+      "trigger_ar": "احتياطي تشددي",
+      "primary_channel": "terminal_rate_repricing",
+      "mechanism": "The FOMC's power to move markets comes not from the meeting outcome (usually priced in advance) but from shifts in the dot plot, the statement language, and Chair Powell's press conference tone. A hawkish surprise typically involves either holding rates longer than priced, revising dots higher, or signaling slower QT tapering. The transmission runs through the terminal rate concept: if the terminal rate shifts up 25bp, every discounted future earnings stream faces a higher hurdle.",
+      "chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_jumps",
+          "reason": "Most directly prices near-term Fed expectations — hawkish dot plot shift reprices entire short-end"
+        },
+        {
+          "asset": "TLT",
+          "direction": "significant_pressure",
+          "reason": "FOMC hawkish surprise historically among the largest single-session TLT movers"
+        },
+        {
+          "asset": "DXY",
+          "direction": "strong_advance",
+          "reason": "Terminal rate repricing widening vs other G10 central banks drives significant FX flows"
+        },
+        {
+          "asset": "GLD",
+          "direction": "significant_weakness",
+          "reason": "Triple headwind: rising real yields, strong dollar, reduced macro uncertainty for haven demand"
+        }
+      ]
+    },
+    {
+      "trigger": "FOMC_dovish",
+      "trigger_ar": "احتياطي تيسيري",
+      "primary_channel": "easing_expectation_pull_forward",
+      "mechanism": "A dovish FOMC surprise loosens financial conditions across all channels simultaneously. The near-term cut probability increases, real yields fall, the dollar weakens, and duration assets rally. The key is whether the dovish signal is growth-supportive (soft landing) or recession-reactive (growth deterioration). The former is asset-constructive; the latter is more complex.",
+      "chain": [
+        {
+          "asset": "2Y Treasury",
+          "direction": "yield_falls",
+          "reason": "Near-term cut probability increases directly"
+        },
+        {
+          "asset": "TLT",
+          "direction": "rallies",
+          "reason": "Duration assets reprice positively across the entire curve"
+        },
+        {
+          "asset": "DXY",
+          "direction": "weakens",
+          "reason": "Rate differential compression reduces dollar yield advantage"
+        },
+        {
+          "asset": "GLD",
+          "direction": "benefits",
+          "reason": "Falling real yields and dollar weakness provide dual support"
+        }
+      ]
+    },
+    {
+      "trigger": "GDP_above",
+      "trigger_ar": "GDP_above",
+      "primary_channel": "soft_landing_confirmation",
+      "mechanism": "Above-consensus GDP strengthens the soft-landing narrative — growth is resilient despite the rate cycle, which supports earnings expectations and reduces the urgency for emergency easing. This is the most market-constructive macro scenario: growth strong enough to support earnings, but not so hot it reignites inflation.",
+      "chain": [
+        {
+          "asset": "SPY / QQQ",
+          "direction": "positive",
+          "reason": "Earnings expectations supported by stronger-than-expected economic activity"
+        },
+        {
+          "asset": "IWM",
+          "direction": "outperforms",
+          "reason": "Small caps are most cyclically sensitive — strong growth narrows the financing headwind relative to revenue opportunity"
+        },
+        {
+          "asset": "XLF (Financials)",
+          "direction": "benefits",
+          "reason": "Loan demand, credit quality, and capital markets activity all improve in a stronger growth environment"
+        },
+        {
+          "asset": "TLT",
+          "direction": "mild_pressure",
+          "reason": "Strong growth may maintain or slightly elevate the long-end, though the Fed remains on hold"
+        }
+      ]
+    },
+    {
+      "trigger": "GDP_below",
+      "trigger_ar": "GDP_below",
+      "primary_channel": "growth_risk_activation",
+      "mechanism": "Below-consensus GDP creates growth risk anxiety — particularly if the trend is sequential deterioration. Bond markets typically bid on recession expectations, but equity markets face a conflicting signal: growth deterioration hits earnings, but expected easing provides a multiple offset. The net direction in equities depends on how far growth is from recession and how quickly easing expectations build.",
+      "chain": [
+        {
+          "asset": "TLT",
+          "direction": "rallies",
+          "reason": "Recession risk bid as investors position for Fed easing and flight to safety"
+        },
+        {
+          "asset": "GLD",
+          "direction": "benefits",
+          "reason": "Haven demand rises; if Fed expected to ease, real yield pressure also reduces"
+        },
+        {
+          "asset": "XLU / XLP",
+          "direction": "outperform",
+          "reason": "Defensive sectors reprice positively on growth deterioration"
+        },
+        {
+          "asset": "IWM",
+          "direction": "underperforms",
+          "reason": "Small caps face sharpest earnings downgrades in growth deterioration"
+        }
+      ]
+    }
+  ],
+  "regime_context": {
+    "risk_appetite": "neutral",
+    "dollar_regime": "uncertain"
+  }
+}

@@ -99,58 +99,23 @@
         '<span>' + menuLabel + '</span>' +
         '<button class="mobile-nav-close" type="button" aria-label="' + closeLabel + '">×</button>' +
       '</div>' +
-      '<nav class="mobile-nav-links" aria-label="' + menuLabel + '"></nav>';
+      '<div class="mobile-nav-cards" data-mobile-cards-root></div>';
 
-    var links = panel.querySelector(".mobile-nav-links");
-    // Render the mobile drawer as grouped sections that mirror the desktop
-    // mega-menu structure. Top-level non-dropdown items become a "Primary"
-    // group; legacy dropdown items get their parent label; mega-menu items
-    // emit one group per column. Result: no 53-item flat wall.
-    function appendGroup(title, anchors) {
-      if (!anchors.length) return;
-      var group = document.createElement("div");
-      group.className = "mobile-nav-group";
-      if (title) {
-        var h = document.createElement("span");
-        h.className = "mobile-nav-group-title";
-        h.textContent = title;
-        group.appendChild(h);
-      }
-      anchors.forEach(function (a) { group.appendChild(a.cloneNode(true)); });
-      links.appendChild(group);
+    var cardsRoot = panel.querySelector("[data-mobile-cards-root]");
+    // ── Card-based mobile drawer ─────────────────────────────────────
+    // Cards (6 grouped: Markets / Research / Intelligence / Tools /
+    // Workspace / Account) are baked into a <template data-mobile-cards>
+    // inside the header by tools/render-global-header.js. We clone the
+    // template into the drawer instead of re-cloning the desktop nav.
+    // The Account card has data-mobile-signin / data-mobile-dashboard /
+    // data-mobile-signout buttons whose visibility is toggled by Clerk
+    // session state below, in sync with the right-side header action.
+    var cardsTemplate = header.querySelector("template[data-mobile-cards]") || document.querySelector("template[data-mobile-cards]");
+    if (cardsTemplate) {
+      cardsRoot.appendChild(cardsTemplate.content.cloneNode(true));
+    } else {
+      console.warn("[GLOBAL HEADER] mobile cards template not found — drawer will be empty");
     }
-    var primaryAnchors = [];
-    Array.prototype.forEach.call(nav.children, function (child) {
-      if (child.tagName === "A") {
-        primaryAnchors.push(child);
-      } else if (child.classList && child.classList.contains("nav-menu")) {
-        var trigger = child.querySelector(".nav-menu-trigger");
-        if (trigger) primaryAnchors.push(trigger);
-      }
-    });
-    appendGroup(isArabic ? "الأقسام الرئيسية" : "Primary", primaryAnchors);
-    var megaColumns = nav.querySelectorAll(".nav-mega-column");
-    Array.prototype.forEach.call(megaColumns, function (col) {
-      var titleEl = col.querySelector(".nav-mega-title");
-      var anchors = Array.prototype.slice.call(col.querySelectorAll("a"));
-      appendGroup(titleEl ? titleEl.textContent.trim() : "", anchors);
-    });
-    var megaFooter = nav.querySelectorAll(".nav-mega-footer-row");
-    Array.prototype.forEach.call(megaFooter, function (row) {
-      var titleEl = row.querySelector(".nav-mega-footer-title");
-      var anchors = Array.prototype.slice.call(row.querySelectorAll("a"));
-      appendGroup(titleEl ? titleEl.textContent.trim() : "", anchors);
-    });
-    // Legacy single-column dropdowns (e.g. Rankings) — render their items
-    // under the parent label so they don't disappear from the drawer.
-    var legacyDropdowns = nav.querySelectorAll(".nav-menu:not(.nav-menu-mega) .nav-dropdown");
-    Array.prototype.forEach.call(legacyDropdowns, function (dd) {
-      var parent = dd.closest(".nav-menu");
-      var trigger = parent && parent.querySelector(".nav-menu-trigger");
-      var labelText = trigger ? trigger.firstChild && trigger.firstChild.textContent : "";
-      var anchors = Array.prototype.slice.call(dd.querySelectorAll("a"));
-      appendGroup(labelText ? labelText.trim() : "", anchors);
-    });
 
     // Language switcher: clone the opposite-language link into the drawer
     var localeEl    = header.querySelector(".locale-links");
@@ -160,8 +125,21 @@
       var mobileSwitcher = document.createElement("div");
       mobileSwitcher.className = "mobile-locale-switcher";
       mobileSwitcher.appendChild(switchLink.cloneNode(true));
-      links.appendChild(mobileSwitcher);
+      cardsRoot.appendChild(mobileSwitcher);
     }
+
+    // Tap-to-expand card behavior — collapsed by default on small viewports
+    // so the drawer fits without scrolling 6 full cards. Tap the card head
+    // to toggle. The first card opens automatically so users see content.
+    var allCards = panel.querySelectorAll(".m-card");
+    Array.prototype.forEach.call(allCards, function (card, idx) {
+      if (idx === 0) card.classList.add("is-expanded");
+      var head = card.querySelector(".m-card-head");
+      if (!head) return;
+      head.addEventListener("click", function () {
+        card.classList.toggle("is-expanded");
+      });
+    });
 
     var backdrop = document.createElement("button");
     backdrop.className = "mobile-nav-backdrop";
@@ -231,7 +209,26 @@
       var signedInHref  = accountAction.getAttribute("data-signed-in-href") || "/account/";
       var mountAttempted = false;
 
+      // Mobile drawer's Account card mirrors the same Clerk state.
+      var mobileSignIn     = document.querySelector("[data-mobile-signin]");
+      var mobileDashboard  = document.querySelector("[data-mobile-dashboard]");
+      var mobileSignOut    = document.querySelector("[data-mobile-signout]");
+      if (mobileSignOut) {
+        mobileSignOut.addEventListener("click", function () {
+          if (window.Clerk && typeof window.Clerk.signOut === "function") {
+            window.Clerk.signOut({ redirectUrl: "/" });
+          }
+        });
+      }
+
+      function applyMobile(user) {
+        if (mobileSignIn)    mobileSignIn.hidden    = !!user;
+        if (mobileDashboard) mobileDashboard.hidden = !user;
+        if (mobileSignOut)   mobileSignOut.hidden   = !user;
+      }
+
       function applyState(user) {
+        applyMobile(user);
         if (user) {
           accountAction.setAttribute("data-signed-in", "1");
           if (signedOutCta) signedOutCta.hidden = true;

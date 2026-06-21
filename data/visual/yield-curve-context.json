@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-06-07T17:32:37.588Z",
+  "data_quality": "structural",
+  "curve": {
+    "state": "unverified",
+    "state_ar": "غير مؤكد",
+    "spread_bps": null,
+    "us10y": null,
+    "us2y": null,
+    "narrative": "Insufficient signal clarity to diagnose the yield curve shape with confidence. The curve's behavior is the most important confirmation signal to watch — direction of 2Y yield movements relative to 10Y will reveal whether the market is pricing tightening, easing, or a growth transition.",
+    "confirmation": [
+      "2Y Treasury yield direction relative to 10Y",
+      "DXY correlation to yield spread",
+      "Credit spread behavior (HYG/LQD vs TLT)"
+    ]
+  },
+  "fed_path": {
+    "bias": "data_dependent",
+    "bias_ar": "مرتبط بالبيانات",
+    "hold_pct": 70,
+    "cut_pct": 10,
+    "hike_pct": 5,
+    "narrative": "The macro signal environment does not provide a clear directional read on Fed policy — incoming data is mixed, and the Fed's reaction function is being re-calibrated. The most likely near-term outcome is a hold with language that preserves optionality in both directions."
+  },
+  "duration_sensitivity": [
+    {
+      "asset": "QQQ",
+      "sensitivity": "very_high",
+      "direction": "positive_on_rate_fall",
+      "direction_ar": "إيجابي عند انخفاض الفائدة"
+    },
+    {
+      "asset": "TLT",
+      "sensitivity": "very_high_direct",
+      "direction": "tailwind",
+      "direction_ar": "سلبي عند ارتفاع الفائدة"
+    },
+    {
+      "asset": "XLU",
+      "sensitivity": "high",
+      "direction": "tailwind",
+      "direction_ar": "سلبي عند ارتفاع الفائدة"
+    },
+    {
+      "asset": "GLD",
+      "sensitivity": "high_via_real_yield",
+      "direction": "tailwind_via_real_yield_fall",
+      "direction_ar": "سلبي عند ارتفاع الفائدة"
+    },
+    {
+      "asset": "XLF",
+      "sensitivity": "positive_on_rate_rise",
+      "direction": "NIM_compression_short_term",
+      "direction_ar": "سلبي عند ارتفاع الفائدة"
+    },
+    {
+      "asset": "IWM",
+      "sensitivity": "high_via_debt_channel",
+      "direction": "positive_financing_relief",
+      "direction_ar": "سلبي عند ارتفاع الفائدة"
+    }
+  ],
+  "duration_regime": {
+    "label": "uncertain",
+    "confidence": 40,
+    "evidence": [
+      "Fed bias: data_dependent",
+      "Cut probability: 10%"
+    ],
+    "data_quality": "structural",
+    "freshness_score": null,
+    "reason_en": "Duration regime unclear — yield curve positioning and rate path signals mixed.",
+    "reason_ar": "نظام المدة غير واضح — إشارات وضع منحنى العائد ومسار الفائدة متضاربة."
+  }
+}

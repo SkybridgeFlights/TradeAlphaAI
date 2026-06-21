@@ -77,7 +77,7 @@ ${head(ar)}
 <body>
 ${header}
   <main class="market-shell">
-    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span><h1>${esc(t(ar, 'Account AI Copilot', 'مساعد الحساب الذكي'))}</h1><p>${esc(t(ar, 'Foundation-only AI copilot — model, scope, tools and governance contracts. Live activation in a later phase.', 'مساعد ذكاء اصطناعي في مرحلة التأسيس — عقود النموذج والنطاق والأدوات والحوكمة. التفعيل الحيّ في مرحلة لاحقة.'))}</p></div></section>
+    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span><h1>${esc(t(ar, 'Account AI Copilot', 'مساعد الحساب الذكي'))}</h1><p>${esc(t(ar, 'Foundation-only AI copilot — model, scope, tools and governance contracts. Live activation in a later phase.', 'مساعد ذكاء اصطناعي في مرحلة التأسيس — عقود النموذج والنطاق والأدوات والحوكمة. التفعيل الحيّ في مرحلة لاحقة.'))}</p></div></section>
 ${body(ar, c)}
   </main>
   ${globalHeaderScripts()}

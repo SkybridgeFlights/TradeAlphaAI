@@ -1,0 +1,153 @@
+{
+  "generated_at": "2026-06-07T17:32:37.589Z",
+  "data_quality": "structural",
+  "nodes": [
+    {
+      "id": "QQQ",
+      "name_en": "QQQ — NASDAQ 100",
+      "name_ar": "ناسداك 100",
+      "category": "broad_equity",
+      "risk": "high",
+      "trend": "unverified",
+      "change_pct": null,
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "SPY",
+      "name_en": "SPY — S&P 500",
+      "name_ar": "ستاندرد آند بورز 500",
+      "category": "broad_equity",
+      "risk": "medium",
+      "trend": "unverified",
+      "change_pct": null,
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "XLK",
+      "name_en": "XLK — Technology",
+      "name_ar": "التكنولوجيا",
+      "category": "sector",
+      "risk": "high",
+      "trend": "unverified",
+      "change_pct": null,
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "SOXX",
+      "name_en": "SOXX — Semiconductors",
+      "name_ar": "أشباه الموصلات",
+      "category": "sector",
+      "risk": "very_high",
+      "trend": "unverified",
+      "change_pct": null,
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "SMH",
+      "name_en": "SMH — Semis Alt",
+      "name_ar": "رقائق بديل",
+      "category": "sector",
+      "risk": "very_high",
+      "trend": "unverified",
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "TLT",
+      "name_en": "TLT — Long Bonds",
+      "name_ar": "سندات طويلة",
+      "category": "fixed_income",
+      "risk": "medium",
+      "trend": "unverified",
+      "change_pct": null,
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "XLE",
+      "name_en": "XLE — Energy",
+      "name_ar": "الطاقة",
+      "category": "sector",
+      "risk": "high",
+      "trend": "unverified",
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "XLV",
+      "name_en": "XLV — Healthcare",
+      "name_ar": "الرعاية الصحية",
+      "category": "sector",
+      "risk": "low",
+      "trend": "unverified",
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    },
+    {
+      "id": "GLD",
+      "name_en": "GLD — Gold",
+      "name_ar": "الذهب",
+      "category": "commodity",
+      "risk": "medium",
+      "trend": "unverified",
+      "flow_signal": "unverified",
+      "flow_ar": "غير مؤكد"
+    }
+  ],
+  "relationships": [
+    {
+      "from": "QQQ",
+      "to": "XLK",
+      "type": "constituent",
+      "strength": 0.95,
+      "description_en": "XLK is the largest QQQ constituent sector",
+      "description_ar": "XLK هو أكبر قطاع مكوّن في QQQ"
+    },
+    {
+      "from": "QQQ",
+      "to": "SOXX",
+      "type": "correlated",
+      "strength": 0.85,
+      "description_en": "Semiconductor leadership drives NASDAQ returns",
+      "description_ar": "قيادة أشباه الموصلات تحرك عوائد ناسداك"
+    },
+    {
+      "from": "SOXX",
+      "to": "SMH",
+      "type": "peer",
+      "strength": 0.92,
+      "description_en": "Alternative semiconductor index — high overlap",
+      "description_ar": "مؤشر أشباه الموصلات البديل — تداخل كبير"
+    },
+    {
+      "from": "TLT",
+      "to": "QQQ",
+      "type": "inverse",
+      "strength": 0.7,
+      "description_en": "Rate sensitivity: rising yields pressure QQQ valuations",
+      "description_ar": "حساسية الفائدة: ارتفاع العوائد يضغط على تقييمات QQQ"
+    },
+    {
+      "from": "TLT",
+      "to": "GLD",
+      "type": "correlated",
+      "strength": 0.55,
+      "description_en": "Safe-haven flows often lift both gold and bonds",
+      "description_ar": "تدفقات الملاذ الآمن ترفع الذهب والسندات معاً"
+    },
+    {
+      "from": "SPY",
+      "to": "XLK",
+      "type": "constituent",
+      "strength": 0.8,
+      "description_en": "Technology is the largest S&P 500 sector weight",
+      "description_ar": "التكنولوجيا هي أكبر قطاع بالوزن في ستاندرد آند بورز 500"
+    }
+  ],
+  "disclaimer_en": "ETF relationships are structural and educational. Not investment advice.",
+  "disclaimer_ar": "علاقات الصناديق هيكلية وتعليمية. ليست توصية استثمارية."
+}

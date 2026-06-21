@@ -63,7 +63,7 @@ ${head(ar, surface, relPath)}
 ${header}
   <main class="market-shell">
     <section class="market-hero"><div class="market-hero-copy">
-      <span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span>
+      <span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span>
       <h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1>
       <p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p>
     </div></section>

@@ -29,9 +29,9 @@ const SURFACES = {
   verify: { rel: 'account/verify/', title_en: 'Account Verify', title_ar: 'التحقق من الحساب',
     desc_en: 'The verify endpoint is where the hosted-UI flow will land after sign-in. Today it describes the future redirect contract.',
     desc_ar: 'نقطة التحقق هي وجهة عودة تدفّق الواجهة المستضافة بعد تسجيل الدخول. اليوم تصف عقد إعادة التوجيه المستقبلي.' },
-  profile: { rel: 'account/profile/', title_en: 'Account Profile', title_ar: 'الملف الشخصي للحساب',
-    desc_en: 'Future account profile surface — fields, scopes and tier visible to the account once live wiring activates.',
-    desc_ar: 'سطح الملف الشخصي المستقبلي — الحقول والصلاحيات والطبقة الظاهرة للحساب عند تفعيل الربط الحيّ.' },
+  profile: { rel: 'account/profile/', title_en: 'Your TradeAlphaAI Account', title_ar: 'حسابك في TradeAlphaAI',
+    desc_en: 'Manage your profile, preferences, watchlists and workspace.',
+    desc_ar: 'أدر ملفك الشخصي وتفضيلاتك وقوائم متابعتك ومساحة العمل.' },
 };
 
 function head(ar, surface, relPath) {
@@ -114,7 +114,7 @@ ${header}
   <main class="market-shell" data-account-surface="${esc(surface.rel)}" data-auth-mode="${esc(mode || 'contract')}">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span>
+        <span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span>
         <h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1>
         <p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p>
       </div>

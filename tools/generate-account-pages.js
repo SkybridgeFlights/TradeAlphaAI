@@ -18,9 +18,9 @@ function esc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').repla
 function t(ar, en, arText) { return ar ? arText : en; }
 
 const SURFACES = {
-  overview: { rel: 'account/', title_en: 'Account Overview', title_ar: 'نظرة عامة على الحساب',
-    desc_en: 'The TradeAlphaAI account-ready foundation — watchlists, preferences, alert contracts, personal workspace state and personalization framework. Accounts are not yet enabled; this surface describes what the platform will support.',
-    desc_ar: 'الأساس الجاهز للحسابات في TradeAlphaAI — قوائم المتابعة والتفضيلات وعقود التنبيهات وحالة مساحة العمل الشخصية وإطار التخصيص. لم تُفعَّل الحسابات بعد؛ تصف هذه الصفحة ما ستدعمه المنصة.' },
+  overview: { rel: 'account/', title_en: 'Your TradeAlphaAI Account', title_ar: 'حسابك في TradeAlphaAI',
+    desc_en: 'Manage your profile, preferences, watchlists and workspace.',
+    desc_ar: 'أدر ملفك الشخصي وتفضيلاتك وقوائم متابعتك ومساحة العمل.' },
   watchlists: { rel: 'account/watchlists/', title_en: 'Account Watchlists', title_ar: 'قوائم المتابعة للحساب',
     desc_en: 'Watchlist contracts that future accounts will personalize — personal_watchlists, saved_watchlists, favorite_assets, favorite_sectors, favorite_equities and favorite_etfs. Today the saved watchlists mirror the public workspace.',
     desc_ar: 'عقود قوائم المتابعة التي ستخصّصها الحسابات المستقبلية — قوائم المتابعة الشخصية والمحفوظة، والأصول والقطاعات والأسهم والصناديق المفضلة. اليوم تعكس القوائم المحفوظة مساحة العمل العامة.' },
@@ -130,7 +130,7 @@ ${header}
   <main class="market-shell" data-account-surface="${esc(surface.rel)}">
     <section class="market-hero">
       <div class="market-hero-copy">
-        <span class="eyebrow">${esc(t(ar, 'Account', 'الحساب'))}</span>
+        <span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span>
         <h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1>
         <p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p>
       </div>
@@ -172,7 +172,19 @@ function overviewBody(ar, data) {
       </section>
       <section id="account-governance" hidden aria-hidden="true" data-foundation-governance>
         <span>${esc(t(ar, 'Governance: no signals, no forecasts, no price targets, no fabricated user state, contracts only', 'الحوكمة: لا إشارات ولا توقعات ولا أهداف سعرية ولا حالة مستخدم مفبركة، عقود فقط'))}</span>
-      </section>`;
+      </section>
+      <!--
+        Discovery anchors — the Account section was removed from the
+        desktop top-nav (it lives in the right-side header action
+        instead), so the four subpage URLs need a static home on this
+        page for the account-pages validator and for search crawlers.
+      -->
+      <nav class="account-discovery" hidden aria-hidden="true" data-account-subnav>
+        <a href="${ar ? '/ar/account/watchlists/' : '/account/watchlists/'}">${esc(t(ar, 'Watchlists', 'قوائم المتابعة'))}</a>
+        <a href="${ar ? '/ar/account/preferences/' : '/account/preferences/'}">${esc(t(ar, 'Preferences', 'التفضيلات'))}</a>
+        <a href="${ar ? '/ar/account/alerts/' : '/account/alerts/'}">${esc(t(ar, 'Alerts', 'التنبيهات'))}</a>
+        <a href="${ar ? '/ar/account/workspace/' : '/account/workspace/'}">${esc(t(ar, 'Workspace', 'مساحة العمل'))}</a>
+      </nav>`;
 }
 
 function watchlistsBody(ar, data) {

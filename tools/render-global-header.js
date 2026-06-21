@@ -86,11 +86,130 @@ function renderGlobalHeader({ locale, activePage = '', basePath = '', arabicHref
       </button>
     </div>
   </div>
+  <template data-mobile-cards>${renderMobileCards(ar, signInHref, accountHref, signInLabel, accountLabel)}</template>
 </div>
 ${MARKER_END}`;
 
   return html;
 }
+
+// Mobile drawer cards — 6 grouped cards instead of a flat list.
+// Cards are baked into a <template> inside the header and cloned by
+// js/global-header.js when the drawer opens. Each card has 3-5 key
+// links + a "View all" terminal anchor.
+function renderMobileCards(ar, signInHref, accountHref, signInLabel, accountLabel) {
+  const cards = ar ? MOBILE_CARDS_AR : MOBILE_CARDS_EN;
+  const viewAllLabel = ar ? 'عرض الكل' : 'View all';
+  const accountSubLabel = ar ? 'حسابي' : 'Account';
+  const inHtml = cards.map((card) => {
+    const items = card.items.map(([href, label]) => `<li><a class="m-card-link" href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`).join('');
+    return `
+    <article class="m-card" data-card-key="${escapeHtml(card.key)}">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true">${MOBILE_CARD_ICONS[card.key] || ''}</span>
+        <h3 class="m-card-title">${escapeHtml(card.title)}</h3>
+      </header>
+      <ul class="m-card-list">${items}</ul>
+      ${card.viewAll ? `<a class="m-card-viewall" href="${escapeHtml(card.viewAll[0])}">${escapeHtml(card.viewAll[1] || viewAllLabel)}<span aria-hidden="true">${ar ? '←' : '→'}</span></a>` : ''}
+    </article>`;
+  }).join('');
+  // Account card — always last, with auth-state-aware buttons. The JS
+  // swaps signed-out/signed-in classes based on Clerk session.
+  const accountCard = `
+    <article class="m-card m-card-account" data-card-key="account" data-mobile-account>
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true">${MOBILE_CARD_ICONS.account}</span>
+        <h3 class="m-card-title">${escapeHtml(accountSubLabel)}</h3>
+      </header>
+      <ul class="m-card-list">
+        <li><a class="m-card-link" href="${escapeHtml(accountHref)}profile/">${escapeHtml(ar ? 'الملف الشخصي' : 'Profile')}</a></li>
+        <li><a class="m-card-link" href="${escapeHtml(accountHref)}watchlists/">${escapeHtml(ar ? 'قوائم المتابعة' : 'Watchlists')}</a></li>
+        <li><a class="m-card-link" href="${escapeHtml(accountHref)}preferences/">${escapeHtml(ar ? 'التفضيلات' : 'Preferences')}</a></li>
+        <li><a class="m-card-link" href="${escapeHtml(accountHref)}alerts/">${escapeHtml(ar ? 'التنبيهات' : 'Alerts')}</a></li>
+      </ul>
+      <div class="m-card-actions">
+        <a class="m-card-cta m-card-cta-signin" data-mobile-signin href="${escapeHtml(signInHref)}">${escapeHtml(signInLabel)}</a>
+        <a class="m-card-cta m-card-cta-dashboard" data-mobile-dashboard hidden href="${escapeHtml(accountHref)}">${escapeHtml(ar ? 'لوحة التحكم' : 'Dashboard')}</a>
+        <button type="button" class="m-card-cta m-card-cta-signout" data-mobile-signout hidden>${escapeHtml(ar ? 'تسجيل الخروج' : 'Sign out')}</button>
+      </div>
+    </article>`;
+  return inHtml + accountCard;
+}
+
+const MOBILE_CARDS_EN = [
+  { key: 'markets', title: 'Markets', viewAll: ['/markets/', 'View all Markets'], items: [
+    ['/markets/', 'Assets'],
+    ['/sectors/', 'Sectors'],
+    ['/equities/', 'Equities'],
+    ['/etfs/', 'ETF Intelligence'],
+  ]},
+  { key: 'research', title: 'Research', viewAll: ['/research/', 'View all Research'], items: [
+    ['/research/', 'Research Hub'],
+    ['/research/feed/', 'Research Feed'],
+    ['/research/regime/', 'Regime Research'],
+    ['/research/etfs/', 'ETF Research'],
+  ]},
+  { key: 'intelligence', title: 'Intelligence', viewAll: ['/intelligence/', 'View all Intelligence'], items: [
+    ['/market-terminal/', 'Market Terminal'],
+    ['/market-regime/', 'Market Regime'],
+    ['/rankings/', 'Rankings'],
+    ['/explorer/', 'Explorer'],
+    ['/changes/', 'Changes'],
+  ]},
+  { key: 'tools', title: 'Tools', viewAll: ['/workspace/', 'View all Tools'], items: [
+    ['/ai-stock-screener.html', 'Screener'],
+    ['/economic-calendar/', 'Economic Calendar'],
+    ['/briefs/', 'Market Briefs'],
+    ['/methodology.html', 'Methodology'],
+  ]},
+  { key: 'workspace', title: 'Workspace', viewAll: ['/workspace/', 'Open workspace'], items: [
+    ['/workspace/watchlists/', 'My Watchlists'],
+    ['/workspace/monitoring/', 'Monitoring'],
+    ['/workspace/regime/', 'Regime Monitoring'],
+    ['/workspace/research/', 'Workspace Research'],
+  ]},
+];
+const MOBILE_CARDS_AR = [
+  { key: 'markets', title: 'الأسواق', viewAll: ['/ar/markets/', 'عرض كل الأسواق'], items: [
+    ['/ar/markets/', 'الأصول'],
+    ['/ar/sectors/', 'القطاعات'],
+    ['/ar/equities/', 'الأسهم الفردية'],
+    ['/ar/etfs/', 'استخبارات الصناديق'],
+  ]},
+  { key: 'research', title: 'الأبحاث', viewAll: ['/ar/research/', 'عرض كل الأبحاث'], items: [
+    ['/ar/research/', 'مركز الأبحاث'],
+    ['/ar/research/feed/', 'تغذية الأبحاث'],
+    ['/ar/research/regime/', 'أبحاث النظام'],
+    ['/ar/research/etfs/', 'أبحاث الصناديق'],
+  ]},
+  { key: 'intelligence', title: 'الاستخبارات', viewAll: ['/ar/intelligence/', 'عرض كل الاستخبارات'], items: [
+    ['/ar/market-terminal/', 'طرفية السوق'],
+    ['/ar/market-regime/', 'نظام السوق'],
+    ['/ar/rankings/', 'الترتيب'],
+    ['/ar/explorer/', 'المستكشف'],
+    ['/ar/changes/', 'التغيّرات'],
+  ]},
+  { key: 'tools', title: 'الأدوات', viewAll: ['/ar/workspace/', 'عرض كل الأدوات'], items: [
+    ['/ar/ai-stock-screener.html', 'ماسح السوق'],
+    ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
+    ['/ar/briefs/', 'الإحاطات'],
+    ['/ar/methodology.html', 'المنهجية'],
+  ]},
+  { key: 'workspace', title: 'مساحة المتابعة', viewAll: ['/ar/workspace/', 'افتح مساحة المتابعة'], items: [
+    ['/ar/workspace/watchlists/', 'قوائم المتابعة'],
+    ['/ar/workspace/monitoring/', 'المتابعة'],
+    ['/ar/workspace/regime/', 'متابعة النظام'],
+    ['/ar/workspace/research/', 'أبحاث المتابعة'],
+  ]},
+];
+const MOBILE_CARD_ICONS = {
+  markets:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>',
+  research:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  intelligence: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  tools:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6.3 6.3 2.6 2.6 6.3-6.3a4 4 0 0 0 5.4-5.4z"/></svg>',
+  workspace:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  account:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>',
+};
 
 // Minimal inline user-circle icon — keeps the Account button visually
 // anchored even before Clerk's UserButton image arrives.
@@ -145,258 +264,123 @@ function globalHeaderScripts() {
 }
 
 function englishLinks() {
+  // 6-item focused top-level. Each non-Home item exposes a short
+  // dropdown (≤7 items) with a "View all" terminal link. Account is
+  // INTENTIONALLY absent — it lives in the right-side header action.
   return [
-    { key: 'home',              href: '/',                       label: 'Home' },
-    { key: 'stocks',            href: '/stocks.html',            label: 'Stocks' },
-    { key: 'etfs',              href: '/etfs.html',              label: 'ETFs' },
-    { key: 'screener',          href: '/ai-stock-screener.html', label: 'Screener' },
+    { key: 'home', href: '/', label: 'Home' },
     {
-      key: 'rankings', href: '/rankings.html', label: 'Rankings',
+      key: 'markets', href: '/markets/', label: 'Markets',
+      activeKeys: ['stocks', 'etfs', 'markets', 'sectors', 'equities', 'compare'],
       children: [
-        ['/rankings.html#top-stocks', 'Stock Rankings'],
-        ['/rankings.html#top-ai-stocks', 'AI Leadership'],
-        ['/rankings.html#top-semiconductor-stocks', 'Semiconductor Leadership'],
-        ['/rankings.html#top-growth-stocks', 'Growth Stocks'],
-        ['/rankings.html#top-dividend-etfs', 'Dividend ETFs'],
-        ['/rankings.html#top-broad-market-etfs', 'Broad-Market ETFs']
-      ]
+        ['/markets/', 'Assets'],
+        ['/sectors/', 'Sectors'],
+        ['/equities/', 'Equities'],
+        ['/etfs/', 'ETF Intelligence'],
+        ['/stocks.html', 'Stocks Directory'],
+        ['/etfs.html', 'ETFs Directory'],
+      ],
+      viewAll: ['/markets/', 'View all Markets'],
     },
     {
-      key: 'research',
-      href: '/intelligence/',
-      label: 'Market Intelligence',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map', 'explorer', 'workspace', 'account'],
-      // Mega-menu: 6 grouped columns instead of a 53-item flat list.
-      // Each column has a title + 5-8 items. Renderer detects `groups`
-      // and emits a multi-column dropdown.
-      groups: [
-        { title: 'Intelligence', items: [
-          ['/market-terminal/', 'Market Terminal'],
-          ['/market-regime/', 'Market Regime'],
-          ['/rankings/', 'Rankings'],
-          ['/market-map/assets/', 'Visual Maps'],
-          ['/markets/', 'Assets'],
-          ['/sectors/', 'Sectors'],
-          ['/equities/', 'Equities'],
-          ['/etfs/', 'ETFs'],
-        ]},
-        { title: 'Research', items: [
-          ['/research/', 'Research Hub'],
-          ['/research/feed/', 'Research Feed'],
-          ['/research/regime/', 'Regime Research'],
-          ['/research/assets/', 'Entity Research'],
-          ['/research/etfs/', 'ETF Research'],
-          ['/insights/', 'Applied Research'],
-          ['/articles/', 'Educational Articles'],
-        ]},
-        { title: 'Changes', items: [
-          ['/changes/', 'Changes Hub'],
-          ['/changes/assets/', 'Asset Changes'],
-          ['/changes/sectors/', 'Sector Changes'],
-          ['/changes/equities/', 'Equity Changes'],
-          ['/changes/etfs/', 'ETF Changes'],
-          ['/changes/regime/', 'Regime Changes'],
-          ['/changes/history/', 'Change History'],
-        ]},
-        { title: 'Explorer', items: [
-          ['/explorer/', 'Explorer Home'],
-          ['/explorer/events/', 'Event Explorer'],
-          ['/explorer/entity/', 'Entity Explorer'],
-          ['/explorer/network/', 'Network Explorer'],
-          ['/explorer/research/', 'Research Explorer'],
-          ['/explorer/search/', 'Search Explorer'],
-        ]},
-        { title: 'Workspace', items: [
-          ['/workspace/', 'Workspace Home'],
-          ['/workspace/watchlists/', 'Watchlists'],
-          ['/workspace/monitoring/', 'Monitoring'],
-          ['/workspace/research/', 'Workspace Research'],
-          ['/workspace/regime/', 'Regime Monitoring'],
-        ]},
-        { title: 'Account', items: [
-          ['/account/', 'Account Overview'],
-          ['/account/profile/', 'Profile'],
-          ['/account/preferences/', 'Preferences'],
-          ['/account/watchlists/', 'My Watchlists'],
-          ['/account/alerts/', 'Alerts'],
-          ['/account/workspace/', 'My Workspace'],
-          ['/account/billing/', 'Billing'],
-          ['/account/mobile/', 'Mobile App'],
-        ]},
+      key: 'research', href: '/research/', label: 'Research',
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news'],
+      children: [
+        ['/research/', 'Research Hub'],
+        ['/research/feed/', 'Research Feed'],
+        ['/research/regime/', 'Regime Research'],
+        ['/research/assets/', 'Entity Research'],
+        ['/research/etfs/', 'ETF Research'],
+        ['/insights/', 'Applied Research'],
       ],
-      // Secondary surfaces — kept reachable from the foot of the
-      // mega-menu so existing internal links + sitemap surfaces are
-      // never orphaned (e.g. market-news, market-structure, market-
-      // outlook, market-map subviews, briefs, research history).
-      footer: [
-        { title: 'More Surfaces', items: [
-          ['/market-news/', 'Market News'],
-          ['/market-structure/', 'Market Structure'],
-          ['/market-outlook/', 'Market Outlook'],
-          ['/briefs/', 'Market Briefs'],
-          ['/research/history/', 'Research History'],
-          ['/market-map/regime/', 'Regime Map'],
-          ['/market-map/network/', 'Network Map'],
-          ['/market-map/history/', 'History Map'],
-          ['/market-map/etfs/', 'ETF Map'],
-        ]},
-      ],
+      viewAll: ['/research/', 'View all Research'],
     },
-    { key: 'economic-calendar', href: '/economic-calendar/', label: 'Economic Calendar' },
-    { key: 'methodology', href: '/methodology.html', label: 'Methodology' }
+    {
+      key: 'intelligence', href: '/intelligence/', label: 'Intelligence',
+      activeKeys: ['intelligence', 'market-terminal', 'market-regime', 'relative-rankings', 'market-map', 'explorer', 'changes', 'market-structure', 'market-outlook'],
+      children: [
+        ['/market-terminal/', 'Market Terminal'],
+        ['/market-regime/', 'Market Regime'],
+        ['/rankings/', 'Rankings'],
+        ['/market-map/assets/', 'Maps'],
+        ['/explorer/', 'Explorer'],
+        ['/changes/', 'Changes'],
+      ],
+      viewAll: ['/intelligence/', 'View all Intelligence'],
+    },
+    {
+      key: 'tools', href: '/workspace/', label: 'Tools',
+      activeKeys: ['screener', 'economic-calendar', 'workspace', 'briefs'],
+      children: [
+        ['/ai-stock-screener.html', 'Screener'],
+        ['/economic-calendar/', 'Economic Calendar'],
+        ['/workspace/', 'Workspace'],
+        ['/workspace/watchlists/', 'Watchlists'],
+        ['/briefs/', 'Market Briefs'],
+        ['/articles/', 'Educational Articles'],
+      ],
+      viewAll: ['/workspace/', 'View all Tools'],
+    },
+    { key: 'methodology', href: '/methodology.html', label: 'Methodology' },
   ];
 }
 
 function arabicLinks() {
   return [
-    { key: 'home',              href: '/ar/',                       label: 'الرئيسية' },
-    { key: 'stocks',            href: '/ar/stocks.html',            label: 'الأسهم' },
-    { key: 'etfs',              href: '/ar/etfs.html',              label: 'الصناديق' },
-    { key: 'screener',          href: '/ar/ai-stock-screener.html', label: 'ماسح السوق' },
+    { key: 'home', href: '/ar/', label: 'الرئيسية' },
     {
-      key: 'rankings', href: '/ar/rankings.html', label: 'التصنيفات',
+      key: 'markets', href: '/ar/markets/', label: 'الأسواق',
+      activeKeys: ['stocks', 'etfs', 'markets', 'sectors', 'equities', 'compare'],
       children: [
-        ['/ar/rankings.html#top-stocks', 'تصنيف الأسهم'],
-        ['/ar/rankings.html#top-ai-stocks', 'قيادة الذكاء الاصطناعي'],
-        ['/ar/rankings.html#top-semiconductor-stocks', 'قيادة أشباه الموصلات'],
-        ['/ar/rankings.html#top-growth-stocks', 'أسهم النمو'],
-        ['/ar/rankings.html#top-dividend-etfs', 'صناديق التوزيعات'],
-        ['/ar/rankings.html#top-broad-market-etfs', 'صناديق السوق الواسع']
-      ]
-    },
-    {
-      key: 'research',
-      href: '/ar/intelligence/',
-      label: 'الأسواق والأبحاث',
-      activeKeys: ['intelligence', 'articles', 'insights', 'market-news', 'market-structure', 'market-outlook', 'briefs', 'market-terminal', 'market-regime', 'markets', 'sectors', 'equities', 'relative-rankings', 'market-map', 'explorer', 'workspace', 'account'],
-      __legacy_ar: [
-        ['/ar/market-terminal/', 'الطرفية المؤسسية'],
-        ['/ar/explorer/', 'مستكشف الاستخبارات'],
-        ['/ar/explorer/events/', 'مستكشف الأحداث'],
-        ['/ar/explorer/entity/', 'مستكشف الكيانات'],
-        ['/ar/explorer/research/', 'مستكشف الأبحاث'],
-        ['/ar/explorer/network/', 'مستكشف الشبكة'],
-        ['/ar/explorer/search/', 'مستكشف البحث'],
-        ['/ar/workspace/', 'مساحة المتابعة'],
-        ['/ar/workspace/watchlists/', 'قوائم المتابعة'],
-        ['/ar/workspace/monitoring/', 'المتابعة'],
-        ['/ar/workspace/research/', 'أبحاث المتابعة'],
-        ['/ar/workspace/regime/', 'متابعة النظام'],
-        ['/ar/market-regime/', 'نظام السوق'],
-        ['/ar/rankings/', 'الترتيب النسبي'],
-        ['/ar/etfs/', 'استخبارات الصناديق'],
-        ['/ar/research/etfs/', 'أبحاث الصناديق'],
-        ['/ar/market-map/etfs/', 'خريطة الصناديق'],
-        ['/ar/market-news/', 'أخبار الأسواق'],
-        ['/ar/market-structure/', 'بنية السوق'],
-        ['/ar/market-outlook/', 'آفاق السوق'],
         ['/ar/markets/', 'الأصول'],
         ['/ar/sectors/', 'القطاعات'],
         ['/ar/equities/', 'الأسهم الفردية'],
-        ['/ar/briefs/', 'إحاطات السوق'],
-        ['/ar/articles/', 'المقالات التعليمية'],
-        ['/ar/insights/', 'الأبحاث التطبيقية'],
-        ['/ar/market-map/assets/', 'خريطة الأصول'],
-        ['/ar/market-map/sectors/', 'خريطة القطاعات'],
-        ['/ar/market-map/equities/', 'خريطة الأسهم'],
-        ['/ar/market-map/regime/', 'خريطة نظام السوق'],
-        ['/ar/market-map/network/', 'خريطة الشبكة'],
-        ['/ar/market-map/history/', 'الخريطة التاريخية'],
+        ['/ar/etfs/', 'استخبارات الصناديق'],
+        ['/ar/stocks.html', 'دليل الأسهم'],
+        ['/ar/etfs.html', 'دليل الصناديق'],
+      ],
+      viewAll: ['/ar/markets/', 'عرض كل الأسواق'],
+    },
+    {
+      key: 'research', href: '/ar/research/', label: 'الأبحاث',
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news'],
+      children: [
         ['/ar/research/', 'مركز الأبحاث'],
         ['/ar/research/feed/', 'تغذية الأبحاث'],
         ['/ar/research/regime/', 'أبحاث النظام'],
-        ['/ar/research/assets/', 'أبحاث الأصول'],
-        ['/ar/research/sectors/', 'أبحاث القطاعات'],
-        ['/ar/research/equities/', 'أبحاث الأسهم'],
-        ['/ar/research/history/', 'سجل الأبحاث'],
-        ['/ar/changes/', 'مركز التغيّرات'],
-        ['/ar/changes/assets/', 'تغيّرات الأصول'],
-        ['/ar/changes/sectors/', 'تغيّرات القطاعات'],
-        ['/ar/changes/equities/', 'تغيّرات الأسهم'],
-        ['/ar/changes/etfs/', 'تغيّرات الصناديق'],
-        ['/ar/changes/regime/', 'تحوّلات النظام'],
-        ['/ar/changes/history/', 'الجدول الزمني للتغيّرات'],
-        ['/ar/account/', 'نظرة عامة على الحساب'],
-        ['/ar/account/watchlists/', 'قوائم متابعة الحساب'],
-        ['/ar/account/preferences/', 'تفضيلات الحساب'],
-        ['/ar/account/alerts/', 'تنبيهات الحساب'],
-        ['/ar/account/workspace/', 'مساحة عمل الحساب'],
-        ['/ar/account/sign-in/', 'تسجيل الدخول'],
-        ['/ar/account/sign-up/', 'إنشاء حساب'],
-        ['/ar/account/profile/', 'الملف الشخصي للحساب'],
-        ['/ar/account/mobile/', 'تطبيق الجوال']
+        ['/ar/research/assets/', 'أبحاث الكيانات'],
+        ['/ar/research/etfs/', 'أبحاث الصناديق'],
+        ['/ar/insights/', 'الأبحاث التطبيقية'],
       ],
-      groups: [
-        { title: 'الاستخبارات', items: [
-          ['/ar/market-terminal/', 'الطرفية المؤسسية'],
-          ['/ar/market-regime/', 'نظام السوق'],
-          ['/ar/rankings/', 'الترتيب النسبي'],
-          ['/ar/market-map/assets/', 'الخرائط المرئية'],
-          ['/ar/markets/', 'الأصول'],
-          ['/ar/sectors/', 'القطاعات'],
-          ['/ar/equities/', 'الأسهم الفردية'],
-          ['/ar/etfs/', 'استخبارات الصناديق'],
-        ]},
-        { title: 'الأبحاث', items: [
-          ['/ar/research/', 'مركز الأبحاث'],
-          ['/ar/research/feed/', 'تغذية الأبحاث'],
-          ['/ar/research/regime/', 'أبحاث النظام'],
-          ['/ar/research/assets/', 'أبحاث الكيانات'],
-          ['/ar/research/etfs/', 'أبحاث الصناديق'],
-          ['/ar/insights/', 'الأبحاث التطبيقية'],
-          ['/ar/articles/', 'المقالات التعليمية'],
-        ]},
-        { title: 'التغيّرات', items: [
-          ['/ar/changes/', 'مركز التغيّرات'],
-          ['/ar/changes/assets/', 'تغيّرات الأصول'],
-          ['/ar/changes/sectors/', 'تغيّرات القطاعات'],
-          ['/ar/changes/equities/', 'تغيّرات الأسهم'],
-          ['/ar/changes/etfs/', 'تغيّرات الصناديق'],
-          ['/ar/changes/regime/', 'تحوّلات النظام'],
-          ['/ar/changes/history/', 'تاريخ التغيّرات'],
-        ]},
-        { title: 'المستكشف', items: [
-          ['/ar/explorer/', 'صفحة المستكشف'],
-          ['/ar/explorer/events/', 'مستكشف الأحداث'],
-          ['/ar/explorer/entity/', 'مستكشف الكيانات'],
-          ['/ar/explorer/network/', 'مستكشف الشبكة'],
-          ['/ar/explorer/research/', 'مستكشف الأبحاث'],
-          ['/ar/explorer/search/', 'مستكشف البحث'],
-        ]},
-        { title: 'مساحة المتابعة', items: [
-          ['/ar/workspace/', 'مساحة المتابعة'],
-          ['/ar/workspace/watchlists/', 'قوائم المتابعة'],
-          ['/ar/workspace/monitoring/', 'المتابعة'],
-          ['/ar/workspace/research/', 'أبحاث المتابعة'],
-          ['/ar/workspace/regime/', 'متابعة النظام'],
-        ]},
-        { title: 'الحساب', items: [
-          ['/ar/account/', 'نظرة عامة على الحساب'],
-          ['/ar/account/profile/', 'الملف الشخصي'],
-          ['/ar/account/preferences/', 'التفضيلات'],
-          ['/ar/account/watchlists/', 'قوائمي'],
-          ['/ar/account/alerts/', 'التنبيهات'],
-          ['/ar/account/workspace/', 'مساحة عملي'],
-          ['/ar/account/billing/', 'الفوترة'],
-          ['/ar/account/mobile/', 'تطبيق الجوال'],
-        ]},
-      ],
-      footer: [
-        { title: 'أسطح إضافية', items: [
-          ['/ar/market-news/', 'أخبار الأسواق'],
-          ['/ar/market-structure/', 'بنية السوق'],
-          ['/ar/market-outlook/', 'آفاق السوق'],
-          ['/ar/briefs/', 'إحاطات السوق'],
-          ['/ar/research/history/', 'سجل الأبحاث'],
-          ['/ar/market-map/regime/', 'خريطة نظام السوق'],
-          ['/ar/market-map/network/', 'خريطة الشبكة'],
-          ['/ar/market-map/history/', 'الخريطة التاريخية'],
-          ['/ar/market-map/etfs/', 'خريطة الصناديق'],
-        ]},
-      ],
+      viewAll: ['/ar/research/', 'عرض كل الأبحاث'],
     },
-    { key: 'economic-calendar', href: '/ar/economic-calendar/', label: 'التقويم الاقتصادي' },
-    { key: 'methodology', href: '/ar/methodology.html', label: 'المنهجية' }
+    {
+      key: 'intelligence', href: '/ar/intelligence/', label: 'الاستخبارات',
+      activeKeys: ['intelligence', 'market-terminal', 'market-regime', 'relative-rankings', 'market-map', 'explorer', 'changes', 'market-structure', 'market-outlook'],
+      children: [
+        ['/ar/market-terminal/', 'طرفية السوق'],
+        ['/ar/market-regime/', 'نظام السوق'],
+        ['/ar/rankings/', 'الترتيب'],
+        ['/ar/market-map/assets/', 'الخرائط'],
+        ['/ar/explorer/', 'المستكشف'],
+        ['/ar/changes/', 'التغيّرات'],
+      ],
+      viewAll: ['/ar/intelligence/', 'عرض كل الاستخبارات'],
+    },
+    {
+      key: 'tools', href: '/ar/workspace/', label: 'الأدوات',
+      activeKeys: ['screener', 'economic-calendar', 'workspace', 'briefs'],
+      children: [
+        ['/ar/ai-stock-screener.html', 'ماسح السوق'],
+        ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
+        ['/ar/workspace/', 'مساحة المتابعة'],
+        ['/ar/workspace/watchlists/', 'قوائم المتابعة'],
+        ['/ar/briefs/', 'الإحاطات'],
+        ['/ar/articles/', 'المقالات التعليمية'],
+      ],
+      viewAll: ['/ar/workspace/', 'عرض كل الأدوات'],
+    },
+    { key: 'methodology', href: '/ar/methodology.html', label: 'المنهجية' },
   ];
 }
 
@@ -436,11 +420,18 @@ function renderNavItem(item, active, ar) {
             </div>
           </div>`;
   }
-  // Legacy single-column dropdown for items like Rankings.
+  // Compact single-column dropdown — used by the new 4 top-level
+  // categories (Markets / Research / Intelligence / Tools). Each ends
+  // with a styled "View all" terminal link pointing to the section
+  // hub page (set via item.viewAll = ['/href/', 'View all X']).
+  const viewAllHtml = item.viewAll
+    ? `<a href="${escapeHtml(item.viewAll[0])}" class="nav-dropdown-viewall">${escapeHtml(item.viewAll[1])}<span aria-hidden="true">${ar ? '←' : '→'}</span></a>`
+    : '';
   return `<div class="nav-menu">
             <a href="${item.href}" class="nav-link nav-menu-trigger${activeClass}"${current}>${item.label}${badge}<span class="nav-caret" aria-hidden="true">▾</span></a>
-            <div class="nav-dropdown">
+            <div class="nav-dropdown nav-dropdown-compact">
               ${item.children.map(([href, label]) => `<a href="${escapeHtml(href)}">${escapeHtml(label)}</a>`).join('\n              ')}
+              ${viewAllHtml}
             </div>
           </div>`;
 }

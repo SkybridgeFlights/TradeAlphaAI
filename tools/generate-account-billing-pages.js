@@ -54,7 +54,7 @@ ${head(ar, surface)}
 <body>
 ${header}
   <main class="market-shell">
-    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Account Foundation', 'أساس الحساب'))}</span><h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1><p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p></div></section>
+    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span><h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1><p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p></div></section>
 ${body}
     <section class="market-section" id="billing-disclaimer"><div class="market-panel"><p class="market-copy">${esc(t(ar, 'Billing is foundation-only — no payments are collected, no subscriptions stored, no card numbers in this repo. Public intelligence remains FREE at every tier; subscriptions only modulate the personal scope (watchlist counts, alert breadth, copilot quota). Not investment advice.', 'الفوترة في مرحلة التأسيس فقط — لا تُجمع مدفوعات ولا تُخزَّن اشتراكات ولا أرقام بطاقات في هذا المستودع. تبقى الاستخبارات العامة مجانية في كل طبقة؛ تعدّل الاشتراكات النطاق الشخصي فقط (عدد قوائم المتابعة، نطاق التنبيهات، حصة المساعد). ليست نصيحة استثمارية.'))}</p></div></section>
   </main>
