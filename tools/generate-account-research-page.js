@@ -22,7 +22,7 @@ function head(ar) {
   const desc = ar ? 'سطح الأبحاث الشخصية — بطاقات مشتقّة من قوائم متابعة كل حساب وجيران entity-research-graph المدعومين بأدلة. تتطلب النتائج لكل حساب حساباً حقيقياً.' : 'Personal research surface — cards derived from per-account watchlist symbols + evidence-backed entity-research-graph neighbours. Per-account results require a real account.';
   const depth = (ar ? 1 : 0) + REL.split('/').filter(Boolean).length;
   const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
   return `<head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${esc(title)}</title>

@@ -29,7 +29,7 @@ function head(ar, surface) {
   const arUrl = `https://www.tradealphaai.com/ar/${surface.rel}`;
   const depth = (ar ? 1 : 0) + surface.rel.split('/').filter(Boolean).length;
   const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
   const title = `${ar ? surface.title_ar : surface.title_en} | TradeAlphaAI`;
   const desc = ar ? surface.desc_ar : surface.desc_en;
   return `<head>

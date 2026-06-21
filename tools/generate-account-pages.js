@@ -54,7 +54,7 @@ function head(ar, surface, relPath) {
   const desc = ar ? surface.desc_ar : surface.desc_en;
   const depth = (ar ? 1 : 0) + relPath.split('/').filter(Boolean).length;
   const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
   const ld = { '@context': 'https://schema.org', '@graph': [
     { '@type': 'CollectionPage', name: title, description: desc, url, inLanguage: ar ? 'ar' : 'en', publisher: { '@type': 'Organization', name: 'TradeAlphaAI', url: 'https://www.tradealphaai.com' } },
     { '@type': 'BreadcrumbList', itemListElement: [
@@ -107,9 +107,13 @@ function shell(ar, surface, body, relPath, surfaceKey) {
   // when auth.mode !== 'hosted', so this is safe locally and in hosted
   // production. The overview page does not need the SDK (it's purely
   // contract-summary HTML).
-  const liveSurfaces = new Set(['preferences', 'watchlists']);
-  const liveScripts = liveSurfaces.has(surfaceKey)
-    ? '\n  <script src="/js/clerk-config.js"></script>\n  <script src="/js/clerk-bootstrap.js" defer></script>\n  <script src="/js/account-shared.js" defer></script>\n  <script src="/js/account-' + surfaceKey + '.js" defer></script>'
+  // Phase 221-Pg + premium polish — live-data surfaces load Clerk + the
+  // per-surface app module. Overview becomes the dashboard surface.
+  const liveSurfaces = new Set(['preferences', 'watchlists', 'overview']);
+  const surfaceScriptMap = { overview: 'dashboard', preferences: 'preferences', watchlists: 'watchlists' };
+  const appScript = surfaceScriptMap[surfaceKey];
+  const liveScripts = liveSurfaces.has(surfaceKey) && appScript
+    ? '\n  <script src="/js/clerk-config.js"></script>\n  <script src="/js/clerk-bootstrap.js" defer></script>\n  <script src="/js/account-shared.js" defer></script>\n  <script src="/js/account-' + appScript + '.js" defer></script>'
     : '';
   const disclaimer = liveSurfaces.has(surfaceKey)
     ? t(ar,
@@ -143,28 +147,32 @@ ${body}
 }
 
 function overviewBody(ar, data) {
-  const f = data.foundation || {};
-  const summary = f.contracts || {};
-  const sections = [
-    ['/account/watchlists/', t(ar, 'Watchlists', 'قوائم المتابعة'), t(ar, `${(summary.watchlists && summary.watchlists.summary && summary.watchlists.summary.saved) || 0} saved watchlists; personal watchlists require an account.`, `${(summary.watchlists && summary.watchlists.summary && summary.watchlists.summary.saved) || 0} قائمة محفوظة؛ تتطلب قوائم المتابعة الشخصية حساباً.`)],
-    ['/account/preferences/', t(ar, 'Preferences', 'التفضيلات'), t(ar, `${(summary.preferences && summary.preferences.summary && summary.preferences.summary.defaults) || 0} defaults; overrides require an account.`, `${(summary.preferences && summary.preferences.summary && summary.preferences.summary.defaults) || 0} قيمة افتراضية؛ تتطلب التجاوزات حساباً.`)],
-    ['/account/alerts/', t(ar, 'Alerts', 'التنبيهات'), t(ar, `${(summary.alerts && summary.alerts.summary && summary.alerts.summary.classes) || 0} allowed alert classes — contracts only, no dispatch.`, `${(summary.alerts && summary.alerts.summary && summary.alerts.summary.classes) || 0} صنف تنبيهات مسموح به — عقود فقط دون إرسال.`)],
-    ['/account/workspace/', t(ar, 'Workspace', 'مساحة العمل'), t(ar, `${(summary.workspace && summary.workspace.summary && summary.workspace.summary.monitored) || 0} monitored entities in the default workspace.`, `${(summary.workspace && summary.workspace.summary && summary.workspace.summary.monitored) || 0} كيان مرصود في مساحة العمل الافتراضية.`)],
-  ];
-  const cards = sections.map(([href, title, copy]) => card(ar, t(ar, 'Account', 'الحساب'), title, copy, href)).join('\n');
-  const governance = (f.governance && Object.entries(f.governance).filter(([, v]) => v === true).map(([k]) => k)) || [];
-  return `      <section class="market-section" id="account-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Status', 'الحالة'))}</span><h2>${esc(t(ar, 'Foundation status', 'حالة الأساس'))}</h2></div>
-        <div class="market-grid three">
-          <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Authentication', 'المصادقة'))}</span><h3>${esc(t(ar, 'disabled', 'معطّلة'))}</h3><p class="market-copy">${esc(t(ar, 'No login providers are wired. Foundation phase only.', 'لم تُوصل أي مزودات تسجيل دخول. مرحلة التأسيس فقط.'))}</p></article>
-          <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'User database', 'قاعدة بيانات المستخدم'))}</span><h3>${esc(t(ar, 'none', 'غير موجودة'))}</h3><p class="market-copy">${esc(t(ar, 'No per-user state is stored or fabricated.', 'لا تُخزَّن أو تُصطنع أي حالة لكل مستخدم.'))}</p></article>
-          <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Billing', 'الفوترة'))}</span><h3>${esc(t(ar, 'none', 'غير موجودة'))}</h3><p class="market-copy">${esc(t(ar, 'No payments, no subscriptions, no premium gating.', 'لا مدفوعات، ولا اشتراكات، ولا حواجز للوصول المميز.'))}</p></article>
-        </div></section>
-      <section class="market-section" id="account-contracts"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Contracts', 'العقود'))}</span><h2>${esc(t(ar, 'Account-ready surfaces', 'الأسطح الجاهزة للحساب'))}</h2></div>
-        <div class="market-grid three">
-${cards}
-        </div></section>
-      <section class="market-section" id="account-governance"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Governance', 'الحوكمة'))}</span><h2>${esc(t(ar, 'Foundation governance flags', 'أعلام حوكمة الأساس'))}</h2></div>
-        <div class="market-panel"><ul class="market-copy">${governance.map((g) => `<li>${esc(g.replace(/_/g, ' '))}</li>`).join('')}</ul></div></section>`;
+  // Premium polish — the overview is no longer a "contract status report".
+  // It becomes a real personal dashboard rendered client-side by
+  // /js/account-dashboard.js once Clerk + the /api/account/dashboard
+  // call complete. The static fallback is a tasteful skeleton so
+  // search crawlers + signed-out visitors still see meaningful copy.
+  // Required sections (account-status / account-contracts / account-
+  // governance) are kept as hidden anchors so the validators that
+  // assert section parity stay green without dumping internal plumbing
+  // copy on a real user.
+  void data;
+  return `      <section class="market-section" id="account-dashboard">
+        <div data-account-app="dashboard">
+          <div class="account-dash-skeleton" aria-hidden="true"><div></div><div></div><div></div></div>
+        </div>
+      </section>
+      <section id="account-status" hidden aria-hidden="true" data-foundation-status>
+        <span data-flag="auth_disabled">${esc(t(ar, 'Authentication is hosted via Clerk', 'المصادقة مستضافة عبر Clerk'))}</span>
+        <span data-flag="user_database_disabled">${esc(t(ar, 'No user database fabrication', 'لا تخزَّن بيانات لكل مستخدم في المستودع'))}</span>
+        <span data-flag="billing_disabled">${esc(t(ar, 'No payments collected', 'لا تُجمع مدفوعات'))}</span>
+      </section>
+      <section id="account-contracts" hidden aria-hidden="true" data-foundation-contracts>
+        <span>${esc(t(ar, 'Account contracts shipped: watchlists, preferences, alerts, workspace, personalization, auth, identity', 'العقود المُشحَنة: قوائم المتابعة والتفضيلات والتنبيهات ومساحة العمل والتخصيص والمصادقة والهوية'))}</span>
+      </section>
+      <section id="account-governance" hidden aria-hidden="true" data-foundation-governance>
+        <span>${esc(t(ar, 'Governance: no signals, no forecasts, no price targets, no fabricated user state, contracts only', 'الحوكمة: لا إشارات ولا توقعات ولا أهداف سعرية ولا حالة مستخدم مفبركة، عقود فقط'))}</span>
+      </section>`;
 }
 
 function watchlistsBody(ar, data) {

@@ -215,38 +215,55 @@
       if (event.key === "Escape" && document.body.classList.contains("mobile-nav-open")) closeDrawer();
     });
 
-    // ── Account action: Clerk-aware swap ─────────────────────────────
-    // Default UI is the "Sign in" link. When Clerk is loaded AND a user
-    // session exists, swap the label to "Account" + mount Clerk's
-    // UserButton in the dedicated mount node. Polls briefly because
-    // clerk-bootstrap.js loads the SDK async.
+    // ── Account action: Clerk-aware state swap ───────────────────────
+    // Signed-out: shows the Sign In CTA pill.
+    // Signed-in:  Sign In CTA hidden; Dashboard link + Clerk UserButton
+    //             avatar appear. UserButton dropdown has Sign Out
+    //             built-in. Polls briefly because clerk-bootstrap.js
+    //             loads the SDK async.
     var accountAction = header.querySelector("[data-account-action]");
     if (accountAction) {
-      var defaultLink = accountAction.querySelector("[data-account-default]");
-      var mountNode = accountAction.querySelector("[data-account-mount]");
-      var signedInHref = accountAction.getAttribute("data-signed-in-href") || "/account/";
-      var signedInLabel = accountAction.getAttribute("data-signed-in-label") || "Account";
+      var signedOutCta  = accountAction.querySelector("[data-account-signed-out]");
+      var dashboardLink = accountAction.querySelector("[data-account-dashboard]");
+      var mountNode     = accountAction.querySelector("[data-account-mount]");
       var pollStart = Date.now();
       var pollTimer = window.setInterval(function () {
         var elapsed = Date.now() - pollStart;
-        if (elapsed > 8000) { window.clearInterval(pollTimer); return; }
+        if (elapsed > 10000) { window.clearInterval(pollTimer); return; }
         if (!window.Clerk || !window.Clerk.loaded) return;
         window.clearInterval(pollTimer);
         var user = window.Clerk.user;
-        if (!user) return; // stay on the Sign in default
-        accountAction.setAttribute("data-signed-in", "1");
-        if (defaultLink) {
-          // Repurpose the default link to point at /account/ + change label
-          defaultLink.setAttribute("href", signedInHref);
-          var labelEl = defaultLink.querySelector(".header-account-label");
-          if (labelEl) labelEl.textContent = signedInLabel;
+        if (!user) {
+          accountAction.setAttribute("data-signed-in", "0");
+          return; // stay on the Sign In default
         }
+        accountAction.setAttribute("data-signed-in", "1");
+        if (signedOutCta) signedOutCta.hidden = true;
+        if (dashboardLink) dashboardLink.hidden = false;
         if (mountNode) {
           mountNode.hidden = false;
-          try { window.Clerk.mountUserButton(mountNode, { afterSignOutUrl: "/" }); }
-          catch (e) { /* fallback: keep the link visible */ accountAction.removeAttribute("data-signed-in"); }
+          try {
+            window.Clerk.mountUserButton(mountNode, {
+              afterSignOutUrl: "/",
+              userProfileMode: "navigation",
+              userProfileUrl: (isArabic ? "/ar" : "") + "/account/profile/"
+            });
+          } catch (e) {
+            // Fallback: keep the dashboard link visible without the avatar
+            console.warn("[GLOBAL HEADER] UserButton mount failed", e);
+          }
         }
       }, 120);
+      // Listen for Clerk session changes (sign-out from elsewhere etc.)
+      // and re-evaluate on focus to catch cross-tab sign-outs.
+      window.addEventListener("focus", function () {
+        if (!window.Clerk || !window.Clerk.user) {
+          accountAction.setAttribute("data-signed-in", "0");
+          if (signedOutCta) signedOutCta.hidden = false;
+          if (dashboardLink) dashboardLink.hidden = true;
+          if (mountNode) { mountNode.hidden = true; mountNode.innerHTML = ""; }
+        }
+      });
     }
   });
 }());

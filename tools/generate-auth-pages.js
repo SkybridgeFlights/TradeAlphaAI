@@ -42,7 +42,7 @@ function head(ar, surface, relPath) {
   const desc = ar ? surface.desc_ar : surface.desc_en;
   const depth = (ar ? 1 : 0) + relPath.split('/').filter(Boolean).length;
   const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
   // Auth pages are explicitly noindexed — the foundation phase pages are
   // informational scaffolding, not content the search index should rank.
   // When live wiring activates, the canonical URL will redirect to the

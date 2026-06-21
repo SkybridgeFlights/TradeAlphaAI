@@ -19,7 +19,7 @@ function head(ar) {
   const desc = ar ? 'تطبيق الويب التقدّمي (PWA) — تركيب من الشاشة الرئيسية وعمل بدون اتصال وعقد إشعارات الدفع. الإشعارات في مرحلة العقد فقط.' : 'Progressive Web App — install to home screen, offline shell, push notification contract. Push is contract-only.';
   const depth = (ar ? 1 : 0) + REL.split('/').filter(Boolean).length;
   const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
   return `<head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${esc(title)}</title>

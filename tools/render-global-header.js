@@ -68,10 +68,14 @@ function renderGlobalHeader({ locale, activePage = '', basePath = '', arabicHref
         <a class="lang-switch" data-locale-route="ar" href="${escapeHtml(arHref)}">${arText}</a>
         <a class="lang-switch" data-locale-route="en" href="${escapeHtml(enHref)}">English</a>
       </div>
-      <div class="header-account" data-account-action data-signed-in-label="${escapeHtml(accountLabel)}" data-signed-in-href="${escapeHtml(accountHref)}">
-        <a class="header-account-link" data-account-default href="${escapeHtml(signInHref)}">
+      <div class="header-account" data-account-action data-signed-in-label="${escapeHtml(accountLabel)}" data-signed-in-href="${escapeHtml(accountHref)}" data-locale="${ar ? 'ar' : 'en'}">
+        <a class="header-account-link header-account-cta" data-account-signed-out href="${escapeHtml(signInHref)}">
           <span class="header-account-icon" aria-hidden="true">${ACCOUNT_ICON_SVG}</span>
           <span class="header-account-label">${signInLabel}</span>
+        </a>
+        <a class="header-account-dashboard" data-account-dashboard href="${escapeHtml(accountHref)}" hidden>
+          <span class="header-account-icon" aria-hidden="true">${DASHBOARD_ICON_SVG}</span>
+          <span class="header-account-label">${escapeHtml(accountLabel)}</span>
         </a>
         <div class="header-account-mount" data-account-mount hidden></div>
       </div>
@@ -90,7 +94,31 @@ ${MARKER_END}`;
 
 // Minimal inline user-circle icon — keeps the Account button visually
 // anchored even before Clerk's UserButton image arrives.
-const ACCOUNT_ICON_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
+const ACCOUNT_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
+const DASHBOARD_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>';
+
+// Mega-menu column icons (12x12, currentColor). Each column title is
+// mapped to one via GROUP_TITLE_TO_ICON (works for both EN + AR titles).
+const NAV_GROUP_ICONS = {
+  intelligence: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>',
+  research:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  changes:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg>',
+  explorer:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  workspace:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  account:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>',
+  more:         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>',
+  default:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>',
+};
+const GROUP_TITLE_TO_ICON = {
+  // EN
+  'Intelligence': 'intelligence', 'Research': 'research', 'Changes': 'changes',
+  'Explorer': 'explorer', 'Workspace': 'workspace', 'Account': 'account',
+  'More Surfaces': 'more',
+  // AR
+  'الاستخبارات': 'intelligence', 'الأبحاث': 'research', 'التغيّرات': 'changes',
+  'المستكشف': 'explorer', 'مساحة المتابعة': 'workspace', 'الحساب': 'account',
+  'أسطح إضافية': 'more',
+};
 
 function globalHeaderStyles() {
   return '<link rel="stylesheet" href="/css/global-header-canonical.css" />';
@@ -191,6 +219,7 @@ function englishLinks() {
           ['/account/preferences/', 'Preferences'],
           ['/account/watchlists/', 'My Watchlists'],
           ['/account/alerts/', 'Alerts'],
+          ['/account/workspace/', 'My Workspace'],
           ['/account/billing/', 'Billing'],
           ['/account/mobile/', 'Mobile App'],
         ]},
@@ -347,6 +376,7 @@ function arabicLinks() {
           ['/ar/account/preferences/', 'التفضيلات'],
           ['/ar/account/watchlists/', 'قوائمي'],
           ['/ar/account/alerts/', 'التنبيهات'],
+          ['/ar/account/workspace/', 'مساحة عملي'],
           ['/ar/account/billing/', 'الفوترة'],
           ['/ar/account/mobile/', 'تطبيق الجوال'],
         ]},
@@ -380,13 +410,17 @@ function renderNavItem(item, active, ar) {
   const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
   // Mega-menu path — multi-column grouped dropdown.
   if (item.groups) {
-    const columnsHtml = item.groups.map((group) => `
-              <div class="nav-mega-column">
-                <h4 class="nav-mega-title">${escapeHtml(group.title)}</h4>
+    const columnsHtml = item.groups.map((group, idx) => {
+      const iconKey = group.icon || GROUP_TITLE_TO_ICON[group.title] || 'default';
+      const icon = NAV_GROUP_ICONS[iconKey] || NAV_GROUP_ICONS.default;
+      return `
+              <div class="nav-mega-column" style="--col-delay:${idx * 30}ms">
+                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true">${icon}</span><span>${escapeHtml(group.title)}</span></h4>
                 <ul class="nav-mega-list">
                   ${group.items.map(([href, label]) => `<li><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`).join('\n                  ')}
                 </ul>
-              </div>`).join('');
+              </div>`;
+    }).join('');
     const footerHtml = (item.footer || []).map((group) => `
               <div class="nav-mega-footer-row">
                 <span class="nav-mega-footer-title">${escapeHtml(group.title)}</span>

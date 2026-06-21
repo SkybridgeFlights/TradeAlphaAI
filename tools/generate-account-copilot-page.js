@@ -21,7 +21,7 @@ function head(ar) {
   const desc = ar ? 'عقد مساعد الذكاء الاصطناعي للحساب — اختيار النموذج، النطاقات المسموح بها، الأدوات المسموح بها، الحوكمة. مرحلة التأسيس فقط؛ لا مفتاح API، لا استعلامات.' : 'Account AI copilot contract — model selection, allowed scopes, allowed tools, governance. Foundation only; no API key, no queries.';
   const depth = (ar ? 1 : 0) + REL.split('/').filter(Boolean).length;
   const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
   return `<head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${esc(title)}</title>
