@@ -575,6 +575,26 @@
                   <stop offset="58%" stop-color="#f7a5a5"/>
                   <stop offset="100%" stop-color="#281322"/>
                 </radialGradient>
+                <linearGradient id="engine-link-gold-grad" x1="190" y1="80" x2="310" y2="150" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#f6d36b" stop-opacity="0.18"/>
+                  <stop offset="48%" stop-color="#fff0b8" stop-opacity="0.86"/>
+                  <stop offset="100%" stop-color="#6ee7d8" stop-opacity="0.2"/>
+                </linearGradient>
+                <linearGradient id="engine-link-teal-grad" x1="310" y1="150" x2="466" y2="86" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#f6d36b" stop-opacity="0.18"/>
+                  <stop offset="52%" stop-color="#6ee7d8" stop-opacity="0.88"/>
+                  <stop offset="100%" stop-color="#87b4f5" stop-opacity="0.2"/>
+                </linearGradient>
+                <linearGradient id="engine-link-blue-grad" x1="310" y1="150" x2="500" y2="214" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#6ee7d8" stop-opacity="0.18"/>
+                  <stop offset="52%" stop-color="#87b4f5" stop-opacity="0.82"/>
+                  <stop offset="100%" stop-color="#d5e4ff" stop-opacity="0.16"/>
+                </linearGradient>
+                <linearGradient id="engine-link-rose-grad" x1="140" y1="214" x2="310" y2="150" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#f7a5d8" stop-opacity="0.2"/>
+                  <stop offset="52%" stop-color="#f7a5a5" stop-opacity="0.78"/>
+                  <stop offset="100%" stop-color="#f6d36b" stop-opacity="0.18"/>
+                </linearGradient>
                 <filter id="engine-glow-ar" x="-60%" y="-60%" width="220%" height="220%">
                   <feGaussianBlur stdDeviation="2.6" result="blur"/>
                   <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -583,12 +603,25 @@
 
               <rect x="18" y="18" width="584" height="264" rx="28" class="engine-frame"/>
               <g class="engine-network-orbit">
-                <path class="engine-link engine-link-gold" d="M310 150 C272 108 235 84 190 80"/>
-                <path class="engine-link engine-link-teal" d="M310 150 C360 96 408 70 466 86"/>
-                <path class="engine-link engine-link-blue" d="M310 150 C372 156 440 170 500 214"/>
-                <path class="engine-link engine-link-rose" d="M310 150 C254 174 206 202 140 214"/>
-                <path class="engine-link engine-link-teal engine-delay" d="M190 80 C275 54 380 58 466 86"/>
-                <path class="engine-link engine-link-gold engine-delay" d="M140 214 C238 252 394 252 500 214"/>
+                <path class="engine-link engine-link-gold" stroke="url(#engine-link-gold-grad)" d="M310 150 C272 108 235 84 190 80"/>
+                <path class="engine-link engine-link-teal" stroke="url(#engine-link-teal-grad)" d="M310 150 C360 96 408 70 466 86"/>
+                <path class="engine-link engine-link-blue" stroke="url(#engine-link-blue-grad)" d="M310 150 C372 156 440 170 500 214"/>
+                <path class="engine-link engine-link-rose" stroke="url(#engine-link-rose-grad)" d="M310 150 C254 174 206 202 140 214"/>
+                <path class="engine-link engine-link-teal engine-delay" stroke="url(#engine-link-teal-grad)" d="M190 80 C275 54 380 58 466 86"/>
+                <path class="engine-link engine-link-gold engine-delay" stroke="url(#engine-link-gold-grad)" d="M140 214 C238 252 394 252 500 214"/>
+
+                <circle class="engine-flow-dot engine-flow-gold" r="3.2">
+                  <animateMotion dur="8s" repeatCount="indefinite" path="M310 150 C272 108 235 84 190 80"/>
+                </circle>
+                <circle class="engine-flow-dot engine-flow-teal" r="3.2">
+                  <animateMotion dur="9.2s" begin="-2.2s" repeatCount="indefinite" path="M310 150 C360 96 408 70 466 86"/>
+                </circle>
+                <circle class="engine-flow-dot engine-flow-blue" r="2.8">
+                  <animateMotion dur="10s" begin="-4.6s" repeatCount="indefinite" path="M310 150 C372 156 440 170 500 214"/>
+                </circle>
+                <circle class="engine-flow-dot engine-flow-rose" r="2.8">
+                  <animateMotion dur="8.8s" begin="-5.4s" repeatCount="indefinite" path="M310 150 C254 174 206 202 140 214"/>
+                </circle>
 
                 <circle class="engine-halo" cx="310" cy="150" r="40"/>
                 <circle class="engine-hub engine-hub-ar" cx="310" cy="150" r="25" filter="url(#engine-glow-ar)"/>
