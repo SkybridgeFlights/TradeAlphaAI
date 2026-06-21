@@ -32,7 +32,7 @@ async function ensureAccountSchema(sql) {
         const body = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
         const statements = splitSqlStatements(body);
         if (!statements.length) throw new Error(`${file} produced zero executable statements`);
-        for (const stmt of statements) await sql.query(stmt);
+        for (const stmt of statements) await sql(stmt);
         await sql`
           INSERT INTO _migrations (id)
           VALUES (${file})

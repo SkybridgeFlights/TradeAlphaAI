@@ -69,7 +69,7 @@ async function main() {
       const statements = splitSqlStatements(body);
       if (!statements.length) throw new Error(`${file} produced zero executable statements`);
       for (const stmt of statements) {
-        await sql.query(stmt);
+        await sql(stmt);
       }
       await sql`INSERT INTO _migrations (id) VALUES (${file})`;
       console.log(`[migrations] applied ${file} (${statements.length} statements)`);
