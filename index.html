@@ -363,17 +363,14 @@
                   <stop offset="58%" stop-color="#f7a5a5"/>
                   <stop offset="100%" stop-color="#281322"/>
                 </radialGradient>
-                <filter id="engine-glow" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur stdDeviation="2.6" result="blur"/>
-                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
               </defs>
 
               <rect x="18" y="18" width="584" height="264" rx="28" class="engine-frame"/>
               <g class="engine-network-orbit">
                 <circle class="engine-halo" cx="310" cy="150" r="40"/>
                 <g class="engine-hub-group">
-                  <circle class="engine-hub" cx="310" cy="150" r="25" filter="url(#engine-glow)"/>
+                  <circle class="engine-hub" cx="310" cy="150" r="25"/>
+                  <rect class="engine-hub-badge" x="283" y="134" width="54" height="32" rx="12"/>
                   <text class="engine-hub-label" x="310" y="147">ETFs</text>
                   <text class="engine-hub-sub" x="310" y="162">Cross-Asset Hub</text>
                 </g>
@@ -389,35 +386,35 @@
                   <line class="engine-spoke engine-spoke-equity engine-mobile-extra" x1="310" y1="150" x2="222" y2="216"/>
 
                   <g class="engine-market-node" transform="translate(310 62)">
-                    <circle class="engine-node engine-node-spy engine-node-1" r="12" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-spy engine-node-1" r="12"/>
                     <text class="engine-node-label" y="-21">SPY</text>
                   </g>
                   <g class="engine-market-node" transform="translate(424 150)">
-                    <circle class="engine-node engine-node-qqq engine-node-2" r="12" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-qqq engine-node-2" r="12"/>
                     <text class="engine-node-label" x="36">QQQ</text>
                   </g>
                   <g class="engine-market-node" transform="translate(196 150)">
-                    <circle class="engine-node engine-node-gld engine-node-3" r="12" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-gld engine-node-3" r="12"/>
                     <text class="engine-node-label" x="-36">GLD</text>
                   </g>
                   <g class="engine-market-node" transform="translate(310 238)">
-                    <circle class="engine-node engine-node-tlt engine-node-4" r="12" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-tlt engine-node-4" r="12"/>
                     <text class="engine-node-label" y="27">TLT</text>
                   </g>
                   <g class="engine-market-node engine-mobile-extra" transform="translate(222 84)">
-                    <circle class="engine-node engine-node-uup engine-node-5" r="10" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-uup engine-node-5" r="10"/>
                     <text class="engine-node-label" x="-34" y="-2">UUP</text>
                   </g>
                   <g class="engine-market-node engine-mobile-extra" transform="translate(398 216)">
-                    <circle class="engine-node engine-node-vix engine-node-6" r="10" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-vix engine-node-6" r="10"/>
                     <text class="engine-node-label" x="38" y="2">VIXY</text>
                   </g>
                   <g class="engine-market-node engine-mobile-extra" transform="translate(398 84)">
-                    <circle class="engine-node engine-node-sector engine-node-7" r="10" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-sector engine-node-7" r="10"/>
                     <text class="engine-node-label" x="48">Sectors</text>
                   </g>
                   <g class="engine-market-node engine-mobile-extra" transform="translate(222 216)">
-                    <circle class="engine-node engine-node-equity engine-node-8" r="10" filter="url(#engine-glow)"/>
+                    <circle class="engine-node engine-node-equity engine-node-8" r="10"/>
                     <text class="engine-node-label" x="-48">Equities</text>
                   </g>
                 </g>
