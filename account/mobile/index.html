@@ -189,6 +189,6 @@
       <div class="market-panel"><p class="market-copy">The service worker has a push handler ready. No subscription is registered today; future opt-in will hook into the existing alert-dispatch contract (Phase 222 + 224) so push uses the same throttling, confidence floors and per-tier rate limits as Telegram + email.</p></div></section>
     <section class="market-section" id="mobile-disclaimer"><div class="market-panel"><p class="market-copy">PWA install is optional; the public site remains accessible without it. No analytics or tracking are added by the service worker. Not investment advice.</p></div></section>
   </main>
-  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
 </body>
 </html>

@@ -220,6 +220,6 @@
       </ul></div></section>
     <section class="market-section" id="copilot-disclaimer"><div class="market-panel"><p class="market-copy">المساعد في مرحلة التأسيس فقط — لا نموذج محمّل ولا استعلامات. عند التفعيل سيقرأ المصادر العامة وحالة الحساب فقط، لا الرسائل الخام ولا الرموز ولا الفوترة ولا حسابات أخرى. كل إجابة ستستشهد بدليل؛ لا إشارات ولا توقعات ولا توصيات.</p></div></section>
   </main>
-  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
 </body>
 </html>

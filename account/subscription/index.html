@@ -193,6 +193,6 @@
       <div class="market-panel"><p class="market-copy">All Phase 200-224 surfaces (research, changes, explorer, workspace, market terminal, ETF intelligence, regime, narratives, rankings, history) remain ACCESSIBLE at every tier including free. Subscriptions only modulate the per-account PERSONAL scope.</p></div></section>
     <section class="market-section" id="billing-disclaimer"><div class="market-panel"><p class="market-copy">Billing is foundation-only — no payments are collected, no subscriptions stored, no card numbers in this repo. Public intelligence remains FREE at every tier; subscriptions only modulate the personal scope (watchlist counts, alert breadth, copilot quota). Not investment advice.</p></div></section>
   </main>
-  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
 </body>
 </html>

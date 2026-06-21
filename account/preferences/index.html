@@ -200,7 +200,7 @@
       <div class="market-panel"><p class="market-copy">Personal data on this surface loads from your authenticated account in Neon Postgres once you sign in. Public Phase 200–227 intelligence stays accessible without an account. Not investment advice.</p></div>
     </section>
   </main>
-  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
   <script src="/js/clerk-config.js"></script>
   <script src="/js/clerk-bootstrap.js" defer></script>
   <script src="/js/account-shared.js" defer></script>

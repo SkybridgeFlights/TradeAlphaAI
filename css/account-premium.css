@@ -378,3 +378,59 @@
 
 /* Skeleton row heights — was 80px, now matches real content density */
 .account-dash-skeleton > div { height: 64px; }
+
+/* ──────────────────────────────────────────────────────────────────
+ * /account/profile/ premium framing — wrap Clerk's mountUserProfile
+ * inside a compact frame so it stops dominating the page. Clerk
+ * defaults to ~800px wide; we cap it and tone the chrome.
+ * ────────────────────────────────────────────────────────────── */
+[data-clerk-mount="user-profile"] {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+}
+[data-clerk-mount="user-profile"] .cl-rootBox,
+[data-clerk-mount="user-profile"] .cl-card {
+  width: 100% !important;
+  max-width: 720px !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(216,177,90,0.18) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005)) !important;
+  border-radius: 14px !important;
+}
+
+/* Compact profile hero — the auth-pages hero looked oversized when
+ * combined with the embedded Clerk UI; trim its padding and h1. */
+main[data-account-surface="account/profile/"] .market-hero,
+main[data-account-surface="account/"] .market-hero {
+  padding-block: 18px;
+}
+main[data-account-surface="account/profile/"] .market-hero h1,
+main[data-account-surface="account/"] .market-hero h1 {
+  font-size: clamp(22px, 2.6vw, 28px);
+  margin: 4px 0 6px;
+}
+
+/* Live profile section heading — quieter than the full market-section */
+#profile-mount .market-section-head,
+#profile-server-truth .market-section-head {
+  margin-bottom: 12px;
+}
+#profile-mount .market-section-head h2,
+#profile-server-truth .market-section-head h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Tighten the field-schema / scopes / state cards so they read as
+ * supporting metadata under the live profile rather than dominating. */
+#profile-fields .market-table,
+#profile-scopes .market-copy,
+#profile-state .market-copy {
+  font-size: 12.5px;
+}
+#profile-fields th,
+#profile-fields td { padding: 8px 10px; font-size: 12.5px; }
+

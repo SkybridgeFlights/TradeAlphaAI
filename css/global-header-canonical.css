@@ -129,12 +129,22 @@ body.mobile-nav-open { overflow: hidden; }
   opacity: 0.9;
 }
 
+.brand-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* Prevent the wordmark from collapsing into vertical characters when
+   * the top-actions cluster grows wide. */
+  white-space: nowrap;
+}
+
 .brand-copy strong {
   display: block;
   color: var(--header-text);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .brand-copy span {
@@ -143,6 +153,7 @@ body.mobile-nav-open { overflow: hidden; }
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* ── Top actions cluster ─────────────────────────────────────────────────── */
@@ -617,7 +628,15 @@ body.mobile-nav-open { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  flex-shrink: 0;
+  /* Reserve vertical centerline so the Sign In pill, Dashboard pill,
+   * and Clerk avatar all sit on the same baseline regardless of which
+   * combination is visible. */
+  line-height: 1;
 }
+.header-account > * { flex-shrink: 0; }
 
 .header-account-link {
   display: inline-flex;
@@ -962,18 +981,30 @@ body.mobile-nav-open { overflow: hidden; }
 .cl-rootBox { display: inline-flex !important; align-items: center; }
 
 /* ── Tighten Account header pills on narrow desktop ─────────────── */
-@media (max-width: 1023px) {
+@media (max-width: 1180px) {
   .header-account-link,
   .header-account-dashboard {
     min-height: 34px;
     padding: 0 10px;
   }
   .header-account-label { font-size: 11.5px; }
+  /* When signed in we already show an avatar + Dashboard. Hide the
+   * Dashboard text label on narrow desktop so the avatar can carry
+   * the identity without crowding the brand. */
+  .header-account-dashboard .header-account-label { display: none; }
+  .header-account-dashboard { padding: 0 9px; }
 }
 
 /* Hide the brand subtitle a bit earlier so the nav has more room */
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .brand-copy span { display: none; }
+}
+
+/* On extreme narrow desktop, collapse the Sign In label too — keep
+ * the icon-only pill so the nav has full breathing room. */
+@media (min-width: 641px) and (max-width: 880px) {
+  .header-account-cta .header-account-label { display: none; }
+  .header-account-cta { padding: 0 10px; }
 }
 
 /* Fallback name pill — shown when Clerk.mountUserButton throws.

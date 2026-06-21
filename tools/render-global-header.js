@@ -260,7 +260,11 @@ function globalHeaderScripts() {
   return '<script src="/js/clerk-config.js"></script>'
     + '<script src="/js/clerk-bootstrap.js" defer></script>'
     + '<script src="/js/global-header.js" defer></script>'
-    + '<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>';
+    // SW registration — also force an update check on every page load
+    // so users on an older deploy immediately drop the stale HTML cache
+    // and adopt the auth-safe v3 worker. Previous cached navigations
+    // were the root cause of the "Sign in" flicker after sign-in.
+    + '<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>';
 }
 
 function englishLinks() {

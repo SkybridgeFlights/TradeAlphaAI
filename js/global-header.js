@@ -269,26 +269,76 @@
         }
       }
 
-      // Two-pronged wiring: addListener fires on every session change
-      // (most reliable); a 20s poll handles the initial Clerk.load()
-      // and any environment where addListener doesn't exist.
-      var pollStart = Date.now();
-      var pollTimer = window.setInterval(function () {
-        var elapsed = Date.now() - pollStart;
-        if (elapsed > 20000) { window.clearInterval(pollTimer); return; }
-        if (!window.Clerk) return;
-        // Once Clerk is on window, wire the listener exactly once.
-        if (typeof window.Clerk.addListener === "function" && !accountAction.__clerkListener) {
-          accountAction.__clerkListener = true;
-          window.Clerk.addListener(function (resources) {
-            applyState(resources && resources.user ? resources.user : null);
-          });
-          console.log("[GLOBAL HEADER] Clerk listener wired");
+      // ── Bulletproof auth-state wiring ────────────────────────────
+      // The bug we are fixing: on normal navigation (not hard refresh)
+      // Clerk's `loaded` flag flips true BEFORE the dev-instance session
+      // cookie has been exchanged for a live user. If we read Clerk.user
+      // at that moment we get null, the header flips to "Sign in", and
+      // Clerk's addListener does NOT fire-on-attach for the already-
+      // settled state — so we get stuck signed-out until a hard refresh
+      // primes the cookie.
+      //
+      // Fix: wait on the Clerk.load() promise itself (it resolves AFTER
+      // session restoration is complete, same as clerk-bootstrap.js).
+      // Then wire the listener for future changes. We also keep a short
+      // re-check after load resolves to catch late session hydration
+      // that can race on the very first cold load of a new dev domain.
+      function pollForClerk(cb) {
+        if (window.Clerk && typeof window.Clerk.load === "function") { cb(window.Clerk); return; }
+        var attempts = 0;
+        var t = window.setInterval(function () {
+          attempts++;
+          if (window.Clerk && typeof window.Clerk.load === "function") {
+            window.clearInterval(t);
+            cb(window.Clerk);
+          } else if (attempts > 200) {
+            // ~30s timeout; auth never showed up (offline / blocked).
+            window.clearInterval(t);
+            cb(null);
+          }
+        }, 150);
+      }
+
+      pollForClerk(function (clerk) {
+        if (!clerk) { applyState(null); return; }
+        // Clerk.load() resolves AFTER initial session restoration. Both
+        // clerk-bootstrap.js and this header rely on the same SDK
+        // instance, so calling load() here returns the same promise
+        // bootstrap is already awaiting — no double init.
+        var loadPromise = clerk.loaded ? Promise.resolve() : clerk.load();
+        loadPromise.then(function () {
+          applyState(clerk.user || null);
+          // Wire the listener for future state changes (sign-in / sign-
+          // out from any tab, session refresh, etc.).
+          if (typeof clerk.addListener === "function" && !accountAction.__clerkListener) {
+            accountAction.__clerkListener = true;
+            clerk.addListener(function (resources) {
+              applyState(resources && resources.user ? resources.user : null);
+            });
+          }
+          // Short re-check window — catches late session hydration on
+          // dev-instance domains where the cookie exchange races with
+          // load() resolution.
+          var rechecks = 0;
+          var rt = window.setInterval(function () {
+            rechecks++;
+            applyState(clerk.user || null);
+            if (rechecks >= 5) window.clearInterval(rt);
+          }, 400);
+        }).catch(function (e) {
+          console.warn("[GLOBAL HEADER] Clerk.load failed", e);
+          applyState(null);
+        });
+      });
+
+      // Also re-run when the page returns from bfcache (back/forward).
+      // bfcache restores the previous DOM without re-running scripts;
+      // Clerk.user may have changed since, so we re-apply.
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted && window.Clerk) {
+          applyState(window.Clerk.user || null);
         }
-        if (!window.Clerk.loaded) return;
-        window.clearInterval(pollTimer);
-        applyState(window.Clerk.user || null);
-      }, 120);
+      });
     }
   });
 }());
