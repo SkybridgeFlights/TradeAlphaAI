@@ -317,8 +317,8 @@ function collectTargetFiles() {
 
 function removeAssetTags(html, assetPattern, tagName) {
   const tagPattern = tagName === 'link'
-    ? /^[ \t]*<link\b[^>]*>[ \t]*(?:\r?\n)?/gim
-    : /^[ \t]*<script\b[^>]*>[\s\S]*?<\/script>[ \t]*(?:\r?\n)?/gim;
+    ? /[ \t]*<link\b[^>]*>[ \t]*(?:\r?\n)?/gi
+    : /[ \t]*<script\b[^>]*>[\s\S]*?<\/script>[ \t]*(?:\r?\n)?/gi;
   return html.replace(tagPattern, (tag) => assetPattern.test(tag) ? '' : tag);
 }
 

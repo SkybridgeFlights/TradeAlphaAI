@@ -479,3 +479,282 @@
     opacity: 0.45;
   }
 }
+
+/* Final hierarchy decision: the network no longer competes inside the
+ * conversion hero. The Signal Feed owns the hero right column; cross-asset
+ * intelligence gets a dedicated section immediately below. */
+.hero-right-stack > .market-network-card {
+  display: none;
+}
+
+.cross-asset-engine {
+  margin-top: 18px;
+}
+
+.cross-asset-engine-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.15fr);
+  gap: 26px;
+  align-items: center;
+  padding: 26px;
+  overflow: hidden;
+}
+
+.cross-asset-engine-copy {
+  max-width: 560px;
+}
+
+.cross-asset-engine-copy h2 {
+  margin: 12px 0 10px;
+  color: #f4f7f1;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.cross-asset-engine-copy p {
+  margin: 0;
+  color: rgba(214, 222, 232, 0.78);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.cross-asset-engine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.cross-asset-engine-visual {
+  position: relative;
+  border: 1px solid rgba(216, 177, 90, 0.22);
+  border-radius: 22px;
+  padding: 14px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(216, 177, 90, 0.14), transparent 42%),
+    radial-gradient(circle at 84% 18%, rgba(110, 231, 216, 0.12), transparent 44%),
+    linear-gradient(135deg, rgba(18, 39, 66, 0.92), rgba(8, 18, 31, 0.96));
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cross-asset-engine-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 72% 65% at 50% 50%, transparent 0%, rgba(4, 8, 14, 0.34) 100%);
+  pointer-events: none;
+}
+
+.engine-network-svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: min(34vw, 320px);
+  min-height: 230px;
+  display: block;
+}
+
+.engine-frame {
+  fill: rgba(255, 255, 255, 0.018);
+  stroke: rgba(244, 215, 122, 0.14);
+  stroke-width: 1;
+}
+
+.engine-network-orbit {
+  transform-origin: 310px 150px;
+  transform-box: view-box;
+  animation: engine-network-drift 24s ease-in-out infinite;
+}
+
+@keyframes engine-network-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  34% { transform: translate(8px, -5px) rotate(1.8deg) scale(1.015); }
+  68% { transform: translate(-7px, 5px) rotate(-1.4deg) scale(0.992); }
+}
+
+.engine-link {
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 5 9;
+  opacity: 0.72;
+  animation: engine-link-flow 9s linear infinite, engine-link-pulse 6.8s ease-in-out infinite;
+}
+
+.engine-link-gold { stroke: rgba(244, 215, 122, 0.58); }
+.engine-link-teal { stroke: rgba(110, 231, 216, 0.52); }
+.engine-link-blue { stroke: rgba(135, 180, 245, 0.48); }
+.engine-link-rose { stroke: rgba(247, 165, 165, 0.48); }
+.engine-link.engine-delay { animation-delay: -3.2s, -2.1s; }
+
+@keyframes engine-link-flow {
+  to { stroke-dashoffset: -72; }
+}
+
+@keyframes engine-link-pulse {
+  0%, 100% { opacity: 0.42; }
+  48% { opacity: 0.86; }
+}
+
+.engine-halo {
+  fill: rgba(244, 215, 122, 0.12);
+  stroke: rgba(244, 215, 122, 0.22);
+  stroke-width: 1;
+  animation: engine-halo-breathe 7s ease-in-out infinite;
+  transform-origin: 310px 150px;
+  transform-box: view-box;
+}
+
+@keyframes engine-halo-breathe {
+  0%, 100% { opacity: 0.46; transform: scale(0.92); }
+  50% { opacity: 0.9; transform: scale(1.12); }
+}
+
+.engine-hub {
+  fill: url(#engine-hub-grad);
+  stroke: rgba(244, 215, 122, 0.85);
+  stroke-width: 1.4;
+}
+
+.engine-hub-ar { fill: url(#engine-hub-grad-ar); }
+
+.engine-node {
+  stroke-width: 1.45;
+  animation: engine-node-glow 11s ease-in-out infinite;
+}
+
+.engine-node-gold {
+  fill: url(#engine-node-gold);
+  stroke: rgba(244, 215, 122, 0.88);
+}
+
+.engine-node-teal {
+  fill: url(#engine-node-teal);
+  stroke: rgba(110, 231, 216, 0.88);
+}
+
+.engine-node-blue {
+  fill: url(#engine-node-blue);
+  stroke: rgba(135, 180, 245, 0.86);
+}
+
+.engine-node-rose {
+  fill: url(#engine-node-rose);
+  stroke: rgba(247, 165, 165, 0.86);
+}
+
+.engine-node-gold.engine-node-ar { fill: url(#engine-node-gold-ar); }
+.engine-node-teal.engine-node-ar { fill: url(#engine-node-teal-ar); }
+.engine-node-blue.engine-node-ar { fill: url(#engine-node-blue-ar); }
+.engine-node-rose.engine-node-ar { fill: url(#engine-node-rose-ar); }
+
+.engine-node-1 { animation-delay: 0s; }
+.engine-node-2 { animation-delay: 1.8s; }
+.engine-node-3 { animation-delay: 3.6s; }
+.engine-node-4 { animation-delay: 5.4s; }
+.engine-node-5 { animation-delay: 7.2s; }
+
+@keyframes engine-node-glow {
+  0%, 88%, 100% {
+    opacity: 0.88;
+    filter: drop-shadow(0 0 5px rgba(244, 215, 122, 0.24));
+  }
+  94% {
+    opacity: 1;
+    filter: drop-shadow(0 0 15px rgba(244, 215, 122, 0.58));
+  }
+}
+
+.cross-asset-engine-chips {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 0 4px 2px;
+}
+
+.cross-asset-engine-chips span {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  background: rgba(255, 255, 255, 0.026);
+  color: rgba(244, 247, 241, 0.78);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .cross-asset-engine-panel {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .cross-asset-engine-copy h2 {
+    font-size: clamp(26px, 8vw, 38px);
+  }
+
+  .engine-network-svg {
+    height: 220px;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .cross-asset-engine {
+    margin-top: 14px;
+  }
+
+  .cross-asset-engine-panel {
+    padding: 18px;
+  }
+
+  .cross-asset-engine-copy p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .cross-asset-engine-actions {
+    display: none;
+  }
+
+  .cross-asset-engine-visual {
+    border-radius: 16px;
+    padding: 10px;
+  }
+
+  .engine-network-svg {
+    height: 165px;
+  }
+
+  .cross-asset-engine-chips {
+    gap: 5px;
+  }
+
+  .cross-asset-engine-chips span {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .engine-network-orbit,
+  .engine-link,
+  .engine-halo,
+  .engine-node {
+    animation: none !important;
+  }
+
+  .engine-link {
+    stroke-dasharray: 0;
+    opacity: 0.55;
+  }
+}

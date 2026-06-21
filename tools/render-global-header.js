@@ -104,19 +104,19 @@ function renderMobileCards(ar, signInHref, accountHref, signInLabel, accountLabe
   const inHtml = cards.map((card) => {
     const items = card.items.map(([href, label]) => `<li><a class="m-card-link" href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`).join('');
     return `
-    <article class="m-card" data-card-key="${escapeHtml(card.key)}">
+    <div class="m-card" data-card-key="${escapeHtml(card.key)}">
       <header class="m-card-head">
         <span class="m-card-icon" aria-hidden="true">${MOBILE_CARD_ICONS[card.key] || ''}</span>
         <h3 class="m-card-title">${escapeHtml(card.title)}</h3>
       </header>
       <ul class="m-card-list">${items}</ul>
       ${card.viewAll ? `<a class="m-card-viewall" href="${escapeHtml(card.viewAll[0])}">${escapeHtml(card.viewAll[1] || viewAllLabel)}<span aria-hidden="true">${ar ? '←' : '→'}</span></a>` : ''}
-    </article>`;
+    </div>`;
   }).join('');
   // Account card — always last, with auth-state-aware buttons. The JS
   // swaps signed-out/signed-in classes based on Clerk session.
   const accountCard = `
-    <article class="m-card m-card-account" data-card-key="account" data-mobile-account>
+    <div class="m-card m-card-account" data-card-key="account" data-mobile-account>
       <header class="m-card-head">
         <span class="m-card-icon" aria-hidden="true">${MOBILE_CARD_ICONS.account}</span>
         <h3 class="m-card-title">${escapeHtml(accountSubLabel)}</h3>
@@ -132,7 +132,7 @@ function renderMobileCards(ar, signInHref, accountHref, signInLabel, accountLabe
         <a class="m-card-cta m-card-cta-dashboard" data-mobile-dashboard hidden href="${escapeHtml(accountHref)}">${escapeHtml(ar ? 'لوحة التحكم' : 'Dashboard')}</a>
         <button type="button" class="m-card-cta m-card-cta-signout" data-mobile-signout hidden>${escapeHtml(ar ? 'تسجيل الخروج' : 'Sign out')}</button>
       </div>
-    </article>`;
+    </div>`;
   return inHtml + accountCard;
 }
 
