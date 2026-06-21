@@ -1,0 +1,105 @@
+/* Premium market-network ambient visual for the homepage hero.
+ *
+ * Lives BEHIND the hero content (z-index: 0, hero content sits at 1).
+ * 8 nodes — GLD, UUP, TLT, SPY, QQQ, ETFs, Sectors, VIXY — connected
+ * by animated stroke-dashoffset lines that suggest information flow.
+ *
+ * Strict performance budget: CSS-only motion, no JS, no canvas, no
+ * heavy filters. SVG is ~6 KB. Respects prefers-reduced-motion.
+ */
+
+.market-network-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.55;
+  mask-image: radial-gradient(ellipse at 60% 50%, #000 35%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 60% 50%, #000 35%, transparent 80%);
+}
+
+/* Make sure hero content stays in front. The existing .hero-panel
+ * needs to host the SVG and the existing grid as siblings. */
+.hero-panel { position: relative; isolation: isolate; }
+.hero-panel > .hero-grid { position: relative; z-index: 1; }
+
+.market-network-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.market-network-link {
+  fill: none;
+  stroke: rgba(216, 177, 90, 0.32);
+  stroke-width: 1.1;
+  stroke-dasharray: 6 8;
+  animation: mn-flow 6s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(216, 177, 90, 0.15));
+}
+.market-network-link.is-teal {
+  stroke: rgba(110, 231, 216, 0.34);
+  filter: drop-shadow(0 0 4px rgba(110, 231, 216, 0.16));
+  animation-duration: 7.5s;
+}
+.market-network-link.is-slow { animation-duration: 9s; }
+.market-network-link.is-rev  { animation-direction: reverse; }
+
+.market-network-node {
+  fill: #0d1a2b;
+  stroke: rgba(216, 177, 90, 0.5);
+  stroke-width: 1.2;
+  transition: stroke-width 200ms ease;
+}
+.market-network-node.is-teal {
+  stroke: rgba(110, 231, 216, 0.55);
+}
+.market-network-halo {
+  fill: rgba(216, 177, 90, 0.16);
+  animation: mn-pulse 5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.market-network-halo.is-teal { fill: rgba(110, 231, 216, 0.16); animation-delay: 1.4s; }
+.market-network-halo.delay-1 { animation-delay: .8s; }
+.market-network-halo.delay-2 { animation-delay: 2.1s; }
+.market-network-halo.delay-3 { animation-delay: 3.4s; }
+
+.market-network-label {
+  fill: rgba(244, 247, 241, 0.6);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+@keyframes mn-flow {
+  to { stroke-dashoffset: -56; }
+}
+@keyframes mn-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.18); }
+}
+
+/* Hide network on tiny mobile so the hero doesn't feel crowded. */
+@media (max-width: 720px) {
+  .market-network-bg { opacity: 0.32; }
+}
+@media (max-width: 480px) {
+  .market-network-bg { display: none; }
+}
+
+/* Accessibility — never animate when the user opts out. */
+@media (prefers-reduced-motion: reduce) {
+  .market-network-link,
+  .market-network-halo {
+    animation: none !important;
+  }
+  .market-network-link {
+    stroke-dasharray: 0;
+    opacity: 0.45;
+  }
+}

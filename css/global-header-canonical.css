@@ -1198,6 +1198,22 @@ body.mobile-nav-open { overflow: hidden; }
   transform: rotate(180deg);
 }
 
+/* Active card — matches the current top-level section. Gentle gold
+ * border + brighter icon halo so the user knows where they are. */
+.m-card.is-active {
+  border-color: rgba(216, 177, 90, 0.32);
+  background: linear-gradient(180deg, rgba(216, 177, 90, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%);
+  box-shadow: 0 0 0 1px rgba(216, 177, 90, 0.08) inset;
+}
+.m-card.is-active .m-card-icon {
+  background: linear-gradient(145deg, rgba(216, 177, 90, 0.28), rgba(216, 177, 90, 0.08));
+  border-color: rgba(216, 177, 90, 0.4);
+  color: #ffe9a8;
+}
+.m-card.is-active .m-card-title {
+  color: #ffe9a8;
+}
+
 .m-card-list {
   list-style: none;
   margin: 0;

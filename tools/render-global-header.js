@@ -156,7 +156,7 @@ const MOBILE_CARDS_EN = [
     ['/explorer/', 'Explorer'],
     ['/changes/', 'Changes'],
   ]},
-  { key: 'tools', title: 'Tools', viewAll: ['/workspace/', 'View all Tools'], items: [
+  { key: 'tools', title: 'Tools', viewAll: ['/tools/', 'View all Tools'], items: [
     ['/ai-stock-screener.html', 'Screener'],
     ['/economic-calendar/', 'Economic Calendar'],
     ['/briefs/', 'Market Briefs'],
@@ -189,7 +189,7 @@ const MOBILE_CARDS_AR = [
     ['/ar/explorer/', 'المستكشف'],
     ['/ar/changes/', 'التغيّرات'],
   ]},
-  { key: 'tools', title: 'الأدوات', viewAll: ['/ar/workspace/', 'عرض كل الأدوات'], items: [
+  { key: 'tools', title: 'الأدوات', viewAll: ['/ar/tools/', 'عرض كل الأدوات'], items: [
     ['/ar/ai-stock-screener.html', 'ماسح السوق'],
     ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
     ['/ar/briefs/', 'الإحاطات'],
@@ -313,17 +313,17 @@ function englishLinks() {
       viewAll: ['/intelligence/', 'View all Intelligence'],
     },
     {
-      key: 'tools', href: '/workspace/', label: 'Tools',
-      activeKeys: ['screener', 'economic-calendar', 'workspace', 'briefs'],
+      key: 'tools', href: '/tools/', label: 'Tools',
+      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs'],
       children: [
         ['/ai-stock-screener.html', 'Screener'],
         ['/economic-calendar/', 'Economic Calendar'],
-        ['/workspace/', 'Workspace'],
-        ['/workspace/watchlists/', 'Watchlists'],
         ['/briefs/', 'Market Briefs'],
+        ['/methodology.html', 'Methodology'],
+        ['/workspace/', 'Workspace'],
         ['/articles/', 'Educational Articles'],
       ],
-      viewAll: ['/workspace/', 'View all Tools'],
+      viewAll: ['/tools/', 'View all Tools'],
     },
     { key: 'methodology', href: '/methodology.html', label: 'Methodology' },
   ];
@@ -372,17 +372,17 @@ function arabicLinks() {
       viewAll: ['/ar/intelligence/', 'عرض كل الاستخبارات'],
     },
     {
-      key: 'tools', href: '/ar/workspace/', label: 'الأدوات',
-      activeKeys: ['screener', 'economic-calendar', 'workspace', 'briefs'],
+      key: 'tools', href: '/ar/tools/', label: 'الأدوات',
+      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs'],
       children: [
         ['/ar/ai-stock-screener.html', 'ماسح السوق'],
         ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
-        ['/ar/workspace/', 'مساحة المتابعة'],
-        ['/ar/workspace/watchlists/', 'قوائم المتابعة'],
         ['/ar/briefs/', 'الإحاطات'],
+        ['/ar/methodology.html', 'المنهجية'],
+        ['/ar/workspace/', 'مساحة المتابعة'],
         ['/ar/articles/', 'المقالات التعليمية'],
       ],
-      viewAll: ['/ar/workspace/', 'عرض كل الأدوات'],
+      viewAll: ['/ar/tools/', 'عرض كل الأدوات'],
     },
     { key: 'methodology', href: '/ar/methodology.html', label: 'المنهجية' },
   ];

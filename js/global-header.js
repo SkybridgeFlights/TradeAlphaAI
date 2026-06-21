@@ -130,16 +130,38 @@
 
     // Tap-to-expand card behavior — collapsed by default on small viewports
     // so the drawer fits without scrolling 6 full cards. Tap the card head
-    // to toggle. The first card opens automatically so users see content.
+    // to toggle.
+    //
+    // Active-section highlight: the card matching the current top-level
+    // section (markets / research / intelligence / tools / workspace /
+    // account) auto-expands AND gets an .is-active class so the user
+    // sees where they are. Falls back to the first card.
+    var activeSection = (header.getAttribute && header.getAttribute("data-active-section")) || "";
+    var sectionToCardKey = {
+      markets: "markets", sectors: "markets", equities: "markets", etfs: "markets", stocks: "markets",
+      research: "research", insights: "research", articles: "research", briefs: "research", "market-news": "research",
+      intelligence: "intelligence", "market-terminal": "intelligence", "market-regime": "intelligence",
+      "relative-rankings": "intelligence", "market-map": "intelligence", explorer: "intelligence",
+      changes: "intelligence", "market-structure": "intelligence", "market-outlook": "intelligence",
+      tools: "tools", screener: "tools", "economic-calendar": "tools",
+      workspace: "workspace",
+      account: "account",
+    };
+    var activeCardKey = sectionToCardKey[activeSection] || "";
     var allCards = panel.querySelectorAll(".m-card");
-    Array.prototype.forEach.call(allCards, function (card, idx) {
-      if (idx === 0) card.classList.add("is-expanded");
+    var anyExpanded = false;
+    Array.prototype.forEach.call(allCards, function (card) {
+      var key = card.getAttribute("data-card-key");
+      if (key === activeCardKey) {
+        card.classList.add("is-active", "is-expanded");
+        anyExpanded = true;
+      }
       var head = card.querySelector(".m-card-head");
-      if (!head) return;
-      head.addEventListener("click", function () {
-        card.classList.toggle("is-expanded");
-      });
+      if (head) {
+        head.addEventListener("click", function () { card.classList.toggle("is-expanded"); });
+      }
     });
+    if (!anyExpanded && allCards.length) allCards[0].classList.add("is-expanded");
 
     var backdrop = document.createElement("button");
     backdrop.className = "mobile-nav-backdrop";

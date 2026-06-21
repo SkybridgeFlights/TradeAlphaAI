@@ -1,0 +1,325 @@
+/* TradeAlphaAI hub pages — Markets / Tools (and the visual contract
+ * for any future hub built by tools/generate-hub-pages.js).
+ *
+ * Design intent: premium institutional landing. Quiet dark surface,
+ * gold + teal accents for primary/secondary destinations, generous
+ * card hierarchy, premium hover lift. RTL-correct. Reduced-motion-safe.
+ */
+
+:root {
+  --hub-bg:        #0a1422;
+  --hub-bg-card:   linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
+  --hub-border:    rgba(216, 177, 90, 0.18);
+  --hub-border-soft: rgba(255,255,255,0.06);
+  --hub-text:      #f4f7f1;
+  --hub-text-muted:rgba(196, 207, 218, 0.74);
+  --hub-text-dim:  rgba(196, 207, 218, 0.5);
+  --hub-gold:      #d8b15a;
+  --hub-gold-soft: rgba(216, 177, 90, 0.22);
+  --hub-teal:      #6ee7d8;
+  --hub-teal-soft: rgba(110, 231, 216, 0.18);
+  --hub-radius:    14px;
+  --hub-radius-sm: 10px;
+}
+
+.hub-shell {
+  display: block;
+  padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 36px) 80px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hub-hero {
+  position: relative;
+  padding: clamp(28px, 6vw, 60px) clamp(20px, 4vw, 44px);
+  border: 1px solid var(--hub-border);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(216,177,90,0.12), transparent 55%),
+    radial-gradient(80% 140% at 100% 100%, rgba(110,231,216,0.08), transparent 50%),
+    linear-gradient(180deg, #0e1a2c 0%, #0a1422 100%);
+  overflow: hidden;
+  margin-bottom: 32px;
+  animation: hub-fadeup 360ms ease-out both;
+}
+.hub-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 0%, rgba(216,177,90,0.07), transparent 65%);
+  pointer-events: none;
+  animation: hub-pulse 9s ease-in-out infinite;
+}
+
+.hub-eyebrow {
+  display: inline-block;
+  color: rgba(216,177,90,0.92);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.hub-h1 {
+  margin: 0 0 14px;
+  color: var(--hub-text);
+  font-size: clamp(28px, 4.4vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+
+.hub-lead {
+  margin: 0;
+  color: var(--hub-text-muted);
+  font-size: clamp(14px, 1.6vw, 17px);
+  line-height: 1.55;
+  max-width: 760px;
+}
+
+/* ── Sections ─────────────────────────────────────────────────── */
+.hub-section {
+  margin: 36px 0;
+  animation: hub-fadeup 420ms ease-out both;
+}
+.hub-section + .hub-section { margin-top: 36px; }
+
+.hub-section-head {
+  margin-bottom: 18px;
+}
+.hub-section-eyebrow {
+  display: block;
+  color: rgba(216,177,90,0.78);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.hub-section-h2 {
+  margin: 0;
+  color: var(--hub-text);
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* ── Primary cards (2-up at desktop, 1-up at mobile) ─────────── */
+.hub-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+}
+.hub-primary-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr 24px;
+  align-items: start;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--hub-border-soft);
+  border-radius: var(--hub-radius);
+  background: var(--hub-bg-card);
+  color: var(--hub-text);
+  text-decoration: none;
+  transition: border-color 200ms ease, transform 200ms ease, background 200ms ease, box-shadow 200ms ease;
+}
+.hub-primary-card:hover,
+.hub-primary-card:focus-visible {
+  border-color: var(--hub-border);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.32);
+}
+
+.hub-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(216,177,90,0.2), rgba(216,177,90,0.04));
+  border: 1px solid rgba(216,177,90,0.28);
+  color: var(--hub-gold);
+}
+.hub-card-icon svg { width: 22px; height: 22px; }
+
+.hub-card-body { min-width: 0; }
+.hub-card-kicker {
+  display: block;
+  color: rgba(216,177,90,0.85);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.hub-card-title {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--hub-text);
+}
+.hub-card-desc {
+  margin: 0;
+  color: var(--hub-text-muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.hub-card-arrow {
+  color: rgba(216,177,90,0.6);
+  font-size: 18px;
+  font-weight: 800;
+  align-self: center;
+  transition: color 200ms ease, transform 200ms ease;
+}
+.hub-primary-card:hover .hub-card-arrow,
+.hub-primary-card:focus-visible .hub-card-arrow {
+  color: var(--hub-gold);
+  transform: translateX(3px);
+}
+[dir="rtl"] .hub-primary-card:hover .hub-card-arrow,
+[dir="rtl"] .hub-primary-card:focus-visible .hub-card-arrow {
+  transform: translateX(-3px);
+}
+
+/* ── Secondary cards ──────────────────────────────────────────── */
+.hub-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.hub-secondary-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border: 1px solid var(--hub-border-soft);
+  border-radius: var(--hub-radius-sm);
+  background: var(--hub-bg-card);
+  color: var(--hub-text);
+  text-decoration: none;
+  transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+}
+.hub-secondary-card:hover,
+.hub-secondary-card:focus-visible {
+  border-color: var(--hub-teal-soft);
+  background: linear-gradient(180deg, rgba(110,231,216,0.05), rgba(255,255,255,0.005));
+  transform: translateY(-1px);
+}
+.hub-secondary-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--hub-text);
+}
+.hub-secondary-desc {
+  margin: 0;
+  color: var(--hub-text-muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.hub-secondary-arrow {
+  position: absolute;
+  top: 14px;
+  inset-inline-end: 14px;
+  color: rgba(110,231,216,0.55);
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 200ms ease, transform 200ms ease;
+}
+.hub-secondary-card:hover .hub-secondary-arrow,
+.hub-secondary-card:focus-visible .hub-secondary-arrow {
+  color: var(--hub-teal);
+  transform: translateX(3px);
+}
+[dir="rtl"] .hub-secondary-card:hover .hub-secondary-arrow,
+[dir="rtl"] .hub-secondary-card:focus-visible .hub-secondary-arrow {
+  transform: translateX(-3px);
+}
+
+/* ── Related list ────────────────────────────────────────────── */
+.hub-related-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+.hub-related-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--hub-border-soft);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
+  color: var(--hub-text-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+.hub-related-list a:hover,
+.hub-related-list a:focus-visible {
+  border-color: var(--hub-gold-soft);
+  color: var(--hub-text);
+  background: rgba(216,177,90,0.05);
+}
+.hub-related-list a span {
+  color: rgba(216,177,90,0.7);
+  font-size: 14px;
+  transition: transform 180ms ease;
+}
+.hub-related-list a:hover span { transform: translateX(2px); }
+[dir="rtl"] .hub-related-list a:hover span { transform: translateX(-2px); }
+
+/* ── Disclaimer ──────────────────────────────────────────────── */
+.hub-disclaimer {
+  margin-top: 24px;
+  padding: 16px 18px;
+  border: 1px dashed var(--hub-border-soft);
+  border-radius: var(--hub-radius-sm);
+  color: var(--hub-text-dim);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+.hub-disclaimer p { margin: 0; }
+
+/* ── Motion ──────────────────────────────────────────────────── */
+@keyframes hub-fadeup {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hub-pulse {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-hero, .hub-section,
+  .hub-primary-card, .hub-secondary-card,
+  .hub-card-arrow, .hub-secondary-arrow,
+  .hub-related-list a span {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Mobile tightening ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hub-shell { padding: 14px 14px 64px; }
+  .hub-hero  { padding: 22px 18px; }
+  .hub-h1    { font-size: 26px; }
+  .hub-primary-card { grid-template-columns: 44px 1fr 18px; gap: 12px; padding: 14px; }
+  .hub-card-icon    { width: 40px; height: 40px; border-radius: 10px; }
+  .hub-card-icon svg{ width: 18px; height: 18px; }
+  .hub-card-title   { font-size: 16px; }
+  .hub-card-desc    { font-size: 13px; }
+}

@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/landing.css" />
   <link rel="stylesheet" href="/css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/market-network-hero.css" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -133,15 +134,15 @@
             </div>
           </div>
           <div class="nav-menu">
-            <a href="/ar/workspace/" class="nav-link nav-menu-trigger">الأدوات<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <a href="/ar/tools/" class="nav-link nav-menu-trigger">الأدوات<span class="nav-caret" aria-hidden="true">▾</span></a>
             <div class="nav-dropdown nav-dropdown-compact">
               <a href="/ar/ai-stock-screener.html">ماسح السوق</a>
               <a href="/ar/economic-calendar/">التقويم الاقتصادي</a>
-              <a href="/ar/workspace/">مساحة المتابعة</a>
-              <a href="/ar/workspace/watchlists/">قوائم المتابعة</a>
               <a href="/ar/briefs/">الإحاطات</a>
+              <a href="/ar/methodology.html">المنهجية</a>
+              <a href="/ar/workspace/">مساحة المتابعة</a>
               <a href="/ar/articles/">المقالات التعليمية</a>
-              <a href="/ar/workspace/" class="nav-dropdown-viewall">عرض كل الأدوات<span aria-hidden="true">←</span></a>
+              <a href="/ar/tools/" class="nav-dropdown-viewall">عرض كل الأدوات<span aria-hidden="true">←</span></a>
             </div>
           </div>
           <a href="/ar/methodology.html" class="nav-link">المنهجية</a>
@@ -200,7 +201,7 @@
         <h3 class="m-card-title">الأدوات</h3>
       </header>
       <ul class="m-card-list"><li><a class="m-card-link" href="/ar/ai-stock-screener.html">ماسح السوق</a></li><li><a class="m-card-link" href="/ar/economic-calendar/">التقويم الاقتصادي</a></li><li><a class="m-card-link" href="/ar/briefs/">الإحاطات</a></li><li><a class="m-card-link" href="/ar/methodology.html">المنهجية</a></li></ul>
-      <a class="m-card-viewall" href="/ar/workspace/">عرض كل الأدوات<span aria-hidden="true">←</span></a>
+      <a class="m-card-viewall" href="/ar/tools/">عرض كل الأدوات<span aria-hidden="true">←</span></a>
     </article>
     <article class="m-card" data-card-key="workspace">
       <header class="m-card-head">
@@ -236,6 +237,33 @@
       <!-- ── CHANGE 1: Product-first hero ── -->
       <section class="hero">
         <div class="hero-panel">
+          <!-- Ambient market-network backdrop. Decoration only — no
+               numbers, no signals, no predictions. -->
+          <div class="market-network-bg" aria-hidden="true">
+            <svg class="market-network-svg" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <g class="market-network-links">
+                <line class="market-network-link" x1="150" y1="120" x2="450" y2="230"/>
+                <line class="market-network-link is-teal" x1="450" y1="230" x2="750" y2="120"/>
+                <line class="market-network-link is-slow" x1="150" y1="340" x2="450" y2="230"/>
+                <line class="market-network-link is-teal is-rev" x1="450" y1="230" x2="750" y2="340"/>
+                <line class="market-network-link is-slow" x1="150" y1="120" x2="450" y2="60"/>
+                <line class="market-network-link is-teal" x1="450" y1="60" x2="750" y2="120"/>
+                <line class="market-network-link" x1="450" y1="400" x2="150" y2="340"/>
+                <line class="market-network-link is-teal is-slow" x1="450" y1="400" x2="750" y2="340"/>
+                <line class="market-network-link is-rev" x1="450" y1="60" x2="450" y2="400"/>
+              </g>
+              <g class="market-network-nodes">
+                <g><circle class="market-network-halo" cx="450" cy="60"  r="14"/><circle class="market-network-node" cx="450" cy="60"  r="8"/><text class="market-network-label" x="450" y="40">SPY</text></g>
+                <g><circle class="market-network-halo is-teal delay-1" cx="450" cy="230" r="18"/><circle class="market-network-node is-teal" cx="450" cy="230" r="10"/><text class="market-network-label" x="450" y="252">ETFs</text></g>
+                <g><circle class="market-network-halo delay-2" cx="450" cy="400" r="14"/><circle class="market-network-node" cx="450" cy="400" r="8"/><text class="market-network-label" x="450" y="424">SECTORS</text></g>
+                <g><circle class="market-network-halo is-teal" cx="150" cy="120" r="13"/><circle class="market-network-node is-teal" cx="150" cy="120" r="7"/><text class="market-network-label" x="150" y="100">GLD</text></g>
+                <g><circle class="market-network-halo delay-3" cx="150" cy="340" r="13"/><circle class="market-network-node" cx="150" cy="340" r="7"/><text class="market-network-label" x="150" y="364">UUP</text></g>
+                <g><circle class="market-network-halo delay-1" cx="750" cy="120" r="13"/><circle class="market-network-node" cx="750" cy="120" r="7"/><text class="market-network-label" x="750" y="100">QQQ</text></g>
+                <g><circle class="market-network-halo is-teal delay-2" cx="750" cy="340" r="13"/><circle class="market-network-node is-teal" cx="750" cy="340" r="7"/><text class="market-network-label" x="750" y="364">TLT</text></g>
+                <g><circle class="market-network-halo" cx="50"  cy="230" r="11"/><circle class="market-network-node" cx="50"  cy="230" r="6"/><text class="market-network-label" x="50"  y="252">VIXY</text></g>
+              </g>
+            </svg>
+          </div>
           <div class="hero-grid">
             <div class="hero-copy">
               <span class="eyebrow">إشارات تداول وأبحاث سوق</span>
@@ -1015,6 +1043,7 @@
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
 </body>
 </html>
