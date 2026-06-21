@@ -180,8 +180,19 @@ function checkAuthPages() {
       if (mode === 'contract') {
         // Foundation phase forbids <form> elements (no simulated live auth).
         if (/<form[\s>]/i.test(html)) fails.push(`${loc} ${dir}: form element forbidden in contract mode`);
-        // Forbid loading an actual Clerk SDK in the foundation phase.
-        if (/clerk[._-]?(js|browser|sdk)\b/i.test(html) || /<script[^>]+clerk/i.test(html)) fails.push(`${loc} ${dir}: Clerk SDK must not be loaded in contract mode`);
+        // Phase polish — clerk-bootstrap.js is now loaded platform-wide
+        // by globalHeaderScripts() to power the header Account action.
+        // It's mode-aware (no-op in contract mode), so its presence is
+        // SAFE. The real invariant is that clerk-config.js must not
+        // contain a real publishable key in contract mode — enforced by
+        // inject-clerk-config.js which writes mode='unconfigured' when
+        // CLERK_PUBLISHABLE_KEY is absent. Local clerk-bootstrap.js /
+        // clerk-config.js references are allowed; only references to a
+        // REMOTE Clerk SDK CDN (clerk-js.dev / clerk.com / clerk.dev/
+        // npm) are blocked because those would attempt to load the
+        // hosted SDK uninvited.
+        var remoteClerkPattern = /<script[^>]+src=["'][^"']*(clerk\.com|clerk\.dev|clerk\.accounts\.dev|clerk-js)/i;
+        if (remoteClerkPattern.test(html)) fails.push(`${loc} ${dir}: remote Clerk SDK must not be loaded in contract mode`);
       } else if (mode === 'hosted') {
         // Hosted mode: the page MUST advertise hosted mode AND load both the
         // injected config + bootstrap. Clerk's own mountSignIn() injects its

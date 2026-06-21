@@ -102,8 +102,54 @@
       '<nav class="mobile-nav-links" aria-label="' + menuLabel + '"></nav>';
 
     var links = panel.querySelector(".mobile-nav-links");
-    Array.prototype.forEach.call(nav.querySelectorAll("a"), function (link) {
-      links.appendChild(link.cloneNode(true));
+    // Render the mobile drawer as grouped sections that mirror the desktop
+    // mega-menu structure. Top-level non-dropdown items become a "Primary"
+    // group; legacy dropdown items get their parent label; mega-menu items
+    // emit one group per column. Result: no 53-item flat wall.
+    function appendGroup(title, anchors) {
+      if (!anchors.length) return;
+      var group = document.createElement("div");
+      group.className = "mobile-nav-group";
+      if (title) {
+        var h = document.createElement("span");
+        h.className = "mobile-nav-group-title";
+        h.textContent = title;
+        group.appendChild(h);
+      }
+      anchors.forEach(function (a) { group.appendChild(a.cloneNode(true)); });
+      links.appendChild(group);
+    }
+    var primaryAnchors = [];
+    Array.prototype.forEach.call(nav.children, function (child) {
+      if (child.tagName === "A") {
+        primaryAnchors.push(child);
+      } else if (child.classList && child.classList.contains("nav-menu")) {
+        var trigger = child.querySelector(".nav-menu-trigger");
+        if (trigger) primaryAnchors.push(trigger);
+      }
+    });
+    appendGroup(isArabic ? "الأقسام الرئيسية" : "Primary", primaryAnchors);
+    var megaColumns = nav.querySelectorAll(".nav-mega-column");
+    Array.prototype.forEach.call(megaColumns, function (col) {
+      var titleEl = col.querySelector(".nav-mega-title");
+      var anchors = Array.prototype.slice.call(col.querySelectorAll("a"));
+      appendGroup(titleEl ? titleEl.textContent.trim() : "", anchors);
+    });
+    var megaFooter = nav.querySelectorAll(".nav-mega-footer-row");
+    Array.prototype.forEach.call(megaFooter, function (row) {
+      var titleEl = row.querySelector(".nav-mega-footer-title");
+      var anchors = Array.prototype.slice.call(row.querySelectorAll("a"));
+      appendGroup(titleEl ? titleEl.textContent.trim() : "", anchors);
+    });
+    // Legacy single-column dropdowns (e.g. Rankings) — render their items
+    // under the parent label so they don't disappear from the drawer.
+    var legacyDropdowns = nav.querySelectorAll(".nav-menu:not(.nav-menu-mega) .nav-dropdown");
+    Array.prototype.forEach.call(legacyDropdowns, function (dd) {
+      var parent = dd.closest(".nav-menu");
+      var trigger = parent && parent.querySelector(".nav-menu-trigger");
+      var labelText = trigger ? trigger.firstChild && trigger.firstChild.textContent : "";
+      var anchors = Array.prototype.slice.call(dd.querySelectorAll("a"));
+      appendGroup(labelText ? labelText.trim() : "", anchors);
     });
 
     // Language switcher: clone the opposite-language link into the drawer
@@ -168,5 +214,39 @@
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && document.body.classList.contains("mobile-nav-open")) closeDrawer();
     });
+
+    // ── Account action: Clerk-aware swap ─────────────────────────────
+    // Default UI is the "Sign in" link. When Clerk is loaded AND a user
+    // session exists, swap the label to "Account" + mount Clerk's
+    // UserButton in the dedicated mount node. Polls briefly because
+    // clerk-bootstrap.js loads the SDK async.
+    var accountAction = header.querySelector("[data-account-action]");
+    if (accountAction) {
+      var defaultLink = accountAction.querySelector("[data-account-default]");
+      var mountNode = accountAction.querySelector("[data-account-mount]");
+      var signedInHref = accountAction.getAttribute("data-signed-in-href") || "/account/";
+      var signedInLabel = accountAction.getAttribute("data-signed-in-label") || "Account";
+      var pollStart = Date.now();
+      var pollTimer = window.setInterval(function () {
+        var elapsed = Date.now() - pollStart;
+        if (elapsed > 8000) { window.clearInterval(pollTimer); return; }
+        if (!window.Clerk || !window.Clerk.loaded) return;
+        window.clearInterval(pollTimer);
+        var user = window.Clerk.user;
+        if (!user) return; // stay on the Sign in default
+        accountAction.setAttribute("data-signed-in", "1");
+        if (defaultLink) {
+          // Repurpose the default link to point at /account/ + change label
+          defaultLink.setAttribute("href", signedInHref);
+          var labelEl = defaultLink.querySelector(".header-account-label");
+          if (labelEl) labelEl.textContent = signedInLabel;
+        }
+        if (mountNode) {
+          mountNode.hidden = false;
+          try { window.Clerk.mountUserButton(mountNode, { afterSignOutUrl: "/" }); }
+          catch (e) { /* fallback: keep the link visible */ accountAction.removeAttribute("data-signed-in"); }
+        }
+      }, 120);
+    }
   });
 }());
