@@ -363,9 +363,20 @@
                   <stop offset="58%" stop-color="#f7a5a5"/>
                   <stop offset="100%" stop-color="#281322"/>
                 </radialGradient>
+                <radialGradient id="engine-sweep-grad" cx="0" cy="50%" r="100%">
+                  <stop offset="0%"  stop-color="rgba(255,232,160,0.55)"/>
+                  <stop offset="65%" stop-color="rgba(255,232,160,0.08)"/>
+                  <stop offset="100%" stop-color="rgba(255,232,160,0)"/>
+                </radialGradient>
               </defs>
 
               <rect x="18" y="18" width="584" height="264" rx="28" class="engine-frame"/>
+              <!-- Radar sweep beam: rotates 18s around the hub, passes
+                   over each satellite. Sits BEHIND the nodes so it
+                   highlights without obscuring them. Labels never move. -->
+              <g class="engine-radar-sweep">
+                <path d="M 310,150 L 420,150 A 110 110 0 0 0 365,55 Z" fill="url(#engine-sweep-grad)"/>
+              </g>
               <g class="engine-network-orbit">
                 <circle class="engine-halo" cx="310" cy="150" r="40"/>
                 <g class="engine-hub-group">

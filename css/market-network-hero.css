@@ -128,13 +128,27 @@
   animation: engine-network-breathe 14s ease-in-out infinite;
 }
 
-/* Slow institutional orbit around the central hub — user requested
- * "very slow", 80-120s full cycle. 110s lands in that band; the
- * rotation is so gentle it reads as life, not spin. */
+/* The orbit-field is now STATIC — rotating it dragged the ticker
+ * labels around with it, leaving SPY/QQQ/GLD half-readable at any
+ * given moment. Professional institutional visualizations (Bloomberg,
+ * Koyfin) keep the layout still and let the motion come from the
+ * hub pulse, sweeping radar, line flow and sequenced node glow.
+ * That's what we do here. */
 .engine-orbit-field {
   transform-origin: 310px 150px;
   transform-box: view-box;
-  animation: engine-field-orbit 110s linear infinite;
+  animation: none;
+}
+
+/* Radar sweep beam — replaces the orbit rotation as the source of
+ * "live" motion. A gradient wedge slowly rotates around the hub,
+ * passing over each satellite, without touching the labels. */
+.engine-radar-sweep {
+  transform-origin: 310px 150px;
+  transform-box: view-box;
+  animation: engine-field-orbit 18s linear infinite;
+  opacity: 0.55;
+  mix-blend-mode: screen;
 }
 
 /* Connection spokes pulse along their length — gentle flow only. */

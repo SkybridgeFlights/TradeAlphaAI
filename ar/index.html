@@ -353,16 +353,24 @@
                   <stop offset="58%" stop-color="#f7a5a5"/>
                   <stop offset="100%" stop-color="#281322"/>
                 </radialGradient>
+                <radialGradient id="engine-sweep-grad-ar" cx="0" cy="50%" r="100%">
+                  <stop offset="0%"  stop-color="rgba(255,232,160,0.55)"/>
+                  <stop offset="65%" stop-color="rgba(255,232,160,0.08)"/>
+                  <stop offset="100%" stop-color="rgba(255,232,160,0)"/>
+                </radialGradient>
               </defs>
 
               <rect x="18" y="18" width="584" height="264" rx="28" class="engine-frame"/>
+              <g class="engine-radar-sweep">
+                <path d="M 310,150 L 420,150 A 110 110 0 0 0 365,55 Z" fill="url(#engine-sweep-grad-ar)"/>
+              </g>
               <g class="engine-network-orbit">
                 <circle class="engine-halo" cx="310" cy="150" r="40"/>
                 <g class="engine-hub-group">
                   <circle class="engine-hub engine-hub-ar" cx="310" cy="150" r="25"/>
                   <rect class="engine-hub-badge" x="283" y="134" width="54" height="32" rx="12"/>
                   <text class="engine-hub-label" x="310" y="147">ETFs</text>
-                  <text class="engine-hub-sub engine-hub-sub-ar" x="310" y="162">مركز الأصول</text>
+                  <text class="engine-hub-sub" x="310" y="162">Cross-Asset Hub</text>
                 </g>
 
                 <g class="engine-orbit-field">
@@ -401,11 +409,11 @@
                   </g>
                   <g class="engine-market-node engine-mobile-extra" transform="translate(398 84)">
                     <circle class="engine-node engine-node-sector engine-node-ar engine-node-7" r="10"/>
-                    <text class="engine-node-label" x="48">القطاعات</text>
+                    <text class="engine-node-label" x="48">SECTOR</text>
                   </g>
                   <g class="engine-market-node engine-mobile-extra" transform="translate(222 216)">
                     <circle class="engine-node engine-node-equity engine-node-ar engine-node-8" r="10"/>
-                    <text class="engine-node-label" x="-48">الأسهم</text>
+                    <text class="engine-node-label" x="-48">EQUITY</text>
                   </g>
                 </g>
               </g>
