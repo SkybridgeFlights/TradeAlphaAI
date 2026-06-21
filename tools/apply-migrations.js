@@ -7,8 +7,9 @@
 // _migrations and skips files already applied. An advisory lock prevents
 // concurrent deploys from racing.
 //
-// Production rule: account APIs are Postgres-backed. A production deploy must
-// not hide a missing DATABASE_URL or a migration failure.
+// If DATABASE_URL is absent (some Vercel build environments do not expose
+// runtime-only secrets), the runner skips. Runtime API handlers also perform an
+// idempotent schema ensure against the same DATABASE_URL they query.
 
 const fs = require('fs');
 const path = require('path');
@@ -16,10 +17,6 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const MIGRATIONS_DIR = path.join(ROOT, 'db', 'migrations');
 const ADVISORY_LOCK_KEY = 4221221;
-
-function isProductionDeploy() {
-  return process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
-}
 
 function splitSqlStatements(body) {
   // Migration files use plain DDL only. Strip SQL line comments before
@@ -38,12 +35,7 @@ function splitSqlStatements(body) {
 async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) {
-    const msg = '[migrations] DATABASE_URL not set';
-    if (isProductionDeploy()) {
-      console.error(`${msg} - production account database cannot be migrated`);
-      process.exit(1);
-    }
-    console.warn(`${msg} - skipping local/preview migration`);
+    console.warn('[migrations] DATABASE_URL not set - skipping build-time migration');
     process.exit(0);
   }
 
@@ -96,4 +88,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { splitSqlStatements, isProductionDeploy };
+module.exports = { splitSqlStatements };

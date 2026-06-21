@@ -11,6 +11,7 @@
 
 const { getSql } = require('../../db/client');
 const { requireAccount, sendError } = require('../../db/auth');
+const { ensureAccountSchema } = require('../../db/schema');
 
 const ALLOWED_LOCALES = new Set(['en', 'ar']);
 
@@ -25,8 +26,9 @@ module.exports = async function handler(req, res) {
   }
   try {
     const { accountId, claims } = await requireAccount(req);
+    const sql = getSql();
+    await ensureAccountSchema(sql);
     if (req.method === 'GET') {
-      const sql = getSql();
       const rows = await sql`SELECT account_id, locale, tier, primary_email_hash, created_at, last_seen_at FROM accounts WHERE account_id = ${accountId} LIMIT 1`;
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -44,7 +46,6 @@ module.exports = async function handler(req, res) {
     const emailHash = (typeof body.primary_email_hash === 'string' && /^[a-f0-9]{64}$/.test(body.primary_email_hash))
       ? body.primary_email_hash
       : null;
-    const sql = getSql();
     const rows = await sql`
       INSERT INTO accounts (account_id, primary_email_hash, locale, last_seen_at)
       VALUES (${accountId}, ${emailHash}, COALESCE(${locale}, 'en'), NOW())

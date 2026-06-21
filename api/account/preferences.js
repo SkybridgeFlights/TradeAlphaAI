@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { getSql } = require('../../db/client');
 const { requireAccount, sendError } = require('../../db/auth');
+const { ensureAccountSchema } = require('../../db/schema');
 
 function loadAllowed() {
   try {
@@ -27,6 +28,7 @@ module.exports = async function handler(req, res) {
   try {
     const { accountId } = await requireAccount(req);
     const sql = getSql();
+    await ensureAccountSchema(sql);
     if (req.method === 'GET') {
       const rows = await sql`SELECT name, value, updated_at FROM preference_overrides WHERE account_id = ${accountId}`;
       res.statusCode = 200;
