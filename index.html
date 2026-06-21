@@ -285,102 +285,133 @@
                   <defs>
                     <!-- Hub gradient — soft gold core fading to navy edge. -->
                     <radialGradient id="mn-hub-grad" cx="50%" cy="40%" r="60%">
+                      <stop offset="0%"   stop-color="#fff3c8"/>
+                      <stop offset="50%"  stop-color="#f4d77a"/>
+                      <stop offset="100%" stop-color="#1f3a5e"/>
+                    </radialGradient>
+                    <!-- Per-asset node gradients (gold / teal / violet / rose / blue). -->
+                    <radialGradient id="mn-node-grad" cx="35%" cy="35%" r="70%">
                       <stop offset="0%"   stop-color="#ffe9a8"/>
                       <stop offset="55%"  stop-color="#d8b15a"/>
-                      <stop offset="100%" stop-color="#1d3658"/>
-                    </radialGradient>
-                    <!-- Node gradients — small inner glow. -->
-                    <radialGradient id="mn-node-grad" cx="40%" cy="40%" r="65%">
-                      <stop offset="0%"   stop-color="#f4d77a"/>
-                      <stop offset="60%"  stop-color="#1c2e4a"/>
                       <stop offset="100%" stop-color="#0e1d33"/>
                     </radialGradient>
-                    <radialGradient id="mn-node-grad-teal" cx="40%" cy="40%" r="65%">
-                      <stop offset="0%"   stop-color="#a8f5e6"/>
-                      <stop offset="60%"  stop-color="#13384a"/>
-                      <stop offset="100%" stop-color="#0c1f30"/>
+                    <radialGradient id="mn-node-grad-teal" cx="35%" cy="35%" r="70%">
+                      <stop offset="0%"   stop-color="#c0fdf0"/>
+                      <stop offset="55%"  stop-color="#6ee7d8"/>
+                      <stop offset="100%" stop-color="#0c2638"/>
                     </radialGradient>
-                    <!-- Connection line gradients (gold + teal flavors). -->
+                    <radialGradient id="mn-node-grad-violet" cx="35%" cy="35%" r="70%">
+                      <stop offset="0%"   stop-color="#e2d0ff"/>
+                      <stop offset="55%"  stop-color="#b491ff"/>
+                      <stop offset="100%" stop-color="#1a1638"/>
+                    </radialGradient>
+                    <radialGradient id="mn-node-grad-rose" cx="35%" cy="35%" r="70%">
+                      <stop offset="0%"   stop-color="#ffd5d5"/>
+                      <stop offset="55%"  stop-color="#f7a5a5"/>
+                      <stop offset="100%" stop-color="#2c1424"/>
+                    </radialGradient>
+                    <radialGradient id="mn-node-grad-blue" cx="35%" cy="35%" r="70%">
+                      <stop offset="0%"   stop-color="#cfe0ff"/>
+                      <stop offset="55%"  stop-color="#87b4f5"/>
+                      <stop offset="100%" stop-color="#0c1d3a"/>
+                    </radialGradient>
+                    <!-- Per-color connection-line gradients. -->
                     <linearGradient id="mn-link-grad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%"   stop-color="rgba(216,177,90,0.55)"/>
-                      <stop offset="100%" stop-color="rgba(216,177,90,0.12)"/>
+                      <stop offset="0%"   stop-color="rgba(244,215,122,0.7)"/>
+                      <stop offset="100%" stop-color="rgba(244,215,122,0.12)"/>
                     </linearGradient>
                     <linearGradient id="mn-link-grad-teal" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%"   stop-color="rgba(110,231,216,0.55)"/>
+                      <stop offset="0%"   stop-color="rgba(110,231,216,0.7)"/>
                       <stop offset="100%" stop-color="rgba(110,231,216,0.12)"/>
                     </linearGradient>
-                    <!-- Radar sweep wedge — angular gradient that fades to nothing. -->
+                    <linearGradient id="mn-link-grad-violet" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%"   stop-color="rgba(180,145,255,0.65)"/>
+                      <stop offset="100%" stop-color="rgba(180,145,255,0.12)"/>
+                    </linearGradient>
+                    <linearGradient id="mn-link-grad-rose" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%"   stop-color="rgba(247,165,165,0.65)"/>
+                      <stop offset="100%" stop-color="rgba(247,165,165,0.12)"/>
+                    </linearGradient>
+                    <linearGradient id="mn-link-grad-blue" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%"   stop-color="rgba(135,180,245,0.65)"/>
+                      <stop offset="100%" stop-color="rgba(135,180,245,0.12)"/>
+                    </linearGradient>
+                    <!-- Radar sweep wedge. -->
                     <radialGradient id="mn-sweep-grad" cx="0" cy="50%" r="100%">
-                      <stop offset="0%"   stop-color="rgba(216,177,90,0.42)"/>
-                      <stop offset="80%"  stop-color="rgba(216,177,90,0)"/>
+                      <stop offset="0%"   stop-color="rgba(244,215,122,0.55)"/>
+                      <stop offset="80%"  stop-color="rgba(244,215,122,0)"/>
                     </radialGradient>
+                    <!-- Premium glow filter applied to all nodes + hub. -->
+                    <filter id="mn-glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="2.4" result="b"/>
+                      <feMerge>
+                        <feMergeNode in="b"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
 
-                  <!-- Soft sonar pulses (radiating from hub) -->
                   <circle class="mn-sonar"        cx="240" cy="165" r="30"/>
                   <circle class="mn-sonar is-teal d1" cx="240" cy="165" r="30"/>
                   <circle class="mn-sonar d2"     cx="240" cy="165" r="30"/>
 
-                  <!-- Radar sweep — soft wedge that rotates slowly. -->
                   <g class="mn-radar">
                     <path d="M 240,165 L 360,135 A 125 125 0 0 1 360 195 Z" fill="url(#mn-sweep-grad)"/>
                   </g>
 
-                  <!-- Hub: outer ring + inner core + label -->
-                  <circle class="mn-hub-ring" cx="240" cy="165" r="34"/>
-                  <circle class="mn-hub-core" cx="240" cy="165" r="22"/>
+                  <circle class="mn-hub-ring" cx="240" cy="165" r="36"/>
+                  <circle class="mn-hub-core" cx="240" cy="165" r="24" filter="url(#mn-glow)"/>
                   <text class="mn-hub-label" x="240" y="161" font-size="13">ETFs</text>
                   <text class="mn-hub-sublabel" x="240" y="178">Cross-asset hub</text>
 
-                  <!-- Asymmetric connections (hub → satellites + a few inter-node).
-                       Different radii + angles break any "disc" feel. -->
-                  <line class="mn-link"           x1="240" y1="165" x2="240" y2="70"/>
-                  <line class="mn-link is-teal"   x1="240" y1="165" x2="370" y2="110"/>
-                  <line class="mn-link is-rev"    x1="240" y1="165" x2="405" y2="200"/>
-                  <line class="mn-link is-teal is-slow" x1="240" y1="165" x2="320" y2="282"/>
-                  <line class="mn-link is-slow"   x1="240" y1="165" x2="135" y2="278"/>
-                  <line class="mn-link is-teal"   x1="240" y1="165" x2="65"  y2="205"/>
-                  <line class="mn-link is-rev"    x1="240" y1="165" x2="110" y2="98"/>
-                  <line class="mn-link is-slow"   x1="240" y1="70"  x2="370" y2="110"/>
-                  <line class="mn-link is-teal is-slow" x1="370" y1="110" x2="405" y2="200"/>
-                  <line class="mn-link is-rev"    x1="65"  y1="205" x2="135" y2="278"/>
-                  <line class="mn-link is-teal"   x1="110" y1="98"  x2="240" y2="70"/>
+                  <!-- Asymmetric connections, each colored by its satellite. -->
+                  <line class="mn-link"          x1="240" y1="165" x2="240" y2="70"/>
+                  <line class="mn-link c-teal"   x1="240" y1="165" x2="370" y2="110"/>
+                  <line class="mn-link c-blue"   x1="240" y1="165" x2="405" y2="200"/>
+                  <line class="mn-link is-slow"  x1="240" y1="165" x2="320" y2="282"/>
+                  <line class="mn-link c-violet is-slow" x1="240" y1="165" x2="135" y2="278"/>
+                  <line class="mn-link c-rose"   x1="240" y1="165" x2="65"  y2="205"/>
+                  <line class="mn-link c-teal is-rev" x1="240" y1="165" x2="110" y2="98"/>
+                  <line class="mn-link is-slow"  x1="240" y1="70"  x2="370" y2="110"/>
+                  <line class="mn-link c-blue is-slow" x1="370" y1="110" x2="405" y2="200"/>
+                  <line class="mn-link c-rose is-rev"  x1="65"  y1="205" x2="135" y2="278"/>
+                  <line class="mn-link c-teal"   x1="110" y1="98"  x2="240" y2="70"/>
 
-                  <!-- Satellites — asymmetric positions, no orbital motion. -->
+                  <!-- Satellites — per-asset COLOR accent. -->
                   <g>
-                    <circle class="mn-sat-halo d1"           cx="240" cy="70" r="13"/>
-                    <circle class="mn-sat-node glow-1"       cx="240" cy="70" r="7.5"/>
-                    <text   class="mn-sat-label"             x="240" y="52">SPY</text>
+                    <circle class="mn-sat-halo d1"                cx="240" cy="70" r="14"/>
+                    <circle class="mn-sat-node glow-1"            cx="240" cy="70" r="8" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label"                  x="240" y="50">SPY</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo d2"           cx="370" cy="110" r="12"/>
-                    <circle class="mn-sat-node glow-2"       cx="370" cy="110" r="7"/>
-                    <text   class="mn-sat-label"             x="370" y="93">QQQ</text>
+                    <circle class="mn-sat-halo c-teal d2"         cx="370" cy="110" r="13"/>
+                    <circle class="mn-sat-node c-teal glow-2"     cx="370" cy="110" r="7.5" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label"                  x="370" y="91">QQQ</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo is-teal d3"   cx="405" cy="200" r="12"/>
-                    <circle class="mn-sat-node is-teal glow-3" cx="405" cy="200" r="7"/>
-                    <text   class="mn-sat-label"             x="405" y="222">TLT</text>
+                    <circle class="mn-sat-halo c-blue d3"         cx="405" cy="200" r="13"/>
+                    <circle class="mn-sat-node c-blue glow-3"     cx="405" cy="200" r="7.5" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label"                  x="405" y="222">TLT</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo d4"           cx="320" cy="282" r="12"/>
-                    <circle class="mn-sat-node glow-4"       cx="320" cy="282" r="7"/>
-                    <text   class="mn-sat-label"             x="320" y="304">GLD</text>
+                    <circle class="mn-sat-halo d4"                cx="320" cy="282" r="13"/>
+                    <circle class="mn-sat-node glow-4"            cx="320" cy="282" r="7.5" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label"                  x="320" y="304">GLD</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo d5"           cx="135" cy="278" r="12"/>
-                    <circle class="mn-sat-node glow-5"       cx="135" cy="278" r="7"/>
-                    <text   class="mn-sat-label"             x="135" y="300">UUP</text>
+                    <circle class="mn-sat-halo c-violet d5"       cx="135" cy="278" r="13"/>
+                    <circle class="mn-sat-node c-violet glow-5"   cx="135" cy="278" r="7.5" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label"                  x="135" y="300">UUP</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo is-teal d6"   cx="65"  cy="205" r="12"/>
-                    <circle class="mn-sat-node is-teal glow-6" cx="65"  cy="205" r="7"/>
-                    <text   class="mn-sat-label"             x="65"  y="227">VIXY</text>
+                    <circle class="mn-sat-halo c-rose d6"         cx="65"  cy="205" r="13"/>
+                    <circle class="mn-sat-node c-rose glow-6"     cx="65"  cy="205" r="7.5" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label"                  x="65"  y="227">VIXY</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo d1"           cx="110" cy="98" r="12"/>
-                    <circle class="mn-sat-node glow-7"       cx="110" cy="98" r="7"/>
-                    <text   class="mn-sat-label mn-sat-label-sm" x="110" y="80">SECTORS</text>
+                    <circle class="mn-sat-halo c-teal d1"         cx="110" cy="98" r="13"/>
+                    <circle class="mn-sat-node c-teal glow-7"     cx="110" cy="98" r="7.5" filter="url(#mn-glow)"/>
+                    <text   class="mn-sat-label mn-sat-label-sm"  x="110" y="79">SECTORS</text>
                   </g>
                 </svg>
 
@@ -388,32 +419,48 @@
                 <svg class="mn-svg-mobile" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Compact cross-asset constellation: SPY, QQQ, GLD, TLT linked to the ETFs hub.">
                   <defs>
                     <radialGradient id="mn-hub-grad-m" cx="50%" cy="40%" r="60%">
+                      <stop offset="0%"   stop-color="#fff3c8"/>
+                      <stop offset="50%"  stop-color="#f4d77a"/>
+                      <stop offset="100%" stop-color="#1f3a5e"/>
+                    </radialGradient>
+                    <radialGradient id="mn-node-grad-m" cx="35%" cy="35%" r="70%">
                       <stop offset="0%"   stop-color="#ffe9a8"/>
                       <stop offset="55%"  stop-color="#d8b15a"/>
-                      <stop offset="100%" stop-color="#1d3658"/>
-                    </radialGradient>
-                    <radialGradient id="mn-node-grad-m" cx="40%" cy="40%" r="65%">
-                      <stop offset="0%"   stop-color="#f4d77a"/>
-                      <stop offset="60%"  stop-color="#1c2e4a"/>
                       <stop offset="100%" stop-color="#0e1d33"/>
                     </radialGradient>
-                    <radialGradient id="mn-node-grad-teal-m" cx="40%" cy="40%" r="65%">
-                      <stop offset="0%"   stop-color="#a8f5e6"/>
-                      <stop offset="60%"  stop-color="#13384a"/>
-                      <stop offset="100%" stop-color="#0c1f30"/>
+                    <radialGradient id="mn-node-grad-teal-m" cx="35%" cy="35%" r="70%">
+                      <stop offset="0%"   stop-color="#c0fdf0"/>
+                      <stop offset="55%"  stop-color="#6ee7d8"/>
+                      <stop offset="100%" stop-color="#0c2638"/>
+                    </radialGradient>
+                    <radialGradient id="mn-node-grad-blue-m" cx="35%" cy="35%" r="70%">
+                      <stop offset="0%"   stop-color="#cfe0ff"/>
+                      <stop offset="55%"  stop-color="#87b4f5"/>
+                      <stop offset="100%" stop-color="#0c1d3a"/>
                     </radialGradient>
                     <linearGradient id="mn-link-grad-m" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%"   stop-color="rgba(216,177,90,0.55)"/>
-                      <stop offset="100%" stop-color="rgba(216,177,90,0.12)"/>
+                      <stop offset="0%"   stop-color="rgba(244,215,122,0.7)"/>
+                      <stop offset="100%" stop-color="rgba(244,215,122,0.12)"/>
                     </linearGradient>
                     <linearGradient id="mn-link-grad-teal-m" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%"   stop-color="rgba(110,231,216,0.55)"/>
+                      <stop offset="0%"   stop-color="rgba(110,231,216,0.7)"/>
                       <stop offset="100%" stop-color="rgba(110,231,216,0.12)"/>
                     </linearGradient>
+                    <linearGradient id="mn-link-grad-blue-m" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%"   stop-color="rgba(135,180,245,0.65)"/>
+                      <stop offset="100%" stop-color="rgba(135,180,245,0.12)"/>
+                    </linearGradient>
                     <radialGradient id="mn-sweep-grad-m" cx="0" cy="50%" r="100%">
-                      <stop offset="0%"   stop-color="rgba(216,177,90,0.42)"/>
-                      <stop offset="80%"  stop-color="rgba(216,177,90,0)"/>
+                      <stop offset="0%"   stop-color="rgba(244,215,122,0.55)"/>
+                      <stop offset="80%"  stop-color="rgba(244,215,122,0)"/>
                     </radialGradient>
+                    <filter id="mn-glow-m" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="1.6" result="b"/>
+                      <feMerge>
+                        <feMergeNode in="b"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
 
                   <circle class="mn-sonar"        cx="160" cy="60" r="18"/>
@@ -423,44 +470,36 @@
                     <path d="M 160,60 L 250,42 A 95 95 0 0 1 250 78 Z" fill="url(#mn-sweep-grad-m)"/>
                   </g>
 
-                  <circle class="mn-hub-ring" cx="160" cy="60" r="20" style="fill:none;stroke:rgba(216,177,90,0.25);stroke-width:1;stroke-dasharray:1 3"/>
-                  <circle class="mn-hub-core" cx="160" cy="60" r="13" style="fill:url(#mn-hub-grad-m);stroke:rgba(216,177,90,0.75);stroke-width:1.2"/>
+                  <circle class="mn-hub-ring" cx="160" cy="60" r="20" style="fill:none;stroke:rgba(244,215,122,0.32);stroke-width:1;stroke-dasharray:1 3"/>
+                  <circle class="mn-hub-core" cx="160" cy="60" r="13" style="fill:url(#mn-hub-grad-m);stroke:rgba(244,215,122,0.85);stroke-width:1.3" filter="url(#mn-glow-m)"/>
                   <text class="mn-hub-label" x="160" y="63" font-size="9">ETFs</text>
 
-                  <!-- 4 satellites in a compact diamond. -->
-                  <line class="mn-link"           x1="160" y1="60" x2="48"  y2="60"/>
-                  <line class="mn-link is-teal"   x1="160" y1="60" x2="272" y2="60"/>
-                  <line class="mn-link is-rev"    x1="160" y1="60" x2="92"  y2="100"/>
-                  <line class="mn-link is-teal is-slow" x1="160" y1="60" x2="228" y2="20"/>
+                  <line class="mn-link"          x1="160" y1="60" x2="48"  y2="60"/>
+                  <line class="mn-link c-teal"   x1="160" y1="60" x2="272" y2="60"/>
+                  <line class="mn-link is-rev"   x1="160" y1="60" x2="92"  y2="100"/>
+                  <line class="mn-link c-blue is-slow" x1="160" y1="60" x2="228" y2="20"/>
 
                   <g>
                     <circle class="mn-sat-halo d1"     cx="48"  cy="60" r="8"/>
-                    <circle class="mn-sat-node glow-1" cx="48"  cy="60" r="5" style="fill:url(#mn-node-grad-m)"/>
+                    <circle class="mn-sat-node glow-1" cx="48"  cy="60" r="5" style="fill:url(#mn-node-grad-m)" filter="url(#mn-glow-m)"/>
                     <text   class="mn-sat-label mn-sat-label-sm" x="48"  y="78">SPY</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo d2"     cx="272" cy="60" r="8"/>
-                    <circle class="mn-sat-node glow-3" cx="272" cy="60" r="5" style="fill:url(#mn-node-grad-m)"/>
+                    <circle class="mn-sat-halo c-teal d2"     cx="272" cy="60" r="8"/>
+                    <circle class="mn-sat-node c-teal glow-3" cx="272" cy="60" r="5" style="fill:url(#mn-node-grad-teal-m)" filter="url(#mn-glow-m)"/>
                     <text   class="mn-sat-label mn-sat-label-sm" x="272" y="78">QQQ</text>
                   </g>
                   <g>
                     <circle class="mn-sat-halo d3"     cx="92"  cy="100" r="8"/>
-                    <circle class="mn-sat-node glow-4" cx="92"  cy="100" r="5" style="fill:url(#mn-node-grad-m)"/>
+                    <circle class="mn-sat-node glow-4" cx="92"  cy="100" r="5" style="fill:url(#mn-node-grad-m)" filter="url(#mn-glow-m)"/>
                     <text   class="mn-sat-label mn-sat-label-sm" x="92"  y="116">GLD</text>
                   </g>
                   <g>
-                    <circle class="mn-sat-halo is-teal d4" cx="228" cy="20" r="8"/>
-                    <circle class="mn-sat-node is-teal glow-2" cx="228" cy="20" r="5" style="fill:url(#mn-node-grad-teal-m)"/>
+                    <circle class="mn-sat-halo c-blue d4" cx="228" cy="20" r="8"/>
+                    <circle class="mn-sat-node c-blue glow-2" cx="228" cy="20" r="5" style="fill:url(#mn-node-grad-blue-m)" filter="url(#mn-glow-m)"/>
                     <text   class="mn-sat-label mn-sat-label-sm" x="228" y="14">TLT</text>
                   </g>
                 </svg>
-              </div>
-              <div class="market-network-chips">
-                <span class="market-network-chip is-gold">Gold</span>
-                <span class="market-network-chip is-blue">Dollar</span>
-                <span class="market-network-chip is-teal">Bonds</span>
-                <span class="market-network-chip">Equities</span>
-                <span class="market-network-chip is-rose">Volatility</span>
               </div>
             </aside>
 
