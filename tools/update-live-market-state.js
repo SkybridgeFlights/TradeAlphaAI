@@ -71,9 +71,29 @@ const NUMERIC_BOUNDS = {
   bitcoin:        [100,     10000000],
   nvda:           [1,       10000],
   tlt:            [10,      500],
+  oil:            [10,      300], // WTI crude futures (USD/barrel)
 };
 
 const FINNHUB_SOURCE = 'https://finnhub.io/';
+
+// ── Yahoo Finance keyless fallback ────────────────────────────────────────────
+// Used to fill VIX / DXY / US10Y / OIL / DOW when FRED key is missing or the
+// FRED series didn't return a value. This is the same keyless tier the Phase
+// 215 ETF coverage uses. Some Yahoo yield indices (^TNX, ^FVX) report values
+// in basis-point form (4.25% → 42.50); divisor=10 corrects them back to
+// percent so the existing NUMERIC_BOUNDS check accepts them.
+// Yahoo's ^TNX / ^TYX / ^FVX symbols return the YIELD AS A PERCENT (e.g. 4.25
+// for a 4.25% yield), so no divisor is needed. We don't cover us2y_yield via
+// Yahoo because there is no free Yahoo 2-Year ticker — substituting ^FVX
+// (5-Year) would be fabrication. us2y_yield stays null until FRED is keyed.
+const YAHOO_FALLBACK_MAP = {
+  vix:         { symbol: '^VIX',     divisor: 1 },
+  dxy:         { symbol: 'DX-Y.NYB', divisor: 1 },
+  us10y_yield: { symbol: '^TNX',     divisor: 1 },
+  dowjones:    { symbol: '^DJI',     divisor: 1 },
+  oil:         { symbol: 'CL=F',     divisor: 1 },
+};
+const YAHOO_SOURCE = 'https://finance.yahoo.com/';
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
@@ -191,9 +211,11 @@ async function fetchAndUpdate() {
   const fredKey = process.env.FRED_API_KEY;
   const finnKey = process.env.FINNHUB_API_KEY;
 
+  // Yahoo Finance is always available without keys — never exit fully, even
+  // if both FRED and Finnhub keys are missing. The Yahoo fallback below
+  // fills VIX / DXY / US10Y / OIL / DOW from public Yahoo quote endpoints.
   if (!fredKey && !finnKey) {
-    console.error('No API keys available (FRED_API_KEY, FINNHUB_API_KEY). Cannot fetch live data.');
-    process.exit(1);
+    console.warn('[KEYS] FRED_API_KEY + FINNHUB_API_KEY both missing — relying on Yahoo Finance fallback only.');
   }
 
   const now   = Date.now();
@@ -337,6 +359,35 @@ async function fetchAndUpdate() {
   for (const sym of SECTOR_SYMBOLS) {
     const q = sectorData[sym];
     if (q) sector_etfs[sym] = { price: q.price, change_pct: q.changePct, source: 'Finnhub', fetched_at: sectorAt };
+  }
+
+  // ── Yahoo Finance keyless fallback ───────────────────────────────────────
+  // For any NUMERIC_BOUNDS field still missing after FRED + Finnhub passes,
+  // try the public Yahoo Finance quote endpoint. This fills VIX, DXY,
+  // US10Y, OIL, DOW etc. without requiring any paid key.
+  const missingForYahoo = Object.keys(YAHOO_FALLBACK_MAP).filter((field) => !collected[field]);
+  if (missingForYahoo.length) {
+    console.log(`[YAHOO] Fallback for missing fields: ${missingForYahoo.join(', ')}`);
+    for (const field of missingForYahoo) {
+      const map = YAHOO_FALLBACK_MAP[field];
+      try {
+        const q = await fetchYahooQuote(map.symbol);
+        if (!q) { console.warn(`  [YAHOO] ${field} (${map.symbol}): no data`); continue; }
+        const value = q.price / (map.divisor || 1);
+        const bounds = NUMERIC_BOUNDS[field];
+        if (bounds && (value < bounds[0] || value > bounds[1])) {
+          console.warn(`  [YAHOO BOUNDS] Skipping ${field} (${map.symbol}): ${value} outside [${bounds[0]},${bounds[1]}]`);
+          continue;
+        }
+        const changePct = (map.divisor && map.divisor !== 1) ? q.changePct : q.changePct; // yields' change is already percent of value
+        collected[field] = mkEntry(value, changePct, YAHOO_SOURCE, 'Yahoo Finance', q.fetchedAt);
+        const chgStr = (changePct == null || isNaN(changePct)) ? '—' : (changePct >= 0 ? `+${changePct.toFixed(2)}` : changePct.toFixed(2));
+        console.log(`  [YAHOO OK] ${field} ${map.symbol}: ${value.toFixed(2)} (${chgStr}%)`);
+      } catch (e) {
+        console.warn(`  [YAHOO] ${field} (${map.symbol}) failed: ${e.message}`);
+      }
+      await delay(200);
+    }
   }
 
   // Yield spread (computed)
@@ -486,9 +537,26 @@ async function fetchFinnhub(symbol, apiKey) {
   return { price: data.c, changePct: typeof data.dp === 'number' ? data.dp : 0 };
 }
 
-function httpGet(url, timeout) {
+// Yahoo's keyless quote endpoint. Returns { price, changePct, fetchedAt }
+// or null if the symbol doesn't resolve. Used as the fallback tier for
+// VIX / DXY / US10Y / OIL / DOW when paid providers don't cover them.
+async function fetchYahooQuote(symbol) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d&includePrePost=false&events=div%2Csplit`;
+  const raw = await httpGet(url, 10000, { 'User-Agent': 'Mozilla/5.0 (compatible; TradeAlphaAI/1.0)' });
+  const data = JSON.parse(raw);
+  const result = data && data.chart && Array.isArray(data.chart.result) ? data.chart.result[0] : null;
+  if (!result || !result.meta) return null;
+  const meta = result.meta;
+  const price = meta.regularMarketPrice;
+  const prevClose = meta.chartPreviousClose || meta.previousClose;
+  if (typeof price !== 'number' || !isFinite(price)) return null;
+  const changePct = (typeof prevClose === 'number' && prevClose > 0) ? ((price - prevClose) / prevClose) * 100 : null;
+  return { price, changePct, fetchedAt: new Date().toISOString() };
+}
+
+function httpGet(url, timeout, headers) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, { timeout }, res => {
+    const req = https.get(url, { timeout, headers: headers || {} }, res => {
       const chunks = [];
       res.on('data', c => chunks.push(c));
       res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));

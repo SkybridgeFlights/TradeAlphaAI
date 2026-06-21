@@ -1,10 +1,10 @@
 {
   "version": "2.0",
-  "generated_at": "2026-06-19T21:46:41.704Z",
+  "generated_at": "2026-06-21T21:53:44.290Z",
   "metadata": {
     "status": "live",
-    "data_quality": "partial",
-    "fields_populated": 7,
+    "data_quality": "full",
+    "fields_populated": 12,
     "source_policy": {
       "description": "Values fetched from FRED and Finnhub APIs with caching. No fabricated or AI-inferred values.",
       "update_tool": "tools/update-live-market-state.js --fetch --write",
@@ -27,11 +27,11 @@
     "fetched_at": "2026-06-19T20:17:31.928Z"
   },
   "dowjones": {
-    "value": null,
-    "change_pct": null,
-    "source_url": null,
-    "source_name": null,
-    "fetched_at": null
+    "value": 51564.7,
+    "change_pct": 1.4079992133533215,
+    "source_url": "https://finance.yahoo.com/",
+    "source_name": "Yahoo Finance",
+    "fetched_at": "2026-06-21T21:53:45.318Z"
   },
   "russell2000": {
     "value": 295.59,
@@ -41,18 +41,18 @@
     "fetched_at": "2026-06-19T20:17:31.928Z"
   },
   "vix": {
-    "value": null,
-    "change_pct": null,
-    "source_url": null,
-    "source_name": null,
-    "fetched_at": null
+    "value": 16.78,
+    "change_pct": 3.580246913580259,
+    "source_url": "https://finance.yahoo.com/",
+    "source_name": "Yahoo Finance",
+    "fetched_at": "2026-06-21T21:53:44.484Z"
   },
   "us10y_yield": {
-    "value": null,
-    "change_pct": null,
-    "source_url": null,
-    "source_name": null,
-    "fetched_at": null
+    "value": 4.451,
+    "change_pct": -0.4027746699485496,
+    "source_url": "https://finance.yahoo.com/",
+    "source_name": "Yahoo Finance",
+    "fetched_at": "2026-06-21T21:53:45.040Z"
   },
   "us2y_yield": {
     "value": null,
@@ -69,11 +69,11 @@
     "fetched_at": null
   },
   "dxy": {
-    "value": null,
-    "change_pct": null,
-    "source_url": null,
-    "source_name": null,
-    "fetched_at": null
+    "value": 100.76,
+    "change_pct": 1.1341965271504666,
+    "source_url": "https://finance.yahoo.com/",
+    "source_name": "Yahoo Finance",
+    "fetched_at": "2026-06-21T21:53:44.758Z"
   },
   "gold": {
     "value": 387.12,
@@ -102,6 +102,13 @@
     "source_url": "https://finnhub.io/",
     "source_name": "Finnhub",
     "fetched_at": "2026-06-19T20:17:31.928Z"
+  },
+  "oil": {
+    "value": 76.54,
+    "change_pct": -5.2136222910216645,
+    "source_url": "https://finance.yahoo.com/",
+    "source_name": "Yahoo Finance",
+    "fetched_at": "2026-06-21T21:53:45.608Z"
   },
   "yield_spread_2y10y": {
     "value": null,
@@ -160,8 +167,8 @@
     }
   },
   "computed_regime": {
-    "volatility_regime": "unverified",
-    "risk_regime": "unverified",
+    "volatility_regime": "normal",
+    "risk_regime": "risk-on",
     "market_regime": "growth_momentum",
     "ai_sector_momentum": "positive",
     "semiconductor_strength": "strong",
@@ -179,7 +186,8 @@
       "XLV"
     ],
     "yield_spread": null,
-    "computed_at": "2026-06-19T21:46:41.704Z"
+    "vix_level": 16.78,
+    "computed_at": "2026-06-21T21:53:45.811Z"
   },
   "sector_leadership": [
     "XLK",
@@ -191,6 +199,6 @@
     "XLF",
     "XLV"
   ],
-  "macro_summary": "Equity moves: SPY +0.78% · QQQ +2.51% · IWM +1.97%. GLD $387.1 (-0.38%). Sector leaders: XLK +3.04% XLI +0.73% XLU +0.67%. Laggards: XLE -1.65% XLF -0.89% XLV -0.87%. Regime: growth_momentum",
+  "macro_summary": "VIX 16.8 (normal volatility). Equity moves: SPY +0.78% · QQQ +2.51% · IWM +1.97%. Yields: 10Y 4.45%. DXY 100.8. GLD $387.1 (-0.38%). Sector leaders: XLK +3.04% XLI +0.73% XLU +0.67%. Laggards: XLE -1.65% XLF -0.89% XLV -0.87%. Regime: growth_momentum",
   "fed_expectations": null
 }
