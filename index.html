@@ -247,35 +247,6 @@
       <!-- ── CHANGE 1: Product-first hero ── -->
       <section class="hero">
         <div class="hero-panel">
-          <!-- Ambient market-network backdrop. Eight macro nodes
-               (GLD, UUP, TLT, SPY, QQQ, ETFs, Sectors, VIXY) with
-               animated connection pulses. Decoration only — no
-               numbers, no signals, no predictions. -->
-          <div class="market-network-bg" aria-hidden="true">
-            <svg class="market-network-svg" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-              <g class="market-network-links">
-                <line class="market-network-link" x1="150" y1="120" x2="450" y2="230"/>
-                <line class="market-network-link is-teal" x1="450" y1="230" x2="750" y2="120"/>
-                <line class="market-network-link is-slow" x1="150" y1="340" x2="450" y2="230"/>
-                <line class="market-network-link is-teal is-rev" x1="450" y1="230" x2="750" y2="340"/>
-                <line class="market-network-link is-slow" x1="150" y1="120" x2="450" y2="60"/>
-                <line class="market-network-link is-teal" x1="450" y1="60" x2="750" y2="120"/>
-                <line class="market-network-link" x1="450" y1="400" x2="150" y2="340"/>
-                <line class="market-network-link is-teal is-slow" x1="450" y1="400" x2="750" y2="340"/>
-                <line class="market-network-link is-rev" x1="450" y1="60" x2="450" y2="400"/>
-              </g>
-              <g class="market-network-nodes">
-                <g><circle class="market-network-halo" cx="450" cy="60"  r="14"/><circle class="market-network-node" cx="450" cy="60"  r="8"/><text class="market-network-label" x="450" y="40">SPY</text></g>
-                <g><circle class="market-network-halo is-teal delay-1" cx="450" cy="230" r="18"/><circle class="market-network-node is-teal" cx="450" cy="230" r="10"/><text class="market-network-label" x="450" y="252">ETFs</text></g>
-                <g><circle class="market-network-halo delay-2" cx="450" cy="400" r="14"/><circle class="market-network-node" cx="450" cy="400" r="8"/><text class="market-network-label" x="450" y="424">SECTORS</text></g>
-                <g><circle class="market-network-halo is-teal" cx="150" cy="120" r="13"/><circle class="market-network-node is-teal" cx="150" cy="120" r="7"/><text class="market-network-label" x="150" y="100">GLD</text></g>
-                <g><circle class="market-network-halo delay-3" cx="150" cy="340" r="13"/><circle class="market-network-node" cx="150" cy="340" r="7"/><text class="market-network-label" x="150" y="364">UUP</text></g>
-                <g><circle class="market-network-halo delay-1" cx="750" cy="120" r="13"/><circle class="market-network-node" cx="750" cy="120" r="7"/><text class="market-network-label" x="750" y="100">QQQ</text></g>
-                <g><circle class="market-network-halo is-teal delay-2" cx="750" cy="340" r="13"/><circle class="market-network-node is-teal" cx="750" cy="340" r="7"/><text class="market-network-label" x="750" y="364">TLT</text></g>
-                <g><circle class="market-network-halo" cx="50"  cy="230" r="11"/><circle class="market-network-node" cx="50"  cy="230" r="6"/><text class="market-network-label" x="50"  y="252">VIXY</text></g>
-              </g>
-            </svg>
-          </div>
           <div class="hero-grid">
             <div class="hero-copy">
               <span class="eyebrow">Trading Signals & Market Research</span>
@@ -304,46 +275,107 @@
                 <span class="market-network-card-live">Live</span>
               </header>
               <div class="market-network-card-stage">
-                <svg viewBox="0 0 480 330" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated network of macro assets: SPY, QQQ, GLD, UUP, TLT, VIXY, Sectors, all connected to a central ETFs hub.">
-                  <circle cx="240" cy="165" r="120" fill="none" stroke="rgba(216,177,90,0.10)" stroke-width="1" stroke-dasharray="2 6"/>
-                  <circle cx="240" cy="165" r="72"  fill="none" stroke="rgba(110,231,216,0.08)" stroke-width="1" stroke-dasharray="2 5"/>
-                  <!-- ORBIT: connection lines + traveling signal pulses
-                       rotate as a single rigid group around the ETFs
-                       hub. Slow 80s revolution = ~4.5°/sec, well below
-                       the "spinning" threshold. Nodes + labels live
-                       outside this group so asset names stay upright. -->
-                  <g class="mn-card-orbit">
-                    <line class="mn-card-link"                x1="240" y1="165" x2="240" y2="50"  data-mn-edge="spy"/>
-                    <line class="mn-card-link is-teal"        x1="240" y1="165" x2="380" y2="100" data-mn-edge="qqq"/>
-                    <line class="mn-card-link is-rev"         x1="240" y1="165" x2="400" y2="230" data-mn-edge="tlt"/>
-                    <line class="mn-card-link is-teal is-rev" x1="240" y1="165" x2="320" y2="290" data-mn-edge="gld"/>
-                    <line class="mn-card-link"                x1="240" y1="165" x2="160" y2="290" data-mn-edge="uup"/>
-                    <line class="mn-card-link is-teal"        x1="240" y1="165" x2="80"  y2="230" data-mn-edge="vixy"/>
-                    <line class="mn-card-link is-rev"         x1="240" y1="165" x2="100" y2="100" data-mn-edge="sectors"/>
-                    <line class="mn-card-link is-teal"        x1="80"  y1="230" x2="400" y2="230" data-mn-edge="vixy-tlt"/>
-                    <line class="mn-card-link is-rev"         x1="100" y1="100" x2="380" y2="100" data-mn-edge="sectors-qqq"/>
-                    <!-- Signal-propagation pulses — bright dashes that
-                         travel along the major hub spokes. -->
-                    <line class="mn-card-pulse"                x1="240" y1="165" x2="240" y2="50"  data-mn-edge="spy"/>
-                    <line class="mn-card-pulse is-teal delay-1" x1="240" y1="165" x2="380" y2="100" data-mn-edge="qqq"/>
-                    <line class="mn-card-pulse delay-2"        x1="240" y1="165" x2="400" y2="230" data-mn-edge="tlt"/>
-                    <line class="mn-card-pulse is-teal delay-3" x1="240" y1="165" x2="320" y2="290" data-mn-edge="gld"/>
-                    <line class="mn-card-pulse delay-4"        x1="240" y1="165" x2="160" y2="290" data-mn-edge="uup"/>
+                <!-- DESKTOP SVG: 7 satellites orbit the ETFs hub on a
+                     real circular path via <animateMotion>. Each
+                     satellite starts at a different angle (begin=-Xs)
+                     and they all share the same 90s period, so they
+                     visibly swap positions as time passes. Labels
+                     stay upright because rotate="0" on the motion. -->
+                <svg class="mn-svg-desktop" viewBox="0 0 480 330" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Live cross-asset orbital network: SPY, QQQ, TLT, GLD, UUP, VIXY, Sectors slowly orbit the ETFs hub.">
+                  <defs>
+                    <!-- Closed circular path: radius 115 around (240, 165). Drawn as two 180-degree arcs so animateMotion has a continuous loop. -->
+                    <path id="mn-orbit-d" d="M 240 50 a 115 115 0 1 1 0 230 a 115 115 0 1 1 0 -230 Z" />
+                  </defs>
+                  <!-- Hub sonar -->
+                  <circle class="mn-sonar"        cx="240" cy="165" r="22"/>
+                  <circle class="mn-sonar is-teal d1" cx="240" cy="165" r="22"/>
+                  <circle class="mn-sonar d2"     cx="240" cy="165" r="22"/>
+                  <!-- Orbit ring -->
+                  <circle class="mn-orbit-ring" cx="240" cy="165" r="115"/>
+                  <!-- Central hub -->
+                  <circle class="mn-hub" cx="240" cy="165" r="22"/>
+                  <text class="mn-hub-label" x="240" y="161" font-size="13">ETFs</text>
+                  <text class="mn-hub-sublabel" x="240" y="178">Cross-asset hub</text>
+                  <!-- Satellites — each travels the orbit path with a staggered begin. -->
+                  <g>
+                    <circle class="mn-sat-halo d1" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label"   x="0" y="-18">SPY</text>
+                    <animateMotion dur="90s" begin="0s"      repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
                   </g>
                   <g>
-                    <g>
-                      <circle class="mn-card-halo is-teal" cx="240" cy="165" r="22"/>
-                      <circle class="mn-card-node is-teal glow-1" cx="240" cy="165" r="13" fill="#0f1f33"/>
-                      <text class="mn-card-label"    x="240" y="169">ETFs</text>
-                      <text class="mn-card-sublabel" x="240" y="195">Cross-asset hub</text>
-                    </g>
-                    <g data-mn-node="spy"><circle class="mn-card-halo d1" cx="240" cy="50"  r="13"/><circle class="mn-card-node glow-2"        cx="240" cy="50"  r="8"/><text class="mn-card-label" x="240" y="32">SPY</text></g>
-                    <g data-mn-node="qqq"><circle class="mn-card-halo d2" cx="380" cy="100" r="13"/><circle class="mn-card-node glow-3"        cx="380" cy="100" r="8"/><text class="mn-card-label" x="380" y="82">QQQ</text></g>
-                    <g data-mn-node="tlt"><circle class="mn-card-halo is-teal d3" cx="400" cy="230" r="13"/><circle class="mn-card-node is-teal glow-4" cx="400" cy="230" r="8"/><text class="mn-card-label" x="400" y="252">TLT</text></g>
-                    <g data-mn-node="gld"><circle class="mn-card-halo d1" cx="320" cy="290" r="13"/><circle class="mn-card-node glow-2"        cx="320" cy="290" r="8"/><text class="mn-card-label" x="320" y="312">GLD</text></g>
-                    <g data-mn-node="uup"><circle class="mn-card-halo d4" cx="160" cy="290" r="13"/><circle class="mn-card-node"                cx="160" cy="290" r="8"/><text class="mn-card-label" x="160" y="312">UUP</text></g>
-                    <g data-mn-node="vixy"><circle class="mn-card-halo is-teal d3" cx="80"  cy="230" r="13"/><circle class="mn-card-node is-teal" cx="80"  cy="230" r="8"/><text class="mn-card-label" x="80"  y="252">VIXY</text></g>
-                    <g data-mn-node="sectors"><circle class="mn-card-halo d2" cx="100" cy="100" r="13"/><circle class="mn-card-node"            cx="100" cy="100" r="8"/><text class="mn-card-label" x="100" y="82">SECTORS</text></g>
+                    <circle class="mn-sat-halo d2" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label"   x="0" y="-18">QQQ</text>
+                    <animateMotion dur="90s" begin="-12.86s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo is-teal d3" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node is-teal"     cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label"            x="0" y="-18">TLT</text>
+                    <animateMotion dur="90s" begin="-25.71s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo d4" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label"   x="0" y="-18">GLD</text>
+                    <animateMotion dur="90s" begin="-38.57s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo d1" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label"   x="0" y="-18">UUP</text>
+                    <animateMotion dur="90s" begin="-51.43s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo is-teal d2" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node is-teal"     cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label"            x="0" y="-18">VIXY</text>
+                    <animateMotion dur="90s" begin="-64.29s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo d3" cx="0" cy="0" r="13"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="8"/>
+                    <text   class="mn-sat-label mn-sat-label-sm" x="0" y="-18">SECTORS</text>
+                    <animateMotion dur="90s" begin="-77.14s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-d"/></animateMotion>
+                  </g>
+                </svg>
+
+                <!-- MOBILE SVG: 4 satellites on a wide elliptical orbit
+                     inside a much shorter strip. Faster 60s period so
+                     the motion is visible at the smaller scale. -->
+                <svg class="mn-svg-mobile" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Compact cross-asset network: SPY, QQQ, GLD, TLT orbiting the ETFs hub.">
+                  <defs>
+                    <path id="mn-orbit-m" d="M 160 28 a 100 32 0 1 1 0 64 a 100 32 0 1 1 0 -64 Z" />
+                  </defs>
+                  <circle class="mn-sonar"        cx="160" cy="60" r="14"/>
+                  <circle class="mn-sonar is-teal d1" cx="160" cy="60" r="14"/>
+                  <ellipse class="mn-orbit-ring" cx="160" cy="60" rx="100" ry="32"/>
+                  <circle class="mn-hub" cx="160" cy="60" r="14"/>
+                  <text class="mn-hub-label" x="160" y="63" font-size="9">ETFs</text>
+                  <g>
+                    <circle class="mn-sat-halo d1" cx="0" cy="0" r="9"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="5.5"/>
+                    <text   class="mn-sat-label mn-sat-label-sm" x="0" y="-12">SPY</text>
+                    <animateMotion dur="60s" begin="0s"   repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-m"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo d2" cx="0" cy="0" r="9"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="5.5"/>
+                    <text   class="mn-sat-label mn-sat-label-sm" x="0" y="-12">QQQ</text>
+                    <animateMotion dur="60s" begin="-15s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-m"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo is-teal d3" cx="0" cy="0" r="9"/>
+                    <circle class="mn-sat-node is-teal"     cx="0" cy="0" r="5.5"/>
+                    <text   class="mn-sat-label mn-sat-label-sm" x="0" y="-12">TLT</text>
+                    <animateMotion dur="60s" begin="-30s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-m"/></animateMotion>
+                  </g>
+                  <g>
+                    <circle class="mn-sat-halo d4" cx="0" cy="0" r="9"/>
+                    <circle class="mn-sat-node"    cx="0" cy="0" r="5.5"/>
+                    <text   class="mn-sat-label mn-sat-label-sm" x="0" y="-12">GLD</text>
+                    <animateMotion dur="60s" begin="-45s" repeatCount="indefinite" rotate="0"><mpath href="#mn-orbit-m"/></animateMotion>
                   </g>
                 </svg>
               </div>
