@@ -845,3 +845,153 @@ body.mobile-nav-open { overflow: hidden; }
   .nav-menu.is-open .nav-mega-column { animation: none !important; }
   .live-dot { animation: none !important; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+ * URGENT FIXES — scroll containment + tighter sizing.
+ * Addresses three production issues:
+ *   1. Mega-menu overflowed the viewport with no way to scroll
+ *   2. Mobile drawer with 6 grouped sections grew too tall
+ *   3. SDK avatars and column icons rendered too large
+ * ───────────────────────────────────────────────────────────────── */
+
+/* Mega-menu hard scroll cap — never exceeds viewport */
+.nav-mega-dropdown {
+  max-height: calc(100vh - var(--header-height) - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  /* Make the dropdown a touch smaller in vertical density */
+  padding: 14px 16px 12px;
+}
+
+/* Subtle scrollbar styling (Chromium/Webkit + Firefox) */
+.nav-mega-dropdown::-webkit-scrollbar { width: 8px; }
+.nav-mega-dropdown::-webkit-scrollbar-track { background: transparent; }
+.nav-mega-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(216, 177, 90, 0.18);
+  border-radius: 8px;
+}
+.nav-mega-dropdown::-webkit-scrollbar-thumb:hover { background: rgba(216, 177, 90, 0.3); }
+.nav-mega-dropdown { scrollbar-width: thin; scrollbar-color: rgba(216, 177, 90, 0.18) transparent; }
+
+/* Tighter column titles */
+.nav-mega-title {
+  font-size: 10.5px;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+}
+.nav-mega-icon { width: 13px; height: 13px; }
+.nav-mega-icon svg { width: 12px; height: 12px; }
+
+/* Tighter list items */
+.nav-mega-list a {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+/* Footer row tightening */
+.nav-mega-footer { margin-top: 12px; padding-top: 10px; }
+.nav-mega-footer-links a { font-size: 11px; }
+
+/* ── Mobile drawer scroll containment ───────────────────────────── */
+/* The panel had overflow-y:auto but the inner list could still
+ * overflow on short viewports. Explicit max-height + scroll on the
+ * links container keeps the head row visible while only the body
+ * scrolls. */
+.mobile-nav-shell {
+  align-items: stretch;
+}
+
+.mobile-nav-panel {
+  height: 100dvh;
+  height: 100vh;
+  max-height: 100dvh;
+  max-height: 100vh;
+}
+
+.mobile-nav-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--drawer-bg);
+  padding-block: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mobile-nav-links {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 24px;
+}
+
+.mobile-nav-links::-webkit-scrollbar { width: 6px; }
+.mobile-nav-links::-webkit-scrollbar-thumb {
+  background: rgba(216, 177, 90, 0.15);
+  border-radius: 6px;
+}
+.mobile-nav-links { scrollbar-width: thin; scrollbar-color: rgba(216, 177, 90, 0.15) transparent; }
+
+/* Tighter mobile group spacing */
+.mobile-nav-group { margin: 0 0 8px; padding-top: 8px; }
+.mobile-nav-group-title { font-size: 9.5px; margin-bottom: 4px; }
+.mobile-nav-links a {
+  padding: 9px 10px;
+  font-size: 13px;
+}
+
+/* ── Avatar sizing — keep Clerk UserButton avatar compact ───────── */
+.cl-userButtonAvatarBox,
+.header-account-mount img,
+.header-account-mount [class*="cl-avatar"] {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.header-account-mount,
+.header-account-mount > div {
+  max-height: 38px;
+  overflow: visible;
+}
+
+/* Hide Clerk's own larger user-button popover if it conflicts —
+ * we want the native Clerk dropdown but it should NOT inherit any
+ * giant inline styles. */
+.cl-rootBox { display: inline-flex !important; align-items: center; }
+
+/* ── Tighten Account header pills on narrow desktop ─────────────── */
+@media (max-width: 1023px) {
+  .header-account-link,
+  .header-account-dashboard {
+    min-height: 34px;
+    padding: 0 10px;
+  }
+  .header-account-label { font-size: 11.5px; }
+}
+
+/* Hide the brand subtitle a bit earlier so the nav has more room */
+@media (max-width: 1180px) {
+  .brand-copy span { display: none; }
+}
+
+/* Fallback name pill — shown when Clerk.mountUserButton throws.
+ * Still gives the user a clear way into /account/. */
+.header-account-fallback-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 177, 90, 0.45);
+  background: linear-gradient(145deg, rgba(216, 177, 90, 0.22), rgba(216, 177, 90, 0.06));
+  color: #f8e9b8;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 0 12px rgba(216, 177, 90, 0.15);
+}
+.header-account-fallback-pill:hover { border-color: rgba(216, 177, 90, 0.7); color: #ffe9a8; }

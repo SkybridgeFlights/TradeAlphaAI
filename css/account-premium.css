@@ -348,3 +348,33 @@
   .account-activity-dot,
   .account-dash-hero::before { animation: none !important; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+ * URGENT FIXES — tighter sizing for dashboard tiles + icons.
+ * ───────────────────────────────────────────────────────────────── */
+
+/* Hero avatar — was 64px which felt oversized */
+.account-dash-avatar { width: 52px; height: 52px; flex: 0 0 52px; }
+.account-dash-avatar-fallback { font-size: 20px; }
+
+/* Action card icons — was 40px which looked clunky */
+.account-action-icon { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 8px; }
+.account-action-icon svg { width: 16px; height: 16px; }
+
+/* Tighter action card padding */
+.account-action-card { padding: 14px 16px; gap: 12px; }
+.account-action-body strong { font-size: 13.5px; }
+.account-action-body span { font-size: 11.5px; }
+
+/* Stat tiles — slightly smaller numbers feel more refined */
+.account-stat-value { font-size: 24px; }
+
+/* Hero greeting heading: keep proportional */
+.account-dash-greeting h1 { font-size: clamp(20px, 2.6vw, 26px); }
+
+/* Teaser icons (signed-out state) */
+.account-teaser-icon { width: 28px; height: 28px; border-radius: 7px; }
+.account-teaser-icon svg { width: 14px; height: 14px; }
+
+/* Skeleton row heights — was 80px, now matches real content density */
+.account-dash-skeleton > div { height: 64px; }
