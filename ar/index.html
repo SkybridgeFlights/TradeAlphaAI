@@ -295,31 +295,36 @@
                 <svg viewBox="0 0 480 330" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="شبكة متحرّكة للأصول الكلية: SPY وQQQ وGLD وUUP وTLT وVIXY والقطاعات حول مركز ETFs.">
                   <circle cx="240" cy="165" r="120" fill="none" stroke="rgba(216,177,90,0.10)" stroke-width="1" stroke-dasharray="2 6"/>
                   <circle cx="240" cy="165" r="72"  fill="none" stroke="rgba(110,231,216,0.08)" stroke-width="1" stroke-dasharray="2 5"/>
-                  <g>
-                    <line class="mn-card-link"               x1="240" y1="165" x2="240" y2="50"/>
-                    <line class="mn-card-link is-teal"       x1="240" y1="165" x2="380" y2="100"/>
-                    <line class="mn-card-link is-rev"        x1="240" y1="165" x2="400" y2="230"/>
-                    <line class="mn-card-link is-teal is-rev" x1="240" y1="165" x2="320" y2="290"/>
-                    <line class="mn-card-link"               x1="240" y1="165" x2="160" y2="290"/>
-                    <line class="mn-card-link is-teal"       x1="240" y1="165" x2="80"  y2="230"/>
-                    <line class="mn-card-link is-rev"        x1="240" y1="165" x2="100" y2="100"/>
-                    <line class="mn-card-link is-teal"       x1="80"  y1="230" x2="400" y2="230"/>
-                    <line class="mn-card-link is-rev"        x1="100" y1="100" x2="380" y2="100"/>
+                  <g class="mn-card-orbit">
+                    <line class="mn-card-link"                x1="240" y1="165" x2="240" y2="50"  data-mn-edge="spy"/>
+                    <line class="mn-card-link is-teal"        x1="240" y1="165" x2="380" y2="100" data-mn-edge="qqq"/>
+                    <line class="mn-card-link is-rev"         x1="240" y1="165" x2="400" y2="230" data-mn-edge="tlt"/>
+                    <line class="mn-card-link is-teal is-rev" x1="240" y1="165" x2="320" y2="290" data-mn-edge="gld"/>
+                    <line class="mn-card-link"                x1="240" y1="165" x2="160" y2="290" data-mn-edge="uup"/>
+                    <line class="mn-card-link is-teal"        x1="240" y1="165" x2="80"  y2="230" data-mn-edge="vixy"/>
+                    <line class="mn-card-link is-rev"         x1="240" y1="165" x2="100" y2="100" data-mn-edge="sectors"/>
+                    <line class="mn-card-link is-teal"        x1="80"  y1="230" x2="400" y2="230" data-mn-edge="vixy-tlt"/>
+                    <line class="mn-card-link is-rev"         x1="100" y1="100" x2="380" y2="100" data-mn-edge="sectors-qqq"/>
+                    <line class="mn-card-pulse"                x1="240" y1="165" x2="240" y2="50"  data-mn-edge="spy"/>
+                    <line class="mn-card-pulse is-teal delay-1" x1="240" y1="165" x2="380" y2="100" data-mn-edge="qqq"/>
+                    <line class="mn-card-pulse delay-2"        x1="240" y1="165" x2="400" y2="230" data-mn-edge="tlt"/>
+                    <line class="mn-card-pulse is-teal delay-3" x1="240" y1="165" x2="320" y2="290" data-mn-edge="gld"/>
+                    <line class="mn-card-pulse delay-4"        x1="240" y1="165" x2="160" y2="290" data-mn-edge="uup"/>
                   </g>
                   <g>
                     <g>
                       <circle class="mn-card-halo is-teal" cx="240" cy="165" r="22"/>
-                      <circle class="mn-card-node is-teal" cx="240" cy="165" r="13" fill="#0f1f33"/>
+                      <circle class="mn-card-node is-teal glow-1" cx="240" cy="165" r="13" fill="#0f1f33"/>
                       <text class="mn-card-label"    x="240" y="169">ETFs</text>
                       <text class="mn-card-sublabel" x="240" y="195">مركز الأصول</text>
                     </g>
-                    <g><circle class="mn-card-halo d1" cx="240" cy="50"  r="13"/><circle class="mn-card-node"        cx="240" cy="50"  r="8"/><text class="mn-card-label" x="240" y="32">SPY</text></g>
-                    <g><circle class="mn-card-halo d2" cx="380" cy="100" r="13"/><circle class="mn-card-node"        cx="380" cy="100" r="8"/><text class="mn-card-label" x="380" y="82">QQQ</text></g>
-                    <g><circle class="mn-card-halo is-teal d3" cx="400" cy="230" r="13"/><circle class="mn-card-node is-teal" cx="400" cy="230" r="8"/><text class="mn-card-label" x="400" y="252">TLT</text></g>
-                    <g><circle class="mn-card-halo d1" cx="320" cy="290" r="13"/><circle class="mn-card-node"        cx="320" cy="290" r="8"/><text class="mn-card-label" x="320" y="312">GLD</text></g>
-                    <g><circle class="mn-card-halo d2" cx="160" cy="290" r="13"/><circle class="mn-card-node"        cx="160" cy="290" r="8"/><text class="mn-card-label" x="160" y="312">UUP</text></g>
-                    <g><circle class="mn-card-halo is-teal d3" cx="80"  cy="230" r="13"/><circle class="mn-card-node is-teal" cx="80"  cy="230" r="8"/><text class="mn-card-label" x="80"  y="252">VIXY</text></g>
-                    <g><circle class="mn-card-halo d2" cx="100" cy="100" r="13"/><circle class="mn-card-node"        cx="100" cy="100" r="8"/><text class="mn-card-label" x="100" y="82">SECTORS</text></g>
+                    <g data-mn-node="spy"><circle class="mn-card-halo d1" cx="240" cy="50"  r="13"/><circle class="mn-card-node glow-2"        cx="240" cy="50"  r="8"/><text class="mn-card-label" x="240" y="32">SPY</text></g>
+                    <g data-mn-node="qqq"><circle class="mn-card-halo d2" cx="380" cy="100" r="13"/><circle class="mn-card-node glow-3"        cx="380" cy="100" r="8"/><text class="mn-card-label" x="380" y="82">QQQ</text></g>
+                    <g data-mn-node="tlt"><circle class="mn-card-halo is-teal d3" cx="400" cy="230" r="13"/><circle class="mn-card-node is-teal glow-4" cx="400" cy="230" r="8"/><text class="mn-card-label" x="400" y="252">TLT</text></g>
+                    <g data-mn-node="gld"><circle class="mn-card-halo d1" cx="320" cy="290" r="13"/><circle class="mn-card-node glow-2"        cx="320" cy="290" r="8"/><text class="mn-card-label" x="320" y="312">GLD</text></g>
+                    <g data-mn-node="uup"><circle class="mn-card-halo d4" cx="160" cy="290" r="13"/><circle class="mn-card-node"                cx="160" cy="290" r="8"/><text class="mn-card-label" x="160" y="312">UUP</text></g>
+                    <g data-mn-node="vixy"><circle class="mn-card-halo is-teal d3" cx="80"  cy="230" r="13"/><circle class="mn-card-node is-teal" cx="80"  cy="230" r="8"/><text class="mn-card-label" x="80"  y="252">VIXY</text></g>
+                    <g data-mn-node="sectors"><circle class="mn-card-halo d2" cx="100" cy="100" r="13"/><circle class="mn-card-node"            cx="100" cy="100" r="8"/><text class="mn-card-label" x="100" y="82">SECTORS</text></g>
                   </g>
                 </svg>
               </div>

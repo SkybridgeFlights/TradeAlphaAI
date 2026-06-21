@@ -185,23 +185,55 @@
  * so we can size them up for the visible card). */
 .mn-card-link {
   fill: none;
-  stroke: rgba(216, 177, 90, 0.45);
-  stroke-width: 1.3;
+  stroke: rgba(216, 177, 90, 0.42);
+  stroke-width: 1.2;
   stroke-dasharray: 5 7;
   animation: mn-flow 7s linear infinite;
-  filter: drop-shadow(0 0 4px rgba(216, 177, 90, 0.22));
+  filter: drop-shadow(0 0 4px rgba(216, 177, 90, 0.20));
 }
 .mn-card-link.is-teal {
-  stroke: rgba(110, 231, 216, 0.5);
+  stroke: rgba(110, 231, 216, 0.48);
   filter: drop-shadow(0 0 4px rgba(110, 231, 216, 0.22));
   animation-duration: 9s;
 }
 .mn-card-link.is-rev { animation-direction: reverse; }
 
+/* Signal-propagation overlay — a single bright dash that travels
+ * along the same chord as a sibling .mn-card-link, giving the map a
+ * "live signal between assets" feel. Staggered via animation-delay
+ * so several pulses fire over a 10s window, not all at once. */
+.mn-card-pulse {
+  fill: none;
+  stroke: rgba(244, 215, 122, 0.95);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 4 240;
+  filter: drop-shadow(0 0 6px rgba(244, 215, 122, 0.55));
+  animation: mn-pulse-travel 5s ease-in-out infinite;
+}
+.mn-card-pulse.is-teal {
+  stroke: rgba(110, 231, 216, 0.9);
+  filter: drop-shadow(0 0 6px rgba(110, 231, 216, 0.5));
+}
+.mn-card-pulse.delay-1 { animation-delay: 1.1s; }
+.mn-card-pulse.delay-2 { animation-delay: 2.3s; }
+.mn-card-pulse.delay-3 { animation-delay: 3.8s; }
+.mn-card-pulse.delay-4 { animation-delay: 4.6s; }
+@keyframes mn-pulse-travel {
+  0%   { stroke-dashoffset: 0;    opacity: 0; }
+  10%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { stroke-dashoffset: -240; opacity: 0; }
+}
+
+/* Slow institutional orbit — rotates ONLY the connection lines and
+ * pulses, not the nodes or labels (labels stay upright, asset names
+ * stay readable). The map "breathes" while the assets stay fixed
+ * reference points. 80s for a full rotation. */
 .mn-card-orbit {
-  transform-origin: 50% 50%;
+  transform-origin: 240px 165px;
   transform-box: view-box;
-  animation: mn-rot 60s linear infinite;
+  animation: mn-rot 80s linear infinite;
 }
 
 .mn-card-halo {
@@ -214,19 +246,30 @@
 .mn-card-halo.d1 { animation-delay: .6s; }
 .mn-card-halo.d2 { animation-delay: 1.8s; }
 .mn-card-halo.d3 { animation-delay: 3.2s; }
+.mn-card-halo.d4 { animation-delay: 4.4s; }
 
 .mn-card-node {
   fill: #0d1a2b;
-  stroke: rgba(216, 177, 90, 0.55);
+  stroke: rgba(216, 177, 90, 0.6);
   stroke-width: 1.3;
+  transition: stroke-width 200ms ease, stroke 200ms ease;
 }
-.mn-card-node.is-teal { stroke: rgba(110, 231, 216, 0.6); }
-.mn-card-node.is-hub {
-  fill: linear-gradient(180deg, #f4d77a, #d8b15a);
+.mn-card-node.is-teal { stroke: rgba(110, 231, 216, 0.65); }
+
+/* Periodic node glow — every ~9s a different node briefly brightens.
+ * Achieved by chaining short stroke-width pulses with offset delays
+ * on each node. */
+.mn-card-node.glow-1 { animation: mn-node-glow 9s ease-in-out infinite; }
+.mn-card-node.glow-2 { animation: mn-node-glow 9s ease-in-out infinite 2.2s; }
+.mn-card-node.glow-3 { animation: mn-node-glow 9s ease-in-out infinite 4.5s; }
+.mn-card-node.glow-4 { animation: mn-node-glow 9s ease-in-out infinite 6.7s; }
+@keyframes mn-node-glow {
+  0%, 92%, 100% { stroke-width: 1.3; filter: none; }
+  96%           { stroke-width: 2.2; filter: drop-shadow(0 0 8px rgba(244, 215, 122, 0.7)); }
 }
 
 .mn-card-label {
-  fill: rgba(244, 247, 241, 0.85);
+  fill: rgba(244, 247, 241, 0.88);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: 11px;
   font-weight: 800;
@@ -287,22 +330,74 @@
   min-width: 0;
 }
 
-/* Reduced-motion: stop orbit + flow, keep static composition. */
+/* Reduced-motion: stop orbit + flow + pulses + node glow + heartbeat. */
 @media (prefers-reduced-motion: reduce) {
   .mn-card-link,
+  .mn-card-pulse,
   .mn-card-halo,
   .mn-card-orbit,
+  .mn-card-node,
   .market-network-card-live::before {
     animation: none !important;
   }
-  .mn-card-link { stroke-dasharray: 0; opacity: 0.55; }
+  .mn-card-link  { stroke-dasharray: 0; opacity: 0.55; }
+  .mn-card-pulse { display: none; }
 }
 
-/* Mobile tightening — card stays compact and visible. */
+/* ──────────────────────────────────────────────────────────────────
+ * MOBILE COMPACTION
+ * Compact dashboard variant — ~150px tall, 5 nodes visible
+ * (ETFs hub + SPY, QQQ, GLD, TLT). UUP, VIXY, SECTORS and their
+ * connecting lines + pulses are hidden via data-* attributes so we
+ * don't need a second SVG. Chips hidden to save vertical space.
+ * The signal-card MUST stay near the fold on phones.
+ * ────────────────────────────────────────────────────────────── */
 @media (max-width: 720px) {
-  .market-network-card { padding: 14px 14px 12px; }
-  .market-network-card-stage { aspect-ratio: 16 / 10; }
-  .market-network-chip { font-size: 10.5px; padding: 4px 9px; }
+  .market-network-card {
+    padding: 12px 14px 10px;
+    gap: 8px;
+    border-radius: 14px;
+  }
+  .market-network-card-head { gap: 8px; }
+  .market-network-card-title { font-size: 11.5px; letter-spacing: 0.05em; }
+  .market-network-card-live  { font-size: 9.5px; }
+  .market-network-card-live::before { width: 6px; height: 6px; }
+
+  /* Stage shrinks dramatically — 16:7 instead of 16:11. At 320-360px
+   * card width that yields roughly 140-160px tall, in the requested
+   * 140-180px band. */
+  .market-network-card-stage {
+    aspect-ratio: 16 / 7;
+    border-radius: 10px;
+  }
+
+  /* Hide the three peripheral nodes + their connecting lines so only
+   * the ETFs hub + SPY, QQQ, GLD, TLT render on mobile. */
+  .market-network-card [data-mn-node="uup"],
+  .market-network-card [data-mn-node="vixy"],
+  .market-network-card [data-mn-node="sectors"],
+  .market-network-card [data-mn-edge*="uup"],
+  .market-network-card [data-mn-edge*="vixy"],
+  .market-network-card [data-mn-edge*="sectors"] {
+    display: none;
+  }
+
+  /* Hide chips on mobile — saves ~40px of vertical space. The card
+   * already carries the cross-asset concept visually. */
+  .market-network-chips { display: none; }
+
+  /* Hide the small "Cross-asset hub" sublabel — central node alone reads. */
+  .mn-card-sublabel { display: none; }
+
+  /* Slightly tighter label size for the smaller stage. */
+  .mn-card-label { font-size: 10px; letter-spacing: 0.06em; }
+}
+
+/* Sub-480 (real phones in portrait) — go even tighter. */
+@media (max-width: 480px) {
+  .market-network-card { padding: 10px 12px 10px; }
+  .market-network-card-stage { aspect-ratio: 16 / 7.5; }
+  .mn-card-label { font-size: 9.5px; }
 }
 
 /* Accessibility — never animate when the user opts out. */
