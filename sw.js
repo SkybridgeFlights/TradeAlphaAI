@@ -1,21 +1,26 @@
-/* TradeAlphaAI Service Worker — Phase 227 (auth-safe rev).
+/* TradeAlphaAI Service Worker — Phase 227 (always-fresh rev).
  *
- * Strict rules to prevent stale signed-in/signed-out header state:
+ * Goal: the user NEVER has to hard-reload (Ctrl+Shift+R) to see new
+ * site content. Every navigation pulls fresh HTML. Every CSS / JS /
+ * image is "stale-while-revalidate": the cached copy renders instantly
+ * (no flash), and the network copy replaces it in the cache for next
+ * load. So the second normal refresh always shows the new design.
+ *
+ * Rules:
  *   • NEVER cache HTML responses or navigation requests.
- *   • Navigation requests pass straight through to the network. If the
- *     network fails we fall back to a tiny offline shell (manifest +
- *     icons), never to a cached HTML body.
- *   • Only static assets (css / svg / png / webp / jpg / jpeg / js)
- *     are cached, and only after a successful network response.
- *   • Account + auth + API requests bypass the SW entirely so that
- *     authenticated server responses can never be served from cache.
+ *   • Navigation = network-only with a tiny offline fallback.
+ *   • Static assets (css/svg/png/webp/jpg/jpeg/js/ico/woff2) =
+ *     stale-while-revalidate: serve cache immediately, fetch network
+ *     in the background, update the cache for next time. No more
+ *     month-old CSS lingering in the SW cache.
+ *   • Account + auth + API + Clerk bootstrap bypass the SW entirely.
  *
  * Push CONTRACT is unchanged — no subscription registered today.
  */
 'use strict';
 
 // Bump VERSION on every change to invalidate older deploys' caches.
-const VERSION = 'tradealphaai-pwa-v3-auth-safe';
+const VERSION = 'tradealphaai-pwa-v4-swr';
 
 self.addEventListener('install', (event) => {
   // No HTML pre-cache. The PWA install no longer ships a stale
@@ -55,17 +60,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets only: cache-first, then network, then store.
+  // Static assets: stale-while-revalidate.
+  //   1. Return the cached copy immediately if we have one (fast paint).
+  //   2. In parallel, fetch the network copy and overwrite the cache.
+  //   3. Next page load (even a normal F5 / pull-to-refresh) gets the
+  //      fresh version. No hard-reload required.
   if (/\.(?:css|svg|png|webp|jpg|jpeg|js|ico|woff2?)$/i.test(url.pathname)) {
     event.respondWith(
-      caches.match(event.request).then((cached) => cached || fetch(event.request).then((resp) => {
-        if (resp && resp.status === 200 && resp.type === 'basic') {
-          const clone = resp.clone();
-          caches.open(VERSION).then((cache) => cache.put(event.request, clone));
-        }
-        return resp;
-      }).catch(() => cached)),
+      caches.open(VERSION).then((cache) => cache.match(event.request).then((cached) => {
+        const networkFetch = fetch(event.request).then((resp) => {
+          if (resp && resp.status === 200 && resp.type === 'basic') {
+            cache.put(event.request, resp.clone());
+          }
+          return resp;
+        }).catch(() => cached);
+        return cached || networkFetch;
+      })),
     );
+  }
+});
+
+// Allow the page to tell us "skip waiting" so a new SW takes control
+// without forcing the user to close every tab. Combined with the
+// updatefound listener in global-header.js, the user gets fresh
+// content within one normal reload.
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });
 

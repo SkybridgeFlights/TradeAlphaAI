@@ -264,7 +264,14 @@ function globalHeaderScripts() {
     // so users on an older deploy immediately drop the stale HTML cache
     // and adopt the auth-safe v3 worker. Previous cached navigations
     // were the root cause of the "Sign in" flicker after sign-in.
-    + '<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>';
+    // SW registration with auto-update:
+    //   1. Register the SW (or reuse the existing one).
+    //   2. Force an update() check on every page load.
+    //   3. When a new SW is installed, tell it to skipWaiting immediately.
+    //   4. When the new SW takes control, reload the page ONE time so
+    //      the user gets fresh CSS/JS without ever needing Ctrl+Shift+R.
+    //      The __SW_RELOAD_GUARD__ flag prevents reload loops.
+    + '<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>';
 }
 
 function englishLinks() {
