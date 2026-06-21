@@ -23,6 +23,7 @@ const MAX_CARDS = 24;
 function readJson(p, f = null) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
 
 function neighboursFor(graph, symbol) {
+  const nodes = new Map(((graph && graph.nodes) || []).map((n) => [n.id, n]));
   const out = [];
   for (const e of (graph && graph.edges) || []) {
     let other = null;
@@ -32,7 +33,16 @@ function neighboursFor(graph, symbol) {
     // Only include edges with evidence — anti-fabrication invariant from
     // entity-research-graph.
     if (!Array.isArray(e.evidence) || e.evidence.length === 0) continue;
-    out.push({ symbol: other, kind: e.kind || 'related', label_en: e.label_en || other, evidence: e.evidence.slice(0, 2) });
+    const node = nodes.get(other) || {};
+    out.push({
+      symbol: other,
+      kind: e.kind || 'related',
+      group: node.group || 'unknown',
+      label_en: node.label_en || other,
+      label_ar: node.label_ar || other,
+      research_href: node.href || null,
+      evidence: e.evidence.slice(0, 2),
+    });
   }
   return out.slice(0, MAX_NEIGHBOURS_PER_SYMBOL);
 }
@@ -62,12 +72,14 @@ function build() {
     const neighbours = neighboursFor(graph, sym);
     for (const n of neighbours) {
       if (cards.length >= MAX_CARDS) break;
+      if (!n.research_href) continue;
       cards.push({
         from_symbol: sym,
         to_symbol: n.symbol,
         kind: n.kind,
+        group: n.group,
         evidence: n.evidence,
-        research_href: `/research/assets/${String(n.symbol).toLowerCase()}/`,
+        research_href: n.research_href,
         source: 'entity-research-graph (evidence-backed neighbours)',
       });
     }

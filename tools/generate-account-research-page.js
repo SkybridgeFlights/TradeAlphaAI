@@ -40,7 +40,12 @@ ${css.map((href) => `  <link rel="stylesheet" href="${href}" />`).join('\n')}
 function body(ar, data) {
   const eng = data.engine || {};
   const ex = (eng.accounts && eng.accounts.example) || { cards: [], cards_count: 0, seed_symbols: [], note_en: '', note_ar: '' };
-  const cards = (ex.cards || []).map((c) => `        <article class="market-card"><span class="market-card-kicker">${esc(c.from_symbol)} → ${esc(c.to_symbol)}</span><h3><a href="${esc(c.research_href)}">${esc(c.to_symbol)}</a></h3><p class="market-copy">${esc(c.kind)} · ${esc((c.evidence || []).slice(0, 1)[0] || '')}</p></article>`).join('\n');
+  const cards = (ex.cards || []).map((c) => {
+    const href = ar && c.research_href && c.research_href.startsWith('/') && !c.research_href.startsWith('/ar/')
+      ? '/ar' + c.research_href
+      : c.research_href;
+    return `        <article class="market-card"><span class="market-card-kicker">${esc(c.from_symbol)} → ${esc(c.to_symbol)}</span><h3><a href="${esc(href)}">${esc(c.to_symbol)}</a></h3><p class="market-copy">${esc(c.kind)} · ${esc((c.evidence || []).slice(0, 1)[0] || '')}</p></article>`;
+  }).join('\n');
   return `    <section class="market-section" id="account-research-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Status', 'الحالة'))}</span><h2>${esc(t(ar, 'Personal research engine status', 'حالة محرّك الأبحاث الشخصية'))}</h2></div>
       <div class="market-grid three">
         <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Engine', 'المحرّك'))}</span><h3>${esc(eng.engine_enabled ? 'enabled' : 'disabled')}</h3><p class="market-copy">${esc(t(ar, 'The engine runs on every build. With no account it falls back to a public-watchlist demo.', 'يعمل المحرّك في كل بناء. بدون حساب يعود إلى عرض توضيحي من قائمة عامة.'))}</p></article>

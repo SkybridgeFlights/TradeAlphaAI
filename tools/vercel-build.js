@@ -26,19 +26,26 @@ const STEPS = [
   // locked so concurrent deploys cannot race. Skips gracefully when
   // DATABASE_URL is missing (e.g. preview deploy without Neon branch).
   ['db-migrate',          ['tools/apply-migrations.js']],
+  ['db-schema-check',     ['tools/check-account-db-schema.js']],
 ];
 
 let failed = false;
+let hardFailed = false;
 for (const [name, args] of STEPS) {
   const r = spawnSync(process.execPath, args, { stdio: 'inherit', cwd: path.resolve(__dirname, '..') });
   if (r.status !== 0) {
     console.error('[vercel-build] step failed:', name, 'exit', r.status);
     failed = true;
+    if (name === 'db-migrate' || name === 'db-schema-check') hardFailed = true;
     // Continue the chain — the failure is surfaced at the end so partial
     // progress is still visible. A single failed step does NOT prevent
     // the static deploy because later steps may legitimately depend on
     // earlier ones being fresh (we want them all to run when possible).
   }
+}
+if (hardFailed) {
+  console.error('[vercel-build] database activation failed - blocking deploy because account APIs require the production schema');
+  process.exit(1);
 }
 if (failed) {
   console.error('[vercel-build] one or more steps failed — deploy will still ship existing static content');

@@ -1,48 +1,67 @@
 'use strict';
 
-// Phase 221-Pg CP1 — Postgres migration runner.
+// Phase 221-Pg CP1 - Postgres migration runner.
 //
 // Applies db/migrations/*.sql in lexicographic order against the Neon
-// instance pointed to by DATABASE_URL. Idempotent: tracks applied
-// versions in a _migrations table and skips files already applied.
-// Acquires an advisory lock so concurrent deploys don't race.
+// instance pointed to by DATABASE_URL. Idempotent: tracks applied versions in
+// _migrations and skips files already applied. An advisory lock prevents
+// concurrent deploys from racing.
 //
-// Behaviour when DATABASE_URL is missing (local dev without provisioning):
-// logs a warning and exits 0. The Vercel build chain continues; the
-// migration applies on the next deploy where DATABASE_URL is present.
+// Production rule: account APIs are Postgres-backed. A production deploy must
+// not hide a missing DATABASE_URL or a migration failure.
 
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const MIGRATIONS_DIR = path.join(ROOT, 'db', 'migrations');
-const ADVISORY_LOCK_KEY = 4221221; // arbitrary 32-bit int unique to this app
+const ADVISORY_LOCK_KEY = 4221221;
+
+function isProductionDeploy() {
+  return process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
+}
+
+function splitSqlStatements(body) {
+  // Migration files use plain DDL only. Strip SQL line comments before
+  // splitting; never discard an entire chunk merely because it starts with a
+  // comment. That was the production bug: leading comments caused CREATE TABLE
+  // statements to be skipped before later indexes/references failed.
+  return String(body || '')
+    .split(/\r?\n/)
+    .map((line) => line.replace(/--.*$/, '').trimEnd())
+    .join('\n')
+    .split(/;\s*(?:\r?\n|$)/)
+    .map((stmt) => stmt.trim())
+    .filter(Boolean);
+}
 
 async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) {
-    console.warn('[migrations] DATABASE_URL not set — skipping (will apply on next deploy with env)');
+    const msg = '[migrations] DATABASE_URL not set';
+    if (isProductionDeploy()) {
+      console.error(`${msg} - production account database cannot be migrated`);
+      process.exit(1);
+    }
+    console.warn(`${msg} - skipping local/preview migration`);
     process.exit(0);
   }
-  // Lazy-require the Neon driver so this script is harmless when deps
-  // are not installed (e.g. a fresh clone before `npm install`).
+
   let neon;
   try {
     ({ neon } = require('@neondatabase/serverless'));
   } catch (e) {
-    console.warn('[migrations] @neondatabase/serverless not installed — run `npm install` first');
-    process.exit(0);
+    console.error('[migrations] @neondatabase/serverless not installed - run npm install first');
+    process.exit(1);
   }
+
   const sql = neon(url);
 
-  // Bootstrap the tracking table itself.
   await sql`CREATE TABLE IF NOT EXISTS _migrations (
     id           TEXT PRIMARY KEY,
     applied_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
 
-  // Acquire an advisory lock (released on session end). Two concurrent
-  // build processes would otherwise race on the migration set.
   await sql`SELECT pg_advisory_lock(${ADVISORY_LOCK_KEY})`;
 
   try {
@@ -55,10 +74,8 @@ async function main() {
         continue;
       }
       const body = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
-      // Neon's serverless driver runs each statement as its own call.
-      // For multi-statement migrations we split on naked semicolons at
-      // end of line (good enough for our DDL — no PL/pgSQL blocks).
-      const statements = body.split(/;\s*\n/).map((s) => s.trim()).filter((s) => s && !/^--/.test(s));
+      const statements = splitSqlStatements(body);
+      if (!statements.length) throw new Error(`${file} produced zero executable statements`);
       for (const stmt of statements) {
         await sql.query(stmt);
       }
@@ -66,17 +83,17 @@ async function main() {
       console.log(`[migrations] applied ${file} (${statements.length} statements)`);
       count += 1;
     }
-    console.log(`[migrations] done — applied ${count} new migration(s); ${applied.size + count} total`);
+    console.log(`[migrations] done - applied ${count} new migration(s); ${applied.size + count} total`);
   } finally {
     await sql`SELECT pg_advisory_unlock(${ADVISORY_LOCK_KEY})`;
   }
 }
 
-main().catch((err) => {
-  console.error('[migrations] FAIL:', err && err.message || err);
-  // Exit 0 in the build chain even on failure — broken migrations
-  // should NOT block the deploy of existing static content. The
-  // failure is surfaced in logs + an admin should investigate.
-  if (process.env.CI || process.env.VERCEL) process.exit(0);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error('[migrations] FAIL:', err && err.message || err);
+    process.exit(1);
+  });
+}
+
+module.exports = { splitSqlStatements, isProductionDeploy };
