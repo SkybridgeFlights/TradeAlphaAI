@@ -99,13 +99,21 @@
   flex-direction: column;
   gap: 12px;
   padding: 18px 18px 16px;
-  border: 1px solid rgba(216, 177, 90, 0.22);
-  border-radius: 16px;
+  /* Premium card: soft gold/teal gradient that BLENDS with the hero
+   * panel instead of feeling like a black island. Subtle frosted-
+   * glass aesthetic with very low-opacity gradients on a translucent
+   * base. */
+  border: 1px solid rgba(216, 177, 90, 0.18);
+  border-radius: 18px;
   background:
-    radial-gradient(120% 100% at 0% 0%, rgba(216,177,90,0.10), transparent 55%),
-    radial-gradient(80% 120% at 100% 100%, rgba(110,231,216,0.08), transparent 50%),
-    linear-gradient(180deg, #0d1a2c 0%, #0a1422 100%);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+    radial-gradient(140% 100% at 0% 0%,   rgba(216,177,90,0.10), transparent 55%),
+    radial-gradient(80%  120% at 100% 100%, rgba(110,231,216,0.08), transparent 50%),
+    linear-gradient(180deg, rgba(15,30,50,0.85) 0%, rgba(10,22,38,0.92) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   overflow: hidden;
   isolation: isolate;
 }
@@ -113,7 +121,9 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 0%, rgba(216,177,90,0.06), transparent 60%);
+  background:
+    radial-gradient(circle at 30% 0%,  rgba(216,177,90,0.08), transparent 55%),
+    radial-gradient(circle at 70% 100%, rgba(110,231,216,0.06), transparent 55%);
   pointer-events: none;
   z-index: 0;
 }
@@ -156,17 +166,18 @@
   50%      { opacity: 1; }
 }
 
-/* Visual region — fixed aspect for layout stability */
+/* Visual region — transparent so the constellation floats on the
+ * card's own gradient. A very soft inner radial just lifts the
+ * center where the hub sits. No more black-rectangle look. */
 .market-network-card-stage {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 11;
   border-radius: 12px;
   background:
-    radial-gradient(ellipse at center, rgba(255,255,255,0.025), transparent 70%),
-    #08121e;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+    radial-gradient(ellipse 65% 70% at 50% 50%, rgba(216,177,90,0.06), transparent 70%);
+  overflow: visible;
+  border: none;
 }
 .market-network-card-stage svg {
   width: 100%;
@@ -175,16 +186,14 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────
- * ORBITAL SYSTEM — satellites actually move around the central hub
- * via SVG <animateMotion>, instead of just the lines spinning. Each
- * satellite walks the same circular path; staggered `begin` offsets
- * place them at evenly-spaced angles. With rotate="0" on the motion,
- * the labels never tilt.
+ * CONSTELLATION + RADAR SWEEP
+ * Premium institutional layout — asymmetric node positions (NOT a
+ * circle, so it doesn't read as a disc), thin gradient connection
+ * lines between them, a slow radar sweep that rotates around the
+ * hub, soft sonar pulses, and a gentle node-by-node glow cycle.
  * ────────────────────────────────────────────────────────────── */
 
-/* Two SVG variants — display toggled by viewport. The desktop one
- * uses a circular orbit at radius 115; the mobile one uses a flatter
- * elliptical orbit (60x32) inside a much shorter card. */
+/* Two SVG variants — display toggled by viewport. */
 .mn-svg-desktop { display: block; width: 100%; height: 100%; }
 .mn-svg-mobile  { display: none;  width: 100%; height: 100%; }
 @media (max-width: 720px) {
@@ -193,85 +202,132 @@
 }
 
 /* Central ETFs hub */
-.mn-hub {
-  fill: #11253c;
-  stroke: rgba(216, 177, 90, 0.7);
-  stroke-width: 1.6;
-  filter: drop-shadow(0 0 10px rgba(216, 177, 90, 0.28));
+.mn-hub-core {
+  fill: url(#mn-hub-grad);
+  stroke: rgba(216, 177, 90, 0.75);
+  stroke-width: 1.4;
+  filter: drop-shadow(0 0 14px rgba(216, 177, 90, 0.35));
+}
+.mn-hub-ring {
+  fill: none;
+  stroke: rgba(216, 177, 90, 0.25);
+  stroke-width: 1;
+  stroke-dasharray: 1 4;
 }
 .mn-hub-label {
-  fill: rgba(255, 233, 168, 0.95);
+  fill: rgba(255, 233, 168, 0.96);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-anchor: middle;
   text-transform: uppercase;
 }
 
-/* Sonar rings — concentric pulses radiating from the hub. Three
- * rings staggered 1.3s apart give a continuous "sweep" feel. */
+/* Radar sweep — a soft gradient wedge that rotates slowly around the
+ * hub. Replaces orbital motion: nodes stay put, the SWEEP is what
+ * moves. This is the institutional "command center" feel.
+ * Desktop: 10s per revolution. */
+.mn-radar {
+  transform-origin: 240px 165px;
+  transform-box: view-box;
+  animation: mn-radar 10s linear infinite;
+}
+.mn-radar-m {
+  transform-origin: 160px 60px;
+  transform-box: view-box;
+  animation: mn-radar 8s linear infinite;
+}
+@keyframes mn-radar { to { transform: rotate(360deg); } }
+
+/* Sonar rings — soft concentric pulses from hub. */
 .mn-sonar {
   fill: none;
-  stroke: rgba(216, 177, 90, 0.55);
-  stroke-width: 1.2;
+  stroke: rgba(216, 177, 90, 0.45);
+  stroke-width: 1;
   transform-box: view-box;
-  animation: mn-sonar 4s ease-out infinite;
+  animation: mn-sonar 5s ease-out infinite;
   opacity: 0;
 }
-.mn-sonar.is-teal { stroke: rgba(110, 231, 216, 0.55); }
-.mn-sonar.d1 { animation-delay: 1.3s; }
-.mn-sonar.d2 { animation-delay: 2.6s; }
+.mn-sonar.is-teal { stroke: rgba(110, 231, 216, 0.45); }
+.mn-sonar.d1 { animation-delay: 1.7s; }
+.mn-sonar.d2 { animation-delay: 3.4s; }
 @keyframes mn-sonar {
   0%   { transform: scale(0.4); opacity: 0; }
-  10%  { opacity: 0.7; }
-  100% { transform: scale(3.6); opacity: 0; }
+  12%  { opacity: 0.55; }
+  100% { transform: scale(3.0); opacity: 0; }
 }
 
-/* Orbit ring — faint dashed circle showing the satellite path. */
-.mn-orbit-ring {
+/* Connection lines — gradient stroke from hub-gold to muted teal.
+ * Subtle dashed flow animation suggests data moving outward. */
+.mn-link {
   fill: none;
-  stroke: rgba(216, 177, 90, 0.18);
-  stroke-width: 1;
+  stroke: url(#mn-link-grad);
+  stroke-width: 0.9;
   stroke-dasharray: 3 5;
+  opacity: 0.7;
+  animation: mn-link-flow 8s linear infinite;
 }
+.mn-link.is-teal { stroke: url(#mn-link-grad-teal); animation-duration: 10s; }
+.mn-link.is-slow { animation-duration: 14s; }
+.mn-link.is-rev  { animation-direction: reverse; }
+@keyframes mn-link-flow { to { stroke-dashoffset: -64; } }
 
-/* Satellite node */
+/* Satellite node — fills with subtle gradient + glow halo. */
 .mn-sat-node {
-  fill: #0d1a2b;
-  stroke: rgba(216, 177, 90, 0.65);
-  stroke-width: 1.4;
-  filter: drop-shadow(0 0 6px rgba(216, 177, 90, 0.32));
+  fill: url(#mn-node-grad);
+  stroke: rgba(216, 177, 90, 0.7);
+  stroke-width: 1.3;
+  filter: drop-shadow(0 0 6px rgba(216, 177, 90, 0.28));
 }
-.mn-sat-node.is-teal { stroke: rgba(110, 231, 216, 0.72); filter: drop-shadow(0 0 6px rgba(110, 231, 216, 0.32)); }
+.mn-sat-node.is-teal {
+  fill: url(#mn-node-grad-teal);
+  stroke: rgba(110, 231, 216, 0.75);
+  filter: drop-shadow(0 0 6px rgba(110, 231, 216, 0.28));
+}
 
-/* Halo behind each satellite, slow breathing */
+/* Soft breathing halo behind each satellite (staggered delays). */
 .mn-sat-halo {
-  fill: rgba(216, 177, 90, 0.22);
+  fill: rgba(216, 177, 90, 0.18);
   transform-box: fill-box;
   transform-origin: center;
-  animation: mn-sat-breath 4.5s ease-in-out infinite;
+  animation: mn-sat-breath 5s ease-in-out infinite;
 }
-.mn-sat-halo.is-teal { fill: rgba(110, 231, 216, 0.22); }
-.mn-sat-halo.d1 { animation-delay: .7s; }
-.mn-sat-halo.d2 { animation-delay: 1.6s; }
-.mn-sat-halo.d3 { animation-delay: 2.5s; }
-.mn-sat-halo.d4 { animation-delay: 3.4s; }
+.mn-sat-halo.is-teal { fill: rgba(110, 231, 216, 0.18); }
+.mn-sat-halo.d1 { animation-delay: .6s; }
+.mn-sat-halo.d2 { animation-delay: 1.4s; }
+.mn-sat-halo.d3 { animation-delay: 2.3s; }
+.mn-sat-halo.d4 { animation-delay: 3.1s; }
+.mn-sat-halo.d5 { animation-delay: 3.9s; }
+.mn-sat-halo.d6 { animation-delay: 4.5s; }
 @keyframes mn-sat-breath {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50%      { opacity: 1;   transform: scale(1.25); }
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.22); }
 }
 
-/* Satellite label — stays upright thanks to rotate="0" on motion */
+/* Per-node periodic glow — every ~12s each node briefly brightens. */
+.mn-sat-node.glow-1 { animation: mn-node-glow 12s ease-in-out infinite 0s; }
+.mn-sat-node.glow-2 { animation: mn-node-glow 12s ease-in-out infinite 1.7s; }
+.mn-sat-node.glow-3 { animation: mn-node-glow 12s ease-in-out infinite 3.4s; }
+.mn-sat-node.glow-4 { animation: mn-node-glow 12s ease-in-out infinite 5.1s; }
+.mn-sat-node.glow-5 { animation: mn-node-glow 12s ease-in-out infinite 6.8s; }
+.mn-sat-node.glow-6 { animation: mn-node-glow 12s ease-in-out infinite 8.5s; }
+.mn-sat-node.glow-7 { animation: mn-node-glow 12s ease-in-out infinite 10.2s; }
+@keyframes mn-node-glow {
+  0%, 92%, 100% { stroke-width: 1.3; filter: drop-shadow(0 0 6px rgba(216, 177, 90, 0.28)); }
+  96%           { stroke-width: 2.0; filter: drop-shadow(0 0 12px rgba(255, 233, 168, 0.6)); }
+}
+
+/* Satellite label */
 .mn-sat-label {
   fill: rgba(244, 247, 241, 0.92);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-anchor: middle;
   text-transform: uppercase;
   paint-order: stroke;
-  stroke: rgba(8, 18, 30, 0.85);
+  stroke: rgba(13, 26, 43, 0.85);
   stroke-width: 3px;
   stroke-linejoin: round;
 }
@@ -328,13 +384,13 @@
 
 /* Reduced-motion: stop all motion, leave a clean static composition. */
 @media (prefers-reduced-motion: reduce) {
-  .mn-sat-halo, .mn-sonar,
+  .mn-sat-halo, .mn-sonar, .mn-radar, .mn-radar-m,
+  .mn-link, .mn-sat-node,
   .market-network-card-live::before {
     animation: none !important;
   }
   .mn-sonar { display: none; }
-  /* Stop SMIL animations too. */
-  animateMotion { display: none; }
+  .mn-link  { stroke-dasharray: 0; opacity: 0.5; }
 }
 
 /* ──────────────────────────────────────────────────────────────────
