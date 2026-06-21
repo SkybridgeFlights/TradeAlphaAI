@@ -7,6 +7,7 @@
 const { getSql } = require('../../db/client');
 const { requireAccount, sendError } = require('../../db/auth');
 const { ensureAccountSchema } = require('../../db/schema');
+const { ensureAccount } = require('../../db/account');
 
 const ALLOWED_KINDS = new Set(['asset', 'sector', 'equity', 'etf', 'research_category', 'regime_state', 'watchlist']);
 
@@ -16,6 +17,7 @@ module.exports = async function handler(req, res) {
     const { accountId } = await requireAccount(req);
     const sql = getSql();
     await ensureAccountSchema(sql);
+    await ensureAccount(sql, accountId);
     if (req.method === 'GET') {
       const rows = await sql`SELECT target_kind, target_id, followed_at FROM followed_targets WHERE account_id = ${accountId} ORDER BY followed_at DESC`;
       res.statusCode = 200;

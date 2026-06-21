@@ -14,6 +14,7 @@
 const { getSql } = require('../../db/client');
 const { requireAccount, sendError } = require('../../db/auth');
 const { ensureAccountSchema } = require('../../db/schema');
+const { ensureAccount } = require('../../db/account');
 
 const TIER_WATCHLIST_LIMITS = { free: 3, premium: 25, institutional: 100 };
 const ALLOWED_TYPES = new Set(['asset', 'sector', 'equity', 'etf']);
@@ -24,6 +25,7 @@ module.exports = async function handler(req, res) {
     const { accountId } = await requireAccount(req);
     const sql = getSql();
     await ensureAccountSchema(sql);
+    await ensureAccount(sql, accountId);
     const url = new URL(req.url, 'http://localhost');
     const isEntities = /\/entities$/.test(url.pathname) || url.searchParams.get('entities') === '1';
 
