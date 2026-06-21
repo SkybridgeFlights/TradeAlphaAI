@@ -15,9 +15,13 @@ const { getSql } = require('../../db/client');
 const { requireAccount, sendError } = require('../../db/auth');
 const { ensureAccountSchema } = require('../../db/schema');
 const { ensureAccount } = require('../../db/account');
+const {
+  normalizeEntityBody,
+  addWatchlistEntity,
+  removeWatchlistEntity,
+} = require('../../db/watchlist-entities');
 
 const TIER_WATCHLIST_LIMITS = { free: 3, premium: 25, institutional: 100 };
-const ALLOWED_TYPES = new Set(['asset', 'sector', 'equity', 'etf']);
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -32,39 +36,21 @@ module.exports = async function handler(req, res) {
     // ─── Entities sub-resource ───────────────────────────────────────
     if (isEntities) {
       if (req.method === 'POST') {
-        let body = req.body;
-        if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
-        body = body || {};
-        const { watchlist_slug, type, symbol, slug } = body;
-        if (!watchlist_slug || !type || !symbol || !slug) {
-          res.statusCode = 400; res.end(JSON.stringify({ error: 'watchlist_slug + type + symbol + slug required' })); return;
-        }
-        if (!ALLOWED_TYPES.has(type)) {
-          res.statusCode = 400; res.end(JSON.stringify({ error: `type must be one of ${[...ALLOWED_TYPES].join(',')}` })); return;
-        }
-        const wl = await sql`SELECT id FROM watchlists WHERE account_id = ${accountId} AND slug = ${watchlist_slug} LIMIT 1`;
-        if (!wl.length) { res.statusCode = 404; res.end(JSON.stringify({ error: 'watchlist not found' })); return; }
-        await sql`
-          INSERT INTO watchlist_entities (watchlist_id, type, symbol, slug)
-          VALUES (${wl[0].id}, ${type}, ${symbol}, ${slug})
-          ON CONFLICT (watchlist_id, type, symbol) DO NOTHING
-        `;
+        const result = await addWatchlistEntity(sql, accountId, normalizeEntityBody(req.body));
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ added: { watchlist_slug, type, symbol, slug } }));
+        res.end(JSON.stringify({ added: result.entity, watchlist: result.watchlist }));
         return;
       }
       if (req.method === 'DELETE') {
-        const watchlist_slug = url.searchParams.get('watchlist_slug');
-        const type = url.searchParams.get('type');
-        const symbol = url.searchParams.get('symbol');
-        if (!watchlist_slug || !type || !symbol) { res.statusCode = 400; res.end(JSON.stringify({ error: 'watchlist_slug + type + symbol required' })); return; }
-        const wl = await sql`SELECT id FROM watchlists WHERE account_id = ${accountId} AND slug = ${watchlist_slug} LIMIT 1`;
-        if (!wl.length) { res.statusCode = 404; res.end(JSON.stringify({ error: 'watchlist not found' })); return; }
-        await sql`DELETE FROM watchlist_entities WHERE watchlist_id = ${wl[0].id} AND type = ${type} AND symbol = ${symbol}`;
+        const result = await removeWatchlistEntity(sql, accountId, {
+          watchlist_slug: url.searchParams.get('watchlist_slug') || '',
+          type: (url.searchParams.get('type') || '').toLowerCase(),
+          symbol: (url.searchParams.get('symbol') || '').toUpperCase(),
+        });
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ deleted: { watchlist_slug, type, symbol } }));
+        res.end(JSON.stringify(result));
         return;
       }
       res.statusCode = 405; res.end(); return;
