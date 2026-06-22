@@ -54,7 +54,7 @@ const HUBS = {
       cards: [
         { title_en: 'Stock research', title_ar: 'أبحاث الأسهم', desc_en: 'Live institutional research per equity, including macro and sector context.', desc_ar: 'أبحاث مؤسسية حيّة لكل سهم، تشمل السياق الكلي والقطاعي.', href_en: '/research/', href_ar: '/ar/research/' },
         { title_en: 'ETF research', title_ar: 'أبحاث الصناديق', desc_en: 'Per-ETF research with flows, holdings overlap and regime fit.', desc_ar: 'أبحاث لكل صندوق مع التدفقات وتداخل الحيازات وملاءمة النظام.', href_en: '/research/etfs/', href_ar: '/ar/research/etfs/' },
-        { title_en: 'Market maps', title_ar: 'خرائط السوق', desc_en: 'Cross-asset and sector-rotation maps showing where capital is moving.', desc_ar: 'خرائط الأصول والتدوير القطاعي توضح أين يتحرك رأس المال.', href_en: '/maps/', href_ar: '/ar/maps/' },
+        { title_en: 'Market maps', title_ar: 'خرائط السوق', desc_en: 'Cross-asset and sector-rotation maps showing where capital is moving.', desc_ar: 'خرائط الأصول والتدوير القطاعي توضح أين يتحرك رأس المال.', href_en: '/market-map/assets/', href_ar: '/ar/market-map/assets/' },
         { title_en: 'Market terminal', title_ar: 'طرفية السوق', desc_en: 'Single live console: regime, breadth, leadership, macro and intraday context.', desc_ar: 'وحدة تحكّم حيّة واحدة: النظام والاتساع والقيادة والكلي والسياق اللحظي.', href_en: '/market-terminal/', href_ar: '/ar/market-terminal/' },
       ],
     },
