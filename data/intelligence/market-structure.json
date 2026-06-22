@@ -1,23 +1,23 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-19T21:40:50.504Z",
+  "generated_at": "2026-06-22T18:31:03.792Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 73,
-  "coverage_pct": 89,
+  "structural_confidence": 95,
+  "coverage_pct": 100,
   "dominant": {
-    "dimension": "concentration",
-    "state": "elevated"
+    "dimension": "stability",
+    "state": "deteriorating"
   },
   "dimensions": {
     "participation": {
-      "state": "broad_participation",
-      "label_en": "broad participation",
-      "label_ar": "مشاركة واسعة",
+      "state": "mixed_participation",
+      "label_en": "mixed participation",
+      "label_ar": "مشاركة مختلطة",
       "evidence": [
-        "leadership=broad",
-        "breadth=broad",
-        "session breadth=confirming"
+        "leadership=narrow",
+        "breadth=mixed",
+        "session breadth=mixed"
       ]
     },
     "volatility_structure": {
@@ -25,7 +25,9 @@
       "label_en": "contained volatility",
       "label_ar": "تذبذب محتوى",
       "evidence": [
-        "alignment=aligned"
+        "regime volatility=normal",
+        "alignment=aligned",
+        "VIX=17.23"
       ]
     },
     "cross_asset": {
@@ -33,8 +35,8 @@
       "label_en": "coherent",
       "label_ar": "متسق",
       "evidence": [
-        "coherence=1",
-        "tension cross_asset=strained"
+        "coherence=0.6",
+        "tension cross_asset=coherent"
       ]
     },
     "concentration": {
@@ -43,16 +45,16 @@
       "label_ar": "تركّز مرتفع",
       "evidence": [
         "ai_concentration=elevated",
-        "momentum_concentration=balanced"
+        "momentum_concentration=broadening"
       ]
     },
     "rotation": {
-      "state": "cyclical_leadership",
-      "label_en": "cyclical leadership",
-      "label_ar": "قيادة دورية",
+      "state": "defensive_rotation",
+      "label_en": "defensive rotation",
+      "label_ar": "تدوير دفاعي",
       "evidence": [
-        "leaders=XLK/XLI/XLU",
-        "regime defensive=cyclical_leadership"
+        "leaders=XLRE/XLV/XLI",
+        "regime defensive=defensive_rotation"
       ]
     },
     "persistence": {
@@ -60,18 +62,18 @@
       "label_en": "transitioning structure",
       "label_ar": "بنية في طور التحوّل",
       "evidence": [
-        "direction=risk_on",
-        "verified_sessions=6",
+        "direction=risk_off",
+        "verified_sessions=7",
         "regime_condition=pressured-regime"
       ]
     },
     "momentum": {
-      "state": "intact",
-      "label_en": "momentum intact",
-      "label_ar": "زخم سليم",
+      "state": "early_deterioration",
+      "label_en": "early momentum deterioration",
+      "label_ar": "تدهور مبكر في الزخم",
       "evidence": [
-        "participation=broad_participation",
-        "rotation=cyclical_leadership",
+        "participation=mixed_participation",
+        "rotation=defensive_rotation",
         "concentration=elevated"
       ]
     },
@@ -81,30 +83,30 @@
       "label_ar": "مشاركة سيولة غير مؤكدة",
       "evidence": [
         "liquidity_participation=uncertain",
-        "liquidity_state=indeterminate"
+        "liquidity_state=yield_pressure"
       ]
     },
     "stability": {
-      "state": "indeterminate",
-      "label_en": "indeterminate",
-      "label_ar": "غير محدد",
+      "state": "deteriorating",
+      "label_en": "deteriorating structure",
+      "label_ar": "بنية متدهورة",
       "evidence": [
-        "regime stability=strengthening",
-        "tension=contained",
+        "regime stability=deteriorating",
+        "tension=building",
         "fragility=building"
       ]
     }
   },
   "homepage_summary": {
     "dominant_structure": {
-      "dimension": "concentration",
-      "state": "elevated"
+      "dimension": "stability",
+      "state": "deteriorating"
     },
-    "participation": "broad_participation",
+    "participation": "mixed_participation",
     "volatility_structure": "contained",
     "cross_asset": "coherent",
-    "structural_stability": "indeterminate",
-    "structural_confidence": 73
+    "structural_stability": "deteriorating",
+    "structural_confidence": 95
   },
   "attribution": {
     "sources": [
@@ -114,7 +116,7 @@
       "session-history",
       "live-market-state"
     ],
-    "market_state_age_hours": 0,
+    "market_state_age_hours": 0.2,
     "note": "Deterministic composition of verified upstream structure signals. No fabricated values; insufficient evidence degrades to indeterminate."
   }
 }
