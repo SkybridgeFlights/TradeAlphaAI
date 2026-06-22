@@ -172,7 +172,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-          ENABLE_TELEGRAM_PUBLISH: ${{ vars.ENABLE_TELEGRAM_PUBLISH }}
+          ENABLE_TELEGRAM_PUBLISH: ${{ vars.ENABLE_TELEGRAM_PUBLISH || secrets.ENABLE_TELEGRAM_PUBLISH }}
         run: |
           FLAG="--dry-run"
           if [ "$ENABLE_TELEGRAM_PUBLISH" = "true" ]; then FLAG="--send"; fi
