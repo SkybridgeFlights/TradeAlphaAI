@@ -18,6 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const narrative = require('./narrative-prose');
 const { scoreArticle, QUALITY_FLOOR } = require('./editorial-quality');
 const { scoreVisual, VISUAL_QUALITY_FLOOR } = require('./visual-quality');
 
@@ -490,39 +491,19 @@ function renderResearchBody(ctx, locale) {
   const sec = (id, head, copy) => sections.push(`<section class="market-section" id="${id}"><div class="market-section-head"><span class="eyebrow">${esc(t('Desk read', 'قراءة المكتب'))}</span><h2>${esc(head)}</h2></div><div class="market-panel">${copy}</div></section>`);
   const p = (s) => `<p class="market-copy">${esc(s)}</p>`;
 
-  // 1. Lead — the structural reading the note exists to make (no event needed).
-  sec('lead', t('The structural reading', 'القراءة الهيكلية'),
-    p(t(`This research note steps back from any single release to read the structure of the tape itself. The prevailing regime is ${reg(rg.regime)}, with liquidity reading ${liq(rg.liquidity_state)} and stability ${stb(rg.stability)}. The research-desk intelligence rail alongside this note carries the same snapshot, and the analysis below works through what that structure means rather than forecasting where prices go next.`,
-      `تتراجع هذه المذكرة خطوة إلى الوراء بعيداً عن أي إصدار منفرد لتقرأ بنية السوق نفسها. النظام السائد هو ${reg(rg.regime)}، مع سيولة ${liq(rg.liquidity_state)} واستقرار ${stb(rg.stability)}. ويحمل مسار استخبارات مكتب الأبحاث المرافق اللقطة ذاتها، ويعمل التحليل أدناه على ما تعنيه هذه البنية بدلاً من التنبؤ بوجهة الأسعار.`))
-    + p(t('It is a deterministic reading drawn from the canonical liquidity-regime and cross-asset artifacts; where a dimension is unavailable it is stated plainly rather than inferred, so the note degrades honestly on a quiet tape instead of manufacturing a narrative.',
-      'وهي قراءة حتمية مستمدة من مرجعَي نظام السيولة والأصول المتقاطعة المعتمدين؛ وحين يغيب بُعد ما يُذكر ذلك صراحة بدل استنتاجه، لتتراجع المذكرة بأمانة في الأسواق الهادئة بدلاً من تصنيع سردية.')));
+  // ── Narrative body — Bloomberg/Investing.com style ──────────────
+  // Replaces the previous 5-section structural-jargon template that
+  // defaulted to "indeterminate" boilerplate. The composer reads live
+  // market state + pulse + economic-calendar and emits concrete
+  // narrative paragraphs with real prices, percentages, and analyst
+  // commentary. Each section is included only when its underlying
+  // data exists — no fabricated padding.
+  const narrativeBody = narrative.composeFullBody(locale, {});
+  sections.push(narrativeBody);
 
-  // 1b) Real sourced OHLCV chart as chart-first evidence when one applies to the
-  // research topic. Omitted cleanly when no verified chart is available.
+  // Chart-first evidence stays as before.
   const researchTopicId = (topic && (topic.id || topic.slug)) || '';
   const researchChart = institutionalChartFigures('market-news', researchTopicId, locale);
-
-  // 2. Regime / liquidity structure.
-  sec('regime', t('Regime and liquidity structure', 'بنية النظام والسيولة'),
-    p(rg.regime && rg.regime !== 'indeterminate'
-      ? t(`A ${reg(rg.regime)} regime with ${liq(rg.liquidity_state)} liquidity frames how any incoming surprise will be absorbed. ${rg.narrative || ''} Cross-asset coherence reads ${coh != null ? coh : 'n/a'}, which matters because a coherent tape transmits a shock cleanly while an incoherent one fragments it across rates, the dollar and equities.`,
-          `نظام ${reg(rg.regime)} مع سيولة ${liq(rg.liquidity_state)} يؤطّر كيفية امتصاص أي مفاجأة قادمة. ${rg.narrative || ''} ويقرأ الاتساق عبر الأصول ${coh != null ? coh : 'غير متاح'}، وهو ما يهمّ لأن السوق المتسق ينقل الصدمة بوضوح بينما يُجزّئها السوق غير المتسق عبر العوائد والدولار والأسهم.`)
-      : t('The structural regime is currently indeterminate on the observed dimensions, so the desk withholds a regime overlay rather than asserting one.', 'النظام الهيكلي غير محدد حالياً وفق الأبعاد المرصودة، لذا يمتنع المكتب عن إسقاط نظام بدل افتراضه.')));
-
-  // 3. Cross-asset structure.
-  sec('cross-asset', t('Cross-asset structure', 'البنية عبر الأصول'),
-    p(t(`Beneath the index, the desk reads participation through breadth (${riVal('', sub.breadth, ar)}), the dollar and yield posture, and whether defensive or cyclical leadership dominates (${riVal('', sub.defensive, ar)}). These dimensions decide whether strength is broad and absorbable or narrow and fragile — the same surface level can sit on very different structures.`,
-      `تحت سطح المؤشر، يقرأ المكتب المشاركة عبر الاتساع (${riVal('', sub.breadth, ar)})، ووضع الدولار والعوائد، وما إذا كانت القيادة دفاعية أم دورية (${riVal('', sub.defensive, ar)}). وتحدد هذه الأبعاد ما إذا كانت القوة واسعة وقابلة للامتصاص أم ضيقة وهشة — فالمستوى السطحي ذاته قد يستند إلى بنى مختلفة تماماً.`)));
-
-  // 4. Volatility / fragility.
-  sec('volatility', t('Volatility and fragility', 'التذبذب والهشاشة'),
-    p(t(`Volatility structure is reading ${riVal('', sub.volatility, ar)}. Compression is not the same as stability: a quiet tape can reflect genuine balance or a temporary absence of force ahead of a catalyst. The desk treats the difference as the central question rather than reading calm as safety.`,
-      `تقرأ بنية التذبذب ${riVal('', sub.volatility, ar)}. والانضغاط ليس كالاستقرار: فالسوق الهادئ قد يعكس توازناً حقيقياً أو غياباً مؤقتاً للقوة قبل محفز. ويعدّ المكتب هذا الفرق السؤال المركزي بدل قراءة الهدوء على أنه أمان.`)));
-
-  // 5. What the desk watches.
-  sec('watch-next', t('What the desk watches', 'ما يراقبه المكتب'),
-    p(t('The desk watches whether breadth confirms or undercuts the index, whether the dollar and yields move with or against risk, and whether the regime strengthens, holds or transitions as the next catalysts arrive. Continuity matters: this note is one reading in a sequence, and the value is in how the structure evolves, not in any single snapshot.',
-      'يراقب المكتب ما إذا كان الاتساع يؤكد المؤشر أم يقوّضه، وما إذا كان الدولار والعوائد يتحركان مع المخاطر أم ضدها، وما إذا كان النظام يتقوّى أو يثبت أو ينتقل مع وصول المحفزات التالية. وتهمّ الاستمرارية: فهذه المذكرة قراءة ضمن سلسلة، والقيمة في كيفية تطوّر البنية لا في أي لقطة منفردة.')));
 
   const baseBody = researchChart ? sections.join('\n') : injectPanels(sections.join('\n'), ctx, locale);
   const body = injectFigureAfterSection(baseBody, 'lead', researchChart);
@@ -532,10 +513,22 @@ function renderResearchBody(ctx, locale) {
 
 function publishResearch(write) {
   const regime = readJson(REGIME, {});
-  // Honest gate: do not manufacture a note when the structural read is empty.
-  if (!regime.regime || regime.regime === 'indeterminate') {
-    console.log('[daily-research] regime indeterminate / unavailable — no honest research note to publish, exiting green.');
-    return { published: false, reason: 'regime_unavailable' };
+  // Soften the previous "regime indeterminate ⇒ skip" gate. The new
+  // narrative body composes from live equity, rates, dollar and
+  // volatility readings via tools/narrative-prose.js — those work
+  // even when the regime classifier hasn't yet locked a verified
+  // state. Only skip when there is genuinely no live market data
+  // (live-market-state.json has no SPY/VIX/yield values), which is
+  // the truly empty case the gate was meant to catch.
+  const live = readJson('data/live-market-state.json', {});
+  const haveLiveBackbone =
+    (live.sp500 && live.sp500.change_pct != null) ||
+    (live.nasdaq && live.nasdaq.change_pct != null) ||
+    (live.vix && live.vix.value != null) ||
+    (live.us10y_yield && live.us10y_yield.value != null);
+  if (!haveLiveBackbone) {
+    console.log('[daily-research] no live equity/volatility/yield backbone in data/live-market-state.json — skipping (no narrative to compose).');
+    return { published: false, reason: 'live_state_empty' };
   }
   const topic = selectResearchTopic();
   if (!topic) {
