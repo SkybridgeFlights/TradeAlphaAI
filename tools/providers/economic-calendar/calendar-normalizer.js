@@ -6,7 +6,12 @@ const ALLOWED_TYPES = new Set([
   'Retail Sales', 'ISM PMI', 'Jobless Claims', 'Treasury Auction',
   'ECB Rate Decision', 'BoJ Rate Decision', 'BoE Rate Decision',
   // Phase 104 — global central bank decisions (official published schedules).
-  'BoC Rate Decision', 'RBA Rate Decision', 'SNB Rate Decision', 'PBoC Rate Decision'
+  'BoC Rate Decision', 'RBA Rate Decision', 'SNB Rate Decision', 'PBoC Rate Decision',
+  // International expansion — high-impact recurring releases beyond US, with
+  // a generic taxonomy that covers any country's variant of the same release.
+  'Manufacturing PMI', 'Services PMI', 'Composite PMI',
+  'PPI', 'Employment', 'Trade Balance', 'Industrial Production',
+  'Sentiment', 'Bond Auction', 'Current Account', 'Retail Trade',
 ]);
 const ALLOWED_IMPORTANCE = new Set(['high', 'medium', 'low']);
 

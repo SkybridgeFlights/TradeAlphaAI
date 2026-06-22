@@ -54,8 +54,8 @@ function deduplicate(events) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const from = dateStr(-4); // Phase 105: keep recent releases in-window for reaction interpretation.
-  const to   = dateStr(28); // Phase 104: wider window for richer US + global coverage (UI still filters to 7d/week).
+  const from = dateStr(-7);  // Keep last week of releases in-window for reaction interpretation.
+  const to   = dateStr(90);  // 90-day forward horizon — Investing.com-level depth from the schedule-fallback path. UI still filters to 7d/week.
   console.log(`[calendar:fetch] target range=${from}..${to}`);
 
   let result;

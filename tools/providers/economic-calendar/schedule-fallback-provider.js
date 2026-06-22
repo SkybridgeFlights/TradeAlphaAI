@@ -82,6 +82,45 @@ const GDP_ADVANCE_SCHEDULE = [
   { date: '2027-10-28', confirmed: false }, // Q3 2027 advance
 ];
 
+// ── International central bank decision schedules (estimated 2026/2027) ──
+// Each list approximates the published meeting calendar. UTC dates.
+const ECB_SCHEDULE = [
+  { date: '2026-01-29' }, { date: '2026-03-12' }, { date: '2026-04-16' },
+  { date: '2026-06-04' }, { date: '2026-07-23' }, { date: '2026-09-10' },
+  { date: '2026-10-29' }, { date: '2026-12-17' },
+  { date: '2027-01-28' }, { date: '2027-03-11' }, { date: '2027-04-15' },
+  { date: '2027-06-03' }, { date: '2027-07-22' }, { date: '2027-09-09' },
+];
+const BOE_SCHEDULE = [
+  { date: '2026-02-05' }, { date: '2026-03-19' }, { date: '2026-05-07' },
+  { date: '2026-06-18' }, { date: '2026-08-06' }, { date: '2026-09-17' },
+  { date: '2026-11-05' }, { date: '2026-12-17' },
+  { date: '2027-02-04' }, { date: '2027-03-18' }, { date: '2027-05-06' },
+];
+const BOJ_SCHEDULE = [
+  { date: '2026-01-23' }, { date: '2026-03-19' }, { date: '2026-04-30' },
+  { date: '2026-06-18' }, { date: '2026-07-31' }, { date: '2026-09-25' },
+  { date: '2026-10-30' }, { date: '2026-12-18' },
+  { date: '2027-01-22' }, { date: '2027-03-18' },
+];
+const BOC_SCHEDULE = [
+  { date: '2026-01-21' }, { date: '2026-03-04' }, { date: '2026-04-15' },
+  { date: '2026-06-03' }, { date: '2026-07-29' }, { date: '2026-09-09' },
+  { date: '2026-10-28' }, { date: '2026-12-09' },
+  { date: '2027-01-20' }, { date: '2027-03-03' },
+];
+const RBA_SCHEDULE = [
+  { date: '2026-02-10' }, { date: '2026-03-31' }, { date: '2026-05-19' },
+  { date: '2026-07-07' }, { date: '2026-08-11' }, { date: '2026-09-29' },
+  { date: '2026-11-03' }, { date: '2026-12-08' },
+  { date: '2027-02-09' }, { date: '2027-03-30' },
+];
+const SNB_SCHEDULE = [
+  { date: '2026-03-19' }, { date: '2026-06-18' },
+  { date: '2026-09-24' }, { date: '2026-12-10' },
+  { date: '2027-03-18' }, { date: '2027-06-17' },
+];
+
 // ── Calendar math helpers ─────────────────────────────────────────────────────
 
 // Returns YYYY-MM-DD for the nth (1-based) occurrence of weekday (0=Sun…6=Sat) in month.
@@ -272,6 +311,122 @@ function fetchCalendar(context) {
     }
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // INTERNATIONAL EXPANSION — major economies' high-impact recurring events.
+  // Scheduled-only (no actuals). All times approximate; precise time will be
+  // resolved by paid providers when their keys are present.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const utcDayTime = (ds, hour, minute) => {
+    const d = new Date(ds + 'T00:00:00Z');
+    d.setUTCHours(hour, minute, 0, 0);
+    return d.toISOString();
+  };
+
+  const cbSchedules = [
+    { schedule: ECB_SCHEDULE, name: 'ECB Rate Decision', type: 'ECB Rate Decision', country: 'EU', hour: 12, src: 'https://www.ecb.europa.eu/press/calendars/' },
+    { schedule: BOE_SCHEDULE, name: 'BoE Rate Decision', type: 'BoE Rate Decision', country: 'GB', hour: 11, src: 'https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes' },
+    { schedule: BOJ_SCHEDULE, name: 'BoJ Rate Decision', type: 'BoJ Rate Decision', country: 'JP', hour:  3, src: 'https://www.boj.or.jp/en/mopo/mpmsche_minu/' },
+    { schedule: BOC_SCHEDULE, name: 'BoC Rate Decision', type: 'BoC Rate Decision', country: 'CA', hour: 14, src: 'https://www.bankofcanada.ca/core-functions/monetary-policy/key-interest-rate/' },
+    { schedule: RBA_SCHEDULE, name: 'RBA Rate Decision', type: 'RBA Rate Decision', country: 'AU', hour:  4, src: 'https://www.rba.gov.au/monetary-policy/' },
+    { schedule: SNB_SCHEDULE, name: 'SNB Rate Decision', type: 'SNB Rate Decision', country: 'CH', hour:  7, src: 'https://www.snb.ch/en/iabout/monpol/id/monpol_current' },
+  ];
+  for (const cb of cbSchedules) {
+    for (const entry of cb.schedule) {
+      if (entry.date < from || entry.date > to) continue;
+      rawEvents.push({
+        event_name: cb.name, type: cb.type, importance: 'high',
+        event_time: utcDayTime(entry.date, cb.hour, 0),
+        source_url: cb.src, source_name: cb.name.split(' ')[0],
+        country: cb.country, _confirmed: false,
+      });
+    }
+  }
+
+  // Recurring monthly international releases keyed to typical publication days.
+  // Each entry: { dayOfMonth | nthWeekday, name, type, country, hour_utc, src }
+  const monthlyInternational = [
+    // ── Eurozone ─────────────────────────────────────────────────────────
+    { dayOfMonth: 23, name: 'Eurozone Flash Manufacturing PMI',  type: 'Manufacturing PMI', country: 'EU', hour_utc:  8, src: 'https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html' },
+    { dayOfMonth: 23, name: 'Eurozone Flash Services PMI',       type: 'Services PMI',      country: 'EU', hour_utc:  8, src: 'https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html' },
+    { dayOfMonth: 23, name: 'Eurozone Flash Composite PMI',      type: 'Composite PMI',     country: 'EU', hour_utc:  8, src: 'https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html' },
+    { lastBizDay: true, name: 'Eurozone Flash CPI',              type: 'CPI',               country: 'EU', hour_utc:  9, src: 'https://ec.europa.eu/eurostat' },
+    // ── Germany ──────────────────────────────────────────────────────────
+    { dayOfMonth: 11, name: 'German ZEW Economic Sentiment',     type: 'Sentiment',         country: 'DE', hour_utc:  9, src: 'https://www.zew.de/en' },
+    { dayOfMonth: 25, name: 'German Ifo Business Climate',       type: 'Sentiment',         country: 'DE', hour_utc:  8, src: 'https://www.ifo.de/en' },
+    { dayOfMonth:  7, name: 'German Industrial Production',      type: 'Industrial Production', country: 'DE', hour_utc:  6, src: 'https://www.destatis.de/EN/' },
+    // ── United Kingdom ───────────────────────────────────────────────────
+    { dayOfMonth: 17, name: 'UK CPI',                            type: 'CPI',               country: 'GB', hour_utc:  6, src: 'https://www.ons.gov.uk/economy/inflationandpriceindices' },
+    { dayOfMonth: 12, name: 'UK GDP (Monthly)',                  type: 'GDP',               country: 'GB', hour_utc:  6, src: 'https://www.ons.gov.uk/economy/grossdomesticproductgdp' },
+    { dayOfMonth: 16, name: 'UK Employment Change',              type: 'Employment',        country: 'GB', hour_utc:  6, src: 'https://www.ons.gov.uk/employmentandlabourmarket' },
+    { dayOfMonth: 19, name: 'UK Retail Sales',                   type: 'Retail Sales',      country: 'GB', hour_utc:  6, src: 'https://www.ons.gov.uk/businessindustryandtrade/retailindustry' },
+    // ── Japan ────────────────────────────────────────────────────────────
+    { lastBizDay: true, name: 'Tokyo CPI',                       type: 'CPI',               country: 'JP', hour_utc: 23, src: 'https://www.stat.go.jp/english/' },
+    { dayOfMonth: 24, name: 'Japan Trade Balance',               type: 'Trade Balance',     country: 'JP', hour_utc: 23, src: 'https://www.customs.go.jp/toukei/info/index_e.htm' },
+    // ── China ────────────────────────────────────────────────────────────
+    { dayOfMonth:  9, name: 'China CPI',                         type: 'CPI',               country: 'CN', hour_utc:  1, src: 'http://www.stats.gov.cn/english/' },
+    { dayOfMonth:  9, name: 'China PPI',                         type: 'PPI',               country: 'CN', hour_utc:  1, src: 'http://www.stats.gov.cn/english/' },
+    { dayOfMonth:  7, name: 'China Trade Balance',               type: 'Trade Balance',     country: 'CN', hour_utc:  3, src: 'http://english.customs.gov.cn/' },
+    { dayOfMonth:  1, name: 'China Caixin Manufacturing PMI',    type: 'Manufacturing PMI', country: 'CN', hour_utc:  1, src: 'https://www.pmi.spglobal.com/' },
+    { dayOfMonth:  3, name: 'China Caixin Services PMI',         type: 'Services PMI',      country: 'CN', hour_utc:  1, src: 'https://www.pmi.spglobal.com/' },
+    // ── Canada ───────────────────────────────────────────────────────────
+    { dayOfMonth: 16, name: 'Canada CPI',                        type: 'CPI',               country: 'CA', hour_utc: 13, src: 'https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes' },
+    { dayOfMonth: 22, name: 'Canada Retail Sales',               type: 'Retail Sales',      country: 'CA', hour_utc: 13, src: 'https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale' },
+    // ── Australia ────────────────────────────────────────────────────────
+    { dayOfMonth: 15, name: 'Australia Employment Change',       type: 'Employment',        country: 'AU', hour_utc:  1, src: 'https://www.abs.gov.au/statistics/labour' },
+    { dayOfMonth: 28, name: 'Australia Monthly CPI Indicator',   type: 'CPI',               country: 'AU', hour_utc:  1, src: 'https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation' },
+    // ── Switzerland ──────────────────────────────────────────────────────
+    { dayOfMonth:  3, name: 'Swiss CPI',                         type: 'CPI',               country: 'CH', hour_utc:  6, src: 'https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html' },
+  ];
+
+  const lastBusinessDayOfMonth = (year, month) => {
+    const d = new Date(Date.UTC(year, month + 1, 0));
+    while (d.getUTCDay() === 0 || d.getUTCDay() === 6) d.setUTCDate(d.getUTCDate() - 1);
+    return d.toISOString().slice(0, 10);
+  };
+
+  for (const ev of monthlyInternational) {
+    for (const { year, month } of monthsInRange(fromDate, toDate)) {
+      let ds = null;
+      if (ev.lastBizDay) {
+        ds = lastBusinessDayOfMonth(year, month);
+      } else if (ev.dayOfMonth) {
+        const last = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+        ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(Math.min(ev.dayOfMonth, last)).padStart(2, '0')}`;
+      }
+      if (!ds || ds < from || ds > to) continue;
+      rawEvents.push({
+        event_name: ev.name, type: ev.type, importance: 'medium',
+        event_time: utcDayTime(ds, ev.hour_utc, 0),
+        source_url: ev.src, source_name: ev.name.split(' ')[0],
+        country: ev.country, _confirmed: false,
+      });
+    }
+  }
+
+  // US Treasury bill auctions — Mondays 11:30 ET (13-week + 26-week).
+  // The full auction schedule is more complex; this is the always-on tier.
+  const mon = new Date(fromDate);
+  mon.setUTCDate(mon.getUTCDate() + ((1 - mon.getUTCDay() + 7) % 7));
+  while (mon <= toDate) {
+    const ds = mon.toISOString().slice(0, 10);
+    if (ds >= from && ds <= to) {
+      rawEvents.push({
+        event_name: 'US 13-Week T-Bill Auction', type: 'Bond Auction', importance: 'low',
+        event_time: toUTC(ds, 11, 30),
+        source_url: 'https://www.treasurydirect.gov/auctions/auction-query/',
+        source_name: 'U.S. Treasury', country: 'US', _confirmed: false,
+      });
+      rawEvents.push({
+        event_name: 'US 26-Week T-Bill Auction', type: 'Bond Auction', importance: 'low',
+        event_time: toUTC(ds, 11, 30),
+        source_url: 'https://www.treasurydirect.gov/auctions/auction-query/',
+        source_name: 'U.S. Treasury', country: 'US', _confirmed: false,
+      });
+    }
+    mon.setUTCDate(mon.getUTCDate() + 7);
+  }
+
   // ── Normalize ─────────────────────────────────────────────────────────────
   const events = rawEvents.map(function (raw) {
     const providerMeta = {
@@ -286,7 +441,7 @@ function fetchCalendar(context) {
       type:           raw.type,
       importance:     raw.importance,
       event_time:     raw.event_time,
-      country:        'US',
+      country:        raw.country || 'US',
       source_url:     raw.source_url,
       time_precision: 'time_estimate',
       status:         'scheduled',
