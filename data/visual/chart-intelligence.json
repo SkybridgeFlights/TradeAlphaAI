@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-19T21:46:42.175Z",
+  "generated_at": "2026-06-22T15:09:22.898Z",
   "source_layer": "chart-intelligence",
   "preview_only": true,
   "chart_types": [
@@ -25,23 +25,23 @@
       "id": "liquidity_regime_snapshot",
       "chart_type": "liquidity_regime_snapshot",
       "analytical_reason": {
-        "regime": "broad_risk_support",
+        "regime": "liquidity_stress",
         "question": "What is the structural environment macro reactions are landing in?"
       },
       "narrative_hook": {
-        "en": "The liquidity snapshot frames the environment: a broad risk support regime with indeterminate liquidity and strengthening stability.",
-        "ar": "يؤطّر مشهد السيولة البيئة: نظام دعم مخاطر واسع مع سيولة غير محدد واستقرار يتقوّى."
+        "en": "The liquidity snapshot frames the environment: a liquidity stress regime with yield pressure liquidity and unstable stability.",
+        "ar": "يؤطّر مشهد السيولة البيئة: نظام ضغط سيولة مع سيولة ضغط العوائد واستقرار غير مستقر."
       },
       "evidence": {
-        "regime": "broad_risk_support",
-        "liquidity_state": "indeterminate",
-        "stability": "strengthening",
-        "coherence": 1,
+        "regime": "liquidity_stress",
+        "liquidity_state": "yield_pressure",
+        "stability": "unstable",
+        "coherence": 0.6,
         "sub_states": {
-          "breadth": "broad",
-          "volatility": "indeterminate",
-          "yield": "indeterminate",
-          "dollar": "indeterminate",
+          "breadth": "mixed",
+          "volatility": "expansion",
+          "yield": "yield_pressure",
+          "dollar": "tightening_proxy",
           "defensive": "cyclical_leadership"
         }
       },
@@ -51,26 +51,26 @@
       ],
       "graphic": {
         "visual_type": "regime-snapshot",
-        "headline_en": "broad risk support",
-        "headline_ar": "دعم مخاطر واسع",
+        "headline_en": "liquidity stress",
+        "headline_ar": "ضغط سيولة",
         "narrative_context": {
-          "en": "Liquidity indeterminate · stability strengthening · coherence 1.",
-          "ar": "سيولة غير محدد · استقرار يتقوّى · اتساق 1."
+          "en": "Liquidity yield pressure · stability unstable · coherence 0.6.",
+          "ar": "سيولة ضغط العوائد · استقرار غير مستقر · اتساق 0.6."
         },
         "annotations": [
           {
-            "label_en": "Liquidity — indeterminate",
-            "label_ar": "السيولة — غير محدد",
+            "label_en": "Liquidity — yield pressure",
+            "label_ar": "السيولة — ضغط العوائد",
             "type": "evidence"
           },
           {
-            "label_en": "Stability — strengthening",
-            "label_ar": "الاستقرار — يتقوّى",
-            "type": "evidence"
+            "label_en": "Stability — unstable",
+            "label_ar": "الاستقرار — غير مستقر",
+            "type": "divergence-highlight"
           },
           {
-            "label_en": "Breadth — broad",
-            "label_ar": "الاتساع — واسع",
+            "label_en": "Breadth — mixed",
+            "label_ar": "الاتساع — مختلط",
             "type": "evidence"
           }
         ],
