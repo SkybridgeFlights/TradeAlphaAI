@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-22T18:31:03.792Z",
+  "generated_at": "2026-06-22T22:19:57.150Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 95,
-  "coverage_pct": 100,
+  "structural_confidence": 89,
+  "coverage_pct": 89,
   "dominant": {
     "dimension": "stability",
-    "state": "deteriorating"
+    "state": "fragile"
   },
   "dimensions": {
     "participation": {
@@ -27,7 +27,7 @@
       "evidence": [
         "regime volatility=normal",
         "alignment=aligned",
-        "VIX=17.23"
+        "VIX=17.28"
       ]
     },
     "cross_asset": {
@@ -49,12 +49,12 @@
       ]
     },
     "rotation": {
-      "state": "defensive_rotation",
-      "label_en": "defensive rotation",
-      "label_ar": "تدوير دفاعي",
+      "state": "cyclical_leadership",
+      "label_en": "cyclical leadership",
+      "label_ar": "قيادة دورية",
       "evidence": [
-        "leaders=XLRE/XLV/XLI",
-        "regime defensive=defensive_rotation"
+        "leaders=XLE/XLI/XLV",
+        "regime defensive=cyclical_leadership"
       ]
     },
     "persistence": {
@@ -68,12 +68,12 @@
       ]
     },
     "momentum": {
-      "state": "early_deterioration",
-      "label_en": "early momentum deterioration",
-      "label_ar": "تدهور مبكر في الزخم",
+      "state": "indeterminate",
+      "label_en": "indeterminate",
+      "label_ar": "غير محدد",
       "evidence": [
         "participation=mixed_participation",
-        "rotation=defensive_rotation",
+        "rotation=cyclical_leadership",
         "concentration=elevated"
       ]
     },
@@ -87,11 +87,11 @@
       ]
     },
     "stability": {
-      "state": "deteriorating",
-      "label_en": "deteriorating structure",
-      "label_ar": "بنية متدهورة",
+      "state": "fragile",
+      "label_en": "fragile structure",
+      "label_ar": "بنية هشة",
       "evidence": [
-        "regime stability=deteriorating",
+        "regime stability=fragile",
         "tension=building",
         "fragility=building"
       ]
@@ -100,13 +100,13 @@
   "homepage_summary": {
     "dominant_structure": {
       "dimension": "stability",
-      "state": "deteriorating"
+      "state": "fragile"
     },
     "participation": "mixed_participation",
     "volatility_structure": "contained",
     "cross_asset": "coherent",
-    "structural_stability": "deteriorating",
-    "structural_confidence": 95
+    "structural_stability": "fragile",
+    "structural_confidence": 89
   },
   "attribution": {
     "sources": [
@@ -116,7 +116,7 @@
       "session-history",
       "live-market-state"
     ],
-    "market_state_age_hours": 0.2,
+    "market_state_age_hours": 0,
     "note": "Deterministic composition of verified upstream structure signals. No fabricated values; insufficient evidence degrades to indeterminate."
   }
 }
