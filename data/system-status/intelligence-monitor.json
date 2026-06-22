@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-22T17:44:38.943Z",
+  "generated_at": "2026-06-22T17:54:59.178Z",
   "source_layer": "intelligence-monitor",
-  "overall_health": "degraded",
+  "overall_health": "warning",
   "regime": {
     "regime": "defensive_rotation",
     "liquidity_state": "yield_pressure",
@@ -20,7 +20,6 @@
     "calendar_source": "schedule_fallback",
     "event_count": 212,
     "degraded_sources": [
-      "fred",
       "fmp_forecast",
       "finnhub_forecast"
     ],
@@ -32,7 +31,7 @@
       "Japan": 1,
       "Canada": 1
     },
-    "health": "degraded"
+    "health": "warning"
   },
   "reaction_capture": {
     "considered": 21,
@@ -43,33 +42,33 @@
   "workflows": [
     {
       "name": "Market News Brain",
-      "health": "degraded",
-      "age_hours": 101
+      "health": "healthy",
+      "age_hours": 0
     },
     {
       "name": "Market Outlook Brain",
       "health": "healthy",
-      "age_hours": 0
+      "age_hours": 0.2
     },
     {
       "name": "Briefs Brain",
       "health": "healthy",
-      "age_hours": 4.8
+      "age_hours": 0.2
     },
     {
       "name": "Articles Brain",
       "health": "healthy",
-      "age_hours": 5.4
+      "age_hours": 5.5
     },
     {
       "name": "Distribution Brain",
       "health": "healthy",
-      "age_hours": 2.6
+      "age_hours": 0
     },
     {
       "name": "Intraday Market Watch",
       "health": "healthy",
-      "age_hours": 0
+      "age_hours": 0.2
     }
   ]
 }

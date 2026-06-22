@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-22T17:44:38.942Z",
+  "generated_at": "2026-06-22T17:54:59.177Z",
   "source_layer": "acquisition-health",
   "calendar_source": "schedule_fallback",
   "calendar_event_count": 212,
-  "calendar_age_hours": 13.7,
+  "calendar_age_hours": 0,
   "coverage_by_country": {
     "AU": 18,
     "US": 74,
@@ -31,20 +31,20 @@
     {
       "id": "fred",
       "kind": "official_actuals",
-      "available": false,
-      "note": "FRED key absent — actuals degrade to scheduled/awaiting."
+      "available": true,
+      "note": "FRED official enrichment active."
     },
     {
       "id": "fmp_forecast",
       "kind": "consensus_forecast",
       "available": false,
-      "note": "FMP forecast unavailable (missing_api_key)."
+      "note": "FMP forecast unavailable (HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar)."
     },
     {
       "id": "finnhub_forecast",
       "kind": "consensus_forecast",
       "available": false,
-      "note": "Finnhub forecast unavailable (missing_api_key)."
+      "note": "Finnhub forecast unavailable (HTTP 403 from https://finnhub.io/api/v1/calendar/economic)."
     },
     {
       "id": "global_official_schedules",
@@ -54,9 +54,8 @@
     }
   ],
   "degraded_sources": [
-    "fred",
     "fmp_forecast",
     "finnhub_forecast"
   ],
-  "overall": "degraded"
+  "overall": "warning"
 }
