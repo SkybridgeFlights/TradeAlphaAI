@@ -66,13 +66,21 @@ function validateCanonicalContract(en, ar, out, checkFiles) {
   }
 
   for (const contract of [en, ar]) {
-    const labels = contract.links.map((link) => link.label.toLocaleLowerCase());
-    const hrefs = contract.links.map((link) => link.href);
+    // Duplicate detection applies to the TOP-LEVEL nav only. Each
+    // dropdown is allowed to repeat its section-root href as the
+    // parent trigger, the first child (section index), and the
+    // "View all" terminal link — that's intentional UX, not a bug.
+    const topLevelLinks = contract.links.filter((link) => link.isTopLevel);
+    const labels = topLevelLinks.map((link) => link.label.toLocaleLowerCase());
+    const hrefs = topLevelLinks.map((link) => link.href);
     for (const label of new Set(labels)) {
       if (labels.filter((value) => value === label).length > 1) {
-        out.push(`${contract.locale}: duplicate navigation label "${label}"`);
+        out.push(`${contract.locale}: duplicate top-level navigation label "${label}"`);
       }
     }
+    // Forbidden-route / file-existence checks still apply to EVERY link
+    // (top-level + dropdown children), so internal routes can never
+    // sneak in through a dropdown.
     for (const link of contract.links) {
       if (FORBIDDEN.some((pattern) => pattern.test(link.href))) {
         out.push(`${contract.locale}: internal route exposed in public navigation (${link.href})`);
@@ -81,7 +89,7 @@ function validateCanonicalContract(en, ar, out, checkFiles) {
     }
     for (const href of new Set(hrefs)) {
       if (hrefs.filter((value) => value === href).length > 1) {
-        out.push(`${contract.locale}: duplicate navigation route "${href}"`);
+        out.push(`${contract.locale}: duplicate top-level navigation route "${href}"`);
       }
     }
   }
@@ -155,8 +163,16 @@ function navContract(html) {
   const navMatch = html.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
   if (!navMatch) return null;
   const links = [...navMatch[0].matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)].map((match) => {
-    const href = (match[1].match(/href="([^"]+)"/i) || [])[1] || '';
-    return { href, label: decodeText(match[2]) };
+    const attrs = match[1];
+    const href = (attrs.match(/href="([^"]+)"/i) || [])[1] || '';
+    const className = (attrs.match(/class="([^"]+)"/i) || [])[1] || '';
+    const isTopLevel = /\bnav-link\b/.test(className);
+    // Strip the dropdown caret character (▾) that nav-menu triggers
+    // append for visual affordance — it's UI chrome, not part of the
+    // label. Without this, "Markets▾" would compare differently to
+    // a sibling rendered "Markets" (e.g. the dropdown first-child).
+    const rawLabel = decodeText(match[2]).replace(/[▾▼▽⌄˅]/g, '').trim();
+    return { href, label: rawLabel, isTopLevel };
   });
   return {
     locale: localeMatch ? localeMatch[1] : (links.some((link) => link.href.startsWith('/ar/')) ? 'ar' : 'en'),
@@ -220,8 +236,15 @@ function runNegativeSelfTests() {
       ar: expected.ar
     },
     {
+      // After the 6-item nav redesign, duplicate detection runs over
+      // TOP-LEVEL links only (intentional repetition inside a dropdown
+      // — trigger + section-index + view-all all pointing at the
+      // section root — is standard premium-nav UX, not a duplicate).
+      // To still verify the rule fires, rename the TOP-LEVEL Research
+      // trigger to "Markets" so the top-level set contains "Markets"
+      // twice.
       name: 'duplicate-label',
-      en: mutate(expected.en, (links) => links.map((link) => link.href === '/insights/' ? { ...link, label: 'Market News' } : link)),
+      en: mutate(expected.en, (links) => links.map((link) => (link.href === '/research/' && link.isTopLevel) ? { ...link, label: 'Markets' } : link)),
       ar: expected.ar
     },
     {
