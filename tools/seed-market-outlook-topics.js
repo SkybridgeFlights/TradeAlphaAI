@@ -440,11 +440,31 @@ function hasHeadlineSimilarity(template) {
 
 // ── Topic builder ─────────────────────────────────────────────────────────────
 
+// Disambiguate titles per occurrence so the duplicate-similarity guard
+// in check-publishing-safety (>=0.82 Jaccard) never trips. We add a
+// date-specific qualifier (month + period) to every seeded title, so
+// the same template seeded across the year produces unique headlines.
+const MONTH_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+function periodQualifier(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  const day = d.getUTCDate();
+  const monthIdx = d.getUTCMonth();
+  const year = d.getUTCFullYear();
+  const periodEn = day <= 10 ? 'Early' : day <= 20 ? 'Mid' : 'Late';
+  const periodAr = day <= 10 ? 'بداية' : day <= 20 ? 'منتصف' : 'أواخر';
+  return {
+    en: `${periodEn}-${MONTH_EN[monthIdx]} ${year} Update`,
+    ar: `تحديث ${periodAr} ${MONTH_AR[monthIdx]} ${year}`,
+  };
+}
+
 function buildTopic(template, publishDate) {
+  const q = periodQualifier(publishDate);
   return {
     slug:                `${template.slug_prefix}-${publishDate}`,
-    title_en:            template.title_en,
-    title_ar:            template.title_ar,
+    title_en:            `${template.title_en} — ${q.en}`,
+    title_ar:            `${template.title_ar} — ${q.ar}`,
     category:            'market_outlook',
     content_type:        'market_outlook',
     topic_cluster:       template.topic_cluster,

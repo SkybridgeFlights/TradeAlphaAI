@@ -92,6 +92,17 @@ const YAHOO_FALLBACK_MAP = {
   us10y_yield: { symbol: '^TNX',     divisor: 1 },
   dowjones:    { symbol: '^DJI',     divisor: 1 },
   oil:         { symbol: 'CL=F',     divisor: 1 },
+  // Equity + commodity + crypto fields. Used both when Finnhub key is
+  // missing AND when the Finnhub cache for these fields has gone stale
+  // beyond the publish-safety threshold (>26h). Yahoo provides daily-EOD
+  // values that keep the homepage live-tape current without retail keys.
+  sp500:       { symbol: 'SPY',      divisor: 1 },
+  nasdaq:      { symbol: 'QQQ',      divisor: 1 },
+  russell2000: { symbol: 'IWM',      divisor: 1 },
+  gold:        { symbol: 'GLD',      divisor: 1 },
+  tlt:         { symbol: 'TLT',      divisor: 1 },
+  nvda:        { symbol: 'NVDA',     divisor: 1 },
+  bitcoin:     { symbol: 'BTC-USD',  divisor: 1 },
 };
 const YAHOO_SOURCE = 'https://finance.yahoo.com/';
 
@@ -362,10 +373,19 @@ async function fetchAndUpdate() {
   }
 
   // ── Yahoo Finance keyless fallback ───────────────────────────────────────
-  // For any NUMERIC_BOUNDS field still missing after FRED + Finnhub passes,
-  // try the public Yahoo Finance quote endpoint. This fills VIX, DXY,
-  // US10Y, OIL, DOW etc. without requiring any paid key.
-  const missingForYahoo = Object.keys(YAHOO_FALLBACK_MAP).filter((field) => !collected[field]);
+  // Fills any NUMERIC_BOUNDS field that is null OR stale (>24h) after the
+  // FRED + Finnhub passes. Yahoo is the always-available tier — no key
+  // required. Stale-refresh prevents the publish-safety "stale fetched_at"
+  // warning from blocking the autonomous publishing brain on weekends or
+  // whenever the paid providers throttle / return 4xx.
+  const STALE_THRESHOLD_MS = 24 * 3600 * 1000;
+  const nowMs = Date.now();
+  const missingForYahoo = Object.keys(YAHOO_FALLBACK_MAP).filter((field) => {
+    const c = collected[field];
+    if (!c || c.value == null) return true;
+    const fetched = c.fetched_at ? new Date(c.fetched_at).getTime() : 0;
+    return (nowMs - fetched) > STALE_THRESHOLD_MS;
+  });
   if (missingForYahoo.length) {
     console.log(`[YAHOO] Fallback for missing fields: ${missingForYahoo.join(', ')}`);
     for (const field of missingForYahoo) {
