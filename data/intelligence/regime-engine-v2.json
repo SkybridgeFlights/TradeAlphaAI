@@ -1,13 +1,17 @@
 {
   "schema_version": "2.0",
-  "generated_at": "2026-06-07T17:32:36.885Z",
+  "generated_at": "2026-06-22T18:00:49.166Z",
   "data_quality": "structural",
   "freshness_score": 100,
   "classifications": {
     "risk_appetite": {
       "label": "neutral",
-      "confidence": 76,
-      "evidence": [],
+      "confidence": 85,
+      "evidence": [
+        "VIX 17.2 — calm conditions",
+        "S&P 500 downtrend",
+        "Broad participation: broad"
+      ],
       "data_quality": "structural",
       "freshness_score": null,
       "reason_en": "Mixed signals — no decisive risk-on or risk-off bias confirmed.",
@@ -18,7 +22,8 @@
       "confidence": 56,
       "evidence": [
         "Fed stance: data-dependent — inflation trajectory unresolved",
-        "Hold probability: 70% — inflation not hot enough for hikes"
+        "Hold probability: 70% — inflation not hot enough for hikes",
+        "50 CPI event(s) in calendar window"
       ],
       "data_quality": "structural",
       "freshness_score": null,
@@ -41,62 +46,94 @@
     },
     "growth_regime": {
       "label": "uncertain",
-      "confidence": 15,
+      "confidence": 55,
       "evidence": [
-        "No growth indicators available"
+        "Breadth: broad",
+        "Equities: downtrend"
       ],
-      "data_quality": "insufficient",
+      "data_quality": "structural",
       "freshness_score": null,
-      "reason_en": "growth_regime: No growth indicators available",
-      "reason_ar": "growth_regime: بيانات غير كافية"
+      "reason_en": "Growth signals are mixed — no clear expansion or contraction trend confirmed.",
+      "reason_ar": "إشارات النمو متضاربة — لم يتأكد اتجاه توسع أو انكماش واضح."
     },
     "volatility_regime": {
-      "label": "uncertain",
-      "confidence": 15,
+      "label": "volatility_compression",
+      "confidence": 65,
       "evidence": [
-        "VIX level not available for precise classification"
+        "VIX: 17.2",
+        "VIX change: +5.0%",
+        "VIX regime: calm"
       ],
-      "data_quality": "insufficient",
+      "data_quality": "structural",
       "freshness_score": null,
-      "reason_en": "volatility_regime: VIX level not available for precise classification",
-      "reason_ar": "volatility_regime: بيانات غير كافية"
+      "reason_en": "VIX at 17.2 — below average. Orderly market conditions.",
+      "reason_ar": "VIX عند 17.2 — أقل من المتوسط. أوضاع سوق منظمة."
     },
     "dollar_regime": {
-      "label": "uncertain",
-      "confidence": 15,
+      "label": "dollar_strength",
+      "confidence": 65,
       "evidence": [
-        "DXY data unavailable"
+        "DXY trend: strong-uptrend",
+        "DXY change: +1.48%",
+        "6 transmission chain(s) involve DXY"
       ],
-      "data_quality": "insufficient",
+      "data_quality": "structural",
       "freshness_score": null,
-      "reason_en": "dollar_regime: DXY data unavailable",
-      "reason_ar": "dollar_regime: بيانات غير كافية"
+      "reason_en": "DXY in uptrend — dollar strength creating headwinds for risk assets and EM.",
+      "reason_ar": "الدولار في اتجاه صعودي — قوة الدولار تخلق عقبات للأصول الخطرة والأسواق الناشئة."
     },
     "duration_regime": {
-      "label": "uncertain",
-      "confidence": 40,
+      "label": "duration_pressure",
+      "confidence": 65,
       "evidence": [
+        "10Y yield: 4.51%",
         "Fed bias: data_dependent",
         "Cut probability: 10%"
       ],
       "data_quality": "structural",
       "freshness_score": null,
-      "reason_en": "Duration regime unclear — yield curve positioning and rate path signals mixed.",
-      "reason_ar": "نظام المدة غير واضح — إشارات وضع منحنى العائد ومسار الفائدة متضاربة."
+      "reason_en": "Elevated long yields or hike bias creating pressure on duration-sensitive assets.",
+      "reason_ar": "ارتفاع العوائد الطويلة أو التحيز نحو الرفع يضغط على الأصول الحساسة للمدة."
     }
   },
   "summary": {
-    "risk_appetite": "neutral (76%)",
+    "risk_appetite": "neutral (85%)",
     "rate_path": "hold_bias (73%)",
-    "volatility_regime": "uncertain (15%)",
-    "growth_regime": "uncertain (15%)",
+    "volatility_regime": "volatility_compression (65%)",
+    "growth_regime": "uncertain (55%)",
     "inflation_regime": "uncertain (56%)",
-    "dollar_regime": "uncertain (15%)",
-    "duration_regime": "uncertain (40%)",
-    "headline_en": "Market tone: neutral · Volatility: uncertain · Rate path: hold bias",
-    "headline_ar": "نبرة السوق: محايد · التقلب: غير مؤكد · مسار الفائدة: ثبات"
+    "dollar_regime": "dollar_strength (65%)",
+    "duration_regime": "duration_pressure (65%)",
+    "headline_en": "Market tone: neutral · Volatility: volatility compression · Rate path: hold bias",
+    "headline_ar": "نبرة السوق: محايد · التقلب: تقلب منخفض · مسار الفائدة: ثبات"
   },
-  "upcoming_catalysts": [],
+  "upcoming_catalysts": [
+    {
+      "event": "Eurozone Flash Manufacturing PMI",
+      "date": "2026-06-23",
+      "impact": "medium"
+    },
+    {
+      "event": "Eurozone Flash Services PMI",
+      "date": "2026-06-23",
+      "impact": "medium"
+    },
+    {
+      "event": "Eurozone Flash Composite PMI",
+      "date": "2026-06-23",
+      "impact": "medium"
+    },
+    {
+      "event": "Australia CPI",
+      "date": "2026-06-24",
+      "impact": "high"
+    },
+    {
+      "event": "Japan Trade Balance",
+      "date": "2026-06-24",
+      "impact": "medium"
+    }
+  ],
   "transmission_signals": [
     {
       "trigger": "CPI_hot",

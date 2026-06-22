@@ -1,18 +1,60 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-07T17:55:47.279Z",
-  "status": "insufficient_data",
-  "min_snapshots_required": 2,
-  "available_snapshots": 1,
-  "insights": [],
+  "generated_at": "2026-06-22T18:00:49.234Z",
+  "status": "ok",
+  "total_snapshots": 2,
+  "date_range": {
+    "from": "2026-06-07",
+    "to": "2026-06-22"
+  },
   "confidence_trend": {
-    "direction": "insufficient_data",
-    "delta": 0,
-    "latest": 0
+    "direction": "rising",
+    "delta": 25,
+    "latest": 66,
+    "values": [
+      {
+        "date": "2026-06-07",
+        "confidence": 41
+      },
+      {
+        "date": "2026-06-22",
+        "confidence": 66
+      }
+    ]
   },
   "summary": {
-    "headline_en": "Insufficient historical data for continuity analysis",
-    "headline_ar": "بيانات تاريخية غير كافية للتحليل",
-    "regime_stability": "unknown"
-  }
+    "headline_en": "Recent regime transition: volatility_state shifted from uncertain to volatility_compression",
+    "headline_ar": "انتقال حديث في النظام: volatility_state تحول من uncertain إلى volatility_compression",
+    "regime_stability": "transitioning",
+    "confidence_trend": "rising",
+    "latest_date": "2026-06-22",
+    "latest_market_tone": "neutral",
+    "total_insights": 2,
+    "has_recent_transition": true,
+    "key_persistent_fields": []
+  },
+  "insights": [
+    {
+      "type": "regime_transition",
+      "field": "volatility_state",
+      "from": "uncertain",
+      "to": "volatility_compression",
+      "date": "2026-06-22",
+      "confidence": 65,
+      "reason_en": "Volatility state transitioned from \"uncertain\" to \"volatility_compression\" on 2026-06-22.",
+      "reason_ar": "Volatility state انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22.",
+      "freshness_score": 100
+    },
+    {
+      "type": "volatility_shift",
+      "from": "uncertain",
+      "to": "volatility_compression",
+      "date": "2026-06-22",
+      "escalating": false,
+      "confidence": 65,
+      "reason_en": "Volatility shifted from \"uncertain\" to \"volatility_compression\" on 2026-06-22. Volatility compression detected.",
+      "reason_ar": "التذبذب انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22. رصد انضغاط في التذبذب.",
+      "freshness_score": 100
+    }
+  ]
 }
