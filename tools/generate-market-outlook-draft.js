@@ -19,6 +19,7 @@ const {
   normalizeArabicFinancialHtml,
 } = require('./arabic-financial-localization');
 const { suppressExcessTickersInHtml } = require('./market-outlook-post-processor');
+const narrative = require('./narrative-prose');
 
 const ROOT = path.resolve(__dirname, '..');
 const QUEUE_PATH = path.join(ROOT, 'data', 'market-outlook-queue.json');
@@ -423,6 +424,8 @@ ${sidebarLinks}
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.executiveSummary)}</span><h2>${escapeHtml(L.executiveSummary)}</h2></div>
         <div class="market-panel"><p class="market-copy">${escapeHtml(execSummaryText)}</p></div>
       </section>
+
+      ${narrative.composeFullBody(locale, {})}
 
 ${convictionSection}
 

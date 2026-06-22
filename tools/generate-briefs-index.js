@@ -124,6 +124,8 @@ function buildMain(ar, brief) {
 
 ${latestBlock}
 
+      ${require('./narrative-prose').composeFullBody(ar ? 'ar' : 'en', {})}
+
       <section class="market-section" id="briefing-cadence">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Briefing cadence', 'إيقاع الموجزات'))}</span><h2>${esc(t('The desk briefing cadence', 'إيقاع موجزات المكتب'))}</h2></div>
         <div class="market-grid three">
