@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "name": "TradeAlpha Workflow Schedule",
+  "description": "User-controllable weekly publishing cadence for the unified TradeAlpha Workflow. Edit weekly_schedule to control how many articles, news and forecasts publish each day of the week. The orchestrator runs once per day and skips slots that have already been delivered.",
+  "timezone": "UTC",
+  "publish_hour_utc": 10,
+  "narrative_mode": true,
+  "min_words_per_article": 1200,
+  "telegram_enabled": true,
+  "type_mapping": {
+    "article":  "editorial",
+    "news":     "continuous-intelligence",
+    "forecast": "market-outlook"
+  },
+  "weekly_schedule": {
+    "0": { "label": "Sunday",    "article": 0, "news": 0, "forecast": 0 },
+    "1": { "label": "Monday",    "article": 1, "news": 1, "forecast": 1 },
+    "2": { "label": "Tuesday",   "article": 1, "news": 1, "forecast": 0 },
+    "3": { "label": "Wednesday", "article": 1, "news": 1, "forecast": 1 },
+    "4": { "label": "Thursday",  "article": 1, "news": 1, "forecast": 0 },
+    "5": { "label": "Friday",    "article": 1, "news": 1, "forecast": 1 },
+    "6": { "label": "Saturday",  "article": 0, "news": 1, "forecast": 0 }
+  },
+  "notes": {
+    "article":  "Long-form research/educational article (editorial, like Investing.com analysis pieces). Mapped to brain content-type 'editorial'.",
+    "news":     "News-driven market analysis with concrete numbers (volatility regime, breadth shifts, sector rotation). Mapped to brain content-type 'continuous-intelligence'.",
+    "forecast": "Daily/weekly price + macro outlook with conviction read. Mapped to brain content-type 'market-outlook'.",
+    "how_to_edit": "Change any value in weekly_schedule to set the daily quota per type. Keys 0-6 are Sunday..Saturday. Set 0 to disable a type that day. The orchestrator respects per-day quotas, dedupes against published-history files, and only publishes new content."
+  }
+}

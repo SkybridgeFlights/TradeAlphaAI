@@ -17,17 +17,18 @@ const WF_DIR = path.join(ROOT, '.github', 'workflows');
 const failures = [];
 
 const CANONICAL = new Set([
-  'autonomous-publishing-brain.yml', // supervisor/engine
+  'tradealpha-workflow.yml',         // Unified publishing workflow (schedule-driven; reads data/publishing-schedule.json)
+  'autonomous-publishing-brain.yml', // Supervisor/engine — workflow_dispatch-only fallback under tradealpha
   'distribution-brain.yml',
   'market-watch.yml',                // Intraday Market Watch
-  'articles-brain.yml',
-  'market-news-brain.yml',
-  'market-outlook-brain.yml',
-  'briefs-brain.yml',
-  'daily-research-brain.yml',        // Phase 115 — continuous Daily Research Brain (publishes on quiet tape)
-  'technical-intelligence-brain.yml', // Phase 116 — continuous Technical Structure Brain (/market-structure/)
+  'articles-brain.yml',              // Now workflow_dispatch-only fallback
+  'market-news-brain.yml',           // Now workflow_dispatch-only fallback
+  'market-outlook-brain.yml',        // Now workflow_dispatch-only fallback
+  'briefs-brain.yml',                // Now workflow_dispatch-only fallback
+  'daily-research-brain.yml',        // Now workflow_dispatch-only fallback
+  'technical-intelligence-brain.yml', // Now workflow_dispatch-only fallback
   'homepage-feed.yml',               // Phase 117 — homepage intelligence feed refresh (owns index.html feed module)
-  'educational-intelligence-brain.yml', // Phase 118 — continuous Educational Intelligence Engine (/articles/)
+  'educational-intelligence-brain.yml', // Now workflow_dispatch-only fallback
   'social-approval-runner.yml',      // Phase 100 — manual controlled social delivery (no schedule)
 ]);
 
@@ -67,13 +68,24 @@ for (const f of active) {
   }
 }
 
-// Publishing brains must wire distribution and run on a schedule.
+// Publishing brains must wire distribution. As of 2026-06-22 the per-section
+// brains are workflow_dispatch-only fallbacks; the unified
+// tradealpha-workflow.yml owns the scheduled cadence, so the per-section
+// schedule requirement no longer applies to them.
 for (const f of PUBLISHING_BRAINS) {
   if (!active.includes(f)) continue;
   const yaml = fs.readFileSync(path.join(WF_DIR, f), 'utf8');
   if (!yaml.includes('build-distribution-plan.js')) failures.push(`${f}: not wired to social distribution`);
-  if (!/schedule:/.test(yaml)) failures.push(`${f}: missing schedule (independent cadence required)`);
   if (!/concurrency:/.test(yaml)) failures.push(`${f}: missing concurrency guard`);
+}
+
+// The unified workflow must run on a schedule and have a concurrency guard.
+if (active.includes('tradealpha-workflow.yml')) {
+  const yaml = fs.readFileSync(path.join(WF_DIR, 'tradealpha-workflow.yml'), 'utf8');
+  if (!/schedule:/.test(yaml)) failures.push('tradealpha-workflow.yml: missing schedule (must drive daily cadence)');
+  if (!/concurrency:/.test(yaml)) failures.push('tradealpha-workflow.yml: missing concurrency guard');
+  if (!yaml.includes('tradealpha-orchestrator.js')) failures.push('tradealpha-workflow.yml: must invoke tradealpha-orchestrator.js');
+  if (!yaml.includes('autonomous-publishing-brain.js')) failures.push('tradealpha-workflow.yml: must invoke autonomous-publishing-brain.js for each slot');
 }
 
 // Archived legacy present under archive/.

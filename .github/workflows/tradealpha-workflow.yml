@@ -1,0 +1,458 @@
+name: TradeAlpha Workflow
+
+# Unified publishing workflow for TradeAlphaAI.
+#
+# Reads data/publishing-schedule.json to decide what should be published today
+# (per article / news / forecast bucket), then runs the autonomous publishing
+# brain once per pending bucket. Each bucket publishes a single article and
+# sends a single Telegram message; the whole run shares one data-prep pass.
+#
+# The schedule, type mapping, and quotas are user-editable in
+# data/publishing-schedule.json. The orchestrator dedupes against the
+# published-history files so re-triggering the workflow on the same day
+# does not republish.
+#
+# Each bucket has an independent slot step bound to it, so a failure in
+# one bucket never starves the others. The 3 buckets are: article, news,
+# forecast.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Plan + data prep only; do not publish'
+        required: true
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
+  schedule:
+    # Daily at 10:00 UTC — runs the schedule for today.
+    - cron: '0 10 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tradealpha-workflow
+  cancel-in-progress: false
+
+jobs:
+  tradealpha-publish:
+    runs-on: ubuntu-latest
+    env:
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      ENABLE_TELEGRAM_PUBLISH: ${{ vars.ENABLE_TELEGRAM_PUBLISH || secrets.ENABLE_TELEGRAM_PUBLISH }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+
+    steps:
+      - name: Log TradeAlpha context
+        run: |
+          echo "==========================================================="
+          echo "  [TRADEALPHA WORKFLOW] starting"
+          echo "  Dry run:        ${DRY_RUN}"
+          echo "  Trigger:        ${{ github.event_name }}"
+          echo "  Run ID:         ${{ github.run_id }}"
+          echo "==========================================================="
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Bilingual structural integrity check (preflight)
+        run: |
+          if ! node tools/check-bilingual-structure.js; then
+            echo "[bilingual] Mismatch detected — running auto-sync for affected slugs..."
+            node -e "
+              const fs = require('fs'), path = require('path');
+              const DRAFTS = 'drafts/editorial';
+              if (!fs.existsSync(DRAFTS)) process.exit(0);
+              const slugs = fs.readdirSync(DRAFTS).filter(d => fs.statSync(path.join(DRAFTS, d)).isDirectory());
+              for (const slug of slugs) {
+                const { spawnSync } = require('child_process');
+                const r = spawnSync('node', ['tools/check-bilingual-structure.js', '--slug=' + slug, '--drafts-only'], {encoding:'utf8'});
+                if (r.status !== 0) {
+                  console.log('[bilingual] Auto-syncing: ' + slug);
+                  spawnSync('node', ['tools/sync-bilingual-article-structure.js', '--slug=' + slug, '--remove-orphans', '--write'], {stdio:'inherit'});
+                }
+              }
+            "
+            echo "[bilingual] Re-validating after auto-sync..."
+            node tools/check-bilingual-structure.js
+          fi
+          echo "[bilingual] Bilingual structural integrity verified."
+
+      - name: Acquire publishing lock
+        if: ${{ env.DRY_RUN == 'false' }}
+        run: |
+          run_id="${{ github.run_id }}"
+          node -e "
+            const { acquire } = require('./tools/publishing-lock');
+            const result = acquire({ run_id: '${run_id}', actor: 'github-actions', mode: 'tradealpha-workflow' });
+            if (!result.ok) {
+              console.error('[lock] BLOCKED: ' + result.error);
+              process.exit(1);
+            }
+          "
+          echo "[lock] Publishing lock acquired for run_id=${run_id}"
+
+      - name: Build run snapshot
+        run: |
+          node tools/build-run-snapshot.js "tradealpha-workflow" "all"
+
+      - name: Fetch economic calendar
+        continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: |
+          node tools/fetch-economic-calendar.js --write || echo "[calendar] fetch failed — preflight will validate against existing cache"
+
+      - name: Self-heal missing approved market-outlook drafts
+        run: node tools/self-heal-market-outlook-drafts.js
+
+      - name: Preflight production gates
+        run: |
+          npm run check:economic-calendar
+          npm run check:market-outlook-queue
+          npm run check:market-outlook-localization
+          npm run check:editorial
+          npm run check:continuous-intelligence
+          npm run check:queue-reconciliation
+          npm run check:language-purity
+          npm run check:dashboard-routes
+          npm run check:production
+          npm run check:seo
+          npm run check:indexing
+          npm run check:social-meta
+          npm run check:responsive
+          npm run check:global-header
+          npm run check:surface-discovery
+
+      - name: Rebuild knowledge graph
+        run: |
+          node tools/build-content-knowledge-graph.js --write
+          node tools/build-article-pairs.js --write
+          node tools/analyze-content-clusters.js --write
+          node tools/detect-orphan-pages.js --write
+
+      - name: Build institutional intelligence
+        run: |
+          node tools/build-market-expectations.js --write || echo "[expectations] degraded"
+          node tools/build-cross-asset-reaction.js --write || echo "[cross-asset-reaction] degraded"
+          node tools/build-event-reaction-memory.js --write || echo "[event-reaction] degraded"
+          node tools/detect-market-regime.js --write
+          node tools/build-cross-asset-transmission.js --write
+          node tools/build-etf-flow-intelligence.js --write
+          node tools/build-rate-path-intelligence.js --write
+          node tools/generate-macro-narrative.js --write
+          node tools/build-market-intelligence-context.js --write || echo "[intelligence-context] degraded"
+
+      - name: Build regime engine v2 + visual data
+        run: |
+          node tools/build-regime-engine-v2.js --write || echo "[regime-v2] degraded"
+          node tools/build-historical-intelligence-memory.js --write || echo "[historical] degraded"
+          node tools/build-narrative-continuity-engine.js --write || echo "[narrative-continuity] degraded"
+          node tools/build-market-narrative-state.js --write || echo "[narrative-state] degraded"
+          node tools/build-newswire-events.js --write || echo "[newswire] degraded"
+          node tools/build-market-pulse.js --write || echo "[pulse] degraded"
+          node tools/build-market-cognition.js --write || echo "[cognition] degraded"
+          node tools/build-macro-cognition.js --write || echo "[macro-cognition] degraded"
+          node tools/build-narrative-convergence.js --write || echo "[convergence] degraded"
+          node tools/build-chart-narratives.js --write || echo "[chart-narratives] degraded"
+          node tools/build-editorial-market-memory.js --write || echo "[editorial-memory] degraded"
+          node tools/build-structural-tension.js --write || echo "[structural-tension] degraded"
+          node tools/build-intelligence-briefs.js --write || echo "[product-brief] degraded"
+          node tools/build-intraday-brief.js --write || echo "[intraday-brief] degraded"
+          node tools/build-social-intelligence.js --write || echo "[social-intelligence] degraded"
+          node tools/build-editorial-graphics.js --write || echo "[editorial-graphics] degraded"
+          node tools/build-graphic-exports.js --write || echo "[graphic-exports] degraded"
+          node tools/build-distribution-plan.js --write || echo "[distribution-plan] degraded"
+          node tools/render-newsroom-modules.js || echo "[newsroom] degraded"
+          node tools/promote-wire-events.js --write || echo "[wire-promotion] degraded"
+          node tools/build-visual-intelligence-data.js --write || echo "[visual-data] degraded"
+
+      - name: Refresh live market state (Yahoo fallback)
+        continue-on-error: true
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: node tools/update-live-market-state.js --write || echo "[live-state] degraded"
+
+      - name: Generate continuous intelligence topic candidates
+        continue-on-error: true
+        run: node tools/generate-continuous-intelligence-topic.js --write || echo "[ci-topic] degraded"
+
+      - name: Generate dashboards + apply global header
+        run: |
+          node tools/generate-dashboard-pages.js || echo "[dashboards] degraded"
+          node tools/apply-global-header.js || echo "[header] degraded"
+
+      - name: Generate educational article surface
+        run: |
+          node tools/build-educational-topics.js --write
+          node tools/generate-articles-index.js --write
+          node tools/generate-seo-sitemaps.js
+
+      - name: Generate market outlook pages
+        run: |
+          node tools/generate-daily-market-outlook.js --write
+          node tools/generate-daily-market-outlook.js --mode=weekly --write
+          node tools/generate-briefs-index.js --write || echo "[briefs] degraded"
+          node tools/build-news-eligibility.js --write || echo "[news-eligibility] degraded"
+          node tools/generate-market-news-index.js --write || echo "[market-news-index] degraded"
+          node tools/apply-global-header.js || echo "[header-outlook] degraded"
+          node tools/generate-seo-sitemaps.js || echo "[sitemaps] degraded"
+
+      - name: Show today's TradeAlpha plan
+        run: node tools/tradealpha-orchestrator.js
+
+      - name: Decide bucket gates
+        id: gates
+        run: |
+          article_pending="$(node tools/tradealpha-orchestrator.js --bucket=article | node -e "process.stdout.write(JSON.parse(require('fs').readFileSync(0,'utf8')).pending>0?'yes':'no')")"
+          news_pending="$(node tools/tradealpha-orchestrator.js --bucket=news | node -e "process.stdout.write(JSON.parse(require('fs').readFileSync(0,'utf8')).pending>0?'yes':'no')")"
+          forecast_pending="$(node tools/tradealpha-orchestrator.js --bucket=forecast | node -e "process.stdout.write(JSON.parse(require('fs').readFileSync(0,'utf8')).pending>0?'yes':'no')")"
+          echo "article=${article_pending}" >> $GITHUB_OUTPUT
+          echo "news=${news_pending}" >> $GITHUB_OUTPUT
+          echo "forecast=${forecast_pending}" >> $GITHUB_OUTPUT
+          echo "[gates] article=${article_pending} news=${news_pending} forecast=${forecast_pending}"
+
+      # ============ FORECAST BUCKET (market-outlook) ============
+      - name: Slot — forecast — publish
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.forecast == 'yes' }}
+        run: |
+          slot_type="market-outlook"
+          echo "[slot forecast] running brain content_type=${slot_type}"
+          node tools/autonomous-publishing-brain.js \
+            --mode=full_pipeline \
+            --content-type="${slot_type}" \
+            --dry-run=false \
+            --manual-topic="" \
+            --force-content-type=true || echo "[slot forecast] brain exit non-zero (cooldown or no eligible topic)"
+          node tools/verify-publish-integrity.js || echo "[slot forecast] integrity warnings"
+          node tools/cleanup-orphan-public-files.js --execute || echo "[slot forecast] orphan-cleanup degraded"
+          node tools/verify-publish-integrity.js || true
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "[slot forecast] no changes to commit"
+            exit 0
+          fi
+          slug_for_commit="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          git commit -m "TradeAlpha forecast slot (${slot_type}) ${slug_for_commit}"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "${GITHUB_REF_NAME}"
+
+      - name: Slot — forecast — Telegram
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.forecast == 'yes' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_content_type||''))}catch{process.stdout.write('')}")"
+          if [ "${published}" != "yes" ] || [ -z "${slug}" ] || [ "${type}" != "market-outlook" ]; then
+            echo "[slot forecast telegram] skipped — published=${published} type=${type}"
+            exit 0
+          fi
+          live_url="https://www.tradealphaai.com/market-outlook/${slug}.html"
+          deployed=no
+          for attempt in $(seq 1 20); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' "${live_url}" || echo 000)"
+            echo "[slot forecast telegram] deploy check ${attempt}/20: ${code} ${live_url}"
+            if [ "${code}" = "200" ]; then deployed=yes; break; fi
+            sleep 15
+          done
+          if [ "${deployed}" != "yes" ]; then
+            echo "[slot forecast telegram] live URL not 200 yet"
+            exit 0
+          fi
+          if [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
+            node tools/send-published-article-telegram.js --slug="${slug}" --content-type="${type}" --source=primary --send
+          fi
+          if ! git diff --quiet -- data/telegram-delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/telegram-delivery-ledger.json
+            git commit -m "Telegram delivery (forecast)"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}"
+          fi
+
+      # ============ NEWS BUCKET (continuous-intelligence) ============
+      - name: Slot — news — publish
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.news == 'yes' }}
+        run: |
+          slot_type="continuous-intelligence"
+          echo "[slot news] running brain content_type=${slot_type}"
+          node tools/autonomous-publishing-brain.js \
+            --mode=full_pipeline \
+            --content-type="${slot_type}" \
+            --dry-run=false \
+            --manual-topic="" \
+            --force-content-type=true || echo "[slot news] brain exit non-zero (cooldown or no eligible topic)"
+          node tools/verify-publish-integrity.js || echo "[slot news] integrity warnings"
+          node tools/cleanup-orphan-public-files.js --execute || echo "[slot news] orphan-cleanup degraded"
+          node tools/verify-publish-integrity.js || true
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "[slot news] no changes to commit"
+            exit 0
+          fi
+          slug_for_commit="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          git commit -m "TradeAlpha news slot (${slot_type}) ${slug_for_commit}"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "${GITHUB_REF_NAME}"
+
+      - name: Slot — news — Telegram
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.news == 'yes' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_content_type||''))}catch{process.stdout.write('')}")"
+          if [ "${published}" != "yes" ] || [ -z "${slug}" ] || [ "${type}" != "continuous-intelligence" ]; then
+            echo "[slot news telegram] skipped — published=${published} type=${type}"
+            exit 0
+          fi
+          live_url="https://www.tradealphaai.com/intelligence/${slug}.html"
+          deployed=no
+          for attempt in $(seq 1 20); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' "${live_url}" || echo 000)"
+            echo "[slot news telegram] deploy check ${attempt}/20: ${code} ${live_url}"
+            if [ "${code}" = "200" ]; then deployed=yes; break; fi
+            sleep 15
+          done
+          if [ "${deployed}" != "yes" ]; then
+            echo "[slot news telegram] live URL not 200 yet"
+            exit 0
+          fi
+          if [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
+            node tools/send-published-article-telegram.js --slug="${slug}" --content-type="${type}" --source=primary --send
+          fi
+          if ! git diff --quiet -- data/telegram-delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/telegram-delivery-ledger.json
+            git commit -m "Telegram delivery (news)"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}"
+          fi
+
+      # ============ ARTICLE BUCKET (editorial) ============
+      - name: Slot — article — publish
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.article == 'yes' }}
+        run: |
+          slot_type="editorial"
+          echo "[slot article] running brain content_type=${slot_type}"
+          node tools/autonomous-publishing-brain.js \
+            --mode=full_pipeline \
+            --content-type="${slot_type}" \
+            --dry-run=false \
+            --manual-topic="" \
+            --force-content-type=true || echo "[slot article] brain exit non-zero (cooldown or no eligible topic)"
+          node tools/verify-publish-integrity.js || echo "[slot article] integrity warnings"
+          node tools/cleanup-orphan-public-files.js --execute || echo "[slot article] orphan-cleanup degraded"
+          node tools/verify-publish-integrity.js || true
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "[slot article] no changes to commit"
+            exit 0
+          fi
+          slug_for_commit="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          git commit -m "TradeAlpha article slot (${slot_type}) ${slug_for_commit}"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "${GITHUB_REF_NAME}"
+
+      - name: Slot — article — Telegram
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.article == 'yes' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_content_type||''))}catch{process.stdout.write('')}")"
+          if [ "${published}" != "yes" ] || [ -z "${slug}" ] || [ "${type}" != "editorial" ]; then
+            echo "[slot article telegram] skipped — published=${published} type=${type}"
+            exit 0
+          fi
+          live_url="https://www.tradealphaai.com/insights/${slug}.html"
+          deployed=no
+          for attempt in $(seq 1 20); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' "${live_url}" || echo 000)"
+            echo "[slot article telegram] deploy check ${attempt}/20: ${code} ${live_url}"
+            if [ "${code}" = "200" ]; then deployed=yes; break; fi
+            sleep 15
+          done
+          if [ "${deployed}" != "yes" ]; then
+            echo "[slot article telegram] live URL not 200 yet"
+            exit 0
+          fi
+          if [ -n "${TELEGRAM_BOT_TOKEN}" ] && { [ -n "${TELEGRAM_CHAT_ID}" ] || [ -n "${TELEGRAM_CHANNEL_ID}" ]; }; then
+            node tools/send-published-article-telegram.js --slug="${slug}" --content-type="${type}" --source=primary --send
+          fi
+          if ! git diff --quiet -- data/telegram-delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/telegram-delivery-ledger.json
+            git commit -m "Telegram delivery (article)"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}"
+          fi
+
+      - name: Update homepage featured + system status
+        if: ${{ always() }}
+        run: |
+          node tools/update-market-outlook-publication.js || echo "[publication-update] degraded"
+          node tools/update-homepage-featured.js --write || echo "[homepage-featured] degraded"
+          node tools/build-intelligence-monitor.js --write || echo "[intelligence-monitor] degraded"
+          node tools/generate-system-status.js || echo "[system-status] degraded"
+          node tools/update-content-feeds.js || echo "[content-feeds] degraded"
+          node tools/render-newsroom-modules.js || echo "[newsroom] degraded"
+          node tools/apply-global-header.js || echo "[header] degraded"
+
+      - name: Commit ancillary changes
+        if: ${{ env.DRY_RUN == 'false' }}
+        continue-on-error: true
+        run: |
+          git config user.name "tradealphaai-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "[ancillary] no homepage / status changes to commit"
+            exit 0
+          fi
+          git commit -m "TradeAlpha workflow ancillary update"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "${GITHUB_REF_NAME}"
+
+      - name: Release publishing lock
+        if: ${{ always() && env.DRY_RUN == 'false' }}
+        run: |
+          run_id="${{ github.run_id }}"
+          node -e "
+            const { release } = require('./tools/publishing-lock');
+            release({ run_id: '${run_id}' });
+          " || echo "[lock] Lock release degraded — may need manual force-release"
+          echo "[lock] Publishing lock released for run_id=${run_id}"
