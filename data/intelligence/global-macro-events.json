@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-19T13:01:41.203Z",
+  "generated_at": "2026-06-22T04:13:31.773Z",
   "layer": "global-macro-acquisition",
   "window": {
-    "from": "2026-06-18",
-    "to": "2026-07-17"
+    "from": "2026-06-21",
+    "to": "2026-07-20"
   },
   "sources": [
     {
@@ -45,155 +45,32 @@
       "Switzerland"
     ],
     "by_region": {
-      "United Kingdom": 3,
-      "Switzerland": 1,
-      "Eurozone": 3,
-      "Japan": 2,
-      "Australia": 3,
+      "Australia": 2,
+      "Eurozone": 2,
       "Germany": 1,
+      "United Kingdom": 2,
+      "Japan": 1,
       "Canada": 1
     },
     "by_country": {
-      "GB": 3,
-      "CH": 1,
-      "EU": 3,
-      "JP": 2,
-      "AU": 3,
+      "AU": 2,
+      "EU": 2,
       "DE": 1,
+      "GB": 2,
+      "JP": 1,
       "CA": 1
     },
     "by_method": {
-      "official_schedule": 2,
-      "estimated_recurring": 12
+      "estimated_recurring": 9
     }
   },
   "min_coverage": 6,
   "source_outage": false,
   "counts": {
-    "total": 14,
-    "high_impact": 9
+    "total": 9,
+    "high_impact": 5
   },
   "events": [
-    {
-      "id": "economic-calendar::global_acquisition::gb::boe-rate-decision::20260618T120000",
-      "country": "GB",
-      "region": "United Kingdom",
-      "source": "Bank of England",
-      "source_url": "https://www.bankofengland.co.uk/monetary-policy/upcoming-mpc-dates",
-      "event_name": "BoE Rate Decision",
-      "event_type": "BoE Rate Decision",
-      "category": "policy",
-      "importance": "high",
-      "release_time": "2026-06-18T12:00:00.000Z",
-      "timezone": "UTC",
-      "verified_time": false,
-      "estimated_date": true,
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "source_confidence": 75,
-      "acquisition_method": "official_schedule",
-      "legal_status": "official_public_schedule"
-    },
-    {
-      "id": "economic-calendar::global_acquisition::ch::snb-rate-decision::20260618T073000",
-      "country": "CH",
-      "region": "Switzerland",
-      "source": "Swiss National Bank",
-      "source_url": "https://www.snb.ch/en/the-snb/mandates-goals/monetary-policy/decisions",
-      "event_name": "SNB Rate Decision",
-      "event_type": "SNB Rate Decision",
-      "category": "policy",
-      "importance": "high",
-      "release_time": "2026-06-18T07:30:00.000Z",
-      "timezone": "UTC",
-      "verified_time": false,
-      "estimated_date": true,
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "source_confidence": 75,
-      "acquisition_method": "official_schedule",
-      "legal_status": "official_public_schedule"
-    },
-    {
-      "id": "economic-calendar::global_acquisition::eu::eurozone-cpi::20260618T100000",
-      "country": "EU",
-      "region": "Eurozone",
-      "source": "Eurostat",
-      "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "event_name": "Eurozone CPI",
-      "event_type": "CPI",
-      "category": "inflation",
-      "importance": "high",
-      "release_time": "2026-06-18T10:00:00.000Z",
-      "timezone": "UTC",
-      "verified_time": false,
-      "estimated_date": true,
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "source_confidence": 50,
-      "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
-    },
-    {
-      "id": "economic-calendar::global_acquisition::jp::japan-cpi::20260619T230000",
-      "country": "JP",
-      "region": "Japan",
-      "source": "Statistics Bureau of Japan",
-      "source_url": "https://www.stat.go.jp/english/",
-      "event_name": "Japan CPI",
-      "event_type": "CPI",
-      "category": "inflation",
-      "importance": "high",
-      "release_time": "2026-06-19T23:00:00.000Z",
-      "timezone": "UTC",
-      "verified_time": false,
-      "estimated_date": true,
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "source_confidence": 50,
-      "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
-    },
     {
       "id": "economic-calendar::global_acquisition::au::australia-cpi::20260624T010000",
       "country": "AU",
@@ -221,36 +98,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
-    },
-    {
-      "id": "economic-calendar::global_acquisition::au::australia-unemployment-rate::20260618T010000",
-      "country": "AU",
-      "region": "Australia",
-      "source": "Australian Bureau of Statistics",
-      "source_url": "https://www.abs.gov.au/release-calendar",
-      "event_name": "Australia Unemployment Rate",
-      "event_type": "Unemployment Rate",
-      "category": "labor",
-      "importance": "medium",
-      "release_time": "2026-06-18T01:00:00.000Z",
-      "timezone": "UTC",
-      "verified_time": false,
-      "estimated_date": true,
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "IWM",
-        "VIX"
-      ],
-      "source_confidence": 50,
-      "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::eu::eurozone-cpi::20260716T100000",
@@ -279,7 +128,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::de::germany-cpi::20260714T070000",
@@ -308,7 +158,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::gb::united-kingdom-cpi::20260715T070000",
@@ -337,7 +188,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::jp::japan-cpi::20260717T230000",
@@ -366,7 +218,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::eu::eurozone-unemployment-rate::20260702T100000",
@@ -395,7 +248,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::gb::united-kingdom-unemployment-rate::20260715T070000",
@@ -424,7 +278,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::ca::canada-unemployment-rate::20260703T130000",
@@ -453,7 +308,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     },
     {
       "id": "economic-calendar::global_acquisition::au::australia-unemployment-rate::20260716T010000",
@@ -482,7 +338,8 @@
       ],
       "source_confidence": 50,
       "acquisition_method": "estimated_recurring",
-      "legal_status": "official_public_cadence"
+      "legal_status": "official_public_cadence",
+      "status": "scheduled"
     }
   ]
 }

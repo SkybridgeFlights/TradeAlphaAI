@@ -323,3 +323,42 @@
   .hub-card-title   { font-size: 16px; }
   .hub-card-desc    { font-size: 13px; }
 }
+
+/* ── Direct-access asset list (Markets Hub) ─────────────────────── */
+.hub-quick-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+.hub-quick-list a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--hub-border-soft);
+  border-radius: 10px;
+  background: var(--hub-bg-card);
+  color: var(--hub-text);
+  text-decoration: none;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+.hub-quick-list a:hover,
+.hub-quick-list a:focus-visible {
+  border-color: var(--hub-gold-soft);
+  background: rgba(216, 177, 90, 0.06);
+  transform: translateY(-1px);
+}
+.hub-quick-symbol {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--hub-text);
+}
+.hub-quick-role {
+  font-size: 11.5px;
+  color: var(--hub-text-muted);
+  line-height: 1.3;
+}

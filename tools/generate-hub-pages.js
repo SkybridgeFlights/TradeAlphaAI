@@ -16,6 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const { renderGlobalHeader, globalHeaderScripts } = require('./render-global-header');
+const { ASSETS } = require('./asset-registry');
 
 const ROOT = path.resolve(__dirname, '..');
 const WRITE = process.argv.includes('--write');
@@ -217,10 +218,37 @@ ${hub.related.map((r) => `        <li><a href="${esc(ar ? r.href_ar : r.href_en)
       </ul>
     </section>
 
+${hub.activePage === 'markets' ? renderAssetQuickAccess(ar) : ''}
+
     <section class="hub-section hub-disclaimer">
       <p>${esc(t(ar, 'TradeAlphaAI presents institutional interpretation of observed conditions. No signals, no price targets, no recommendations, no investment advice.', 'تقدم TradeAlphaAI تفسيراً مؤسسياً للظروف المرصودة. لا إشارات ولا أهداف سعرية ولا توصيات ولا نصيحة استثمارية.'))}</p>
     </section>
   </main>`;
+}
+
+// Markets Hub: full registry of individual asset jump-links. Keeps the
+// /markets/<slug>/ discoverable from the hub (covers the
+// check:intelligence-indexes "≥ N entity links" rule) AND lets the
+// user jump straight to any single asset without going through the
+// /markets/assets/ index.
+function renderAssetQuickAccess(ar) {
+  if (!Array.isArray(ASSETS) || ASSETS.length === 0) return '';
+  const prefix = ar ? '/ar/markets' : '/markets';
+  const items = ASSETS.map((a) => {
+    const role = ar ? (a.role_ar || a.role_en || '') : (a.role_en || a.role_ar || '');
+    return `        <li><a href="${prefix}/${esc(a.slug)}/"><span class="hub-quick-symbol">${esc(a.symbol)}</span><span class="hub-quick-role">${esc(role)}</span></a></li>`;
+  }).join('\n');
+  return `
+    <section class="hub-section" id="hub-quick-assets">
+      <header class="hub-section-head">
+        <span class="hub-section-eyebrow">${esc(t(ar, 'Direct access', 'وصول مباشر'))}</span>
+        <h2 class="hub-section-h2">${esc(t(ar, 'Jump to any asset', 'انتقل إلى أي أصل'))}</h2>
+      </header>
+      <ul class="hub-quick-list">
+${items}
+      </ul>
+    </section>
+`;
 }
 
 function shell(ar, hub) {

@@ -295,12 +295,14 @@ function englishLinks() {
     },
     {
       key: 'research', href: '/research/', label: 'Research',
-      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news'],
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure'],
       children: [
         ['/research/', 'Research Hub'],
         ['/research/feed/', 'Research Feed'],
+        ['/market-outlook/', 'Market Outlook'],
+        ['/market-news/', 'Market News'],
+        ['/market-structure/', 'Market Structure'],
         ['/research/regime/', 'Regime Research'],
-        ['/research/assets/', 'Entity Research'],
         ['/research/etfs/', 'ETF Research'],
         ['/insights/', 'Applied Research'],
       ],
@@ -354,12 +356,14 @@ function arabicLinks() {
     },
     {
       key: 'research', href: '/ar/research/', label: 'الأبحاث',
-      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news'],
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure'],
       children: [
         ['/ar/research/', 'مركز الأبحاث'],
         ['/ar/research/feed/', 'تغذية الأبحاث'],
+        ['/ar/market-outlook/', 'نظرة السوق'],
+        ['/ar/market-news/', 'أخبار السوق'],
+        ['/ar/market-structure/', 'بنية السوق'],
         ['/ar/research/regime/', 'أبحاث النظام'],
-        ['/ar/research/assets/', 'أبحاث الكيانات'],
         ['/ar/research/etfs/', 'أبحاث الصناديق'],
         ['/ar/insights/', 'الأبحاث التطبيقية'],
       ],

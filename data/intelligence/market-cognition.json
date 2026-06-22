@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-21T21:54:06.807Z",
-  "run_date": "2026-06-21",
-  "verified": false,
-  "sessions_tracked": 8,
+  "updated_at": "2026-06-22T04:17:46.876Z",
+  "run_date": "2026-06-22",
+  "verified": true,
+  "sessions_tracked": 9,
   "regime_shifts": [
     {
       "dimension": "risk_state",
@@ -14,16 +14,16 @@
     },
     {
       "dimension": "volatility_regime",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "normal",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
       "dimension": "dollar_pressure",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "firming",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
@@ -35,23 +35,23 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "balanced",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
       "dimension": "ai_concentration_risk",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "elevated",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
       "dimension": "breadth_state",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "confirming",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
@@ -70,16 +70,16 @@
     },
     {
       "dimension": "speculative_appetite",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "expanding",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
       "dimension": "market_fragility",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "building",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     }
   ],
@@ -265,10 +265,21 @@
         }
       }
     ],
-    "fragility": [],
+    "fragility": [
+      {
+        "source": "market_fragility",
+        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
+        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
+      }
+    ],
     "exhaustion": [],
     "liquidity": [],
     "speculative": [
+      {
+        "source": "speculative_appetite",
+        "en": "Speculative appetite is expanding across the high-beta complex.",
+        "ar": "شهية المضاربة تتوسع عبر الأصول عالية البيتا."
+      },
       {
         "source": "nvda_move",
         "en": "An outsized sourced AI-leadership move (+2.95%) marks active speculative positioning.",
@@ -324,5 +335,5 @@
       "note": "ai concentration risk: elevated -> contained"
     }
   ],
-  "cognition_note": "No verified regime inputs this run. Cognition holds prior memory without extending any claim."
+  "cognition_note": "Cognition state — 7/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 12 timeline event(s)."
 }

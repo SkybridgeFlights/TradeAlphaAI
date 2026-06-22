@@ -62,8 +62,10 @@
             <div class="nav-dropdown nav-dropdown-compact">
               <a href="/ar/research/">مركز الأبحاث</a>
               <a href="/ar/research/feed/">تغذية الأبحاث</a>
+              <a href="/ar/market-outlook/">نظرة السوق</a>
+              <a href="/ar/market-news/">أخبار السوق</a>
+              <a href="/ar/market-structure/">بنية السوق</a>
               <a href="/ar/research/regime/">أبحاث النظام</a>
-              <a href="/ar/research/assets/">أبحاث الكيانات</a>
               <a href="/ar/research/etfs/">أبحاث الصناديق</a>
               <a href="/ar/insights/">الأبحاث التطبيقية</a>
               <a href="/ar/research/" class="nav-dropdown-viewall">عرض كل الأبحاث<span aria-hidden="true">←</span></a>
@@ -247,6 +249,7 @@
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (r) { try { r.update(); } catch (e) {} }).catch(function () {}); }); }</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
 </body>
 </html>
