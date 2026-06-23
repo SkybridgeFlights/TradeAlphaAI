@@ -55,7 +55,11 @@ if (!Array.isArray(topic.language_support) || !topic.language_support.includes('
 
 const draftDir = path.join(DRAFT_ROOT, topic.slug);
 if (fs.existsSync(path.join(draftDir, 'en.html')) || fs.existsSync(path.join(draftDir, 'ar.html'))) {
-  fail(`${topic.slug}: draft files already exist; refusing to overwrite review workspace`);
+  if (!isRepairRegen) {
+    fail(`${topic.slug}: draft files already exist; refusing to overwrite review workspace`);
+  }
+  // Repair-regeneration explicitly requests overwrite of a failed draft.
+  console.log(`${topic.slug}: repair regeneration overwriting existing draft workspace`);
 }
 
 fs.mkdirSync(draftDir, { recursive: true });

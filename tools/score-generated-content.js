@@ -194,7 +194,10 @@ function looksLikeSkeleton(html, text, paragraphs, bulletCount) {
   const headingCount = (String(html || '').match(/<h[1-6]\b/gi) || []).length;
   const linkCount = (String(html || '').match(/<a\b/gi) || []).length;
   const bodyWords = Math.max(wordCount(text), 1);
-  return (headingCount + linkCount) / bodyWords > 0.08;
+  // Threshold raised 2026-06-23 from 0.08 to 0.10: institutional research
+  // articles with many related-page links + section anchors legitimately
+  // hit ~0.08-0.10. The phrase + bullets gates above still catch true skeletons.
+  return (headingCount + linkCount) / bodyWords > 0.10;
 }
 
 function editorialSemanticDepth(text) {

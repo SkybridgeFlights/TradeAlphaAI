@@ -23,6 +23,31 @@ const FINANCIAL_TERMS = [
   [/\bPrevious\b/gi, 'السابق'],
   [/\bSeasonally Adjusted\b/gi, 'معدل موسميا'],
   [/\bAnnualized\b/gi, 'محسوب سنويا'],
+  // Rate path / Fed policy bias terminology — these leak into AR from
+  // intelligence files (rate-path, regime-engine) when stitched together.
+  [/\bhold[ _]with[ _]hawkish[ _]bias\b/gi, 'تثبيت مع ميل تشديدي'],
+  [/\bhold[ _]with[ _]dovish[ _]bias\b/gi, 'تثبيت مع ميل تيسيري'],
+  [/\bhawkish bias\b/gi, 'ميل تشديدي'],
+  [/\bdovish bias\b/gi, 'ميل تيسيري'],
+  [/\bhold bias\b/gi, 'ميل التثبيت'],
+  [/\beasing bias\b/gi, 'ميل التيسير'],
+  [/\btightening bias\b/gi, 'ميل التشديد'],
+  [/\bdata[- ]dependent\b/gi, 'يعتمد على البيانات'],
+  [/\brestrictive\b/gi, 'مُقيِّد'],
+  [/\baccommodative\b/gi, 'تيسيري'],
+  [/\btransitioning\b/gi, 'انتقالي'],
+  [/\bneutral\b/gi, 'محايد'],
+  [/\bhawkish\b/gi, 'تشديدي'],
+  [/\bdovish\b/gi, 'تيسيري'],
+  [/\bRate path\b/gi, 'مسار الفائدة'],
+  [/\bMarket tone\b/gi, 'نبرة السوق'],
+  [/\bVolatility compression\b/gi, 'انضغاط التذبذب'],
+  [/\bvolatility compression\b/g, 'انضغاط التذبذب'],
+  // Regime tone leaks
+  [/\bdisinflation\b/gi, 'تباطؤ التضخم'],
+  [/\bstagflation risk\b/gi, 'مخاطر الركود التضخمي'],
+  [/\breflation\b/gi, 'إعادة التضخم'],
+  [/\bgoldilocks\b/gi, 'بيئة معتدلة'],
 ];
 
 const ALLOWED_TOKENS = [
