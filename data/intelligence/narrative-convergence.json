@@ -1,20 +1,27 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-23T12:40:27.869Z",
+  "updated_at": "2026-06-23T15:56:44.191Z",
   "run_date": "2026-06-23",
   "verified": true,
   "coherence": {
-    "score": 75,
+    "score": 88,
     "band": "coherent",
     "observed_links": 8,
-    "en": "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
+    "ar": "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
-    "events_5d": 4,
+    "events_5d": 5,
     "band": "accelerating"
   },
   "what_changed": [
+    {
+      "date": "2026-06-23",
+      "dimension": "risk_state",
+      "from": "risk-on",
+      "to": "neutral",
+      "note": "risk state: risk-on -> neutral"
+    },
     {
       "date": "2026-06-18",
       "dimension": "market_fragility",
@@ -28,13 +35,6 @@
       "from": "mixed",
       "to": "confirming",
       "note": "breadth state: mixed -> confirming"
-    },
-    {
-      "date": "2026-06-18",
-      "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "note": "ai concentration risk: contained -> elevated"
     }
   ],
   "confirms": [
@@ -94,26 +94,13 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
-      "id": "yields-bonds",
-      "legs": [
-        "us10y",
-        "tlt"
-      ],
-      "state": "confirming",
-      "chain_strength": 2,
-      "en": "Rising yields mark down long-duration bonds",
-      "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
-    }
-  ],
-  "diverges": [
-    {
       "id": "liquidity-beta",
       "legs": [
         "btc",
         "qqq"
       ],
-      "state": "diverging",
-      "chain_strength": 4,
+      "state": "confirming",
+      "chain_strength": 1,
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     },
@@ -123,13 +110,33 @@
         "spy",
         "iwm"
       ],
-      "state": "diverging",
-      "chain_strength": 2,
+      "state": "confirming",
+      "chain_strength": 1,
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
-  "weakening": [],
+  "diverges": [
+    {
+      "id": "yields-bonds",
+      "legs": [
+        "us10y",
+        "tlt"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Rising yields mark down long-duration bonds",
+      "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
+    }
+  ],
+  "weakening": [
+    {
+      "track": "speculative_pressure",
+      "score": 1,
+      "en": "Speculative appetite buildup",
+      "ar": "تراكم شهية المضاربة"
+    }
+  ],
   "crowding": null,
   "preparing_for": [
     {
@@ -151,16 +158,16 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: market fragility: contained -> building; breadth state: mixed -> confirming; ai concentration risk: contained -> elevated.",
-    "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "The BTC/QQQ link is not holding — a 4-session strain; that is where the tape's internal argument lives.",
+    "The regime picture moved: risk state: risk-on -> neutral; market fragility: contained -> building; breadth state: mixed -> confirming.",
+    "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
+    "The US10Y/TLT link is not holding; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is Australia CPI."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
-    "رابط BTC/QQQ لا يصمد — إجهاد مستمر منذ 4 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
+    "رابط US10Y/TLT لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي Australia CPI."
   ],
@@ -258,7 +265,7 @@
       },
       {
         "date": "2026-06-23",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "breadth-link": [
@@ -296,7 +303,7 @@
       },
       {
         "date": "2026-06-23",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "yields-bonds": [
@@ -306,9 +313,9 @@
       },
       {
         "date": "2026-06-23",
-        "state": "confirming"
+        "state": "diverging"
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 75/100 (coherent); velocity accelerating; 6 confirming / 2 diverging links; 1 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 88/100 (coherent); velocity accelerating; 7 confirming / 1 diverging links; 1 underpriced signal(s)."
 }
