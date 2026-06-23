@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-22T19:00:19.379Z",
+  "generated_at": "2026-06-23T12:40:27.664Z",
   "status": "ok",
-  "total_snapshots": 2,
+  "total_snapshots": 3,
   "date_range": {
     "from": "2026-06-07",
-    "to": "2026-06-22"
+    "to": "2026-06-23"
   },
   "confidence_trend": {
     "direction": "rising",
@@ -19,6 +19,10 @@
       {
         "date": "2026-06-22",
         "confidence": 66
+      },
+      {
+        "date": "2026-06-23",
+        "confidence": 66
       }
     ]
   },
@@ -27,13 +31,47 @@
     "headline_ar": "انتقال حديث في النظام: volatility_state تحول من uncertain إلى volatility_compression",
     "regime_stability": "transitioning",
     "confidence_trend": "rising",
-    "latest_date": "2026-06-22",
+    "latest_date": "2026-06-23",
     "latest_market_tone": "neutral",
-    "total_insights": 2,
+    "total_insights": 5,
     "has_recent_transition": true,
-    "key_persistent_fields": []
+    "key_persistent_fields": [
+      "market_tone",
+      "rate_path",
+      "inflation_regime"
+    ]
   },
   "insights": [
+    {
+      "type": "narrative_persistence",
+      "field": "market_tone",
+      "value": "neutral",
+      "run_days": 3,
+      "confidence": 65,
+      "reason_en": "Market tone \"neutral\" has persisted for 3 consecutive snapshots.",
+      "reason_ar": "نبرة السوق \"neutral\" استمرت على مدى 3 لقطات متتالية.",
+      "freshness_score": 100
+    },
+    {
+      "type": "narrative_persistence",
+      "field": "rate_path",
+      "value": "hold_bias",
+      "run_days": 3,
+      "confidence": 62,
+      "reason_en": "Rate path \"hold_bias\" has been stable for 3 consecutive periods.",
+      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 3 فترات متتالية.",
+      "freshness_score": 100
+    },
+    {
+      "type": "narrative_persistence",
+      "field": "inflation_regime",
+      "value": "uncertain",
+      "run_days": 3,
+      "confidence": 57,
+      "reason_en": "Inflation regime \"uncertain\" has persisted for 3 consecutive periods.",
+      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 3 فترات متتالية.",
+      "freshness_score": 100
+    },
     {
       "type": "regime_transition",
       "field": "volatility_state",
@@ -43,7 +81,7 @@
       "confidence": 65,
       "reason_en": "Volatility state transitioned from \"uncertain\" to \"volatility_compression\" on 2026-06-22.",
       "reason_ar": "Volatility state انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22.",
-      "freshness_score": 100
+      "freshness_score": 80
     },
     {
       "type": "volatility_shift",
@@ -54,7 +92,7 @@
       "confidence": 65,
       "reason_en": "Volatility shifted from \"uncertain\" to \"volatility_compression\" on 2026-06-22. Volatility compression detected.",
       "reason_ar": "التذبذب انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22. رصد انضغاط في التذبذب.",
-      "freshness_score": 100
+      "freshness_score": 80
     }
   ]
 }
