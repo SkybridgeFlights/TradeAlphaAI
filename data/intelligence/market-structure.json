@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T16:36:28.413Z",
+  "generated_at": "2026-06-24T19:07:55.648Z",
   "source_layer": "market-structure",
   "available": true,
   "structural_confidence": 95,
@@ -21,13 +21,13 @@
       ]
     },
     "volatility_structure": {
-      "state": "contained",
-      "label_en": "contained volatility",
-      "label_ar": "تذبذب محتوى",
+      "state": "expansion",
+      "label_en": "volatility expansion",
+      "label_ar": "اتساع التذبذب",
       "evidence": [
-        "regime volatility=normal",
+        "regime volatility=expansion",
         "alignment=aligned",
-        "VIX=19.49"
+        "VIX=20.02"
       ]
     },
     "cross_asset": {
@@ -36,7 +36,7 @@
       "label_ar": "متسق",
       "evidence": [
         "coherence=0.6",
-        "tension cross_asset=coherent"
+        "tension cross_asset=strained"
       ]
     },
     "concentration": {
@@ -53,7 +53,7 @@
       "label_en": "defensive rotation",
       "label_ar": "تدوير دفاعي",
       "evidence": [
-        "leaders=XLP/XLV/XLRE",
+        "leaders=XLI/XLP/XLV",
         "regime defensive=defensive_rotation"
       ]
     },
@@ -78,9 +78,9 @@
       ]
     },
     "liquidity_participation": {
-      "state": "uncertain",
-      "label_en": "uncertain liquidity participation",
-      "label_ar": "مشاركة سيولة غير مؤكدة",
+      "state": "exhaustion_risk",
+      "label_en": "liquidity exhaustion risk",
+      "label_ar": "مخاطر استنزاف السيولة",
       "evidence": [
         "liquidity_participation=uncertain",
         "liquidity_state=defensive_demand"
@@ -92,7 +92,7 @@
       "label_ar": "بنية متدهورة",
       "evidence": [
         "regime stability=deteriorating",
-        "tension=building",
+        "tension=contained",
         "fragility=building"
       ]
     }
@@ -103,7 +103,7 @@
       "state": "deteriorating"
     },
     "participation": "mixed_participation",
-    "volatility_structure": "contained",
+    "volatility_structure": "expansion",
     "cross_asset": "coherent",
     "structural_stability": "deteriorating",
     "structural_confidence": 95
