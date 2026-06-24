@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-24T12:23:58.352Z",
+  "updated_at": "2026-06-24T18:02:12.899Z",
   "run_date": "2026-06-24",
   "verified": true,
   "sessions_tracked": 11,
@@ -17,10 +17,13 @@
     },
     {
       "dimension": "volatility_regime",
-      "state": "normal",
-      "phase": "established",
-      "sessions_in_state": 3,
-      "from": null
+      "state": "elevated",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "normal",
+        "date": "2026-06-23"
+      }
     },
     {
       "dimension": "dollar_pressure",
@@ -31,10 +34,13 @@
     },
     {
       "dimension": "duration_pressure",
-      "state": "neutral",
-      "phase": "established",
-      "sessions_in_state": 3,
-      "from": null
+      "state": "relaxing",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "neutral",
+        "date": "2026-06-23"
+      }
     },
     {
       "dimension": "momentum_concentration",
@@ -122,10 +128,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "us10y": 1.4679313459801353,
-        "qqq": -3.2929
+        "us10y": -1.3219807304503732,
+        "qqq": -0.8239
       }
     },
     {
@@ -137,10 +143,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "us10y": 1.4679313459801353,
-        "dxy": 1.2998301528624256
+        "us10y": -1.3219807304503732,
+        "dxy": 0.788299454635599
       }
     },
     {
@@ -154,8 +160,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "confirming",
       "evidence": {
-        "dxy": 1.2998301528624256,
-        "gold": -1.8903
+        "dxy": 0.788299454635599,
+        "gold": -3.3817
       }
     },
     {
@@ -169,8 +175,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "confirming",
       "evidence": {
-        "vix": 5.694143167028184,
-        "spy": -1.4522
+        "vix": 22.073170731707325,
+        "spy": -0.2031
       }
     },
     {
@@ -184,8 +190,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": -4.1265,
-        "qqq": -3.2929
+        "nvda": -1.2448,
+        "qqq": -0.8239
       }
     },
     {
@@ -199,8 +205,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": -3.0502,
-        "qqq": -3.2929
+        "btc": -4.7949,
+        "qqq": -0.8239
       }
     },
     {
@@ -212,10 +218,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "spy": -1.4522,
-        "iwm": -0.9592
+        "spy": -0.2031,
+        "iwm": 0.2269
       }
     },
     {
@@ -227,51 +233,69 @@
       "expected": "inverse",
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "us10y": 1.4679313459801353,
-        "tlt": 0.1278
+        "us10y": -1.3219807304503732,
+        "tlt": 1.3805
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
-        "source": "causal:yields-growth",
-        "en": "Rising yields pressure long-duration growth equities",
-        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-        "evidence": {
-          "us10y": 1.4679313459801353,
-          "qqq": -3.2929
-        }
-      },
-      {
-        "source": "causal:yields-dollar",
-        "en": "Yield support typically firms the dollar",
-        "ar": "دعم العوائد يقوّي الدولار عادة",
-        "evidence": {
-          "us10y": 1.4679313459801353,
-          "dxy": 1.2998301528624256
-        }
-      },
-      {
         "source": "causal:dollar-gold",
         "en": "A firming dollar typically pressures gold",
         "ar": "تقوّي الدولار يضغط على الذهب عادة",
         "evidence": {
-          "dxy": 1.2998301528624256,
-          "gold": -1.8903
+          "dxy": 0.788299454635599,
+          "gold": -3.3817
+        }
+      },
+      {
+        "source": "causal:vix-equities",
+        "en": "Rising hedging demand pressures the equity tape",
+        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
+        "evidence": {
+          "vix": 22.073170731707325,
+          "spy": -0.2031
+        }
+      },
+      {
+        "source": "causal:ai-growth",
+        "en": "AI leadership drives the growth complex",
+        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
+        "evidence": {
+          "nvda": -1.2448,
+          "qqq": -0.8239
         }
       }
     ],
     "contradiction": [
       {
-        "source": "causal:yields-bonds",
-        "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:yields-growth",
+        "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": 1.4679313459801353,
-          "tlt": 0.1278
+          "us10y": -1.3219807304503732,
+          "qqq": -0.8239
+        }
+      },
+      {
+        "source": "causal:yields-dollar",
+        "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "us10y": -1.3219807304503732,
+          "dxy": 0.788299454635599
+        }
+      },
+      {
+        "source": "causal:breadth-link",
+        "en": "Divergence on the spy/iwm link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة spy/iwm — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "spy": -0.2031,
+          "iwm": 0.2269
         }
       }
     ],
@@ -295,24 +319,46 @@
         "en": "A firming dollar alongside soft crypto liquidity beta points to draining marginal liquidity.",
         "ar": "تقوّي الدولار مع ضعف بيتا سيولة الكريبتو يشير إلى انحسار السيولة الهامشية.",
         "evidence": {
-          "dxy": 1.2998301528624256,
-          "btc": -3.0502
+          "dxy": 0.788299454635599,
+          "btc": -4.7949
         }
       }
     ],
-    "speculative": [
-      {
-        "source": "nvda_move",
-        "en": "An outsized sourced AI-leadership move (-4.13%) marks active speculative positioning.",
-        "ar": "تحرك موثق كبير في قيادة الذكاء الاصطناعي (-4.13%) يعكس تمركزاً مضاربياً نشطاً.",
-        "evidence": {
-          "nvda": -4.1265
-        }
-      }
-    ]
+    "speculative": []
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "volatility-expansion-2026-06-24",
+      "type": "volatility-expansion",
+      "severity": "elevated",
+      "date": "2026-06-24",
+      "headline_en": "Volatility expansion — regime moved from normal to elevated.",
+      "headline_ar": "توسع التقلب — انتقل النظام من الوضع الطبيعي إلى الارتفاع.",
+      "derived_from": [
+        {
+          "dimension": "volatility_regime",
+          "from": "normal",
+          "to": "elevated",
+          "date": "2026-06-24"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
+    {
+      "date": "2026-06-24",
+      "dimension": "duration_pressure",
+      "from": "neutral",
+      "to": "relaxing",
+      "note": "duration pressure: neutral -> relaxing"
+    },
+    {
+      "date": "2026-06-24",
+      "dimension": "volatility_regime",
+      "from": "normal",
+      "to": "elevated",
+      "note": "volatility regime: normal -> elevated"
+    },
     {
       "date": "2026-06-23",
       "dimension": "risk_state",
@@ -340,21 +386,7 @@
       "from": "contained",
       "to": "elevated",
       "note": "ai concentration risk: contained -> elevated"
-    },
-    {
-      "date": "2026-06-18",
-      "dimension": "momentum_concentration",
-      "from": "balanced",
-      "to": "narrow-megacap",
-      "note": "momentum concentration: balanced -> narrow-megacap"
-    },
-    {
-      "date": "2026-06-17",
-      "dimension": "market_fragility",
-      "from": "building",
-      "to": "contained",
-      "note": "market fragility: building -> contained"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 3 cross-session observation(s); 13 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 3 cross-session observation(s); 15 timeline event(s)."
 }

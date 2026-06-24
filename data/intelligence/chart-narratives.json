@@ -1,9 +1,57 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-24T12:23:58.456Z",
+  "updated_at": "2026-06-24T18:02:13.009Z",
   "run_date": "2026-06-24",
   "verified": true,
-  "selected": [],
+  "selected": [
+    {
+      "id": "yields-growth",
+      "kind": "cross-asset",
+      "visual_type": "cross-asset-comparison",
+      "symbols": [
+        "TVC:US10Y",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Yields vs growth equities",
+      "title_ar": "العوائد مقابل أسهم النمو",
+      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
+      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
+      "score": 50,
+      "evidence": [
+        "causal:yields-growth diverging ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — US10Y/QQQ not confirming",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
+          "evidence": [
+            "convergence:diverges:yields-growth:chain=1"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — duration pressure neutral → relaxing",
+          "label_ar": "تحوّل النظام — duration pressure: neutral ← relaxing",
+          "evidence": [
+            "cognition:timeline:duration_pressure:neutral->relaxing:2026-06-24"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — Australia CPI (2026-06-24)",
+          "label_ar": "نافذة محفز — Australia CPI (2026-06-24)",
+          "evidence": [
+            "pulse:catalyst:Australia CPI:2026-06-24"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    }
+  ],
   "supported_visual_types": [
     "price-structure",
     "cross-asset-comparison",
