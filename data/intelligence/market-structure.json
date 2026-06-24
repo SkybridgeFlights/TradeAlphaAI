@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T19:07:55.648Z",
+  "generated_at": "2026-06-24T21:51:47.824Z",
   "source_layer": "market-structure",
   "available": true,
   "structural_confidence": 95,
@@ -11,12 +11,12 @@
   },
   "dimensions": {
     "participation": {
-      "state": "mixed_participation",
-      "label_en": "mixed participation",
-      "label_ar": "مشاركة مختلطة",
+      "state": "narrow_leadership",
+      "label_en": "narrow leadership",
+      "label_ar": "قيادة ضيقة",
       "evidence": [
         "leadership=narrow",
-        "breadth=mixed",
+        "breadth=flat",
         "session breadth=mixed"
       ]
     },
@@ -27,7 +27,7 @@
       "evidence": [
         "regime volatility=expansion",
         "alignment=aligned",
-        "VIX=20.02"
+        "VIX=18.63"
       ]
     },
     "cross_asset": {
@@ -53,7 +53,7 @@
       "label_en": "defensive rotation",
       "label_ar": "تدوير دفاعي",
       "evidence": [
-        "leaders=XLI/XLP/XLV",
+        "leaders=XLI/XLU/XLP",
         "regime defensive=defensive_rotation"
       ]
     },
@@ -68,11 +68,11 @@
       ]
     },
     "momentum": {
-      "state": "early_deterioration",
-      "label_en": "early momentum deterioration",
-      "label_ar": "تدهور مبكر في الزخم",
+      "state": "deteriorating",
+      "label_en": "momentum deterioration",
+      "label_ar": "تدهور الزخم",
       "evidence": [
-        "participation=mixed_participation",
+        "participation=narrow_leadership",
         "rotation=defensive_rotation",
         "concentration=elevated"
       ]
@@ -102,7 +102,7 @@
       "dimension": "stability",
       "state": "deteriorating"
     },
-    "participation": "mixed_participation",
+    "participation": "narrow_leadership",
     "volatility_structure": "expansion",
     "cross_asset": "coherent",
     "structural_stability": "deteriorating",
