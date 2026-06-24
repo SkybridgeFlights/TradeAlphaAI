@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-23T12:40:27.664Z",
+  "generated_at": "2026-06-24T12:23:58.207Z",
   "status": "ok",
-  "total_snapshots": 3,
+  "total_snapshots": 4,
   "date_range": {
     "from": "2026-06-07",
-    "to": "2026-06-23"
+    "to": "2026-06-24"
   },
   "confidence_trend": {
     "direction": "rising",
-    "delta": 25,
-    "latest": 66,
+    "delta": 22,
+    "latest": 63,
     "values": [
       {
         "date": "2026-06-07",
@@ -23,6 +23,10 @@
       {
         "date": "2026-06-23",
         "confidence": 66
+      },
+      {
+        "date": "2026-06-24",
+        "confidence": 63
       }
     ]
   },
@@ -31,14 +35,15 @@
     "headline_ar": "انتقال حديث في النظام: volatility_state تحول من uncertain إلى volatility_compression",
     "regime_stability": "transitioning",
     "confidence_trend": "rising",
-    "latest_date": "2026-06-23",
+    "latest_date": "2026-06-24",
     "latest_market_tone": "neutral",
-    "total_insights": 5,
+    "total_insights": 7,
     "has_recent_transition": true,
     "key_persistent_fields": [
       "market_tone",
       "rate_path",
-      "inflation_regime"
+      "inflation_regime",
+      "volatility_state"
     ]
   },
   "insights": [
@@ -46,30 +51,40 @@
       "type": "narrative_persistence",
       "field": "market_tone",
       "value": "neutral",
-      "run_days": 3,
-      "confidence": 65,
-      "reason_en": "Market tone \"neutral\" has persisted for 3 consecutive snapshots.",
-      "reason_ar": "نبرة السوق \"neutral\" استمرت على مدى 3 لقطات متتالية.",
+      "run_days": 4,
+      "confidence": 70,
+      "reason_en": "Market tone \"neutral\" has persisted for 4 consecutive snapshots.",
+      "reason_ar": "نبرة السوق \"neutral\" استمرت على مدى 4 لقطات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "rate_path",
       "value": "hold_bias",
-      "run_days": 3,
-      "confidence": 62,
-      "reason_en": "Rate path \"hold_bias\" has been stable for 3 consecutive periods.",
-      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 3 فترات متتالية.",
+      "run_days": 4,
+      "confidence": 66,
+      "reason_en": "Rate path \"hold_bias\" has been stable for 4 consecutive periods.",
+      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 4 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "inflation_regime",
       "value": "uncertain",
+      "run_days": 4,
+      "confidence": 61,
+      "reason_en": "Inflation regime \"uncertain\" has persisted for 4 consecutive periods.",
+      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 4 فترات متتالية.",
+      "freshness_score": 100
+    },
+    {
+      "type": "narrative_persistence",
+      "field": "volatility_state",
+      "value": "volatility_compression",
       "run_days": 3,
       "confidence": 57,
-      "reason_en": "Inflation regime \"uncertain\" has persisted for 3 consecutive periods.",
-      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 3 فترات متتالية.",
+      "reason_en": "Volatility state \"volatility_compression\" has been stable for 3 consecutive snapshots.",
+      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 3 لقطات متتالية.",
       "freshness_score": 100
     },
     {
@@ -82,6 +97,19 @@
       "reason_en": "Volatility state transitioned from \"uncertain\" to \"volatility_compression\" on 2026-06-22.",
       "reason_ar": "Volatility state انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22.",
       "freshness_score": 80
+    },
+    {
+      "type": "sector_leadership_transition",
+      "direction": "emerging",
+      "sectors": [
+        "XLRE",
+        "XLV",
+        "XLI"
+      ],
+      "confidence": 60,
+      "reason_en": "Emerging sector leadership: XLRE, XLV, XLI recently appeared in multiple consecutive snapshots.",
+      "reason_ar": "قيادة قطاعية ناشئة: XLRE, XLV, XLI ظهرت في لقطات متتالية أخيرة.",
+      "freshness_score": 100
     },
     {
       "type": "volatility_shift",

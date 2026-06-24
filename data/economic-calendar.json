@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "updated_at": "2026-06-23T12:40:21.855Z",
+  "updated_at": "2026-06-24T12:23:52.156Z",
   "source": "schedule_fallback",
   "provider_metadata": {
     "endpoint": null,
@@ -13,7 +13,7 @@
         "endpoint": "https://financialmodelingprep.com/stable/economic-calendar",
         "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar",
         "event_count": 0,
-        "last_checked": "2026-06-23T12:40:20.775Z"
+        "last_checked": "2026-06-24T12:23:50.796Z"
       },
       {
         "provider": "finnhub",
@@ -21,7 +21,7 @@
         "endpoint": "https://finnhub.io/api/v1/calendar/economic",
         "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic",
         "event_count": 0,
-        "last_checked": "2026-06-23T12:40:20.920Z"
+        "last_checked": "2026-06-24T12:23:51.041Z"
       },
       {
         "provider": "alphavantage",
@@ -29,7 +29,7 @@
         "endpoint": "https://www.alphavantage.co/query",
         "reason": "api_error",
         "event_count": 0,
-        "last_checked": "2026-06-23T12:40:21.012Z"
+        "last_checked": "2026-06-24T12:23:51.196Z"
       },
       {
         "provider": "fred",
@@ -37,7 +37,7 @@
         "endpoint": "https://api.stlouisfed.org/fred/releases/dates",
         "reason": "no_supported_events",
         "event_count": 0,
-        "last_checked": "2026-06-23T12:40:21.835Z"
+        "last_checked": "2026-06-24T12:23:52.135Z"
       }
     ]
   },
@@ -87,209 +87,6 @@
   },
   "events": [
     {
-      "id": "economic-calendar::global_acquisition::jp::boj-rate-decision::20260616T030000",
-      "event_name": "BoJ Rate Decision",
-      "name": "BoJ Rate Decision",
-      "type": "BoJ Rate Decision",
-      "country": "JP",
-      "importance": "high",
-      "impact_level": "high",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-06-16T03:00:00.000Z",
-      "date": "2026-06-16",
-      "timezone": "UTC",
-      "time_precision": "time_estimate",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Bank of Japan",
-      "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
-      "provider": "global_acquisition",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "schedule_estimate": true
-      },
-      "tags": [
-        "official_schedule"
-      ],
-      "region": "Japan",
-      "acquisition_method": "official_schedule",
-      "estimated_date": true,
-      "verified_time": false,
-      "source_confidence": 75,
-      "legal_status": "official_public_schedule",
-      "confirmed": false,
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "BoJ Rate Decision was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::global_acquisition::au::rba-rate-decision::20260616T033000",
-      "event_name": "RBA Rate Decision",
-      "name": "RBA Rate Decision",
-      "type": "RBA Rate Decision",
-      "country": "AU",
-      "importance": "high",
-      "impact_level": "high",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-06-16T03:30:00.000Z",
-      "date": "2026-06-16",
-      "timezone": "UTC",
-      "time_precision": "time_estimate",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Reserve Bank of Australia",
-      "source_url": "https://www.rba.gov.au/schedules-events/",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
-      "provider": "global_acquisition",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "schedule_estimate": true
-      },
-      "tags": [
-        "official_schedule"
-      ],
-      "region": "Australia",
-      "acquisition_method": "official_schedule",
-      "estimated_date": true,
-      "verified_time": false,
-      "source_confidence": 75,
-      "legal_status": "official_public_schedule",
-      "confirmed": false,
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "RBA Rate Decision was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::gb::uk-employment-change::20260616T060000",
-      "event_name": "UK Employment Change",
-      "name": "UK Employment Change",
-      "type": "Employment",
-      "country": "GB",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-06-16T06:00:00.000Z",
-      "date": "2026-06-16",
-      "timezone": "UTC",
-      "time_precision": "time_estimate",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "UK",
-      "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
-      "provider": "schedule_fallback",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "tags": [
-        "schedule-estimate"
-      ],
-      "confirmed": false,
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "UK Employment Change was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::ca::canada-cpi::20260616T130000",
-      "event_name": "Canada CPI",
-      "name": "Canada CPI",
-      "type": "CPI",
-      "country": "CA",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-06-16T13:00:00.000Z",
-      "date": "2026-06-16",
-      "timezone": "UTC",
-      "time_precision": "time_estimate",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Canada",
-      "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
-      "provider": "schedule_fallback",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "tags": [
-        "schedule-estimate"
-      ],
-      "confirmed": false,
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "neutral",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "Canada CPI was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
       "id": "economic-calendar::schedule_fallback::gb::uk-cpi::20260617T060000",
       "event_name": "UK CPI",
       "name": "UK CPI",
@@ -318,7 +115,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -365,7 +162,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -418,7 +215,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -471,7 +268,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -520,7 +317,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve",
       "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -567,7 +364,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -622,7 +419,7 @@
       "post_event_regime": null,
       "source_name": "BoJ",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -671,7 +468,7 @@
       "post_event_regime": null,
       "source_name": "SNB",
       "source_url": "https://www.snb.ch/en/iabout/monpol/id/monpol_current",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -720,7 +517,7 @@
       "post_event_regime": null,
       "source_name": "Swiss National Bank",
       "source_url": "https://www.snb.ch/en/the-snb/mandates-goals/monetary-policy/decisions",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -773,7 +570,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -828,7 +625,7 @@
       "post_event_regime": null,
       "source_name": "BoE",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -877,7 +674,7 @@
       "post_event_regime": null,
       "source_name": "Bank of England",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy/upcoming-mpc-dates",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -930,7 +727,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -977,7 +774,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1024,7 +821,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -1077,7 +874,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1123,7 +920,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1169,7 +966,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1215,7 +1012,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1261,7 +1058,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1307,7 +1104,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1354,7 +1151,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -1406,7 +1203,7 @@
       "post_event_regime": null,
       "source_name": "Japan",
       "source_url": "https://www.customs.go.jp/toukei/info/index_e.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1452,7 +1249,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.ifo.de/en",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1499,7 +1296,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1546,7 +1343,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1593,7 +1390,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1640,7 +1437,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1686,7 +1483,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1732,7 +1529,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1779,7 +1576,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://ec.europa.eu/eurostat",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1826,7 +1623,7 @@
       "post_event_regime": null,
       "source_name": "Tokyo",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1872,7 +1669,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1919,7 +1716,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1966,7 +1763,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -2019,7 +1816,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2065,7 +1862,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2112,7 +1909,7 @@
       "post_event_regime": null,
       "source_name": "Swiss",
       "source_url": "https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2159,7 +1956,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2206,7 +2003,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2253,7 +2050,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -2306,7 +2103,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/services/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2352,7 +2149,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2398,7 +2195,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2444,7 +2241,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://english.customs.gov.cn/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2493,7 +2290,7 @@
       "post_event_regime": null,
       "source_name": "RBA",
       "source_url": "https://www.rba.gov.au/monetary-policy/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2539,7 +2336,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.destatis.de/EN/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2586,7 +2383,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2633,7 +2430,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2680,7 +2477,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2726,7 +2523,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2773,7 +2570,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2819,7 +2616,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.zew.de/en",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2866,7 +2663,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2912,7 +2709,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2958,7 +2755,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3005,7 +2802,7 @@
       "post_event_regime": null,
       "source_name": "Destatis (Federal Statistical Office)",
       "source_url": "https://www.destatis.de/EN/Home/_node.html",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3057,7 +2854,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3104,7 +2901,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3157,7 +2954,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3210,7 +3007,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3257,7 +3054,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3309,7 +3106,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3356,7 +3153,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3409,7 +3206,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3456,7 +3253,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3503,7 +3300,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3550,7 +3347,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3603,7 +3400,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3649,7 +3446,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3695,7 +3492,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3742,7 +3539,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3795,7 +3592,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -3848,7 +3645,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3894,7 +3691,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3940,7 +3737,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3986,7 +3783,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4035,7 +3832,7 @@
       "post_event_regime": null,
       "source_name": "ECB",
       "source_url": "https://www.ecb.europa.eu/press/calendars/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4082,7 +3879,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4131,7 +3928,7 @@
       "post_event_regime": null,
       "source_name": "European Central Bank",
       "source_url": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -4183,7 +3980,7 @@
       "post_event_regime": null,
       "source_name": "Japan",
       "source_url": "https://www.customs.go.jp/toukei/info/index_e.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4229,7 +4026,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.ifo.de/en",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4275,7 +4072,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4321,7 +4118,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4368,7 +4165,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4415,7 +4212,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/gdp/gross-domestic-product",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4464,7 +4261,7 @@
       "post_event_regime": null,
       "source_name": "BoC",
       "source_url": "https://www.bankofcanada.ca/core-functions/monetary-policy/key-interest-rate/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4513,7 +4310,7 @@
       "post_event_regime": null,
       "source_name": "Bank of Canada",
       "source_url": "https://www.bankofcanada.ca/press/upcoming-events/",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -4568,7 +4365,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve",
       "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4617,7 +4414,7 @@
       "post_event_regime": null,
       "source_name": "Bank of Japan",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -4670,7 +4467,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4719,7 +4516,7 @@
       "post_event_regime": null,
       "source_name": "BoJ",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4766,7 +4563,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://ec.europa.eu/eurostat",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4813,7 +4610,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4860,7 +4657,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4907,7 +4704,7 @@
       "post_event_regime": null,
       "source_name": "Tokyo",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4953,7 +4750,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4999,7 +4796,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5046,7 +4843,7 @@
       "post_event_regime": null,
       "source_name": "Swiss",
       "source_url": "https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5093,7 +4890,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5139,7 +4936,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5185,7 +4982,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5234,7 +5031,7 @@
       "post_event_regime": null,
       "source_name": "Reserve Bank of Australia",
       "source_url": "https://www.rba.gov.au/schedules-events/",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -5287,7 +5084,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/services/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5334,7 +5131,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -5389,7 +5186,7 @@
       "post_event_regime": null,
       "source_name": "BoE",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5438,7 +5235,7 @@
       "post_event_regime": null,
       "source_name": "Bank of England",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy/upcoming-mpc-dates",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -5491,7 +5288,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5537,7 +5334,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://english.customs.gov.cn/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5583,7 +5380,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.destatis.de/EN/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5630,7 +5427,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5677,7 +5474,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5724,7 +5521,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -5777,7 +5574,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5823,7 +5620,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5870,7 +5667,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -5922,7 +5719,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5968,7 +5765,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6017,7 +5814,7 @@
       "post_event_regime": null,
       "source_name": "RBA",
       "source_url": "https://www.rba.gov.au/monetary-policy/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6064,7 +5861,7 @@
       "post_event_regime": null,
       "source_name": "Destatis (Federal Statistical Office)",
       "source_url": "https://www.destatis.de/EN/Home/_node.html",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -6116,7 +5913,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.zew.de/en",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6163,7 +5960,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6210,7 +6007,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -6263,7 +6060,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6310,7 +6107,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6357,7 +6154,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6403,7 +6200,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6449,7 +6246,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6496,7 +6293,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6543,7 +6340,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6589,7 +6386,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6635,7 +6432,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6682,7 +6479,7 @@
       "post_event_regime": null,
       "source_name": "National Bureau of Statistics of China",
       "source_url": "https://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -6735,7 +6532,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -6788,7 +6585,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6835,7 +6632,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -6888,7 +6685,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -6941,7 +6738,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6988,7 +6785,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -7041,7 +6838,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -7094,7 +6891,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -7147,7 +6944,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7194,7 +6991,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -7247,7 +7044,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7293,7 +7090,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7339,7 +7136,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7385,7 +7182,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7431,7 +7228,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7477,7 +7274,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7523,7 +7320,7 @@
       "post_event_regime": null,
       "source_name": "Japan",
       "source_url": "https://www.customs.go.jp/toukei/info/index_e.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7569,7 +7366,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.ifo.de/en",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7616,7 +7413,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -7669,7 +7466,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7716,7 +7513,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7763,7 +7560,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7810,7 +7607,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7857,7 +7654,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://ec.europa.eu/eurostat",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7903,7 +7700,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7949,7 +7746,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7996,7 +7793,7 @@
       "post_event_regime": null,
       "source_name": "Tokyo",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8042,7 +7839,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8089,7 +7886,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8135,7 +7932,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8182,7 +7979,7 @@
       "post_event_regime": null,
       "source_name": "Swiss",
       "source_url": "https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8229,7 +8026,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -8282,7 +8079,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8329,7 +8126,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/services/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8376,7 +8173,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8423,7 +8220,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8470,7 +8267,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -8522,7 +8319,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://english.customs.gov.cn/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8568,7 +8365,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.destatis.de/EN/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8614,7 +8411,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8660,7 +8457,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8707,7 +8504,7 @@
       "post_event_regime": null,
       "source_name": "Destatis (Federal Statistical Office)",
       "source_url": "https://www.destatis.de/EN/Home/_node.html",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -8760,7 +8557,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8806,7 +8603,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8853,7 +8650,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8900,7 +8697,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8949,7 +8746,7 @@
       "post_event_regime": null,
       "source_name": "BoC",
       "source_url": "https://www.bankofcanada.ca/core-functions/monetary-policy/key-interest-rate/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8998,7 +8795,7 @@
       "post_event_regime": null,
       "source_name": "Bank of Canada",
       "source_url": "https://www.bankofcanada.ca/press/upcoming-events/",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9053,7 +8850,7 @@
       "post_event_regime": null,
       "source_name": "ECB",
       "source_url": "https://www.ecb.europa.eu/press/calendars/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9100,7 +8897,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9149,7 +8946,7 @@
       "post_event_regime": null,
       "source_name": "European Central Bank",
       "source_url": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9201,7 +8998,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.zew.de/en",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9248,7 +9045,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9294,7 +9091,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9340,7 +9137,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9386,7 +9183,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9433,7 +9230,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9485,7 +9282,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9532,7 +9329,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9585,7 +9382,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9638,7 +9435,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9685,7 +9482,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9734,7 +9531,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve",
       "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9781,7 +9578,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9834,7 +9631,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9881,7 +9678,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9936,7 +9733,7 @@
       "post_event_regime": null,
       "source_name": "BoE",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9985,7 +9782,7 @@
       "post_event_regime": null,
       "source_name": "Bank of England",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy/upcoming-mpc-dates",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -10038,7 +9835,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10087,7 +9884,7 @@
       "post_event_regime": null,
       "source_name": "Bank of Japan",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm",
-      "fetched_at": "2026-06-23T12:40:21.843Z",
+      "fetched_at": "2026-06-24T12:23:52.144Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -10140,7 +9937,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-06-23T12:40:21.844Z",
+      "fetched_at": "2026-06-24T12:23:52.145Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -10193,7 +9990,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10239,7 +10036,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10285,7 +10082,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-06-23T12:40:21.836Z",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10302,6 +10099,53 @@
       "policy_tone": "event_specific",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "US 26-Week T-Bill Auction was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::schedule_fallback::ca::canada-retail-sales::20260922T130000",
+      "event_name": "Canada Retail Sales",
+      "name": "Canada Retail Sales",
+      "type": "Retail Sales",
+      "country": "CA",
+      "importance": "medium",
+      "impact_level": "medium",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-09-22T13:00:00.000Z",
+      "date": "2026-09-22",
+      "timezone": "UTC",
+      "time_precision": "time_estimate",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "SPY",
+        "IWM",
+        "Oil",
+        "Defensive sectors"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "Canada",
+      "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
+      "fetched_at": "2026-06-24T12:23:52.136Z",
+      "provider": "schedule_fallback",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": true,
+        "schedule_estimate": true
+      },
+      "tags": [
+        "schedule-estimate"
+      ],
+      "confirmed": false,
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "neutral",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "Canada Retail Sales was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     }
   ]
 }
