@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-06-24T12:23:58.207Z",
+  "generated_at": "2026-06-25T12:28:03.365Z",
   "status": "ok",
-  "total_snapshots": 4,
+  "total_snapshots": 5,
   "date_range": {
     "from": "2026-06-07",
-    "to": "2026-06-24"
+    "to": "2026-06-25"
   },
   "confidence_trend": {
     "direction": "rising",
-    "delta": 22,
-    "latest": 63,
+    "delta": 21,
+    "latest": 62,
     "values": [
       {
         "date": "2026-06-07",
@@ -27,6 +27,10 @@
       {
         "date": "2026-06-24",
         "confidence": 63
+      },
+      {
+        "date": "2026-06-25",
+        "confidence": 62
       }
     ]
   },
@@ -35,12 +39,11 @@
     "headline_ar": "انتقال حديث في النظام: volatility_state تحول من uncertain إلى volatility_compression",
     "regime_stability": "transitioning",
     "confidence_trend": "rising",
-    "latest_date": "2026-06-24",
-    "latest_market_tone": "neutral",
-    "total_insights": 7,
+    "latest_date": "2026-06-25",
+    "latest_market_tone": "risk_on",
+    "total_insights": 9,
     "has_recent_transition": true,
     "key_persistent_fields": [
-      "market_tone",
       "rate_path",
       "inflation_regime",
       "volatility_state"
@@ -49,42 +52,43 @@
   "insights": [
     {
       "type": "narrative_persistence",
-      "field": "market_tone",
-      "value": "neutral",
-      "run_days": 4,
-      "confidence": 70,
-      "reason_en": "Market tone \"neutral\" has persisted for 4 consecutive snapshots.",
-      "reason_ar": "نبرة السوق \"neutral\" استمرت على مدى 4 لقطات متتالية.",
-      "freshness_score": 100
-    },
-    {
-      "type": "narrative_persistence",
       "field": "rate_path",
       "value": "hold_bias",
-      "run_days": 4,
-      "confidence": 66,
-      "reason_en": "Rate path \"hold_bias\" has been stable for 4 consecutive periods.",
-      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 4 فترات متتالية.",
+      "run_days": 5,
+      "confidence": 70,
+      "reason_en": "Rate path \"hold_bias\" has been stable for 5 consecutive periods.",
+      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 5 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "inflation_regime",
       "value": "uncertain",
-      "run_days": 4,
-      "confidence": 61,
-      "reason_en": "Inflation regime \"uncertain\" has persisted for 4 consecutive periods.",
-      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 4 فترات متتالية.",
+      "run_days": 5,
+      "confidence": 65,
+      "reason_en": "Inflation regime \"uncertain\" has persisted for 5 consecutive periods.",
+      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 5 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "volatility_state",
       "value": "volatility_compression",
-      "run_days": 3,
-      "confidence": 57,
-      "reason_en": "Volatility state \"volatility_compression\" has been stable for 3 consecutive snapshots.",
-      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 3 لقطات متتالية.",
+      "run_days": 4,
+      "confidence": 61,
+      "reason_en": "Volatility state \"volatility_compression\" has been stable for 4 consecutive snapshots.",
+      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 4 لقطات متتالية.",
+      "freshness_score": 100
+    },
+    {
+      "type": "regime_transition",
+      "field": "market_tone",
+      "from": "neutral",
+      "to": "risk_on",
+      "date": "2026-06-25",
+      "confidence": 65,
+      "reason_en": "Market tone transitioned from \"neutral\" to \"risk_on\" on 2026-06-25.",
+      "reason_ar": "Market tone انتقل من \"neutral\" إلى \"risk_on\" بتاريخ 2026-06-25.",
       "freshness_score": 100
     },
     {
@@ -96,7 +100,7 @@
       "confidence": 65,
       "reason_en": "Volatility state transitioned from \"uncertain\" to \"volatility_compression\" on 2026-06-22.",
       "reason_ar": "Volatility state انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22.",
-      "freshness_score": 80
+      "freshness_score": 60
     },
     {
       "type": "sector_leadership_transition",
@@ -112,6 +116,18 @@
       "freshness_score": 100
     },
     {
+      "type": "sector_leadership_dominant",
+      "sectors": [
+        "XLRE",
+        "XLV",
+        "XLI"
+      ],
+      "confidence": 70,
+      "reason_en": "Consistent sector leadership: XLRE, XLV, XLI appeared in 3+ of the last 5 snapshots.",
+      "reason_ar": "قيادة قطاعية ثابتة: XLRE, XLV, XLI ظهرت في 3 أو أكثر من اللقطات الخمس الأخيرة.",
+      "freshness_score": 100
+    },
+    {
       "type": "volatility_shift",
       "from": "uncertain",
       "to": "volatility_compression",
@@ -120,7 +136,19 @@
       "confidence": 65,
       "reason_en": "Volatility shifted from \"uncertain\" to \"volatility_compression\" on 2026-06-22. Volatility compression detected.",
       "reason_ar": "التذبذب انتقل من \"uncertain\" إلى \"volatility_compression\" بتاريخ 2026-06-22. رصد انضغاط في التذبذب.",
-      "freshness_score": 80
+      "freshness_score": 60
+    },
+    {
+      "type": "crowded_theme",
+      "themes": [
+        "Market pricing 70% hold probability — rates expected stable ",
+        "Inflation trajectory unclear — Fed maintains data-dependent ",
+        "Defensive rotation remains the dominant macro risk expressio"
+      ],
+      "confidence": 55,
+      "reason_en": "Crowded narrative themes (repeated 4+ times in recent snapshots): Market pricing 70% hold probability — rates expected stable ; Inflation trajectory unclear — Fed maintains data-dependent .",
+      "reason_ar": "روايات سوقية مكتظة (تكررت 4+ مرات في اللقطات الأخيرة): Market pricing 70% hold probability — rates expected stable ; Inflation trajectory unclear — Fed maintains data-dependent .",
+      "freshness_score": 100
     }
   ]
 }

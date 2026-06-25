@@ -1,41 +1,54 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-24T21:37:54.627Z",
-  "run_date": "2026-06-24",
+  "updated_at": "2026-06-25T12:28:03.682Z",
+  "run_date": "2026-06-25",
   "verified": true,
   "status": "verified",
   "regime_condition": "pressured-regime",
-  "tension_level": "contained",
-  "tension_score": 22,
+  "tension_level": "building",
+  "tension_score": 30,
   "tracks": {
     "positioning-strain": {
       "id": "positioning-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 7,
+      "sessions": 8,
       "severity": 2,
       "first_seen": "2026-06-16",
-      "last_seen": "2026-06-24",
-      "last_evaluated": "2026-06-24",
+      "last_seen": "2026-06-25",
+      "last_evaluated": "2026-06-25",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
     "cross-asset-strain": {
       "id": "cross-asset-strain",
       "active": true,
-      "state": "persistent",
-      "sessions": 5,
-      "severity": 1,
+      "state": "intensifying",
+      "sessions": 6,
+      "severity": 2,
       "first_seen": "2026-06-18",
-      "last_seen": "2026-06-24",
-      "last_evaluated": "2026-06-24",
+      "last_seen": "2026-06-25",
+      "last_evaluated": "2026-06-25",
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    "liquidity-strain": {
+      "id": "liquidity-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-06-25",
+      "last_seen": "2026-06-25",
+      "last_evaluated": "2026-06-25",
+      "en": "Liquidity participation is thinning at the margin.",
+      "ar": "تتراجع مساهمة السيولة عند الهامش."
     }
   },
   "active_strains": [
     "positioning-strain",
-    "cross-asset-strain"
+    "cross-asset-strain",
+    "liquidity-strain"
   ],
   "internal_stability": {
     "leadership": "narrow",
@@ -46,11 +59,11 @@
   },
   "narrative_stability": "strained",
   "catalyst_fragility": {
-    "level": "contained",
+    "level": "moderate",
     "next": {
       "name": "Initial Jobless Claims",
       "time": "2026-06-25T12:30:00.000Z",
-      "hours": 14.9
+      "hours": 0
     },
     "en": "Initial Jobless Claims is the next scheduled test of the current structure.",
     "ar": "يمثل Initial Jobless Claims الاختبار المجدول التالي للبنية الحالية."
@@ -59,18 +72,26 @@
     {
       "id": "positioning-strain",
       "state": "persistent",
-      "sessions": 7,
+      "sessions": 8,
       "severity": 2,
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
     {
       "id": "cross-asset-strain",
-      "state": "persistent",
-      "sessions": 5,
-      "severity": 1,
+      "state": "intensifying",
+      "sessions": 6,
+      "severity": 2,
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    {
+      "id": "liquidity-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Liquidity participation is thinning at the margin.",
+      "ar": "تتراجع مساهمة السيولة عند الهامش."
     }
   ],
   "pressure_memory": [
@@ -133,6 +154,12 @@
       "condition": "pressured-regime",
       "score": 22,
       "change": "stable"
+    },
+    {
+      "date": "2026-06-25",
+      "condition": "pressured-regime",
+      "score": 30,
+      "change": "intensified"
     }
   ],
   "summary_en": "Structural pressure is building, but the regime has not entered an unstable condition. Positioning remains concentrated rather than broadly distributed.",

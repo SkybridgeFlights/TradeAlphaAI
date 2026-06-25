@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-24T21:37:54.561Z",
-  "run_date": "2026-06-24",
+  "updated_at": "2026-06-25T12:28:03.614Z",
+  "run_date": "2026-06-25",
   "verified": true,
   "selected": [
     {
@@ -16,18 +16,18 @@
       "title_ar": "العوائد مقابل أسهم النمو",
       "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
       "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 50,
+      "score": 60,
       "evidence": [
-        "causal:yields-growth diverging ×1"
+        "causal:yields-growth diverging ×2"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
-          "severity": "elevated",
-          "label_en": "Divergence — US10Y/QQQ not confirming",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
+          "severity": "high",
+          "label_en": "Divergence — US10Y/QQQ not confirming (2-session strain)",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 2 جلسات)",
           "evidence": [
-            "convergence:diverges:yields-growth:chain=1"
+            "convergence:diverges:yields-growth:chain=2"
           ]
         },
         {
@@ -42,10 +42,57 @@
         {
           "type": "catalyst-zone",
           "severity": "info",
-          "label_en": "Catalyst window — Australia CPI (2026-06-24)",
-          "label_ar": "نافذة محفز — Australia CPI (2026-06-24)",
+          "label_en": "Catalyst window — Initial Jobless Claims (2026-06-25)",
+          "label_ar": "نافذة محفز — Initial Jobless Claims (2026-06-25)",
           "evidence": [
-            "pulse:catalyst:Australia CPI:2026-06-24"
+            "pulse:catalyst:Initial Jobless Claims:2026-06-25"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
+      "symbols": [
+        "CRYPTO:BTCUSD",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 18,
+      "evidence": [
+        "liquidity_pressure 3/5"
+      ],
+      "annotations": [
+        {
+          "type": "commentary-label",
+          "severity": "info",
+          "label_en": "Confirmation — BTC/QQQ relationship holding",
+          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
+          "evidence": [
+            "convergence:confirms:liquidity-beta"
+          ]
+        },
+        {
+          "type": "pressure-band",
+          "severity": "elevated",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
+          "evidence": [
+            "macro:pressure:liquidity_pressure:3"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — PCE (2026-06-26)",
+          "label_ar": "نافذة محفز — PCE (2026-06-26)",
+          "evidence": [
+            "pulse:catalyst:PCE:2026-06-26"
           ]
         }
       ],

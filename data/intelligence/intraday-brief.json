@@ -1,56 +1,37 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-24T21:37:54.871Z",
+  "updated_at": "2026-06-25T12:28:03.744Z",
   "verified": true,
-  "urgency": "high",
+  "urgency": "elevated",
   "pulse_shift": [],
-  "quote_driven_changes": [
+  "quote_driven_changes": [],
+  "new_contradictions": [],
+  "pressure_buildup": [
     {
-      "kind": "quote-driven-change",
-      "asset": "bitcoin",
-      "from": -4.7949,
-      "to": -2.4593,
-      "delta": 2.3356000000000003,
-      "en": "bitcoin move changed by +2.34 percentage points.",
-      "ar": "تغير تحرك bitcoin بمقدار +2.34 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 21.524390243902445,
-      "to": 13.59756097560976,
-      "delta": -7.9268292682926855,
-      "en": "vix move changed by -7.93 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -7.93 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "nvda",
-      "from": -1.2448,
-      "to": -0.5199,
-      "delta": 0.7248999999999999,
-      "en": "nvda move changed by +0.72 percentage points.",
-      "ar": "تغير تحرك nvda بمقدار +0.72 نقطة مئوية."
+      "kind": "pressure-buildup",
+      "track": "liquidity_pressure",
+      "from": 2,
+      "to": 3,
+      "en": "liquidity pressure built from 2/5 to 3/5.",
+      "ar": "تصاعد liquidity pressure من 2/5 إلى 3/5."
     }
   ],
-  "new_contradictions": [],
-  "pressure_buildup": [],
   "new_alerts": [],
   "catalyst_countdown": [
     {
-      "name": "Australia CPI",
-      "time": "2026-06-24T01:00:00.000Z",
-      "minutes_until": 0
-    },
-    {
       "name": "Initial Jobless Claims",
       "time": "2026-06-25T12:30:00.000Z",
-      "minutes_until": 892
+      "minutes_until": 2
     },
     {
       "name": "PCE",
       "time": "2026-06-26T12:30:00.000Z",
-      "minutes_until": 2332
+      "minutes_until": 1442
+    },
+    {
+      "name": "Core PCE",
+      "time": "2026-06-26T12:30:00.000Z",
+      "minutes_until": 1442
     }
   ],
   "wire_event": {
@@ -60,49 +41,20 @@
   },
   "changes": [
     {
-      "kind": "quote-driven-change",
-      "asset": "bitcoin",
-      "from": -4.7949,
-      "to": -2.4593,
-      "delta": 2.3356000000000003,
-      "en": "bitcoin move changed by +2.34 percentage points.",
-      "ar": "تغير تحرك bitcoin بمقدار +2.34 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 21.524390243902445,
-      "to": 13.59756097560976,
-      "delta": -7.9268292682926855,
-      "en": "vix move changed by -7.93 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -7.93 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "nvda",
-      "from": -1.2448,
-      "to": -0.5199,
-      "delta": 0.7248999999999999,
-      "en": "nvda move changed by +0.72 percentage points.",
-      "ar": "تغير تحرك nvda بمقدار +0.72 نقطة مئوية."
-    },
-    {
-      "kind": "wire-event",
-      "en": "Wire event: VIX jumps +13.60% to 18.63",
-      "ar": "حدث على الموجز: VIX jumps +13.60% to 18.63",
-      "event": {
-        "headline": "VIX jumps +13.60% to 18.63",
-        "timestamp": "2026-06-24T21:37:53.073Z",
-        "urgency": 90
-      }
+      "kind": "pressure-buildup",
+      "track": "liquidity_pressure",
+      "from": 2,
+      "to": 3,
+      "en": "liquidity pressure built from 2/5 to 3/5.",
+      "ar": "تصاعد liquidity pressure من 2/5 إلى 3/5."
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": true,
+    "eligible": false,
     "sent": false,
-    "suppression_reason": null
+    "suppression_reason": "urgency_below_high_threshold"
   },
   "snapshot": {
     "verified": true,
@@ -135,7 +87,7 @@
     "contradiction_ids": [],
     "pressure": {
       "volatility_pressure": 0,
-      "liquidity_pressure": 2,
+      "liquidity_pressure": 3,
       "defensive_pressure": 0,
       "speculative_pressure": 1,
       "concentration_pressure": 5,
@@ -143,15 +95,15 @@
     },
     "catalysts": [
       {
-        "name": "Australia CPI",
-        "time": "2026-06-24T01:00:00.000Z"
-      },
-      {
         "name": "Initial Jobless Claims",
         "time": "2026-06-25T12:30:00.000Z"
       },
       {
         "name": "PCE",
+        "time": "2026-06-26T12:30:00.000Z"
+      },
+      {
+        "name": "Core PCE",
         "time": "2026-06-26T12:30:00.000Z"
       }
     ],
