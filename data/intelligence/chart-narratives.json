@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-26T12:18:10.419Z",
+  "updated_at": "2026-06-26T15:28:06.326Z",
   "run_date": "2026-06-26",
   "verified": true,
   "selected": [
@@ -63,27 +63,28 @@
       "title_ar": "بيتا السيولة",
       "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
       "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 24,
+      "score": 58,
       "evidence": [
-        "liquidity_pressure 4/5"
+        "causal:liquidity-beta diverging ×1",
+        "liquidity_pressure 3/5"
       ],
       "annotations": [
         {
-          "type": "commentary-label",
-          "severity": "info",
-          "label_en": "Confirmation — BTC/QQQ relationship holding",
-          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — BTC/QQQ not confirming",
+          "label_ar": "انفصال — BTC/QQQ لا يؤكد",
           "evidence": [
-            "convergence:confirms:liquidity-beta"
+            "convergence:diverges:liquidity-beta:chain=1"
           ]
         },
         {
           "type": "pressure-band",
-          "severity": "high",
-          "label_en": "Stored pressure — liquidity pressure 4/5",
-          "label_ar": "ضغط مخزّن — 4/5",
+          "severity": "elevated",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
           "evidence": [
-            "macro:pressure:liquidity_pressure:4"
+            "macro:pressure:liquidity_pressure:3"
           ]
         },
         {
