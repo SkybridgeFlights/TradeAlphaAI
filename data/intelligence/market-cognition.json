@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-26T17:17:22.232Z",
+  "updated_at": "2026-06-26T19:20:49.544Z",
   "run_date": "2026-06-26",
   "verified": true,
   "sessions_tracked": 13,
@@ -24,13 +24,10 @@
     },
     {
       "dimension": "dollar_pressure",
-      "state": "stable",
-      "phase": "emerging",
-      "sessions_in_state": 1,
-      "from": {
-        "state": "firming",
-        "date": "2026-06-25"
-      }
+      "state": "firming",
+      "phase": "extended",
+      "sessions_in_state": 5,
+      "from": null
     },
     {
       "dimension": "duration_pressure",
@@ -95,6 +92,14 @@
   "memory_observations": [
     {
       "kind": "streak",
+      "dimension": "dollar_pressure",
+      "state": "firming",
+      "sessions": 5,
+      "en": "Dollar firming persists into a fifth consecutive session, draining global risk appetite at the margin.",
+      "ar": "تقوّي الدولار يمتد للجلسة الخامسة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+    },
+    {
+      "kind": "streak",
       "dimension": "ai_concentration_risk",
       "state": "elevated",
       "sessions": 5,
@@ -129,8 +134,8 @@
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": -0.47813527856115184,
-        "qqq": -0.5988
+        "us10y": -0.4553666066962734,
+        "qqq": -0.8724
       }
     },
     {
@@ -144,8 +149,8 @@
       "ar": "دعم العوائد يقوّي الدولار عادة",
       "state": "diverging",
       "evidence": {
-        "us10y": -0.47813527856115184,
-        "dxy": 0.2940011878835845
+        "us10y": -0.4553666066962734,
+        "dxy": 0.32270837457929874
       }
     },
     {
@@ -159,8 +164,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": 0.2940011878835845,
-        "gold": 1.3831
+        "dxy": 0.32270837457929874,
+        "gold": 1.0583
       }
     },
     {
@@ -172,10 +177,10 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "vix": 8.449074074074057,
-        "spy": -0.0109
+        "vix": 9.953703703703697,
+        "spy": -0.2043
       }
     },
     {
@@ -189,8 +194,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": -1.1904,
-        "qqq": -0.5988
+        "nvda": -0.6948,
+        "qqq": -0.8724
       }
     },
     {
@@ -204,8 +209,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "diverging",
       "evidence": {
-        "btc": 1.5795,
-        "qqq": -0.5988
+        "btc": 1.1832,
+        "qqq": -0.8724
       }
     },
     {
@@ -217,10 +222,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "spy": -0.0109,
-        "iwm": 0.0502
+        "spy": -0.2043,
+        "iwm": -0.6323
       }
     },
     {
@@ -234,20 +239,38 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
       "state": "neutral",
       "evidence": {
-        "us10y": -0.47813527856115184,
-        "tlt": -0.0229
+        "us10y": -0.4553666066962734,
+        "tlt": -0.0343
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
+        "source": "causal:vix-equities",
+        "en": "Rising hedging demand pressures the equity tape",
+        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
+        "evidence": {
+          "vix": 9.953703703703697,
+          "spy": -0.2043
+        }
+      },
+      {
         "source": "causal:ai-growth",
         "en": "AI leadership drives the growth complex",
         "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "nvda": -1.1904,
-          "qqq": -0.5988
+          "nvda": -0.6948,
+          "qqq": -0.8724
+        }
+      },
+      {
+        "source": "causal:breadth-link",
+        "en": "Healthy advances carry small caps with the index",
+        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
+        "evidence": {
+          "spy": -0.2043,
+          "iwm": -0.6323
         }
       }
     ],
@@ -257,8 +280,8 @@
         "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": -0.47813527856115184,
-          "qqq": -0.5988
+          "us10y": -0.4553666066962734,
+          "qqq": -0.8724
         }
       },
       {
@@ -266,8 +289,8 @@
         "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": -0.47813527856115184,
-          "dxy": 0.2940011878835845
+          "us10y": -0.4553666066962734,
+          "dxy": 0.32270837457929874
         }
       },
       {
@@ -275,8 +298,8 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": 0.2940011878835845,
-          "gold": 1.3831
+          "dxy": 0.32270837457929874,
+          "gold": 1.0583
         }
       }
     ],
@@ -342,5 +365,5 @@
       "note": "market fragility: contained -> building"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 3 cross-session observation(s); 17 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 4 cross-session observation(s); 17 timeline event(s)."
 }
