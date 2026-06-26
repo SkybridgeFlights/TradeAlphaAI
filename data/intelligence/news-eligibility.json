@@ -1,14 +1,67 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-25T12:28:05.058Z",
-  "run_date": "2026-06-25",
+  "updated_at": "2026-06-26T12:18:12.008Z",
+  "run_date": "2026-06-26",
   "significance_threshold": 70,
   "cluster_cooldown_hours": 36,
   "cross_asset_context": true,
-  "eligible": [],
-  "eligible_count": 0,
-  "covered": [],
-  "note": "No event cleared the significance threshold this cycle — the News desk stays quiet (reaction analysis requires a released, surprising, market-moving event).",
+  "eligible": [
+    {
+      "event_id": "release::economic-calendar::fmp::us::gdp-growth-rate-qoq-q1::20260625T123000",
+      "cluster": "growth",
+      "headline": "GDP Growth Rate QoQ (Q1): 2.1 vs 1.6 expected",
+      "significance": 100,
+      "market_impact": 85,
+      "evidence": [
+        "newswire:release::economic-calendar::fmp::us::gdp-growth-rate-qoq-q1::20260625T123000",
+        "official economic release via platform calendar providers"
+      ],
+      "cross_asset_context": true
+    },
+    {
+      "event_id": "release::economic-calendar::fmp::us::gross-domestic-product-qoq-q1::20260625T123000",
+      "cluster": "macro",
+      "headline": "Gross Domestic Product QoQ (Q1): 2.1 vs 1.6 expected",
+      "significance": 100,
+      "market_impact": 85,
+      "evidence": [
+        "newswire:release::economic-calendar::fmp::us::gross-domestic-product-qoq-q1::20260625T123000",
+        "official economic release via platform calendar providers"
+      ],
+      "cross_asset_context": true
+    },
+    {
+      "event_id": "release::economic-calendar::fmp::us::core-pce-price-index-mom-may::20260625T123000",
+      "cluster": "inflation",
+      "headline": "Core PCE Price Index MoM (May): 0.3 vs 0.3 expected",
+      "significance": 100,
+      "market_impact": 85,
+      "evidence": [
+        "newswire:release::economic-calendar::fmp::us::core-pce-price-index-mom-may::20260625T123000",
+        "official economic release via platform calendar providers"
+      ],
+      "cross_asset_context": true
+    }
+  ],
+  "eligible_count": 3,
+  "covered": [
+    {
+      "cluster": "growth",
+      "event_id": "release::economic-calendar::fmp::us::gdp-growth-rate-qoq-q1::20260625T123000",
+      "last_covered": "2026-06-26T12:18:12.008Z"
+    },
+    {
+      "cluster": "macro",
+      "event_id": "release::economic-calendar::fmp::us::gross-domestic-product-qoq-q1::20260625T123000",
+      "last_covered": "2026-06-26T12:18:12.008Z"
+    },
+    {
+      "cluster": "inflation",
+      "event_id": "release::economic-calendar::fmp::us::core-pce-price-index-mom-may::20260625T123000",
+      "last_covered": "2026-06-26T12:18:12.008Z"
+    }
+  ],
+  "note": null,
   "policy": {
     "event_driven": true,
     "no_scheduled_filler": true,
