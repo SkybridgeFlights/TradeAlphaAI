@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-26T21:07:33.830Z",
-  "run_date": "2026-06-26",
+  "updated_at": "2026-06-27T11:41:20.689Z",
+  "run_date": "2026-06-27",
   "verified": true,
-  "sessions_tracked": 13,
+  "sessions_tracked": 14,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "neutral",
-      "phase": "established",
-      "sessions_in_state": 4,
+      "phase": "extended",
+      "sessions_in_state": 5,
       "from": {
         "state": "risk-on",
         "date": "2026-06-22"
@@ -19,28 +19,28 @@
       "dimension": "volatility_regime",
       "state": "normal",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     },
     {
       "dimension": "dollar_pressure",
       "state": "firming",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     },
     {
       "dimension": "duration_pressure",
       "state": "neutral",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     },
     {
       "dimension": "momentum_concentration",
       "state": "balanced",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "broadening",
         "date": "2026-06-25"
@@ -50,14 +50,14 @@
       "dimension": "ai_concentration_risk",
       "state": "elevated",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     },
     {
       "dimension": "breadth_state",
       "state": "mixed",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     },
     {
@@ -71,7 +71,7 @@
       "dimension": "liquidity_stress",
       "state": "mixed",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     },
     {
@@ -85,7 +85,7 @@
       "dimension": "market_fragility",
       "state": "building",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": null
     }
   ],
@@ -94,32 +94,32 @@
       "kind": "streak",
       "dimension": "dollar_pressure",
       "state": "firming",
-      "sessions": 5,
-      "en": "Dollar firming persists into a fifth consecutive session, draining global risk appetite at the margin.",
-      "ar": "تقوّي الدولار يمتد للجلسة الخامسة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+      "sessions": 6,
+      "en": "Dollar firming persists into a sixth consecutive session, draining global risk appetite at the margin.",
+      "ar": "تقوّي الدولار يمتد للجلسة السادسة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
     },
     {
       "kind": "streak",
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "sessions": 5,
-      "en": "AI concentration risk holds elevated for a fifth straight session — crowding pressure is building, not resetting.",
-      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الخامسة على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
+      "sessions": 6,
+      "en": "AI concentration risk holds elevated for a sixth straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة السادسة على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
     },
     {
       "kind": "streak",
       "dimension": "market_fragility",
       "state": "building",
-      "sessions": 5,
-      "en": "Market fragility signals build for a fifth straight session across volatility, breadth, and concentration inputs.",
-      "ar": "إشارات هشاشة السوق تتراكم للجلسة الخامسة على التوالي عبر مدخلات التقلب والاتساع والتركز."
+      "sessions": 6,
+      "en": "Market fragility signals build for a sixth straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة السادسة على التوالي عبر مدخلات التقلب والاتساع والتركز."
     },
     {
       "kind": "divergence",
       "flag": "gold-vs-dollar",
-      "sessions": 1,
-      "en": "Gold is rising against a firming dollar this session — an unusual co-move worth respecting.",
-      "ar": "الذهب يرتفع رغم تقوّي الدولار في هذه الجلسة — تحرك متزامن غير معتاد يستحق الانتباه."
+      "sessions": 2,
+      "en": "Gold strength against a firming dollar persists for a second session — an unusual co-move worth respecting.",
+      "ar": "قوة الذهب رغم تقوّي الدولار تستمر للجلسة الثانية — تحرك متزامن غير معتاد يستحق الانتباه."
     }
   ],
   "causal_links": [
@@ -320,7 +320,23 @@
     "liquidity": [],
     "speculative": []
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "macro-divergence-2026-06-27",
+      "type": "macro-divergence",
+      "severity": "watch",
+      "date": "2026-06-27",
+      "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+      "derived_from": [
+        {
+          "divergence": "gold-vs-dollar",
+          "streak": 2,
+          "date": "2026-06-27"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
     {
       "date": "2026-06-26",
@@ -365,5 +381,5 @@
       "note": "market fragility: contained -> building"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 4 cross-session observation(s); 17 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 4 cross-session observation(s); 17 timeline event(s)."
 }

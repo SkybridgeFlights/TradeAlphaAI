@@ -1,47 +1,36 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-26T21:07:35.114Z",
+  "updated_at": "2026-06-27T11:41:20.916Z",
   "verified": true,
   "urgency": "elevated",
   "pulse_shift": [],
-  "quote_driven_changes": [
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 9.953703703703697,
-      "to": 6.539351851851846,
-      "delta": -3.414351851851851,
-      "en": "vix move changed by -3.41 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -3.41 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "oil",
-      "from": -7.671745522587538,
-      "to": -5.920876770916858,
-      "delta": 1.75086875167068,
-      "en": "oil move changed by +1.75 percentage points.",
-      "ar": "تغير تحرك oil بمقدار +1.75 نقطة مئوية."
-    }
-  ],
+  "quote_driven_changes": [],
   "new_contradictions": [],
   "pressure_buildup": [],
-  "new_alerts": [],
+  "new_alerts": [
+    {
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-06-27",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
+    }
+  ],
   "catalyst_countdown": [
-    {
-      "name": "PCE",
-      "time": "2026-06-26T12:30:00.000Z",
-      "minutes_until": 0
-    },
-    {
-      "name": "Core PCE",
-      "time": "2026-06-26T12:30:00.000Z",
-      "minutes_until": 0
-    },
     {
       "name": "RBA Meeting Minutes",
       "time": "2026-06-30T01:30:00-04:00",
-      "minutes_until": 4822
+      "minutes_until": 3949
+    },
+    {
+      "name": "Gross Domestic Product QoQ (Q1)",
+      "time": "2026-06-30T06:00:00-04:00",
+      "minutes_until": 4219
+    },
+    {
+      "name": "Gross Domestic Product YoY (Q1)",
+      "time": "2026-06-30T06:00:00-04:00",
+      "minutes_until": 4219
     }
   ],
   "wire_event": {
@@ -51,22 +40,11 @@
   },
   "changes": [
     {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 9.953703703703697,
-      "to": 6.539351851851846,
-      "delta": -3.414351851851851,
-      "en": "vix move changed by -3.41 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -3.41 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "oil",
-      "from": -7.671745522587538,
-      "to": -5.920876770916858,
-      "delta": 1.75086875167068,
-      "en": "oil move changed by +1.75 percentage points.",
-      "ar": "تغير تحرك oil بمقدار +1.75 نقطة مئوية."
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-06-27",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     }
   ],
   "note_en": null,
@@ -102,8 +80,26 @@
       "nvda": -0.6948,
       "oil": -5.920876770916858
     },
-    "alert_ids": [],
-    "alerts": [],
+    "alert_ids": [
+      "macro-divergence-2026-06-27"
+    ],
+    "alerts": [
+      {
+        "id": "macro-divergence-2026-06-27",
+        "type": "macro-divergence",
+        "severity": "watch",
+        "date": "2026-06-27",
+        "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+        "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+        "derived_from": [
+          {
+            "divergence": "gold-vs-dollar",
+            "streak": 2,
+            "date": "2026-06-27"
+          }
+        ]
+      }
+    ],
     "contradiction_ids": [],
     "pressure": {
       "volatility_pressure": 0,
@@ -115,16 +111,16 @@
     },
     "catalysts": [
       {
-        "name": "PCE",
-        "time": "2026-06-26T12:30:00.000Z"
-      },
-      {
-        "name": "Core PCE",
-        "time": "2026-06-26T12:30:00.000Z"
-      },
-      {
         "name": "RBA Meeting Minutes",
         "time": "2026-06-30T01:30:00-04:00"
+      },
+      {
+        "name": "Gross Domestic Product QoQ (Q1)",
+        "time": "2026-06-30T06:00:00-04:00"
+      },
+      {
+        "name": "Gross Domestic Product YoY (Q1)",
+        "time": "2026-06-30T06:00:00-04:00"
       }
     ],
     "wire_event": {
