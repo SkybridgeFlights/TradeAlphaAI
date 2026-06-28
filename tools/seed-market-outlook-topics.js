@@ -24,6 +24,13 @@ const COOLDOWN_MACRO_EVENT = 21;
 const SIMILARITY_THRESHOLD = 0.82;
 const SEEDER_VERSION       = '1.0';
 
+// Month names — used by periodQualifier(). Declared near the top of the
+// module so the TDZ doesn't trap the seeding loop (which runs before the
+// later "function periodQualifier" declaration block was previously
+// reading the const at module-level).
+const MONTH_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
 // ── Template library ──────────────────────────────────────────────────────────
 // Indexed by semantic cluster. event_types[] links to economic-calendar types.
 // Structural themes have empty event_types and activate as fallback.
@@ -444,8 +451,8 @@ function hasHeadlineSimilarity(template) {
 // in check-publishing-safety (>=0.82 Jaccard) never trips. We add a
 // date-specific qualifier (month + period) to every seeded title, so
 // the same template seeded across the year produces unique headlines.
-const MONTH_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const MONTH_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+// (MONTH_EN / MONTH_AR are declared near the top of this module so the
+// seeding loop above can call periodQualifier without hitting a TDZ.)
 function periodQualifier(dateStr) {
   const d = new Date(dateStr + 'T00:00:00Z');
   const day = d.getUTCDate();
