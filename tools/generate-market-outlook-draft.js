@@ -33,7 +33,7 @@ const MACRO_COGNITION_PATH = path.join(ROOT, 'data', 'intelligence', 'macro-cogn
 const OUT_DIR = path.join(ROOT, 'drafts', 'market-outlook');
 const SITE_URL = 'https://www.tradealphaai.com';
 const ELIGIBLE = new Set(['planned', 'draft']);
-const DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market conditions can change rapidly and uncertainty remains present.';
+const DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market regimes can shift rapidly and uncertainty remains present.';
 const DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
 
 

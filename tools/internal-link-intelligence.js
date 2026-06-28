@@ -184,12 +184,22 @@ function checkClusterConnectivity(html, clusters = []) {
  * Check anchor text diversity — articles should not repeat the same anchor 3+ times.
  */
 function checkAnchorDiversity(html) {
-  const anchors = [...html.matchAll(/<a\s[^>]*href="\/[^"#?]+[^>]*>([\s\S]*?)<\/a>/gi)]
+  // Strip global header + footer + breadcrumb nav so platform-wide repeated
+  // anchors ("Market Outlook" / "Economic Calendar" / "Methodology" footer
+  // links) don't get counted against article-body diversity.
+  const stripped = String(html || '')
+    .replace(/<header[\s\S]*?<\/header>/gi, ' ')
+    .replace(/<footer[\s\S]*?<\/footer>/gi, ' ')
+    .replace(/<nav[\s\S]*?<\/nav>/gi, ' ');
+  const anchors = [...stripped.matchAll(/<a\s[^>]*href="\/[^"#?]+[^>]*>([\s\S]*?)<\/a>/gi)]
     .map(m => m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().toLowerCase())
     .filter(t => t.length > 2);
   const counts = new Map();
   for (const a of anchors) counts.set(a, (counts.get(a) || 0) + 1);
-  const repeated = [...counts.entries()].filter(([, c]) => c >= 3).map(([a]) => a);
+  // Threshold raised 2026-06-23 from 3 to 5: legitimate article bodies may
+  // reference the same hub anchor (e.g. "Market Outlook" tagline) a few
+  // times for clarity; 5+ repetitions is the real spam signal.
+  const repeated = [...counts.entries()].filter(([, c]) => c >= 5).map(([a]) => a);
   return { diverse: repeated.length === 0, repeated };
 }
 

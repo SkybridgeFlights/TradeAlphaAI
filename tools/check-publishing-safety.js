@@ -18,7 +18,8 @@ const ALLOWED_NEWS_SOURCE_TYPES = new Set([
   'cpi_release', 'nfp_release', 'gdp_release', 'pce_release',
   'etf_provider_update', 'platform_market_data'
 ]);
-const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market conditions can change rapidly and uncertainty remains present.';
+const OUTLOOK_DISCLAIMER_EN = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market regimes can shift rapidly and uncertainty remains present.';
+const OUTLOOK_DISCLAIMER_EN_LEGACY = 'This analysis is educational market commentary only. It is not investment advice, financial advice, or a recommendation to buy or sell any asset. Market conditions can change rapidly and uncertainty remains present.';
 const OUTLOOK_DISCLAIMER_AR = 'هذا التحليل عبارة عن تعليق تعليمي حول الأسواق المالية فقط، ولا يُعتبر نصيحة استثمارية أو مالية أو توصية شراء أو بيع لأي أصل مالي. قد تتغير ظروف السوق بسرعة وتبقى حالة عدم اليقين قائمة.';
 
 checkEconomicCalendar();
@@ -76,12 +77,12 @@ function checkMarketOutlookQueue() {
   checkQueueBasics('market_outlook', queue.topics || []);
   checkClusterCooldown('market_outlook', queue.topics || [], 14);
   if (queue.policy) {
-    if (queue.policy.disclaimer_en !== OUTLOOK_DISCLAIMER_EN) failures.push('market_outlook policy: required EN disclaimer mismatch');
+    if (queue.policy.disclaimer_en !== OUTLOOK_DISCLAIMER_EN && queue.policy.disclaimer_en !== OUTLOOK_DISCLAIMER_EN_LEGACY) failures.push('market_outlook policy: required EN disclaimer mismatch');
     if (queue.policy.disclaimer_ar !== OUTLOOK_DISCLAIMER_AR) failures.push('market_outlook policy: required AR disclaimer mismatch');
   }
   for (const topic of queue.topics || []) {
     const text = JSON.stringify(topic);
-    if (topic.disclaimer_en && !text.includes(OUTLOOK_DISCLAIMER_EN)) failures.push(`${topic.slug}: market outlook missing required EN disclaimer`);
+    if (topic.disclaimer_en && !text.includes(OUTLOOK_DISCLAIMER_EN) && !text.includes(OUTLOOK_DISCLAIMER_EN_LEGACY)) failures.push(`${topic.slug}: market outlook missing required EN disclaimer`);
     if (topic.disclaimer_ar && !text.includes(OUTLOOK_DISCLAIMER_AR)) failures.push(`${topic.slug}: market outlook missing required AR disclaimer`);
   }
 }
@@ -211,8 +212,12 @@ function checkDraftTree(dir, type) {
       if (!/educational-disclaimer|Educational disclaimer|insight-disclaimer|إخلاء المسؤولية التعليمي|تنبيه تعليمي|educational market commentary|تعليق تعليمي/.test(html)) {
         failures.push(`${rel}: missing educational disclaimer`);
       }
-      if (type === 'market_outlook' && !plain.includes(name === 'ar.html' ? OUTLOOK_DISCLAIMER_AR : OUTLOOK_DISCLAIMER_EN)) {
-        failures.push(`${rel}: missing required market outlook disclaimer`);
+      if (type === 'market_outlook') {
+        const required = name === 'ar.html' ? OUTLOOK_DISCLAIMER_AR : OUTLOOK_DISCLAIMER_EN;
+        const legacy = name === 'ar.html' ? null : OUTLOOK_DISCLAIMER_EN_LEGACY;
+        if (!plain.includes(required) && !(legacy && plain.includes(legacy))) {
+          failures.push(`${rel}: missing required market outlook disclaimer`);
+        }
       }
       if (type === 'market_outlook') {
         const BANNED = [

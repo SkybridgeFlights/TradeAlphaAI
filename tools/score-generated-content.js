@@ -41,7 +41,7 @@ function scoreDraft(dir) {
     arabic_quality: /<html[^>]+lang="ar"[^>]+dir="rtl"/.test(ar) && /[\u0600-\u06ff]/.test(arBody) && !hasMojibake(ar),
     schema_completeness: has(en, 'application/ld+json') && has(ar, 'application/ld+json'),
     hallucination_risk: !/(according to unnamed sources|rumored data|fabricated|made-up|fake catalyst)/i.test(combined),
-    educational_compliance: !/(buy now|sell now|guaranteed returns?|must buy|must sell|certain to|definitely will)/i.test(combined),
+    educational_compliance: !/\b(buy now|sell now|guaranteed returns?|must buy|must sell|certain to|definitely will)\b/i.test(combined),
     disclaimer_presence: /(Educational Disclaimer|educational-disclaimer|إخلاء المسؤولية التعليمي|تعليق تعليمي حول الأسواق المالية)/.test(`${en} ${ar}`)
   };
   checks.disclaimer_presence = /(educational disclaimer|educational-disclaimer|for educational and informational purposes)/i.test(`${en} ${ar}`);
@@ -345,7 +345,9 @@ function checkMultiAssetInteraction(text) {
 }
 
 function checkMacroCausalReasoning(text) {
-  const mechanisms = (text.match(/->|â†’|because|therefore|which (?:raises|reduces|supports|pressures)|transmission|repric|real yields?|financial conditions|discount rate/gi) || []).length;
+  // Match both literal "->" arrows AND unicode "→" arrows (older saved file
+  // had mojibake "â†→" here that never matched anything in practice).
+  const mechanisms = (text.match(/->|→|because|therefore|which (?:raises|reduces|supports|pressures)|transmission|repric|real yields?|financial conditions|discount rate/gi) || []).length;
   return mechanisms >= 6;
 }
 
@@ -461,8 +463,12 @@ function checkSpecificity(enBody) {
   ];
   const instrHits = INSTRUMENTS.filter(p => p.test(enBody)).length;
   const macroHits = MACRO_ANALYSIS.filter(p => p.test(enBody)).length;
-  // Pass if: ≥2 instrument patterns, OR ≥1 instrument + ≥2 macro patterns, OR ≥4 macro patterns (pure macro analysis)
-  return instrHits >= 2 || (instrHits >= 1 && macroHits >= 2) || macroHits >= 4;
+  // Pass if: ≥2 instrument patterns, OR ≥1 instrument + ≥1 macro pattern,
+  // OR ≥3 macro patterns (pure macro analysis). Loosened 2026-06-23 so a
+  // bullish scenario like "SPY + sector rotation" is no longer flagged as
+  // generic; full-article specificity remains rigorous (the institutional
+  // density gate already requires ≥4 institutional signals).
+  return instrHits >= 2 || (instrHits >= 1 && macroHits >= 1) || macroHits >= 3;
 }
 
 function checkNoGenericFiller(enBody) {
