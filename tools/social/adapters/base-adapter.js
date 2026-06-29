@@ -121,6 +121,9 @@ class BaseAdapter {
       network_attempted: true,
       status: delivered ? 'posted' : (result && result.status) || 'not_delivered',
       external_post_id: (result && result.external_post_id) || null,
+      // Surface the platform's actual error message so the orchestrator
+      // can log it. Previously dropped, making API failures opaque.
+      error: delivered ? null : (result && result.error) || null,
     };
   }
 }
