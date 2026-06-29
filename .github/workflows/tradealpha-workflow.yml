@@ -52,6 +52,26 @@ jobs:
       FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
       FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
       ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+      # Social posting (each platform independent; missing flag = preview-only)
+      ENABLE_FACEBOOK_POSTING: ${{ vars.ENABLE_FACEBOOK_POSTING || secrets.ENABLE_FACEBOOK_POSTING }}
+      ENABLE_INSTAGRAM_POSTING: ${{ vars.ENABLE_INSTAGRAM_POSTING || secrets.ENABLE_INSTAGRAM_POSTING }}
+      ENABLE_X_POSTING: ${{ vars.ENABLE_X_POSTING || secrets.ENABLE_X_POSTING }}
+      ENABLE_LINKEDIN_POSTING: ${{ vars.ENABLE_LINKEDIN_POSTING || secrets.ENABLE_LINKEDIN_POSTING }}
+      SOCIAL_DRY_RUN: ${{ vars.SOCIAL_DRY_RUN || secrets.SOCIAL_DRY_RUN }}
+      REQUIRE_SOCIAL_APPROVAL: ${{ vars.REQUIRE_SOCIAL_APPROVAL || secrets.REQUIRE_SOCIAL_APPROVAL }}
+      # Facebook + Instagram
+      FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+      FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+      INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+      INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+      # X (Twitter)
+      X_API_KEY: ${{ secrets.X_API_KEY }}
+      X_API_SECRET: ${{ secrets.X_API_SECRET }}
+      X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+      X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+      # LinkedIn
+      LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+      LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
 
     steps:
       - name: Log TradeAlpha context
@@ -297,6 +317,24 @@ jobs:
             git push origin "${GITHUB_REF_NAME}"
           fi
 
+      - name: Slot — forecast — Social distribution
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.forecast == 'yes' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_content_type||''))}catch{process.stdout.write('')}")"
+          if [ "${published}" != "yes" ] || [ -z "${slug}" ]; then exit 0; fi
+          node tools/send-published-article-social.js --slug="${slug}" --content-type="${type}"
+          if ! git diff --quiet -- data/social/delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/social/delivery-ledger.json
+            git commit -m "Social delivery (forecast)" || true
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}" || true
+          fi
+
       # ============ NEWS BUCKET (continuous-intelligence) ============
       - name: Slot — news — publish
         if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.news == 'yes' }}
@@ -359,6 +397,24 @@ jobs:
             git push origin "${GITHUB_REF_NAME}"
           fi
 
+      - name: Slot — news — Social distribution
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.news == 'yes' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_content_type||''))}catch{process.stdout.write('')}")"
+          if [ "${published}" != "yes" ] || [ -z "${slug}" ]; then exit 0; fi
+          node tools/send-published-article-social.js --slug="${slug}" --content-type="${type}"
+          if ! git diff --quiet -- data/social/delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/social/delivery-ledger.json
+            git commit -m "Social delivery (news)" || true
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}" || true
+          fi
+
       # ============ ARTICLE BUCKET (editorial) ============
       - name: Slot — article — publish
         if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.article == 'yes' }}
@@ -419,6 +475,24 @@ jobs:
             git commit -m "Telegram delivery (article)"
             git pull --rebase origin "${GITHUB_REF_NAME}" || true
             git push origin "${GITHUB_REF_NAME}"
+          fi
+
+      - name: Slot — article — Social distribution
+        if: ${{ env.DRY_RUN == 'false' && steps.gates.outputs.article == 'yes' }}
+        continue-on-error: true
+        run: |
+          published="$(node -e "try{const r=require('./data/intelligence/publishing-report.json');process.stdout.write(r.published===true?'yes':'no')}catch{process.stdout.write('no')}")"
+          slug="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_topic||''))}catch{process.stdout.write('')}")"
+          type="$(node -e "try{process.stdout.write(String(require('./data/intelligence/publishing-report.json').selected_content_type||''))}catch{process.stdout.write('')}")"
+          if [ "${published}" != "yes" ] || [ -z "${slug}" ]; then exit 0; fi
+          node tools/send-published-article-social.js --slug="${slug}" --content-type="${type}"
+          if ! git diff --quiet -- data/social/delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/social/delivery-ledger.json
+            git commit -m "Social delivery (article)" || true
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}" || true
           fi
 
       - name: Update homepage featured + system status

@@ -60,13 +60,26 @@ async function adapterPreviewSafety() {
   }
 }
 
-// 3. No adapter source file may contain a real network primitive in this phase.
+// 3. Adapter network safety: any network call MUST live inside _deliver(),
+//    and _deliver() can only be reached after BaseAdapter's 7 gates pass.
+//    This check used to forbid all network primitives; as of the live
+//    rollout, network code is permitted but the disabled-mode test above
+//    (no network_attempted, no posted) is the runtime proof that gates
+//    still hold.
 {
   const adaptersDir = path.join(ROOT, 'tools', 'social', 'adapters');
   const forbidden = /\b(?:fetch\s*\(|https?\.request|https?\.get|axios|node-fetch|XMLHttpRequest|got\()/;
   for (const f of fs.readdirSync(adaptersDir).filter((x) => x.endsWith('.js'))) {
     const src = fs.readFileSync(path.join(adaptersDir, f), 'utf8');
-    if (forbidden.test(src)) fail(`adapter ${f} contains a network primitive (live delivery must be a stub this phase)`);
+    if (!forbidden.test(src)) continue;
+    // If the file contains network code, it MUST also extend BaseAdapter
+    // (so the gate chain wraps it) and define an _deliver method.
+    if (!/extends\s+BaseAdapter/.test(src)) {
+      fail(`adapter ${f} has network code but does not extend BaseAdapter`);
+    }
+    if (!/async\s+_deliver\s*\(/.test(src)) {
+      fail(`adapter ${f} has network code but no _deliver method`);
+    }
   }
 }
 
