@@ -1,0 +1,106 @@
+name: Manual Social Blast
+
+# One-shot social delivery for an ALREADY PUBLISHED article.
+# Use this to test that Facebook + Instagram tokens work without waiting
+# for the next scheduled publish, OR to re-broadcast an old article.
+#
+# The orchestrator's BaseAdapter gates still apply:
+#   - duplicate ledger check (blocks if already posted to that platform)
+#   - URL liveness (must serve 200)
+#   - rate limit (max N per window)
+#   - SOCIAL_DRY_RUN respected if set to true
+#
+# Trigger from GitHub Actions UI: enter slug + content type, click Run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Article slug (e.g. ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk)'
+        required: true
+        type: string
+      content_type:
+        description: 'Content type'
+        required: true
+        type: choice
+        options:
+          - editorial
+          - market-outlook
+          - continuous-intelligence
+        default: editorial
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manual-social-blast
+  cancel-in-progress: false
+
+jobs:
+  social-blast:
+    runs-on: ubuntu-latest
+    env:
+      ENABLE_FACEBOOK_POSTING: ${{ vars.ENABLE_FACEBOOK_POSTING || secrets.ENABLE_FACEBOOK_POSTING }}
+      ENABLE_INSTAGRAM_POSTING: ${{ vars.ENABLE_INSTAGRAM_POSTING || secrets.ENABLE_INSTAGRAM_POSTING }}
+      ENABLE_X_POSTING: ${{ vars.ENABLE_X_POSTING || secrets.ENABLE_X_POSTING }}
+      ENABLE_LINKEDIN_POSTING: ${{ vars.ENABLE_LINKEDIN_POSTING || secrets.ENABLE_LINKEDIN_POSTING }}
+      SOCIAL_DRY_RUN: ${{ vars.SOCIAL_DRY_RUN || secrets.SOCIAL_DRY_RUN }}
+      REQUIRE_SOCIAL_APPROVAL: ${{ vars.REQUIRE_SOCIAL_APPROVAL || secrets.REQUIRE_SOCIAL_APPROVAL }}
+      FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+      FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+      INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+      INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+      X_API_KEY: ${{ secrets.X_API_KEY }}
+      X_API_SECRET: ${{ secrets.X_API_SECRET }}
+      X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+      X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+      LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+      LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Log inputs + active modes
+        run: |
+          echo "============================================"
+          echo "  Manual Social Blast"
+          echo "============================================"
+          echo "  slug         : ${{ github.event.inputs.slug }}"
+          echo "  content_type : ${{ github.event.inputs.content_type }}"
+          echo "  FB enabled   : ${ENABLE_FACEBOOK_POSTING:-unset}"
+          echo "  IG enabled   : ${ENABLE_INSTAGRAM_POSTING:-unset}"
+          echo "  LI enabled   : ${ENABLE_LINKEDIN_POSTING:-unset}"
+          echo "  X  enabled   : ${ENABLE_X_POSTING:-unset}"
+          echo "  DRY_RUN      : ${SOCIAL_DRY_RUN:-unset (defaults true)}"
+          echo "============================================"
+
+      - name: Send to social platforms
+        run: |
+          node tools/send-published-article-social.js \
+            --slug="${{ github.event.inputs.slug }}" \
+            --content-type="${{ github.event.inputs.content_type }}"
+
+      - name: Commit social ledger
+        continue-on-error: true
+        run: |
+          if ! git diff --quiet -- data/social/delivery-ledger.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/social/delivery-ledger.json
+            git commit -m "Manual social blast: ${{ github.event.inputs.slug }}"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}"
+          else
+            echo "[ledger] No social ledger changes to commit."
+          fi

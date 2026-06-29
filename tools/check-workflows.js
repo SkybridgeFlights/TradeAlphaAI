@@ -18,6 +18,7 @@ const failures = [];
 
 const CANONICAL = new Set([
   'tradealpha-workflow.yml',         // Unified publishing workflow (schedule-driven; reads data/publishing-schedule.json)
+  'manual-social-blast.yml',         // One-shot manual social delivery for an already-published article
   'autonomous-publishing-brain.yml', // Supervisor/engine — workflow_dispatch-only fallback under tradealpha
   'distribution-brain.yml',
   'market-watch.yml',                // Intraday Market Watch
