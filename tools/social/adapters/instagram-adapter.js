@@ -77,11 +77,10 @@ function buildCaption(item) {
   if (item.hook) lines.push(item.hook.trim());
   if (item.body) lines.push(item.body.trim());
   if (item.cta) lines.push(item.cta.trim());
-  // Instagram does not auto-link URLs in captions — include the site CTA in text.
-  if (item.source_url) {
-    const url = absoluteUrl(item.source_url);
-    lines.push(`Read the full analysis: ${url}`);
-  }
+  // Instagram does not auto-link URLs in captions, so we intentionally do
+  // NOT append the source URL. The orchestrator's payload builder for
+  // Instagram either omits source_url entirely or routes users to the
+  // brand domain via the CTA / link-in-bio convention.
   return lines.join('\n\n').trim();
 }
 

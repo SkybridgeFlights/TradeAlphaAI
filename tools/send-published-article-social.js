@@ -28,6 +28,7 @@ const path = require('path');
 const https = require('https');
 const { getAdapter } = require('./social/adapters');
 const { PLATFORMS, modeFor } = require('./social/social-flags');
+const { renderHashtags } = require('./social/hashtag-library');
 
 const ROOT = path.resolve(__dirname, '..');
 const SITE_URL = process.env.SITE_URL || 'https://www.tradealphaai.com';
@@ -184,10 +185,11 @@ function findGraphicUrl(slug) {
 function buildPayload(platform, article) {
   const baseHook = article.title;
   const baseBody = article.description || `New research from TradeAlphaAI on ${article.title}.`;
-  const baseCta = 'Read the full analysis on TradeAlphaAI.';
+  const ctx = { slug: article.slug, title: article.title, body: baseBody };
 
-  // Adapt per platform's tone + length.
+  // X (Twitter): one strong hook, tight body, 1-2 hashtags, link auto-shortens.
   if (platform === 'x') {
+    const hashtags = renderHashtags('x', ctx);
     return {
       platform,
       slug: article.slug,
@@ -195,13 +197,17 @@ function buildPayload(platform, article) {
       approval_status: 'approved',
       language: 'en',
       hook: trim(baseHook, 90),
-      body: trim(baseBody, 140),
+      body: trim(baseBody, 100) + hashtags,
       cta: '',
       source_url: article.source_url,
       graphic_path: article.graphic_path
     };
   }
+
+  // Instagram: hashtag-heavy, NO inline link (Instagram doesn't make them
+  // clickable). Direct readers to tradealphaai.com or "link in bio" via CTA.
   if (platform === 'instagram') {
+    const hashtags = renderHashtags('instagram', ctx);
     return {
       platform,
       slug: article.slug,
@@ -210,13 +216,18 @@ function buildPayload(platform, article) {
       language: 'en',
       hook: baseHook,
       body: baseBody,
-      cta: baseCta,
-      source_url: article.source_url,
+      // No source_url here — Instagram strips URLs from captions and they
+      // appear as ugly plain text. Direct to brand domain via the CTA instead.
+      cta: '🔗 Read the full analysis at tradealphaai.com (link in bio)' + hashtags,
+      // source_url intentionally omitted so adapter does not append it.
       graphic_path: article.graphic_path,
       graphic_url: article.graphic_url
     };
   }
+
+  // Facebook: medium-length, link + auto-preview, 2-3 hashtags at end.
   if (platform === 'facebook') {
+    const hashtags = renderHashtags('facebook', ctx);
     return {
       platform,
       slug: article.slug,
@@ -225,13 +236,15 @@ function buildPayload(platform, article) {
       language: 'en',
       hook: baseHook,
       body: baseBody,
-      cta: baseCta,
+      cta: 'Read the full analysis on TradeAlphaAI.' + hashtags,
       source_url: article.source_url,
       graphic_path: article.graphic_path,
       graphic_url: article.graphic_url
     };
   }
+  // LinkedIn: professional tone, longer body OK, 3-5 hashtags at end.
   if (platform === 'linkedin') {
+    const hashtags = renderHashtags('linkedin', ctx);
     return {
       platform,
       slug: article.slug,
@@ -240,7 +253,7 @@ function buildPayload(platform, article) {
       language: 'en',
       hook: baseHook,
       body: baseBody,
-      cta: baseCta,
+      cta: 'Read the full analysis on TradeAlphaAI.' + hashtags,
       source_url: article.source_url,
       graphic_path: article.graphic_path
     };
