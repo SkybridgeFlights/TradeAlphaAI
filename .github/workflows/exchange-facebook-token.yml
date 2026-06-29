@@ -1,0 +1,49 @@
+name: Exchange Facebook Long-Lived Token
+
+# ONE-SHOT workflow to convert a short-lived Facebook User Token into a
+# long-lived Page Token that never expires (as long as the daily publishing
+# workflow keeps using it). Run this once when you need to (re)issue tokens;
+# the output appears in the workflow log so you can copy + paste it into the
+# FACEBOOK_PAGE_ACCESS_TOKEN + INSTAGRAM_ACCESS_TOKEN GitHub secrets.
+#
+# Inputs are passed through workflow_dispatch (never stored). Logs in this
+# private repo are visible only to collaborators; treat them as confidential.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_id:
+        description: 'Meta App ID (from developers.facebook.com → App Settings → Basic)'
+        required: true
+        type: string
+      app_secret:
+        description: 'Meta App Secret (same place; click Show)'
+        required: true
+        type: string
+      user_token:
+        description: 'Short-lived User Token from Graph API Explorer (Generate Access Token button)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  exchange:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Exchange short-lived token for long-lived Page Token
+        env:
+          FB_APP_ID: ${{ github.event.inputs.app_id }}
+          FB_APP_SECRET: ${{ github.event.inputs.app_secret }}
+          FB_USER_TOKEN: ${{ github.event.inputs.user_token }}
+        run: |
+          node tools/social/exchange-facebook-token.js
