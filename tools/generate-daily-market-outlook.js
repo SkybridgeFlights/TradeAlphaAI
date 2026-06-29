@@ -388,7 +388,7 @@ function buildWeekEventTable(events, narratives) {
       <td class="cal-narrative">${esc(narr?.narrative_blocks?.[0]?.slice(0, 120) || '—')}</td>
     </tr>`;
   }).join('');
-  return `<table class="calendar-table"><thead><tr><th>Time (ET)</th><th>Event</th><th>Impact</th><th>Forecast</th><th>Previous</th><th>Context</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<div class="table-scroll"><table class="calendar-table"><thead><tr><th>Time (ET)</th><th>Event</th><th>Impact</th><th>Forecast</th><th>Previous</th><th>Context</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 function buildHistoricalSensitivitySection(patterns) {

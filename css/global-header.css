@@ -519,3 +519,34 @@ body { min-width: 0; overflow-x: hidden; }
   [data-global-header] .locale-links,
   [data-global-header] .header-signal-cta { display: none; }
 }
+
+/* Skip-to-content link — visible only on keyboard focus */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent, #0ea5e9);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0 0 8px 0;
+  z-index: 10000;
+  text-decoration: none;
+  transition: left 0.12s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: 0;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+[dir="rtl"] .skip-link {
+  left: auto;
+  right: -9999px;
+  border-radius: 0 0 0 8px;
+}
+[dir="rtl"] .skip-link:focus,
+[dir="rtl"] .skip-link:focus-visible {
+  right: 0;
+}

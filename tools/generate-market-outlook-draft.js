@@ -690,7 +690,7 @@ function buildHistoricalComparisonSection(ar) {
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.sectionTitle)}</span><h2>${escapeHtml(L.sectionTitle)}</h2><p class="market-copy">${escapeHtml(L.intro)}</p></div>
         <div class="market-panel">
           <p class="market-copy"><strong>${escapeHtml(headlineText)}</strong></p>
-          <table class="hist-compare-table" aria-label="${escapeHtml(L.sectionTitle)}">
+          <div class="table-scroll"><table class="hist-compare-table" aria-label="${escapeHtml(L.sectionTitle)}">
             <thead><tr><th></th><th>${escapeHtml(L.prevSnapshot)} (${escapeHtml(previous.date)})</th><th>${escapeHtml(L.currentSnapshot)} (${escapeHtml(latest.date)})</th></tr></thead>
             <tbody>
 ${tableRows}
@@ -700,7 +700,7 @@ ${tableRows}
                 <td>${latest.confidence || 0}%${(latest.confidence || 0) > (previous.confidence || 0) ? ' ↑' : (latest.confidence || 0) < (previous.confidence || 0) ? ' ↓' : ''}</td>
               </tr>
             </tbody>
-          </table>
+          </table></div>
           <div class="hist-continuity-row">
             <span><strong>${escapeHtml(L.regimeStability)}:</strong> ${fmt(summary.regime_stability)}</span>
             <span><strong>${escapeHtml(L.confTrend)}:</strong> ${fmt(confTrend.direction)}</span>

@@ -312,6 +312,150 @@
         "ar": "/ar/defensive-etfs.html",
         "en": "/defensive-etfs.html"
     },
+    "/dividend-stocks.html": {
+        "ar": "/ar/dividend-stocks.html",
+        "en": "/dividend-stocks.html"
+    },
+    "/ar/dividend-stocks.html": {
+        "ar": "/ar/dividend-stocks.html",
+        "en": "/dividend-stocks.html"
+    },
+    "/en/dividend-stocks.html": {
+        "ar": "/ar/dividend-stocks.html",
+        "en": "/dividend-stocks.html"
+    },
+    "/blue-chip-stocks.html": {
+        "ar": "/ar/blue-chip-stocks.html",
+        "en": "/blue-chip-stocks.html"
+    },
+    "/ar/blue-chip-stocks.html": {
+        "ar": "/ar/blue-chip-stocks.html",
+        "en": "/blue-chip-stocks.html"
+    },
+    "/en/blue-chip-stocks.html": {
+        "ar": "/ar/blue-chip-stocks.html",
+        "en": "/blue-chip-stocks.html"
+    },
+    "/healthcare-stocks.html": {
+        "ar": "/ar/healthcare-stocks.html",
+        "en": "/healthcare-stocks.html"
+    },
+    "/ar/healthcare-stocks.html": {
+        "ar": "/ar/healthcare-stocks.html",
+        "en": "/healthcare-stocks.html"
+    },
+    "/en/healthcare-stocks.html": {
+        "ar": "/ar/healthcare-stocks.html",
+        "en": "/healthcare-stocks.html"
+    },
+    "/energy-stocks.html": {
+        "ar": "/ar/energy-stocks.html",
+        "en": "/energy-stocks.html"
+    },
+    "/ar/energy-stocks.html": {
+        "ar": "/ar/energy-stocks.html",
+        "en": "/energy-stocks.html"
+    },
+    "/en/energy-stocks.html": {
+        "ar": "/ar/energy-stocks.html",
+        "en": "/energy-stocks.html"
+    },
+    "/momentum-stocks.html": {
+        "ar": "/ar/momentum-stocks.html",
+        "en": "/momentum-stocks.html"
+    },
+    "/ar/momentum-stocks.html": {
+        "ar": "/ar/momentum-stocks.html",
+        "en": "/momentum-stocks.html"
+    },
+    "/en/momentum-stocks.html": {
+        "ar": "/ar/momentum-stocks.html",
+        "en": "/momentum-stocks.html"
+    },
+    "/value-stocks.html": {
+        "ar": "/ar/value-stocks.html",
+        "en": "/value-stocks.html"
+    },
+    "/ar/value-stocks.html": {
+        "ar": "/ar/value-stocks.html",
+        "en": "/value-stocks.html"
+    },
+    "/en/value-stocks.html": {
+        "ar": "/ar/value-stocks.html",
+        "en": "/value-stocks.html"
+    },
+    "/bond-etfs.html": {
+        "ar": "/ar/bond-etfs.html",
+        "en": "/bond-etfs.html"
+    },
+    "/ar/bond-etfs.html": {
+        "ar": "/ar/bond-etfs.html",
+        "en": "/bond-etfs.html"
+    },
+    "/en/bond-etfs.html": {
+        "ar": "/ar/bond-etfs.html",
+        "en": "/bond-etfs.html"
+    },
+    "/real-estate-etfs.html": {
+        "ar": "/ar/real-estate-etfs.html",
+        "en": "/real-estate-etfs.html"
+    },
+    "/ar/real-estate-etfs.html": {
+        "ar": "/ar/real-estate-etfs.html",
+        "en": "/real-estate-etfs.html"
+    },
+    "/en/real-estate-etfs.html": {
+        "ar": "/ar/real-estate-etfs.html",
+        "en": "/real-estate-etfs.html"
+    },
+    "/commodity-etfs.html": {
+        "ar": "/ar/commodity-etfs.html",
+        "en": "/commodity-etfs.html"
+    },
+    "/ar/commodity-etfs.html": {
+        "ar": "/ar/commodity-etfs.html",
+        "en": "/commodity-etfs.html"
+    },
+    "/en/commodity-etfs.html": {
+        "ar": "/ar/commodity-etfs.html",
+        "en": "/commodity-etfs.html"
+    },
+    "/emerging-market-etfs.html": {
+        "ar": "/ar/emerging-market-etfs.html",
+        "en": "/emerging-market-etfs.html"
+    },
+    "/ar/emerging-market-etfs.html": {
+        "ar": "/ar/emerging-market-etfs.html",
+        "en": "/emerging-market-etfs.html"
+    },
+    "/en/emerging-market-etfs.html": {
+        "ar": "/ar/emerging-market-etfs.html",
+        "en": "/emerging-market-etfs.html"
+    },
+    "/healthcare-etfs.html": {
+        "ar": "/ar/healthcare-etfs.html",
+        "en": "/healthcare-etfs.html"
+    },
+    "/ar/healthcare-etfs.html": {
+        "ar": "/ar/healthcare-etfs.html",
+        "en": "/healthcare-etfs.html"
+    },
+    "/en/healthcare-etfs.html": {
+        "ar": "/ar/healthcare-etfs.html",
+        "en": "/healthcare-etfs.html"
+    },
+    "/low-volatility-etfs.html": {
+        "ar": "/ar/low-volatility-etfs.html",
+        "en": "/low-volatility-etfs.html"
+    },
+    "/ar/low-volatility-etfs.html": {
+        "ar": "/ar/low-volatility-etfs.html",
+        "en": "/low-volatility-etfs.html"
+    },
+    "/en/low-volatility-etfs.html": {
+        "ar": "/ar/low-volatility-etfs.html",
+        "en": "/low-volatility-etfs.html"
+    },
     "/stocks/aapl.html": {
         "ar": "/ar/stocks/aapl.html",
         "en": "/stocks/aapl.html"
@@ -1764,6 +1908,30 @@
         "ar": "/ar/insights/ai-stocks-market-overview.html",
         "en": "/insights/ai-stocks-market-overview.html"
     },
+    "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html": {
+        "ar": "/ar/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html",
+        "en": "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html"
+    },
+    "/ar/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html": {
+        "ar": "/ar/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html",
+        "en": "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html"
+    },
+    "/en/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html": {
+        "ar": "/ar/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html",
+        "en": "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html"
+    },
+    "/insights/bond-etfs-in-market-research.html": {
+        "ar": "/ar/insights/bond-etfs-in-market-research.html",
+        "en": "/insights/bond-etfs-in-market-research.html"
+    },
+    "/ar/insights/bond-etfs-in-market-research.html": {
+        "ar": "/ar/insights/bond-etfs-in-market-research.html",
+        "en": "/insights/bond-etfs-in-market-research.html"
+    },
+    "/en/insights/bond-etfs-in-market-research.html": {
+        "ar": "/ar/insights/bond-etfs-in-market-research.html",
+        "en": "/insights/bond-etfs-in-market-research.html"
+    },
     "/insights/cloud-computing-ai-market-structure.html": {
         "ar": "/ar/insights/cloud-computing-ai-market-structure.html",
         "en": "/insights/cloud-computing-ai-market-structure.html"
@@ -1800,6 +1968,18 @@
         "ar": "/ar/insights/custom-ai-chips-asics-tpus.html",
         "en": "/insights/custom-ai-chips-asics-tpus.html"
     },
+    "/insights/cybersecurity-stocks-research-framework.html": {
+        "ar": "/ar/insights/cybersecurity-stocks-research-framework.html",
+        "en": "/insights/cybersecurity-stocks-research-framework.html"
+    },
+    "/ar/insights/cybersecurity-stocks-research-framework.html": {
+        "ar": "/ar/insights/cybersecurity-stocks-research-framework.html",
+        "en": "/insights/cybersecurity-stocks-research-framework.html"
+    },
+    "/en/insights/cybersecurity-stocks-research-framework.html": {
+        "ar": "/ar/insights/cybersecurity-stocks-research-framework.html",
+        "en": "/insights/cybersecurity-stocks-research-framework.html"
+    },
     "/insights/cybersecurity-stocks-to-watch.html": {
         "ar": "/ar/insights/cybersecurity-stocks-to-watch.html",
         "en": "/insights/cybersecurity-stocks-to-watch.html"
@@ -1812,6 +1992,18 @@
         "ar": "/ar/insights/cybersecurity-stocks-to-watch.html",
         "en": "/insights/cybersecurity-stocks-to-watch.html"
     },
+    "/insights/defensive-investing-explained.html": {
+        "ar": "/ar/insights/defensive-investing-explained.html",
+        "en": "/insights/defensive-investing-explained.html"
+    },
+    "/ar/insights/defensive-investing-explained.html": {
+        "ar": "/ar/insights/defensive-investing-explained.html",
+        "en": "/insights/defensive-investing-explained.html"
+    },
+    "/en/insights/defensive-investing-explained.html": {
+        "ar": "/ar/insights/defensive-investing-explained.html",
+        "en": "/insights/defensive-investing-explained.html"
+    },
     "/insights/dividend-etfs-explained.html": {
         "ar": "/ar/insights/dividend-etfs-explained.html",
         "en": "/insights/dividend-etfs-explained.html"
@@ -1823,6 +2015,30 @@
     "/en/insights/dividend-etfs-explained.html": {
         "ar": "/ar/insights/dividend-etfs-explained.html",
         "en": "/insights/dividend-etfs-explained.html"
+    },
+    "/insights/etf-diversification-basics.html": {
+        "ar": "/ar/insights/etf-diversification-basics.html",
+        "en": "/insights/etf-diversification-basics.html"
+    },
+    "/ar/insights/etf-diversification-basics.html": {
+        "ar": "/ar/insights/etf-diversification-basics.html",
+        "en": "/insights/etf-diversification-basics.html"
+    },
+    "/en/insights/etf-diversification-basics.html": {
+        "ar": "/ar/insights/etf-diversification-basics.html",
+        "en": "/insights/etf-diversification-basics.html"
+    },
+    "/insights/etf-diversification-guide.html": {
+        "ar": "/ar/insights/etf-diversification-guide.html",
+        "en": "/insights/etf-diversification-guide.html"
+    },
+    "/ar/insights/etf-diversification-guide.html": {
+        "ar": "/ar/insights/etf-diversification-guide.html",
+        "en": "/insights/etf-diversification-guide.html"
+    },
+    "/en/insights/etf-diversification-guide.html": {
+        "ar": "/ar/insights/etf-diversification-guide.html",
+        "en": "/insights/etf-diversification-guide.html"
     },
     "/insights/etf-education-etf-structure-and-index-methodology.html": {
         "ar": "/ar/insights/etf-education-etf-structure-and-index-methodology.html",
@@ -1859,6 +2075,30 @@
     "/en/insights/etf-expense-ratios-explained.html": {
         "ar": "/ar/insights/etf-expense-ratios-explained.html",
         "en": "/insights/etf-expense-ratios-explained.html"
+    },
+    "/insights/etf-research-methodology.html": {
+        "ar": "/ar/insights/etf-research-methodology.html",
+        "en": "/insights/etf-research-methodology.html"
+    },
+    "/ar/insights/etf-research-methodology.html": {
+        "ar": "/ar/insights/etf-research-methodology.html",
+        "en": "/insights/etf-research-methodology.html"
+    },
+    "/en/insights/etf-research-methodology.html": {
+        "ar": "/ar/insights/etf-research-methodology.html",
+        "en": "/insights/etf-research-methodology.html"
+    },
+    "/insights/etf-risk-comparison-guide.html": {
+        "ar": "/ar/insights/etf-risk-comparison-guide.html",
+        "en": "/insights/etf-risk-comparison-guide.html"
+    },
+    "/ar/insights/etf-risk-comparison-guide.html": {
+        "ar": "/ar/insights/etf-risk-comparison-guide.html",
+        "en": "/insights/etf-risk-comparison-guide.html"
+    },
+    "/en/insights/etf-risk-comparison-guide.html": {
+        "ar": "/ar/insights/etf-risk-comparison-guide.html",
+        "en": "/insights/etf-risk-comparison-guide.html"
     },
     "/insights/gpu-market-research-accelerator-competition-across-ai-workloads.html": {
         "ar": "/ar/insights/gpu-market-research-accelerator-competition-across-ai-workloads.html",
@@ -1932,6 +2172,42 @@
         "ar": "/ar/insights/growth-stocks-vs-value-stocks.html",
         "en": "/insights/growth-stocks-vs-value-stocks.html"
     },
+    "/insights/growth-vs-value-etf-research-framework.html": {
+        "ar": "/ar/insights/growth-vs-value-etf-research-framework.html",
+        "en": "/insights/growth-vs-value-etf-research-framework.html"
+    },
+    "/ar/insights/growth-vs-value-etf-research-framework.html": {
+        "ar": "/ar/insights/growth-vs-value-etf-research-framework.html",
+        "en": "/insights/growth-vs-value-etf-research-framework.html"
+    },
+    "/en/insights/growth-vs-value-etf-research-framework.html": {
+        "ar": "/ar/insights/growth-vs-value-etf-research-framework.html",
+        "en": "/insights/growth-vs-value-etf-research-framework.html"
+    },
+    "/insights/healthcare-etf-research-guide.html": {
+        "ar": "/ar/insights/healthcare-etf-research-guide.html",
+        "en": "/insights/healthcare-etf-research-guide.html"
+    },
+    "/ar/insights/healthcare-etf-research-guide.html": {
+        "ar": "/ar/insights/healthcare-etf-research-guide.html",
+        "en": "/insights/healthcare-etf-research-guide.html"
+    },
+    "/en/insights/healthcare-etf-research-guide.html": {
+        "ar": "/ar/insights/healthcare-etf-research-guide.html",
+        "en": "/insights/healthcare-etf-research-guide.html"
+    },
+    "/insights/how-dividend-etfs-generate-income.html": {
+        "ar": "/ar/insights/how-dividend-etfs-generate-income.html",
+        "en": "/insights/how-dividend-etfs-generate-income.html"
+    },
+    "/ar/insights/how-dividend-etfs-generate-income.html": {
+        "ar": "/ar/insights/how-dividend-etfs-generate-income.html",
+        "en": "/insights/how-dividend-etfs-generate-income.html"
+    },
+    "/en/insights/how-dividend-etfs-generate-income.html": {
+        "ar": "/ar/insights/how-dividend-etfs-generate-income.html",
+        "en": "/insights/how-dividend-etfs-generate-income.html"
+    },
     "/insights/hyperscaler-capex-cycles.html": {
         "ar": "/ar/insights/hyperscaler-capex-cycles.html",
         "en": "/insights/hyperscaler-capex-cycles.html"
@@ -1967,6 +2243,18 @@
     "/en/insights/interest-rates-and-tech-stocks.html": {
         "ar": "/ar/insights/interest-rates-and-tech-stocks.html",
         "en": "/insights/interest-rates-and-tech-stocks.html"
+    },
+    "/insights/international-etf-research-basics.html": {
+        "ar": "/ar/insights/international-etf-research-basics.html",
+        "en": "/insights/international-etf-research-basics.html"
+    },
+    "/ar/insights/international-etf-research-basics.html": {
+        "ar": "/ar/insights/international-etf-research-basics.html",
+        "en": "/insights/international-etf-research-basics.html"
+    },
+    "/en/insights/international-etf-research-basics.html": {
+        "ar": "/ar/insights/international-etf-research-basics.html",
+        "en": "/insights/international-etf-research-basics.html"
     },
     "/insights/mega-cap-tech-index-concentration.html": {
         "ar": "/ar/insights/mega-cap-tech-index-concentration.html",
@@ -2016,6 +2304,18 @@
         "ar": "/ar/insights/portfolio-diversification-basics.html",
         "en": "/insights/portfolio-diversification-basics.html"
     },
+    "/insights/portfolio-risk-research-for-beginners.html": {
+        "ar": "/ar/insights/portfolio-risk-research-for-beginners.html",
+        "en": "/insights/portfolio-risk-research-for-beginners.html"
+    },
+    "/ar/insights/portfolio-risk-research-for-beginners.html": {
+        "ar": "/ar/insights/portfolio-risk-research-for-beginners.html",
+        "en": "/insights/portfolio-risk-research-for-beginners.html"
+    },
+    "/en/insights/portfolio-risk-research-for-beginners.html": {
+        "ar": "/ar/insights/portfolio-risk-research-for-beginners.html",
+        "en": "/insights/portfolio-risk-research-for-beginners.html"
+    },
     "/insights/sector-etfs-vs-broad-market.html": {
         "ar": "/ar/insights/sector-etfs-vs-broad-market.html",
         "en": "/insights/sector-etfs-vs-broad-market.html"
@@ -2027,6 +2327,18 @@
     "/en/insights/sector-etfs-vs-broad-market.html": {
         "ar": "/ar/insights/sector-etfs-vs-broad-market.html",
         "en": "/insights/sector-etfs-vs-broad-market.html"
+    },
+    "/insights/sector-rotation-explained.html": {
+        "ar": "/ar/insights/sector-rotation-explained.html",
+        "en": "/insights/sector-rotation-explained.html"
+    },
+    "/ar/insights/sector-rotation-explained.html": {
+        "ar": "/ar/insights/sector-rotation-explained.html",
+        "en": "/insights/sector-rotation-explained.html"
+    },
+    "/en/insights/sector-rotation-explained.html": {
+        "ar": "/ar/insights/sector-rotation-explained.html",
+        "en": "/insights/sector-rotation-explained.html"
     },
     "/insights/semiconductor-cycle-risks.html": {
         "ar": "/ar/insights/semiconductor-cycle-risks.html",
@@ -2088,6 +2400,18 @@
         "ar": "/ar/insights/semiconductor-stocks-outlook.html",
         "en": "/insights/semiconductor-stocks-outlook.html"
     },
+    "/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html": {
+        "ar": "/ar/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html",
+        "en": "/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html"
+    },
+    "/ar/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html": {
+        "ar": "/ar/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html",
+        "en": "/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html"
+    },
+    "/en/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html": {
+        "ar": "/ar/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html",
+        "en": "/insights/small-cap-etf-breadth-guide-participation-concentration-and-risk.html"
+    },
     "/insights/spy-vs-qqq-etf-comparison-guide.html": {
         "ar": "/ar/insights/spy-vs-qqq-etf-comparison-guide.html",
         "en": "/insights/spy-vs-qqq-etf-comparison-guide.html"
@@ -2135,30 +2459,6 @@
     "/en/insights/voo-vs-vti-long-term-etf-comparison.html": {
         "ar": "/ar/insights/voo-vs-vti-long-term-etf-comparison.html",
         "en": "/insights/voo-vs-vti-long-term-etf-comparison.html"
-    },
-    "/market-outlook/": {
-        "ar": "/ar/market-outlook/",
-        "en": "/market-outlook/"
-    },
-    "/market-outlook/index.html": {
-        "ar": "/ar/market-outlook/index.html",
-        "en": "/market-outlook/index.html"
-    },
-    "/ar/market-outlook/": {
-        "ar": "/ar/market-outlook/",
-        "en": "/market-outlook/"
-    },
-    "/ar/market-outlook/index.html": {
-        "ar": "/ar/market-outlook/index.html",
-        "en": "/market-outlook/index.html"
-    },
-    "/en/market-outlook/": {
-        "ar": "/ar/market-outlook/",
-        "en": "/market-outlook/"
-    },
-    "/en/market-outlook/index.html": {
-        "ar": "/ar/market-outlook/index.html",
-        "en": "/market-outlook/index.html"
     }
 };
   const currentPath = window.location.pathname;
@@ -2187,12 +2487,6 @@
     if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
     m = n.match(/^\/en\/insights\/([a-z0-9.-]+\.html)$/i);
     if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
-    m = n.match(/^\/market-outlook\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/market-outlook/" + f, en: "/market-outlook/" + f }; }
-    m = n.match(/^\/ar\/market-outlook\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/market-outlook/" + f, en: "/market-outlook/" + f }; }
-    m = n.match(/^\/en\/market-outlook\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/market-outlook/" + f, en: "/market-outlook/" + f }; }
     return { ar: "/ar/", en: "/" };
   }
   const routes = resolveRoute(currentPath);

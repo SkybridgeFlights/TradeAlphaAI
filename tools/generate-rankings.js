@@ -127,6 +127,37 @@ function sectionHtml(sec) {
 const sectionsOutput = sections.map(sectionHtml).join('\n');
 const totalAssets = new Set(sections.flatMap(s => s.symbols)).size;
 
+// ── Complete Coverage Directory ─────────────────────────────────────────────
+// Every stock + ETF research page must have at least one inbound static link
+// from the live navigable surface (SEO + crawl health). This A-Z directory
+// guarantees that, regardless of which curated lists feature them above.
+function directoryGroup(label, items, hrefPrefix) {
+  if (!items.length) return '';
+  const sorted = [...items].sort((a, b) => a.symbol.localeCompare(b.symbol));
+  const chips = sorted.map(asset => {
+    const slug = asset.symbol.toLowerCase();
+    return `<a class="coverage-chip" href="${hrefPrefix}/${slug}.html"><span class="coverage-sym">${esc(asset.symbol)}</span><span class="coverage-name">${esc(asset.name)}</span></a>`;
+  }).join('');
+  return `<div class="coverage-group" data-group="${esc(label.toLowerCase().replace(/\s+/g,'-'))}">
+    <h3 class="coverage-group-title">${esc(label)} <span class="coverage-count">(${sorted.length})</span></h3>
+    <div class="coverage-grid">${chips}</div>
+  </div>`;
+}
+
+const allStocksDir = directoryGroup('Complete Stock Coverage', stocks, 'stocks');
+const allEtfsDir   = directoryGroup('Complete ETF Coverage',   etfs,   'etfs');
+
+const coverageDirectory = `<section class="market-section" id="complete-coverage" aria-labelledby="complete-coverage-title">
+  <div class="market-panel">
+    <div class="section-head">
+      <div><span class="eyebrow">Complete Research Coverage</span><h2 id="complete-coverage-title">All researched stocks and ETFs</h2></div>
+      <p class="market-copy">Every entity TradeAlphaAI maintains a research page for, sorted A–Z for direct navigation. Educational profiles only — not investment advice.</p>
+    </div>
+    ${allStocksDir}
+    ${allEtfsDir}
+  </div>
+</section>`;
+
 // Pre-compute snapshot values
 const allRanked = [...new Set(sections.flatMap(s => s.symbols))].map(s => bySymbol.get(s)).filter(Boolean);
 const bestScoreAsset = allRanked.reduce((best, a) => score(a) > score(best) ? a : best, allRanked[0]);
@@ -183,9 +214,14 @@ const html = `<!doctype html>
   <meta property="og:description" content="Educational research-ranked assets and watchlist candidates. Live prices. No buy or sell recommendations." />
   <meta property="og:url" content="${DOMAIN}/rankings.html" />
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:image" content="${DOMAIN}/Image/og-image.svg" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Research Rankings and Watchlists | TradeAlphaAI" />
+  <meta name="twitter:description" content="Educational research-ranked stocks, ETFs, sectors, and watchlist candidates with TradeAlpha scoring. Live prices. No financial advice." />
+  <meta name="twitter:image" content="${DOMAIN}/Image/og-image.svg" />
   <link rel="icon" href="/favicon.ico" />
+  <link rel="manifest" href="/manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -262,6 +298,7 @@ const html = `<!doctype html>
         <div class="market-panel" data-market-authority="rankings"></div>
       </section>
       ${sectionsOutput}
+      ${coverageDirectory}
       <section class="market-section">
         <div class="market-panel">
           <span class="eyebrow">Compliance</span>

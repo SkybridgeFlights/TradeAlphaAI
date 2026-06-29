@@ -48,7 +48,9 @@ function renderGlobalHeader({ locale, activePage = '', basePath = '', arabicHref
   const enHref = englishHref || counterpartEn(activePage);
   const arHref = arabicHref  || counterpartAr(activePage);
 
+  const skipText = ar ? 'انتقل إلى المحتوى الرئيسي' : 'Skip to main content';
   const html = `${MARKER_START}
+<a class="skip-link" href="#top">${skipText}</a>
 <div class="topbar" data-global-header data-locale="${ar ? 'ar' : 'en'}" data-active-section="${escapeHtml(activePage)}">
   <div class="wrap topbar-inner">
     <a class="brand" href="${homeHref}">
