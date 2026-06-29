@@ -150,26 +150,27 @@ function resolveArticle(slug, contentType) {
 }
 
 function findGraphicPath(slug) {
-  // Prefer rendered PNG export tied to this slug. No SVG fallback because
-  // Instagram + X reject SVG; the Facebook link-post path also looks
-  // better with a real per-article image than a generic brand SVG.
+  // Prefer rendered PNG export tied to this slug; otherwise fall back to
+  // the TradeAlphaAI brand image so Instagram (which requires PNG/JPG)
+  // can still publish. SVG is intentionally excluded.
   const candidates = [
     path.join(ROOT, 'data', 'social', 'exports', slug + '.png'),
-    path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png')
+    path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png'),
+    path.join(ROOT, 'Image', '1.png')   // brand fallback (PNG, not SVG)
   ];
   for (const c of candidates) if (fs.existsSync(c)) return c;
   return null;
 }
 
 function findGraphicUrl(slug) {
-  // Public URL for image-hosted-by-URL platforms. PNG/JPG only — Instagram
-  // and X reject SVG. When no per-article PNG exists yet:
-  //   * Facebook falls back to a link post (auto-pulls OG image preview)
-  //   * Instagram cleanly skips with no_image_url (Instagram requires image)
-  //   * LinkedIn falls back to an ARTICLE share (auto-pulls OG image preview)
+  // Public URL for image-hosted-by-URL platforms (Instagram + Facebook
+  // photo posts). PNG only — Instagram and X reject SVG. When no
+  // per-article PNG exists yet, fall back to the brand PNG hosted at
+  // /Image/1.png so Instagram does not skip silently with no_image_url.
   const candidates = [
     { local: path.join(ROOT, 'data', 'social', 'exports', slug + '.png'), url: `${SITE_URL}/data/social/exports/${slug}.png` },
-    { local: path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png'), url: `${SITE_URL}/data/visual/social-exports/${slug}.png` }
+    { local: path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png'), url: `${SITE_URL}/data/visual/social-exports/${slug}.png` },
+    { local: path.join(ROOT, 'Image', '1.png'), url: `${SITE_URL}/Image/1.png` }
   ];
   for (const c of candidates) if (fs.existsSync(c.local)) return c.url;
   return null;
