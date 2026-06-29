@@ -84,7 +84,10 @@ async function main() {
       outcome = { platform, status: 'failed', error: String(err && err.message || err) };
     }
 
-    console.log(`[social] ${platform}: ${outcome.status}${outcome.error ? ' — ' + outcome.error : ''}${outcome.external_post_id ? ' (id=' + outcome.external_post_id + ')' : ''}`);
+    const violationSuffix = (outcome.violations && outcome.violations.length)
+      ? ' — violations: ' + outcome.violations.join('; ')
+      : '';
+    console.log(`[social] ${platform}: ${outcome.status}${outcome.error ? ' — ' + outcome.error : ''}${violationSuffix}${outcome.external_post_id ? ' (id=' + outcome.external_post_id + ')' : ''}`);
     results.push({
       platform,
       slug,
