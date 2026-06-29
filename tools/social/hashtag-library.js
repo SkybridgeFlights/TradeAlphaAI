@@ -84,11 +84,13 @@ const TOPIC_MAP = [
     tags: ['#SectorRotation', '#MarketBreadth', '#PortfolioStrategy'] },
 ];
 
-// Per-platform display rules.
+// Per-platform display rules. The `max` here MUST stay ≤ the platform's
+// `maxHashtags` in platform-content-rules.js — that file enforces the
+// validation gate and an overflow here just produces a blocked_invalid_payload.
 const PLATFORM_RULES = {
   x:         { max: 2, separator: ' ',  trailingNewline: false },
   facebook:  { max: 3, separator: ' ',  trailingNewline: true  },
-  instagram: { max: 12, separator: ' ', trailingNewline: true  },
+  instagram: { max: 8, separator: ' ',  trailingNewline: true  },
   linkedin:  { max: 5, separator: ' ',  trailingNewline: true  },
 };
 
