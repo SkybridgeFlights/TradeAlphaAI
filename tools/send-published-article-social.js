@@ -150,26 +150,29 @@ function resolveArticle(slug, contentType) {
 }
 
 function findGraphicPath(slug) {
-  // Prefer rendered PNG export tied to this slug; fallback to a default
-  // brand image bundled with the site.
+  // Prefer rendered PNG export tied to this slug. No SVG fallback because
+  // Instagram + X reject SVG; the Facebook link-post path also looks
+  // better with a real per-article image than a generic brand SVG.
   const candidates = [
     path.join(ROOT, 'data', 'social', 'exports', slug + '.png'),
-    path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png'),
-    path.join(ROOT, 'Image', 'og-image.svg')
+    path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png')
   ];
   for (const c of candidates) if (fs.existsSync(c)) return c;
   return null;
 }
 
 function findGraphicUrl(slug) {
-  // Public URL for image-hosted-by-URL platforms (Instagram, Facebook).
+  // Public URL for image-hosted-by-URL platforms. PNG/JPG only — Instagram
+  // and X reject SVG. When no per-article PNG exists yet:
+  //   * Facebook falls back to a link post (auto-pulls OG image preview)
+  //   * Instagram cleanly skips with no_image_url (Instagram requires image)
+  //   * LinkedIn falls back to an ARTICLE share (auto-pulls OG image preview)
   const candidates = [
     { local: path.join(ROOT, 'data', 'social', 'exports', slug + '.png'), url: `${SITE_URL}/data/social/exports/${slug}.png` },
     { local: path.join(ROOT, 'data', 'visual', 'social-exports', slug + '.png'), url: `${SITE_URL}/data/visual/social-exports/${slug}.png` }
   ];
   for (const c of candidates) if (fs.existsSync(c.local)) return c.url;
-  // Fallback to brand image — guaranteed to exist on production.
-  return `${SITE_URL}/Image/og-image.svg`;
+  return null;
 }
 
 // ── Per-platform payload builders ─────────────────────────────────────────────
