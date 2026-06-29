@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-28T11:52:03.106Z",
-  "run_date": "2026-06-28",
+  "updated_at": "2026-06-29T11:37:33.617Z",
+  "run_date": "2026-06-29",
   "verified": true,
   "selected": [
     {
@@ -16,18 +16,18 @@
       "title_ar": "العوائد مقابل أسهم النمو",
       "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
       "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 90,
+      "score": 100,
       "evidence": [
-        "causal:yields-growth diverging ×5"
+        "causal:yields-growth diverging ×6"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
           "severity": "high",
-          "label_en": "Divergence — US10Y/QQQ not confirming (5-session strain)",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 5 جلسات)",
+          "label_en": "Divergence — US10Y/QQQ not confirming (6-session strain)",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 6 جلسات)",
           "evidence": [
-            "convergence:diverges:yields-growth:chain=5"
+            "convergence:diverges:yields-growth:chain=6"
           ]
         },
         {
@@ -52,39 +52,38 @@
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "liquidity-beta",
-      "kind": "liquidity",
-      "visual_type": "liquidity-pressure",
+      "id": "dollar-gold",
+      "kind": "cross-asset",
+      "visual_type": "macro-divergence",
       "symbols": [
-        "CRYPTO:BTCUSD",
-        "NASDAQ:QQQ"
+        "TVC:DXY",
+        "OANDA:XAUUSD"
       ],
-      "title_en": "Liquidity beta",
-      "title_ar": "بيتا السيولة",
-      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 78,
+      "title_en": "Dollar vs gold",
+      "title_ar": "الدولار مقابل الذهب",
+      "reading_en": "Gold holding against a firming dollar for 4 sessions — an unusual co-move that leaves the relationship structurally unresolved.",
+      "reading_ar": "الذهب يصمد رغم تقوّي الدولار منذ 4 جلسات — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
+      "score": 88,
       "evidence": [
-        "causal:liquidity-beta diverging ×3",
-        "liquidity_pressure 3/5"
+        "causal:dollar-gold diverging ×4"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
           "severity": "high",
-          "label_en": "Divergence — BTC/QQQ not confirming (3-session strain)",
-          "label_ar": "انفصال — BTC/QQQ لا يؤكد (إجهاد 3 جلسات)",
+          "label_en": "Divergence — DXY/GOLD not confirming (4-session strain)",
+          "label_ar": "انفصال — DXY/GOLD لا يؤكد (إجهاد 4 جلسات)",
           "evidence": [
-            "convergence:diverges:liquidity-beta:chain=3"
+            "convergence:diverges:dollar-gold:chain=4"
           ]
         },
         {
-          "type": "pressure-band",
+          "type": "transition-label",
           "severity": "elevated",
-          "label_en": "Stored pressure — liquidity pressure 3/5",
-          "label_ar": "ضغط مخزّن — 3/5",
+          "label_en": "Regime shift — dollar pressure firming → stable",
+          "label_ar": "تحوّل النظام — dollar pressure: firming ← stable",
           "evidence": [
-            "macro:pressure:liquidity_pressure:3"
+            "cognition:timeline:dollar_pressure:firming->stable:2026-06-26"
           ]
         },
         {
