@@ -530,3 +530,14 @@ jobs:
             release({ run_id: '${run_id}' });
           " || echo "[lock] Lock release degraded — may need manual force-release"
           echo "[lock] Publishing lock released for run_id=${run_id}"
+          # Persist the release to git so the next workflow run does not see
+          # a stale held=true. Without this commit+push, the release is
+          # local-only and the next run pulls main with the lock still held.
+          if ! git diff --quiet -- data/runtime/publishing-lock.json; then
+            git config user.name "tradealphaai-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add -- data/runtime/publishing-lock.json
+            git commit -m "Release publishing lock (run_id=${run_id})" || true
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "${GITHUB_REF_NAME}" || true
+          fi
