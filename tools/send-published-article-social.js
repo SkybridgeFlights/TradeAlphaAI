@@ -40,8 +40,11 @@ function argValue(flag) {
 }
 
 async function main() {
-  const slug = argValue('--slug');
-  const contentType = argValue('--content-type');
+  // Trim whitespace so a slug pasted with a leading/trailing space (a common
+  // copy-paste mishap in the workflow_dispatch UI) does not falsely fail
+  // the "article not found" check.
+  const slug = argValue('--slug').trim();
+  const contentType = argValue('--content-type').trim();
 
   if (!slug || !contentType) {
     console.log('[social] usage: --slug=<slug> --content-type=<type>');
