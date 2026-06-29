@@ -1,50 +1,72 @@
 {
   "version": "2.0",
   "product": "Daily Market Brief 2.0",
-  "updated_at": "2026-06-29T14:11:58.525Z",
+  "updated_at": "2026-06-29T16:40:26.187Z",
   "run_date": "2026-06-29",
   "verified": true,
   "desk_lead": {
-    "en": "Macro Desk: The regime picture moved: momentum concentration: broadening -> balanced; dollar pressure: firming -> stable; duration pressure: neutral -> relaxing. Regime coherence 44/100 — cross-asset relationships are openly conflicted this session. The US10Y/QQQ link is not holding — a 6-session strain; that is where the tape's internal argument lives.",
-    "ar": "مكتب الماكرو: صورة النظام تحركت عبر تحولات موثقة جديدة. اتساق النظام 44/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة. رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 6 جلسات؛ وهناك يكمن الجدل الداخلي للسوق."
+    "en": "Macro Desk: The regime picture moved: breadth state: mixed -> deteriorating; ai concentration risk: elevated -> contained; momentum concentration: balanced -> narrow-megacap. Regime coherence 59/100 — the tape is internally tense; confirmations and divergences are competing. The DXY/GOLD link is not holding — a 4-session strain; that is where the tape's internal argument lives.",
+    "ar": "مكتب الماكرو: صورة النظام تحركت عبر تحولات موثقة جديدة. اتساق النظام 59/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. رابط DXY/GOLD لا يصمد — إجهاد مستمر منذ 4 جلسات؛ وهناك يكمن الجدل الداخلي للسوق."
   },
   "regime": {
-    "state": "stable-structure",
-    "state_ar": "stable-structure",
+    "state": "squeeze-behavior",
+    "state_ar": "squeeze-behavior",
     "coherence": {
-      "score": 44,
-      "band": "conflicted",
+      "score": 59,
+      "band": "tense",
       "observed_links": 8,
-      "en": "Regime coherence 44/100 — cross-asset relationships are openly conflicted this session.",
-      "ar": "اتساق النظام 44/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة."
+      "en": "Regime coherence 59/100 — the tape is internally tense; confirmations and divergences are competing.",
+      "ar": "اتساق النظام 59/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
     },
-    "conviction": "deteriorating-confirmation",
+    "conviction": "increasingly-confirmed",
     "volatility": "normal"
   },
   "what_changed": [
     {
-      "date": "2026-06-26",
+      "date": "2026-06-29",
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "deteriorating",
+      "note": "breadth state: mixed -> deteriorating"
+    },
+    {
+      "date": "2026-06-29",
+      "dimension": "ai_concentration_risk",
+      "from": "elevated",
+      "to": "contained",
+      "note": "ai concentration risk: elevated -> contained"
+    },
+    {
+      "date": "2026-06-29",
       "dimension": "momentum_concentration",
-      "from": "broadening",
-      "to": "balanced",
-      "note": "momentum concentration: broadening -> balanced"
-    },
-    {
-      "date": "2026-06-26",
-      "dimension": "dollar_pressure",
-      "from": "firming",
-      "to": "stable",
-      "note": "dollar pressure: firming -> stable"
-    },
-    {
-      "date": "2026-06-24",
-      "dimension": "duration_pressure",
-      "from": "neutral",
-      "to": "relaxing",
-      "note": "duration pressure: neutral -> relaxing"
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
   "confirms": [
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    },
+    {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    },
     {
       "id": "vix-equities",
       "legs": [
@@ -68,40 +90,18 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
-      "id": "breadth-link",
+      "id": "liquidity-beta",
       "legs": [
-        "spy",
-        "iwm"
+        "btc",
+        "qqq"
       ],
       "state": "confirming",
-      "chain_strength": 4,
-      "en": "Healthy advances carry small caps with the index",
-      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
+      "chain_strength": 1,
+      "en": "Crypto trades as the liquidity beta of the growth complex",
+      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     }
   ],
   "diverges": [
-    {
-      "id": "yields-growth",
-      "legs": [
-        "us10y",
-        "qqq"
-      ],
-      "state": "diverging",
-      "chain_strength": 6,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
-    {
-      "id": "yields-dollar",
-      "legs": [
-        "us10y",
-        "dxy"
-      ],
-      "state": "diverging",
-      "chain_strength": 6,
-      "en": "Yield support typically firms the dollar",
-      "ar": "دعم العوائد يقوّي الدولار عادة"
-    },
     {
       "id": "dollar-gold",
       "legs": [
@@ -114,18 +114,39 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة"
     },
     {
-      "id": "liquidity-beta",
+      "id": "breadth-link",
       "legs": [
-        "btc",
-        "qqq"
+        "spy",
+        "iwm"
       ],
       "state": "diverging",
-      "chain_strength": 4,
-      "en": "Crypto trades as the liquidity beta of the growth complex",
-      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+      "chain_strength": 1,
+      "en": "Healthy advances carry small caps with the index",
+      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
-  "contradictions": [],
+  "contradictions": [
+    {
+      "id": "index-vs-breadth",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-06-29",
+      "last_seen": "2026-06-29",
+      "active_today": true,
+      "en": "Headline index strength against weak participation beneath the surface.",
+      "ar": "قوة المؤشرات الرئيسية تقابلها مشاركة ضعيفة تحت السطح."
+    },
+    {
+      "id": "leadership-vs-participation",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-06-29",
+      "last_seen": "2026-06-29",
+      "active_today": true,
+      "en": "Growth leadership extending while small-cap participation deteriorates.",
+      "ar": "قيادة النمو تمتد بينما تتدهور مشاركة الأسهم الصغيرة."
+    }
+  ],
   "pressure_active": [
     {
       "track": "concentration_pressure",
@@ -193,78 +214,80 @@
     {
       "rank": 1,
       "asset": "QQQ",
-      "score": 84,
-      "live_change_pct": -0.8724,
+      "score": 83,
+      "live_change_pct": 1.9023,
       "drivers_en": [
-        "sourced move magnitude -0.87%",
-        "diverging yields/growth relationship",
+        "sourced move magnitude +1.90%",
+        "confirming yields/growth relationship",
         "confirming ai/growth relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -0.87%",
-        "تباعد في علاقة yields/growth",
+        "حجم التحرك الموثق +1.90%",
+        "تأكيد في علاقة yields/growth",
         "تأكيد في علاقة ai/growth"
       ]
     },
     {
       "rank": 2,
-      "asset": "DXY",
-      "score": 59,
-      "live_change_pct": 0.3454761433379566,
+      "asset": "SPY",
+      "score": 64,
+      "live_change_pct": 1.3032,
       "drivers_en": [
-        "sourced move magnitude +0.35%",
-        "diverging yields/dollar relationship",
-        "diverging dollar/gold relationship"
+        "sourced move magnitude +1.30%",
+        "confirming vix/equities relationship",
+        "diverging breadth/link relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.35%",
-        "تباعد في علاقة yields/dollar",
-        "تباعد في علاقة dollar/gold"
+        "حجم التحرك الموثق +1.30%",
+        "تأكيد في علاقة vix/equities",
+        "تباعد في علاقة breadth/link"
       ]
     },
     {
       "rank": 3,
-      "asset": "VIX",
-      "score": 52,
-      "live_change_pct": 6.539351851851846,
+      "asset": "US10Y",
+      "score": 59,
+      "live_change_pct": -2.4705096817271457,
       "drivers_en": [
-        "sourced move magnitude +6.54%",
-        "confirming vix/equities relationship",
-        "direct relevance to the next scheduled catalyst"
+        "sourced move magnitude -2.47%",
+        "confirming yields/growth relationship",
+        "confirming yields/dollar relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +6.54%",
-        "تأكيد في علاقة vix/equities",
-        "حساسية مباشرة للمحفز المجدول التالي"
+        "حجم التحرك الموثق -2.47%",
+        "تأكيد في علاقة yields/growth",
+        "تأكيد في علاقة yields/dollar"
       ]
     },
     {
       "rank": 4,
-      "asset": "US10Y",
-      "score": 48,
-      "live_change_pct": -0.4553666066962734,
+      "asset": "DXY",
+      "score": 54,
+      "live_change_pct": -0.4782993799822894,
       "drivers_en": [
-        "sourced move magnitude -0.46%",
-        "diverging yields/growth relationship",
-        "diverging yields/dollar relationship"
+        "sourced move magnitude -0.48%",
+        "confirming yields/dollar relationship",
+        "diverging dollar/gold relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -0.46%",
-        "تباعد في علاقة yields/growth",
-        "تباعد في علاقة yields/dollar"
+        "حجم التحرك الموثق -0.48%",
+        "تأكيد في علاقة yields/dollar",
+        "تباعد في علاقة dollar/gold"
       ]
     },
     {
       "rank": 5,
-      "asset": "OIL",
-      "score": 45,
-      "live_change_pct": -5.920876770916858,
+      "asset": "VIX",
+      "score": 52,
+      "live_change_pct": -8.722421754746021,
       "drivers_en": [
-        "sourced move magnitude -5.92%",
+        "sourced move magnitude -8.72%",
+        "confirming vix/equities relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -5.92%",
+        "حجم التحرك الموثق -8.72%",
+        "تأكيد في علاقة vix/equities",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     }
@@ -273,157 +296,157 @@
     {
       "rank": 1,
       "asset": "QQQ",
-      "score": 84,
-      "live_change_pct": -0.8724,
+      "score": 83,
+      "live_change_pct": 1.9023,
       "drivers_en": [
-        "sourced move magnitude -0.87%",
-        "diverging yields/growth relationship",
+        "sourced move magnitude +1.90%",
+        "confirming yields/growth relationship",
         "confirming ai/growth relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -0.87%",
-        "تباعد في علاقة yields/growth",
+        "حجم التحرك الموثق +1.90%",
+        "تأكيد في علاقة yields/growth",
         "تأكيد في علاقة ai/growth"
       ]
     },
     {
       "rank": 2,
-      "asset": "DXY",
-      "score": 59,
-      "live_change_pct": 0.3454761433379566,
+      "asset": "SPY",
+      "score": 64,
+      "live_change_pct": 1.3032,
       "drivers_en": [
-        "sourced move magnitude +0.35%",
-        "diverging yields/dollar relationship",
-        "diverging dollar/gold relationship"
+        "sourced move magnitude +1.30%",
+        "confirming vix/equities relationship",
+        "diverging breadth/link relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +0.35%",
-        "تباعد في علاقة yields/dollar",
-        "تباعد في علاقة dollar/gold"
+        "حجم التحرك الموثق +1.30%",
+        "تأكيد في علاقة vix/equities",
+        "تباعد في علاقة breadth/link"
       ]
     },
     {
       "rank": 3,
-      "asset": "VIX",
-      "score": 52,
-      "live_change_pct": 6.539351851851846,
+      "asset": "US10Y",
+      "score": 59,
+      "live_change_pct": -2.4705096817271457,
       "drivers_en": [
-        "sourced move magnitude +6.54%",
-        "confirming vix/equities relationship",
-        "direct relevance to the next scheduled catalyst"
+        "sourced move magnitude -2.47%",
+        "confirming yields/growth relationship",
+        "confirming yields/dollar relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +6.54%",
-        "تأكيد في علاقة vix/equities",
-        "حساسية مباشرة للمحفز المجدول التالي"
+        "حجم التحرك الموثق -2.47%",
+        "تأكيد في علاقة yields/growth",
+        "تأكيد في علاقة yields/dollar"
       ]
     },
     {
       "rank": 4,
-      "asset": "US10Y",
-      "score": 48,
-      "live_change_pct": -0.4553666066962734,
+      "asset": "DXY",
+      "score": 54,
+      "live_change_pct": -0.4782993799822894,
       "drivers_en": [
-        "sourced move magnitude -0.46%",
-        "diverging yields/growth relationship",
-        "diverging yields/dollar relationship"
+        "sourced move magnitude -0.48%",
+        "confirming yields/dollar relationship",
+        "diverging dollar/gold relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -0.46%",
-        "تباعد في علاقة yields/growth",
-        "تباعد في علاقة yields/dollar"
+        "حجم التحرك الموثق -0.48%",
+        "تأكيد في علاقة yields/dollar",
+        "تباعد في علاقة dollar/gold"
       ]
     },
     {
       "rank": 5,
-      "asset": "OIL",
-      "score": 45,
-      "live_change_pct": -5.920876770916858,
+      "asset": "VIX",
+      "score": 52,
+      "live_change_pct": -8.722421754746021,
       "drivers_en": [
-        "sourced move magnitude -5.92%",
+        "sourced move magnitude -8.72%",
+        "confirming vix/equities relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -5.92%",
+        "حجم التحرك الموثق -8.72%",
+        "تأكيد في علاقة vix/equities",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
       "rank": 6,
-      "asset": "SPY",
-      "score": 43,
-      "live_change_pct": -0.2043,
-      "drivers_en": [
-        "sourced move magnitude -0.20%",
-        "confirming vix/equities relationship",
-        "confirming breadth/link relationship"
-      ],
-      "drivers_ar": [
-        "حجم التحرك الموثق -0.20%",
-        "تأكيد في علاقة vix/equities",
-        "تأكيد في علاقة breadth/link"
-      ]
-    },
-    {
-      "rank": 7,
       "asset": "GOLD",
-      "score": 42,
-      "live_change_pct": 1.0583,
+      "score": 44,
+      "live_change_pct": -1.2258,
       "drivers_en": [
-        "sourced move magnitude +1.06%",
+        "sourced move magnitude -1.23%",
         "diverging dollar/gold relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +1.06%",
+        "حجم التحرك الموثق -1.23%",
         "تباعد في علاقة dollar/gold",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
-      "rank": 8,
-      "asset": "BTC",
-      "score": 40,
-      "live_change_pct": 1.1832,
+      "rank": 7,
+      "asset": "OIL",
+      "score": 24,
+      "live_change_pct": 0.7108330963889679,
       "drivers_en": [
-        "sourced move magnitude +1.18%",
-        "diverging liquidity/beta relationship",
-        "liquidity pressure at 3/5"
+        "sourced move magnitude +0.71%",
+        "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +1.18%",
-        "تباعد في علاقة liquidity/beta",
-        "مسار ضغط نشط عند 3/5"
+        "حجم التحرك الموثق +0.71%",
+        "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
-      "rank": 9,
+      "rank": 8,
       "asset": "NVDA",
-      "score": 27,
-      "live_change_pct": -0.6948,
+      "score": 22,
+      "live_change_pct": 0.2597,
       "drivers_en": [
-        "sourced move magnitude -0.69%",
+        "sourced move magnitude +0.26%",
         "confirming ai/growth relationship",
         "concentration pressure at 5/5"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -0.69%",
+        "حجم التحرك الموثق +0.26%",
         "تأكيد في علاقة ai/growth",
         "مسار ضغط نشط عند 5/5"
+      ]
+    },
+    {
+      "rank": 9,
+      "asset": "BTC",
+      "score": 21,
+      "live_change_pct": 0.2015,
+      "drivers_en": [
+        "sourced move magnitude +0.20%",
+        "confirming liquidity/beta relationship",
+        "liquidity pressure at 3/5"
+      ],
+      "drivers_ar": [
+        "حجم التحرك الموثق +0.20%",
+        "تأكيد في علاقة liquidity/beta",
+        "مسار ضغط نشط عند 3/5"
       ]
     }
   ],
   "monitoring_checklist": [
     {
       "id": "breadth-confirmation",
-      "en": "Watch whether breadth continues to confirm index strength across the next sourced cycle.",
-      "ar": "راقب استمرار اتساع السوق في تأكيد قوة المؤشرات خلال دورة البيانات الموثقة التالية.",
+      "en": "Watch whether breadth repairs enough to confirm index strength; participation is the active fault line.",
+      "ar": "راقب ما إذا كان اتساع السوق يستعيد تماسكه بما يؤكد قوة المؤشرات؛ فالمشاركة هي موضع الضغط الحالي.",
       "source": "breadth_state"
     },
     {
       "id": "dollar-pressure",
-      "en": "Watch whether DXY pressure continues or fades; the current state is firming.",
-      "ar": "راقب ما إذا كان ضغط مؤشر الدولار يستمر أو ينحسر؛ والحالة الراهنة يتصاعد.",
+      "en": "Watch whether DXY pressure continues or fades; the current state is easing.",
+      "ar": "راقب ما إذا كان ضغط مؤشر الدولار يستمر أو ينحسر؛ والحالة الراهنة ينحسر.",
       "source": "dollar_pressure"
     },
     {
@@ -446,8 +469,8 @@
     }
   ],
   "risk_framing": {
-    "en": "The current regime has no active structural contradiction in the verified stack, but confirmation remains conditional on breadth, volatility, and the next catalyst.",
-    "ar": "لا يظهر في المنظومة الموثقة تناقض هيكلي نشط حالياً، لكن التأكيد يبقى مشروطاً بالاتساع والتقلب والمحفز التالي."
+    "en": "The regime carries 2 active structural contradiction(s); conviction should be read through confirmation, not headline direction.",
+    "ar": "يحمل النظام 2 من التناقضات الهيكلية النشطة؛ وتُقرأ القناعة عبر إشارات التأكيد لا عبر اتجاه العناوين."
   },
   "premium_module_contracts": [
     {

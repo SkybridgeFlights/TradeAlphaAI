@@ -1,43 +1,65 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-29T14:11:58.389Z",
+  "updated_at": "2026-06-29T16:40:24.957Z",
   "run_date": "2026-06-29",
   "verified": true,
   "coherence": {
-    "score": 44,
-    "band": "conflicted",
+    "score": 59,
+    "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 44/100 — cross-asset relationships are openly conflicted this session.",
-    "ar": "اتساق النظام 44/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة."
+    "en": "Regime coherence 59/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 59/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
-    "events_5d": 4,
+    "events_5d": 9,
     "band": "accelerating"
   },
   "what_changed": [
     {
-      "date": "2026-06-26",
+      "date": "2026-06-29",
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "deteriorating",
+      "note": "breadth state: mixed -> deteriorating"
+    },
+    {
+      "date": "2026-06-29",
+      "dimension": "ai_concentration_risk",
+      "from": "elevated",
+      "to": "contained",
+      "note": "ai concentration risk: elevated -> contained"
+    },
+    {
+      "date": "2026-06-29",
       "dimension": "momentum_concentration",
-      "from": "broadening",
-      "to": "balanced",
-      "note": "momentum concentration: broadening -> balanced"
-    },
-    {
-      "date": "2026-06-26",
-      "dimension": "dollar_pressure",
-      "from": "firming",
-      "to": "stable",
-      "note": "dollar pressure: firming -> stable"
-    },
-    {
-      "date": "2026-06-24",
-      "dimension": "duration_pressure",
-      "from": "neutral",
-      "to": "relaxing",
-      "note": "duration pressure: neutral -> relaxing"
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
   "confirms": [
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    },
+    {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    },
     {
       "id": "vix-equities",
       "legs": [
@@ -61,40 +83,18 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
-      "id": "breadth-link",
+      "id": "liquidity-beta",
       "legs": [
-        "spy",
-        "iwm"
+        "btc",
+        "qqq"
       ],
       "state": "confirming",
-      "chain_strength": 4,
-      "en": "Healthy advances carry small caps with the index",
-      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
+      "chain_strength": 1,
+      "en": "Crypto trades as the liquidity beta of the growth complex",
+      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     }
   ],
   "diverges": [
-    {
-      "id": "yields-growth",
-      "legs": [
-        "us10y",
-        "qqq"
-      ],
-      "state": "diverging",
-      "chain_strength": 6,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
-    {
-      "id": "yields-dollar",
-      "legs": [
-        "us10y",
-        "dxy"
-      ],
-      "state": "diverging",
-      "chain_strength": 6,
-      "en": "Yield support typically firms the dollar",
-      "ar": "دعم العوائد يقوّي الدولار عادة"
-    },
     {
       "id": "dollar-gold",
       "legs": [
@@ -107,15 +107,15 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة"
     },
     {
-      "id": "liquidity-beta",
+      "id": "breadth-link",
       "legs": [
-        "btc",
-        "qqq"
+        "spy",
+        "iwm"
       ],
       "state": "diverging",
-      "chain_strength": 4,
-      "en": "Crypto trades as the liquidity beta of the growth complex",
-      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+      "chain_strength": 1,
+      "en": "Healthy advances carry small caps with the index",
+      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
   "weakening": [],
@@ -147,16 +147,16 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: momentum concentration: broadening -> balanced; dollar pressure: firming -> stable; duration pressure: neutral -> relaxing.",
-    "Regime coherence 44/100 — cross-asset relationships are openly conflicted this session.",
-    "The US10Y/QQQ link is not holding — a 6-session strain; that is where the tape's internal argument lives.",
+    "The regime picture moved: breadth state: mixed -> deteriorating; ai concentration risk: elevated -> contained; momentum concentration: balanced -> narrow-megacap.",
+    "Regime coherence 59/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The DXY/GOLD link is not holding — a 4-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is RBA Meeting Minutes."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 44/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة.",
-    "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 6 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "اتساق النظام 59/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "رابط DXY/GOLD لا يصمد — إجهاد مستمر منذ 4 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي RBA Meeting Minutes."
   ],
@@ -192,7 +192,7 @@
       },
       {
         "date": "2026-06-29",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "yields-dollar": [
@@ -226,7 +226,7 @@
       },
       {
         "date": "2026-06-29",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "dollar-gold": [
@@ -378,7 +378,7 @@
       },
       {
         "date": "2026-06-29",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "breadth-link": [
@@ -420,7 +420,7 @@
       },
       {
         "date": "2026-06-29",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "yields-bonds": [
@@ -458,5 +458,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 44/100 (conflicted); velocity accelerating; 3 confirming / 4 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 59/100 (tense); velocity accelerating; 5 confirming / 2 diverging links; 2 underpriced signal(s)."
 }

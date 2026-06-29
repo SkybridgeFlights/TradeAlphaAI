@@ -1,56 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-29T14:11:58.420Z",
+  "updated_at": "2026-06-29T16:40:24.984Z",
   "run_date": "2026-06-29",
   "verified": true,
   "selected": [
-    {
-      "id": "yields-growth",
-      "kind": "cross-asset",
-      "visual_type": "cross-asset-comparison",
-      "symbols": [
-        "TVC:US10Y",
-        "NASDAQ:QQQ"
-      ],
-      "title_en": "Yields vs growth equities",
-      "title_ar": "العوائد مقابل أسهم النمو",
-      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
-      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 100,
-      "evidence": [
-        "causal:yields-growth diverging ×6"
-      ],
-      "annotations": [
-        {
-          "type": "divergence-highlight",
-          "severity": "high",
-          "label_en": "Divergence — US10Y/QQQ not confirming (6-session strain)",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 6 جلسات)",
-          "evidence": [
-            "convergence:diverges:yields-growth:chain=6"
-          ]
-        },
-        {
-          "type": "transition-label",
-          "severity": "elevated",
-          "label_en": "Regime shift — duration pressure neutral → relaxing",
-          "label_ar": "تحوّل النظام — duration pressure: neutral ← relaxing",
-          "evidence": [
-            "cognition:timeline:duration_pressure:neutral->relaxing:2026-06-24"
-          ]
-        },
-        {
-          "type": "catalyst-zone",
-          "severity": "info",
-          "label_en": "Catalyst window — RBA Meeting Minutes (2026-06-30)",
-          "label_ar": "نافذة محفز — RBA Meeting Minutes (2026-06-30)",
-          "evidence": [
-            "pulse:catalyst:RBA Meeting Minutes:2026-06-30"
-          ]
-        }
-      ],
-      "attribution": "Chart: TradingView · Quotes: sourced market providers"
-    },
     {
       "id": "dollar-gold",
       "kind": "cross-asset",
@@ -80,10 +33,57 @@
         {
           "type": "transition-label",
           "severity": "elevated",
-          "label_en": "Regime shift — dollar pressure firming → stable",
-          "label_ar": "تحوّل النظام — dollar pressure: firming ← stable",
+          "label_en": "Regime shift — dollar pressure firming → easing",
+          "label_ar": "تحوّل النظام — dollar pressure: firming ← easing",
           "evidence": [
-            "cognition:timeline:dollar_pressure:firming->stable:2026-06-26"
+            "cognition:timeline:dollar_pressure:firming->easing:2026-06-29"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — RBA Meeting Minutes (2026-06-30)",
+          "label_ar": "نافذة محفز — RBA Meeting Minutes (2026-06-30)",
+          "evidence": [
+            "pulse:catalyst:RBA Meeting Minutes:2026-06-30"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "breadth-confirmation",
+      "kind": "cross-asset",
+      "visual_type": "breadth",
+      "symbols": [
+        "AMEX:SPY",
+        "AMEX:RSP"
+      ],
+      "title_en": "Cap-weighted vs equal-weight breadth",
+      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
+      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
+      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
+      "score": 38,
+      "evidence": [
+        "breadth_state: deteriorating ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — SPY/IWM not confirming",
+          "label_ar": "انفصال — SPY/IWM لا يؤكد",
+          "evidence": [
+            "convergence:diverges:breadth-link:chain=1"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — breadth state mixed → deteriorating",
+          "label_ar": "تحوّل النظام — breadth state: mixed ← deteriorating",
+          "evidence": [
+            "cognition:timeline:breadth_state:mixed->deteriorating:2026-06-29"
           ]
         },
         {
