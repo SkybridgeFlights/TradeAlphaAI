@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-30T18:05:04.895Z",
+  "updated_at": "2026-06-30T20:13:27.202Z",
   "run_date": "2026-06-30",
   "verified": true,
   "coherence": {
-    "score": 63,
+    "score": 50,
     "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "ar": "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
+    "en": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
     "events_5d": 10,
@@ -38,17 +38,6 @@
     }
   ],
   "confirms": [
-    {
-      "id": "dollar-gold",
-      "legs": [
-        "dxy",
-        "gold"
-      ],
-      "state": "confirming",
-      "chain_strength": 1,
-      "en": "A firming dollar typically pressures gold",
-      "ar": "تقوّي الدولار يضغط على الذهب عادة"
-    },
     {
       "id": "vix-equities",
       "legs": [
@@ -96,6 +85,17 @@
   ],
   "diverges": [
     {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "diverging",
+      "chain_strength": 5,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
+    {
       "id": "yields-growth",
       "legs": [
         "us10y",
@@ -130,7 +130,10 @@
     }
   ],
   "weakening": [],
-  "crowding": null,
+  "crowding": {
+    "en": "Positioning is crowded — leadership, concentration, and speculative appetite are stacked on the same trade.",
+    "ar": "التمركزات مزدحمة — القيادة والتركز وشهية المضاربة متراكمة على الصفقة نفسها."
+  },
   "preparing_for": [
     {
       "name": "RBA Meeting Minutes",
@@ -148,28 +151,21 @@
       "score": 3,
       "en": "accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying.",
       "ar": "ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
-    },
-    {
-      "kind": "pressure",
-      "track": "concentration_pressure",
-      "score": 5,
-      "en": "persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
-      "ar": "تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
     }
   ],
   "narrative_en": [
     "The regime picture moved: breadth state: deteriorating -> confirming; ai concentration risk: contained -> elevated; dollar pressure: easing -> stable.",
-    "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "The US10Y/QQQ link is not holding; that is where the tape's internal argument lives.",
-    "Quietly building beneath the surface: accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
-    "The next scheduled resolution point is RBA Meeting Minutes."
+    "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The DXY/GOLD link is not holding — a 5-session strain; that is where the tape's internal argument lives.",
+    "Positioning is crowded — leadership, concentration, and speculative appetite are stacked on the same trade.",
+    "Quietly building beneath the surface: accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
-    "رابط US10Y/QQQ لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
-    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
-    "نقطة الحسم المجدولة التالية هي RBA Meeting Minutes."
+    "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "رابط DXY/GOLD لا يصمد — إجهاد مستمر منذ 5 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "التمركزات مزدحمة — القيادة والتركز وشهية المضاربة متراكمة على الصفقة نفسها.",
+    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
   ],
   "link_history": {
     "yields-growth": [
@@ -283,7 +279,7 @@
       },
       {
         "date": "2026-06-30",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "vix-equities": [
@@ -489,5 +485,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 63/100 (tense); velocity accelerating; 5 confirming / 3 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 50/100 (tense); velocity accelerating; 4 confirming / 4 diverging links; 1 underpriced signal(s)."
 }
