@@ -80,7 +80,8 @@ const core = [
   // check:visual-intelligence; previously omitted, which failed that gate).
   .concat(["market-dashboard/", "macro-dashboard/", "etf-dashboard/", "ar/market-dashboard/", "ar/macro-dashboard/", "ar/etf-dashboard/"].filter(existsDir))
   .concat(existsDir("articles") ? ["articles/"] : [])
-  .concat(educationalArticleFiles("articles").map(toRel));
+  .concat(educationalArticleFiles("articles").map(toRel))
+  .concat(existsDir("links") ? ["links/"] : []);
 
 const stocks = htmlFiles("stocks").map(toRel);
 const etfs = htmlFiles("etfs").map(toRel);
@@ -124,7 +125,7 @@ function arUrls() {
     "market-news/", "market-structure/", "market-outlook/",
     "market-terminal/", "intelligence/",
     "market-dashboard/", "macro-dashboard/", "etf-dashboard/",
-    "articles/", "methodology.html", "market-data-status.html"
+    "articles/", "links/", "methodology.html", "market-data-status.html"
   ]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }
