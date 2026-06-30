@@ -125,6 +125,32 @@
       line-height: 1;
     }
     .social-name { font-size: 0.7rem; font-weight: 500; color: #9aa8b6; }
+    /* Newsletter card */
+    .newsletter-card {
+      margin: 0 0 1.25rem;
+      padding: 1.1rem 1.1rem 1.25rem;
+      background: rgba(34, 211, 195, 0.05);
+      border: 1px solid rgba(34, 211, 195, 0.28);
+      border-radius: 14px;
+    }
+    .newsletter-title {
+      margin: 0 0 0.35rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #22d3c3;
+    }
+    .newsletter-blurb {
+      margin: 0 0 0.7rem;
+      font-size: 0.82rem;
+      color: #9aa8b6;
+      line-height: 1.45;
+    }
+    .newsletter-form { min-height: 44px; }
+    .newsletter-form input[type="email"] {
+      background: rgba(7, 16, 33, 0.7) !important;
+      color: #e6f7f3 !important;
+      border-color: rgba(34, 211, 195, 0.35) !important;
+    }
     /* Recent section */
     .recent-head {
       display: flex;
@@ -253,14 +279,6 @@
       .social-name { font-size: 0.6rem; }
     }
   </style>
-<!-- GA4_INSTALLED:G-C8REB6WQP1 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-C8REB6WQP1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-C8REB6WQP1', { anonymize_ip: true });
-</script>
 </head>
 <body>
   <main class="container">
@@ -273,6 +291,12 @@
     <a class="cta-primary" href="https://t.me/TradeAlphaAI" target="_blank" rel="noopener">
       ✈️ Get daily research on Telegram
     </a>
+
+    <section class="newsletter-card">
+      <h3 class="newsletter-title">Get the newsletter by email</h3>
+      <p class="newsletter-blurb">Daily institutional analysis. Free. Unsubscribe anytime.</p>
+      <div id="custom-substack-embed" class="newsletter-form"></div>
+    </section>
 
     <div class="social-row"><a class="social-link" href="https://t.me/TradeAlphaAI" target="_blank" rel="noopener" aria-label="Telegram"><span class="social-icon">✈️</span><span class="social-name">Telegram</span></a><a class="social-link" href="https://www.facebook.com/profile.php?id=61583281783652" target="_blank" rel="noopener" aria-label="Facebook"><span class="social-icon">f</span><span class="social-name">Facebook</span></a><a class="social-link" href="https://www.instagram.com/tradealpha_ai/" target="_blank" rel="noopener" aria-label="Instagram"><span class="social-icon">◎</span><span class="social-name">Instagram</span></a><a class="social-link" href="https://x.com/TradeAlpha_AI" target="_blank" rel="noopener" aria-label="X"><span class="social-icon">𝕏</span><span class="social-name">X</span></a></div>
 
@@ -497,5 +521,15 @@
       });
     })();
   </script>
+  <script>
+    window.CustomSubstackWidget = {
+      substackUrl: "tradealphaai.substack.com",
+      placeholder: "your@email.com",
+      buttonText: "Subscribe",
+      theme: "custom",
+      colors: { primary: "#22d3c3", input: "#071021", email: "#e6f7f3", text: "#021018" }
+    };
+  </script>
+  <script src="https://substackapi.com/widget.js" async></script>
 </body>
 </html>

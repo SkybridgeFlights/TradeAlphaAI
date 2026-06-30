@@ -23,6 +23,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const SITE_URL = 'https://www.tradealphaai.com';
 const TELEGRAM_URL = 'https://t.me/TradeAlphaAI';
+const SUBSTACK_URL = 'https://tradealphaai.substack.com';
 
 const SOCIAL_LINKS = [
   { id: 'telegram',  label: 'Telegram',  url: TELEGRAM_URL,                                       icon: '✈️' },
@@ -144,6 +145,10 @@ function renderPage(locale) {
     'أبحاث سوق مؤسسية — أسهم وصناديق ETF وتحليل ماكرو.'
   );
   const subscribeText = t('Get daily research on Telegram', 'احصل على أبحاث يومية على Telegram');
+  const newsletterTitle = t('Get the newsletter by email', 'احصل على النشرة عبر البريد');
+  const newsletterBlurb = t('Daily institutional analysis. Free. Unsubscribe anytime.', 'تحليل يومي مؤسسي. مجاناً. ألغِ الاشتراك في أي وقت.');
+  const newsletterPh = t('your@email.com', 'بريدك الإلكتروني');
+  const newsletterBtn = t('Subscribe', 'اشترك');
   const filterAll = t('All', 'الكل');
   const filterArt = t('Articles', 'مقالات');
   const filterNews = t('News', 'أخبار');
@@ -309,6 +314,32 @@ function renderPage(locale) {
       line-height: 1;
     }
     .social-name { font-size: 0.7rem; font-weight: 500; color: #9aa8b6; }
+    /* Newsletter card */
+    .newsletter-card {
+      margin: 0 0 1.25rem;
+      padding: 1.1rem 1.1rem 1.25rem;
+      background: rgba(34, 211, 195, 0.05);
+      border: 1px solid rgba(34, 211, 195, 0.28);
+      border-radius: 14px;
+    }
+    .newsletter-title {
+      margin: 0 0 0.35rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #22d3c3;
+    }
+    .newsletter-blurb {
+      margin: 0 0 0.7rem;
+      font-size: 0.82rem;
+      color: #9aa8b6;
+      line-height: 1.45;
+    }
+    .newsletter-form { min-height: 44px; }
+    .newsletter-form input[type="email"] {
+      background: rgba(7, 16, 33, 0.7) !important;
+      color: #e6f7f3 !important;
+      border-color: rgba(34, 211, 195, 0.35) !important;
+    }
     /* Recent section */
     .recent-head {
       display: flex;
@@ -450,6 +481,12 @@ function renderPage(locale) {
       ✈️ ${escapeHtml(subscribeText)}
     </a>
 
+    <section class="newsletter-card">
+      <h3 class="newsletter-title">${escapeHtml(newsletterTitle)}</h3>
+      <p class="newsletter-blurb">${escapeHtml(newsletterBlurb)}</p>
+      <div id="custom-substack-embed" class="newsletter-form"></div>
+    </section>
+
     <div class="social-row">${socialRow}</div>
 
     <section>
@@ -488,6 +525,16 @@ function renderPage(locale) {
       });
     })();
   </script>
+  <script>
+    window.CustomSubstackWidget = {
+      substackUrl: "tradealphaai.substack.com",
+      placeholder: "${newsletterPh}",
+      buttonText: "${newsletterBtn}",
+      theme: "custom",
+      colors: { primary: "#22d3c3", input: "#071021", email: "#e6f7f3", text: "#021018" }
+    };
+  </script>
+  <script src="https://substackapi.com/widget.js" async></script>
 </body>
 </html>
 `;

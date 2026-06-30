@@ -353,5 +353,74 @@
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
+<!-- NEWSLETTER_CTA_INSTALLED:v2 -->
+<aside class="ta-newsletter-cta" role="complementary" aria-label="Join the research newsletter" dir="ltr">
+  <div class="ta-newsletter-inner">
+    <div class="ta-newsletter-text">
+      <h3 class="ta-newsletter-title">Join the research newsletter</h3>
+      <p class="ta-newsletter-blurb">Daily institutional market analysis — stocks, ETFs, and macro. Free.</p>
+    </div>
+    <div id="custom-substack-embed" class="ta-newsletter-form"></div>
+    <p class="ta-newsletter-note">No spam. Unsubscribe in one click.</p>
+  </div>
+</aside>
+<style>
+  .ta-newsletter-cta {
+    margin: 3rem auto 2rem;
+    max-width: 720px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid rgba(34, 211, 195, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(13, 26, 42, 0.6) 0%, rgba(7, 16, 33, 0.85) 100%);
+    color: #e6f7f3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Cairo', sans-serif;
+    box-shadow: 0 12px 36px rgba(34, 211, 195, 0.08);
+  }
+  .ta-newsletter-inner { display: flex; flex-direction: column; gap: 0.9rem; }
+  .ta-newsletter-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #22d3c3;
+  }
+  .ta-newsletter-blurb {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #c2d3e0;
+    line-height: 1.5;
+  }
+  .ta-newsletter-form { margin: 0.25rem 0; min-height: 44px; }
+  .ta-newsletter-form input[type="email"] {
+    background: rgba(7, 16, 33, 0.7) !important;
+    color: #e6f7f3 !important;
+    border-color: rgba(34, 211, 195, 0.35) !important;
+  }
+  .ta-newsletter-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #6b7a8a;
+  }
+  @media (max-width: 600px) {
+    .ta-newsletter-cta { margin: 2rem 1rem 1.5rem; padding: 1.25rem 1.1rem; }
+    .ta-newsletter-title { font-size: 1.05rem; }
+    .ta-newsletter-blurb { font-size: 0.85rem; }
+  }
+</style>
+<script>
+  window.CustomSubstackWidget = {
+    substackUrl: "tradealphaai.substack.com",
+    placeholder: "your@email.com",
+    buttonText: "Subscribe",
+    theme: "custom",
+    colors: {
+      primary: "#22d3c3",
+      input: "#071021",
+      email: "#e6f7f3",
+      text: "#021018"
+    }
+  };
+</script>
+<script src="https://substackapi.com/widget.js" async></script>
 </body>
 </html>
