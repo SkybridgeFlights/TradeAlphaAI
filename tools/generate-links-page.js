@@ -28,8 +28,8 @@ const SOCIAL_LINKS = [
   { id: 'telegram',  label: 'Telegram',  url: TELEGRAM_URL,                                       icon: '✈️' },
   { id: 'facebook',  label: 'Facebook',  url: 'https://www.facebook.com/profile.php?id=61583281783652', icon: 'f' },
   { id: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/tradealpha_ai/',         icon: '◎' },
-  { id: 'x',         label: 'X (Twitter)', url: 'https://x.com/TradeAlphaAI',                     icon: '𝕏' },
-  { id: 'linkedin',  label: 'LinkedIn',  url: 'https://www.linkedin.com/company/tradealphaai/',   icon: 'in' },
+  { id: 'x',         label: 'X',         url: 'https://x.com/TradeAlpha_AI',                      icon: '𝕏' },
+  // LinkedIn intentionally omitted until a Company Page exists.
 ];
 
 const BUCKETS = [
@@ -280,7 +280,7 @@ function renderPage(locale) {
     /* Social row */
     .social-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 0.5rem;
       margin: 0.5rem 0 2rem;
     }
@@ -432,7 +432,7 @@ function renderPage(locale) {
     @media (max-width: 400px) {
       .container { padding: 1.5rem 1rem 3rem; }
       .hero h1 { font-size: 1.4rem; }
-      .social-row { grid-template-columns: repeat(5, 1fr); gap: 0.4rem; }
+      .social-row { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
       .social-link { padding: 0.7rem 0.35rem; }
       .social-name { font-size: 0.6rem; }
     }
