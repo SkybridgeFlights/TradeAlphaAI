@@ -9,10 +9,12 @@ name: Distribution Brain
 
 on:
   workflow_dispatch:
-  schedule:
-    # Twice daily, offset from the publishing/market-watch crons.
-    - cron: '20 11 * * *'
-    - cron: '20 21 * * *'
+  # Cron disabled — superseded by tradealpha-workflow.yml which now drives
+  # live social distribution directly. This workflow was a preview-only
+  # rehearsal layer and is kept as workflow_dispatch fallback only.
+  # schedule:
+  #   - cron: '20 11 * * *'
+  #   - cron: '20 21 * * *'
 
 permissions:
   contents: write
