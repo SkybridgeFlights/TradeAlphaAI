@@ -253,26 +253,39 @@ function buildArchiveHtml(items, dateLabel, dateIso, title, subtitle) {
 `;
 }
 
-function buildArchiveIndex(allArchives) {
+function buildArchiveIndex(allArchives, isAr = false) {
+  const rowHrefPrefix = isAr ? '/newsletter/' : '';
   const rows = allArchives.map((a) => `
-          <a class="insight-stat-card" href="${a.dateIso}.html" style="text-decoration:none">
+          <a class="insight-stat-card" href="${rowHrefPrefix}${a.dateIso}.html" style="text-decoration:none">
             <span>${esc(a.dateLabel)}</span>
             <strong>${esc(a.title)}</strong>
           </a>`).join('');
+  const t = (en, ar) => isAr ? ar : en;
+  const lang = isAr ? 'ar' : 'en';
+  const dir = isAr ? 'rtl' : 'ltr';
+  const canonical = `${SITE_URL}/${isAr ? 'ar/' : ''}newsletter/`;
+  const title = t('Newsletter archive | TradeAlphaAI Daily', 'أرشيف النشرة | TradeAlphaAI Daily');
+  const desc = t(
+    'Every TradeAlphaAI Daily newsletter — searchable archive of past digests.',
+    'كل نشرات TradeAlphaAI اليومية — أرشيف قابل للبحث للنشرات السابقة.'
+  );
   return `<!doctype html>
-<html lang="en" dir="ltr">
+<html lang="${lang}" dir="${dir}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Newsletter archive | TradeAlphaAI Daily</title>
-  <meta name="description" content="Every TradeAlphaAI Daily newsletter — searchable archive of past digests." />
+  <title>${esc(title)}</title>
+  <meta name="description" content="${esc(desc)}" />
   <meta name="robots" content="index,follow,max-image-preview:large" />
-  <link rel="canonical" href="${SITE_URL}/newsletter/" />
+  <link rel="canonical" href="${canonical}" />
+  <link rel="alternate" hreflang="en" href="${SITE_URL}/newsletter/" />
+  <link rel="alternate" hreflang="ar" href="${SITE_URL}/ar/newsletter/" />
+  <link rel="alternate" hreflang="x-default" href="${SITE_URL}/newsletter/" />
   <meta property="og:site_name" content="TradeAlphaAI" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Newsletter archive | TradeAlphaAI Daily" />
-  <meta property="og:description" content="Every TradeAlphaAI Daily newsletter — searchable archive of past digests." />
-  <meta property="og:url" content="${SITE_URL}/newsletter/" />
+  <meta property="og:title" content="${esc(title)}" />
+  <meta property="og:description" content="${esc(desc)}" />
+  <meta property="og:url" content="${canonical}" />
   <meta property="og:image" content="${SITE_URL}/Image/og-image.svg" />
   <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/styles.css" />
@@ -286,22 +299,26 @@ function buildArchiveIndex(allArchives) {
   <main class="market-shell">
     <div class="wrap">
 
-      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Newsletter</span></nav>
+      <nav class="breadcrumb"><a href="/${isAr ? 'ar/' : ''}">${t('Home', 'الرئيسية')}</a><span>/</span><span>${t('Newsletter', 'النشرة')}</span></nav>
 
       <section class="market-section">
         <div class="market-panel insight-hero-card">
           <div class="insight-label-row">
-            <span class="insight-category-badge">Newsletter</span>
+            <span class="insight-category-badge">${t('Newsletter', 'النشرة')}</span>
           </div>
-          <h1>Newsletter Archive</h1>
-          <p class="market-lead">Every TradeAlpha Daily digest — research, news, and market outlooks delivered each morning.</p>
+          <h1>${t('Newsletter Archive', 'أرشيف النشرة')}</h1>
+          <p class="market-lead">${t(
+            'Every TradeAlpha Daily digest — research, news, and market outlooks delivered each morning.',
+            'كل نشرات TradeAlpha Daily — أبحاث وأخبار وتوقعات سوق تصل كل صباح.'
+          )}</p>
+          ${isAr ? '<p class="insight-hero-disclaimer">محتوى النشرات باللغة الإنجليزية حالياً.</p>' : ''}
         </div>
       </section>
 
       <section class="market-section">
-        <h2 style="color:var(--accent);margin-bottom:16px">All past digests</h2>
+        <h2 style="color:var(--accent);margin-bottom:16px">${t('All past digests', 'كل النشرات السابقة')}</h2>
         <div class="insight-stat-grid">
-          ${rows || '<p class="market-copy" style="color:var(--muted)">No digests yet.</p>'}
+          ${rows || `<p class="market-copy" style="color:var(--muted)">${t('No digests yet.', 'لا توجد نشرات بعد.')}</p>`}
         </div>
       </section>
 
@@ -330,7 +347,12 @@ function writeArchive(items, dateLabel, dateIso, title, subtitle) {
       };
     })
     .sort((a, b) => b.dateIso.localeCompare(a.dateIso));
-  fs.writeFileSync(path.join(ARCHIVE_DIR, 'index.html'), buildArchiveIndex(archives), 'utf8');
+  fs.writeFileSync(path.join(ARCHIVE_DIR, 'index.html'), buildArchiveIndex(archives, false), 'utf8');
+  // AR mirror index — same digest list, Arabic UI labels. Digests themselves
+  // stay EN-only for now (workflow generates only one language per day).
+  const arDir = path.join(ROOT, 'ar', 'newsletter');
+  fs.mkdirSync(arDir, { recursive: true });
+  fs.writeFileSync(path.join(arDir, 'index.html'), buildArchiveIndex(archives, true), 'utf8');
   return out;
 }
 

@@ -81,6 +81,7 @@ const ROOTS = [
   'glossary',
   'ar/glossary',
   'newsletter',
+  'ar/newsletter',
   'links',
   'ar/links',
 ];
@@ -256,6 +257,20 @@ function computeLocaleHrefs(relative, ar) {
       const slug = m[1] === 'index.html' ? '' : m[1];
       return { arabicHref: `/ar/${sec}/${slug}`, englishHref: `/${sec}/${slug}` };
     }
+  }
+  // SEO surfaces: glossary term/index + /links/ + /newsletter/. Newsletter has
+  // no per-locale digest yet, so the AR toggle points at the (bilingual)
+  // archive index; ditto for the /ar/ counterpart of links.
+  const glossaryMatch = relative.match(/^(?:ar\/)?glossary\/([^/]+\.html)$/);
+  if (glossaryMatch) {
+    const slug = glossaryMatch[1] === 'index.html' ? '' : glossaryMatch[1];
+    return { arabicHref: `/ar/glossary/${slug}`, englishHref: `/glossary/${slug}` };
+  }
+  if (relative.match(/^(?:ar\/)?links\/index\.html$/)) {
+    return { arabicHref: '/ar/links/', englishHref: '/links/' };
+  }
+  if (relative.match(/^newsletter\//)) {
+    return { arabicHref: '/ar/newsletter/', englishHref: '/newsletter/' };
   }
   // Default: let the renderer compute section-level counterpart
   return { arabicHref: undefined, englishHref: undefined };
