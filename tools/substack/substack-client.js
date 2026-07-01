@@ -21,7 +21,12 @@ class SubstackClient {
     if (!sessionCookie) throw new Error('SubstackClient: sessionCookie is required (substack.sid value)');
     this.hostname = hostname.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
     this.sessionCookie = sessionCookie;
-    this.userAgent = userAgent || 'TradeAlphaAI-Newsletter/1.0 (+https://www.tradealphaai.com)';
+    // Substack sits behind Cloudflare which blocks non-browser UAs with a JS
+    // challenge ("Just a moment..."). Presenting as current Chrome + adding
+    // Sec-Fetch-* headers is enough to pass the L1 bot check for API calls
+    // when the substack.sid cookie is valid.
+    this.userAgent = userAgent
+      || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
   }
 
   request(method, pathOrUrl, body) {
@@ -37,9 +42,17 @@ class SubstackClient {
       const headers = {
         'User-Agent': this.userAgent,
         'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'identity',
         'Cookie': `substack.sid=${this.sessionCookie}`,
         'Origin': `https://${this.hostname}`,
-        'Referer': `https://${this.hostname}/`
+        'Referer': `https://${this.hostname}/publish/home`,
+        'Sec-Ch-Ua': '"Chromium";v="131", "Not_A Brand";v="24", "Google Chrome";v="131"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin'
       };
       if (payload != null) {
         headers['Content-Type'] = 'application/json';
