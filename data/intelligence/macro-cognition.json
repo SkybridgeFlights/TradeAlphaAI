@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-01T18:04:37.580Z",
+  "updated_at": "2026-07-01T20:07:38.475Z",
   "run_date": "2026-07-01",
   "verified": true,
   "conviction": {
-    "state": "healthy-trend-structure",
+    "state": "increasingly-confirmed",
     "regime_confidence": "high",
-    "confirmations": 6,
-    "contradictions": 1,
-    "en": "Healthy trend structure — confirmations are broad and uncontested across the causal network.",
-    "ar": "بنية اتجاه صحية — التأكيدات واسعة وغير متنازع عليها عبر الشبكة السببية."
+    "confirmations": 4,
+    "contradictions": 2,
+    "en": "The structure is increasingly confirmed — cross-asset links and regime persistence agree.",
+    "ar": "البنية تزداد تأكيداً — روابط الأصول واستمرارية النظام متوافقتان."
   },
   "contradictions": [],
   "structure": {
@@ -41,9 +41,9 @@
         "ar": "ضغط التناوب الدفاعي"
       },
       "speculative_pressure": {
-        "score": 3,
+        "score": 2,
         "base_score": 2,
-        "state": "accumulating",
+        "state": "steady",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
@@ -64,17 +64,16 @@
     },
     "elevated": [
       "liquidity_pressure",
-      "speculative_pressure",
       "concentration_pressure"
     ],
-    "note": "Stored pressure elevated on: liquidity pressure, speculative pressure, concentration pressure."
+    "note": "Stored pressure elevated on: liquidity pressure, concentration pressure."
   },
   "scenarios": [
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with healthy trend structure; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع بنية اتجاه صحية؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — stable structure with increasingly confirmed; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — بنية مستقرة مع البنية تزداد تأكيداً؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -82,7 +81,7 @@
     },
     {
       "id": "bullish-continuation",
-      "status": "active",
+      "status": "watch",
       "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
       "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
       "derived_from": [
@@ -123,8 +122,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -146,5 +145,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: healthy-trend-structure; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: increasingly-confirmed; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 2."
 }
