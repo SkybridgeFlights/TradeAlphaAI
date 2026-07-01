@@ -1,17 +1,16 @@
 name: Daily Newsletter
 
-# Sends the TradeAlpha Daily newsletter via Substack every morning.
+# Semi-automated Substack flow — Cloudflare blocks direct API posting from
+# GitHub Actions runner IPs, so this workflow does everything EXCEPT the final
+# "Send" click:
 #
-# Workflow steps:
-#   1. Smoke-test the Substack session cookie (fail fast if expired)
-#   2. Generate the digest (collects last 24h of publishes)
-#   3. Write the public archive page at /newsletter/YYYY-MM-DD.html
-#   4. Create + publish a Substack post (emails subscribers)
-#   5. Commit the archive page
-#   6. Telegram notify on success / failure
+#   1. Collect last N hours of publishes across editorial / news / outlooks
+#   2. Write /newsletter/YYYY-MM-DD.html public archive page (SEO)
+#   3. Build a Substack-ready Markdown digest
+#   4. Telegram it to you as a copy-block + Substack "new post" deep link
 #
-# Manual trigger inputs let you do dry-runs and shorten/lengthen the window
-# (useful for catch-up posts).
+# You: long-press the code block in Telegram → open Substack → paste → Send.
+# ~30 seconds daily.
 
 on:
   schedule:
@@ -20,11 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Skip Substack publish (still writes archive page)'
-        type: boolean
-        default: false
-      no_send:
-        description: 'Publish to Substack web but do NOT email subscribers'
+        description: 'Write archive + print Markdown to logs. Skip Telegram.'
         type: boolean
         default: false
       window_hours:
@@ -44,8 +39,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SUBSTACK_HOSTNAME: ${{ vars.SUBSTACK_HOSTNAME || 'tradealphaai.substack.com' }}
-      SUBSTACK_SESSION_COOKIE: ${{ secrets.SUBSTACK_SESSION_COOKIE }}
-      SUBSTACK_USER_ID: ${{ secrets.SUBSTACK_USER_ID }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
@@ -63,15 +56,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Smoke-test Substack cookie
-        if: ${{ env.SUBSTACK_SESSION_COOKIE != '' }}
-        run: node tools/send-daily-newsletter.js --smoke-test
-
-      - name: Generate + publish daily digest
+      - name: Generate digest + Telegram
         run: |
           ARGS=""
           if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then ARGS="$ARGS --dry-run"; fi
-          if [[ "${{ github.event.inputs.no_send }}" == "true" ]]; then ARGS="$ARGS --no-send"; fi
           if [[ -n "${{ github.event.inputs.window_hours }}" ]]; then ARGS="$ARGS --window-hours=${{ github.event.inputs.window_hours }}"; fi
           echo "[run] node tools/send-daily-newsletter.js $ARGS"
           node tools/send-daily-newsletter.js $ARGS

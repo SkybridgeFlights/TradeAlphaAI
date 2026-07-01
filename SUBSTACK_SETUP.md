@@ -1,153 +1,144 @@
-# Substack Daily Newsletter — One-Time Setup
+# Substack Daily Newsletter — Semi-Automated Flow
 
-The `Daily Newsletter` GitHub Action publishes a digest to
-`tradealphaai.substack.com` every morning at **08:00 UTC** and emails it to all
-subscribers. It authenticates against Substack with a session cookie copied
-from a logged-in browser tab.
+**Why semi-auto?** Substack sits behind Cloudflare, which blocks HTTP requests
+from GitHub Actions runner IPs with a JavaScript challenge that a plain HTTPS
+client cannot solve. Rather than fight that arms race, the workflow does
+everything up to (but not including) the final "Send" click in Substack.
 
-You only need to do this **once every ~90 days**, when the cookie expires.
-
----
-
-## What you'll do
-
-1. Log in to Substack in Chrome (or any browser)
-2. Copy three values from the developer console
-3. Paste them as GitHub Secrets
-
-That's it.
+Your daily commitment: **~30 seconds** to open Substack and paste.
 
 ---
 
-## Step 1 — Log in
+## What the workflow does
 
-Open https://substack.com and sign in to the account that owns
-`tradealphaai.substack.com`.
+Every morning at **08:00 UTC** (11:00 Riyadh / 04:00 New York), a GitHub
+Actions job:
 
-Confirm you can reach the dashboard at:
-```
-https://tradealphaai.substack.com/publish/home
-```
+1. Collects everything published to your site in the last 24h
+   (research articles + news + market outlooks)
+2. Writes a public archive page at `https://www.tradealphaai.com/newsletter/YYYY-MM-DD.html`
+   (also updates `/newsletter/` archive index — good SEO)
+3. Builds a Substack-ready Markdown digest
+4. Sends it to your Telegram as a copy-block + a one-tap link to Substack's
+   "new post" editor
 
-If you cannot reach the dashboard, you are not signed in as the right user.
-
----
-
-## Step 2 — Extract `substack.sid`
-
-1. While on any `substack.com` or `tradealphaai.substack.com` page, press **F12**
-   (or right-click → Inspect) to open DevTools
-2. Go to the **Application** tab (Chrome) or **Storage** tab (Firefox)
-3. In the left sidebar expand **Cookies** → click `https://substack.com`
-4. Find the row named **`substack.sid`**
-5. Double-click the value column and copy the entire string
-   (it's long — starts with `s%3A` and contains a random token)
-
-Keep this value secret — it can authenticate as you for ~90 days.
+Your job:
+5. Long-press the code block in Telegram → **Copy**
+6. Tap the "Open Substack editor" link
+7. Paste into the editor → click **Send** → done
 
 ---
 
-## Step 3 — Find your `user_id`
+## One-time setup
 
-In the same DevTools, go to the **Console** tab and paste:
+The **only** required secrets are Telegram credentials, and you already have
+these from the main workflow:
 
-```js
-fetch('https://tradealphaai.substack.com/api/v1/subscription', { credentials: 'include' })
-  .then((r) => r.json()).then((d) => console.log('user_id =', d?.user?.id, 'publication =', d?.publication?.id));
-```
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
 
-Press Enter. You'll see something like:
-```
-user_id = 12345678 publication = 4567890
-```
+Both are already set up in your repo. **Nothing else to configure.**
 
-Copy the number after `user_id =`.
+### Optional: delete the old Substack secrets
 
----
+If you set up `SUBSTACK_SESSION_COOKIE` or `SUBSTACK_USER_ID` earlier, you can
+delete them — they are no longer used and leaving them adds no value:
 
-## Step 4 — Add GitHub Secrets
-
-Open the repo settings:
 ```
 https://github.com/SkybridgeFlights/TradeAlphaAI/settings/secrets/actions
 ```
 
-Click **New repository secret** for each of:
-
-| Name | Value |
-|---|---|
-| `SUBSTACK_SESSION_COOKIE` | the long `substack.sid` value from Step 2 |
-| `SUBSTACK_USER_ID` | the number from Step 3 (e.g. `12345678`) |
-
-The publication hostname is hardcoded to `tradealphaai.substack.com`. If you
-ever rename the publication, also add `SUBSTACK_HOSTNAME` with the new value.
+Click the ⋯ next to each and choose Remove.
 
 ---
 
-## Step 5 — Test the cookie (optional but recommended)
-
-Trigger the workflow manually with `dry_run = true`:
+## Test it now
 
 1. Open https://github.com/SkybridgeFlights/TradeAlphaAI/actions
 2. Click **Daily Newsletter** in the sidebar
-3. Click **Run workflow** (top right) → set `dry_run = true` → **Run workflow**
-
-The smoke-test step will hit Substack's `/api/v1/subscription` and confirm
-your cookie is valid. If it fails, re-do Step 2 (the cookie may have expired
-or you copied it from the wrong domain).
+3. Click **Run workflow** (top right)
+4. Leave defaults (or set `window_hours = 168` to pull the last week) → **Run workflow**
+5. Wait ~30s. Check your Telegram — the digest should arrive as one intro
+   message + one or more code blocks
 
 ---
 
-## Step 6 — Send your first newsletter
+## Daily flow
 
-Once dry-run passes, trigger the workflow again with all defaults (no inputs).
-It will:
+**In Telegram**, when the message arrives:
 
-1. Collect the last 24 hours of publishes from your three history files
-2. Build a digest with research + news + outlooks
-3. Write the public archive page to `/newsletter/YYYY-MM-DD.html`
-4. Create a Substack draft, prepublish, publish, and **email subscribers**
-5. Telegram you a confirmation message
+1. Long-press the code block (the one that starts with "Good morning...")
+   → **Copy**
+2. Tap the "Open Substack editor" link in the intro message
+3. In Substack:
+   - Paste the copied content into the editor (Substack auto-parses the
+     Markdown)
+   - Adjust the title if you want (default is fine)
+   - Click **Publish** → **Send to everyone** → done
 
-After this first manual run, the workflow runs automatically every morning.
+Total time: ~30 seconds.
+
+If the digest arrives on a quiet day (0 items), you can skip sending — the
+archive page is still generated and the Telegram notification will say so.
+
+---
+
+## Optional: also on mobile
+
+The Substack mobile app makes this even faster:
+
+1. In Telegram mobile, long-press the code block → **Copy**
+2. Open Substack app → **New post** (⊕ button)
+3. Paste → hit **Send**
+
+30 seconds on the phone, no laptop needed.
 
 ---
 
 ## Troubleshooting
 
-### Smoke test fails with 401 / 403
-Your cookie expired or you copied the wrong value. Re-do Step 2.
+### No Telegram message
+Check the workflow run log. If it says `[telegram] TELEGRAM_BOT_TOKEN or
+TELEGRAM_CHAT_ID missing` — verify both secrets exist in
+`Settings → Secrets and variables → Actions`.
 
-### Draft creates but publish fails
-Substack sometimes rejects drafts that exceed length limits or violate spam
-heuristics. Check the workflow log for the response body. Most commonly: too
-many external links in a single post. Reduce the window-hours and retry.
+### Message split into multiple parts
+Normal on busy days. Telegram caps messages at 4096 chars; the tool chunks on
+paragraph boundaries. Copy each block in order and paste them into Substack
+sequentially — the paragraph breaks stay intact.
 
-### No items in the digest
-Normal on quiet news days. The digest still publishes with a short message
-pointing to the site catalog. If you'd rather skip publishing entirely on
-quiet days, edit `tools/send-daily-newsletter.js` and exit early when
-`items.length === 0`.
+### Substack doesn't auto-render the Markdown
+Substack's editor understands `##`, `**bold**`, `[link](url)`, `---` out of
+the box. If a paste looks broken:
+- Use the ⊕ menu in the Substack editor → **Import Markdown** for reliable
+  parsing on longer digests
+- Or paste into `https://tradealphaai.substack.com/publish/post?type=newsletter`
+  which is the direct link the Telegram intro sends you to
 
-### Skipping a day
-Just disable the workflow temporarily:
-```
-Actions → Daily Newsletter → ··· → Disable workflow
-```
-Re-enable when you're ready.
+### I want to skip a day
+Just don't tap **Send** in Substack. The archive page still gets committed to
+your site (good — it's an SEO win either way). Nothing tries to send twice.
 
-### Sending an extra newsletter mid-day
-Use **Run workflow** with `window_hours = 4` (or whatever interval covers
-just-published content).
+### I want to run it mid-day for a fresh batch
+`Actions → Daily Newsletter → Run workflow → window_hours = 4` will pull just
+the last 4 hours.
+
+### I want to disable the automatic 08:00 UTC run
+`Actions → Daily Newsletter → ··· → Disable workflow` (top right).
 
 ---
 
-## Cookie rotation reminder
+## When to revisit full automation
 
-The `substack.sid` cookie typically lasts ~90 days, but Substack may
-invalidate it sooner if you sign out, change your password, or sign in from a
-new location. Plan to re-do Step 2 quarterly.
+The current semi-auto flow is stable and free. Revisit full automation only
+when **at least one** of these is true:
 
-A future enhancement could send you a Telegram warning ~7 days before
-expiration; for now, the workflow's smoke-test step will fail loudly with
-`401 Unauthorized` if the cookie has lapsed.
+- You have 500+ Substack subscribers (30 s/day × 365 = enough time to be
+  worth the engineering investment)
+- Substack publishes an official public API for free-tier publications
+- You want to move off Substack entirely (switch to Buttondown, Loops,
+  Resend, Beehiiv, etc. — all have real APIs and free tiers up to
+  100–1000 subscribers)
+
+Until then, the semi-auto flow is the right level of automation for the
+subscriber base.

@@ -1,39 +1,40 @@
 #!/usr/bin/env node
 'use strict';
 
-// Daily newsletter generator + publisher.
+// Daily newsletter generator — semi-automated Substack flow.
 //
-// Pipeline:
-//   1. Collect items published in the last N hours from the three history files
-//      (editorial / market-outlook / continuous-intelligence)
-//   2. Build a ProseMirror doc + a public HTML archive page
-//   3. Authenticate against Substack via session cookie
-//   4. Create a draft → prepublish → publish (with email send by default)
-//   5. Notify Telegram on success / failure
+// Why semi-auto: Substack sits behind Cloudflare which blocks requests from
+// GitHub Actions runner IPs (Azure ranges) with a JS challenge that a plain
+// HTTPS client cannot solve. Rather than fight that arms race, this tool:
+//
+//   1. Collects items published in the last N hours across the 3 buckets
+//   2. Writes a public archive page at /newsletter/YYYY-MM-DD.html (SEO)
+//   3. Builds a Substack-ready Markdown body
+//   4. Telegrams you the title + subtitle + a code-block containing the
+//      Markdown so you can long-press to copy on mobile, then paste into
+//      Substack's editor and hit Send (~30s of work)
+//
+// The tools/substack/ client is retained (unused) for the day CF relaxes or
+// we move to Playwright-based automation.
 //
 // CLI:
-//   --dry-run       Render the digest + write archive, skip Substack call
-//   --no-send       Publish to substack web but do NOT email subscribers
+//   --dry-run       Write archive only, skip Telegram
 //   --window-hours  How far back to look. Default 24.
-//   --smoke-test    Hit the auth endpoint only (cookie health check)
 //
-// Required env (in workflow, from GitHub Secrets):
-//   SUBSTACK_SESSION_COOKIE   substack.sid value
+// Env (from GitHub Secrets, all optional except TELEGRAM_*):
+//   TELEGRAM_BOT_TOKEN        required to notify
+//   TELEGRAM_CHAT_ID          required to notify
 //   SUBSTACK_HOSTNAME         e.g. tradealphaai.substack.com (default)
-//   SUBSTACK_USER_ID          numeric byline id (fetched on first run if absent)
-//   TELEGRAM_BOT_TOKEN        optional, for notification
-//   TELEGRAM_CHAT_ID          optional, for notification
 
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
-const { SubstackClient } = require('./substack/substack-client');
-const PM = require('./substack/prosemirror-builder');
 
 const SITE_URL = 'https://www.tradealphaai.com';
 const SUBSTACK_HOSTNAME = process.env.SUBSTACK_HOSTNAME || 'tradealphaai.substack.com';
+const SUBSTACK_NEW_POST_URL = `https://${SUBSTACK_HOSTNAME}/publish/post?type=newsletter`;
 const ARCHIVE_DIR = path.join(ROOT, 'newsletter');
 
 // ── CLI parsing ──────────────────────────────────────────────────────────────
@@ -45,16 +46,14 @@ function arg(flag, def = null) {
 }
 
 const DRY_RUN = arg('dry-run') === true;
-const NO_SEND = arg('no-send') === true;
-const SMOKE_TEST = arg('smoke-test') === true;
 const WINDOW_HOURS = Number(arg('window-hours', '24')) || 24;
 
-// ── History readers (shared schema across all 3 buckets) ─────────────────────
+// ── History readers ──────────────────────────────────────────────────────────
 
 const BUCKETS = [
-  { id: 'editorial',                 historyFile: 'data/published-history.json',               dir: 'insights',         label: 'Research',  badge: 'Article'  },
-  { id: 'market-outlook',            historyFile: 'data/market-outlook-history.json',          dir: 'market-outlook',   label: 'Outlooks',  badge: 'Forecast' },
-  { id: 'continuous-intelligence',   historyFile: 'data/continuous-intelligence-history.json', dir: 'intelligence',     label: 'News',      badge: 'News'     }
+  { id: 'editorial',                 historyFile: 'data/published-history.json',               dir: 'insights',       label: 'Research',  badge: 'Article'  },
+  { id: 'market-outlook',            historyFile: 'data/market-outlook-history.json',          dir: 'market-outlook', label: 'Outlooks',  badge: 'Forecast' },
+  { id: 'continuous-intelligence',   historyFile: 'data/continuous-intelligence-history.json', dir: 'intelligence',   label: 'News',      badge: 'News'     }
 ];
 
 function readJson(p, fallback) {
@@ -101,11 +100,10 @@ function collectRecent(windowHours) {
   return items;
 }
 
-// ── Body builders ─────────────────────────────────────────────────────────────
-
 function todayLabel() {
-  const d = new Date();
-  return new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(d);
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'
+  }).format(new Date());
 }
 
 function isoDateUTC() {
@@ -118,57 +116,6 @@ function groupBy(items, key) {
   return out;
 }
 
-function buildProseMirrorDoc(items, dateLabel) {
-  const blocks = [];
-
-  // Intro
-  blocks.push(PM.paragraph([
-    PM.textNode(`Good morning. Here is your TradeAlphaAI brief for ${dateLabel}. `),
-    PM.textNode(`We tracked ${items.length} new item${items.length === 1 ? '' : 's'} across research, news, and forecasts.`)
-  ]));
-
-  blocks.push(PM.divider());
-
-  const groups = groupBy(items, 'bucketId');
-  const sectionsOrder = [
-    { id: 'editorial',               title: 'Research articles' },
-    { id: 'continuous-intelligence', title: 'Market news' },
-    { id: 'market-outlook',          title: 'Market outlooks' }
-  ];
-
-  let emittedAnything = false;
-  for (const section of sectionsOrder) {
-    const list = groups[section.id];
-    if (!list || !list.length) continue;
-    emittedAnything = true;
-    blocks.push(PM.heading(2, section.title));
-    for (const it of list) {
-      // Title (link)
-      blocks.push(PM.linkLine(null, it.title, it.url));
-      // One-line description if available
-      if (it.description) {
-        blocks.push(PM.paragraph([PM.textNode(it.description.slice(0, 220))]));
-      }
-    }
-    blocks.push(PM.divider());
-  }
-
-  if (!emittedAnything) {
-    blocks.push(PM.paragraph([PM.textNode('Quiet news cycle today — no new publications in the last 24 hours. Visit the site for evergreen research:')]));
-    blocks.push(PM.linkLine('Open ', 'tradealphaai.com', SITE_URL));
-    blocks.push(PM.divider());
-  }
-
-  // Footer
-  blocks.push(PM.paragraph([
-    PM.textNode('You are receiving this because you subscribed to TradeAlphaAI. '),
-    PM.textNode('Educational research only — not financial advice.')
-  ]));
-  blocks.push(PM.linkLine('More: ', SITE_URL.replace(/^https?:\/\//, ''), SITE_URL));
-
-  return PM.doc(blocks);
-}
-
 function buildSubtitle(items) {
   if (!items.length) return 'A quiet cycle — site research catalog inside.';
   const counts = groupBy(items, 'bucketId');
@@ -179,10 +126,61 @@ function buildSubtitle(items) {
   return parts.join(' · ');
 }
 
+// ── Markdown builder (Substack-editor-friendly) ───────────────────────────────
+
+function buildMarkdown(items, dateLabel) {
+  const lines = [];
+  lines.push(`Good morning. Here is your TradeAlphaAI brief for ${dateLabel}.`);
+  lines.push(`We tracked ${items.length} new item${items.length === 1 ? '' : 's'} across research, news, and forecasts.`);
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+
+  const groups = groupBy(items, 'bucketId');
+  const order = [
+    { id: 'editorial',               title: 'Research articles' },
+    { id: 'continuous-intelligence', title: 'Market news' },
+    { id: 'market-outlook',          title: 'Market outlooks' }
+  ];
+
+  let anything = false;
+  for (const section of order) {
+    const list = groups[section.id];
+    if (!list || !list.length) continue;
+    anything = true;
+    lines.push(`## ${section.title}`);
+    lines.push('');
+    for (const it of list) {
+      lines.push(`**[${it.title}](${it.url})**`);
+      if (it.description) lines.push(it.description.slice(0, 220));
+      lines.push('');
+    }
+    lines.push('---');
+    lines.push('');
+  }
+
+  if (!anything) {
+    lines.push('A quiet news cycle today. Visit the research catalog:');
+    lines.push(`[${SITE_URL.replace(/^https?:\/\//, '')}](${SITE_URL})`);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  }
+
+  lines.push('You are receiving this because you subscribed to TradeAlphaAI.');
+  lines.push('Educational research only — not financial advice.');
+  lines.push('');
+  lines.push(`More: [${SITE_URL.replace(/^https?:\/\//, '')}](${SITE_URL})`);
+  return lines.join('\n');
+}
+
 // ── Public archive page ───────────────────────────────────────────────────────
 
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 function buildArchiveHtml(items, dateLabel, dateIso, title, subtitle) {
-  const esc = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const rows = items.length === 0
     ? '<p class="empty">A quiet cycle. No new publications in the last 24 hours.</p>'
     : items.map((it) => `
@@ -255,7 +253,6 @@ function buildArchiveHtml(items, dateLabel, dateIso, title, subtitle) {
 }
 
 function buildArchiveIndex(allArchives) {
-  const esc = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const rows = allArchives.map((a) => `
     <li><a href="${a.dateIso}.html"><span class="archive-date">${a.dateLabel}</span><span class="archive-title">${esc(a.title)}</span></a></li>`).join('');
   return `<!doctype html>
@@ -295,7 +292,6 @@ function writeArchive(items, dateLabel, dateIso, title, subtitle) {
   const out = path.join(ARCHIVE_DIR, `${dateIso}.html`);
   fs.writeFileSync(out, html, 'utf8');
 
-  // Rebuild the archive index from whatever .html files now live in /newsletter/.
   const archives = fs.readdirSync(ARCHIVE_DIR)
     .filter((f) => /^\d{4}-\d{2}-\d{2}\.html$/.test(f))
     .map((f) => {
@@ -312,24 +308,67 @@ function writeArchive(items, dateLabel, dateIso, title, subtitle) {
   return out;
 }
 
-// ── Telegram notify (best-effort) ────────────────────────────────────────────
+// ── Telegram ──────────────────────────────────────────────────────────────────
 
-function notifyTelegram(text) {
+function tgEscapeHtml(s) {
+  // Telegram parse_mode=HTML only supports a tiny tag set; escape everything else.
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function sendTelegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return Promise.resolve();
-  const payload = JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true });
-  return new Promise((resolve) => {
+  if (!token || !chatId) {
+    console.warn('[telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing — skipping notification');
+    return Promise.resolve({ skipped: true });
+  }
+  const payload = JSON.stringify({
+    chat_id: chatId,
+    text,
+    parse_mode: 'HTML',
+    disable_web_page_preview: true
+  });
+  return new Promise((resolve, reject) => {
     const req = https.request({
       method: 'POST',
       hostname: 'api.telegram.org',
       path: `/bot${token}/sendMessage`,
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) }
-    }, (res) => { res.on('data', () => {}); res.on('end', resolve); });
-    req.on('error', resolve);
+    }, (res) => {
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => {
+        const raw = Buffer.concat(chunks).toString('utf8');
+        if (res.statusCode >= 200 && res.statusCode < 300) resolve({ ok: true });
+        else reject(new Error(`Telegram ${res.statusCode}: ${raw.slice(0, 300)}`));
+      });
+    });
+    req.on('error', reject);
     req.write(payload);
     req.end();
   });
+}
+
+// Telegram caps messages at 4096 chars. Chunk on paragraph boundaries.
+async function sendTelegramLong(intro, markdownBody) {
+  await sendTelegram(intro);
+  const MAX = 3800;
+  const wrap = (chunk) => `<pre>${tgEscapeHtml(chunk)}</pre>`;
+
+  if (markdownBody.length <= MAX) {
+    await sendTelegram(wrap(markdownBody));
+    return;
+  }
+
+  // Chunk by paragraph blocks so nothing splits mid-heading.
+  const paragraphs = markdownBody.split(/\n\n/);
+  let buf = '';
+  const flush = async () => { if (buf) { await sendTelegram(wrap(buf)); buf = ''; } };
+  for (const p of paragraphs) {
+    if ((buf.length + p.length + 2) > MAX) await flush();
+    buf += (buf ? '\n\n' : '') + p;
+  }
+  await flush();
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -338,27 +377,10 @@ async function main() {
   const dateLabel = todayLabel();
   const dateIso = isoDateUTC();
 
-  const cookie = process.env.SUBSTACK_SESSION_COOKIE;
-  if (!cookie && !DRY_RUN) {
-    console.error('[newsletter] SUBSTACK_SESSION_COOKIE missing — refusing to publish');
-    process.exit(1);
-  }
-
-  if (SMOKE_TEST) {
-    const client = new SubstackClient({ hostname: SUBSTACK_HOSTNAME, sessionCookie: cookie });
-    try {
-      const me = await client.getMe();
-      console.log('[smoke-test] cookie OK. publication_id =', me?.publication?.id, 'user_id =', me?.user?.id);
-      process.exit(0);
-    } catch (err) {
-      console.error('[smoke-test] FAILED:', err.message, err.status, err.raw?.slice(0, 200));
-      process.exit(2);
-    }
-  }
-
   const items = collectRecent(WINDOW_HOURS);
   const title = `TradeAlpha Daily — ${dateLabel}`;
   const subtitle = buildSubtitle(items);
+  const markdown = buildMarkdown(items, dateLabel);
 
   console.log(`[newsletter] ${dateLabel}: ${items.length} items in last ${WINDOW_HOURS}h`);
 
@@ -366,55 +388,26 @@ async function main() {
   console.log(`[newsletter] archive written: ${path.relative(ROOT, archiveFile)}`);
 
   if (DRY_RUN) {
-    console.log('[newsletter] DRY_RUN — skipping Substack publish');
+    console.log('[newsletter] DRY_RUN — skipping Telegram');
+    console.log('--- Markdown preview ---');
+    console.log(markdown);
     return;
   }
 
-  const bodyDoc = buildProseMirrorDoc(items, dateLabel);
-  const client = new SubstackClient({ hostname: SUBSTACK_HOSTNAME, sessionCookie: cookie });
+  const archiveUrl = `${SITE_URL}/newsletter/${dateIso}.html`;
+  const intro =
+    `📰 <b>${tgEscapeHtml(title)}</b>\n` +
+    `${tgEscapeHtml(subtitle)}\n\n` +
+    `<b>Archive:</b> ${tgEscapeHtml(archiveUrl)}\n` +
+    `<b>Open Substack editor:</b> ${tgEscapeHtml(SUBSTACK_NEW_POST_URL)}\n\n` +
+    `Long-press the block below to copy → paste into Substack → Publish.`;
 
-  let userId = process.env.SUBSTACK_USER_ID ? Number(process.env.SUBSTACK_USER_ID) : null;
-  if (!userId) {
-    try {
-      const me = await client.getMe();
-      userId = me?.user?.id || null;
-      if (userId) console.log(`[newsletter] discovered SUBSTACK_USER_ID=${userId}`);
-    } catch (err) {
-      console.warn('[newsletter] could not fetch user_id, posting without byline:', err.message);
-    }
-  }
-
-  let draft;
   try {
-    draft = await client.createDraft({
-      title,
-      subtitle,
-      bodyDoc,
-      byline_user_id: userId,
-      audience: 'everyone'
-    });
-    console.log(`[newsletter] draft created id=${draft?.id}`);
+    await sendTelegramLong(intro, markdown);
+    console.log('[newsletter] Telegram notification sent');
   } catch (err) {
-    console.error('[newsletter] createDraft FAILED:', err.message, err.status, err.raw?.slice(0, 300));
-    await notifyTelegram(`❌ Newsletter draft failed (${err.status || 'network'}): ${(err.body?.error || err.message || '').toString().slice(0, 200)}`);
+    console.error('[newsletter] Telegram failed:', err.message);
     process.exit(3);
-  }
-
-  try {
-    await client.prepublishDraft(draft.id);
-  } catch (err) {
-    // Substack sometimes returns a non-2xx on prepublish even when publish will succeed. Log and continue.
-    console.warn('[newsletter] prepublish warn:', err.message, err.status);
-  }
-
-  try {
-    const published = await client.publishDraft(draft.id, { sendEmail: !NO_SEND });
-    console.log(`[newsletter] PUBLISHED post_id=${published?.id} send=${!NO_SEND}`);
-    await notifyTelegram(`📰 Newsletter sent: ${title}\n${subtitle}\nhttps://${SUBSTACK_HOSTNAME}/p/${published?.slug || ''}`);
-  } catch (err) {
-    console.error('[newsletter] publish FAILED:', err.message, err.status, err.raw?.slice(0, 300));
-    await notifyTelegram(`❌ Newsletter publish failed (${err.status || 'network'}): ${(err.body?.error || err.message || '').toString().slice(0, 200)}`);
-    process.exit(4);
   }
 }
 
@@ -425,4 +418,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { collectRecent, buildProseMirrorDoc, buildArchiveHtml, buildSubtitle };
+module.exports = { collectRecent, buildMarkdown, buildArchiveHtml, buildSubtitle };
