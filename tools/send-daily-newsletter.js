@@ -182,70 +182,71 @@ function esc(s) {
 
 function buildArchiveHtml(items, dateLabel, dateIso, title, subtitle) {
   const rows = items.length === 0
-    ? '<p class="empty">A quiet cycle. No new publications in the last 24 hours.</p>'
+    ? '<p class="market-copy" style="color:var(--muted);padding:2rem 0;text-align:center">A quiet cycle. No new publications in the last 24 hours.</p>'
     : items.map((it) => `
-        <article class="dn-item" data-bucket="${esc(it.bucketId)}">
-          <div class="dn-badge">${esc(it.badge)}</div>
-          <h3 class="dn-title"><a href="${esc(it.url)}">${esc(it.title)}</a></h3>
-          ${it.description ? `<p class="dn-desc">${esc(it.description.slice(0, 220))}</p>` : ''}
-        </article>`).join('');
+          <article class="insight-stat-card">
+            <span>${esc(it.badge)}</span>
+            <strong><a href="${esc(it.url)}" style="color:inherit;text-decoration:none">${esc(it.title)}</a></strong>
+            ${it.description ? `<p>${esc(it.description.slice(0, 220))}</p>` : ''}
+          </article>`).join('');
 
   return `<!doctype html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${esc(title)} — TradeAlphaAI Daily</title>
+  <title>${esc(title)} | TradeAlphaAI Daily</title>
   <meta name="description" content="${esc(subtitle)} — TradeAlphaAI daily research digest." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="${SITE_URL}/newsletter/${esc(dateIso)}.html" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="${esc(title)}" />
   <meta property="og:description" content="${esc(subtitle)}" />
-  <meta property="og:image" content="${SITE_URL}/Image/1.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}
-    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:radial-gradient(ellipse at top,#0d1a2a,#071021 60%);color:#e6f7f3;min-height:100vh;line-height:1.55}
-    .container{max-width:760px;margin:0 auto;padding:3rem 1.25rem 4rem}
-    .hero{text-align:center;padding-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,.08)}
-    .eyebrow{color:#22d3c3;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-    h1{margin:.5rem 0 .35rem;font-size:1.95rem;letter-spacing:-.02em}
-    .subtitle{color:#9aa8b6;margin:0}
-    .dn-item{padding:1.1rem 0;border-bottom:1px solid rgba(255,255,255,.06)}
-    .dn-badge{display:inline-block;padding:.25rem .6rem;border-radius:6px;background:rgba(34,211,195,.12);color:#22d3c3;font-size:.7rem;font-weight:700;letter-spacing:.04em}
-    .dn-title{margin:.5rem 0 .35rem;font-size:1.1rem}
-    .dn-title a{color:#e6f7f3;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .12s}
-    .dn-title a:hover{border-bottom-color:#22d3c3}
-    .dn-desc{margin:0;color:#9aa8b6;font-size:.9rem}
-    .empty{color:#9aa8b6;padding:2rem 0;text-align:center}
-    .cta-box{margin-top:2.5rem;padding:1.5rem;border:1px solid rgba(34,211,195,.28);border-radius:14px;background:rgba(34,211,195,.05);text-align:center}
-    .cta-box h3{margin:0 0 .5rem;color:#22d3c3}
-    .cta-box p{margin:0 0 1rem;color:#9aa8b6;font-size:.9rem}
-    .cta-btn{display:inline-block;padding:.75rem 1.5rem;background:#22d3c3;color:#021018;border-radius:10px;text-decoration:none;font-weight:700}
-    footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08);font-size:.75rem;color:#6b7a8a;text-align:center}
-    footer a{color:#9aa8b6;text-decoration:none}
-  </style>
+  <meta property="og:url" content="${SITE_URL}/newsletter/${esc(dateIso)}.html" />
+  <meta property="og:image" content="${SITE_URL}/Image/og-image.svg" />
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/landing.css" />
+  <link rel="stylesheet" href="/css/market/market-portal.css" />
 </head>
-<body>
-  <main class="container">
-    <header class="hero">
-      <div class="eyebrow">TradeAlpha Daily · ${esc(dateLabel)}</div>
-      <h1>${esc(title)}</h1>
-      <p class="subtitle">${esc(subtitle)}</p>
-    </header>
-    <section class="items">
-      ${rows}
-    </section>
-    <div class="cta-box">
-      <h3>Get this in your inbox</h3>
-      <p>Daily research + news + outlooks. Free. Unsubscribe anytime.</p>
-      <a class="cta-btn" href="https://${esc(SUBSTACK_HOSTNAME)}" target="_blank" rel="noopener">Subscribe on Substack</a>
+<body class="market-page">
+  <!-- GLOBAL_HEADER_START -->
+  <!-- GLOBAL_HEADER_END -->
+
+  <main class="market-shell">
+    <div class="wrap">
+
+      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/newsletter/">Newsletter</a><span>/</span><span>${esc(dateLabel)}</span></nav>
+
+      <section class="market-section">
+        <div class="market-panel insight-hero-card">
+          <div class="insight-label-row">
+            <span class="insight-category-badge">Newsletter</span>
+            <span class="insight-category-badge muted">${esc(dateLabel)}</span>
+          </div>
+          <h1>${esc(title)}</h1>
+          <p class="market-lead">${esc(subtitle)}</p>
+          <p class="insight-hero-disclaimer">Educational market research only. Not financial advice.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <h2 style="color:var(--accent);margin-bottom:16px">Today's items</h2>
+        <div class="insight-stat-grid">
+          ${rows}
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel" style="text-align:center;padding:32px">
+          <h2 style="color:var(--accent);margin:0 0 8px">Get this in your inbox</h2>
+          <p class="market-copy" style="max-width:520px;margin:0 auto 20px">Daily research + news + outlooks delivered to your email. Free. Unsubscribe anytime.</p>
+          <a class="cta" href="https://${esc(SUBSTACK_HOSTNAME)}" target="_blank" rel="noopener">Subscribe on Substack</a>
+        </div>
+      </section>
+
     </div>
-    <footer>
-      <p>Educational market research only. Not financial advice.</p>
-      <p><a href="${SITE_URL}/">tradealphaai.com</a> · <a href="${SITE_URL}/newsletter/">Archive</a></p>
-    </footer>
   </main>
 </body>
 </html>
@@ -254,32 +255,57 @@ function buildArchiveHtml(items, dateLabel, dateIso, title, subtitle) {
 
 function buildArchiveIndex(allArchives) {
   const rows = allArchives.map((a) => `
-    <li><a href="${a.dateIso}.html"><span class="archive-date">${a.dateLabel}</span><span class="archive-title">${esc(a.title)}</span></a></li>`).join('');
+          <a class="insight-stat-card" href="${a.dateIso}.html" style="text-decoration:none">
+            <span>${esc(a.dateLabel)}</span>
+            <strong>${esc(a.title)}</strong>
+          </a>`).join('');
   return `<!doctype html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Newsletter archive — TradeAlphaAI Daily</title>
+  <title>Newsletter archive | TradeAlphaAI Daily</title>
   <meta name="description" content="Every TradeAlphaAI Daily newsletter — searchable archive of past digests." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="${SITE_URL}/newsletter/" />
-  <style>
-    body{font-family:'Inter',sans-serif;background:#071021;color:#e6f7f3;margin:0;padding:3rem 1.25rem}
-    .wrap{max-width:680px;margin:0 auto}
-    h1{font-size:1.8rem;margin:0 0 .5rem}
-    .lead{color:#9aa8b6;margin:0 0 2rem}
-    ul{list-style:none;padding:0;margin:0}
-    li a{display:flex;justify-content:space-between;padding:1rem;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none;color:#e6f7f3;gap:1rem}
-    li a:hover{background:rgba(34,211,195,.05);color:#22d3c3}
-    .archive-date{color:#6b7a8a;font-size:.85rem;white-space:nowrap}
-    .archive-title{flex:1;text-align:right;font-size:.95rem}
-  </style>
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Newsletter archive | TradeAlphaAI Daily" />
+  <meta property="og:description" content="Every TradeAlphaAI Daily newsletter — searchable archive of past digests." />
+  <meta property="og:url" content="${SITE_URL}/newsletter/" />
+  <meta property="og:image" content="${SITE_URL}/Image/og-image.svg" />
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/landing.css" />
+  <link rel="stylesheet" href="/css/market/market-portal.css" />
 </head>
-<body>
-  <main class="wrap">
-    <h1>Newsletter archive</h1>
-    <p class="lead">All TradeAlpha Daily digests, newest first.</p>
-    <ul>${rows}</ul>
+<body class="market-page">
+  <!-- GLOBAL_HEADER_START -->
+  <!-- GLOBAL_HEADER_END -->
+
+  <main class="market-shell">
+    <div class="wrap">
+
+      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Newsletter</span></nav>
+
+      <section class="market-section">
+        <div class="market-panel insight-hero-card">
+          <div class="insight-label-row">
+            <span class="insight-category-badge">Newsletter</span>
+          </div>
+          <h1>Newsletter Archive</h1>
+          <p class="market-lead">Every TradeAlpha Daily digest — research, news, and market outlooks delivered each morning.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <h2 style="color:var(--accent);margin-bottom:16px">All past digests</h2>
+        <div class="insight-stat-grid">
+          ${rows || '<p class="market-copy" style="color:var(--muted)">No digests yet.</p>'}
+        </div>
+      </section>
+
+    </div>
   </main>
 </body>
 </html>

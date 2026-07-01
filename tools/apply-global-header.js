@@ -77,6 +77,12 @@ const ROOTS = [
   'ar/explorer',
   'workspace',
   'ar/workspace',
+  // Phase 149+: SEO/marketing surfaces (glossary, newsletter archive, /links/)
+  'glossary',
+  'ar/glossary',
+  'newsletter',
+  'links',
+  'ar/links',
 ];
 
 // Phase 99: legacy pre-canonical pages that predate the global-header markers

@@ -158,29 +158,23 @@ function renderPage(locale) {
   const visitSite = t('Visit tradealphaai.com', 'زيارة tradealphaai.com');
 
   const socialRow = SOCIAL_LINKS.map((s) =>
-    `<a class="social-link" href="${escapeHtml(s.url)}" target="_blank" rel="noopener" aria-label="${escapeHtml(s.label)}"><span class="social-icon">${s.icon}</span><span class="social-name">${escapeHtml(s.label)}</span></a>`
+    `<a class="links-social" href="${escapeHtml(s.url)}" target="_blank" rel="noopener" aria-label="${escapeHtml(s.label)}"><span class="links-social-icon">${s.icon}</span><span class="links-social-name">${escapeHtml(s.label)}</span></a>`
   ).join('');
 
   const filters = `
-    <button class="filter-pill active" data-filter="all">${filterAll}</button>
-    <button class="filter-pill" data-filter="editorial">${filterArt}</button>
-    <button class="filter-pill" data-filter="continuous-intelligence">${filterNews}</button>
-    <button class="filter-pill" data-filter="market-outlook">${filterFcst}</button>
+    <button class="links-filter active" data-filter="all">${filterAll}</button>
+    <button class="links-filter" data-filter="editorial">${filterArt}</button>
+    <button class="links-filter" data-filter="continuous-intelligence">${filterNews}</button>
+    <button class="links-filter" data-filter="market-outlook">${filterFcst}</button>
   `;
 
   const cards = items.map((it) => `
-    <article class="link-card" data-bucket="${escapeHtml(it.bucketId)}">
-      <a class="link-card-inner" href="${escapeHtml(it.url)}" target="_blank" rel="noopener">
-        <div class="link-badge" style="--badge-color:${it.color}">${escapeHtml(it.badge)}</div>
-        <h2 class="link-title">${escapeHtml(it.title)}</h2>
-        ${it.description ? `<p class="link-desc">${escapeHtml(it.description.slice(0, 140))}${it.description.length > 140 ? '…' : ''}</p>` : ''}
-        <div class="link-meta">
-          <span class="link-date">${escapeHtml(formatDate(it.publishDate, locale))}</span>
-          <span class="link-read">${readText} →</span>
-        </div>
-      </a>
-    </article>
-  `).join('');
+        <article class="insight-stat-card" data-bucket="${escapeHtml(it.bucketId)}" style="--accent-color:${it.color}">
+          <span style="color:${it.color}">${escapeHtml(it.badge)}</span>
+          <strong><a href="${escapeHtml(it.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${escapeHtml(it.title)}</a></strong>
+          ${it.description ? `<p>${escapeHtml(it.description.slice(0, 140))}${it.description.length > 140 ? '…' : ''}</p>` : ''}
+          <p style="margin-top:8px;color:var(--muted);font-size:.8rem"><span>${escapeHtml(formatDate(it.publishDate, locale))}</span> · <span style="color:var(--accent)">${readText} →</span></p>
+        </article>`).join('');
 
   const titleText = ar ? 'TradeAlphaAI · الروابط' : 'TradeAlphaAI · Links';
   const description = ar
@@ -194,7 +188,7 @@ function renderPage(locale) {
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${escapeHtml(titleText)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
-  <meta name="robots" content="index,follow" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta name="theme-color" content="#071021" />
   <link rel="canonical" href="${SITE_URL}/${ar ? 'ar/' : ''}links/" />
   <link rel="alternate" hreflang="en" href="${SITE_URL}/links/" />
@@ -213,306 +207,76 @@ function renderPage(locale) {
   <meta name="twitter:image" content="${SITE_URL}/Image/1.png" />
   <link rel="icon" href="/favicon.ico" />
   <link rel="manifest" href="/manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/landing.css" />
+  <link rel="stylesheet" href="/css/market/market-portal.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      font-family: ${ar ? "'Cairo'," : "'Inter',"} -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(ellipse at top, #0d1a2a 0%, #071021 60%);
-      color: #e6f7f3;
-      min-height: 100vh;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-    .container {
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 4rem;
-    }
-    /* Hero */
-    .hero {
-      text-align: center;
-      padding: 1.5rem 0 1.75rem;
-    }
-    .hero-mark {
-      width: 96px;
-      height: 96px;
-      margin: 0 auto 1rem;
-      border-radius: 24px;
-      background: linear-gradient(135deg, #0d1a2a 0%, #1a2e44 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 12px 40px rgba(34, 211, 195, 0.18);
-      border: 1px solid rgba(34, 211, 195, 0.25);
-    }
-    .hero-mark img { width: 56px; height: 56px; object-fit: contain; }
-    .hero h1 {
-      margin: 0.5rem 0 0.25rem;
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .hero .tagline {
-      margin: 0 auto;
-      color: #9aa8b6;
-      font-size: 0.95rem;
-      max-width: 420px;
-    }
-    /* Primary CTA */
-    .cta-primary {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      width: 100%;
-      padding: 1rem 1.25rem;
-      margin: 1.75rem 0 1.25rem;
-      background: linear-gradient(135deg, #22d3c3 0%, #4dd0e1 100%);
-      color: #021018;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 1rem;
-      text-decoration: none;
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
-      box-shadow: 0 8px 24px rgba(34, 211, 195, 0.25);
-    }
-    .cta-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(34, 211, 195, 0.35); }
-    .cta-primary:active { transform: translateY(0); }
-    /* Social row */
-    .social-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.5rem;
-      margin: 0.5rem 0 2rem;
-    }
-    .social-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.85rem 0.5rem;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      color: #e6f7f3;
-      text-decoration: none;
-      transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
-    }
-    .social-link:hover {
-      background: rgba(34, 211, 195, 0.08);
-      border-color: rgba(34, 211, 195, 0.35);
-      transform: translateY(-2px);
-    }
-    .social-icon {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #22d3c3;
-      line-height: 1;
-    }
-    .social-name { font-size: 0.7rem; font-weight: 500; color: #9aa8b6; }
-    /* Newsletter card */
-    .newsletter-card {
-      margin: 0 0 1.25rem;
-      padding: 1.1rem 1.1rem 1.25rem;
-      background: rgba(34, 211, 195, 0.05);
-      border: 1px solid rgba(34, 211, 195, 0.28);
-      border-radius: 14px;
-    }
-    .newsletter-title {
-      margin: 0 0 0.35rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #22d3c3;
-    }
-    .newsletter-blurb {
-      margin: 0 0 0.7rem;
-      font-size: 0.82rem;
-      color: #9aa8b6;
-      line-height: 1.45;
-    }
-    .newsletter-form { min-height: 44px; }
-    .newsletter-form input[type="email"] {
-      background: rgba(7, 16, 33, 0.7) !important;
-      color: #e6f7f3 !important;
-      border-color: rgba(34, 211, 195, 0.35) !important;
-    }
-    /* Recent section */
-    .recent-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 1rem 0 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .recent-head h2 { margin: 0; font-size: 1.05rem; font-weight: 700; }
-    /* Filter pills */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .filter-pill {
-      padding: 0.5rem 0.95rem;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      color: #9aa8b6;
-      font-family: inherit;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.12s ease;
-    }
-    .filter-pill:hover { color: #e6f7f3; border-color: rgba(34, 211, 195, 0.35); }
-    .filter-pill.active {
-      background: rgba(34, 211, 195, 0.12);
-      border-color: rgba(34, 211, 195, 0.5);
-      color: #22d3c3;
-    }
-    /* Article cards */
-    .links-grid { display: flex; flex-direction: column; gap: 0.75rem; }
-    .link-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
-    }
-    .link-card:hover {
-      border-color: rgba(34, 211, 195, 0.35);
-      transform: translateY(-2px);
-      background: rgba(34, 211, 195, 0.04);
-    }
-    .link-card[hidden] { display: none; }
-    .link-card-inner {
-      display: block;
-      padding: 1rem 1.1rem;
-      text-decoration: none;
-      color: inherit;
-    }
-    .link-badge {
-      display: inline-block;
-      padding: 0.25rem 0.65rem;
-      background: color-mix(in oklab, var(--badge-color) 18%, transparent);
-      color: var(--badge-color);
-      border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.55rem;
-    }
-    .link-title {
-      margin: 0 0 0.4rem;
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.35;
-      color: #e6f7f3;
-    }
-    .link-desc {
-      margin: 0 0 0.6rem;
-      font-size: 0.8rem;
-      color: #9aa8b6;
-      line-height: 1.45;
-    }
-    .link-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-    }
-    .link-date { color: #6b7a8a; }
-    .link-read { color: #22d3c3; font-weight: 600; }
-    /* Visit-site link */
-    .visit-site {
-      display: block;
-      text-align: center;
-      margin: 2rem 0 1rem;
-      padding: 0.85rem;
-      color: #9aa8b6;
-      text-decoration: none;
-      font-size: 0.85rem;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      transition: all 0.12s ease;
-    }
-    .visit-site:hover {
-      color: #22d3c3;
-      border-color: rgba(34, 211, 195, 0.35);
-    }
-    /* Footer */
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.7rem;
-      color: #6b7a8a;
-      line-height: 1.55;
-    }
-    footer p { margin: 0.4rem 0; }
-    footer a { color: #6b7a8a; text-decoration: none; }
-    footer a:hover { color: #9aa8b6; }
-    /* Reduce motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-    }
-    /* Tiny screens */
-    @media (max-width: 400px) {
-      .container { padding: 1.5rem 1rem 3rem; }
-      .hero h1 { font-size: 1.4rem; }
-      .social-row { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
-      .social-link { padding: 0.7rem 0.35rem; }
-      .social-name { font-size: 0.6rem; }
-    }
+    .links-socials { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+    .links-social { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--glass); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; color: var(--text, #e6f7f3); text-decoration: none; transition: border-color .12s, background .12s, transform .12s; }
+    .links-social:hover { border-color: rgba(34,211,195,.35); background: rgba(34,211,195,.06); transform: translateY(-2px); }
+    .links-social-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: rgba(34,211,195,.12); color: var(--accent); font-weight: 700; }
+    .links-social-name { font-size: .9rem; font-weight: 600; }
+    .links-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .links-filter { padding: 8px 16px; background: var(--glass); border: 1px solid rgba(255,255,255,.08); border-radius: 999px; color: var(--muted); font-family: inherit; font-size: .85rem; font-weight: 500; cursor: pointer; transition: all .12s; }
+    .links-filter:hover { color: var(--text, #e6f7f3); border-color: rgba(34,211,195,.35); }
+    .links-filter.active { background: rgba(34,211,195,.12); border-color: rgba(34,211,195,.5); color: var(--accent); }
+    .insight-stat-card[hidden] { display: none; }
   </style>
 </head>
-<body>
-  <main class="container">
-    <section class="hero">
-      <div class="hero-mark"><img src="/Image/og-image.svg" alt="TradeAlphaAI" /></div>
-      <h1>TradeAlphaAI</h1>
-      <p class="tagline">${escapeHtml(tagline)}</p>
-    </section>
+<body class="market-page">
+  <!-- GLOBAL_HEADER_START -->
+  <!-- GLOBAL_HEADER_END -->
 
-    <a class="cta-primary" href="${TELEGRAM_URL}" target="_blank" rel="noopener">
-      ✈️ ${escapeHtml(subscribeText)}
-    </a>
+  <main class="market-shell">
+    <div class="wrap">
 
-    <section class="newsletter-card">
-      <h3 class="newsletter-title">${escapeHtml(newsletterTitle)}</h3>
-      <p class="newsletter-blurb">${escapeHtml(newsletterBlurb)}</p>
-      <div id="custom-substack-embed" class="newsletter-form"></div>
-    </section>
+      <nav class="breadcrumb"><a href="/${ar ? 'ar/' : ''}">${ar ? 'الرئيسية' : 'Home'}</a><span>/</span><span>${ar ? 'الروابط' : 'Links'}</span></nav>
 
-    <div class="social-row">${socialRow}</div>
+      <section class="market-section">
+        <div class="market-panel insight-hero-card">
+          <div class="insight-label-row">
+            <span class="insight-category-badge">${ar ? 'مركز الروابط' : 'Link Hub'}</span>
+          </div>
+          <h1>TradeAlphaAI</h1>
+          <p class="market-lead">${escapeHtml(tagline)}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px">
+            <a class="cta" href="${TELEGRAM_URL}" target="_blank" rel="noopener">✈️ ${escapeHtml(subscribeText)}</a>
+            <a class="cta" href="${SITE_URL}/${ar ? 'ar/' : ''}" style="background:transparent;color:var(--accent);border:1px solid rgba(34,211,195,.35)">${escapeHtml(visitSite)} →</a>
+          </div>
+        </div>
+      </section>
 
-    <section>
-      <div class="recent-head">
-        <h2>${escapeHtml(recentLabel)}</h2>
-      </div>
-      <div class="filters" role="tablist">
-        ${filters}
-      </div>
-      <div class="links-grid" id="linksGrid">
-        ${cards}
-      </div>
-    </section>
+      <section class="market-section">
+        <div class="market-panel">
+          <h2 style="color:var(--accent);margin:0 0 8px">${escapeHtml(newsletterTitle)}</h2>
+          <p class="market-copy" style="margin:0 0 16px">${escapeHtml(newsletterBlurb)}</p>
+          <div id="custom-substack-embed" style="min-height:44px"></div>
+        </div>
+      </section>
 
-    <a class="visit-site" href="${SITE_URL}/${ar ? 'ar/' : ''}">${escapeHtml(visitSite)} →</a>
+      <section class="market-section">
+        <h2 style="color:var(--accent);margin-bottom:12px">${ar ? 'قنوات السوشيال' : 'Follow us'}</h2>
+        <div class="links-socials">${socialRow}</div>
+      </section>
 
-    <footer>
-      <p>${escapeHtml(t('Educational market research only. Not financial advice.', 'أبحاث سوق تعليمية فقط. لا تُشكّل نصيحة مالية.'))}</p>
-      <p>&copy; ${new Date().getUTCFullYear()} TradeAlphaAI</p>
-    </footer>
+      <section class="market-section">
+        <h2 style="color:var(--accent);margin-bottom:12px">${escapeHtml(recentLabel)}</h2>
+        <div class="links-filters" role="tablist">
+          ${filters}
+        </div>
+        <div class="insight-stat-grid" id="linksGrid">
+          ${cards}
+        </div>
+      </section>
+
+    </div>
   </main>
 
   <script>
     (function () {
-      var pills = document.querySelectorAll('.filter-pill');
-      var cards = document.querySelectorAll('.link-card');
+      var pills = document.querySelectorAll('.links-filter');
+      var cards = document.querySelectorAll('#linksGrid .insight-stat-card');
       pills.forEach(function (pill) {
         pill.addEventListener('click', function () {
           pills.forEach(function (p) { p.classList.remove('active'); });
