@@ -1,99 +1,43 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-30T21:58:17.489Z",
-  "run_date": "2026-06-30",
+  "updated_at": "2026-07-01T15:47:57.585Z",
+  "run_date": "2026-07-01",
   "verified": true,
   "selected": [
     {
-      "id": "dollar-gold",
-      "kind": "cross-asset",
-      "visual_type": "macro-divergence",
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
       "symbols": [
-        "TVC:DXY",
-        "OANDA:XAUUSD"
+        "CRYPTO:BTCUSD",
+        "NASDAQ:QQQ"
       ],
-      "title_en": "Dollar vs gold",
-      "title_ar": "الدولار مقابل الذهب",
-      "reading_en": "Gold holding against a firming dollar for 5 sessions — an unusual co-move that leaves the relationship structurally unresolved.",
-      "reading_ar": "الذهب يصمد رغم تقوّي الدولار منذ 5 جلسات — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
-      "score": 100,
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 68,
       "evidence": [
-        "causal:dollar-gold diverging ×5"
+        "causal:liquidity-beta diverging ×2",
+        "liquidity_pressure 3/5"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
           "severity": "high",
-          "label_en": "Divergence — DXY/GOLD not confirming (5-session strain)",
-          "label_ar": "انفصال — DXY/GOLD لا يؤكد (إجهاد 5 جلسات)",
+          "label_en": "Divergence — BTC/QQQ not confirming (2-session strain)",
+          "label_ar": "انفصال — BTC/QQQ لا يؤكد (إجهاد 2 جلسات)",
           "evidence": [
-            "convergence:diverges:dollar-gold:chain=5"
-          ]
-        },
-        {
-          "type": "transition-label",
-          "severity": "elevated",
-          "label_en": "Regime shift — dollar pressure easing → stable",
-          "label_ar": "تحوّل النظام — dollar pressure: easing ← stable",
-          "evidence": [
-            "cognition:timeline:dollar_pressure:easing->stable:2026-06-30"
-          ]
-        },
-        {
-          "type": "catalyst-zone",
-          "severity": "info",
-          "label_en": "Catalyst window — RBA Meeting Minutes (2026-06-30)",
-          "label_ar": "نافذة محفز — RBA Meeting Minutes (2026-06-30)",
-          "evidence": [
-            "pulse:catalyst:RBA Meeting Minutes:2026-06-30"
-          ]
-        }
-      ],
-      "attribution": "Chart: TradingView · Quotes: sourced market providers"
-    },
-    {
-      "id": "ai-concentration",
-      "kind": "cross-asset",
-      "visual_type": "positioning-concentration",
-      "symbols": [
-        "NASDAQ:NVDA",
-        "NASDAQ:QQQ"
-      ],
-      "title_en": "AI leadership vs the growth complex",
-      "title_ar": "قيادة الذكاء الاصطناعي مقابل قطاع النمو",
-      "reading_en": "AI leadership against the broader growth complex — when the gap widens while breadth thins, the leadership is carrying more weight than the structure can comfortably bear.",
-      "reading_ar": "قيادة الذكاء الاصطناعي مقابل قطاع النمو الأوسع — حين تتسع الفجوة بينما يضيق الاتساع، تحمل القيادة وزناً أكبر مما تحتمله البنية بارتياح.",
-      "score": 60,
-      "evidence": [
-        "momentum_concentration: narrow-megacap",
-        "ai_concentration_risk: elevated"
-      ],
-      "annotations": [
-        {
-          "type": "commentary-label",
-          "severity": "info",
-          "label_en": "Confirmation — NVDA/QQQ relationship holding",
-          "label_ar": "تأكيد — علاقة NVDA/QQQ صامدة",
-          "evidence": [
-            "convergence:confirms:ai-growth"
-          ]
-        },
-        {
-          "type": "transition-label",
-          "severity": "elevated",
-          "label_en": "Regime shift — ai concentration risk contained → elevated",
-          "label_ar": "تحوّل النظام — ai concentration risk: contained ← elevated",
-          "evidence": [
-            "cognition:timeline:ai_concentration_risk:contained->elevated:2026-06-30"
+            "convergence:diverges:liquidity-beta:chain=2"
           ]
         },
         {
           "type": "pressure-band",
-          "severity": "high",
-          "label_en": "Stored pressure — concentration pressure 5/5",
-          "label_ar": "ضغط مخزّن — 5/5",
+          "severity": "elevated",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
           "evidence": [
-            "macro:pressure:concentration_pressure:5"
+            "macro:pressure:liquidity_pressure:3"
           ]
         }
       ],

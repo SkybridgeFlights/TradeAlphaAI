@@ -1,22 +1,22 @@
 {
   "version": "1.0",
-  "updated_at": "2026-06-30T21:58:17.557Z",
-  "run_date": "2026-06-30",
+  "updated_at": "2026-07-01T15:47:57.654Z",
+  "run_date": "2026-07-01",
   "verified": true,
   "status": "verified",
   "regime_condition": "unstable-regime",
   "tension_level": "building",
-  "tension_score": 42,
+  "tension_score": 34,
   "tracks": {
     "participation-strain": {
       "id": "participation-strain",
-      "active": true,
-      "state": "accumulating",
+      "active": false,
+      "state": "resolving",
       "sessions": 2,
-      "severity": 1,
+      "severity": 0,
       "first_seen": "2026-06-29",
       "last_seen": "2026-06-30",
-      "last_evaluated": "2026-06-30",
+      "last_evaluated": "2026-07-01",
       "en": "Participation remains narrower than the headline tape.",
       "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
     },
@@ -24,11 +24,11 @@
       "id": "positioning-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 13,
+      "sessions": 14,
       "severity": 2,
       "first_seen": "2026-06-16",
-      "last_seen": "2026-06-30",
-      "last_evaluated": "2026-06-30",
+      "last_seen": "2026-07-01",
+      "last_evaluated": "2026-07-01",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
@@ -36,11 +36,11 @@
       "id": "cross-asset-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 11,
+      "sessions": 12,
       "severity": 2,
       "first_seen": "2026-06-18",
-      "last_seen": "2026-06-30",
-      "last_evaluated": "2026-06-30",
+      "last_seen": "2026-07-01",
+      "last_evaluated": "2026-07-01",
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
     },
@@ -48,40 +48,43 @@
       "id": "liquidity-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 6,
+      "sessions": 7,
       "severity": 1,
       "first_seen": "2026-06-25",
-      "last_seen": "2026-06-30",
-      "last_evaluated": "2026-06-30",
+      "last_seen": "2026-07-01",
+      "last_evaluated": "2026-07-01",
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
     }
   },
   "active_strains": [
-    "participation-strain",
     "positioning-strain",
     "cross-asset-strain",
     "liquidity-strain"
   ],
   "internal_stability": {
-    "leadership": "narrow",
-    "cross_asset": "strained",
+    "leadership": "broad",
+    "cross_asset": "coherent",
     "volatility_alignment": "aligned",
     "risk_appetite": "risk-on",
     "liquidity_participation": "uncertain"
   },
   "narrative_stability": "internally-inconsistent",
   "catalyst_fragility": {
-    "level": "none",
-    "next": null,
-    "en": "No major catalyst sits inside the 72-hour structural window.",
-    "ar": "لا يوجد محفز رئيسي ضمن نافذة الحساسية الهيكلية البالغة 72 ساعة."
+    "level": "moderate",
+    "next": {
+      "name": "ISM Manufacturing PMI (Jun)",
+      "time": "2026-07-01T14:00:00-04:00",
+      "hours": 2.2
+    },
+    "en": "ISM Manufacturing PMI (Jun) is the next scheduled test of the current structure.",
+    "ar": "يمثل ISM Manufacturing PMI (Jun) الاختبار المجدول التالي للبنية الحالية."
   },
   "strain_map": [
     {
       "id": "positioning-strain",
       "state": "persistent",
-      "sessions": 13,
+      "sessions": 14,
       "severity": 2,
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
@@ -89,7 +92,7 @@
     {
       "id": "cross-asset-strain",
       "state": "persistent",
-      "sessions": 11,
+      "sessions": 12,
       "severity": 2,
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
@@ -97,18 +100,10 @@
     {
       "id": "liquidity-strain",
       "state": "persistent",
-      "sessions": 6,
+      "sessions": 7,
       "severity": 1,
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
-    },
-    {
-      "id": "participation-strain",
-      "state": "accumulating",
-      "sessions": 2,
-      "severity": 1,
-      "en": "Participation remains narrower than the headline tape.",
-      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
     }
   ],
   "pressure_memory": [
@@ -206,6 +201,12 @@
       "date": "2026-06-30",
       "condition": "unstable-regime",
       "score": 42,
+      "change": "faded"
+    },
+    {
+      "date": "2026-07-01",
+      "condition": "unstable-regime",
+      "score": 34,
       "change": "faded"
     }
   ],
