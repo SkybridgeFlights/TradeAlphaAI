@@ -317,10 +317,16 @@ function tgEscapeHtml(s) {
 
 function sendTelegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  // IMPORTANT: newsletter digest is an admin task reminder, NOT public content.
+  // Must go to the owner's private DM (TELEGRAM_ADMIN_CHAT_ID) — never to
+  // TELEGRAM_CHAT_ID / TELEGRAM_CHANNEL_ID (those are the public channel and
+  // would leak the copy-paste workflow to subscribers).
+  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
   if (!token || !chatId) {
-    console.warn('[telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing — skipping notification');
-    return Promise.resolve({ skipped: true });
+    console.error('[telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID missing — refusing to send');
+    console.error('[telegram] Set TELEGRAM_ADMIN_CHAT_ID to your PERSONAL chat id (from @userinfobot).');
+    console.error('[telegram] Do NOT set it to the public channel id or subscribers will see the digest prep messages.');
+    throw new Error('TELEGRAM_ADMIN_CHAT_ID not set');
   }
   const payload = JSON.stringify({
     chat_id: chatId,

@@ -40,7 +40,9 @@ jobs:
     env:
       SUBSTACK_HOSTNAME: ${{ vars.SUBSTACK_HOSTNAME || 'tradealphaai.substack.com' }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      # Owner's PRIVATE DM chat id. Must NOT be the public channel id —
+      # the digest contains copy-paste prep messages meant only for the admin.
+      TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
 
     steps:
       - name: Checkout repository

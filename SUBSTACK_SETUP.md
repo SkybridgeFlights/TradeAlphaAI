@@ -31,13 +31,31 @@ Your job:
 
 ## One-time setup
 
-The **only** required secrets are Telegram credentials, and you already have
-these from the main workflow:
+The workflow needs **two** secrets:
 
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_CHAT_ID`
+| Secret | What it is | Where to get it |
+|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | Your existing bot token (already set) | Already in repo |
+| `TELEGRAM_ADMIN_CHAT_ID` | YOUR personal Telegram chat id — NOT the public channel | See below |
 
-Both are already set up in your repo. **Nothing else to configure.**
+**Critical**: the digest contains copy-paste prep messages meant only for you.
+If you set it to the public channel id, your subscribers will see the
+workflow reminders. The code refuses to run without a dedicated admin id.
+
+### Getting your personal chat id
+
+1. Open Telegram → search for **@userinfobot** → tap Start
+2. It replies with `Your ID: 123456789` — copy that number
+3. **Very important**: also start a DM with the bot that publishes to your
+   public channel. Search its name in Telegram, tap it, send `/start`. Bots
+   cannot DM users who haven't messaged them first.
+4. Add the number as a new GitHub secret:
+   ```
+   https://github.com/SkybridgeFlights/TradeAlphaAI/settings/secrets/actions
+   → New repository secret
+   → Name:  TELEGRAM_ADMIN_CHAT_ID
+   → Value: <the number from step 2>
+   ```
 
 ### Optional: delete the old Substack secrets
 
