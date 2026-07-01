@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Compound Interest — Definition, Formula, and Example | TradeAlphaAI</title>
+  <meta name="description" content="Interest calculated on both the initial principal and the accumulated interest from previous periods. Enables exponential (rather than linear) growth over time." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/glossary/compound-interest.html" />
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/glossary/compound-interest.html" />
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/glossary/compound-interest.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/glossary/compound-interest.html" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="Compound Interest — TradeAlphaAI Glossary" />
+  <meta property="og:description" content="Interest calculated on both the initial principal and the accumulated interest from previous periods. Enables exponential (rather than linear) growth over time." />
+  <meta property="og:url" content="https://www.tradealphaai.com/glossary/compound-interest.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Compound Interest" />
+  <meta name="twitter:description" content="Interest calculated on both the initial principal and the accumulated interest from previous periods. Enables exponential (rather than linear) growth over time." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "DefinedTerm",
+      "name": "Compound Interest",
+      "description": "Interest calculated on both the initial principal and the accumulated interest from previous periods. Enables exponential (rather than linear) growth over time.",
+      "inDefinedTermSet": "https://www.tradealphaai.com/glossary/",
+      "termCode": "compound-interest",
+      "url": "https://www.tradealphaai.com/glossary/compound-interest.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "TradeAlphaAI",
+          "item": "https://www.tradealphaai.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Glossary",
+          "item": "https://www.tradealphaai.com/glossary/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Compound Interest",
+          "item": "https://www.tradealphaai.com/glossary/compound-interest.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What's the Rule of 72?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A quick mental shortcut: divide 72 by the annual return rate to estimate years to double your money. At 8% annual return, money doubles in ~72/8 = 9 years. At 12%: ~6 years. At 4%: ~18 years."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does compounding work in a savings account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — high-yield savings accounts compound (typically daily or monthly). But real rates after inflation matter more than nominal rates: a 4% savings account with 3% inflation gives 1% real growth."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I lose money from compounding?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The math principle isn't the issue — negative annual returns compound losses too. A -20% year followed by a +20% year leaves you down 4% (100 → 80 → 96), not flat."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <style>
+    .glossary-main { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    .glossary-eyebrow { color: #22d3c3; font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .35rem; }
+    .glossary-h1 { font-size: 2rem; letter-spacing: -.02em; margin: 0 0 .35rem; }
+    .glossary-lead { font-size: 1.1rem; color: #c2d3e0; margin: 0 0 1.75rem; line-height: 1.55; }
+    .glossary-section { margin: 2rem 0; }
+    .glossary-section h2 { font-size: 1.25rem; margin: 0 0 .75rem; color: #22d3c3; }
+    .glossary-section p { line-height: 1.7; color: #d7e5ee; }
+    .formula-block { background: rgba(34, 211, 195, 0.05); border: 1px solid rgba(34, 211, 195, 0.28); border-radius: 12px; padding: 1.1rem 1.25rem; }
+    .formula-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.05rem; margin: 0 0 .5rem; color: #e6f7f3; }
+    .formula-notes { margin: 0; font-size: .88rem; color: #9aa8b6; }
+    .example-block { border-inline-start: 3px solid #22d3c3; padding-inline-start: 1rem; }
+    .faq-item { padding: .75rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .faq-item summary { cursor: pointer; font-weight: 600; color: #e6f7f3; }
+    .faq-item p { margin: .5rem 0 0; color: #9aa8b6; }
+    .related-terms { margin-top: 2rem; padding: 1.25rem; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; }
+    .related-terms h2 { margin: 0 0 .75rem; font-size: 1rem; color: #22d3c3; }
+    .related-terms ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+    .related-terms li a { display: inline-block; padding: .4rem .8rem; background: rgba(34,211,195,.08); border: 1px solid rgba(34,211,195,.25); border-radius: 999px; text-decoration: none; color: #22d3c3; font-size: .88rem; }
+    .related-terms li a:hover { background: rgba(34,211,195,.16); }
+    .cat-badge { display: inline-block; padding: .25rem .65rem; background: rgba(34,211,195,.12); color: #22d3c3; border-radius: 6px; font-size: .72rem; font-weight: 700; letter-spacing: .04em; margin-bottom: .5rem; }
+  </style>
+<!-- GA4_INSTALLED:G-C8REB6WQP1 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C8REB6WQP1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C8REB6WQP1', { anonymize_ip: true });
+</script>
+</head>
+<body>
+  <main class="glossary-main">
+    <div class="cat-badge">Investing Basics</div>
+    <div class="glossary-eyebrow">TradeAlphaAI Glossary</div>
+    <h1 class="glossary-h1">Compound Interest</h1>
+    <p class="glossary-lead">Interest calculated on both the initial principal and the accumulated interest from previous periods. Enables exponential (rather than linear) growth over time.</p>
+
+    <section class="glossary-section">
+      <h2>Definition</h2>
+      <p>Called by Einstein &#39;the eighth wonder of the world&#39; (attribution disputed but the principle is real). Compounding turns small consistent returns into large sums over decades. A $10,000 investment growing at 8% annually becomes ~$21,589 in 10 years, $46,610 in 20 years, and $100,627 in 30 years — the last decade adds nearly $54,000 by itself. The corollary: starting early matters far more than starting large. A 25-year-old investing $200/month can end up with more than a 35-year-old investing $400/month, both retiring at 65. Compounding also works against you with debt (credit cards, unpaid loans) — high interest compounds against the borrower.</p>
+    </section>
+
+    <section class="formula-block">
+        <h2>Formula</h2>
+        <pre class="formula-code">A = P(1 + r/n)^(n·t)</pre>
+        <p class="formula-notes">A = final amount, P = principal, r = annual interest rate, n = compounding periods per year, t = years</p>
+      </section>
+
+    <section class="glossary-section example-block">
+      <h2>Example</h2>
+      <p>$10,000 principal at 8% annual return, compounded yearly over 30 years: A = 10,000 × (1.08)^30 = $100,627. Over 40 years: A = 10,000 × (1.08)^40 = $217,245 — more than doubling the 30-year result by adding just one more decade.</p>
+    </section>
+
+    <section class="faq-block">
+        <h2>Frequently asked questions</h2>
+        <details class="faq-item"><summary>What&#39;s the Rule of 72?</summary><p>A quick mental shortcut: divide 72 by the annual return rate to estimate years to double your money. At 8% annual return, money doubles in ~72/8 = 9 years. At 12%: ~6 years. At 4%: ~18 years.</p></details><details class="faq-item"><summary>Does compounding work in a savings account?</summary><p>Yes — high-yield savings accounts compound (typically daily or monthly). But real rates after inflation matter more than nominal rates: a 4% savings account with 3% inflation gives 1% real growth.</p></details><details class="faq-item"><summary>Can I lose money from compounding?</summary><p>The math principle isn&#39;t the issue — negative annual returns compound losses too. A -20% year followed by a +20% year leaves you down 4% (100 → 80 → 96), not flat.</p></details>
+      </section>
+
+    
+
+    <p style="margin-top:2rem"><a href="/glossary/">← Back to all terms</a></p>
+  </main>
+<!-- NEWSLETTER_CTA_INSTALLED:v2 -->
+<aside class="ta-newsletter-cta" role="complementary" aria-label="Join the research newsletter" dir="ltr">
+  <div class="ta-newsletter-inner">
+    <div class="ta-newsletter-text">
+      <h3 class="ta-newsletter-title">Join the research newsletter</h3>
+      <p class="ta-newsletter-blurb">Daily institutional market analysis — stocks, ETFs, and macro. Free.</p>
+    </div>
+    <div id="custom-substack-embed" class="ta-newsletter-form"></div>
+    <p class="ta-newsletter-note">No spam. Unsubscribe in one click.</p>
+  </div>
+</aside>
+<style>
+  .ta-newsletter-cta {
+    margin: 3rem auto 2rem;
+    max-width: 720px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid rgba(34, 211, 195, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(13, 26, 42, 0.6) 0%, rgba(7, 16, 33, 0.85) 100%);
+    color: #e6f7f3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Cairo', sans-serif;
+    box-shadow: 0 12px 36px rgba(34, 211, 195, 0.08);
+  }
+  .ta-newsletter-inner { display: flex; flex-direction: column; gap: 0.9rem; }
+  .ta-newsletter-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #22d3c3;
+  }
+  .ta-newsletter-blurb {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #c2d3e0;
+    line-height: 1.5;
+  }
+  .ta-newsletter-form { margin: 0.25rem 0; min-height: 44px; }
+  .ta-newsletter-form input[type="email"] {
+    background: rgba(7, 16, 33, 0.7) !important;
+    color: #e6f7f3 !important;
+    border-color: rgba(34, 211, 195, 0.35) !important;
+  }
+  .ta-newsletter-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #6b7a8a;
+  }
+  @media (max-width: 600px) {
+    .ta-newsletter-cta { margin: 2rem 1rem 1.5rem; padding: 1.25rem 1.1rem; }
+    .ta-newsletter-title { font-size: 1.05rem; }
+    .ta-newsletter-blurb { font-size: 0.85rem; }
+  }
+</style>
+<script>
+  window.CustomSubstackWidget = {
+    substackUrl: "tradealphaai.substack.com",
+    placeholder: "your@email.com",
+    buttonText: "Subscribe",
+    theme: "custom",
+    colors: {
+      primary: "#22d3c3",
+      input: "#071021",
+      email: "#e6f7f3",
+      text: "#021018"
+    }
+  };
+</script>
+<script src="https://substackapi.com/widget.js" async></script>
+</body>
+</html>

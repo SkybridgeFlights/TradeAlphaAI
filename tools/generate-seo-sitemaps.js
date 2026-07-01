@@ -91,6 +91,7 @@ const comparisons = htmlFiles("compare").map(toRel);
 // subdirectories, so sitemap discovery must recurse through the full tree.
 const marketOutlook = htmlFilesRecursive("market-outlook").map(toRel);
 const insights = ["insights/"].filter(existsDir).concat(htmlFiles("insights").filter((rel) => !rel.endsWith("/index.html")).map(toRel), marketOutlook);
+const glossary = ["glossary/"].filter(existsDir).concat(htmlFiles("glossary").filter((rel) => !rel.endsWith("/index.html")).map(toRel));
 const ar = arUrls();
 
 writeUrlset("sitemap-core.xml", core, "weekly", priorityFor);
@@ -98,6 +99,7 @@ writeUrlset("sitemap-stocks.xml", stocks, "weekly", () => "0.82");
 writeUrlset("sitemap-etfs.xml", etfs, "weekly", () => "0.82");
 writeUrlset("sitemap-compare.xml", comparisons, "weekly", () => "0.80");
 writeUrlset("sitemap-insights.xml", insights, "weekly", () => "0.76");
+writeUrlset("sitemap-glossary.xml", glossary, "monthly", () => "0.70");
 writeUrlset("sitemap-ar.xml", ar, "weekly", () => "0.80");
 
 // Compatibility sitemap kept for existing production checks and historical robots references.
@@ -109,13 +111,14 @@ writeSitemapIndex("sitemap.xml", [
   "sitemap-etfs.xml",
   "sitemap-compare.xml",
   "sitemap-insights.xml",
+  "sitemap-glossary.xml",
   "sitemap-ar.xml",
   "sitemap-market.xml"
 ]);
 writeRobots();
 
 console.log("SEO sitemap generation complete.");
-console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} compare=${comparisons.length} insights=${insights.length} ar=${ar.length}`);
+console.log(`core=${core.length} stocks=${stocks.length} etfs=${etfs.length} compare=${comparisons.length} insights=${insights.length} glossary=${glossary.length} ar=${ar.length}`);
 
 function arUrls() {
   const out = ["ar/"];

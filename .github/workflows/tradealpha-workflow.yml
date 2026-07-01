@@ -505,6 +505,8 @@ jobs:
           node tools/update-content-feeds.js || echo "[content-feeds] degraded"
           node tools/render-newsroom-modules.js || echo "[newsroom] degraded"
           node tools/generate-links-page.js || echo "[links-page] degraded"
+          node tools/generate-glossary.js || echo "[glossary] degraded"
+          node tools/generate-seo-sitemaps.js || echo "[sitemaps] degraded"
           node tools/apply-global-header.js || echo "[header] degraded"
           node tools/apply-analytics-head.js || echo "[ga4] degraded"
           node tools/apply-newsletter-cta.js || echo "[newsletter-cta] degraded"

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sharpe Ratio — Definition, Formula, and Example | TradeAlphaAI</title>
+  <meta name="description" content="A measure of risk-adjusted return: excess return over the risk-free rate, divided by the portfolio&#39;s standard deviation. Higher is better." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/glossary/sharpe-ratio.html" />
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/glossary/sharpe-ratio.html" />
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/glossary/sharpe-ratio.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/glossary/sharpe-ratio.html" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="Sharpe Ratio — TradeAlphaAI Glossary" />
+  <meta property="og:description" content="A measure of risk-adjusted return: excess return over the risk-free rate, divided by the portfolio&#39;s standard deviation. Higher is better." />
+  <meta property="og:url" content="https://www.tradealphaai.com/glossary/sharpe-ratio.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Sharpe Ratio" />
+  <meta name="twitter:description" content="A measure of risk-adjusted return: excess return over the risk-free rate, divided by the portfolio&#39;s standard deviation. Higher is better." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "DefinedTerm",
+      "name": "Sharpe Ratio",
+      "description": "A measure of risk-adjusted return: excess return over the risk-free rate, divided by the portfolio's standard deviation. Higher is better.",
+      "inDefinedTermSet": "https://www.tradealphaai.com/glossary/",
+      "termCode": "sharpe-ratio",
+      "url": "https://www.tradealphaai.com/glossary/sharpe-ratio.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "TradeAlphaAI",
+          "item": "https://www.tradealphaai.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Glossary",
+          "item": "https://www.tradealphaai.com/glossary/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sharpe Ratio",
+          "item": "https://www.tradealphaai.com/glossary/sharpe-ratio.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is considered a good Sharpe ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Above 1.0 is acceptable; above 2.0 is strong; above 3.0 is exceptional and rare over long periods. Very high short-term Sharpes often shrink when the measurement window widens."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can Sharpe ratio be negative?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, when portfolio returns fall below the risk-free rate. A negative Sharpe means you would have been better off holding cash or T-bills."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What's the difference between Sharpe and Sortino ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sharpe uses total standard deviation. Sortino uses only downside deviation, treating upside volatility as a feature rather than a risk."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <style>
+    .glossary-main { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    .glossary-eyebrow { color: #22d3c3; font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .35rem; }
+    .glossary-h1 { font-size: 2rem; letter-spacing: -.02em; margin: 0 0 .35rem; }
+    .glossary-lead { font-size: 1.1rem; color: #c2d3e0; margin: 0 0 1.75rem; line-height: 1.55; }
+    .glossary-section { margin: 2rem 0; }
+    .glossary-section h2 { font-size: 1.25rem; margin: 0 0 .75rem; color: #22d3c3; }
+    .glossary-section p { line-height: 1.7; color: #d7e5ee; }
+    .formula-block { background: rgba(34, 211, 195, 0.05); border: 1px solid rgba(34, 211, 195, 0.28); border-radius: 12px; padding: 1.1rem 1.25rem; }
+    .formula-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.05rem; margin: 0 0 .5rem; color: #e6f7f3; }
+    .formula-notes { margin: 0; font-size: .88rem; color: #9aa8b6; }
+    .example-block { border-inline-start: 3px solid #22d3c3; padding-inline-start: 1rem; }
+    .faq-item { padding: .75rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .faq-item summary { cursor: pointer; font-weight: 600; color: #e6f7f3; }
+    .faq-item p { margin: .5rem 0 0; color: #9aa8b6; }
+    .related-terms { margin-top: 2rem; padding: 1.25rem; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; }
+    .related-terms h2 { margin: 0 0 .75rem; font-size: 1rem; color: #22d3c3; }
+    .related-terms ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+    .related-terms li a { display: inline-block; padding: .4rem .8rem; background: rgba(34,211,195,.08); border: 1px solid rgba(34,211,195,.25); border-radius: 999px; text-decoration: none; color: #22d3c3; font-size: .88rem; }
+    .related-terms li a:hover { background: rgba(34,211,195,.16); }
+    .cat-badge { display: inline-block; padding: .25rem .65rem; background: rgba(34,211,195,.12); color: #22d3c3; border-radius: 6px; font-size: .72rem; font-weight: 700; letter-spacing: .04em; margin-bottom: .5rem; }
+  </style>
+<!-- GA4_INSTALLED:G-C8REB6WQP1 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C8REB6WQP1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C8REB6WQP1', { anonymize_ip: true });
+</script>
+</head>
+<body>
+  <main class="glossary-main">
+    <div class="cat-badge">Risk &amp; Performance</div>
+    <div class="glossary-eyebrow">TradeAlphaAI Glossary</div>
+    <h1 class="glossary-h1">Sharpe Ratio</h1>
+    <p class="glossary-lead">A measure of risk-adjusted return: excess return over the risk-free rate, divided by the portfolio&#39;s standard deviation. Higher is better.</p>
+
+    <section class="glossary-section">
+      <h2>Definition</h2>
+      <p>Developed by Nobel laureate William F. Sharpe in 1966, the Sharpe ratio quantifies how much return an investment generates per unit of total risk taken. It rewards strategies that produce steady returns and penalizes those with high volatility, even if raw returns look attractive. In practice, Sharpe ratios are compared across strategies or funds with a similar mandate. A Sharpe of 1.0 is considered acceptable, 2.0 is very good, and 3.0+ is excellent. Ratios are highly sensitive to the measurement period and the choice of risk-free rate. The Sortino ratio is a related metric that considers only downside volatility, arguing upside volatility should not be penalized.</p>
+    </section>
+
+    <section class="formula-block">
+        <h2>Formula</h2>
+        <pre class="formula-code">Sharpe = (Rp − Rf) / σp</pre>
+        <p class="formula-notes">Rp = portfolio return, Rf = risk-free rate (typically 3-month T-bill), σp = standard deviation of portfolio returns</p>
+      </section>
+
+    <section class="glossary-section example-block">
+      <h2>Example</h2>
+      <p>A portfolio returns 12% annually with a standard deviation of 10%, when T-bills yield 4%. Sharpe = (12 − 4) / 10 = 0.80. A second portfolio returns 15% with a standard deviation of 20%: (15 − 4) / 20 = 0.55. Despite the second&#39;s higher raw return, the first is more efficient risk-adjusted.</p>
+    </section>
+
+    <section class="faq-block">
+        <h2>Frequently asked questions</h2>
+        <details class="faq-item"><summary>What is considered a good Sharpe ratio?</summary><p>Above 1.0 is acceptable; above 2.0 is strong; above 3.0 is exceptional and rare over long periods. Very high short-term Sharpes often shrink when the measurement window widens.</p></details><details class="faq-item"><summary>Can Sharpe ratio be negative?</summary><p>Yes, when portfolio returns fall below the risk-free rate. A negative Sharpe means you would have been better off holding cash or T-bills.</p></details><details class="faq-item"><summary>What&#39;s the difference between Sharpe and Sortino ratio?</summary><p>Sharpe uses total standard deviation. Sortino uses only downside deviation, treating upside volatility as a feature rather than a risk.</p></details>
+      </section>
+
+    <aside class="related-terms" aria-label="Related terms"><h2>Related terms</h2><ul><li><a href="/glossary/alpha.html">Alpha</a></li><li><a href="/glossary/beta.html">Beta</a></li></ul></aside>
+
+    <p style="margin-top:2rem"><a href="/glossary/">← Back to all terms</a></p>
+  </main>
+<!-- NEWSLETTER_CTA_INSTALLED:v2 -->
+<aside class="ta-newsletter-cta" role="complementary" aria-label="Join the research newsletter" dir="ltr">
+  <div class="ta-newsletter-inner">
+    <div class="ta-newsletter-text">
+      <h3 class="ta-newsletter-title">Join the research newsletter</h3>
+      <p class="ta-newsletter-blurb">Daily institutional market analysis — stocks, ETFs, and macro. Free.</p>
+    </div>
+    <div id="custom-substack-embed" class="ta-newsletter-form"></div>
+    <p class="ta-newsletter-note">No spam. Unsubscribe in one click.</p>
+  </div>
+</aside>
+<style>
+  .ta-newsletter-cta {
+    margin: 3rem auto 2rem;
+    max-width: 720px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid rgba(34, 211, 195, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(13, 26, 42, 0.6) 0%, rgba(7, 16, 33, 0.85) 100%);
+    color: #e6f7f3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Cairo', sans-serif;
+    box-shadow: 0 12px 36px rgba(34, 211, 195, 0.08);
+  }
+  .ta-newsletter-inner { display: flex; flex-direction: column; gap: 0.9rem; }
+  .ta-newsletter-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #22d3c3;
+  }
+  .ta-newsletter-blurb {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #c2d3e0;
+    line-height: 1.5;
+  }
+  .ta-newsletter-form { margin: 0.25rem 0; min-height: 44px; }
+  .ta-newsletter-form input[type="email"] {
+    background: rgba(7, 16, 33, 0.7) !important;
+    color: #e6f7f3 !important;
+    border-color: rgba(34, 211, 195, 0.35) !important;
+  }
+  .ta-newsletter-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #6b7a8a;
+  }
+  @media (max-width: 600px) {
+    .ta-newsletter-cta { margin: 2rem 1rem 1.5rem; padding: 1.25rem 1.1rem; }
+    .ta-newsletter-title { font-size: 1.05rem; }
+    .ta-newsletter-blurb { font-size: 0.85rem; }
+  }
+</style>
+<script>
+  window.CustomSubstackWidget = {
+    substackUrl: "tradealphaai.substack.com",
+    placeholder: "your@email.com",
+    buttonText: "Subscribe",
+    theme: "custom",
+    colors: {
+      primary: "#22d3c3",
+      input: "#071021",
+      email: "#e6f7f3",
+      text: "#021018"
+    }
+  };
+</script>
+<script src="https://substackapi.com/widget.js" async></script>
+</body>
+</html>
