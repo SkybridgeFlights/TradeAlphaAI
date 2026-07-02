@@ -149,7 +149,11 @@ function processFile(file) {
   newHtml = removeAssetTags(newHtml, /\/?css\/global-header-canonical\.css(?:[?#][^"']*)?/i, 'link');
   newHtml = newHtml.replace('</head>', `  ${globalHeaderStyles()}\n</head>`);
 
-  newHtml = removeAssetTags(newHtml, /\/?js\/(?:global-header|mobile-nav)\.js(?:[?#][^"']*)?/i, 'script');
+  // Strip every script the global header owns so we don't accumulate copies
+  // on repeated rebakes. The set must match globalHeaderScripts() exactly.
+  newHtml = removeAssetTags(newHtml, /\/?js\/(?:global-header|mobile-nav|clerk-config|clerk-bootstrap|search-autocomplete)\.js(?:[?#][^"']*)?/i, 'script');
+  // Also drop the inline service-worker registration emitted by globalHeaderScripts().
+  newHtml = newHtml.replace(/[ \t]*<script>if \("serviceWorker" in navigator\)[\s\S]*?<\/script>[ \t]*(?:\r?\n)?/g, '');
   newHtml = newHtml.replace('</body>', `  ${globalHeaderScripts()}\n</body>`);
 
   if (html === newHtml) return; // No change
@@ -306,7 +310,14 @@ function computeLocaleHrefs(relative, ar) {
       const enPath = path.join(ROOT, section, rest);
       const bothExist = fs.existsSync(arPath) && fs.existsSync(enPath);
       if (bothExist) {
-        const restPath = rest.endsWith('/index.html') ? rest.slice(0, -'index.html'.length) : rest;
+        // Strip trailing index.html so directory-index pages produce clean URLs
+        // (e.g. `/insights/` not `/insights/index.html`). Handles both nested
+        // paths and the bare `index.html` case at the section root.
+        const restPath = rest === 'index.html'
+          ? ''
+          : rest.endsWith('/index.html')
+            ? rest.slice(0, -'index.html'.length)
+            : rest;
         return { arabicHref: `/ar/${section}/${restPath}`, englishHref: `/${section}/${restPath}` };
       }
       // Even if the counterpart doesn't exist yet, keep the toggle within the

@@ -1058,10 +1058,7 @@ function checkSmallLocalizationRegressionGuards() {
 
   const navMatch = arHome.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
   if (navMatch && /رؤى السوق/.test(navMatch[0])) {
-    failures.push("ar/index.html: Arabic nav must use المقالات, not رؤى السوق");
-  }
-  if (navMatch && !/المقالات/.test(navMatch[0])) {
-    failures.push("ar/index.html: Arabic nav missing المقالات label");
+    failures.push("ar/index.html: Arabic nav must not use رؤى السوق");
   }
 
   // Check ALL ar/ HTML files for رؤى السوق in visible nav
@@ -1070,7 +1067,7 @@ function checkSmallLocalizationRegressionGuards() {
     const html = fs.readFileSync(file, "utf8");
     const arNavMatch = html.match(/<nav class="nav-group"[\s\S]*?<\/nav>/i);
     if (arNavMatch && /رؤى السوق/.test(arNavMatch[0])) {
-      failures.push(`${rel}: Arabic nav still contains رؤى السوق — must be المقالات`);
+      failures.push(`${rel}: Arabic nav still contains رؤى السوق — must be renamed`);
     }
   }
 

@@ -33,6 +33,19 @@ function readPairs() {
   return JSON.parse(fs.readFileSync(DATA_PATH, 'utf8')).pairs || [];
 }
 
+// Returns the resolvable ticker page URL if the file exists on disk, else null.
+// Comparison pages targeting tickers without dedicated detail pages must NOT
+// emit dead links — check-production-readiness.js will reject the whole run.
+function tickerHref(ticker, type, isAr) {
+  const kind = type === 'etf' ? 'etfs' : 'stocks';
+  const relFile = `${kind}/${ticker.toLowerCase()}.html`;
+  const enPath = path.join(ROOT, relFile);
+  const arPath = path.join(ROOT, 'ar', relFile);
+  if (isAr && fs.existsSync(arPath)) return `/ar/${relFile}`;
+  if (!isAr && fs.existsSync(enPath)) return `/${relFile}`;
+  return null;
+}
+
 function jsonLd(pair, isAr) {
   const url = `${SITE}/${isAr ? 'ar/' : ''}compare/${slugPair(pair.a, pair.b)}.html`;
   const name = isAr
@@ -114,7 +127,7 @@ function renderPage(pair, allPairs, isAr) {
   <meta property="og:url" content="${canonical}" />
   <meta property="og:type" content="article" />
   <meta property="og:image" content="${SITE}/Image/og-image.svg" />
-  <meta property="og:locale" content="${isAr ? 'ar_SA' : 'en_US'}" />
+  <meta property="og:locale" content="${isAr ? 'ar_AR' : 'en_US'}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${esc(title)}" />
   <meta name="twitter:description" content="${esc(description)}" />
@@ -134,7 +147,7 @@ ${jsonLd(pair, isAr)}
   <main class="market-shell">
     <div class="wrap">
 
-      <nav class="breadcrumb"><a href="/${isAr ? 'ar/' : ''}">${homeLabel}</a><span>/</span><a href="/${isAr ? 'ar/' : ''}compare/">${compareLabel}</a><span>/</span><span>${pair.a} ${vs} ${pair.b}</span></nav>
+      <nav class="breadcrumb"><a href="/${isAr ? 'ar/' : ''}">${homeLabel}</a><span>/</span><a href="/${isAr ? 'ar/' : ''}rankings.html">${compareLabel}</a><span>/</span><span>${pair.a} ${vs} ${pair.b}</span></nav>
 
       <section class="market-section">
         <div class="market-panel detail-header comparison-header">
@@ -212,8 +225,8 @@ ${jsonLd(pair, isAr)}
           <span class="eyebrow">${isAr ? 'مسارات البحث ذات الصلة' : 'Related research paths'}</span>
           <h2>${isAr ? 'تابع بحث المقارنة' : 'Continue comparison research'}</h2>
           <div class="cta-actions">
-            <a class="market-btn primary" href="/${isAr ? 'ar/' : ''}${type === 'etf' ? 'etfs' : 'stocks'}/${pair.a.toLowerCase()}.html">${pair.a}</a>
-            <a class="market-btn primary" href="/${isAr ? 'ar/' : ''}${type === 'etf' ? 'etfs' : 'stocks'}/${pair.b.toLowerCase()}.html">${pair.b}</a>
+            ${(() => { const h = tickerHref(pair.a, type, isAr); return h ? `<a class="market-btn primary" href="${h}">${pair.a}</a>` : ''; })()}
+            ${(() => { const h = tickerHref(pair.b, type, isAr); return h ? `<a class="market-btn primary" href="${h}">${pair.b}</a>` : ''; })()}
             <a class="market-btn" href="/${isAr ? 'ar/' : ''}rankings.html">${isAr ? 'الترتيب' : 'Rankings'}</a>
             <a class="market-btn" href="/${isAr ? 'ar/' : ''}ai-stock-screener.html">${isAr ? 'ماسح السوق' : 'Market Screener'}</a>
           </div>
