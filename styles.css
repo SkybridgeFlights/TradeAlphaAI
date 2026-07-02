@@ -556,3 +556,17 @@ body[data-page] footer{
   .dev-warning .dev-learn{margin-left:0;margin-top:8px}
   .dev-warning{padding:10px 12px;font-size:13px}
 }
+
+/* Auto-linked glossary terms inside article body copy — subtle underline
+   so readers can see they lead to the glossary without visual noise. */
+.market-copy a.glossary-link {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(34,211,195,0.5);
+  transition: border-color .12s, color .12s;
+}
+.market-copy a.glossary-link:hover {
+  color: var(--accent-2);
+  border-bottom-color: var(--accent-2);
+  border-bottom-style: solid;
+}

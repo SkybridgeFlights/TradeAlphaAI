@@ -510,6 +510,7 @@ jobs:
           node tools/apply-global-header.js || echo "[header] degraded"
           node tools/apply-analytics-head.js || echo "[ga4] degraded"
           node tools/apply-newsletter-cta.js || echo "[newsletter-cta] degraded"
+          node tools/apply-glossary-links.js || echo "[glossary-links] degraded"
 
       - name: Commit ancillary changes
         if: ${{ env.DRY_RUN == 'false' }}
