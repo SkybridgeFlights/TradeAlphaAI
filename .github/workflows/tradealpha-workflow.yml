@@ -225,6 +225,13 @@ jobs:
           node tools/generate-dashboard-pages.js || echo "[dashboards] degraded"
           node tools/apply-global-header.js || echo "[header] degraded"
 
+      # AI topic ideation refills the editorial queue when it drains, so the
+      # brain always has fresh candidates. Runs OPENAI-backed and only tops
+      # up when eligible < threshold, so tokens aren't wasted on healthy days.
+      - name: Top up editorial queue via AI ideation
+        continue-on-error: true
+        run: node tools/generate-ai-editorial-topics.js --write || echo "[ai-topics] degraded"
+
       - name: Generate educational article surface
         run: |
           node tools/build-educational-topics.js --write
