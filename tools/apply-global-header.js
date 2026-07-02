@@ -258,19 +258,54 @@ function computeLocaleHrefs(relative, ar) {
       return { arabicHref: `/ar/${sec}/${slug}`, englishHref: `/${sec}/${slug}` };
     }
   }
-  // SEO surfaces: glossary term/index + /links/ + /newsletter/. Newsletter has
-  // no per-locale digest yet, so the AR toggle points at the (bilingual)
-  // archive index; ditto for the /ar/ counterpart of links.
+  // SEO surfaces: glossary term/index + /links/ + /newsletter/ + /compare/.
+  // Newsletter has no per-locale digest yet, so the AR toggle points at the
+  // (bilingual) archive index; ditto for /ar/ counterparts of links + compare.
   const glossaryMatch = relative.match(/^(?:ar\/)?glossary\/([^/]+\.html)$/);
   if (glossaryMatch) {
     const slug = glossaryMatch[1] === 'index.html' ? '' : glossaryMatch[1];
     return { arabicHref: `/ar/glossary/${slug}`, englishHref: `/glossary/${slug}` };
+  }
+  const compareMatch = relative.match(/^(?:ar\/)?compare\/([^/]+\.html)$/);
+  if (compareMatch) {
+    const slug = compareMatch[1] === 'index.html' ? '' : compareMatch[1];
+    return { arabicHref: `/ar/compare/${slug}`, englishHref: `/compare/${slug}` };
   }
   if (relative.match(/^(?:ar\/)?links\/index\.html$/)) {
     return { arabicHref: '/ar/links/', englishHref: '/links/' };
   }
   if (relative.match(/^newsletter\//)) {
     return { arabicHref: '/ar/newsletter/', englishHref: '/newsletter/' };
+  }
+  // Generic fallback: for any /{section}/{slug}.html or /ar/{section}/{slug}.html
+  // page, point the locale toggle at the mirror URL if the counterpart file
+  // actually exists on disk. This prevents new content directories from
+  // silently falling back to the home page just because they weren't added
+  // to the hardcoded section list above.
+  const genericMatch = relative.match(/^(ar\/)?([^/]+)\/([^/]+\.html)$/);
+  if (genericMatch) {
+    const isArPage = Boolean(genericMatch[1]);
+    const section = genericMatch[2];
+    const file = genericMatch[3];
+    // Guard against picking up top-level pages we don't want to auto-mirror.
+    const SKIP_SECTIONS = new Set(['tools', 'js', 'css', 'Image', 'icons', 'data', 'node_modules']);
+    if (!SKIP_SECTIONS.has(section)) {
+      const arPath = path.join(ROOT, 'ar', section, file);
+      const enPath = path.join(ROOT, section, file);
+      const bothExist = fs.existsSync(arPath) && fs.existsSync(enPath);
+      if (bothExist) {
+        const slug = file === 'index.html' ? '' : file;
+        return { arabicHref: `/ar/${section}/${slug}`, englishHref: `/${section}/${slug}` };
+      }
+      // Even if the counterpart doesn't exist yet, keep the toggle within the
+      // same section (points to section index) rather than dropping to home.
+      if (isArPage && fs.existsSync(path.join(ROOT, section))) {
+        return { arabicHref: `/ar/${section}/`, englishHref: `/${section}/` };
+      }
+      if (!isArPage && fs.existsSync(path.join(ROOT, 'ar', section))) {
+        return { arabicHref: `/ar/${section}/`, englishHref: `/${section}/` };
+      }
+    }
   }
   // Default: let the renderer compute section-level counterpart
   return { arabicHref: undefined, englishHref: undefined };
