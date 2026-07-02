@@ -32,6 +32,11 @@ const MIN_OVERLAP = 2;  // fewer than this → skip (no widget rendered)
 
 // Content sources — each one contributes documents and receives widget
 // injection. Order matters only for the cross-type mixing preference below.
+//
+// IMPORTANT: some content lives at BOTH `<dir>/` and `en/<dir>/` (the
+// en-localized mirror maintained for hreflang parity). Both paths must be
+// processed identically or the bilingual-structure check will fail with a
+// section-count mismatch and block the whole publishing workflow.
 const SOURCES = [
   { id: 'insights',   dir: 'insights',        label: 'Applied Research', badge: 'Research' },
   { id: 'articles',   dir: 'articles',        label: 'Educational',      badge: 'Article' },
@@ -43,6 +48,11 @@ const SOURCES = [
   { id: 'structure',  dir: 'market-structure',label: 'Market Structure', badge: 'Structure' },
   { id: 'briefs',     dir: 'briefs',          label: 'Market Brief',     badge: 'Brief' }
 ];
+
+// Extra prefix roots that mirror the SOURCES dirs but only for a subset. The
+// bilingual check compares en/insights ↔ ar/insights (not insights ↔ ar/insights),
+// so leaving en-mirror pages untouched creates a section-count mismatch.
+const EN_MIRROR_DIRS = ['insights', 'market-outlook', 'intelligence'];
 
 // Words that add no topical signal — drop from keyword sets before scoring.
 const STOP_WORDS = new Set([
@@ -111,8 +121,15 @@ function buildCorpus() {
       const d = readDoc(f, source, false);
       if (d) docs.push(d);
     }
-    const arDir = 'ar/' + source.dir;
-    for (const f of listHtml(arDir)) {
+    // en-mirror pages must be processed identically to the canonical dir so
+    // section counts stay parity-matched against the ar/ mirror.
+    if (EN_MIRROR_DIRS.includes(source.dir)) {
+      for (const f of listHtml('en/' + source.dir)) {
+        const d = readDoc(f, source, false);
+        if (d) docs.push(d);
+      }
+    }
+    for (const f of listHtml('ar/' + source.dir)) {
       const d = readDoc(f, source, true);
       if (d) docs.push(d);
     }
