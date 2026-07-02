@@ -65,6 +65,12 @@ function renderGlobalHeader({ locale, activePage = '', basePath = '', arabicHref
       <nav class="nav-group" aria-label="${navLabel}">
         ${nav}
       </nav>
+      <div class="header-search" role="search">
+        <label class="header-search-label" for="header-search-input">
+          <svg class="header-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="header-search-input" class="header-search-input" type="search" placeholder="${ar ? 'ابحث في الموقع…' : 'Search…'}" autocomplete="off" aria-label="${ar ? 'بحث الموقع' : 'Site search'}" data-site-search />
+        </label>
+      </div>
       <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">${ctaText}</a>
       <div class="locale-links" aria-label="${langLabel}">
         <a class="lang-switch" data-locale-route="ar" href="${escapeHtml(arHref)}">${arText}</a>
@@ -264,6 +270,7 @@ function globalHeaderScripts() {
   return '<script src="/js/clerk-config.js"></script>'
     + '<script src="/js/clerk-bootstrap.js" defer></script>'
     + '<script src="/js/global-header.js" defer></script>'
+    + '<script src="/js/search-autocomplete.js" defer></script>'
     // SW registration — also force an update check on every page load
     // so users on an older deploy immediately drop the stale HTML cache
     // and adopt the auth-safe v3 worker. Previous cached navigations

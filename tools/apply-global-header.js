@@ -84,6 +84,9 @@ const ROOTS = [
   'ar/newsletter',
   'links',
   'ar/links',
+  // Phase 172+: interactive calculators live under /tools/{name}/
+  'tools',
+  'ar/tools',
 ];
 
 // Phase 99: legacy pre-canonical pages that predate the global-header markers

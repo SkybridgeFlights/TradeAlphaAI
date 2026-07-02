@@ -101,7 +101,7 @@
   }
 
   function init() {
-    document.querySelectorAll('.market-search[type="search"], input[type="search"][data-filter-query]').forEach(attach);
+    document.querySelectorAll('.market-search[type="search"], input[type="search"][data-filter-query], input[type="search"][data-site-search]').forEach(attach);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });

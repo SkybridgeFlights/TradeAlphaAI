@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Compound Interest Calculator — See How Money Grows (2026) | TradeAlphaAI</title>
+  <meta name="description" content="Free compound interest calculator from TradeAlphaAI. Enter initial amount, monthly contribution, and annual return rate to see how your investment grows over time. Educational only." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/tools/compound-interest/" />
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/tools/compound-interest/" />
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/tools/compound-interest/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/tools/compound-interest/" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="Compound Interest Calculator — See How Money Grows (2026)" />
+  <meta property="og:description" content="Free compound interest calculator from TradeAlphaAI. Enter initial amount, monthly contribution, and annual return rate to see how your investment grows over time. Educational only." />
+  <meta property="og:url" content="https://www.tradealphaai.com/tools/compound-interest/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Compound Interest Calculator — See How Money Grows (2026)" />
+  <meta name="twitter:description" content="Free compound interest calculator from TradeAlphaAI. Enter initial amount, monthly contribution, and annual return rate to see how your investment grows over time. Educational only." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/landing.css" />
+  <link rel="stylesheet" href="/css/market/market-portal.css" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Compound Interest Calculator",
+      "description": "Free compound interest calculator from TradeAlphaAI. Enter initial amount, monthly contribution, and annual return rate to see how your investment grows over time. Educational only.",
+      "url": "https://www.tradealphaai.com/tools/compound-interest/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any (web browser)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.tradealphaai.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Tools",
+          "item": "https://www.tradealphaai.com/tools/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Compound Interest Calculator",
+          "item": "https://www.tradealphaai.com/tools/compound-interest/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is compound interest?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Interest calculated on the initial principal AND on the accumulated interest of previous periods — unlike simple interest, which is calculated on the principal alone."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which compounding frequency is best?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The more frequent (daily vs annual), the slightly higher the result. The difference becomes noticeable over long periods or high rates."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this calculator include inflation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Results are pre-inflation. For real returns, subtract ~2-3% from your annual return rate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it account for taxes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Check your local tax rules — tax-advantaged accounts (401k/IRA/Roth) differ substantially from taxable brokerage accounts."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <style>
+    .calc-shell { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .calc-shell { grid-template-columns: 1fr; } }
+    .calc-form { display: grid; gap: 14px; }
+    .calc-field label { display: block; font-size: .82rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; letter-spacing: .02em; }
+    .calc-field input, .calc-field select { width: 100%; padding: 10px 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; color: var(--text, #e6f7f3); font: inherit; }
+    .calc-field input:focus, .calc-field select:focus { outline: none; border-color: rgba(34,211,195,.5); background: rgba(34,211,195,.05); }
+    .calc-results { display: grid; gap: 10px; }
+    .calc-result-card { padding: 14px 16px; background: rgba(34,211,195,.06); border: 1px solid rgba(34,211,195,.28); border-radius: 12px; }
+    .calc-result-card span { display: block; font-size: .78rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .calc-result-card strong { display: block; font-size: 1.6rem; color: var(--accent); margin-top: 4px; }
+    .calc-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: .88rem; }
+    .calc-table th, .calc-table td { padding: 8px 10px; text-align: right; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .calc-table th { color: var(--muted); font-weight: 600; text-align: right; }
+    [dir="ltr"] .calc-table th, [dir="ltr"] .calc-table td { text-align: right; }
+    [dir="ltr"] .calc-table th:first-child, [dir="ltr"] .calc-table td:first-child { text-align: left; }
+    [dir="rtl"] .calc-table th, [dir="rtl"] .calc-table td { text-align: left; }
+    [dir="rtl"] .calc-table th:first-child, [dir="rtl"] .calc-table td:first-child { text-align: right; }
+    .calc-table tbody tr:hover { background: rgba(34,211,195,.03); }
+    .calc-chart { height: 200px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; margin-top: 12px; padding: 12px; }
+    .calc-chart svg { width: 100%; height: 100%; }
+    .calc-faq details { padding: 12px 16px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; margin: 8px 0; }
+    .calc-faq summary { cursor: pointer; font-weight: 600; color: var(--text, #e6f7f3); }
+    .calc-faq p { margin: 10px 0 0; color: var(--muted); line-height: 1.6; }
+  </style>
+  <link rel="stylesheet" href="/css/global-header-canonical.css" />
+</head>
+<body class="market-page">
+  <!-- GLOBAL_HEADER_START -->
+<a class="skip-link" href="#top">Skip to main content</a>
+<div class="topbar" data-global-header data-locale="en" data-active-section="">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>TradeAlpha AI</strong>
+        <span>TRADING &amp; MARKET RESEARCH PLATFORM</span>
+      </span>
+    </a>
+
+    <div class="top-actions">
+      <nav class="nav-group" aria-label="Primary">
+        <a href="/" class="nav-link">Home</a>
+          <div class="nav-menu">
+            <a href="/markets/" class="nav-link nav-menu-trigger">Markets<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/markets/">Assets</a>
+              <a href="/sectors/">Sectors</a>
+              <a href="/equities/">Equities</a>
+              <a href="/etfs/">ETF Intelligence</a>
+              <a href="/stocks.html">Stocks Directory</a>
+              <a href="/etfs.html">ETFs Directory</a>
+              <a href="/markets/" class="nav-dropdown-viewall">View all Markets<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/research/" class="nav-link nav-menu-trigger">Research<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/research/">Research Hub</a>
+              <a href="/research/feed/">Research Feed</a>
+              <a href="/market-outlook/">Market Outlook</a>
+              <a href="/market-news/">Market News</a>
+              <a href="/market-structure/">Market Structure</a>
+              <a href="/insights/">Applied Research</a>
+              <a href="/glossary/">Glossary</a>
+              <a href="/research/" class="nav-dropdown-viewall">View all Research<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/intelligence/" class="nav-link nav-menu-trigger">Intelligence<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/market-terminal/">Market Terminal</a>
+              <a href="/market-regime/">Market Regime</a>
+              <a href="/rankings/">Rankings</a>
+              <a href="/market-map/assets/">Maps</a>
+              <a href="/explorer/">Explorer</a>
+              <a href="/changes/">Changes</a>
+              <a href="/intelligence/" class="nav-dropdown-viewall">View all Intelligence<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/tools/" class="nav-link nav-menu-trigger">Tools<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/ai-stock-screener.html">Screener</a>
+              <a href="/economic-calendar/">Economic Calendar</a>
+              <a href="/briefs/">Market Briefs</a>
+              <a href="/newsletter/">Newsletter</a>
+              <a href="/methodology.html">Methodology</a>
+              <a href="/workspace/">Workspace</a>
+              <a href="/tools/" class="nav-dropdown-viewall">View all Tools<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <a href="/methodology.html" class="nav-link">Methodology</a>
+      </nav>
+      <div class="header-search" role="search">
+        <label class="header-search-label" for="header-search-input">
+          <svg class="header-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="header-search-input" class="header-search-input" type="search" placeholder="Search…" autocomplete="off" aria-label="Site search" data-site-search />
+        </label>
+      </div>
+      <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">Market Briefs</a>
+      <div class="locale-links" aria-label="Language">
+        <a class="lang-switch" data-locale-route="ar" href="/ar/">Arabic</a>
+        <a class="lang-switch" data-locale-route="en" href="/">English</a>
+      </div>
+      <div class="header-account" data-account-action data-signed-in-label="Account" data-signed-in-href="/account/" data-locale="en">
+        <a class="header-account-link header-account-cta" data-account-signed-out href="/account/sign-in/">
+          <span class="header-account-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+          <span class="header-account-label">Sign in</span>
+        </a>
+        <a class="header-account-dashboard" data-account-dashboard href="/account/" hidden>
+          <span class="header-account-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+          <span class="header-account-label">Account</span>
+        </a>
+        <div class="header-account-mount" data-account-mount hidden></div>
+      </div>
+      <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+  <template data-mobile-cards>
+    <div class="m-card" data-card-key="markets">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+        <h3 class="m-card-title">Markets</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/markets/">Assets</a></li><li><a class="m-card-link" href="/sectors/">Sectors</a></li><li><a class="m-card-link" href="/equities/">Equities</a></li><li><a class="m-card-link" href="/etfs/">ETF Intelligence</a></li></ul>
+      <a class="m-card-viewall" href="/markets/">View all Markets<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="research">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <h3 class="m-card-title">Research</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/research/">Research Hub</a></li><li><a class="m-card-link" href="/research/feed/">Research Feed</a></li><li><a class="m-card-link" href="/insights/">Applied Research</a></li><li><a class="m-card-link" href="/glossary/">Glossary</a></li></ul>
+      <a class="m-card-viewall" href="/research/">View all Research<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="intelligence">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <h3 class="m-card-title">Intelligence</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/market-terminal/">Market Terminal</a></li><li><a class="m-card-link" href="/market-regime/">Market Regime</a></li><li><a class="m-card-link" href="/rankings/">Rankings</a></li><li><a class="m-card-link" href="/explorer/">Explorer</a></li><li><a class="m-card-link" href="/changes/">Changes</a></li></ul>
+      <a class="m-card-viewall" href="/intelligence/">View all Intelligence<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="tools">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6.3 6.3 2.6 2.6 6.3-6.3a4 4 0 0 0 5.4-5.4z"/></svg></span>
+        <h3 class="m-card-title">Tools</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/ai-stock-screener.html">Screener</a></li><li><a class="m-card-link" href="/economic-calendar/">Economic Calendar</a></li><li><a class="m-card-link" href="/briefs/">Market Briefs</a></li><li><a class="m-card-link" href="/newsletter/">Newsletter</a></li><li><a class="m-card-link" href="/methodology.html">Methodology</a></li></ul>
+      <a class="m-card-viewall" href="/tools/">View all Tools<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="workspace">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+        <h3 class="m-card-title">Workspace</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/workspace/watchlists/">My Watchlists</a></li><li><a class="m-card-link" href="/workspace/monitoring/">Monitoring</a></li><li><a class="m-card-link" href="/workspace/regime/">Regime Monitoring</a></li><li><a class="m-card-link" href="/workspace/research/">Workspace Research</a></li></ul>
+      <a class="m-card-viewall" href="/workspace/">Open workspace<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card m-card-account" data-card-key="account" data-mobile-account>
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+        <h3 class="m-card-title">Account</h3>
+      </header>
+      <ul class="m-card-list">
+        <li><a class="m-card-link" href="/account/profile/">Profile</a></li>
+        <li><a class="m-card-link" href="/account/watchlists/">Watchlists</a></li>
+        <li><a class="m-card-link" href="/account/preferences/">Preferences</a></li>
+        <li><a class="m-card-link" href="/account/alerts/">Alerts</a></li>
+      </ul>
+      <div class="m-card-actions">
+        <a class="m-card-cta m-card-cta-signin" data-mobile-signin href="/account/sign-in/">Sign in</a>
+        <a class="m-card-cta m-card-cta-dashboard" data-mobile-dashboard hidden href="/account/">Dashboard</a>
+        <button type="button" class="m-card-cta m-card-cta-signout" data-mobile-signout hidden>Sign out</button>
+      </div>
+    </div></template>
+</div>
+<!-- GLOBAL_HEADER_END -->
+
+  <main class="market-shell">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/tools/">Tools</a><span>/</span><span>Compound Interest Calculator</span></nav>
+
+      <section class="market-section">
+        <div class="market-panel insight-hero-card">
+          <div class="insight-label-row">
+            <span class="insight-category-badge">Interactive Calculator</span>
+          </div>
+          <h1>Compound Interest Calculator</h1>
+          <p class="market-lead">Discover the power of exponential growth. Enter your figures below and see results instantly.</p>
+          <p class="insight-hero-disclaimer">This tool is educational only. Not investment advice. Actual returns vary with markets, taxes, and fees.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <div class="calc-shell">
+            <div>
+              <h2 style="color:var(--accent);margin:0 0 16px">Inputs</h2>
+              <form class="calc-form" id="calc-form" onsubmit="return false;">
+                <div class="calc-field"><label for="ci-p">Initial amount ($)</label><input type="number" id="ci-p" value="10000" min="0" step="100" /></div>
+                <div class="calc-field"><label for="ci-pmt">Monthly contribution ($)</label><input type="number" id="ci-pmt" value="500" min="0" step="50" /></div>
+                <div class="calc-field"><label for="ci-r">Annual return (%)</label><input type="number" id="ci-r" value="8" min="0" max="50" step="0.1" /></div>
+                <div class="calc-field"><label for="ci-t">Years</label><input type="number" id="ci-t" value="20" min="1" max="60" step="1" /></div>
+                <div class="calc-field"><label for="ci-n">Compounding</label><select id="ci-n"><option value="1">Annually</option><option value="4">Quarterly</option><option value="12" selected>Monthly</option><option value="365">Daily</option></select></div>
+              </form>
+            </div>
+            <div>
+              <h2 style="color:var(--accent);margin:0 0 16px">Results</h2>
+              <div class="calc-results">
+                <div class="calc-result-card"><span>Final value</span><strong id="ci-final">$0</strong></div>
+                <div class="calc-result-card"><span>Total contributions</span><strong id="ci-contrib">$0</strong></div>
+                <div class="calc-result-card"><span>Total interest earned</span><strong id="ci-interest">$0</strong></div>
+              </div>
+              <div class="calc-chart" id="ci-chart" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <h2>Yearly Breakdown</h2>
+          <div style="overflow-x:auto">
+            <table class="calc-table"><thead><tr><th>Year</th><th>Cumulative contributions</th><th>Cumulative interest</th><th>Balance</th></tr></thead><tbody id="ci-table"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel">
+          <span class="eyebrow">Rule of 72 shortcut</span>
+          <p class="market-copy">Divide 72 by your annual return rate to estimate years to double your money. At 8% → ~9 years. At 12% → ~6 years.</p>
+          <h2 style="margin-top:24px">How this calculator works</h2>
+          <p class="market-copy">Compound interest is calculated on the initial principal plus all previously accumulated interest. Formula: <code>A = P(1 + r/n)^(n·t) + PMT × [((1+r/n)^(n·t) − 1)/(r/n)]</code>. Where A is final amount, P is principal, r is rate, n is compounding periods, t is years, PMT is periodic contribution.</p>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel calc-faq">
+          <h2>Frequently asked questions</h2>
+          <details><summary>What is compound interest?</summary><p>Interest calculated on the initial principal AND on the accumulated interest of previous periods — unlike simple interest, which is calculated on the principal alone.</p></details><details><summary>Which compounding frequency is best?</summary><p>The more frequent (daily vs annual), the slightly higher the result. The difference becomes noticeable over long periods or high rates.</p></details><details><summary>Does this calculator include inflation?</summary><p>No. Results are pre-inflation. For real returns, subtract ~2-3% from your annual return rate.</p></details><details><summary>Does it account for taxes?</summary><p>No. Check your local tax rules — tax-advantaged accounts (401k/IRA/Roth) differ substantially from taxable brokerage accounts.</p></details>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="market-panel" style="text-align:center;padding:32px">
+          <h2 style="color:var(--accent);margin:0 0 8px">Learn more about compounding</h2>
+          <p class="market-copy" style="max-width:560px;margin:0 auto 20px">The TradeAlphaAI glossary explains compound interest and related concepts with examples and formulas.</p>
+          <a class="cta" href="/glossary/compound-interest.html">Open glossary</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const money = (v) => Number(v).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+    function calc() {
+      const P = Math.max(0, Number($('ci-p').value) || 0);
+      const pmtMonthly = Math.max(0, Number($('ci-pmt').value) || 0);
+      const r = Math.max(0, Number($('ci-r').value) || 0) / 100;
+      const t = Math.max(1, Math.min(60, Number($('ci-t').value) || 1));
+      const n = Number($('ci-n').value) || 12;
+      // Convert monthly contribution to compounding period contribution.
+      const pmtPeriod = (pmtMonthly * 12) / n;
+      const rows = [];
+      let balance = P;
+      let cumContrib = P;
+      for (let year = 1; year <= t; year++) {
+        for (let p = 0; p < n; p++) {
+          balance = balance * (1 + r / n) + pmtPeriod;
+          cumContrib += pmtPeriod;
+        }
+        rows.push({ year, contrib: cumContrib, interest: balance - cumContrib, balance });
+      }
+      const final = rows[rows.length - 1];
+      $('ci-final').textContent = money(final.balance);
+      $('ci-contrib').textContent = money(final.contrib);
+      $('ci-interest').textContent = money(final.interest);
+      const tbody = $('ci-table');
+      tbody.innerHTML = rows.map((row) =>
+        '<tr><td>' + row.year + '</td><td>' + money(row.contrib) + '</td><td>' + money(row.interest) + '</td><td>' + money(row.balance) + '</td></tr>'
+      ).join('');
+      drawChart(rows);
+    }
+    function drawChart(rows) {
+      const el = $('ci-chart');
+      const w = 600, h = 180, pad = 20;
+      const maxY = Math.max(...rows.map((r) => r.balance)) || 1;
+      const stepX = (w - pad * 2) / Math.max(1, rows.length - 1);
+      const scaleY = (y) => h - pad - (y / maxY) * (h - pad * 2);
+      const linePath = rows.map((r, i) => (i === 0 ? 'M' : 'L') + (pad + i * stepX).toFixed(1) + ',' + scaleY(r.balance).toFixed(1)).join(' ');
+      const contribPath = rows.map((r, i) => (i === 0 ? 'M' : 'L') + (pad + i * stepX).toFixed(1) + ',' + scaleY(r.contrib).toFixed(1)).join(' ');
+      el.innerHTML =
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+        '<path d="' + contribPath + '" fill="none" stroke="#9aa8b6" stroke-width="1.5" stroke-dasharray="4 4" />' +
+        '<path d="' + linePath + '" fill="none" stroke="#22d3c3" stroke-width="2.5" />' +
+        '</svg>';
+    }
+    document.getElementById('calc-form').addEventListener('input', calc);
+    calc();
+  })();
+  </script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script src="/js/search-autocomplete.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
+</body>
+</html>
