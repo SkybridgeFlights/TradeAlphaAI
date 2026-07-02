@@ -1,0 +1,49 @@
+name: Weekly Growth Report
+
+# Compact TradeAlphaAI growth digest — publish counts, Telegram channel size,
+# Substack subs, site catalog totals. Sent to the owner's private DM every
+# Sunday morning.
+
+on:
+  schedule:
+    # 08:00 UTC every Sunday = 11:00 Riyadh / 04:00 New York.
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Print report to logs only. Skip Telegram send.'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-report
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+      TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      SUBSTACK_HOSTNAME: ${{ vars.SUBSTACK_HOSTNAME || 'tradealphaai.substack.com' }}
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Send weekly report
+        run: |
+          ARGS=""
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then ARGS="$ARGS --dry-run"; fi
+          node tools/send-weekly-report.js $ARGS
