@@ -79,6 +79,11 @@ const HTML_SOURCES = [
   { dir: 'articles',         type: 'article',   sector: 'Educational',     sector_ar: 'تعليمي' }
 ];
 
+// Interactive calculators live at /tools/{slug}/index.html so we index by
+// scanning subdirectories rather than a flat directory listing.
+const CALCULATOR_ROOT = 'tools';
+const CALCULATOR_TYPE = 'calculator';
+
 function decodeEntities(s) {
   return String(s || '')
     .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
@@ -163,8 +168,43 @@ function htmlItems() {
   return [...bySlug.values()];
 }
 
+function calculatorItems() {
+  const items = [];
+  for (const isAr of [false, true]) {
+    const base = path.join(ROOT, isAr ? path.join('ar', CALCULATOR_ROOT) : CALCULATOR_ROOT);
+    if (!fs.existsSync(base)) continue;
+    for (const entry of fs.readdirSync(base, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const indexFile = path.join(base, entry.name, 'index.html');
+      if (!fs.existsSync(indexFile)) continue;
+      let html; try { html = fs.readFileSync(indexFile, 'utf8'); } catch { continue; }
+      const rawTitle = extract(html, /<title>([\s\S]*?)<\/title>/i);
+      const title = decodeEntities(rawTitle).replace(/\s*\|\s*TradeAlphaAI.*$/i, '').trim();
+      const desc = decodeEntities(extract(html, /<meta\s+name="description"\s+content="([^"]*)"/i)).trim();
+      if (!title) continue;
+      const enHref = `/${CALCULATOR_ROOT}/${entry.name}/`;
+      const arHref = `/ar/${CALCULATOR_ROOT}/${entry.name}/`;
+      items.push({
+        symbol: entry.name,
+        name: title,
+        type: CALCULATOR_TYPE,
+        sector: isAr ? 'حاسبة' : 'Calculator',
+        category: isAr ? 'حاسبة' : 'Calculator',
+        themes: [],
+        href: isAr ? arHref : enHref,
+        arHref,
+        label: title,
+        arLabel: title,
+        keywords: [entry.name, title, desc].filter(Boolean).join(' '),
+        arKeywords: [entry.name, title, desc].filter(Boolean).join(' ')
+      });
+    }
+  }
+  return items;
+}
+
 function main() {
-  const items = [...assetItems(), ...registryArticles(), ...htmlItems()];
+  const items = [...assetItems(), ...registryArticles(), ...htmlItems(), ...calculatorItems()];
 
   // Sort deterministically for stable git diffs.
   items.sort((a, b) => (a.type + a.symbol).localeCompare(b.type + b.symbol));
