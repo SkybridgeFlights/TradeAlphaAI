@@ -109,7 +109,8 @@ const CONTENT_DIRS = [
   'market-structure', 'ar/market-structure',
   'articles', 'ar/articles',
   'briefs', 'ar/briefs',
-  'glossary', 'ar/glossary'
+  'glossary', 'ar/glossary',
+  'compare', 'ar/compare'
 ];
 
 // Root-level + bilingual landing pages that should also carry the CTA.
