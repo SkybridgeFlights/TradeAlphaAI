@@ -280,25 +280,34 @@ function computeLocaleHrefs(relative, ar) {
   if (relative.match(/^newsletter\//)) {
     return { arabicHref: '/ar/newsletter/', englishHref: '/newsletter/' };
   }
-  // Generic fallback: for any /{section}/{slug}.html or /ar/{section}/{slug}.html
-  // page, point the locale toggle at the mirror URL if the counterpart file
-  // actually exists on disk. This prevents new content directories from
-  // silently falling back to the home page just because they weren't added
-  // to the hardcoded section list above.
-  const genericMatch = relative.match(/^(ar\/)?([^/]+)\/([^/]+\.html)$/);
+  // Interactive tools live at /tools/{slug}/index.html — a 3-segment path
+  // that the flat generic-fallback regex below doesn't handle. Explicit
+  // rule points the toggle at the same-slug mirror.
+  const toolsMatch = relative.match(/^(?:ar\/)?tools\/([^/]+)\/(?:index\.html)?$/);
+  if (toolsMatch) {
+    const slug = toolsMatch[1];
+    return { arabicHref: `/ar/tools/${slug}/`, englishHref: `/tools/${slug}/` };
+  }
+  // Generic fallback: for any /{section}/{...path}.html page (arbitrary depth),
+  // point the locale toggle at the mirror URL if it exists on disk. Prevents
+  // new content directories from silently regressing to the home page just
+  // because they weren't added to the hardcoded section list above.
+  const genericMatch = relative.match(/^(ar\/)?([^/]+)\/(.+\.html)$/);
   if (genericMatch) {
     const isArPage = Boolean(genericMatch[1]);
     const section = genericMatch[2];
-    const file = genericMatch[3];
-    // Guard against picking up top-level pages we don't want to auto-mirror.
-    const SKIP_SECTIONS = new Set(['tools', 'js', 'css', 'Image', 'icons', 'data', 'node_modules']);
+    const rest = genericMatch[3];  // may include nested subdirs
+    // Guard against picking up top-level tech directories we don't want to
+    // auto-mirror. 'tools' is INTENTIONALLY not here — the explicit tools
+    // matcher above covers it.
+    const SKIP_SECTIONS = new Set(['js', 'css', 'Image', 'icons', 'data', 'node_modules', '.git', '.github']);
     if (!SKIP_SECTIONS.has(section)) {
-      const arPath = path.join(ROOT, 'ar', section, file);
-      const enPath = path.join(ROOT, section, file);
+      const arPath = path.join(ROOT, 'ar', section, rest);
+      const enPath = path.join(ROOT, section, rest);
       const bothExist = fs.existsSync(arPath) && fs.existsSync(enPath);
       if (bothExist) {
-        const slug = file === 'index.html' ? '' : file;
-        return { arabicHref: `/ar/${section}/${slug}`, englishHref: `/${section}/${slug}` };
+        const restPath = rest.endsWith('/index.html') ? rest.slice(0, -'index.html'.length) : rest;
+        return { arabicHref: `/ar/${section}/${restPath}`, englishHref: `/${section}/${restPath}` };
       }
       // Even if the counterpart doesn't exist yet, keep the toggle within the
       // same section (points to section index) rather than dropping to home.
