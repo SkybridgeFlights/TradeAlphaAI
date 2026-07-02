@@ -148,8 +148,8 @@ const MOBILE_CARDS_EN = [
   { key: 'research', title: 'Research', viewAll: ['/research/', 'View all Research'], items: [
     ['/research/', 'Research Hub'],
     ['/research/feed/', 'Research Feed'],
-    ['/research/regime/', 'Regime Research'],
-    ['/research/etfs/', 'ETF Research'],
+    ['/insights/', 'Applied Research'],
+    ['/glossary/', 'Glossary'],
   ]},
   { key: 'intelligence', title: 'Intelligence', viewAll: ['/intelligence/', 'View all Intelligence'], items: [
     ['/market-terminal/', 'Market Terminal'],
@@ -162,6 +162,7 @@ const MOBILE_CARDS_EN = [
     ['/ai-stock-screener.html', 'Screener'],
     ['/economic-calendar/', 'Economic Calendar'],
     ['/briefs/', 'Market Briefs'],
+    ['/newsletter/', 'Newsletter'],
     ['/methodology.html', 'Methodology'],
   ]},
   { key: 'workspace', title: 'Workspace', viewAll: ['/workspace/', 'Open workspace'], items: [
@@ -181,8 +182,8 @@ const MOBILE_CARDS_AR = [
   { key: 'research', title: 'الأبحاث', viewAll: ['/ar/research/', 'عرض كل الأبحاث'], items: [
     ['/ar/research/', 'مركز الأبحاث'],
     ['/ar/research/feed/', 'تغذية الأبحاث'],
-    ['/ar/research/regime/', 'أبحاث النظام'],
-    ['/ar/research/etfs/', 'أبحاث الصناديق'],
+    ['/ar/insights/', 'الأبحاث التطبيقية'],
+    ['/ar/glossary/', 'قاموس المصطلحات'],
   ]},
   { key: 'intelligence', title: 'الاستخبارات', viewAll: ['/ar/intelligence/', 'عرض كل الاستخبارات'], items: [
     ['/ar/market-terminal/', 'طرفية السوق'],
@@ -195,6 +196,7 @@ const MOBILE_CARDS_AR = [
     ['/ar/ai-stock-screener.html', 'ماسح السوق'],
     ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
     ['/ar/briefs/', 'الإحاطات'],
+    ['/ar/newsletter/', 'النشرة اليومية'],
     ['/ar/methodology.html', 'المنهجية'],
   ]},
   { key: 'workspace', title: 'مساحة المتابعة', viewAll: ['/ar/workspace/', 'افتح مساحة المتابعة'], items: [
@@ -297,16 +299,15 @@ function englishLinks() {
     },
     {
       key: 'research', href: '/research/', label: 'Research',
-      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure'],
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure', 'glossary'],
       children: [
         ['/research/', 'Research Hub'],
         ['/research/feed/', 'Research Feed'],
         ['/market-outlook/', 'Market Outlook'],
         ['/market-news/', 'Market News'],
         ['/market-structure/', 'Market Structure'],
-        ['/research/regime/', 'Regime Research'],
-        ['/research/etfs/', 'ETF Research'],
         ['/insights/', 'Applied Research'],
+        ['/glossary/', 'Glossary'],
       ],
       viewAll: ['/research/', 'View all Research'],
     },
@@ -325,14 +326,14 @@ function englishLinks() {
     },
     {
       key: 'tools', href: '/tools/', label: 'Tools',
-      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs'],
+      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs', 'newsletter'],
       children: [
         ['/ai-stock-screener.html', 'Screener'],
         ['/economic-calendar/', 'Economic Calendar'],
         ['/briefs/', 'Market Briefs'],
+        ['/newsletter/', 'Newsletter'],
         ['/methodology.html', 'Methodology'],
         ['/workspace/', 'Workspace'],
-        ['/articles/', 'Educational Articles'],
       ],
       viewAll: ['/tools/', 'View all Tools'],
     },
@@ -358,16 +359,15 @@ function arabicLinks() {
     },
     {
       key: 'research', href: '/ar/research/', label: 'الأبحاث',
-      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure'],
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure', 'glossary'],
       children: [
         ['/ar/research/', 'مركز الأبحاث'],
         ['/ar/research/feed/', 'تغذية الأبحاث'],
         ['/ar/market-outlook/', 'نظرة السوق'],
         ['/ar/market-news/', 'أخبار السوق'],
         ['/ar/market-structure/', 'بنية السوق'],
-        ['/ar/research/regime/', 'أبحاث النظام'],
-        ['/ar/research/etfs/', 'أبحاث الصناديق'],
         ['/ar/insights/', 'الأبحاث التطبيقية'],
+        ['/ar/glossary/', 'قاموس المصطلحات'],
       ],
       viewAll: ['/ar/research/', 'عرض كل الأبحاث'],
     },
@@ -386,14 +386,14 @@ function arabicLinks() {
     },
     {
       key: 'tools', href: '/ar/tools/', label: 'الأدوات',
-      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs'],
+      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs', 'newsletter'],
       children: [
         ['/ar/ai-stock-screener.html', 'ماسح السوق'],
         ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
         ['/ar/briefs/', 'الإحاطات'],
+        ['/ar/newsletter/', 'النشرة اليومية'],
         ['/ar/methodology.html', 'المنهجية'],
         ['/ar/workspace/', 'مساحة المتابعة'],
-        ['/ar/articles/', 'المقالات التعليمية'],
       ],
       viewAll: ['/ar/tools/', 'عرض كل الأدوات'],
     },
