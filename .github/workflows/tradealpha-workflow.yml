@@ -513,6 +513,7 @@ jobs:
           node tools/apply-newsletter-cta.js || echo "[newsletter-cta] degraded"
           node tools/apply-glossary-links.js || echo "[glossary-links] degraded"
           node tools/apply-meta-optimizer.js || echo "[meta-opt] degraded"
+          node tools/apply-related-content.js || echo "[related] degraded"
 
       - name: Commit ancillary changes
         if: ${{ env.DRY_RUN == 'false' }}
