@@ -1,38 +1,80 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-01T22:05:05.981Z",
+  "updated_at": "2026-07-02T15:23:20.239Z",
   "verified": true,
-  "urgency": "high",
-  "pulse_shift": [],
+  "urgency": "elevated",
+  "pulse_shift": [
+    {
+      "kind": "pulse-shift",
+      "dimension": "dollar_pressure",
+      "from": "stable",
+      "to": "easing",
+      "en": "dollar pressure shifted from stable to easing.",
+      "ar": "تحولت حالة dollar pressure من stable إلى easing."
+    },
+    {
+      "kind": "pulse-shift",
+      "dimension": "momentum_concentration",
+      "from": "broadening",
+      "to": "balanced",
+      "en": "momentum concentration shifted from broadening to balanced.",
+      "ar": "تحولت حالة momentum concentration من broadening إلى balanced."
+    }
+  ],
   "quote_driven_changes": [
     {
       "kind": "quote-driven-change",
+      "asset": "gold",
+      "from": 0.6026,
+      "to": 2.1749,
+      "delta": 1.5723,
+      "en": "gold move changed by +1.57 percentage points.",
+      "ar": "تغير تحرك gold بمقدار +1.57 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
       "asset": "vix",
-      "from": -13.181577554261526,
-      "to": -12.175754367390157,
-      "delta": 1.0058231868713694,
-      "en": "vix move changed by +1.01 percentage points.",
-      "ar": "تغير تحرك vix بمقدار +1.01 نقطة مئوية."
+      "from": -12.175754367390157,
+      "to": -9.1254752851711,
+      "delta": 3.050279082219056,
+      "en": "vix move changed by +3.05 percentage points.",
+      "ar": "تغير تحرك vix بمقدار +3.05 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "oil",
+      "from": -1.6466849631662581,
+      "to": -4.522968197879862,
+      "delta": -2.876283234713604,
+      "en": "oil move changed by -2.88 percentage points.",
+      "ar": "تغير تحرك oil بمقدار -2.88 نقطة مئوية."
     }
   ],
-  "new_contradictions": [],
+  "new_contradictions": [
+    {
+      "kind": "new-contradiction",
+      "id": "dollar-vs-yields",
+      "en": "A new structural contradiction is active: dollar vs yields.",
+      "ar": "ظهر تناقض هيكلي جديد قيد المتابعة: dollar-vs-yields."
+    }
+  ],
   "pressure_buildup": [],
   "new_alerts": [],
   "catalyst_countdown": [
     {
-      "name": "ISM Manufacturing PMI (Jun)",
-      "time": "2026-07-01T14:00:00-04:00",
-      "minutes_until": 0
-    },
-    {
       "name": "Unemployment Rate (Jun)",
       "time": "2026-07-02T12:30:00-04:00",
-      "minutes_until": 1105
+      "minutes_until": 67
     },
     {
       "name": "Initial Jobless Claims",
       "time": "2026-07-02T12:30:00.000Z",
-      "minutes_until": 865
+      "minutes_until": 0
+    },
+    {
+      "name": "Nonfarm Payrolls",
+      "time": "2026-07-03T12:30:00.000Z",
+      "minutes_until": 1267
     }
   ],
   "wire_event": {
@@ -42,40 +84,70 @@
   },
   "changes": [
     {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -13.181577554261526,
-      "to": -12.175754367390157,
-      "delta": 1.0058231868713694,
-      "en": "vix move changed by +1.01 percentage points.",
-      "ar": "تغير تحرك vix بمقدار +1.01 نقطة مئوية."
+      "kind": "pulse-shift",
+      "dimension": "dollar_pressure",
+      "from": "stable",
+      "to": "easing",
+      "en": "dollar pressure shifted from stable to easing.",
+      "ar": "تحولت حالة dollar pressure من stable إلى easing."
     },
     {
-      "kind": "wire-event",
-      "en": "Wire event: VIX drops -12.18% to 16.59",
-      "ar": "حدث على الموجز: VIX drops -12.18% to 16.59",
-      "event": {
-        "headline": "VIX drops -12.18% to 16.59",
-        "timestamp": "2026-07-01T22:05:03.500Z",
-        "urgency": 90
-      }
+      "kind": "pulse-shift",
+      "dimension": "momentum_concentration",
+      "from": "broadening",
+      "to": "balanced",
+      "en": "momentum concentration shifted from broadening to balanced.",
+      "ar": "تحولت حالة momentum concentration من broadening إلى balanced."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "gold",
+      "from": 0.6026,
+      "to": 2.1749,
+      "delta": 1.5723,
+      "en": "gold move changed by +1.57 percentage points.",
+      "ar": "تغير تحرك gold بمقدار +1.57 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "vix",
+      "from": -12.175754367390157,
+      "to": -9.1254752851711,
+      "delta": 3.050279082219056,
+      "en": "vix move changed by +3.05 percentage points.",
+      "ar": "تغير تحرك vix بمقدار +3.05 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "oil",
+      "from": -1.6466849631662581,
+      "to": -4.522968197879862,
+      "delta": -2.876283234713604,
+      "en": "oil move changed by -2.88 percentage points.",
+      "ar": "تغير تحرك oil بمقدار -2.88 نقطة مئوية."
+    },
+    {
+      "kind": "new-contradiction",
+      "id": "dollar-vs-yields",
+      "en": "A new structural contradiction is active: dollar vs yields.",
+      "ar": "ظهر تناقض هيكلي جديد قيد المتابعة: dollar-vs-yields."
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": true,
+    "eligible": false,
     "sent": false,
-    "suppression_reason": null
+    "suppression_reason": "urgency_below_high_threshold"
   },
   "snapshot": {
     "verified": true,
     "dimensions": {
       "risk_state": "risk-on",
       "volatility_regime": "normal",
-      "dollar_pressure": "stable",
+      "dollar_pressure": "easing",
       "duration_pressure": "neutral",
-      "momentum_concentration": "broadening",
+      "momentum_concentration": "balanced",
       "ai_concentration_risk": "elevated",
       "breadth_state": "mixed",
       "defensive_rotation": "unverified",
@@ -84,19 +156,21 @@
       "market_fragility": "building"
     },
     "quote_changes": {
-      "gold": 0.6026,
-      "dxy": 0.03551696921862803,
-      "sp500": -0.1406,
-      "nasdaq": -1.5168,
-      "bitcoin": 1.9807,
-      "vix": -12.175754367390157,
-      "us10y_yield": 1.889799635701259,
-      "nvda": -1.2544,
-      "oil": -1.6466849631662581
+      "gold": 2.1749,
+      "dxy": -0.3689051528038816,
+      "sp500": -0.0979,
+      "nasdaq": -1.328,
+      "bitcoin": 2.4124,
+      "vix": -9.1254752851711,
+      "us10y_yield": 2.035681610247036,
+      "nvda": -1.3564,
+      "oil": -4.522968197879862
     },
     "alert_ids": [],
     "alerts": [],
-    "contradiction_ids": [],
+    "contradiction_ids": [
+      "dollar-vs-yields"
+    ],
     "pressure": {
       "volatility_pressure": 0,
       "liquidity_pressure": 3,
@@ -107,16 +181,16 @@
     },
     "catalysts": [
       {
-        "name": "ISM Manufacturing PMI (Jun)",
-        "time": "2026-07-01T14:00:00-04:00"
-      },
-      {
         "name": "Unemployment Rate (Jun)",
         "time": "2026-07-02T12:30:00-04:00"
       },
       {
         "name": "Initial Jobless Claims",
         "time": "2026-07-02T12:30:00.000Z"
+      },
+      {
+        "name": "Nonfarm Payrolls",
+        "time": "2026-07-03T12:30:00.000Z"
       }
     ],
     "wire_event": {
