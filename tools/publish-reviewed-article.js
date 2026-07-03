@@ -5,7 +5,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { ensureProductionEditorialLayout, hasProductionEditorialLayout } = require('./editorial-layout-renderer');
 const { assessPublicationConfidence } = require('./intelligence/publication-confidence-engine');
-const { injectArticleVisual } = require('./render-editorial-visuals');
+const { injectArticleVisual, selectChartForArticle } = require('./render-editorial-visuals');
 const { injectEditorialGraphic } = require('./render-editorial-graphics');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -41,14 +41,15 @@ diagnoseArticleParts(fs.readFileSync(draftAr, 'utf8'), true, relative(draftAr));
 if (!hasRequiredArticleParts(fs.readFileSync(draftEn, 'utf8'), false)) fail(`${relative(draftEn)} is missing required article metadata/schema/discovery/layout`);
 if (!hasRequiredArticleParts(fs.readFileSync(draftAr, 'utf8'), true)) fail(`${relative(draftAr)} is missing required Arabic article metadata/schema/discovery/layout`);
 
-const enHtml = injectEditorialGraphic(injectArticleVisual(
-  ensureProductionEditorialLayout(fs.readFileSync(draftEn, 'utf8'), topic, 'en'),
-  'en'
-), 'en');
-const arHtml = injectEditorialGraphic(injectArticleVisual(
-  ensureProductionEditorialLayout(fs.readFileSync(draftAr, 'utf8'), topic, 'ar'),
-  'ar'
-), 'ar');
+// Chart selection runs against the EN body ONCE — the term-matching
+// heuristic is English-only, so running it separately against the AR
+// translation gave asymmetric results and broke the section-count
+// contract. Both locales now inject the same chart (or neither).
+const enLayoutHtml = ensureProductionEditorialLayout(fs.readFileSync(draftEn, 'utf8'), topic, 'en');
+const arLayoutHtml = ensureProductionEditorialLayout(fs.readFileSync(draftAr, 'utf8'), topic, 'ar');
+const sharedChart = selectChartForArticle(enLayoutHtml);
+const enHtml = injectEditorialGraphic(injectArticleVisual(enLayoutHtml, 'en', sharedChart), 'en');
+const arHtml = injectEditorialGraphic(injectArticleVisual(arLayoutHtml, 'ar', sharedChart), 'ar');
 assertProductionLayout(enHtml, false, relative(draftEn));
 assertProductionLayout(arHtml, true, relative(draftAr));
 

@@ -24,12 +24,37 @@ const COOLDOWN_MACRO_EVENT = 21;
 const SIMILARITY_THRESHOLD = 0.82;
 const SEEDER_VERSION       = '1.0';
 
-// Month names — used by periodQualifier(). Declared near the top of the
-// module so the TDZ doesn't trap the seeding loop (which runs before the
-// later "function periodQualifier" declaration block was previously
-// reading the const at module-level).
+// Month names + angle rotation used by periodQualifier(). Declared near
+// the top of the module so the TDZ doesn't trap the seeding loop (which
+// runs before the later "function periodQualifier" declaration block was
+// previously reading the const at module-level).
 const MONTH_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTH_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+// Rotating "angle" phrase keyed off day-of-year so the same cluster
+// seeded across many dates produces titles that differ by ≥5 unique
+// tokens — enough to stay below the 0.82 Jaccard similarity gate in
+// check-publishing-safety.js.
+const ANGLE_ROTATION_EN = [
+  'Positioning Snapshot',
+  'Flow Signals Read',
+  'Regime Momentum Note',
+  'Breadth And Dispersion Check',
+  'Catalyst Sensitivity View',
+  'Rotation And Risk Read',
+  'Volatility Framing Note',
+  'Cross-Asset Confirmation',
+];
+const ANGLE_ROTATION_AR = [
+  'قراءة تموضع',
+  'قراءة إشارات التدفق',
+  'ملاحظة زخم النظام',
+  'فحص الاتساع والتشتت',
+  'رؤية حساسية المحفزات',
+  'قراءة التناوب والمخاطر',
+  'ملاحظة تأطير التقلب',
+  'تأكيد متعدد الأصول',
+];
 
 // ── Template library ──────────────────────────────────────────────────────────
 // Indexed by semantic cluster. event_types[] links to economic-calendar types.
@@ -447,36 +472,9 @@ function hasHeadlineSimilarity(template) {
 
 // ── Topic builder ─────────────────────────────────────────────────────────────
 
-// Disambiguate titles per occurrence so the duplicate-similarity guard
-// in check-publishing-safety (>=0.82 Jaccard on unique-word sets) never
-// trips. Old design added only 3 tokens (e.g. "Late-June 2026 Update")
-// so consecutive-cluster titles differed by ~2 words out of ~14 total,
-// which is 0.86 similarity — above the threshold.
-// New design pairs the specific ISO date with a rotating "angle" phrase
-// keyed off the day-of-year, so each iteration contributes 5-6 unique
-// tokens and stays comfortably below 0.82 similarity even for the same
-// cluster seeded across many dates.
-const ANGLE_ROTATION_EN = [
-  'Positioning Snapshot',
-  'Flow Signals Read',
-  'Regime Momentum Note',
-  'Breadth And Dispersion Check',
-  'Catalyst Sensitivity View',
-  'Rotation And Risk Read',
-  'Volatility Framing Note',
-  'Cross-Asset Confirmation',
-];
-const ANGLE_ROTATION_AR = [
-  'قراءة تموضع',
-  'قراءة إشارات التدفق',
-  'ملاحظة زخم النظام',
-  'فحص الاتساع والتشتت',
-  'رؤية حساسية المحفزات',
-  'قراءة التناوب والمخاطر',
-  'ملاحظة تأطير التقلب',
-  'تأكيد متعدد الأصول',
-];
-
+// periodQualifier() uses MONTH_EN/AR + ANGLE_ROTATION_EN/AR declared at
+// the top of the file (must stay there to avoid TDZ — the top-level
+// seeding loop calls buildTopic() → periodQualifier() during module load).
 function periodQualifier(dateStr) {
   const d = new Date(dateStr + 'T00:00:00Z');
   const day = d.getUTCDate();

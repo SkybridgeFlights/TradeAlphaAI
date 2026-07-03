@@ -107,8 +107,8 @@ function selectChartForArticle(articleContext) {
   return data ? selectRelevantChart(data.selected, articleContext) : null;
 }
 
-function renderArticleVisualSection(articleContext, locale) {
-  const chart = selectChartForArticle(articleContext);
+function renderArticleVisualSection(articleContext, locale, preSelectedChart = null) {
+  const chart = preSelectedChart || selectChartForArticle(articleContext);
   if (!chart) return '';
   const ar = locale === 'ar';
   return `<section class="market-section editorial-visual-section article-visual-intelligence" aria-labelledby="visual-intelligence-heading">
@@ -117,9 +117,15 @@ function renderArticleVisualSection(articleContext, locale) {
       </section>`;
 }
 
-function injectArticleVisual(html, locale) {
+// preSelectedChart lets the caller select ONCE from the EN article and
+// pass the same chart into both EN and AR. Otherwise the term-matching
+// heuristic runs against the Arabic-translated body, which can either
+// under-match (English chart terms not present) or over-match (bilingual
+// glossary/hub anchors leak English tokens), producing asymmetric
+// section counts — a hard-fail in the article-pair contract check.
+function injectArticleVisual(html, locale, preSelectedChart = null) {
   if (!html || html.includes('class="editorial-figure"')) return html;
-  const section = renderArticleVisualSection(html, locale);
+  const section = renderArticleVisualSection(html, locale, preSelectedChart);
   if (!section) return html;
 
   let output = html;
