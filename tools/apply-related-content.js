@@ -234,13 +234,15 @@ function arBadge(source) {
   }[source] || source;
 }
 
-// The widget goes INSIDE the .market-shell wrap, just before its closing </div>
-// pair. If the page doesn't have that shell (e.g. a very minimal template),
-// fall back to injecting just before </body>.
+// The widget is the LAST section inside <main>. The previous heuristic
+// inserted after the first </div> following .market-shell — on newer article
+// templates that first </div> closes the breadcrumb block, so "Continue
+// reading" recommendations rendered ABOVE the article headline. Anchoring on
+// the closing </main> tag is deterministic across every template.
 function injectWidget(html, widgetHtml) {
-  const shellMatch = html.match(/(<main class="market-shell">[\s\S]*?<\/div>)([\s\S]*?<\/main>)/);
-  if (shellMatch) {
-    return html.replace(shellMatch[0], `${shellMatch[1]}\n${widgetHtml}\n${shellMatch[2]}`);
+  const mainClose = html.search(/<\/main>/i);
+  if (mainClose >= 0) {
+    return `${html.slice(0, mainClose)}${widgetHtml}\n${html.slice(mainClose)}`;
   }
   return html.replace(/<\/body>/i, `${widgetHtml}\n</body>`);
 }

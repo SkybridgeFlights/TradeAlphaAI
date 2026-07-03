@@ -2536,30 +2536,24 @@
   const currentPath = window.location.pathname;
   const isArabicPath = currentPath === "/ar" || currentPath.startsWith("/ar/");
   const currentLocale = isArabicPath ? "ar" : "en";
+  function mirrorRoute(p) {
+    // The site is a strict /ar mirror by construction (bilingual validators
+    // enforce EN/AR twins for every published surface), so the counterpart
+    // path is always derivable: /x -> /ar/x and /ar/x -> /x. This replaces
+    // the old behaviour of falling back to the HOMEPAGE for any path missing
+    // from the static map — every newly published article hit that fallback
+    // and the language switch dumped readers on the front page.
+    var clean = p.replace(/^\/en\//, "/");
+    if (clean === "/ar" || clean === "/ar/") return { ar: "/ar/", en: "/" };
+    if (clean.indexOf("/ar/") === 0) return { ar: clean, en: clean.slice(3) || "/" };
+    if (clean === "/") return { ar: "/ar/", en: "/" };
+    return { ar: "/ar" + clean, en: clean };
+  }
   function resolveRoute(p) {
     if (localizedRoutes[p]) return localizedRoutes[p];
     var withExt = (!p.endsWith('/') && !p.endsWith('.html')) ? p + '.html' : p;
     if (withExt !== p && localizedRoutes[withExt]) return localizedRoutes[withExt];
-    var n = withExt, m;
-    m = n.match(/^\/stocks\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
-    m = n.match(/^\/ar\/stocks\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
-    m = n.match(/^\/en\/stocks\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/stocks/" + f, en: "/stocks/" + f }; }
-    m = n.match(/^\/etfs\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
-    m = n.match(/^\/ar\/etfs\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
-    m = n.match(/^\/en\/etfs\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/etfs/" + f, en: "/etfs/" + f }; }
-    m = n.match(/^\/insights\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
-    m = n.match(/^\/ar\/insights\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
-    m = n.match(/^\/en\/insights\/([a-z0-9.-]+\.html)$/i);
-    if (m) { var f = m[1].toLowerCase(); return { ar: "/ar/insights/" + f, en: "/insights/" + f }; }
-    return { ar: "/ar/", en: "/" };
+    return mirrorRoute(withExt);
   }
   const routes = resolveRoute(currentPath);
   document.documentElement.lang = currentLocale;
@@ -2574,7 +2568,12 @@
   }
   document.querySelectorAll("[data-locale-route]").forEach(function (link) {
     var locale = link.getAttribute("data-locale-route");
-    link.setAttribute("href", routes[locale] || routes.en || "/");
+    // The baked href (computed per-page at publish time) is authoritative.
+    // Only overwrite it when it is missing or generic — the router must
+    // never downgrade a specific page link to the homepage.
+    var baked = link.getAttribute("href");
+    var isGeneric = !baked || baked === "/" || baked === "/ar" || baked === "/ar/";
+    if (isGeneric) link.setAttribute("href", routes[locale] || (locale === "ar" ? "/ar/" : "/"));
     link.textContent = locale === "ar" ? "\u0627\u0644\u0639\u0631\u0628\u064a\u0629" : "English";
     link.addEventListener("click", function () {
       try { localStorage.setItem("ta_lang", locale); } catch (_) {}

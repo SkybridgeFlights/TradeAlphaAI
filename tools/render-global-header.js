@@ -256,7 +256,13 @@ const GROUP_TITLE_TO_ICON = {
 };
 
 function globalHeaderStyles() {
-  return '<link rel="stylesheet" href="/css/global-header-canonical.css" />';
+  // BOTH stylesheets are required: global-header.css carries the component
+  // styling (search-icon sizing, dropdown chrome, mobile drawer) while the
+  // canonical file pins the layout contract. Newly published pages that only
+  // received the canonical link rendered a giant unstyled search icon and a
+  // broken header — the header must never depend on the page template
+  // happening to link the base stylesheet on its own.
+  return '<link rel="stylesheet" href="/css/global-header.css" />\n  <link rel="stylesheet" href="/css/global-header-canonical.css" />';
 }
 
 function globalHeaderHead() {

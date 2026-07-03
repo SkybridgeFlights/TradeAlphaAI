@@ -145,8 +145,10 @@ function processFile(file) {
     newHtml = `${html.slice(0, headerStart)}${header}\n\n  ${html.slice(contentStart)}`;
   }
 
-  // Ensure global-header.css is linked
-  newHtml = removeAssetTags(newHtml, /\/?css\/global-header-canonical\.css(?:[?#][^"']*)?/i, 'link');
+  // Ensure BOTH header stylesheets are linked (base component styles +
+  // canonical layout contract). Strip any existing copies of either first so
+  // repeated rebakes stay idempotent.
+  newHtml = removeAssetTags(newHtml, /\/?css\/global-header(?:-canonical)?\.css(?:[?#][^"']*)?/i, 'link');
   newHtml = newHtml.replace('</head>', `  ${globalHeaderStyles()}\n</head>`);
 
   // Strip every script the global header owns so we don't accumulate copies
