@@ -654,7 +654,10 @@ function buildHistoricalComparisonSection(ar) {
       insufficientNote:  'Historical continuity confidence insufficient',
     };
 
-    function fmt(v) { return escapeHtml(String(v || 'unknown').replace(/_/g, ' ')); }
+    // AR must map regime enums through cleanStateAr — bare underscore-stripping
+    // leaves adjacent English cells ("risk on"/"risk on") that hard-fail the
+    // Arabic localization gate in assertArabicGenerationSafe.
+    function fmt(v) { return escapeHtml(ar ? cleanStateAr(v) : String(v || 'unknown').replace(/_/g, ' ')); }
     function changed(a, b) { return a !== b && b !== 'unknown' && b !== 'uncertain'; }
 
     const toneChanged  = changed(previous.market_tone,       latest.market_tone);
@@ -723,6 +726,8 @@ function cleanStateAr(value) {
   if (value === null || value === undefined || value === '') return 'غير محدد';
   const map = {
     risk_off: 'تجنب المخاطر', risk_on: 'إقبال على المخاطر', neutral: 'محايد',
+    uncertain: 'غير مؤكد', hold_bias: 'ميل التثبيت',
+    volatility_compression: 'انضغاط التذبذب',
     elevated: 'مرتفع', low: 'منخفض', normal: 'طبيعي', high: 'عالٍ',
     moderate: 'معتدل', mixed: 'متباين', tightening: 'تشديدي', easing: 'تيسيري',
     transitioning: 'انتقالي', established: 'مستقر', contested: 'متنازع عليه',

@@ -29,7 +29,14 @@ const FINANCIAL_TERMS = [
   [/\bhold[ _]with[ _]dovish[ _]bias\b/gi, 'تثبيت مع ميل تيسيري'],
   [/\bhawkish bias\b/gi, 'ميل تشديدي'],
   [/\bdovish bias\b/gi, 'ميل تيسيري'],
-  [/\bhold bias\b/gi, 'ميل التثبيت'],
+  [/\bhold[-_ ]bias\b/gi, 'ميل التثبيت'],
+  // Risk-appetite regime enums — leak from narrative-continuity / historical
+  // memory snapshots (market_tone: "risk_on") into AR drafts. Matched with
+  // hyphen/underscore/space so "risk-on", "risk_on", and "risk on" all map.
+  [/\brisk[-_ ]on\b/gi, 'إقبال على المخاطر'],
+  [/\brisk[-_ ]off\b/gi, 'تجنب المخاطر'],
+  [/\bvolatility[-_ ]compression\b/gi, 'انضغاط التذبذب'],
+  [/\buncertain\b/gi, 'غير مؤكد'],
   [/\beasing bias\b/gi, 'ميل التيسير'],
   [/\btightening bias\b/gi, 'ميل التشديد'],
   [/\bdata[- ]dependent\b/gi, 'يعتمد على البيانات'],

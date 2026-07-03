@@ -770,7 +770,11 @@ function validateSections(en) {
 
   // key_drivers chain check
   if (Array.isArray(en.key_drivers)) {
-    const withChain = en.key_drivers.filter(d => /→|->|leads?\s+to|results?\s+in|triggers?|compresses?|expands?|supports?|pressures?/.test(d || ''));
+    // Causal-language detector. The original verb list was narrow enough that
+    // institutional-register drivers ("higher yields weigh on duration ETFs",
+    // "breadth improvement anchors small-cap participation") failed with
+    // chains=1 and forced a structural fallback despite high specificity.
+    const withChain = en.key_drivers.filter(d => /→|->|\blead(?:s|ing)?\s+to\b|\bresult(?:s|ing)?\s+in\b|\btrigger(?:s|ed|ing)?\b|\bcompress(?:es|ed|ing)?\b|\bexpand(?:s|ed|ing)?\b|\bsupport(?:s|ed|ing)?\b|\bpressur(?:e|es|ed|ing)\b|\bdriv(?:es|en|ing)\b|\bpush(?:es|ed|ing)?\b|\blift(?:s|ed|ing)?\b|\bweigh(?:s|ed|ing)?\s+on\b|\bboost(?:s|ed|ing)?\b|\bdampen(?:s|ed|ing)?\b|\bsteepen(?:s|ed|ing)?\b|\bflatten(?:s|ed|ing)?\b|\bwiden(?:s|ed|ing)?\b|\bnarrow(?:s|ed|ing)\b|\btighten(?:s|ed|ing)?\b|\beas(?:es|ed|ing)\b|\banchor(?:s|ed|ing)?\b|\bunderpin(?:s|ned|ning)?\b|\bamplif(?:y|ies|ied|ying)\b|\breprice(?:s|d)?\b|\brepricing\b|\bfeed(?:s|ing)?\s+(?:into|through)\b|\btranslat(?:e|es|ed|ing)\s+into\b|\bspill(?:s|ed|ing)?\s+over\b|\berod(?:e|es|ed|ing)\b|\bstrengthen(?:s|ed|ing)?\b|\bweaken(?:s|ed|ing)?\b/i.test(d || ''));
     const combined = en.key_drivers.join(' ');
     const instScore = detectInstitutionalPhrasing(combined);
     const instrHits = INSTRUMENT_PATTERNS.filter(p => p.test(combined)).length;
@@ -892,6 +896,7 @@ ${tasks.join('\n')}
 EXPANSION REQUIREMENTS:
 - Add institutional macro specificity: yield curve, duration, breadth, participation, liquidity, volatility regime, risk appetite, positioning, sector rotation, or transmission mechanism.
 - Include explicit [Signal -> Mechanism -> Named Instrument Impact] chains in expanded sections.
+- If key_drivers is flagged: EVERY key_drivers item must contain a literal "→" arrow connecting signal → mechanism → named instrument impact (e.g. "10Y yield above 4.5% → duration repricing → TLT and long-duration bond ETFs under pressure"). Items without a "→" arrow will be rejected.
 - For scenarios, include catalyst, transmission mechanism, affected instruments, and market implication.
 - Use institutional register. Do not use retail phrases, promotional language, financial advice, or generic filler.
 - Reference at least one named instrument or institutional macro pattern in every expanded section.
