@@ -76,10 +76,20 @@
       "Bash(Test-Path \"tools/run-full-market-outlook-pipeline.js\")",
       "Bash(Test-Path \"tools/score-generated-content.js\")",
       "Bash(Test-Path \"tools/check-publishing-safety.js\")",
+<<<<<<< Updated upstream
       "Read(//c/Users/WAJDSH~1/AppData/Local/Temp/claude/C--EA-AI-TradeAlphaAI-Final/e7ba37f5-9774-4d21-a355-08e6c6710e95/tasks/**)",
       "PowerShell(node tools/apply-global-header.js 2>&1)",
       "Read(//tmp/**)",
       "PowerShell(gh workflow list --limit 30 2>&1)"
+=======
+      "Bash(ls netlify/)",
+      "Bash(ls netlify/functions/)",
+      "Bash(ls api/)",
+      "Bash(ls -la netlify.toml vercel.json)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(k,v\\) for k,v in d.get\\('scripts',{}\\).items\\(\\) if 'check' in k or 'responsive' in k or 'language' in k or 'seo' in k or 'production' in k]\")",
+      "Bash(sed -n '260,295p' css/economic-calendar.css)",
+      "Bash(sed -n '480,510p' css/economic-calendar.css)"
+>>>>>>> Stashed changes
     ]
   }
 }

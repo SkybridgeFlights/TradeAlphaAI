@@ -111,6 +111,15 @@ console.log(`Created: ${relative(arContentPath)}`);
 updateInsightsIndexes(slug, topic, enHtml, arHtml);
 console.log('Updated: insights/index.html and ar/insights/index.html');
 
+// ── 4b. Inject canonical global header into the freshly-published pages ──────
+// check-public-surface-discovery.js requires every insights/*.html to reference
+// /css/global-header-canonical.css and /js/global-header.js. Without this step
+// those markers are only injected by the workflow's "ancillary" post-publish
+// step, so the NEXT workflow run trips surface-discovery preflight on the
+// pages we just wrote and skips the whole publishing block.
+run(process.execPath, ['tools/apply-global-header.js']);
+console.log('Applied canonical global header to newly-published pages.');
+
 // ── 5. Regenerate derived artifacts and validate ──────────────────────────────
 const NPM = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 run(NPM, ['run', 'article-registry:generate']);

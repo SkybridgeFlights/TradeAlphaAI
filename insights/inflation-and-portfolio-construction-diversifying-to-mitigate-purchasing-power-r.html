@@ -105,6 +105,7 @@
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/editorial-graphics.css" />
+  <link rel="stylesheet" href="/css/global-header-canonical.css" />
 </head>
 <body class="market-page">
   <div class="insight-progress-bar" id="read-progress"></div>
@@ -212,23 +213,7 @@
       <header class="m-card-head">
         <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
         <h3 class="m-card-title">Markets</h3>
-      <!-- editorial:graphic:regime-unstable-regime:regime-transition -->
-<figure class="editorial-graphic editorial-graphic--regime-transition" data-editorial-graphic="regime-unstable-regime" data-verified="true" dir="ltr">
-  <div class="editorial-graphic__frame">
-    <figcaption class="editorial-graphic__header">
-      <span class="editorial-graphic__kicker">Verified visual intelligence</span>
-      <h2>Structural pressure is testing regime stability</h2>
-      <p>The regime remains intact but internally fragile as several pressure tracks persist. Positioning remains concentrated rather than broadly distributed.</p>
-    </figcaption>
-    
-    <ul class="editorial-graphic__annotations"><li><span>Persistent structural pressure</span><small>structural-tension:positioning-strain</small></li><li><span>Persistent structural pressure</span><small>structural-tension:cross-asset-strain</small></li></ul>
-    <footer class="editorial-graphic__footer">
-      <span>Structural reading, not a directional forecast</span>
-      <cite>TradeAlphaAI structural tension engine; verified state only.</cite>
-    </footer>
-  </div>
-</figure>
-</header>
+      </header>
       <ul class="m-card-list"><li><a class="m-card-link" href="/markets/">Assets</a></li><li><a class="m-card-link" href="/sectors/">Sectors</a></li><li><a class="m-card-link" href="/equities/">Equities</a></li><li><a class="m-card-link" href="/etfs/">ETF Intelligence</a></li></ul>
       <a class="m-card-viewall" href="/markets/">View all Markets<span aria-hidden="true">→</span></a>
     </div>
@@ -439,7 +424,7 @@
   <script>(function(){var bar=document.getElementById('read-progress');if(!bar)return;window.addEventListener('scroll',function(){var d=document.documentElement;var p=Math.min(d.scrollTop/(d.scrollHeight-d.clientHeight)||0,1);bar.style.width=(p*100).toFixed(1)+'%';},{passive:true});})();</script>
   <script src="../js/research-layer.js"></script>
   <script src="../js/language-router.js" defer></script>
-  <script src="../js/mobile-nav.js" defer></script>
   <script type="module">import { trackRecentlyViewed } from "/js/market/recently-viewed.js"; trackRecentlyViewed({ title: document.title, url: location.pathname || "/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html", type: "insight" });</script>
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script src="/js/search-autocomplete.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
 </body>
 </html>
