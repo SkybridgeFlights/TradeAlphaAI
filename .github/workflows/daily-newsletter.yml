@@ -66,14 +66,21 @@ jobs:
           echo "[run] node tools/send-daily-newsletter.js $ARGS"
           node tools/send-daily-newsletter.js $ARGS
 
+      - name: Bake canonical header into archive pages
+        if: ${{ github.event.inputs.dry_run != 'true' || github.event_name == 'schedule' }}
+        # Archive pages carry empty GLOBAL_HEADER markers until baked;
+        # committing them unbaked fails check:surface-discovery on every
+        # subsequent tradealpha-workflow preflight.
+        run: node tools/apply-global-header.js
+
       - name: Commit archive page
         if: ${{ github.event.inputs.dry_run != 'true' || github.event_name == 'schedule' }}
         continue-on-error: true
         run: |
-          if ! git diff --quiet -- newsletter/; then
+          if ! git diff --quiet -- newsletter/ ar/newsletter/; then
             git config user.name "tradealphaai-bot"
             git config user.email "actions@users.noreply.github.com"
-            git add -- newsletter/
+            git add -- newsletter/ ar/newsletter/
             git commit -m "Daily newsletter archive: $(date -u +%Y-%m-%d)"
             git pull --rebase origin "${GITHUB_REF_NAME}" || true
             git push origin "${GITHUB_REF_NAME}"

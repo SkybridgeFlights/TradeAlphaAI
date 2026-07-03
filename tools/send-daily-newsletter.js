@@ -353,6 +353,16 @@ function writeArchive(items, dateLabel, dateIso, title, subtitle) {
   const arDir = path.join(ROOT, 'ar', 'newsletter');
   fs.mkdirSync(arDir, { recursive: true });
   fs.writeFileSync(path.join(arDir, 'index.html'), buildArchiveIndex(archives, true), 'utf8');
+
+  // The archive pages above are written with EMPTY GLOBAL_HEADER markers.
+  // check:surface-discovery requires the canonical navigation block inside
+  // them, so bake it here — the newsletter workflow commits newsletter/
+  // directly and never runs the site-wide header pass on its own.
+  const bake = require('child_process').spawnSync(
+    process.execPath, [path.join(__dirname, 'apply-global-header.js')],
+    { stdio: 'inherit' }
+  );
+  if (bake.status !== 0) throw new Error('apply-global-header failed — archive pages would fail surface-discovery');
   return out;
 }
 
