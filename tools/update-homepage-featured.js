@@ -64,7 +64,15 @@ function main() {
   enHtml = replaceDiv(enHtml, 'class="editorial-grid"',         enEditorialHtml, 'editorial-grid');
   enHtml = replaceDiv(enHtml, 'id="homepage-outlook-cards"',    enOutlookHtml,   'homepage-outlook-cards');
   arHtml = replaceDiv(arHtml, 'class="editorial-grid"',         arEditorialHtml, 'editorial-grid (ar)');
-  arHtml = replaceDiv(arHtml, 'id="homepage-outlook-cards-ar"', arOutlookHtml,   'homepage-outlook-cards-ar');
+  // generate-localized-pages mirrors index.html verbatim, so the AR homepage
+  // carries the SAME id as EN (no -ar suffix). Try the suffixed id first for
+  // backward compatibility, then fall back to the mirrored id — without the
+  // fallback the AR homepage never received outlook cards.
+  if (arHtml.includes('id="homepage-outlook-cards-ar"')) {
+    arHtml = replaceDiv(arHtml, 'id="homepage-outlook-cards-ar"', arOutlookHtml, 'homepage-outlook-cards-ar');
+  } else {
+    arHtml = replaceDiv(arHtml, 'id="homepage-outlook-cards"', arOutlookHtml, 'homepage-outlook-cards (ar fallback)');
+  }
 
   if (WRITE) {
     fs.writeFileSync(EN_INDEX, enHtml, 'utf8');
@@ -116,12 +124,30 @@ function buildEnEditorialGrid(articles) {
 
 // ── AR editorial grid ─────────────────────────────────────────────────────────
 
+// Category badges arrive as English enum labels from the editorial queue —
+// rendering them raw leaves English chips on the Arabic homepage.
+const AR_CATEGORY = {
+  'ETF Education': 'تعليم صناديق المؤشرات',
+  'Sector Outlook': 'نظرة قطاعية',
+  'Market Structure': 'بنية السوق',
+  'Macro Research': 'أبحاث الاقتصاد الكلي',
+  'Portfolio Risk': 'مخاطر المحافظ',
+  'Beginner Investing': 'الاستثمار للمبتدئين',
+  'Market Research': 'أبحاث السوق',
+  'AI Stocks': 'أسهم الذكاء الاصطناعي',
+  'Stock Comparison': 'مقارنة الأسهم',
+  Research: 'بحث',
+};
+function arCategory(value) {
+  return AR_CATEGORY[value] || 'بحث';
+}
+
 function buildArEditorialGrid(articles) {
   if (!articles.length) return '';
   const [feat, ...rest] = articles;
   const featTitle = cleanTitle(feat.languages?.ar?.title || feat.slug);
   const featSummary = truncate(feat.languages?.ar?.summary || '', 160);
-  const featCategory = feat.category || 'بحث';
+  const featCategory = arCategory(feat.category);
 
   let html = `\n            <a class="editorial-feature" href="/ar/insights/${feat.slug}.html" data-featured-link>\n`;
   html += `              <span class="insight-category-badge">${esc(featCategory)}</span>\n`;
@@ -135,7 +161,7 @@ function buildArEditorialGrid(articles) {
     for (const a of rest.slice(0, 2)) {
       const t = cleanTitle(a.languages?.ar?.title || a.slug);
       const s = truncate(a.languages?.ar?.summary || '', 120);
-      const cat = a.category || 'بحث';
+      const cat = arCategory(a.category);
       html += `              <a class="editorial-card" href="/ar/insights/${a.slug}.html" data-featured-link>\n`;
       html += `                <span class="insight-category-badge">${esc(cat)}</span>\n`;
       html += `                <h3>${esc(t)}</h3>\n`;

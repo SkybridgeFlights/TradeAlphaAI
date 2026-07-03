@@ -186,7 +186,13 @@ const sitemapPath = path.join(ROOT, 'sitemap-core.xml');
 if (fs.existsSync(sitemapPath)) {
   const sitemap = fs.readFileSync(sitemapPath, 'utf8');
   if (!sitemap.includes('/economic-calendar/')) warnings.push('sitemap-core.xml: missing /economic-calendar/ entry');
-  if (!sitemap.includes('/ar/economic-calendar/')) warnings.push('sitemap-core.xml: missing /ar/economic-calendar/ entry');
+}
+// AR entries live in sitemap-ar.xml, not sitemap-core.xml — checking core for
+// the AR route produced a permanent false warning on every run.
+const arSitemapPath = path.join(ROOT, 'sitemap-ar.xml');
+if (fs.existsSync(arSitemapPath)) {
+  const arSitemap = fs.readFileSync(arSitemapPath, 'utf8');
+  if (!arSitemap.includes('/ar/economic-calendar/')) warnings.push('sitemap-ar.xml: missing /ar/economic-calendar/ entry');
 }
 
 // ── 6. HTML: new UI elements ──────────────────────────────────────────────────

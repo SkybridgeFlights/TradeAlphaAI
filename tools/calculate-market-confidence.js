@@ -128,11 +128,10 @@ function buildScenarios({ vix, aiMomentum, semiconductorMomentum, us10yYield, ma
     scenarios.push('A risk-off regime may favour defensive allocations over growth, though regime shifts can occur rapidly and without clear warning.');
   }
 
-  // Fallback if no data
-  if (!scenarios.length) {
-    scenarios.push('No sourced market data is currently available for directional commentary. Analysis is based on educational framework only.');
-  }
-
+  // No fallback sentence here: telling readers "no sourced market data is
+  // available" on a published page undermines the whole piece. An empty
+  // return lets generate-market-intelligence substitute its bilingual
+  // conditional-framework scenarios instead.
   return scenarios.slice(0, 3);
 }
 

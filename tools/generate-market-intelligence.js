@@ -110,10 +110,31 @@ function buildMarketNarrative(live, sp500, nasdaq, vix, us10y, dxy, confidence) 
   if (us10y !== null) { en.push(`the US 10-year yield near ${us10y}%`); ar.push(`عائد السندات الأمريكية لعشر سنوات قرب ${us10y}%`); }
   if (dxy !== null) { en.push(`DXY near ${dxy}`); ar.push(`مؤشر الدولار DXY قرب ${dxy}`); }
   if (!en.length) return FALLBACKS.market_narrative;
-  return {
-    en: `With ${en.join(', ')}, the current tone can be framed as ${confidence.label}. This remains conditional context, not a forecast.`,
-    ar: `مع ${ar.join(' و')}, يمكن تأطير نبرة السوق الحالية بوصفها ${confidenceLabelAr(confidence.label)}. يبقى ذلك سياقا مشروطا وليس توقعا.`
-  };
+  // Day-rotated phrasing — the fixed "With X, Y, Z, the current tone can be
+  // framed as..." opener repeated verbatim across structural outlook pages
+  // and read as template filler.
+  const label = confidence.label;
+  const labelAr = confidenceLabelAr(label);
+  const variants = [
+    {
+      en: `With ${en.join(', ')}, the current tone can be framed as ${label}. This remains conditional context, not a forecast.`,
+      ar: `مع ${ar.join(' و')}, يمكن تأطير نبرة السوق الحالية بوصفها ${labelAr}. يبقى ذلك سياقا مشروطا وليس توقعا.`,
+    },
+    {
+      en: `The tape currently shows ${en.join(', ')} — a configuration that reads as ${label} on the desk framework. Conditional context only, not a forecast.`,
+      ar: `يُظهر السوق حاليا ${ar.join(' و')} — وهي تركيبة تُقرأ ضمن إطار المكتب بوصفها ${labelAr}. سياق مشروط فقط وليس توقعا.`,
+    },
+    {
+      en: `Session reference points: ${en.join(', ')}. Taken together, the structural read is ${label}; that framing stays conditional rather than predictive.`,
+      ar: `نقاط مرجعية للجلسة: ${ar.join(' و')}. مجتمعةً، تكون القراءة الهيكلية ${labelAr}؛ وتبقى هذه الصياغة مشروطة لا تنبؤية.`,
+    },
+    {
+      en: `Against a backdrop of ${en.join(', ')}, the working stance is ${label} — a framework classification, not a directional call.`,
+      ar: `في ظل ${ar.join(' و')}, يكون الموقف العملي ${labelAr} — وهو تصنيف ضمن الإطار البحثي وليس دعوة اتجاهية.`,
+    },
+  ];
+  const dayOfYear = Math.floor((Date.now() - Date.UTC(new Date().getUTCFullYear(), 0, 1)) / 86400000);
+  return variants[dayOfYear % variants.length];
 }
 
 function buildSectorNarrative(live, aiMom, semiMom) {

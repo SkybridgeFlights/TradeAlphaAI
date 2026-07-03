@@ -143,8 +143,18 @@ function improveTitle(current, h1, contentDir, isAr) {
   } else if (len > 80) {
     // Only trim titles that genuinely exceed SERP budget. Preserve everything
     // meaningful — no fragment endings like "for" or "the".
-    newBase = trimAtWord(stripped, 60);
-    if (newBase.length < stripped.length * 0.5) return null;  // trim was too destructive
+    //
+    // "Head: A, B, and C" titles must not be cut mid-enumeration ("Head: A"
+    // reads broken) — when the head clause alone is substantial, drop the
+    // whole subtitle instead: it is a complete phrase by construction.
+    const head = stripped.split(/[::]/)[0].trim();
+    const wordTrimmed = trimAtWord(stripped, 60);
+    if (head.length >= 25 && head.length <= 60 && wordTrimmed.length > head.length) {
+      newBase = head;
+    } else {
+      newBase = wordTrimmed;
+      if (newBase.length < stripped.length * 0.5) return null;  // trim was too destructive
+    }
   } else if (!hasYear(decoded) && (section === 'compare' || section === 'glossary' || section === 'insights')) {
     // Add year signal to evergreen content only. News/outlooks are time-stamped.
     if (stripped.length + 7 > 65) return null;  // no room without pushing over budget

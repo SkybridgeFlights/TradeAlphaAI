@@ -512,12 +512,16 @@ function buildArticleIntelligence(topic, ar) {
     const divergence = detectCrossAssetDivergence(current);
     const signals = extractMarketSignals(current, memoryBefore).signals.slice(0, 5);
     const tags = signals.length ? signals.map((signal) => ar ? cleanStateAr(signal.signal) : signal.signal) : [ar ? 'مراقبة أساسية' : 'baseline monitoring'];
+    // Cards with unverified/empty values are omitted — rendering the literal
+    // word "unverified" (or "غير محدد") on a published page reads as broken
+    // data to visitors.
     const stateCards = [
       [L.riskRegime, current.dominant_risk_regime],
       [L.volatilityRegime, current.volatility_environment],
       [L.breadthCondition, current.breadth_quality == null ? current.breadth_state : `${current.breadth_quality}%`],
       [L.concentrationRisk, current.concentration_risk]
-    ];
+    ].filter(([, value]) => value && value !== 'unverified' && value !== 'unknown');
+    if (!stateCards.length) return '';
     return `      <section class="market-section" id="intelligence-snapshot">
         <div class="market-section-head"><span class="eyebrow">${escapeHtml(L.intelligenceSnapshot)}</span><h2>${escapeHtml(L.intelligenceSnapshot)}</h2><p class="market-copy">${escapeHtml(L.intelligenceIntro)}</p></div>
         <div class="article-intelligence-panel">
@@ -1033,35 +1037,42 @@ function tryGetAiContent(slug) {
     console.log('[AI] OPENAI_API_KEY not set — using structural content (no auto-approve).');
     return null;
   }
-  console.log(`[AI] Generating AI content for: ${slug}`);
-  const result = spawnSync(process.execPath, [
-    path.join(__dirname, 'generate-ai-market-outlook-content.js'),
-    `--slug=${slug}`
-  ], {
-    cwd: ROOT,
-    stdio: ['ignore', 'pipe', 'pipe'],
-    timeout: 60000,
-    env: { ...process.env }
-  });
-  // Use buffer.toString('utf8') explicitly to handle multi-byte Arabic characters on Windows
-  if (result.stderr) process.stderr.write(Buffer.isBuffer(result.stderr) ? result.stderr.toString('utf8') : result.stderr);
-  const stdout = result.stdout ? (Buffer.isBuffer(result.stdout) ? result.stdout.toString('utf8') : result.stdout) : '';
-  if (result.status !== 0 || !stdout.trim()) {
-    console.log(`[AI] AI content generation failed or returned empty — falling back to structural.`);
-    return null;
-  }
-  try {
-    const content = JSON.parse(stdout);
-    if (!content.en || !content.ar) {
-      console.log('[AI] AI content missing en or ar — falling back to structural.');
-      return null;
+  // Validation failures are non-deterministic (temperature 0.75) — one retry
+  // roughly halves the structural-fallback rate, and structural drafts score
+  // below the 92 auto-publish gate, so each retry that succeeds is the
+  // difference between publishing AI analysis and publishing nothing.
+  const MAX_ATTEMPTS = 2;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    console.log(`[AI] Generating AI content for: ${slug} (attempt ${attempt}/${MAX_ATTEMPTS})`);
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'generate-ai-market-outlook-content.js'),
+      `--slug=${slug}`
+    ], {
+      cwd: ROOT,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      timeout: 90000,
+      env: { ...process.env }
+    });
+    // Use buffer.toString('utf8') explicitly to handle multi-byte Arabic characters on Windows
+    if (result.stderr) process.stderr.write(Buffer.isBuffer(result.stderr) ? result.stderr.toString('utf8') : result.stderr);
+    const stdout = result.stdout ? (Buffer.isBuffer(result.stdout) ? result.stdout.toString('utf8') : result.stdout) : '';
+    if (result.status !== 0 || !stdout.trim()) {
+      console.log(`[AI] Attempt ${attempt} failed or returned empty${attempt < MAX_ATTEMPTS ? ' — retrying' : ' — falling back to structural.'}`);
+      continue;
     }
-    console.log(`[AI] AI content ready. Bias: ${content.en.directional_bias}`);
-    return content;
-  } catch (e) {
-    console.log(`[AI] Could not parse AI content JSON: ${e.message}`);
-    return null;
+    try {
+      const content = JSON.parse(stdout);
+      if (!content.en || !content.ar) {
+        console.log(`[AI] Attempt ${attempt}: content missing en or ar${attempt < MAX_ATTEMPTS ? ' — retrying' : ' — falling back to structural.'}`);
+        continue;
+      }
+      console.log(`[AI] AI content ready. Bias: ${content.en.directional_bias}`);
+      return content;
+    } catch (e) {
+      console.log(`[AI] Attempt ${attempt}: could not parse AI content JSON: ${e.message}${attempt < MAX_ATTEMPTS ? ' — retrying' : ''}`);
+    }
   }
+  return null;
 }
 
 function attemptAutoApproval(topicItem, slugValue) {

@@ -1836,6 +1836,18 @@
         "ar": "/ar/insights/aapl-vs-msft-mega-cap-tech-comparison.html",
         "en": "/insights/aapl-vs-msft-mega-cap-tech-comparison.html"
     },
+    "/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html": {
+        "ar": "/ar/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html",
+        "en": "/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html"
+    },
+    "/ar/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html": {
+        "ar": "/ar/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html",
+        "en": "/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html"
+    },
+    "/en/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html": {
+        "ar": "/ar/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html",
+        "en": "/insights/ai-etf-concentration-guide-semiconductor-exposure-breadth-and-risk.html"
+    },
     "/insights/ai-inference-vs-training.html": {
         "ar": "/ar/insights/ai-inference-vs-training.html",
         "en": "/insights/ai-inference-vs-training.html"
@@ -1908,6 +1920,18 @@
         "ar": "/ar/insights/ai-stocks-market-overview.html",
         "en": "/insights/ai-stocks-market-overview.html"
     },
+    "/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html": {
+        "ar": "/ar/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html",
+        "en": "/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html"
+    },
+    "/ar/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html": {
+        "ar": "/ar/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html",
+        "en": "/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html"
+    },
+    "/en/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html": {
+        "ar": "/ar/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html",
+        "en": "/insights/analyzing-factor-exposure-in-smart-beta-etfs-volatility-size-and-value.html"
+    },
     "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html": {
         "ar": "/ar/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html",
         "en": "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html"
@@ -1919,6 +1943,18 @@
     "/en/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html": {
         "ar": "/ar/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html",
         "en": "/insights/bond-etf-duration-guide-yield-curve-rate-risk-and-liquidity.html"
+    },
+    "/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html": {
+        "ar": "/ar/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html",
+        "en": "/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html"
+    },
+    "/ar/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html": {
+        "ar": "/ar/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html",
+        "en": "/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html"
+    },
+    "/en/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html": {
+        "ar": "/ar/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html",
+        "en": "/insights/bond-etf-liquidity-navigating-spreads-and-market-depth-in-volatile-times.html"
     },
     "/insights/bond-etfs-in-market-research.html": {
         "ar": "/ar/insights/bond-etfs-in-market-research.html",
@@ -2220,6 +2256,18 @@
         "ar": "/ar/insights/hyperscaler-capex-cycles.html",
         "en": "/insights/hyperscaler-capex-cycles.html"
     },
+    "/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html": {
+        "ar": "/ar/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html",
+        "en": "/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html"
+    },
+    "/ar/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html": {
+        "ar": "/ar/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html",
+        "en": "/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html"
+    },
+    "/en/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html": {
+        "ar": "/ar/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html",
+        "en": "/insights/inflation-and-portfolio-construction-diversifying-to-mitigate-purchasing-power-r.html"
+    },
     "/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html": {
         "ar": "/ar/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html",
         "en": "/insights/interest-rate-research-interest-rate-sensitivity-in-growth-stocks.html"
@@ -2327,6 +2375,18 @@
     "/en/insights/sector-etfs-vs-broad-market.html": {
         "ar": "/ar/insights/sector-etfs-vs-broad-market.html",
         "en": "/insights/sector-etfs-vs-broad-market.html"
+    },
+    "/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html": {
+        "ar": "/ar/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html",
+        "en": "/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html"
+    },
+    "/ar/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html": {
+        "ar": "/ar/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html",
+        "en": "/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html"
+    },
+    "/en/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html": {
+        "ar": "/ar/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html",
+        "en": "/insights/sector-rotation-and-economic-cycles-aligning-investments-with-macro-trends.html"
     },
     "/insights/sector-rotation-explained.html": {
         "ar": "/ar/insights/sector-rotation-explained.html",
@@ -2447,6 +2507,18 @@
     "/en/insights/understanding-beta-in-stocks.html": {
         "ar": "/ar/insights/understanding-beta-in-stocks.html",
         "en": "/insights/understanding-beta-in-stocks.html"
+    },
+    "/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html": {
+        "ar": "/ar/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html",
+        "en": "/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html"
+    },
+    "/ar/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html": {
+        "ar": "/ar/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html",
+        "en": "/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html"
+    },
+    "/en/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html": {
+        "ar": "/ar/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html",
+        "en": "/insights/understanding-etf-tax-efficiency-creation-redemption-mechanisms-and-capital-gain.html"
     },
     "/insights/voo-vs-vti-long-term-etf-comparison.html": {
         "ar": "/ar/insights/voo-vs-vti-long-term-etf-comparison.html",

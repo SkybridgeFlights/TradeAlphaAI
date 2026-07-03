@@ -1485,7 +1485,20 @@ function finalArabicCleanup(html) {
 }
 
 function localizeArabicLandingCopy(html) {
+  // Hero risk microcopy: element-anchored replacement, NOT a text pair —
+  // localizeStaticText runs earlier and word-level substitutions ("risk" →
+  // "المخاطر") mangle the English sentence before any exact pair can match.
+  html = html.replace(
+    /(<p class="hero-risk-note"[^>]*>)[\s\S]*?(<\/p>)/,
+    '$1التداول ينطوي على مخاطر كبيرة. الإشارات لأغراض معلوماتية وتعليمية — نتائج الاختبار التاريخي لا تضمن الأداء المستقبلي.$2'
+  );
   const replacements = [
+    // Backtest-qualified performance stats. These pairs must come BEFORE the
+    // older unqualified pairs ("Max DD 6%") so the longer strings match first.
+    ["Backtest Max DD 6%", "أقصى تراجع بالاختبار التاريخي 6%"],
+    ["Backtest PF 1.82", "معامل ربح بالاختبار التاريخي 1.82"],
+    ["Cross-Asset Intelligence Engine", "محرك الذكاء عبر الأصول"],
+    ["A compact map of how market evidence connects.", "خريطة موجزة لكيفية ترابط أدلة السوق."],
     ["TRADING &amp; MARKET RESEARCH PLATFORM", "منصة التداول وأبحاث السوق"],
     ["TRADING &amp;amp; MARKET RESEARCH PLATFORM", "منصة التداول وأبحاث السوق"],
     ["TRADING &amp; أبحاث السوق PLATFORM", "منصة التداول وأبحاث السوق"],

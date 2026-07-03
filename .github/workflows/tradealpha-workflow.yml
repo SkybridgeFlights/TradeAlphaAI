@@ -226,6 +226,14 @@ jobs:
           node tools/apply-global-header.js || echo "[header] degraded"
 
       # AI topic ideation refills the editorial queue when it drains, so the
+      # Stuck-topic recovery: topics parked in manual_revision_required for
+      # 7+ days get one bounded retry as 'planned' — generator fixes land
+      # continuously, so last week's failure often passes today. Runs before
+      # AI ideation so requeued topics count toward the eligible threshold.
+      - name: Requeue stale manual-revision topics
+        continue-on-error: true
+        run: node tools/requeue-stale-revisions.js --execute || echo "[requeue] degraded"
+
       # brain always has fresh candidates. Runs OPENAI-backed and only tops
       # up when eligible < threshold, so tokens aren't wasted on healthy days.
       - name: Top up editorial queue via AI ideation
@@ -523,6 +531,11 @@ jobs:
           node tools/apply-glossary-links.js || echo "[glossary-links] degraded"
           node tools/apply-meta-optimizer.js || echo "[meta-opt] degraded"
           node tools/apply-related-content.js || echo "[related] degraded"
+          # Rebuild the knowledge graph + orphan report AFTER related-content
+          # injection so inbound-link counts reflect the links that actually
+          # ship — the early-preflight build predates this run's widgets.
+          node tools/build-content-knowledge-graph.js --write || echo "[graph-refresh] degraded"
+          node tools/detect-orphan-pages.js --write || echo "[orphan-refresh] degraded"
 
       - name: Commit ancillary changes
         if: ${{ env.DRY_RUN == 'false' }}

@@ -235,11 +235,25 @@ function reasoningArabicSections(topic, plan) {
       `يبقى الاستنتاج مشروطا وغير استشاري. يمثل ${comparison.left} و${comparison.right} طريقتين مختلفتين للتنفيذ، ويتوقف البحث المناسب على الأفق الزمني والتعرضات الحالية والسيولة وتحمل المخاطر. هذا المحتوى لا يشكل نصيحة مالية.`
     ]
   ];
-  return headings.map((heading, index) => ({
-    id: plan.section_plan[index].id,
-    heading,
-    paragraphs: paragraphs[index].map((paragraph) => `${paragraph} ضمن إطار بحثي مشروط ومدعوم بالأدلة بصورة منهجية.`)
-  }));
+  // A single methodological qualifier closes each SECTION (rotating wording),
+  // not every paragraph — the old blanket suffix repeated the identical
+  // sentence 24 times per article and read as machine output.
+  const SECTION_CLOSERS = [
+    'ويأتي ذلك ضمن إطار بحثي مشروط ومدعوم بالأدلة.',
+    'ويظل هذا التحليل تعليميا يستند إلى الأدلة لا إلى التوصيات.',
+    'وتُقرأ هذه النقاط كسياق منهجي قابل للمراجعة وليس كحكم نهائي.',
+    'ويبقى تقييم ذلك مشروطا بما تؤكده البيانات اللاحقة.',
+  ];
+  return headings.map((heading, index) => {
+    const closer = SECTION_CLOSERS[index % SECTION_CLOSERS.length];
+    const body = paragraphs[index].slice();
+    body[body.length - 1] = `${body[body.length - 1]} ${closer}`;
+    return {
+      id: plan.section_plan[index].id,
+      heading,
+      paragraphs: body
+    };
+  });
 }
 
 function renderReasoningComparisonTable(plan, ar) {

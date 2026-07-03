@@ -603,7 +603,16 @@ function renderSection(locale) {
           <div class="nr-hero-ribbon">
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Top story', 'القصة الأبرز')}</span>${escapeHtml(topStory || t('Desk monitoring — no dominant wire story', 'وضع المراقبة — لا قصة مهيمنة في الموجز'))}</span>
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Next catalyst', 'المحفز التالي')}</span>${topCatalyst ? escapeHtml(catalystName(topCatalyst.name, ar)) : t('none scheduled', 'لا شيء مجدول')}</span>
-            <span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${escapeHtml(stateLabel(dims.risk_state || 'unverified', ar))} · ${escapeHtml(stateLabel(dims.volatility_regime || 'unverified', ar))}</span>${macroVerified && macro.conviction && macro.conviction.state !== 'unverified' ? `
+            ${(() => {
+              // Only verified regime parts render; "— · —" placeholders read
+              // as broken data on the hero ribbon.
+              const parts = [dims.risk_state, dims.volatility_regime]
+                .filter((v) => v && v !== 'unverified')
+                .map((v) => escapeHtml(stateLabel(v, ar)));
+              return parts.length
+                ? `<span class="nr-hero-item"><span class="nr-hero-key">${t('Regime', 'النظام')}</span>${parts.join(' · ')}</span>`
+                : '';
+            })()}${macroVerified && macro.conviction && macro.conviction.state !== 'unverified' ? `
             <span class="nr-hero-item"><span class="nr-hero-key">${t('Conviction', 'القناعة')}</span>${escapeHtml(CONVICTION_LABELS[locale][macro.conviction.state] || macro.conviction.state)}</span>` : ''}${tensionItem}${catalystWindowItem}${transitionItem}
           </div>`;
 
@@ -749,11 +758,15 @@ function renderSection(locale) {
   }).join('\n            ');
 
   // ── Macro monitor chips (terminal dashboard, with regime phase markers) ─
-  const chips = Object.entries(DIM_LABELS[locale]).map(([key, label]) => {
-    const value = dims[key] || 'unverified';
-    const marker = cogFresh && value !== 'unverified' ? phaseMarker(cogShifts[key], ar) : '';
-    return `<span class="nr-chip" data-dim="${key}" data-state="${escapeHtml(value)}">${escapeHtml(label)}: <strong>${escapeHtml(stateLabel(value, ar))}</strong>${marker}</span>`;
-  }).join('\n            ');
+  // Unverified dimensions are OMITTED, not rendered as "—"/"unverified" —
+  // empty-value chips on the homepage read as broken data to visitors.
+  const chips = Object.entries(DIM_LABELS[locale])
+    .filter(([key]) => dims[key] && dims[key] !== 'unverified')
+    .map(([key, label]) => {
+      const value = dims[key];
+      const marker = cogFresh ? phaseMarker(cogShifts[key], ar) : '';
+      return `<span class="nr-chip" data-dim="${key}" data-state="${escapeHtml(value)}">${escapeHtml(label)}: <strong>${escapeHtml(stateLabel(value, ar))}</strong>${marker}</span>`;
+    }).join('\n            ');
 
   // ── Modules (with desk identities) ──────────────────────────────────────
   const fedDay = catalysts.some((c) => /fomc|fed/i.test(String(c.name || '')));
@@ -787,14 +800,16 @@ function renderSection(locale) {
     ? movers.map((m) => `<li><span class="nr-wire-headline"><strong>${m.symbol}</strong> ${fmtChange(m.change)} — ${escapeHtml(classifyMove(m.symbol, m.change, dims, ar))}</span></li>`).join('\n              ')
     : `<li class="nr-empty">${t('No outsized sourced moves this cycle.', 'لا تحركات كبيرة موثقة في هذه الدورة.')}</li>`;
 
-  const rotation = verified
+  let rotation = verified
     ? [
       [t('Breadth', 'الاتساع'), dims.breadth_state],
       [t('Defensive rotation', 'التناوب الدفاعي'), dims.defensive_rotation],
       [t('Momentum concentration', 'تركز الزخم'), dims.momentum_concentration],
       [t('Speculative appetite', 'شهية المضاربة'), dims.speculative_appetite],
-    ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ')
-    : `<li class="nr-empty">${t('Rotation structure remains under observation until participation inputs are verified.', 'تبقى بنية التناوب قيد الرصد إلى أن تتأكد بيانات المشاركة في السوق.')}</li>`;
+    ].filter(([, value]) => value && value !== 'unverified')
+      .map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value, ar))}</span></li>`).join('\n              ')
+    : '';
+  if (!rotation) rotation = `<li class="nr-empty">${t('Rotation structure remains under observation until participation inputs are verified.', 'تبقى بنية التناوب قيد الرصد إلى أن تتأكد بيانات المشاركة في السوق.')}</li>`;
 
   let riskDesk = verified
     ? [
@@ -802,8 +817,10 @@ function renderSection(locale) {
       [t('Market fragility', 'هشاشة السوق'), dims.market_fragility],
       [t('Liquidity state', 'حالة السيولة'), dims.liquidity_stress],
       [t('Duration stress', 'ضغط الحساسية للفائدة'), dims.duration_pressure],
-    ].map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value || 'unverified', ar))}</span></li>`).join('\n              ')
-    : `<li class="nr-empty">${t('Risk conditions are being monitored; no verified stress state is asserted this cycle.', 'تخضع ظروف المخاطر للرصد؛ ولا تُعتمد حالة ضغط قبل اكتمال هذه الدورة الموثقة.')}</li>`;
+    ].filter(([, value]) => value && value !== 'unverified')
+      .map(([label, value]) => `<li><span>${escapeHtml(label)}</span><span class="nr-meta">${escapeHtml(stateLabel(value, ar))}</span></li>`).join('\n              ')
+    : '';
+  if (!riskDesk) riskDesk = `<li class="nr-empty">${t('Risk conditions are being monitored; no verified stress state is asserted this cycle.', 'تخضع ظروف المخاطر للرصد؛ ولا تُعتمد حالة ضغط قبل اكتمال هذه الدورة الموثقة.')}</li>`;
   const riskMemory = memoryFocus.find((item) => ['market-fragility', 'liquidity-compression', 'defensive-rotation', 'volatility-compression'].includes(item.id));
   if (verified && riskMemory) {
     riskDesk += `\n              <li data-memory-thread="${escapeHtml(riskMemory.id)}"><span class="nr-wire-headline"><span class="nr-badge" data-urgency="low">${t('CONTINUITY', 'استمرارية')}</span> ${escapeHtml(ar ? riskMemory.ar : riskMemory.en)}</span></li>`;
@@ -827,8 +844,12 @@ function renderSection(locale) {
     en: { emerging: 'EMERGING', strengthening: 'STRENGTHENING', dominant: 'DOMINANT', crowded: 'CROWDED', weakening: 'WEAKENING', fading: 'FADING', unresolved: 'UNRESOLVED', invalidated: 'INVALIDATED', failed: 'FAILED TEST', 'ignored-by-price': 'UNPRICED' },
     ar: { emerging: 'ناشئة', strengthening: 'تتعزز', dominant: 'مهيمنة', crowded: 'مزدحمة', weakening: 'تضعف', fading: 'تتلاشى', unresolved: 'غير محسومة', invalidated: 'انتفت', failed: 'اختبار لم يتحقق', 'ignored-by-price': 'دون تسعير' },
   };
-  const memoryHtml = memoryFocus.length
-    ? memoryFocus.slice(0, 4).map((item) => {
+  // Skip the memory item already promoted to the desk-lead headline —
+  // repeating the exact sentence in two homepage sections reads as
+  // auto-generated filler.
+  const memoryList = memoryFocus.filter((item) => (ar ? item.ar : item.en) !== leadHeadline);
+  const memoryHtml = memoryList.length
+    ? memoryList.slice(0, 4).map((item) => {
       const state = MEMORY_STATES.includes(item.state) || ['failed', 'ignored-by-price'].includes(item.state) ? item.state : 'emerging';
       const sessions = Number.isInteger(item.sessions) && item.sessions > 1
         ? `<span class="nr-meta">${ar ? `${item.sessions} جلسات` : `${item.sessions} sessions`}</span>`

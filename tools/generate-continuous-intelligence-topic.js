@@ -28,8 +28,13 @@ const RATE_PATH        = path.join(ROOT, 'data', 'intelligence', 'rate-path-inte
 const VISUAL_DIR       = path.join(ROOT, 'data', 'visual');
 const QUEUE_PATH       = path.join(ROOT, 'data', 'continuous-intelligence-queue.json');
 
-const MIN_CONFIDENCE      = 40;
-const FAMILY_COOLDOWN_DAYS = 10;
+// Loosened 2026-07-03 (40/10 → 35/7): with the old settings the news desk
+// produced zero candidates for 11 straight days — every detected signal was
+// either one family in a 10-day cooldown or just under the confidence bar.
+// A visibly frozen news section is worse than a slightly more talkative one;
+// the quality scorer and publish gates still guard the output.
+const MIN_CONFIDENCE      = 35;
+const FAMILY_COOLDOWN_DAYS = 7;
 
 function readJson(p, fallback) {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return fallback; }

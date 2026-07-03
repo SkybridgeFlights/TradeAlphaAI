@@ -203,14 +203,52 @@ function checkAnchorDiversity(html) {
   return { diverse: repeated.length === 0, repeated };
 }
 
+// Specific Arabic labels for hub pages — without these every hub link on an
+// Arabic page collapsed to the generic "مركز أبحاث ذو صلة" fallback.
+const AR_HUB_LABELS = {
+  'ai-stocks': 'مركز أسهم الذكاء الاصطناعي',
+  'blue-chip-stocks': 'مركز الأسهم القيادية',
+  'cloud-stocks': 'مركز أسهم الحوسبة السحابية',
+  'cybersecurity-stocks': 'مركز أسهم الأمن السيبراني',
+  'defensive-stocks': 'مركز الأسهم الدفاعية',
+  'dividend-stocks': 'مركز أسهم التوزيعات',
+  'energy-stocks': 'مركز أسهم الطاقة',
+  'fintech-stocks': 'مركز أسهم التقنية المالية',
+  'growth-stocks': 'مركز أسهم النمو',
+  'healthcare-stocks': 'مركز أسهم الرعاية الصحية',
+  'momentum-stocks': 'مركز أسهم الزخم',
+  'semiconductor-stocks': 'مركز أسهم أشباه الموصلات',
+  'value-stocks': 'مركز أسهم القيمة',
+  'ai-etfs': 'مركز صناديق الذكاء الاصطناعي',
+  'bond-etfs': 'مركز صناديق السندات',
+  'commodity-etfs': 'مركز صناديق السلع',
+  'defensive-etfs': 'مركز الصناديق الدفاعية',
+  'dividend-etfs': 'مركز صناديق التوزيعات',
+  'emerging-market-etfs': 'مركز صناديق الأسواق الناشئة',
+  'healthcare-etfs': 'مركز صناديق الرعاية الصحية',
+  'low-volatility-etfs': 'مركز صناديق التقلب المنخفض',
+  'real-estate-etfs': 'مركز الصناديق العقارية',
+};
+
 function buildAnchor(node, locale) {
   const localized = ARTICLE_METADATA.get(node.slug);
   if (locale === 'ar') {
     const registryTitle = cleanTitle(localized?.title_ar);
     if (registryTitle) return normalizeArabicLabel(registryTitle, node);
 
+    if (node.type === 'hub' && AR_HUB_LABELS[node.slug]) return AR_HUB_LABELS[node.slug];
     if (node.type === 'etf') return normalizeArabicLabel(`صندوق ${node.slug.toUpperCase()}`, node);
     if (node.type === 'stock') return normalizeArabicLabel(`بحث ${node.slug.toUpperCase()}`, node);
+    if (node.type === 'compare') {
+      // "aapl-vs-msft" → "مقارنة AAPL و MSFT" — tickers stay Latin, which
+      // Arabic financial copy accepts and normalizeArabicLabel now allows.
+      const m = node.slug.match(/^([a-z0-9]+)-vs-([a-z0-9]+)$/);
+      if (m) return normalizeArabicLabel(`مقارنة ${m[1].toUpperCase()} و ${m[2].toUpperCase()}`, node);
+    }
+    if (node.type === 'market_outlook') {
+      const date = (node.slug.match(/(\d{4}-\d{2}-\d{2})$/) || [])[1];
+      if (date) return `نظرة السوق — ${date}`;
+    }
 
     const graphFallback = cleanTitle(node.title) || node.slug.replace(/-/g, ' ');
     return normalizeArabicLabel(graphFallback, node);
@@ -233,7 +271,12 @@ function cleanTitle(title) {
 
 function normalizeArabicLabel(label, node) {
   const normalized = String(label || '').trim();
-  if (normalized && !/[A-Za-z]{4,}/.test(normalized)) return normalized;
+  // Tickers (all-caps tokens up to 5 chars) are legitimately Latin inside
+  // Arabic financial copy — strip them before testing for English leaks so
+  // "صندوق SOXX" and "مقارنة AAPL و MSFT" keep their specific labels instead
+  // of collapsing to the generic fallback.
+  const withoutTickers = normalized.replace(/\b[A-Z]{2,5}\b/g, '');
+  if (normalized && !/[A-Za-z]{4,}/.test(withoutTickers)) return normalized;
 
   console.warn(
     `[internal-links] Arabic label localization fallback for ${node.slug || node.id || 'unknown'}: ` +
