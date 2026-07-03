@@ -118,7 +118,12 @@ function editorialLongFormChecks(en, ar, enBody, arBody, combined) {
   const arSections = extractMainSections(ar);
   const enArticleText = enSections.map((section) => section.text).join(' ') || enBody;
   const arArticleText = arSections.map((section) => section.text).join(' ') || arBody;
-  const bulletCount = (en.match(/<li\b/gi) || []).length;
+  // Count bullets ONLY within actual article sections. Counting the whole
+  // document double-counts the header-nav dropdowns and sidebar related-
+  // research chips as "content bullets", which false-fails paragraph_dominance
+  // and no_skeleton_structure on well-formed articles.
+  const enSectionHtml = enSections.map((section) => section.html).join(' ');
+  const bulletCount = (enSectionHtml.match(/<li\b/gi) || []).length;
   const semantic = editorialSemanticDepth(enArticleText);
   return {
     editorial_word_count: wordCount(enArticleText) >= 1200 && wordCount(enArticleText) <= 1800 && wordCount(arArticleText) >= 900 && wordCount(arArticleText) <= 1400,
@@ -128,7 +133,7 @@ function editorialLongFormChecks(en, ar, enBody, arBody, combined) {
     editorial_analytical_sentence_count: analyticalSentenceCount(enArticleText) >= 32,
     editorial_paragraph_dominance: bulletCount < enParagraphs.length,
     editorial_section_depth: enSections.length >= 7 && enSections.every((section) => wordCount(section.text) >= 120 && extractParagraphs(section.html).length >= 2),
-    editorial_no_skeleton_structure: !looksLikeSkeleton(en, enArticleText, enParagraphs, bulletCount),
+    editorial_no_skeleton_structure: !looksLikeSkeleton(enSectionHtml, enArticleText, enParagraphs, bulletCount),
     editorial_semantic_depth: Object.values(semantic).every(Boolean),
     editorial_narrative_continuity: narrativeContinuity(en, enArticleText),
     editorial_analytical_density: analyticalSentenceCount(enArticleText) / Math.max(sentenceCount(enArticleText), 1) >= 0.42,

@@ -102,7 +102,14 @@ function checkInstitutionalEditorial(html, rel) {
   const paragraphs = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
     .map((match) => stripHtml(match[1]))
     .filter((paragraph) => paragraph.split(/\s+/).length >= 18);
-  const bullets = (html.match(/<li\b/gi) || []).length;
+  // Count bullets ONLY within the article body — exclude the global header
+  // nav dropdowns and the sidebar related-research chips, which are chrome
+  // and would otherwise false-fail `excessive bullet dependency` on every
+  // well-formed article.
+  const articleBody = html
+    .replace(/<!--\s*GLOBAL_HEADER_START\s*-->[\s\S]*?<!--\s*GLOBAL_HEADER_END\s*-->/, '')
+    .replace(/<aside class="insight-sidebar"[\s\S]*?<\/aside>/g, '');
+  const bullets = (articleBody.match(/<li\b/gi) || []).length;
   const transitions = (html.match(/class="editorial-transition"/g) || []).length;
   const analytical = text.split(/[.!?]+/).filter((sentence) =>
     sentence.split(/\s+/).length >= 12 &&
