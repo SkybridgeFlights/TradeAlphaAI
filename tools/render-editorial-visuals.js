@@ -107,8 +107,20 @@ function selectChartForArticle(articleContext) {
   return data ? selectRelevantChart(data.selected, articleContext) : null;
 }
 
-function renderArticleVisualSection(articleContext, locale, preSelectedChart = null) {
-  const chart = preSelectedChart || selectChartForArticle(articleContext);
+function renderArticleVisualSection(articleContext, locale, preSelectedChart) {
+  // Sentinel logic:
+  //   preSelectedChart === undefined → legacy path, run selection on articleContext
+  //   preSelectedChart === null      → caller explicitly says "no chart" — skip
+  //   preSelectedChart === object    → use this chart
+  //
+  // The old `preSelectedChart || selectChartForArticle(articleContext)` collapsed
+  // the null case into the legacy path, which meant callers passing null (to
+  // enforce EN/AR symmetry) instead re-ran selection on the AR body and
+  // asymmetrically injected the visual section — breaking the article-pair
+  // section-count contract.
+  const chart = preSelectedChart === undefined
+    ? selectChartForArticle(articleContext)
+    : preSelectedChart;
   if (!chart) return '';
   const ar = locale === 'ar';
   return `<section class="market-section editorial-visual-section article-visual-intelligence" aria-labelledby="visual-intelligence-heading">
@@ -123,7 +135,7 @@ function renderArticleVisualSection(articleContext, locale, preSelectedChart = n
 // under-match (English chart terms not present) or over-match (bilingual
 // glossary/hub anchors leak English tokens), producing asymmetric
 // section counts — a hard-fail in the article-pair contract check.
-function injectArticleVisual(html, locale, preSelectedChart = null) {
+function injectArticleVisual(html, locale, preSelectedChart) {
   if (!html || html.includes('class="editorial-figure"')) return html;
   const section = renderArticleVisualSection(html, locale, preSelectedChart);
   if (!section) return html;
