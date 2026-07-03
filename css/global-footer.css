@@ -1,0 +1,61 @@
+/* Canonical global footer — baked onto every page by apply-global-header.js.
+   Self-contained copy of the .site-footer rules (originally in
+   global-layout.css) so pages that do not load global-layout.css still
+   render the footer identically. */
+
+.site-footer {
+  margin-top: clamp(48px, 7vw, 88px);
+  border-top: 1px solid var(--global-nav-border, rgba(120, 144, 178, 0.25));
+  background: #07101d;
+  color: #dbe7f5;
+}
+
+.site-footer .wrap,
+.site-footer-inner {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.site-footer-inner {
+  min-height: 150px;
+  padding-block: 32px;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  align-items: start;
+  gap: 20px 48px;
+}
+
+.site-footer p,
+.site-footer small { color: #91a4ba; }
+.site-footer p { margin: 6px 0 0; }
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px 20px;
+}
+
+.site-footer a { color: #dbe7f5; text-decoration: none; }
+.site-footer a:hover,
+.site-footer a:focus-visible { color: var(--global-nav-active, #e8c258); }
+
+.site-footer-disclaimer {
+  grid-column: 1 / -1;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  border-top: 1px solid rgba(120, 144, 178, 0.15);
+  padding-top: 14px;
+}
+
+.site-footer small { grid-column: 1 / -1; }
+
+[dir="rtl"] .site-footer-inner,
+[dir="rtl"] .site-footer nav { text-align: right; }
+[dir="rtl"] .site-footer nav { justify-content: flex-start; }
+
+@media (max-width: 720px) {
+  .site-footer-inner { grid-template-columns: 1fr; }
+  .site-footer nav { justify-content: flex-start; }
+}

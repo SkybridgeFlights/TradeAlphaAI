@@ -14,6 +14,17 @@
 const fs   = require('fs');
 const path = require('path');
 const { renderGlobalHeader, globalHeaderStyles, globalHeaderScripts, MARKER_START, MARKER_END } = require('./render-global-header');
+const { renderGlobalFooter, globalFooterStyles, FOOTER_MARKER_START, FOOTER_MARKER_END } = require('./render-global-footer');
+
+// Site typography (Cairo + Inter via Google Fonts) was only linked on the
+// homepage — every other page silently fell back to Segoe UI, which is the
+// single biggest "these pages don't look like the same site" factor. The
+// bake guarantees the font stack on every page.
+const FONT_LINKS = [
+  '<link rel="preconnect" href="https://fonts.googleapis.com" />',
+  '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />',
+  '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />',
+].join('\n  ');
 
 const ROOT   = path.resolve(__dirname, '..');
 const DRY    = process.argv.includes('--dry-run');
@@ -150,6 +161,37 @@ function processFile(file) {
   // repeated rebakes stay idempotent.
   newHtml = removeAssetTags(newHtml, /\/?css\/global-header(?:-canonical)?\.css(?:[?#][^"']*)?/i, 'link');
   newHtml = newHtml.replace('</head>', `  ${globalHeaderStyles()}\n</head>`);
+
+  // Ensure the site font stack on every page (strip existing copies first).
+  newHtml = newHtml.replace(/[ \t]*<link[^>]*href="https:\/\/fonts\.(?:googleapis|gstatic)\.com[^>]*>[ \t]*(?:\r?\n)?/gi, '');
+  newHtml = newHtml.replace('</head>', `  ${FONT_LINKS}\n</head>`);
+
+  // market-shell pages are designed on styles.css (theme variables + core
+  // typography). Some generated families (market-outlook daily briefings)
+  // shipped without it and rendered off-theme.
+  if (newHtml.includes('market-shell') && !/<link[^>]*href="[^"]*styles\.css"/i.test(newHtml)) {
+    newHtml = newHtml.replace('</head>', '  <link rel="stylesheet" href="/styles.css" />\n</head>');
+  }
+
+  // ── Canonical global footer ────────────────────────────────────────────────
+  // Every content page carries the same trust block (brand + nav +
+  // education/no-advice disclaimer + copyright). The landing footer on the
+  // homepage (<footer class="footer">) is richer by design and stays.
+  newHtml = removeAssetTags(newHtml, /\/?css\/global-footer\.css(?:[?#][^"']*)?/i, 'link');
+  const hasLandingFooter = /<footer[^>]*class="footer[\s"]/i.test(newHtml);
+  if (!hasLandingFooter) {
+    newHtml = newHtml.replace('</head>', `  ${globalFooterStyles()}\n</head>`);
+    // Drop a previously baked canonical footer (marker block).
+    const fStart = newHtml.indexOf(FOOTER_MARKER_START);
+    const fEnd = newHtml.indexOf(FOOTER_MARKER_END);
+    if (fStart >= 0 && fEnd > fStart) {
+      newHtml = newHtml.slice(0, fStart) + newHtml.slice(fEnd + FOOTER_MARKER_END.length);
+    }
+    // Drop legacy per-template site-footer blocks so the canonical one is the
+    // single source of truth.
+    newHtml = newHtml.replace(/[ \t]*<footer class="site-footer">[\s\S]*?<\/footer>[ \t]*(?:\r?\n)?/g, '');
+    newHtml = newHtml.replace(/<\/body>/i, `${renderGlobalFooter(ar ? 'ar' : 'en')}\n</body>`);
+  }
 
   // Strip every script the global header owns so we don't accumulate copies
   // on repeated rebakes. The set must match globalHeaderScripts() exactly.
@@ -389,6 +431,19 @@ function collectTargetFiles() {
       for (const file of walkHtml(absolute)) files.add(file);
     } else {
       files.add(absolute);
+    }
+  }
+  // Hub pages live as root-level *-stocks.html / *-etfs.html files — they
+  // were never in ROOTS, so 22 EN + 22 AR high-traffic hubs shipped without
+  // the canonical header/footer/font bake and drifted visually.
+  const hubPattern = /^[a-z0-9-]+-(?:stocks|etfs)\.html$/;
+  for (const name of fs.readdirSync(ROOT)) {
+    if (hubPattern.test(name)) files.add(path.join(ROOT, name));
+  }
+  const arDir = path.join(ROOT, 'ar');
+  if (fs.existsSync(arDir)) {
+    for (const name of fs.readdirSync(arDir)) {
+      if (hubPattern.test(name)) files.add(path.join(arDir, name));
     }
   }
   return [...files]

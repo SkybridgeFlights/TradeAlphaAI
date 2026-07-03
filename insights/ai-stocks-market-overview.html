@@ -122,6 +122,10 @@
   <!-- META_OPTIMIZED:v1 -->
   <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/css/global-header-canonical.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global-footer.css" />
 </head>
 <body class="market-page">
   <!-- GLOBAL_HEADER_START -->
@@ -464,6 +468,30 @@
   };
 </script>
 <script src="https://substackapi.com/widget.js" async></script>
+
+
+
+<!-- GLOBAL_FOOTER_START -->
+<footer class="site-footer" data-global-footer>
+  <div class="wrap site-footer-inner">
+    <div>
+      <strong>TradeAlpha AI</strong>
+      <p>Educational, non-advisory financial research and market intelligence.</p>
+    </div>
+    <nav aria-label="Footer navigation">
+      <a href="/insights/">Research Library</a>
+      <a href="/market-outlook/">Market Outlook</a>
+      <a href="/market-news/">Market News</a>
+      <a href="/economic-calendar/">Economic Calendar</a>
+      <a href="/glossary/">Glossary</a>
+      <a href="/newsletter/">Newsletter</a>
+      <a href="/methodology.html">Methodology</a>
+    </nav>
+    <p class="site-footer-disclaimer">All content on this site is educational research and market context — not investment advice, a recommendation, or a solicitation. Trading involves substantial risk of loss.</p>
+    <small>&copy; 2026 TradeAlphaAI — All rights reserved.</small>
+  </div>
+</footer>
+<!-- GLOBAL_FOOTER_END -->
   <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script src="/js/search-autocomplete.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
 </body>
 </html>

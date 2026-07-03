@@ -1338,3 +1338,8 @@ body.mobile-nav-open { overflow: hidden; }
   .nav-dropdown.nav-dropdown-compact,
   .nav-mega-dropdown { display: none !important; }
 }
+
+/* Overflow guard (2026-07-03): hidden nav dropdowns near the right edge extended layout width by ~11px, creating a permanent horizontal scrollbar on every page. Right-edge menus flip to right-alignment, and html clips residual overflow without creating a new scroll container. */
+.nav-menu:last-child .nav-dropdown,
+.nav-item:last-child .nav-dropdown { left: auto; right: 0; }
+html { overflow-x: clip; }
