@@ -103,7 +103,32 @@ function collectCoveredTitles(queue, registry) {
   return [...new Set(covered)];
 }
 
-function normalizeTopic(raw) {
+// Auto-discover the list of valid hub pages from disk. `related_hubs` must
+// point at real hub files (checked by check-editorial-quality.js) — hardcoding
+// would drift as new hubs land.
+function discoverHubs() {
+  const hubs = new Set();
+  for (const file of fs.readdirSync(ROOT)) {
+    const m = file.match(/^([a-z0-9-]+-(?:stocks|etfs))\.html$/);
+    if (m) hubs.add(m[1]);
+  }
+  return [...hubs].sort();
+}
+
+// Category → best-guess hub fallback when the model returns no hubs.
+// The categories mirror what the ideation prompt asks the model to use.
+function fallbackHub(category, availableHubs) {
+  const cat = String(category || '').toLowerCase();
+  const pick = (needle) => availableHubs.find((h) => h.includes(needle));
+  if (cat.includes('etf'))       return pick('etfs') || availableHubs[0];
+  if (cat.includes('sector'))    return pick('stocks') || availableHubs[0];
+  if (cat.includes('macro'))     return pick('defensive') || availableHubs[0];
+  if (cat.includes('portfolio')) return pick('defensive') || availableHubs[0];
+  if (cat.includes('structure')) return pick('growth') || availableHubs[0];
+  return availableHubs[0];
+}
+
+function normalizeTopic(raw, availableHubs, dayOffset = 1) {
   if (!raw || typeof raw !== 'object') return null;
   const titleEn = String(raw.title_en || raw.title || '').trim();
   const titleAr = String(raw.title_ar || '').trim();
@@ -111,8 +136,19 @@ function normalizeTopic(raw) {
   const slug = slugify(raw.slug || titleEn);
   if (!slug) return null;
 
+  // Stagger target publish dates so the editorial-schedule check (1/day cap)
+  // doesn't complain when we drop 6 new topics at once.
   const today = new Date();
-  const publishTarget = new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const publishTarget = new Date(today.getTime() + dayOffset * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  // Only keep hubs the model returned that actually exist on disk — anything
+  // else fails check-editorial-quality.js when it looks up the hub page.
+  const proposedHubs = Array.isArray(raw.related_hubs) ? raw.related_hubs.map(String) : [];
+  const validHubs = proposedHubs.filter((h) => availableHubs.includes(h));
+  if (validHubs.length === 0) {
+    const fallback = fallbackHub(raw.category, availableHubs);
+    if (fallback) validHubs.push(fallback);
+  }
 
   return {
     slug,
@@ -123,7 +159,7 @@ function normalizeTopic(raw) {
     related_stocks:      Array.isArray(raw.related_stocks) ? raw.related_stocks.map((s) => String(s).toUpperCase()).slice(0, 6) : [],
     related_etfs:        Array.isArray(raw.related_etfs) ? raw.related_etfs.map((s) => String(s).toUpperCase()).slice(0, 6) : [],
     related_comparisons: Array.isArray(raw.related_comparisons) ? raw.related_comparisons.map(String).slice(0, 4) : [],
-    related_hubs:        Array.isArray(raw.related_hubs) ? raw.related_hubs.map(String).slice(0, 4) : [],
+    related_hubs:        validHubs.slice(0, 4),
     priority:            2,
     status:              'planned',
     target_publish_date: publishTarget,
@@ -162,6 +198,7 @@ async function main() {
   const registry = readJson(REGISTRY_PATH, { articles: [] });
   const covered = collectCoveredTitles(queue, registry);
   const existingSlugs = new Set((queue.topics || []).map((t) => t.slug));
+  const availableHubs = discoverHubs();
 
   const systemPrompt = [
     'You are an institutional research editor for TradeAlphaAI, a bilingual (English + Arabic) educational financial research platform.',
@@ -183,6 +220,9 @@ async function main() {
     'Already covered (do NOT duplicate any of these angles):',
     ...covered.slice(0, 60).map((t, i) => `${i + 1}. ${t}`),
     '',
+    `Available hub pages (each topic MUST reference at least 1-2, exact strings):`,
+    availableHubs.join(', '),
+    '',
     'Return JSON with this exact shape:',
     '{',
     '  "topics": [',
@@ -193,6 +233,7 @@ async function main() {
     '      "tags": ["3-5 topical tags"],',
     '      "related_stocks": ["TICKER1", "TICKER2"],',
     '      "related_etfs": ["ETF1", "ETF2"],',
+    '      "related_hubs": ["one-or-two-hub-slugs-from-the-list-above"],',
     '      "evergreen_category": "sector education | etf education | macro education | portfolio education",',
     '      "discovery_cluster": "short cluster name"',
     '    }',
@@ -213,12 +254,14 @@ async function main() {
   const accepted = [];
   const rejected = [];
 
+  let dayOffset = 1;
   for (const item of raw) {
-    const topic = normalizeTopic(item);
+    const topic = normalizeTopic(item, availableHubs, dayOffset);
     if (!topic) { rejected.push({ reason: 'missing_required_fields', raw: item }); continue; }
     if (existingSlugs.has(topic.slug)) { rejected.push({ reason: 'duplicate_slug', slug: topic.slug }); continue; }
     existingSlugs.add(topic.slug);
     accepted.push(topic);
+    dayOffset++;
   }
 
   console.log(`[ai-topics] proposals: ${raw.length}, accepted: ${accepted.length}, rejected: ${rejected.length}`);
