@@ -9,9 +9,14 @@ const SOURCE_URL = 'https://fred.stlouisfed.org/docs/api/fred/releases_dates.htm
 async function fetchCalendar(context) {
   const apiKey = String(context.env.FRED_API_KEY || '').trim();
   if (!apiKey) throw providerError('missing_api_key');
-  // Request with ascending sort so upcoming scheduled dates appear first.
-  // Increase limit to 2000 to maximise coverage across all FRED releases.
-  const url = `${ENDPOINT}?api_key=${encodeURIComponent(apiKey)}&file_type=json&include_release_dates_with_no_data=true&limit=1000&order_by=release_date&sort_order=asc`;
+  // realtime_start/realtime_end scope the response to the requested window.
+  // Without them the API defaults its realtime period to TODAY and ascending
+  // sort returns the oldest release dates on record — 1000 historical rows,
+  // zero in the future range, which made this free provider permanently
+  // useless ("no release dates in range (total=1000)" on every run).
+  // include_release_dates_with_no_data=true is what surfaces FUTURE scheduled
+  // dates inside that window.
+  const url = `${ENDPOINT}?api_key=${encodeURIComponent(apiKey)}&file_type=json&include_release_dates_with_no_data=true&limit=1000&order_by=release_date&sort_order=asc&realtime_start=${encodeURIComponent(context.from)}&realtime_end=${encodeURIComponent(context.to)}`;
   console.log(`[FRED_PROVIDER] endpoint=${ENDPOINT} range=${context.from}..${context.to}`);
   const data = await getJson(url);
   if (!Array.isArray(data?.release_dates)) throw providerError('unexpected_response');

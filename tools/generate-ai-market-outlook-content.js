@@ -1088,7 +1088,10 @@ async function main() {
       buildSystemCore(),
       buildEnUserPrompt(topic, fw, narrativeContext, calendarText),
       apiKey,
-      { maxTokens: 2800, temperature: 0.75 }
+      // Retry attempts (AI_ATTEMPT >= 2, set by the draft generator) run at
+      // lower temperature: validation failures are usually creative drift,
+      // and cooler sampling converges on the required section structure.
+      { maxTokens: 2800, temperature: Number(process.env.AI_ATTEMPT || 1) >= 2 ? 0.55 : 0.75 }
     );
   } catch (err) {
     process.stderr.write(`[AI] EN generation failed: ${err.message}\n`);

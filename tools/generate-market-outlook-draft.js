@@ -1041,7 +1041,7 @@ function tryGetAiContent(slug) {
   // roughly halves the structural-fallback rate, and structural drafts score
   // below the 92 auto-publish gate, so each retry that succeeds is the
   // difference between publishing AI analysis and publishing nothing.
-  const MAX_ATTEMPTS = 2;
+  const MAX_ATTEMPTS = 3;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     console.log(`[AI] Generating AI content for: ${slug} (attempt ${attempt}/${MAX_ATTEMPTS})`);
     const result = spawnSync(process.execPath, [
@@ -1051,7 +1051,10 @@ function tryGetAiContent(slug) {
       cwd: ROOT,
       stdio: ['ignore', 'pipe', 'pipe'],
       timeout: 90000,
-      env: { ...process.env }
+      // Later attempts run at lower temperature — validation failures are
+      // usually creative drift, and more deterministic output converges on
+      // the required structure.
+      env: { ...process.env, AI_ATTEMPT: String(attempt) }
     });
     // Use buffer.toString('utf8') explicitly to handle multi-byte Arabic characters on Windows
     if (result.stderr) process.stderr.write(Buffer.isBuffer(result.stderr) ? result.stderr.toString('utf8') : result.stderr);
