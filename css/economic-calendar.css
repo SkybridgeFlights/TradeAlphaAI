@@ -278,6 +278,38 @@
 .ec-badge-high   { background: rgba(255, 120, 120, 0.15); color: var(--market-red, #ff7878);  border: 1px solid rgba(255, 120, 120, 0.28); }
 .ec-badge-medium { background: rgba(216, 177, 90, 0.14);  color: var(--market-gold, #d8b15a); border: 1px solid rgba(216, 177, 90, 0.28); }
 .ec-badge-low    { background: rgba(125, 255, 140, 0.09); color: var(--market-green, #7dff8c);border: 1px solid rgba(125, 255, 140, 0.2); }
+
+/* investing.com-style impact meter: three bars, filled by importance. */
+.ec-impact-meter {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-inline-end: 6px;
+  height: 12px;
+  vertical-align: middle;
+}
+.ec-impact-bar {
+  display: inline-block;
+  width: 3px;
+  background: rgba(180, 196, 210, 0.22);
+  border-radius: 1px;
+}
+.ec-impact-bar:nth-child(1) { height: 5px; }
+.ec-impact-bar:nth-child(2) { height: 8px; }
+.ec-impact-bar:nth-child(3) { height: 11px; }
+.ec-impact-bar.is-on { background: var(--market-red, #ff7878); }
+/* Filled bars take the row's importance colour. */
+td:has(.ec-badge-medium) .ec-impact-bar.is-on { background: var(--market-gold, #d8b15a); }
+td:has(.ec-badge-low) .ec-impact-bar.is-on { background: var(--market-green, #7dff8c); }
+
+/* Country flag before the code. */
+.ec-flag {
+  font-size: 1.05rem;
+  margin-inline-end: 6px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.ec-country-code { vertical-align: middle; }
 .ec-badge-estimated {
   display: inline-block;
   padding: 0.1rem 0.38rem;

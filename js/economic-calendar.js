@@ -529,12 +529,31 @@
 
   // ── Country / currency ────────────────────────────────────────────────────
   var CCY = { US: 'USD', EU: 'EUR', GB: 'GBP', JP: 'JPY', CN: 'CNY', DE: 'EUR',
-              FR: 'EUR', IT: 'EUR', CA: 'CAD', AU: 'AUD', NZ: 'NZD', CH: 'CHF' };
+              FR: 'EUR', IT: 'EUR', CA: 'CAD', AU: 'AUD', NZ: 'NZD', CH: 'CHF',
+              ES: 'EUR', NL: 'EUR', SE: 'SEK', NO: 'NOK', IN: 'INR', BR: 'BRL',
+              MX: 'MXN', KR: 'KRW', ZA: 'ZAR', SG: 'SGD', HK: 'HKD' };
+  // Flag emoji from the ISO country code (regional-indicator letters). Every
+  // major economy investing.com shows gets its flag; unknown codes fall back
+  // to a globe so the cell never renders blank.
+  var FLAG_OVERRIDE = { EU: '🇪🇺', UK: '🇬🇧' };
+  function flagEmoji(country) {
+    var c = String(country || '').toUpperCase();
+    if (FLAG_OVERRIDE[c]) return FLAG_OVERRIDE[c];
+    if (!/^[A-Z]{2}$/.test(c)) return '🌐'; // globe
+    var A = 0x1F1E6;
+    return String.fromCodePoint(A + c.charCodeAt(0) - 65) + String.fromCodePoint(A + c.charCodeAt(1) - 65);
+  }
 
   function countryCurrency(country) {
     var c   = String(country || '').toUpperCase();
     var ccy = CCY[c];
     return ccy ? c + ' \xB7 ' + ccy : (c || '—');
+  }
+  // HTML flag cell — kept separate from countryCurrency because the row builder
+  // wraps the text label in esc(); the flag markup must NOT be escaped.
+  function countryCellHtml(country) {
+    return '<span class="ec-flag" aria-hidden="true">' + flagEmoji(country) + '</span>'
+         + '<span class="ec-country-code">' + esc(countryCurrency(country)) + '</span>';
   }
 
   // ── Arabic event name translations ────────────────────────────────────────
@@ -828,7 +847,16 @@
             : imp === 'low'     ? 'ec-badge-low'
             : imp === 'holiday' ? 'ec-badge-holiday'
             : 'ec-badge-low';
-    return '<span class="ec-badge ' + cls + '">' + esc(L[imp] || imp || '') + '</span>';
+    // investing.com-style 3-level impact indicator: filled bars scale with
+    // importance (high=3, medium=2, low=1). The text label stays for
+    // accessibility + the impact filter.
+    var filled = imp === 'high' ? 3 : imp === 'medium' ? 2 : imp === 'holiday' ? 0 : 1;
+    var bars = '';
+    for (var i = 1; i <= 3; i++) {
+      bars += '<i class="ec-impact-bar' + (i <= filled ? ' is-on' : '') + '"></i>';
+    }
+    var meter = imp === 'holiday' ? '' : '<span class="ec-impact-meter" aria-hidden="true">' + bars + '</span>';
+    return meter + '<span class="ec-badge ' + cls + '">' + esc(L[imp] || imp || '') + '</span>';
   }
 
   // Map artifact category → educational CAT_DESC key.
@@ -1070,7 +1098,7 @@
             upcomingBadgeHtml(e) +
             (cdHtml ? cdHtml : '') +
             '</td>';
-          var tdCountry = '<td class="ec-col-country">' + esc(countryCurrency(e.country)) + '</td>';
+          var tdCountry = '<td class="ec-col-country">' + countryCellHtml(e.country) + '</td>';
           var tdEvent   = '<td class="ec-col-event"><strong>' + evtDisplayName + estimatedBadge + '</strong>' + evtSub + '</td>';
           var tdImpact  = '<td>' + badgeHtml(e.importance) + '</td>';
           var tdActual  = '<td class="' + actualCls + '">' + dispActual   + '</td>';

@@ -197,4 +197,72 @@ function safeWriteJson(file, data, label) {
   }
 }
 
-module.exports = { fetchEconomicCalendar };
+// ── Aggregation mode ──────────────────────────────────────────────────────────
+// investing.com does NOT pick one source — it merges them. This queries EVERY
+// available provider (not first-success-wins), unions their events, and lets
+// the caller merge by field richness. Rich providers (fmp/forexfactory with
+// forecast+previous) and broad providers (fred release dates 90d out) combine:
+// coverage AND values, instead of one or the other.
+async function aggregateEconomicCalendar(options = {}) {
+  const context = {
+    from: options.from,
+    to: options.to,
+    env: options.env || process.env
+  };
+  const attempts = [];
+  const collected = [];
+  const activeSources = [];
+
+  console.log(`[PROVIDER_ROUTER] AGGREGATE mode — querying all providers range=${context.from}..${context.to}`);
+  for (const provider of PROVIDERS) {
+    const name = providerName(provider);
+    try {
+      const result = await provider.fetchCalendar(context);
+      const valid = (result.events || []).filter((event) => !event.error);
+      if (valid.length) {
+        collected.push(...valid);
+        activeSources.push({ name, count: valid.length, endpoint: result.endpoint });
+        attempts.push(healthAttempt(name, 'ok', result.endpoint, '', valid.length));
+        console.log(`[PROVIDER_ROUTER]   +${name}: ${valid.length} event(s)`);
+      } else {
+        attempts.push(healthAttempt(name, 'unavailable', result.endpoint, 'no_supported_events', 0));
+      }
+    } catch (error) {
+      const endpoint = error.endpoint || provider.ENDPOINT || '';
+      const reason = sanitizeReason(error.message);
+      attempts.push(healthAttempt(name, 'unavailable', endpoint, reason, 0));
+      console.warn(`[PROVIDER_ROUTER]   ${name} unavailable: ${reason}`);
+    }
+  }
+
+  // Primary source label = the richest provider that responded (chain order),
+  // falling back to cache/degraded exactly like single-source mode.
+  const primary = activeSources[0];
+  if (!collected.length) {
+    const cached = readCache();
+    if (cached?.events?.length) {
+      writeHealth({ provider: cached.provider || 'cache', endpoint: cached.endpoint, fetchedAt: cached.fetchedAt, events: cached.events, fallbackUsed: true, cacheUsed: true }, attempts, true, 'all_live_providers_unavailable_cache_used');
+      console.warn(`[PROVIDER_ROUTER] AGGREGATE active=cache events=${cached.events.length} degraded=true`);
+      return { provider: 'cache', endpoint: cached.endpoint || 'local-cache', fetchedAt: cached.fetchedAt, events: cached.events, rawCount: cached.events.length, fallbackUsed: true, cacheUsed: true, sources: [], attempts };
+    }
+    writeHealth({ provider: 'degraded', endpoint: '', fetchedAt: new Date().toISOString(), events: [], fallbackUsed: true }, attempts, true, 'all_providers_unavailable');
+    return { provider: 'degraded', endpoint: '', fetchedAt: new Date().toISOString(), events: [], rawCount: 0, fallbackUsed: true, sources: [], attempts };
+  }
+
+  const routed = {
+    provider: primary.name,
+    endpoint: primary.endpoint,
+    fetchedAt: new Date().toISOString(),
+    events: collected,
+    rawCount: collected.length,
+    fallbackUsed: primary.name !== 'fmp',
+    sources: activeSources,
+    attempts
+  };
+  writeCache(routed);
+  writeHealth(routed, attempts, false, '');
+  console.log(`[PROVIDER_ROUTER] AGGREGATE active_sources=${activeSources.map((s) => `${s.name}(${s.count})`).join(',')} total=${collected.length}`);
+  return routed;
+}
+
+module.exports = { fetchEconomicCalendar, aggregateEconomicCalendar };

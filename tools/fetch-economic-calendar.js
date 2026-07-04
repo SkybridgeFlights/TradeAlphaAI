@@ -9,7 +9,7 @@ const fs   = require('fs');
 const path = require('path');
 const { analyzeEconomicSurprise } = require('./analyze-economic-surprise');
 const { ALLOWED_TYPES }           = require('./providers/economic-calendar/calendar-normalizer');
-const { fetchEconomicCalendar }   = require('./providers/economic-calendar/provider-router');
+const { aggregateEconomicCalendar } = require('./providers/economic-calendar/provider-router');
 const { getGlobalEventsForCalendar } = require('./build-global-macro-events');
 const scheduleFallback            = require('./providers/economic-calendar/schedule-fallback-provider');
 
@@ -37,18 +37,59 @@ function readExisting() {
   } catch { return null; }
 }
 
+// Richness-preferring merge (investing.com style). Events that describe the
+// same release from different providers are collapsed into ONE row that
+// carries the best of each: a forecast from ForexFactory, an actual from FMP,
+// a precise time from whichever had one. This is why aggregating beats
+// first-source-wins — no single free source has every field.
+function richnessScore(e) {
+  let s = 0;
+  if (e.forecast != null) s += 2;
+  if (e.previous != null) s += 2;
+  if (e.actual != null)   s += 3;
+  if (e.time_precision === 'date_time') s += 1; // has a real clock time
+  if (e.importance === 'high') s += 1;
+  return s;
+}
+
+function mergeEvent(base, incoming) {
+  // Fill any null field on the winner from the other source.
+  for (const field of ['forecast', 'previous', 'actual', 'unit', 'market_expectation']) {
+    if (base[field] == null && incoming[field] != null) base[field] = incoming[field];
+  }
+  // Prefer a real clock time over a date-only placeholder.
+  if (base.time_precision !== 'date_time' && incoming.time_precision === 'date_time') {
+    base.event_time = incoming.event_time;
+    base.time_precision = 'date_time';
+    base.timezone = incoming.timezone;
+  }
+  // Track every contributing source for transparency.
+  const providers = new Set([...(base.merged_sources || [base.provider]), incoming.provider].filter(Boolean));
+  base.merged_sources = [...providers];
+  return base;
+}
+
 function deduplicate(events) {
-  const seenId  = new Set();
-  const seenKey = new Set();
-  return events.filter(e => {
-    if (seenId.has(e.id)) return false;
-    seenId.add(e.id);
+  const byKey = new Map();
+  for (const e of events) {
     const title = String(e.event_name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-    const key   = `${title}|${e.country}|${String(e.event_time || '').slice(0, 16)}`;
-    if (seenKey.has(key)) return false;
-    seenKey.add(key);
-    return true;
-  });
+    // Day-level key so a date-only source and a timed source for the same
+    // release collapse together (investing.com shows one row per release/day).
+    const key = `${title}|${e.country}|${String(e.event_time || '').slice(0, 10)}`;
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, { ...e, merged_sources: [e.provider].filter(Boolean) });
+      continue;
+    }
+    // Keep the richer row as the base, merge the other into it.
+    if (richnessScore(e) > richnessScore(existing)) {
+      const merged = mergeEvent({ ...e, merged_sources: existing.merged_sources }, existing);
+      byKey.set(key, merged);
+    } else {
+      byKey.set(key, mergeEvent(existing, e));
+    }
+  }
+  return [...byKey.values()];
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -60,7 +101,7 @@ async function main() {
 
   let result;
   try {
-    result = await fetchEconomicCalendar({ from, to, env: process.env });
+    result = await aggregateEconomicCalendar({ from, to, env: process.env });
   } catch (err) {
     console.warn(`[calendar:fetch] provider router error: ${sanitize(err.message)}`);
     result = { provider: 'degraded', events: [], fallbackUsed: true, attempts: [] };
@@ -131,6 +172,7 @@ async function main() {
       endpoint:     result.endpoint    || null,
       fallback_used: result.fallbackUsed === true,
       cache_used:    result.cacheUsed   === true,
+      active_sources: (result.sources || []).map((s) => ({ name: s.name, count: s.count })),
       attempts:      result.attempts   || [],
     },
     source_policy: {
