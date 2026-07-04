@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const fmp          = require('./fmp-provider');
+const forexfactory = require('./forexfactory-provider');
 const finnhub      = require('./finnhub-provider');
 const alphavantage = require('./alphavantage-provider');
 const fred         = require('./fred-provider');
@@ -10,7 +11,10 @@ const fred         = require('./fred-provider');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const HEALTH_PATH = path.join(ROOT, 'data', 'provider-health.json');
 const CACHE_PATH = path.join(ROOT, 'data', 'cache', 'economic-calendar-cache.json');
-const PROVIDERS = [fmp, finnhub, alphavantage, fred];
+// forexfactory sits directly behind fmp: keyless and free, and it carries
+// forecast/previous values that the remaining free providers (fred release
+// dates) cannot supply.
+const PROVIDERS = [fmp, forexfactory, finnhub, alphavantage, fred];
 
 async function fetchEconomicCalendar(options = {}) {
   const context = {
@@ -35,7 +39,7 @@ async function fetchEconomicCalendar(options = {}) {
     console.log(`[calendar-env] ${primary}=${present ? 'present' : 'missing'}`);
   }
 
-  console.log(`[PROVIDER_ROUTER] starting priority=fmp>finnhub>alphavantage>fred range=${context.from}..${context.to}`);
+  console.log(`[PROVIDER_ROUTER] starting priority=fmp>forexfactory>finnhub>alphavantage>fred range=${context.from}..${context.to}`);
 
   for (const provider of PROVIDERS) {
     const name = providerName(provider);
@@ -158,6 +162,7 @@ function healthAttempt(provider, status, endpoint, reason, eventCount) {
 
 function providerName(provider) {
   if (provider === fmp)          return 'fmp';
+  if (provider === forexfactory) return 'forexfactory';
   if (provider === finnhub)      return 'finnhub';
   if (provider === alphavantage) return 'alphavantage';
   return 'fred';
