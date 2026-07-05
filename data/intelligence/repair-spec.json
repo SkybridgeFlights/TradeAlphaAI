@@ -1,112 +1,22 @@
 {
   "version": "2.0",
-  "created_at": "2026-06-07T11:09:24.123Z",
-  "target_slug": "growth-vs-value-etf-research-framework",
+  "created_at": "2026-07-05T11:40:40.078Z",
+  "target_slug": "currency-impact-on-international-etfs-strategies-for-mitigating-fx-risk",
   "failures_detected": [
     {
-      "check": "macro_transmission_depth",
-      "description": "Insufficient transmission chain — found 0/2 required pattern matches",
-      "repair_action": "rebuild_macro_transmission_section",
-      "severity": "critical"
-    },
-    {
-      "check": "regime_context",
-      "description": "Insufficient regime awareness — found 0/1 required pattern matches",
-      "repair_action": "inject_regime_context",
-      "severity": "critical"
-    },
-    {
-      "check": "comparative_depth",
-      "description": "Insufficient comparative depth — found 0/2 required pattern matches",
-      "repair_action": "rebuild_comparison_section",
-      "severity": "critical"
-    },
-    {
-      "check": "probability_reasoning",
-      "description": "Insufficient probability reasoning — found 0/1 required pattern matches",
-      "repair_action": "rebuild_risk_scenario_section",
-      "severity": "critical"
-    },
-    {
-      "check": "evidence_linkage",
-      "description": "Insufficient evidence linkage — found 0/2 required pattern matches",
-      "repair_action": "rebuild_evidence_linkage_section",
-      "severity": "critical"
-    },
-    {
-      "check": "comparative_depth",
-      "description": "ETF article missing editorial-comparison-table — structural comparison inadequate",
-      "repair_action": "rebuild_comparison_section",
-      "severity": "critical"
-    },
-    {
       "check": "analytical_density",
-      "description": "Excessive bullet dependency (17 bullets vs 7 substantive paragraphs)",
+      "description": "Excessive bullet dependency (36 bullets vs 30 substantive paragraphs)",
       "repair_action": "rebuild_evidence_linkage_section",
       "severity": "warning"
-    },
-    {
-      "check": "analytical_density",
-      "description": "Low analytical sentence density (4 found, 15+ required)",
-      "repair_action": "rebuild_evidence_linkage_section",
-      "severity": "critical"
     }
   ],
   "generic_phrase_violations": [],
-  "critical_failures": 7,
-  "requires_ai_repair": true,
-  "auto_repair_insufficient": true,
-  "deterministic_repair_available": false,
-  "context_injections": [
-    {
-      "type": "regime_context",
-      "context": {
-        "regime": "unverified",
-        "regime_label": "Unverified",
-        "regime_summary": "Available live-market and economic-event inputs are insufficient to classify the current macro regime. Scenario frameworks remain conditional until data-backed confirmation is available."
-      },
-      "instruction": "Incorporate current macro regime context — explain how the current environment affects the subject matter."
-    },
-    {
-      "type": "transmission_context",
-      "context": {
-        "regime_note": "Transmission chain dynamics apply within the current macro context.",
-        "relevant_chains": []
-      },
-      "instruction": "Add cross-asset transmission chain analysis — explain WHY assets react to macro events, not just THAT they do."
-    },
-    {
-      "type": "etf_comparison_context",
-      "context": {
-        "etf_profiles": [
-          {
-            "ticker": "SPY",
-            "full_name": "SPDR S&P 500 ETF Trust",
-            "institutional_interpretation": "SPY is the canonical beta exposure to the US equity market. Its value as an analytical unit is in identifying when active sector rotation is occurring — when SPY diverges significantly from its sector components, it signals breadth deterioration or sector-specific distortion. Institutional investors use SPY as the baseline against which to measure XLV/XLK/XLE/IWM spread trades.",
-            "comparison_note": "Compared to IWM (small cap), SPY's mega-cap bias means it is less sensitive to domestic financing conditions but more exposed to global earnings cycles and regulatory risk. Compared to QQQ, SPY's broader sector diversification reduces concentration risk but also reduces upside in technology-led rall"
-          },
-          {
-            "ticker": "QQQ",
-            "full_name": "Invesco QQQ Trust",
-            "institutional_interpretation": "QQQ's analytical value is as a duration proxy for the equity market. When QQQ significantly underperforms SPY, it typically signals either: (1) rate headwinds increasing, (2) growth premium being questioned, or (3) mega-cap earnings cycle at risk. QQQ/SPY spread is a real-time sentiment indicator for the growth vs. value debate.",
-            "comparison_note": "QQQ's concentration in technology introduces idiosyncratic earnings risk that differs materially from IVW (iShares S&P 500 Growth) or VUG. QQQ's zero utilities and minimal healthcare exposure means it has essentially no defensive buffer in risk-off environments — a characteristic often overlooked wh"
-          }
-        ]
-      },
-      "instruction": "Upgrade ETF comparisons to institutional depth: allocation structure, rate sensitivity, concentration risk, regime behavior."
-    },
-    {
-      "type": "rate_path_context",
-      "context": {
-        "stance": "neutral",
-        "bias": "data_dependent",
-        "curve_shape": "uncertain",
-        "narrative": "The macro signal environment does not provide a clear directional read on Fed policy — incoming data is mixed, and the Fed's reaction function is being re-calibrated. The most likely near-term outcome is a hold with language that preserves optionality in both directions."
-      },
-      "instruction": "Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions."
-    }
-  ],
-  "ai_repair_prompt": "INSTITUTIONAL DEPTH REPAIR REQUEST: growth-vs-value-etf-research-framework\n\nDETECTED FAILURES:\n- macro_transmission_depth: Insufficient transmission chain — found 0/2 required pattern matches\n- regime_context: Insufficient regime awareness — found 0/1 required pattern matches\n- comparative_depth: Insufficient comparative depth — found 0/2 required pattern matches\n- probability_reasoning: Insufficient probability reasoning — found 0/1 required pattern matches\n- evidence_linkage: Insufficient evidence linkage — found 0/2 required pattern matches\n- comparative_depth: ETF article missing editorial-comparison-table — structural comparison inadequate\n- analytical_density: Excessive bullet dependency (17 bullets vs 7 substantive paragraphs)\n- analytical_density: Low analytical sentence density (4 found, 15+ required)\n\nGENERIC PHRASE VIOLATIONS:\nNone\n\nCONTEXT AVAILABLE:\n- regime_context: Incorporate current macro regime context — explain how the current environment affects the subject matter.\n- transmission_context: Add cross-asset transmission chain analysis — explain WHY assets react to macro events, not just THAT they do.\n- etf_comparison_context: Upgrade ETF comparisons to institutional depth: allocation structure, rate sensitivity, concentration risk, regime behavior.\n- rate_path_context: Add probability-weighted scenario analysis — frame outcomes conditionally (if X then Y) rather than as absolute predictions.\n\nREPAIR REQUIREMENTS:\n1. Every macro claim must explain the mechanism, not just the direction\n2. Cross-asset transmission chains must explain WHY, not just THAT\n3. ETF comparisons must cover: allocation structure, rate sensitivity, concentration risk, scenario behavior\n4. Generic phrases must be replaced with evidence-grounded, specific language\n5. Probability framing must be conditional: \"IF X, THEN Y is likely because of Z\"\n6. Bond ETF articles must cover: duration risk, yield curve, Fed path, real yields, credit spreads,\n   Treasury vs aggregate, short vs long duration, TLT/IEF/SHY/BND comparison, inflation sensitivity,\n   recession vs soft-landing scenarios, liquidity, income vs price-return tradeoff\n\nQUALITY STANDARD: Institutional research desk quality. Not SEO blog. Not generic finance content.",
-  "repair_priority": "high",
+  "critical_failures": 0,
+  "requires_ai_repair": false,
+  "auto_repair_insufficient": false,
+  "deterministic_repair_available": true,
+  "context_injections": [],
+  "ai_repair_prompt": "INSTITUTIONAL DEPTH REPAIR REQUEST: currency-impact-on-international-etfs-strategies-for-mitigating-fx-risk\n\nDETECTED FAILURES:\n- analytical_density: Excessive bullet dependency (36 bullets vs 30 substantive paragraphs)\n\nGENERIC PHRASE VIOLATIONS:\nNone\n\nCONTEXT AVAILABLE:\nNone\n\nREPAIR REQUIREMENTS:\n1. Every macro claim must explain the mechanism, not just the direction\n2. Cross-asset transmission chains must explain WHY, not just THAT\n3. ETF comparisons must cover: allocation structure, rate sensitivity, concentration risk, scenario behavior\n4. Generic phrases must be replaced with evidence-grounded, specific language\n5. Probability framing must be conditional: \"IF X, THEN Y is likely because of Z\"\n6. Bond ETF articles must cover: duration risk, yield curve, Fed path, real yields, credit spreads,\n   Treasury vs aggregate, short vs long duration, TLT/IEF/SHY/BND comparison, inflation sensitivity,\n   recession vs soft-landing scenarios, liquidity, income vs price-return tradeoff\n\nQUALITY STANDARD: Institutional research desk quality. Not SEO blog. Not generic finance content.",
+  "repair_priority": "medium",
   "next_action": "run_with_execute_write_flag"
 }
