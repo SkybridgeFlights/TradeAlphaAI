@@ -1,9 +1,105 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-07T15:46:03.843Z",
+  "updated_at": "2026-07-07T18:06:43.215Z",
   "run_date": "2026-07-07",
-  "verified": false,
-  "selected": [],
+  "verified": true,
+  "selected": [
+    {
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
+      "symbols": [
+        "CRYPTO:BTCUSD",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 128,
+      "evidence": [
+        "causal:liquidity-beta diverging ×8",
+        "liquidity_pressure 3/5"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "high",
+          "label_en": "Divergence — BTC/QQQ not confirming (8-session strain)",
+          "label_ar": "انفصال — BTC/QQQ لا يؤكد (إجهاد 8 جلسات)",
+          "evidence": [
+            "convergence:diverges:liquidity-beta:chain=8"
+          ]
+        },
+        {
+          "type": "pressure-band",
+          "severity": "elevated",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
+          "evidence": [
+            "macro:pressure:liquidity_pressure:3"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-07)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-07)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-07-07"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "dollar-gold",
+      "kind": "cross-asset",
+      "visual_type": "macro-divergence",
+      "symbols": [
+        "TVC:DXY",
+        "OANDA:XAUUSD"
+      ],
+      "title_en": "Dollar vs gold",
+      "title_ar": "الدولار مقابل الذهب",
+      "reading_en": "Gold holding against a firming dollar — an unusual co-move that leaves the relationship structurally unresolved.",
+      "reading_ar": "الذهب يصمد رغم تقوّي الدولار — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
+      "score": 52,
+      "evidence": [
+        "causal:dollar-gold diverging ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — DXY/GOLD not confirming",
+          "label_ar": "انفصال — DXY/GOLD لا يؤكد",
+          "evidence": [
+            "convergence:diverges:dollar-gold:chain=1"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — dollar pressure stable → easing",
+          "label_ar": "تحوّل النظام — dollar pressure: stable ← easing",
+          "evidence": [
+            "cognition:timeline:dollar_pressure:stable->easing:2026-07-07"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-07)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-07)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-07-07"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    }
+  ],
   "supported_visual_types": [
     "price-structure",
     "cross-asset-comparison",

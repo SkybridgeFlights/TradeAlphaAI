@@ -1,18 +1,18 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-07T15:46:03.748Z",
+  "updated_at": "2026-07-07T18:06:43.117Z",
   "run_date": "2026-07-07",
-  "verified": false,
+  "verified": true,
   "sessions_tracked": 24,
   "regime_shifts": [
     {
       "dimension": "risk_state",
-      "state": "neutral",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "risk-on",
+      "phase": "extended",
+      "sessions_in_state": 9,
       "from": {
-        "state": "risk-on",
-        "date": "2026-07-06"
+        "state": "neutral",
+        "date": "2026-06-28"
       }
     },
     {
@@ -51,12 +51,12 @@
     },
     {
       "dimension": "ai_concentration_risk",
-      "state": "contained",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "elevated",
+      "phase": "extended",
+      "sessions_in_state": 8,
       "from": {
-        "state": "elevated",
-        "date": "2026-07-06"
+        "state": "contained",
+        "date": "2026-06-29"
       }
     },
     {
@@ -92,16 +92,30 @@
     },
     {
       "dimension": "market_fragility",
-      "state": "contained",
-      "phase": "emerging",
-      "sessions_in_state": 1,
-      "from": {
-        "state": "building",
-        "date": "2026-07-06"
-      }
+      "state": "building",
+      "phase": "extended",
+      "sessions_in_state": 16,
+      "from": null
     }
   ],
-  "memory_observations": [],
+  "memory_observations": [
+    {
+      "kind": "streak",
+      "dimension": "market_fragility",
+      "state": "building",
+      "sessions": 16,
+      "en": "Market fragility signals build for a 16th straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة رقم 16 على التوالي عبر مدخلات التقلب والاتساع والتركز."
+    },
+    {
+      "kind": "streak",
+      "dimension": "ai_concentration_risk",
+      "state": "elevated",
+      "sessions": 8,
+      "en": "AI concentration risk holds elevated for a eighth straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثامنة على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
+    }
+  ],
   "causal_links": [
     {
       "id": "yields-growth",
@@ -114,8 +128,8 @@
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
       "state": "confirming",
       "evidence": {
-        "us10y": 2.105024898143956,
-        "qqq": -2.078
+        "us10y": 2.3313716613852367,
+        "qqq": -1.3171
       }
     },
     {
@@ -129,8 +143,8 @@
       "ar": "دعم العوائد يقوّي الدولار عادة",
       "state": "diverging",
       "evidence": {
-        "us10y": 2.105024898143956,
-        "dxy": -0.4319952658053086
+        "us10y": 2.3313716613852367,
+        "dxy": -0.44087188085610285
       }
     },
     {
@@ -144,8 +158,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": -0.4319952658053086,
-        "gold": -0.4109
+        "dxy": -0.44087188085610285,
+        "gold": -0.526
       }
     },
     {
@@ -159,8 +173,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": -1.2055455093429734,
-        "spy": -0.6323
+        "vix": -5.786618444846288,
+        "spy": -0.2822
       }
     },
     {
@@ -172,10 +186,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "nvda": -1.0739,
-        "qqq": -2.078
+        "nvda": 1.033,
+        "qqq": -1.3171
       }
     },
     {
@@ -189,8 +203,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "diverging",
       "evidence": {
-        "btc": 1.7587,
-        "qqq": -2.078
+        "btc": 0.4832,
+        "qqq": -1.3171
       }
     },
     {
@@ -204,8 +218,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": -0.6323,
-        "iwm": -0.7226
+        "spy": -0.2822,
+        "iwm": -0.4818
       }
     },
     {
@@ -219,8 +233,8 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
       "state": "confirming",
       "evidence": {
-        "us10y": 2.105024898143956,
-        "tlt": -0.7022
+        "us10y": 2.3313716613852367,
+        "tlt": -0.7724
       }
     }
   ],
@@ -231,17 +245,8 @@
         "en": "Rising yields pressure long-duration growth equities",
         "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
         "evidence": {
-          "us10y": 2.105024898143956,
-          "qqq": -2.078
-        }
-      },
-      {
-        "source": "causal:ai-growth",
-        "en": "AI leadership drives the growth complex",
-        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-        "evidence": {
-          "nvda": -1.0739,
-          "qqq": -2.078
+          "us10y": 2.3313716613852367,
+          "qqq": -1.3171
         }
       },
       {
@@ -249,8 +254,17 @@
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": -0.6323,
-          "iwm": -0.7226
+          "spy": -0.2822,
+          "iwm": -0.4818
+        }
+      },
+      {
+        "source": "causal:yields-bonds",
+        "en": "Rising yields mark down long-duration bonds",
+        "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
+        "evidence": {
+          "us10y": 2.3313716613852367,
+          "tlt": -0.7724
         }
       }
     ],
@@ -260,8 +274,8 @@
         "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": 2.105024898143956,
-          "dxy": -0.4319952658053086
+          "us10y": 2.3313716613852367,
+          "dxy": -0.44087188085610285
         }
       },
       {
@@ -269,8 +283,8 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": -0.4319952658053086,
-          "gold": -0.4109
+          "dxy": -0.44087188085610285,
+          "gold": -0.526
         }
       },
       {
@@ -278,13 +292,25 @@
         "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": -1.2055455093429734,
-          "spy": -0.6323
+          "vix": -5.786618444846288,
+          "spy": -0.2822
         }
       }
     ],
-    "fragility": [],
-    "exhaustion": [],
+    "fragility": [
+      {
+        "source": "market_fragility",
+        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
+        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
+      }
+    ],
+    "exhaustion": [
+      {
+        "source": "ai_concentration_risk",
+        "en": "Persistent elevated AI concentration raises exhaustion risk in the leadership complex.",
+        "ar": "استمرار تركز الذكاء الاصطناعي المرتفع يرفع خطر إنهاك قطاع القيادة."
+      }
+    ],
     "liquidity": [],
     "speculative": []
   },
@@ -333,5 +359,5 @@
       "note": "dollar pressure: stable -> easing"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 33 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 33 timeline event(s)."
 }
