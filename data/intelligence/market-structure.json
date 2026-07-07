@@ -1,20 +1,21 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-07T16:43:48.504Z",
+  "generated_at": "2026-07-07T19:18:28.385Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 84,
-  "coverage_pct": 78,
+  "structural_confidence": 95,
+  "coverage_pct": 100,
   "dominant": {
     "dimension": "stability",
     "state": "deteriorating"
   },
   "dimensions": {
     "participation": {
-      "state": "indeterminate",
-      "label_en": "indeterminate",
-      "label_ar": "غير محدد",
+      "state": "narrow_leadership",
+      "label_en": "narrow leadership",
+      "label_ar": "قيادة ضيقة",
       "evidence": [
+        "leadership=narrow",
         "breadth=broad_weakness",
         "session breadth=mixed"
       ]
@@ -25,7 +26,8 @@
       "label_ar": "تذبذب محتوى",
       "evidence": [
         "regime volatility=normal",
-        "VIX=16.39"
+        "alignment=aligned",
+        "VIX=15.63"
       ]
     },
     "cross_asset": {
@@ -33,7 +35,8 @@
       "label_en": "cross-asset divergence",
       "label_ar": "تباعد عبر الأصول",
       "evidence": [
-        "coherence=0.2"
+        "coherence=0.2",
+        "tension cross_asset=strained"
       ]
     },
     "concentration": {
@@ -50,7 +53,7 @@
       "label_en": "defensive rotation",
       "label_ar": "تدوير دفاعي",
       "evidence": [
-        "leaders=XLV/XLRE/XLE",
+        "leaders=XLE/XLRE/XLV",
         "regime defensive=defensive_rotation"
       ]
     },
@@ -60,25 +63,26 @@
       "label_ar": "بنية في طور التحوّل",
       "evidence": [
         "direction=risk_on",
-        "verified_sessions=21",
-        "regime_condition=unverified"
+        "verified_sessions=22",
+        "regime_condition=internally-conflicted-regime"
       ]
     },
     "momentum": {
-      "state": "early_deterioration",
-      "label_en": "early momentum deterioration",
-      "label_ar": "تدهور مبكر في الزخم",
+      "state": "deteriorating",
+      "label_en": "momentum deterioration",
+      "label_ar": "تدهور الزخم",
       "evidence": [
-        "participation=indeterminate",
+        "participation=narrow_leadership",
         "rotation=defensive_rotation",
         "concentration=elevated"
       ]
     },
     "liquidity_participation": {
-      "state": "indeterminate",
-      "label_en": "indeterminate",
-      "label_ar": "غير محدد",
+      "state": "uncertain",
+      "label_en": "uncertain liquidity participation",
+      "label_ar": "مشاركة سيولة غير مؤكدة",
       "evidence": [
+        "liquidity_participation=uncertain",
         "liquidity_state=yield_pressure"
       ]
     },
@@ -88,7 +92,7 @@
       "label_ar": "بنية متدهورة",
       "evidence": [
         "regime stability=deteriorating",
-        "tension=unverified",
+        "tension=building",
         "fragility=building"
       ]
     }
@@ -98,11 +102,11 @@
       "dimension": "stability",
       "state": "deteriorating"
     },
-    "participation": "indeterminate",
+    "participation": "narrow_leadership",
     "volatility_structure": "contained",
     "cross_asset": "divergent",
     "structural_stability": "deteriorating",
-    "structural_confidence": 84
+    "structural_confidence": 95
   },
   "attribution": {
     "sources": [
