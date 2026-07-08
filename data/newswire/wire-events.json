@@ -1,19 +1,19 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-07T21:55:09.169Z",
+  "updated_at": "2026-07-08T15:27:39.316Z",
   "status": "live",
-  "item_count": 17,
+  "item_count": 20,
   "clusters": {
-    "tape": 7,
-    "volatility": 1,
+    "tape": 9,
+    "volatility": 2,
     "fed": 6,
-    "inflation": 2,
-    "growth": 1
+    "labor": 1,
+    "inflation": 2
   },
   "top_story": {
-    "id": "move::US10Y::2026-07-07T21",
+    "id": "move::US10Y::2026-07-08T15",
     "kind": "market_move",
-    "headline": "US10Y jumps +2.51% to 4.529",
+    "headline": "US10Y jumps +2.73% to 4.597",
     "urgency": 65,
     "market_impact": 70,
     "cluster": "tape",
@@ -23,11 +23,62 @@
     "sector_tags": [
       "rates"
     ],
-    "timestamp": "2026-07-07T21:55:08.285Z",
+    "timestamp": "2026-07-08T15:27:38.558Z",
     "source": "Yahoo Finance",
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::US10Y::2026-07-08T15",
+      "kind": "market_move",
+      "headline": "US10Y jumps +2.73% to 4.597",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-07-08T15:27:38.558Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::VIX::2026-07-08T15",
+      "kind": "market_move",
+      "headline": "VIX jumps +11.89% to 18.07",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-07-08T15:27:37.994Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::GLD::2026-07-08T15",
+      "kind": "market_move",
+      "headline": "GLD drops -2.08% to 369.64",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "GLD"
+      ],
+      "sector_tags": [
+        "metals"
+      ],
+      "timestamp": "2026-07-08T15:27:36.105Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
     {
       "id": "move::US10Y::2026-07-07T21",
       "kind": "market_move",
@@ -163,6 +214,50 @@
       "timestamp": "2026-07-07T15:46:00.484Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260710T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-07-10)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-07-10T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260709T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-07-09, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-07-09T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260709T000000",
@@ -318,50 +413,6 @@
         "fed"
       ],
       "timestamp": "2026-07-07T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::forexfactory::us::ism-services-pmi::20260706T140000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: ISM Services PMI (2026-07-06)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "growth",
-      "asset_tags": [
-        "Treasury yields",
-        "SPY",
-        "IWM",
-        "Oil",
-        "Defensive sectors"
-      ],
-      "sector_tags": [
-        "growth"
-      ],
-      "timestamp": "2026-07-06T14:00:00.000Z",
-      "source": "forexfactory",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260706T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-07-06)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-07-06T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
