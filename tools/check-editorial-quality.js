@@ -59,7 +59,16 @@ function checkDraftIfPresent(topic) {
   for (const file of files) {
     if (!fs.existsSync(path.join(dir, file))) failures.push(`${relative(dir)}: missing ${file}`);
   }
-  const requiresPublicationDepth = topic.status !== 'manual_revision_required';
+  // Only actual publish CANDIDATES must meet publication depth. A `planned`
+  // topic has not been through generation+review yet — any draft folder
+  // present is a stale prior attempt that the pipeline regenerates when the
+  // topic is picked. `manual_revision_required` is a known-failing state.
+  // Neither should hard-fail preflight; the publish transaction's own scorer
+  // (min-score 90/92) is the real quality gate. Without this, the workflow
+  // commits a failed `planned` draft and it blocks the NEXT run's preflight —
+  // a self-inflicted publishing deadlock.
+  const NON_CANDIDATE = new Set(['manual_revision_required', 'planned', 'failed_generation']);
+  const requiresPublicationDepth = !NON_CANDIDATE.has(topic.status);
   for (const locale of ['en', 'ar']) {
     const file = path.join(dir, `${locale}.html`);
     if (!fs.existsSync(file)) continue;
