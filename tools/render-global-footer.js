@@ -16,22 +16,24 @@ const FOOTER_MARKER_END = '<!-- GLOBAL_FOOTER_END -->';
 
 const NAV_LINKS = {
   en: [
+    ['/about/', 'About'],
     ['/insights/', 'Research Library'],
     ['/market-outlook/', 'Market Outlook'],
-    ['/market-news/', 'Market News'],
     ['/economic-calendar/', 'Economic Calendar'],
     ['/glossary/', 'Glossary'],
-    ['/newsletter/', 'Newsletter'],
     ['/methodology.html', 'Methodology'],
+    ['/editorial-policy/', 'Editorial Policy'],
+    ['/contact/', 'Contact'],
   ],
   ar: [
+    ['/ar/about/', 'من نحن'],
     ['/ar/insights/', 'مكتبة الأبحاث'],
     ['/ar/market-outlook/', 'نظرة السوق'],
-    ['/ar/market-news/', 'أخبار السوق'],
     ['/ar/economic-calendar/', 'المفكرة الاقتصادية'],
     ['/ar/glossary/', 'المصطلحات'],
-    ['/ar/newsletter/', 'النشرة البريدية'],
     ['/ar/methodology.html', 'المنهجية'],
+    ['/ar/editorial-policy/', 'السياسة التحريرية'],
+    ['/ar/contact/', 'تواصل معنا'],
   ],
 };
 

@@ -51,6 +51,7 @@ const core = [
   "rankings.html", "methodology.html", "market-data-status.html", "tadawul.html"
 ].filter((rel) => exists(rel))
   .concat((marketConfig.hubs || []).map((hub) => hub.pagePath).filter(exists))
+  .concat(["about/", "editorial-policy/", "contact/"].filter(existsDir))
   .concat(existsDir("briefs") ? ["briefs/"] : [])
   .concat(existsDir("economic-calendar") ? ["economic-calendar/"] : [])
   .concat(existsDir("market-news") ? ["market-news/"] : [])
@@ -128,7 +129,8 @@ function arUrls() {
     "market-news/", "market-structure/", "market-outlook/",
     "market-terminal/", "intelligence/",
     "market-dashboard/", "macro-dashboard/", "etf-dashboard/",
-    "articles/", "links/", "methodology.html", "market-data-status.html"
+    "articles/", "links/", "methodology.html", "market-data-status.html",
+    "about/", "editorial-policy/", "contact/"
   ]) {
     if (rel.endsWith("/") ? existsDir(`ar/${rel}`) : exists(`ar/${rel}`)) out.push(`ar/${rel}`);
   }

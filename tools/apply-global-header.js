@@ -98,6 +98,13 @@ const ROOTS = [
   // Phase 172+: interactive calculators live under /tools/{name}/
   'tools',
   'ar/tools',
+  // E-E-A-T trust pages.
+  'about',
+  'ar/about',
+  'editorial-policy',
+  'ar/editorial-policy',
+  'contact',
+  'ar/contact',
 ];
 
 // Phase 99: legacy pre-canonical pages that predate the global-header markers

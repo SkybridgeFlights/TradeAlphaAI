@@ -521,6 +521,7 @@ jobs:
           node tools/render-newsroom-modules.js || echo "[newsroom] degraded"
           node tools/generate-links-page.js || echo "[links-page] degraded"
           node tools/generate-glossary.js || echo "[glossary] degraded"
+          node tools/generate-trust-pages.js --write || echo "[trust-pages] degraded"
           node tools/generate-comparisons.js || echo "[comparisons] degraded"
           node tools/pages/generate-calculators.js || echo "[calculators] degraded"
           node tools/generate-search-index.js || echo "[search-index] degraded"
