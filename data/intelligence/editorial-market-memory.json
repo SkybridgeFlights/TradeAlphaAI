@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-09T12:34:58.454Z",
+  "updated_at": "2026-07-09T16:05:13.865Z",
   "run_date": "2026-07-09",
   "verified": true,
   "status": "verified",
@@ -8,23 +8,6 @@
   "memory_note_en": "Verified editorial memory advanced for this market date.",
   "memory_note_ar": "تقدمت الذاكرة التحريرية الموثقة لهذه الجلسة السوقية.",
   "narratives": [
-    {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "crowded",
-      "sessions": 4,
-      "inactive_sessions": 0,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-07-09",
-      "last_evaluated": "2026-07-09",
-      "active": true,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": [
-        "pulse:momentum_concentration=narrow-megacap",
-        "pulse:breadth_state=mixed"
-      ]
-    },
     {
       "id": "yield-pressure",
       "family": "macro",
@@ -42,35 +25,30 @@
     {
       "id": "speculative-momentum",
       "family": "positioning",
-      "state": "crowded",
+      "state": "invalidated",
       "sessions": 23,
       "inactive_sessions": 0,
       "first_seen": "2026-06-15",
       "last_seen": "2026-07-09",
       "last_evaluated": "2026-07-09",
-      "active": true,
+      "active": false,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
-      "evidence": [
-        "pulse:speculative_appetite=expanding",
-        "pulse:ai_concentration_risk=elevated"
-      ]
+      "evidence": []
     },
     {
       "id": "market-fragility",
       "family": "risk",
-      "state": "unresolved",
+      "state": "invalidated",
       "sessions": 23,
       "inactive_sessions": 0,
       "first_seen": "2026-06-15",
       "last_seen": "2026-07-09",
       "last_evaluated": "2026-07-09",
-      "active": true,
+      "active": false,
       "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
       "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
-      "evidence": [
-        "pulse:market_fragility=building"
-      ]
+      "evidence": []
     },
     {
       "id": "cross-asset-conflict",
@@ -85,12 +63,28 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:liquidity-beta",
-        "convergence:yields-growth"
+        "convergence:yields-growth",
+        "convergence:vix-equities",
+        "convergence:ai-growth",
+        "convergence:yields-bonds"
       ]
     }
   ],
   "archive": [
+    {
+      "id": "narrow-leadership",
+      "family": "leadership",
+      "state": "invalidated",
+      "sessions": 3,
+      "inactive_sessions": 18,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-07-09",
+      "active": false,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": []
+    },
     {
       "id": "dollar-strength",
       "family": "macro",
@@ -120,20 +114,6 @@
       "evidence": []
     },
     {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "invalidated",
-      "sessions": 3,
-      "inactive_sessions": 17,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-06-18",
-      "last_evaluated": "2026-07-08",
-      "active": false,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": []
-    },
-    {
       "id": "cross-asset-conflict",
       "family": "cross-asset",
       "state": "invalidated",
@@ -148,41 +128,9 @@
       "evidence": []
     }
   ],
-  "expectations": [
-    {
-      "id": "narrow-leadership:breadth-broadening",
-      "narrative_id": "narrow-leadership",
-      "status": "monitoring",
-      "opened_on": "2026-07-08",
-      "opened_at_session": 4,
-      "evaluated_on": "2026-07-09",
-      "expected_dimension": "breadth_state",
-      "expected_values": [
-        "confirming"
-      ],
-      "observed_value": "mixed",
-      "en": "Breadth confirmation remains an open confirmation test.",
-      "ar": "يبقى تأكيد اتساع المشاركة اختباراً مفتوحاً للتأكيد."
-    }
-  ],
+  "expectations": [],
   "failed_expectations": [],
   "unresolved_tensions": [
-    {
-      "id": "market-fragility",
-      "family": "risk",
-      "state": "unresolved",
-      "sessions": 23,
-      "inactive_sessions": 0,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-07-09",
-      "last_evaluated": "2026-07-09",
-      "active": true,
-      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
-      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
-      "evidence": [
-        "pulse:market_fragility=building"
-      ]
-    },
     {
       "id": "cross-asset-conflict",
       "family": "cross-asset",
@@ -196,8 +144,10 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:liquidity-beta",
-        "convergence:yields-growth"
+        "convergence:yields-growth",
+        "convergence:vix-equities",
+        "convergence:ai-growth",
+        "convergence:yields-bonds"
       ]
     }
   ],
@@ -219,40 +169,16 @@
       "status": "emerging",
       "first_seen": "2026-07-09",
       "last_seen": "2026-07-09",
-      "en": "stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
-      "ar": "شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
+      "en": "stacked speculative appetite (3/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
+      "ar": "شهية مضاربة متراكمة (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
     }
   ],
   "market_character": {
-    "id": "fragile-optimism",
-    "en": "Fragile optimism",
-    "ar": "تفاؤل هش"
+    "id": "unresolved-tension",
+    "en": "Unresolved tension",
+    "ar": "توتر غير محسوم"
   },
   "current_focus": [
-    {
-      "kind": "narrative",
-      "id": "speculative-momentum",
-      "state": "crowded",
-      "sessions": 23,
-      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
-      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
-    },
-    {
-      "kind": "narrative",
-      "id": "narrow-leadership",
-      "state": "crowded",
-      "sessions": 4,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة."
-    },
-    {
-      "kind": "narrative",
-      "id": "market-fragility",
-      "state": "unresolved",
-      "sessions": 23,
-      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
-      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب."
-    },
     {
       "kind": "narrative",
       "id": "cross-asset-conflict",
@@ -260,6 +186,14 @@
       "sessions": 3,
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي."
+    },
+    {
+      "kind": "narrative",
+      "id": "yield-pressure",
+      "state": "weakening",
+      "sessions": 1,
+      "en": "Yield pressure remains a constraint on long-duration assets.",
+      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل."
     },
     {
       "kind": "underpriced-memory",
@@ -271,28 +205,6 @@
     }
   ],
   "timeline": [
-    {
-      "id": "2026-06-19:persisted:market-fragility",
-      "date": "2026-06-19",
-      "kind": "persisted",
-      "narrative_id": "market-fragility",
-      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
-      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
-      "evidence": [
-        "pulse:market_fragility=building"
-      ]
-    },
-    {
-      "id": "2026-06-19:persisted:cross-asset-conflict",
-      "date": "2026-06-19",
-      "kind": "persisted",
-      "narrative_id": "cross-asset-conflict",
-      "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
-      "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
-      "evidence": [
-        "convergence:liquidity-beta"
-      ]
-    },
     {
       "id": "2026-06-22:changed:narrow-leadership",
       "date": "2026-06-22",
@@ -1315,6 +1227,28 @@
       "evidence": [
         "convergence:liquidity-beta",
         "convergence:yields-growth"
+      ]
+    },
+    {
+      "id": "2026-07-09:repriced:speculative-momentum",
+      "date": "2026-07-09",
+      "kind": "repriced",
+      "narrative_id": "speculative-momentum",
+      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
+      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
+      "evidence": [
+        "state-transition:repriced:speculative-momentum"
+      ]
+    },
+    {
+      "id": "2026-07-09:repriced:market-fragility",
+      "date": "2026-07-09",
+      "kind": "repriced",
+      "narrative_id": "market-fragility",
+      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
+      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
+      "evidence": [
+        "state-transition:repriced:market-fragility"
       ]
     }
   ],
