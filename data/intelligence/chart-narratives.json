@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-08T21:44:26.806Z",
-  "run_date": "2026-07-08",
+  "updated_at": "2026-07-09T12:34:58.426Z",
+  "run_date": "2026-07-09",
   "verified": true,
   "selected": [
     {
@@ -16,19 +16,19 @@
       "title_ar": "بيتا السيولة",
       "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
       "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 138,
+      "score": 148,
       "evidence": [
-        "causal:liquidity-beta diverging ×9",
+        "causal:liquidity-beta diverging ×10",
         "liquidity_pressure 3/5"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
           "severity": "high",
-          "label_en": "Divergence — BTC/QQQ not confirming (9-session strain)",
-          "label_ar": "انفصال — BTC/QQQ لا يؤكد (إجهاد 9 جلسات)",
+          "label_en": "Divergence — BTC/QQQ not confirming (10-session strain)",
+          "label_ar": "انفصال — BTC/QQQ لا يؤكد (إجهاد 10 جلسات)",
           "evidence": [
-            "convergence:diverges:liquidity-beta:chain=9"
+            "convergence:diverges:liquidity-beta:chain=10"
           ]
         },
         {
@@ -43,58 +43,57 @@
         {
           "type": "catalyst-zone",
           "severity": "info",
-          "label_en": "Catalyst window — FOMC Press Release (2026-07-08)",
-          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-08)",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-09)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-09)",
           "evidence": [
-            "pulse:catalyst:FOMC Press Release:2026-07-08"
+            "pulse:catalyst:FOMC Press Release:2026-07-09"
           ]
         }
       ],
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "ai-concentration",
+      "id": "yields-growth",
       "kind": "cross-asset",
-      "visual_type": "positioning-concentration",
+      "visual_type": "cross-asset-comparison",
       "symbols": [
-        "NASDAQ:NVDA",
+        "TVC:US10Y",
         "NASDAQ:QQQ"
       ],
-      "title_en": "AI leadership vs the growth complex",
-      "title_ar": "قيادة الذكاء الاصطناعي مقابل قطاع النمو",
-      "reading_en": "AI leadership against the broader growth complex — when the gap widens while breadth thins, the leadership is carrying more weight than the structure can comfortably bear.",
-      "reading_ar": "قيادة الذكاء الاصطناعي مقابل قطاع النمو الأوسع — حين تتسع الفجوة بينما يضيق الاتساع، تحمل القيادة وزناً أكبر مما تحتمله البنية بارتياح.",
+      "title_en": "Yields vs growth equities",
+      "title_ar": "العوائد مقابل أسهم النمو",
+      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
+      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
       "score": 60,
       "evidence": [
-        "momentum_concentration: narrow-megacap",
-        "ai_concentration_risk: elevated"
+        "causal:yields-growth diverging ×2"
       ],
       "annotations": [
         {
-          "type": "commentary-label",
-          "severity": "info",
-          "label_en": "Confirmation — NVDA/QQQ relationship holding",
-          "label_ar": "تأكيد — علاقة NVDA/QQQ صامدة",
+          "type": "divergence-highlight",
+          "severity": "high",
+          "label_en": "Divergence — US10Y/QQQ not confirming (2-session strain)",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 2 جلسات)",
           "evidence": [
-            "convergence:confirms:ai-growth"
+            "convergence:diverges:yields-growth:chain=2"
           ]
         },
         {
           "type": "transition-label",
           "severity": "elevated",
-          "label_en": "Regime shift — ai concentration risk contained → elevated",
-          "label_ar": "تحوّل النظام — ai concentration risk: contained ← elevated",
+          "label_en": "Regime shift — duration pressure neutral → building",
+          "label_ar": "تحوّل النظام — duration pressure: neutral ← building",
           "evidence": [
-            "cognition:timeline:ai_concentration_risk:contained->elevated:2026-07-08"
+            "cognition:timeline:duration_pressure:neutral->building:2026-07-08"
           ]
         },
         {
-          "type": "pressure-band",
-          "severity": "high",
-          "label_en": "Stored pressure — concentration pressure 5/5",
-          "label_ar": "ضغط مخزّن — 5/5",
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-09)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-09)",
           "evidence": [
-            "macro:pressure:concentration_pressure:5"
+            "pulse:catalyst:FOMC Press Release:2026-07-09"
           ]
         }
       ],
