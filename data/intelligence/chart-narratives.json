@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-09T18:06:11.489Z",
+  "updated_at": "2026-07-09T20:23:07.874Z",
   "run_date": "2026-07-09",
   "verified": true,
   "selected": [
@@ -43,38 +43,29 @@
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "liquidity-beta",
-      "kind": "liquidity",
-      "visual_type": "liquidity-pressure",
+      "id": "dollar-gold",
+      "kind": "cross-asset",
+      "visual_type": "macro-divergence",
       "symbols": [
-        "CRYPTO:BTCUSD",
-        "NASDAQ:QQQ"
+        "TVC:DXY",
+        "OANDA:XAUUSD"
       ],
-      "title_en": "Liquidity beta",
-      "title_ar": "بيتا السيولة",
-      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 18,
+      "title_en": "Dollar vs gold",
+      "title_ar": "الدولار مقابل الذهب",
+      "reading_en": "Gold holding against a firming dollar — an unusual co-move that leaves the relationship structurally unresolved.",
+      "reading_ar": "الذهب يصمد رغم تقوّي الدولار — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
+      "score": 52,
       "evidence": [
-        "liquidity_pressure 3/5"
+        "causal:dollar-gold diverging ×1"
       ],
       "annotations": [
         {
-          "type": "commentary-label",
-          "severity": "info",
-          "label_en": "Confirmation — BTC/QQQ relationship holding",
-          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
-          "evidence": [
-            "convergence:confirms:liquidity-beta"
-          ]
-        },
-        {
-          "type": "pressure-band",
+          "type": "divergence-highlight",
           "severity": "elevated",
-          "label_en": "Stored pressure — liquidity pressure 3/5",
-          "label_ar": "ضغط مخزّن — 3/5",
+          "label_en": "Divergence — DXY/GOLD not confirming",
+          "label_ar": "انفصال — DXY/GOLD لا يؤكد",
           "evidence": [
-            "macro:pressure:liquidity_pressure:3"
+            "convergence:diverges:dollar-gold:chain=1"
           ]
         },
         {

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-09T18:06:11.389Z",
+  "updated_at": "2026-07-09T20:23:07.775Z",
   "run_date": "2026-07-09",
   "verified": true,
   "sessions_tracked": 26,
@@ -114,8 +114,8 @@
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": 0.9810479375696676,
-        "qqq": 1.7106
+        "us10y": 1.2040133779264075,
+        "qqq": 1.6642
       }
     },
     {
@@ -127,10 +127,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "us10y": 0.9810479375696676,
-        "dxy": 0.023797719385226485
+        "us10y": 1.2040133779264075,
+        "dxy": 0.09419930589985014
       }
     },
     {
@@ -142,10 +142,10 @@
       "expected": "inverse",
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
-      "state": "neutral",
+      "state": "diverging",
       "evidence": {
-        "dxy": 0.023797719385226485,
-        "gold": 1.2205
+        "dxy": 0.09419930589985014,
+        "gold": 0.9961
       }
     },
     {
@@ -159,8 +159,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": 2.7617212588310838,
-        "spy": 0.8277
+        "vix": 1.79833012202954,
+        "spy": 0.8465
       }
     },
     {
@@ -174,8 +174,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "diverging",
       "evidence": {
-        "nvda": -0.4752,
-        "qqq": 1.7106
+        "nvda": -0.6565,
+        "qqq": 1.6642
       }
     },
     {
@@ -189,8 +189,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": 1.3982,
-        "qqq": 1.7106
+        "btc": 1.6396,
+        "qqq": 1.6642
       }
     },
     {
@@ -204,8 +204,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": 0.8277,
-        "iwm": 1.4073
+        "spy": 0.8465,
+        "iwm": 1.2812
       }
     },
     {
@@ -219,20 +219,29 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": 0.9810479375696676,
-        "tlt": 0.3201
+        "us10y": 1.2040133779264075,
+        "tlt": 0.1541
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
+        "source": "causal:yields-dollar",
+        "en": "Yield support typically firms the dollar",
+        "ar": "دعم العوائد يقوّي الدولار عادة",
+        "evidence": {
+          "us10y": 1.2040133779264075,
+          "dxy": 0.09419930589985014
+        }
+      },
+      {
         "source": "causal:liquidity-beta",
         "en": "Crypto trades as the liquidity beta of the growth complex",
         "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
         "evidence": {
-          "btc": 1.3982,
-          "qqq": 1.7106
+          "btc": 1.6396,
+          "qqq": 1.6642
         }
       },
       {
@@ -240,14 +249,9 @@
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": 0.8277,
-          "iwm": 1.4073
+          "spy": 0.8465,
+          "iwm": 1.2812
         }
-      },
-      {
-        "source": "breadth_state",
-        "en": "Breadth confirms the advance beyond megacap leadership.",
-        "ar": "اتساع السوق يؤكد الصعود خارج قيادة الأسهم الكبرى."
       }
     ],
     "contradiction": [
@@ -256,8 +260,17 @@
         "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": 0.9810479375696676,
-          "qqq": 1.7106
+          "us10y": 1.2040133779264075,
+          "qqq": 1.6642
+        }
+      },
+      {
+        "source": "causal:dollar-gold",
+        "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "dxy": 0.09419930589985014,
+          "gold": 0.9961
         }
       },
       {
@@ -265,17 +278,8 @@
         "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": 2.7617212588310838,
-          "spy": 0.8277
-        }
-      },
-      {
-        "source": "causal:ai-growth",
-        "en": "Divergence on the nvda/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة nvda/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "nvda": -0.4752,
-          "qqq": 1.7106
+          "vix": 1.79833012202954,
+          "spy": 0.8465
         }
       }
     ],
