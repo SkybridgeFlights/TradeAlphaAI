@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-10T18:54:29.386Z",
+  "generated_at": "2026-07-10T21:31:39.557Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 89,
-  "coverage_pct": 89,
+  "structural_confidence": 95,
+  "coverage_pct": 100,
   "dominant": {
     "dimension": "stability",
     "state": "fragile"
@@ -27,7 +27,7 @@
       "evidence": [
         "regime volatility=normal",
         "alignment=aligned",
-        "VIX=15.35"
+        "VIX=15.03"
       ]
     },
     "cross_asset": {
@@ -49,12 +49,12 @@
       ]
     },
     "rotation": {
-      "state": "cyclical_leadership",
-      "label_en": "cyclical leadership",
-      "label_ar": "قيادة دورية",
+      "state": "defensive_rotation",
+      "label_en": "defensive rotation",
+      "label_ar": "تدوير دفاعي",
       "evidence": [
-        "leaders=XLP/XLI/XLK",
-        "regime defensive=cyclical_leadership"
+        "leaders=XLP/XLU/XLRE",
+        "regime defensive=defensive_rotation"
       ]
     },
     "persistence": {
@@ -68,12 +68,12 @@
       ]
     },
     "momentum": {
-      "state": "indeterminate",
-      "label_en": "indeterminate",
-      "label_ar": "غير محدد",
+      "state": "deteriorating",
+      "label_en": "momentum deterioration",
+      "label_ar": "تدهور الزخم",
       "evidence": [
         "participation=narrow_leadership",
-        "rotation=cyclical_leadership",
+        "rotation=defensive_rotation",
         "concentration=elevated"
       ]
     },
@@ -83,7 +83,7 @@
       "label_ar": "مشاركة سيولة غير مؤكدة",
       "evidence": [
         "liquidity_participation=uncertain",
-        "liquidity_state=neutral"
+        "liquidity_state=defensive_demand"
       ]
     },
     "stability": {
@@ -106,7 +106,7 @@
     "volatility_structure": "contained",
     "cross_asset": "coherent",
     "structural_stability": "fragile",
-    "structural_confidence": 89
+    "structural_confidence": 95
   },
   "attribution": {
     "sources": [
