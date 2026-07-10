@@ -1,21 +1,32 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-09T22:03:48.248Z",
-  "run_date": "2026-07-09",
+  "updated_at": "2026-07-10T15:36:00.984Z",
+  "run_date": "2026-07-10",
   "verified": true,
   "conviction": {
     "state": "deteriorating-confirmation",
     "regime_confidence": "high",
-    "confirmations": 4,
-    "contradictions": 5,
-    "en": "Confirmation is deteriorating — 5 structural contradiction signal(s) against 4 confirmation(s).",
-    "ar": "التأكيد يتدهور — 5 إشارات تناقض هيكلي مقابل 4 إشارات تأكيد."
+    "confirmations": 3,
+    "contradictions": 4,
+    "en": "Confirmation is deteriorating — 4 structural contradiction signal(s) against 3 confirmation(s).",
+    "ar": "التأكيد يتدهور — 4 إشارات تناقض هيكلي مقابل 3 إشارات تأكيد."
   },
-  "contradictions": [],
+  "contradictions": [
+    {
+      "id": "concentration-vs-breadth",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-07-10",
+      "last_seen": "2026-07-10",
+      "active_today": true,
+      "en": "Extreme AI concentration against deteriorating market breadth.",
+      "ar": "تركز حاد في الذكاء الاصطناعي مقابل تدهور اتساع السوق."
+    }
+  ],
   "structure": {
-    "class": "healthy-trend",
-    "en": "Healthy trend structure — broad participation with no structural contradictions.",
-    "ar": "بنية اتجاه صحية — مشاركة واسعة دون تناقضات هيكلية."
+    "class": "fragile-trend",
+    "en": "Fragile trend — the advance rests on deteriorating participation and stacking stress inputs.",
+    "ar": "اتجاه هش — الصعود يرتكز على مشاركة متدهورة ومدخلات ضغط متراكمة."
   },
   "pressure": {
     "tracks": {
@@ -41,16 +52,16 @@
         "ar": "ضغط التناوب الدفاعي"
       },
       "speculative_pressure": {
-        "score": 3,
+        "score": 4,
         "base_score": 3,
-        "state": "steady",
+        "state": "accumulating",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
       "concentration_pressure": {
         "score": 5,
         "base_score": 5,
-        "state": "steady",
+        "state": "accumulating",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
@@ -73,8 +84,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — healthy trend with deteriorating confirmation; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية اتجاه صحية مع التأكيد يتدهور؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — fragile trend with deteriorating confirmation; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — اتجاه هش مع التأكيد يتدهور؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -82,7 +93,7 @@
     },
     {
       "id": "bullish-continuation",
-      "status": "active",
+      "status": "watch",
       "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
       "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
       "derived_from": [
@@ -92,7 +103,7 @@
     },
     {
       "id": "fragile-upside",
-      "status": "dormant",
+      "status": "active",
       "en": "Fragile upside — the index can extend while participation thins; deteriorating breadth alongside new highs would confirm this path, broadening would invalidate it.",
       "ar": "صعود هش — يمكن للمؤشر أن يمتد بينما تضيق المشاركة؛ تدهور الاتساع مع قمم جديدة يؤكد هذا المسار، واتساع المشاركة يبطله.",
       "derived_from": [
@@ -123,8 +134,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -146,5 +157,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: deteriorating-confirmation; structure: healthy-trend; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: deteriorating-confirmation; structure: fragile-trend; contradictions active: 1 (0 escalated); elevated pressure tracks: 3."
 }
