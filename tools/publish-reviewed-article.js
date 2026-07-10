@@ -241,19 +241,32 @@ function updateInsightsIndexes(slug, topic, enHtml, arHtml) {
   const enCard = `<article class="market-card" data-category="${escape(dataCategory)}"><span class="market-card-kicker">${escape(enKicker)}</span><h3>${escape(enTitle)}</h3><p>${escape(enDesc)}</p><a class="market-card-link" href="/insights/${slug}.html">Read article</a></article>`;
   const arCard = `<article class="market-card" data-category="${escape(dataCategory)}"><span class="market-card-kicker">${escape(arKicker)}</span><h3>${escape(arTitle)}</h3><p>${escape(arDesc)}</p><a class="market-card-link" href="/ar/insights/${slug}.html">اقرأ المقال</a></article>`;
 
-  const GRID_MARKER = '<div id="insight-grid" class="market-grid three">';
-  injectCard(path.join(ROOT, 'insights', 'index.html'), GRID_MARKER, enCard, slug);
-  injectCard(path.join(ROOT, 'ar', 'insights', 'index.html'), GRID_MARKER, arCard, slug);
+  // insights/index.html is owned by generate-controlled-insights.js, which
+  // rebuilds it (directory-scanning every indexable article) and emits the grid
+  // WITHOUT the legacy id="insight-grid" anchor. Resolve the grid container by
+  // whichever marker is present — the id form first, then the stable
+  // design-system class the generator actually emits — so a rebuilt index can
+  // never strand this transaction at "Cannot find article grid marker". That
+  // failure fired AFTER the public files were already written, leaving orphan
+  // pages with the queue still `reviewed`, which deadlocked ALL editorial
+  // publishing (every later run then hit the overwrite guard and exited 1).
+  const GRID_MARKERS = [
+    '<div id="insight-grid" class="market-grid three">',
+    '<div class="market-grid three">'
+  ];
+  injectCard(path.join(ROOT, 'insights', 'index.html'), GRID_MARKERS, enCard, slug);
+  injectCard(path.join(ROOT, 'ar', 'insights', 'index.html'), GRID_MARKERS, arCard, slug);
 }
 
-function injectCard(indexPath, marker, card, slug) {
+function injectCard(indexPath, markers, card, slug) {
   const html = fs.readFileSync(indexPath, 'utf8');
   if (html.includes(`/${slug}.html`)) {
     console.log(`  Index ${relative(indexPath)}: already contains ${slug}, skipping injection.`);
     return;
   }
+  const marker = (Array.isArray(markers) ? markers : [markers]).find((m) => html.includes(m));
+  if (!marker) fail(`Cannot find article grid marker in ${relative(indexPath)}`);
   const pos = html.indexOf(marker);
-  if (pos === -1) fail(`Cannot find article grid marker in ${relative(indexPath)}`);
   const insertAt = pos + marker.length;
   const updated = html.slice(0, insertAt) + card + html.slice(insertAt);
   fs.writeFileSync(indexPath, updated, 'utf8');

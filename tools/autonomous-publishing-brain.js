@@ -1053,6 +1053,20 @@ function executeAction(contentType, mode, dryRun, action) {
           : null,
         (slug) => {
           const args = [`--slug=${slug}`, '--execute'];
+          // Phantom-publish self-heal: if public pages already exist for a topic
+          // the brain is only now trying to publish (status was reviewed/approved,
+          // never `published`), those files are orphans from a partial prior
+          // publish. Without --refresh-existing the publish transaction refuses to
+          // overwrite them whenever a repair-regenerated draft differs, deadlocking
+          // ALL editorial publishing indefinitely. Detect the phantom and let the
+          // transaction refresh the stale public files atomically (it also relinks
+          // the index, registry, history and sitemaps), instead of failing forever.
+          const phantomPublicFiles = expectedPublicPages(contentType, slug)
+            .filter((rel) => fs.existsSync(path.join(ROOT, rel)));
+          if (phantomPublicFiles.length) {
+            console.warn(`[brain] Phantom public pages detected for ${slug} (${phantomPublicFiles.join(', ')}); publishing with --refresh-existing to reconcile.`);
+            args.push('--refresh-existing');
+          }
           const { chatId: _tgChatId } = resolveTelegramTarget();
           const telegramGate = telegramQualityGate(slug);
           if (process.env.TELEGRAM_BOT_TOKEN && _tgChatId && telegramGate.allowed) {
