@@ -33,6 +33,12 @@ function buildManifest(map) {
     .map(function (name) { const b = Buffer.isBuffer(map[name]) ? map[name] : bytesFix(map[name]); return { name: name, sha256: hashOf(b), size_bytes: b.length, schema_version: '1.0.0' }; });
   return { transport_version: '1.0.0', generated_at: '2026-07-11T06:00:00Z', files: files };
 }
+// Immutable variant: same entries + a valid snapshots/<release>/<name> path.
+function buildImmutableManifest(map, releaseId) {
+  const m = buildManifest(map);
+  m.files.forEach(function (f) { f.path = 'snapshots/' + releaseId + '/' + f.name; });
+  return m;
+}
 // Injected loaders. `manifest` may be overridden (e.g. tampered). Tracks calls.
 function makeLoaders(map, manifestObj, calls) {
   const getJson = function (url) {
@@ -283,8 +289,82 @@ function runHistoricalTests() {
   ok('(H16) no historical_record => no historical section, no errors', cNo.innerHTML.indexOf('Historical Research Record') === -1);
 }
 
+// ── Phase 1F: immutable versioned snapshot paths (additive) ───────────────
+function runPathTests() {
+  const NAME = 'public_performance_summary.json';
+  const good = 'snapshots/20260711T120000Z-ab12cd34/' + NAME;
+  // (P2) valid immutable path
+  ok('(P2) valid immutable path accepted', PP.isSafeSnapshotPath(good, NAME) === true);
+  // (P4) final filename must equal name
+  ok('(P4) name/path filename mismatch rejected', PP.isSafeSnapshotPath('snapshots/rel/public_system_summary.json', NAME) === false);
+  // (P5) admin rejected
+  ok('(P5) admin path rejected', PP.isSafeSnapshotPath('snapshots/rel/admin_research_health.json', 'admin_research_health.json') === false);
+  // (P6) traversal
+  ok('(P6) literal traversal rejected', PP.isSafeSnapshotPath('snapshots/../evil/' + NAME, NAME) === false);
+  // (P7) encoded traversal
+  ok('(P7) encoded traversal rejected', PP.isSafeSnapshotPath('snapshots/%2e%2e/' + NAME, NAME) === false);
+  ok('(P7b) encoded slash rejected', PP.isSafeSnapshotPath('snapshots%2frel/' + NAME, NAME) === false);
+  // (P8) leading slash
+  ok('(P8) leading slash rejected', PP.isSafeSnapshotPath('/snapshots/rel/' + NAME, NAME) === false);
+  // (P9) backslash
+  ok('(P9) backslash rejected', PP.isSafeSnapshotPath('snapshots\\rel\\' + NAME, NAME) === false);
+  // (P10) URL scheme
+  ok('(P10) scheme rejected', PP.isSafeSnapshotPath('https://evil/snapshots/rel/' + NAME, NAME) === false);
+  ok('(P10b) javascript scheme rejected', PP.isSafeSnapshotPath('javascript:snapshots/rel/' + NAME, NAME) === false);
+  // (P11) query
+  ok('(P11) query string rejected', PP.isSafeSnapshotPath(good + '?x=1', NAME) === false);
+  // (P12) fragment
+  ok('(P12) fragment rejected', PP.isSafeSnapshotPath(good + '#a', NAME) === false);
+  // (P13) invalid release_id
+  ok('(P13) space in release_id rejected', PP.isSafeSnapshotPath('snapshots/rel id/' + NAME, NAME) === false);
+  ok('(P13b) dot in release_id rejected', PP.isSafeSnapshotPath('snapshots/rel.x/' + NAME, NAME) === false);
+  // (P14) arbitrary directory / depth
+  ok('(P14) wrong root dir rejected', PP.isSafeSnapshotPath('uploads/rel/' + NAME, NAME) === false);
+  ok('(P14b) extra directory rejected', PP.isSafeSnapshotPath('snapshots/rel/sub/' + NAME, NAME) === false);
+  ok('(P14c) duplicate slash rejected', PP.isSafeSnapshotPath('snapshots//rel/' + NAME, NAME) === false);
+  // (P15) arbitrary extension
+  ok('(P15) wrong extension rejected', PP.isSafeSnapshotPath('snapshots/rel/public_performance_summary.txt', NAME) === false);
+
+  // buildSnapshotUrlFromEntry: path when present, name when absent, throws on bad path
+  ok('(P1u) entry without path => legacy name URL', PP.buildSnapshotUrlFromEntry('https://cdn.x/perf', { name: NAME }) === 'https://cdn.x/perf/' + NAME);
+  ok('(P2u) entry with path => path URL', PP.buildSnapshotUrlFromEntry('https://cdn.x/perf', { name: NAME, path: good }) === 'https://cdn.x/perf/' + good);
+  let threw = false; try { PP.buildSnapshotUrlFromEntry('https://cdn.x/perf', { name: NAME, path: 'snapshots/../evil/' + NAME }); } catch (e) { threw = true; } ok('(P6u) bad path throws', threw);
+
+  // manifest with a valid path validates; manifest with a bad path is rejected
+  const relId = '20260711T120000Z-ab12cd34';
+  ok('(P2m) immutable manifest validates', PP.validateManifest(buildImmutableManifest(happyMap, relId), NOW).ok === true);
+  const badMan = buildImmutableManifest(happyMap, relId);
+  badMan.files.forEach(function (f) { if (f.name === NAME) f.path = 'snapshots/../evil/' + NAME; });
+  const mvBad = PP.validateManifest(badMan, NOW);
+  ok('(P6m) manifest with traversal path rejected', mvBad.ok === false && mvBad.errors.join(' ').indexOf('bad path') !== -1);
+
+  // async: immutable manifest load uses path, integrity still enforced
+  const urls = [];
+  const getJson = function () { return Promise.resolve(buildImmutableManifest(happyMap, relId)); };
+  const getBytes = function (u) { urls.push(u); const n = String(u).split('/').pop(); return Promise.resolve(bytesFix(happyMap[n])); };
+  return PP.load('https://cdn.example.com/perf', { nowMs: NOW, fetchJson: getJson, getBytes: getBytes }).then(function (r) {
+    ok('(P2l) immutable manifest load ok', r.ok === true && !!r.performance && !!r.system && !!r.weekly);
+    ok('(P3) snapshots fetched via path not name', urls.length === 3 && urls.every(function (u) { return u.indexOf('/snapshots/' + relId + '/') !== -1; }));
+    ok('(P16-18) integrity/schema/privacy still enforced', r.errors.length === 0 && r.integrity_error === false && r.stale === false);
+  }).then(function () {
+    // (P19) partial failure remains safe with immutable manifest
+    const gb = function (u) { const n = String(u).split('/').pop(); if (n === 'public_weekly_research.json') return Promise.reject(new Error('HTTP 404')); return Promise.resolve(bytesFix(happyMap[n])); };
+    return PP.load('https://cdn.example.com/perf', { nowMs: NOW, fetchJson: getJson, getBytes: gb }).then(function (r) {
+      ok('(P19) immutable partial failure safe', r.partial === true && r.weekly === null && !!r.performance);
+    });
+  }).then(function () {
+    // (P16 integrity) hash mismatch under immutable manifest still rejects
+    const man = buildImmutableManifest(happyMap, relId);
+    man.files.forEach(function (f) { if (f.name === NAME) f.sha256 = 'b'.repeat(64); });
+    return PP.load('https://cdn.example.com/perf', { nowMs: NOW, fetchJson: function () { return Promise.resolve(man); }, getBytes: getBytes }).then(function (r) {
+      ok('(P16) immutable hash mismatch rejects performance', r.integrity_error === true && r.performance === null);
+    });
+  });
+}
+
 runVerifiedTests()
   .then(runLoadTests)
+  .then(runPathTests)
   .then(function () { runRenderTests(); runScanTests(); runHistoricalTests(); })
   .then(function () {
     console.log('\n[public-performance-consumer] ' + pass + ' passed, ' + fail + ' failed');

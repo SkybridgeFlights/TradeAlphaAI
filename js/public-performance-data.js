@@ -113,6 +113,45 @@
     return baseUrl.replace(/\/+$/, '') + '/' + filename;
   }
 
+  // Immutable versioned path (Phase 1F). The ONLY accepted shape is exactly
+  // `snapshots/<release_id>/<name>` where <name> is the allowlisted logical
+  // filename and release_id is [A-Za-z0-9_-]+. Everything else is refused:
+  // admin names, traversal (literal or percent-encoded), separators/backslash,
+  // schemes, query/fragment, leading/duplicate slash, extra directories,
+  // arbitrary extensions, or a final filename that differs from entry.name.
+  function isSafeSnapshotPath(path, name) {
+    if (typeof path !== 'string' || !path.length) return false;
+    if (ALLOWED_FILES.indexOf(name) === -1) return false;          // name must be allowlisted
+    if (FORBIDDEN_NAME.test(path)) return false;                   // admin/secret/etc.
+    if (/[\\]/.test(path)) return false;                           // backslash
+    if (path.indexOf('..') !== -1) return false;                   // literal traversal
+    if (/%2e|%2f|%5c/i.test(path)) return false;                   // encoded . / \
+    if (/^[a-z][a-z0-9+.-]*:/i.test(path)) return false;           // scheme (http:, data:, …)
+    if (path.indexOf('?') !== -1 || path.indexOf('#') !== -1) return false; // query/fragment
+    if (path.charAt(0) === '/') return false;                      // leading slash
+    if (path.indexOf('//') !== -1) return false;                   // duplicate slash
+    const parts = path.split('/');
+    if (parts.length !== 3) return false;                          // exactly snapshots/<id>/<name>
+    if (parts[0] !== 'snapshots') return false;
+    if (!/^[A-Za-z0-9_-]+$/.test(parts[1])) return false;          // release_id (no dots/spaces)
+    if (parts[2] !== name) return false;                           // final filename === entry.name
+    return true;
+  }
+
+  // Resolve the fetch URL for a manifest entry: validated immutable path when
+  // present, otherwise the legacy fixed name. URL is built ONLY from the
+  // configured base + validated manifest data; page/query input can never
+  // influence it.
+  function buildSnapshotUrlFromEntry(baseUrl, entry) {
+    if (!isSafeBaseUrl(baseUrl)) throw new Error('PUBLIC_SNAPSHOT_BASE_URL is missing or unsafe');
+    const name = entry && entry.name;
+    if (entry && entry.path != null && entry.path !== '') {
+      if (!isSafeSnapshotPath(entry.path, name)) throw new Error('refused unsafe snapshot path');
+      return baseUrl.replace(/\/+$/, '') + '/' + entry.path;
+    }
+    return buildSnapshotUrl(baseUrl, name);
+  }
+
   // ── Cross-environment SHA-256 (hex) ─────────────────────────────────────
   function toUint8(bytes) {
     if (bytes instanceof Uint8Array) return bytes;
@@ -162,7 +201,10 @@
       if (!SHA256_HEX.test(String(f.sha256 || ''))) errors.push('bad sha256 for ' + f.name);
       if (!Number.isInteger(f.size_bytes) || f.size_bytes < 0) errors.push('bad size_bytes for ' + f.name);
       if (f.schema_version !== SCHEMA_VERSION) errors.push('bad schema_version for ' + f.name);
-      entries[f.name] = { name: f.name, sha256: String(f.sha256 || '').toLowerCase(), size_bytes: f.size_bytes, schema_version: f.schema_version };
+      // Immutable path is optional and additive; when present it must be a
+      // strictly-valid snapshots/<release_id>/<name> path.
+      if (f.path != null && f.path !== '' && !isSafeSnapshotPath(f.path, f.name)) errors.push('bad path for ' + f.name);
+      entries[f.name] = { name: f.name, path: (f.path != null && f.path !== '') ? String(f.path) : null, sha256: String(f.sha256 || '').toLowerCase(), size_bytes: f.size_bytes, schema_version: f.schema_version };
     }
     return { ok: errors.length === 0, errors: errors, files: Array.from(seen), entries: entries };
   }
@@ -444,7 +486,8 @@
         if (!mv.ok) { result.errors.push.apply(result.errors, mv.errors); return result; }
         const wanted = mv.files.filter(function (n) { return ALLOWED_FILES.indexOf(n) !== -1; });
         return Promise.all(wanted.map(function (name) {
-          return fetchVerified(buildSnapshotUrl(baseUrl, name), mv.entries[name], verifyOpts)
+          // Use the validated immutable path when present, else the legacy name.
+          return fetchVerified(buildSnapshotUrlFromEntry(baseUrl, mv.entries[name]), mv.entries[name], verifyOpts)
             .then(function (obj) { return { name: name, obj: obj }; })
             .catch(function (e) {
               const msg = String(e && e.message || e);
@@ -646,7 +689,7 @@
     TRANSPORT_VERSION: TRANSPORT_VERSION, SCHEMA_VERSION: SCHEMA_VERSION, EXPECTED_SOURCE: EXPECTED_SOURCE,
     MANIFEST_FILE: MANIFEST_FILE, ALLOWED_FILES: ALLOWED_FILES, MAX_CACHE_AGE_MS: MAX_CACHE_AGE_MS,
     isValidUtcTimestamp: isValidUtcTimestamp, isSafePublicFilename: isSafePublicFilename, isSafeBaseUrl: isSafeBaseUrl,
-    buildSnapshotUrl: buildSnapshotUrl, sha256Hex: sha256Hex,
+    buildSnapshotUrl: buildSnapshotUrl, isSafeSnapshotPath: isSafeSnapshotPath, buildSnapshotUrlFromEntry: buildSnapshotUrlFromEntry, sha256Hex: sha256Hex,
     validateManifest: validateManifest, validateEnvelope: validateEnvelope, isStale: isStale, sampleStatusFor: sampleStatusFor,
     normalizeSystemSummary: normalizeSystemSummary, normalizePerformance: normalizePerformance, normalizeWeekly: normalizeWeekly, normalizeHistorical: normalizeHistorical,
     ingestSnapshot: ingestSnapshot, fetchVerified: fetchVerified, load: load, render: render, init: init, _labels: LABELS,
