@@ -208,6 +208,36 @@
     };
   }
 
+  // Optional, additive historical record. Returns null when absent (so the
+  // section never renders). Kept STRICTLY separate from schema-1.0 metrics —
+  // never merged, never treated as verified. null preserved.
+  function normalizeHistorical(hr) {
+    if (!isPlainObject(hr)) return null;
+    const dq = isPlainObject(hr.data_quality) ? hr.data_quality : {};
+    return {
+      available: hr.available !== false, // object present but not explicitly false => available
+      coverage: safeStr(hr.coverage),
+      verified_from: safeStr(hr.verified_from),
+      independently_audited: hr.independently_audited === true,
+      as_of: safeStr(hr.as_of),
+      closed_trades: safeInt(hr.closed_trades),
+      wins: safeInt(hr.wins),
+      losses: safeInt(hr.losses),
+      win_rate_pct: safeNum(hr.win_rate_pct),
+      profit_factor: safeNum(hr.profit_factor),
+      expectancy_r: safeNum(hr.expectancy_r),
+      pnl_usd: safeNum(hr.pnl_usd),
+      average_holding_minutes: safeNum(hr.average_holding_minutes),
+      data_quality: {
+        schema_1_closed_trades: safeInt(dq.schema_1_closed_trades),
+        legacy_closed_trades: safeInt(dq.legacy_closed_trades),
+        join_success_pct: safeNum(dq.join_success_pct),
+        critical_issues: safeInt(dq.critical_issues),
+      },
+      methodology_note: safeStr(hr.methodology_note),
+    };
+  }
+
   function normalizePerformance(payload) {
     if (!isPlainObject(payload)) return null;
     const systems = Array.isArray(payload.systems) ? payload.systems.map(function (s) {
@@ -224,6 +254,7 @@
         max_drawdown_pct: safeNum(s.max_drawdown_pct), average_holding_minutes: safeNum(s.average_holding_minutes),
         schema_1_signal_rows: safeInt(s.schema_1_signal_rows), schema_1_trading_days: safeInt(s.schema_1_trading_days),
         methodology_note: safeStr(s.methodology_note),
+        historical_record: normalizeHistorical(s.historical_record),
       };
     }) : [];
     return { as_of: safeStr(payload.as_of), systems: systems };
@@ -282,6 +313,14 @@
       notAudited: 'Internally generated research record — not independently audited.',
       weeklyHeading: 'Weekly research', weeklyUnavailable: 'Public weekly summary not yet available.',
       week: 'Week', observations: 'Observations',
+      verifiedHeading: 'Verified Schema 1.0 Research Record',
+      histHeading: 'Historical Research Record', histBadge: 'Historical / Legacy coverage',
+      histUnavailable: 'Historical research record not available.',
+      histWarning: 'Includes legacy pre-schema data. Legacy rows do not contain the complete Schema 1.0 field set. This record is internally generated and not independently audited.',
+      histLimited: 'Limited historical sample — results remain observational and may change materially.',
+      pnlUsd: 'PnL (USD)', schema1Count: 'Schema 1.0 closed trades', legacyCount: 'Legacy closed trades',
+      joinSuccess: 'Join success', criticalIssues: 'Critical data issues', auditState: 'Independently audited',
+      auditNo: 'No — internally generated',
       disclaimer: 'Educational research only — not investment advice. Past performance does not guarantee future results.',
       sample: {
         insufficient: 'Insufficient sample — these statistics are observational and are not evidence of stable future performance.',
@@ -307,6 +346,14 @@
       notAudited: 'سجل بحثي مُولّد داخلياً — غير مُدقّق من جهة خارجية مستقلة.',
       weeklyHeading: 'البحث الأسبوعي', weeklyUnavailable: 'الملخّص الأسبوعي العام غير متوفر بعد.',
       week: 'الأسبوع', observations: 'ملاحظات',
+      verifiedHeading: 'سجل بحثي موثّق وفق المخطط 1.0',
+      histHeading: 'السجل البحثي التاريخي', histBadge: 'تغطية تاريخية/قديمة',
+      histUnavailable: 'السجل البحثي التاريخي غير متاح.',
+      histWarning: 'يتضمن بيانات تاريخية سابقة للمخطط 1.0. السجلات القديمة لا تحتوي على كامل حقول المخطط 1.0. هذا السجل مُنشأ داخليًا ولم يخضع لتدقيق مستقل.',
+      histLimited: 'العينة التاريخية محدودة — النتائج وصفية وقد تتغير بصورة جوهرية.',
+      pnlUsd: 'الربح/الخسارة (دولار)', schema1Count: 'صفقات المخطط 1.0 المغلقة', legacyCount: 'الصفقات القديمة المغلقة',
+      joinSuccess: 'نجاح الربط', criticalIssues: 'مشكلات بيانات حرجة', auditState: 'مُدقّق من جهة مستقلة',
+      auditNo: 'لا — مُنشأ داخليًا',
       disclaimer: 'محتوى بحثي تعليمي فقط — وليس نصيحة استثمارية. الأداء السابق لا يضمن النتائج المستقبلية.',
       sample: {
         insufficient: 'حجم العينة غير كافٍ — هذه الإحصاءات وصفية فقط ولا تُعد دليلاً على ثبات الأداء مستقبلًا.',
@@ -440,6 +487,47 @@
       '</span><span class="pp-metric-value">' + esc(shown) + '</span></div>';
   }
 
+  // Historical Research Record — a SEPARATE subsection, only when present.
+  // Neutral badge (never green/"verified"), its own legacy warning, and its
+  // own metrics. Never merged with the schema-1.0 figures above it. pnl_usd is
+  // the one place a USD figure is allowed (and only when non-null).
+  function renderHistoricalCard(hist, L) {
+    if (!hist) return ''; // absent => no section at all
+    const badge = '<span class="pp-badge pp-badge-historical">' + esc(L.histBadge) + '</span>';
+    if (hist.available === false) {
+      return '<section class="pp-historical"><div class="pp-hist-head"><h4>' + esc(L.histHeading) + '</h4>' + badge + '</div>' +
+        '<p class="pp-unavailable" role="status">' + esc(L.histUnavailable) + '</p></section>';
+    }
+    const limited = (hist.closed_trades !== null && hist.closed_trades < SAMPLE_THRESHOLDS.insufficient)
+      ? '<p class="pp-hist-limited" role="note">' + esc(L.histLimited) + '</p>' : '';
+    const dq = hist.data_quality || {};
+    return '<section class="pp-historical">' +
+      '<div class="pp-hist-head"><h4>' + esc(L.histHeading) + '</h4>' + badge + '</div>' +
+      '<p class="pp-hist-warning" role="note">' + esc(L.histWarning) + '</p>' + limited +
+      '<div class="pp-metrics">' +
+        metricRow(L.closedTrades, hist.closed_trades === null ? null : String(hist.closed_trades), L.unavailable) +
+        metricRow(L.winRate, fmtPct(hist.win_rate_pct), L.unavailable) +
+        metricRow(L.profitFactor, fmtNum(hist.profit_factor, 2), L.unavailable) +
+        metricRow(L.wins, hist.wins === null ? null : String(hist.wins), L.unavailable) +
+        metricRow(L.losses, hist.losses === null ? null : String(hist.losses), L.unavailable) +
+        metricRow(L.expectancy, fmtNum(hist.expectancy_r, 2), L.unavailable) +
+        // USD PnL shown only when non-null; null => "Not available" (never 0).
+        metricRow(L.pnlUsd, hist.pnl_usd === null ? null : ('$' + Number(hist.pnl_usd).toFixed(2)), L.unavailable) +
+        metricRow(L.avgHold, hist.average_holding_minutes === null ? null : String(hist.average_holding_minutes), L.unavailable) +
+        metricRow(L.schema1Count, dq.schema_1_closed_trades === null ? null : String(dq.schema_1_closed_trades), L.unavailable) +
+        metricRow(L.legacyCount, dq.legacy_closed_trades === null ? null : String(dq.legacy_closed_trades), L.unavailable) +
+        metricRow(L.joinSuccess, fmtPct(dq.join_success_pct), L.unavailable) +
+        metricRow(L.criticalIssues, dq.critical_issues === null ? null : String(dq.critical_issues), L.unavailable) +
+        metricRow(L.auditState, L.auditNo, L.unavailable) +
+      '</div>' +
+      '<footer class="pp-card-foot">' +
+        '<span>' + esc(L.asOf) + ': ' + esc(hist.as_of || L.unavailable) + '</span>' +
+        '<span>' + esc(L.notAudited) + '</span>' +
+        (hist.methodology_note ? '<span class="pp-method">' + esc(hist.methodology_note) + '</span>' : '') +
+      '</footer>' +
+    '</section>';
+  }
+
   function renderSystemCard(sys, L) {
     if (!sys) return '';
     const warn = L.sample[sys.sample_status] || L.sample.insufficient;
@@ -448,7 +536,7 @@
       '<article class="pp-card" data-sample="' + esc(sys.sample_status || 'insufficient') + '">' +
         '<header class="pp-card-head"><h3>' + esc(sys.public_name || L.unavailable) + '</h3>' +
           '<span class="' + badgeClass + '">' + esc(sys.sample_status || 'insufficient') + '</span></header>' +
-        '<p class="pp-schema-tag">' + esc(L.schemaVerified) + '</p>' +
+        '<p class="pp-schema-tag">' + esc(L.verifiedHeading) + '</p>' +
         '<p class="pp-sample-warning" role="note">' + esc(warn) + '</p>' +
         '<div class="pp-metrics">' +
           metricRow(L.closedTrades, sys.closed_trades === null ? null : String(sys.closed_trades), L.unavailable) +
@@ -469,6 +557,7 @@
           '<span>' + esc(L.delay) + ': ' + esc(sys.data_delay_hours === null ? L.unavailable : sys.data_delay_hours) + '</span>' +
           (sys.methodology_note ? '<span class="pp-method">' + esc(sys.methodology_note) + '</span>' : '') +
         '</footer>' +
+        renderHistoricalCard(sys.historical_record, L) +
       '</article>';
   }
 
@@ -559,7 +648,7 @@
     isValidUtcTimestamp: isValidUtcTimestamp, isSafePublicFilename: isSafePublicFilename, isSafeBaseUrl: isSafeBaseUrl,
     buildSnapshotUrl: buildSnapshotUrl, sha256Hex: sha256Hex,
     validateManifest: validateManifest, validateEnvelope: validateEnvelope, isStale: isStale, sampleStatusFor: sampleStatusFor,
-    normalizeSystemSummary: normalizeSystemSummary, normalizePerformance: normalizePerformance, normalizeWeekly: normalizeWeekly,
+    normalizeSystemSummary: normalizeSystemSummary, normalizePerformance: normalizePerformance, normalizeWeekly: normalizeWeekly, normalizeHistorical: normalizeHistorical,
     ingestSnapshot: ingestSnapshot, fetchVerified: fetchVerified, load: load, render: render, init: init, _labels: LABELS,
   };
 });

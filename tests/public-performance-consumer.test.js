@@ -233,9 +233,59 @@ function runScanTests() {
   ok('(25) mobile media query present in CSS', css.indexOf('@media') !== -1 && css.indexOf('max-width') !== -1);
 }
 
+// ── Phase 1E: historical_record (additive, backward-compatible) ───────────
+function runHistoricalTests() {
+  const L = PP._labels.en;
+  const withHistPayload = readFix('performance.with_historical.json').payload;
+  const norm = PP.normalizePerformance(withHistPayload);
+  const gold = norm.systems[0];
+  const qqq = norm.systems[1];
+
+  ok('(H1) historical absent => null (backward compat)', PP.normalizePerformance(readFix('performance.insufficient.json').payload).systems[0].historical_record === null);
+  ok('(H1b) per-system optional: QQQ has no historical', qqq.historical_record === null);
+  ok('(H2) available=true parsed', gold.historical_record && gold.historical_record.available === true && gold.historical_record.closed_trades === 20);
+  ok('(H4) verified (2) vs historical (20) kept separate', gold.closed_trades === 2 && gold.historical_record.closed_trades === 20);
+  ok('(H4b) data_quality legacy/schema split', gold.historical_record.data_quality.schema_1_closed_trades === 2 && gold.historical_record.data_quality.legacy_closed_trades === 18);
+
+  const c = { innerHTML: '' };
+  PP.render(c, { performance: norm, system: null, weekly: null }, 'en');
+  const h = c.innerHTML;
+  ok('(H2r) Historical section rendered', h.indexOf('Historical Research Record') !== -1);
+  ok('(H3v) Verified Schema 1.0 label present', h.indexOf('Verified Schema 1.0 Research Record') !== -1);
+  ok('(H9) neutral historical badge (not green/verified)', h.indexOf('Historical / Legacy coverage') !== -1);
+  ok('(H7) legacy warning EN present', h.indexOf('Includes legacy pre-schema data') !== -1);
+  ok('(H5) non-null historical PnL shows $202.80', h.indexOf('$202.80') !== -1);
+  ok('(H11) legacy + schema-1 counts labelled', h.indexOf('Schema 1.0 closed trades') !== -1 && h.indexOf('Legacy closed trades') !== -1);
+  ok('(H10) independently_audited=false shown clearly', h.indexOf('No — internally generated') !== -1);
+  ok('(H12) closed-count beside historical WR/PF', h.indexOf(L.closedTrades) !== -1 && h.indexOf(L.winRate) !== -1 && h.indexOf(L.profitFactor) !== -1);
+  ok('(H13) historical <30 => limited-sample warning', h.indexOf('Limited historical sample') !== -1);
+  ok('(H14) schema-1 insufficient warning unchanged', h.indexOf('Insufficient sample') !== -1);
+  ok('(H15) no balances/positions/account IDs', !/balance|equity_usd|buying_power|open_pnl|position_qty|account_id/i.test(h));
+  ok('(H3promo) no legacy promotional wording', !/\bproven\b|guaranteed|audited performance|stable edge|live account proof/i.test(h));
+
+  const car = { innerHTML: '' };
+  PP.render(car, { performance: norm, system: null, weekly: null }, 'ar');
+  ok('(H8) legacy warning AR present (RTL)', car.innerHTML.indexOf('يتضمن بيانات تاريخية سابقة للمخطط 1.0') !== -1 && car.innerHTML.indexOf('السجل البحثي التاريخي') !== -1);
+
+  const goldFalse = Object.assign({}, gold, { historical_record: PP.normalizeHistorical({ available: false }) });
+  const c3 = { innerHTML: '' };
+  PP.render(c3, { performance: { as_of: 'x', systems: [goldFalse] }, system: null, weekly: null }, 'en');
+  ok('(H3) available=false => neutral unavailable, no metrics', c3.innerHTML.indexOf('Historical research record not available') !== -1 && c3.innerHTML.indexOf('$202.80') === -1);
+
+  const histNull = PP.normalizeHistorical(Object.assign({}, withHistPayload.systems[0].historical_record, { pnl_usd: null }));
+  const goldNull = Object.assign({}, gold, { historical_record: histNull });
+  const c6 = { innerHTML: '' };
+  PP.render(c6, { performance: { as_of: 'x', systems: [goldNull] }, system: null, weekly: null }, 'en');
+  ok('(H6) null historical PnL => "Not available", never $ or 0', c6.innerHTML.indexOf('PnL (USD)') !== -1 && c6.innerHTML.indexOf('$') === -1 && c6.innerHTML.indexOf(L.unavailable) !== -1);
+
+  const cNo = { innerHTML: '' };
+  PP.render(cNo, { performance: PP.normalizePerformance(readFix('performance.insufficient.json').payload), system: null, weekly: null }, 'en');
+  ok('(H16) no historical_record => no historical section, no errors', cNo.innerHTML.indexOf('Historical Research Record') === -1);
+}
+
 runVerifiedTests()
   .then(runLoadTests)
-  .then(function () { runRenderTests(); runScanTests(); })
+  .then(function () { runRenderTests(); runScanTests(); runHistoricalTests(); })
   .then(function () {
     console.log('\n[public-performance-consumer] ' + pass + ' passed, ' + fail + ' failed');
     process.exit(fail === 0 ? 0 : 1);

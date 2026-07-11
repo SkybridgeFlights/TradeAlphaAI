@@ -1,0 +1,38 @@
+{
+  "_synthetic": true,
+  "_notice": "SYNTHETIC TEST FIXTURE — not real performance data. Adds optional historical_record on Gold only.",
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-11T06:00:00Z",
+  "freshness_seconds": 86400,
+  "privacy": "public",
+  "source": "tradealpha.snapshot_exporter.SYNTHETIC_FIXTURE",
+  "payload": {
+    "as_of": "2026-07-10T00:00:00Z",
+    "systems": [
+      {
+        "public_name": "Gold Strategy", "verified_from": "2026-06-01", "as_of": "2026-07-10T00:00:00Z",
+        "data_delay_hours": 24, "sample_status": "insufficient", "insufficient_sample": true,
+        "closed_trades": 2, "wins": 1, "losses": 1, "win_rate_pct": 50.0, "profit_factor": 1.47,
+        "expectancy_r": 0.21, "cumulative_return_pct": null, "max_drawdown_pct": null,
+        "average_holding_minutes": 190, "schema_1_signal_rows": 340, "schema_1_trading_days": 26,
+        "methodology_note": "Schema 1.0 closed trades only; delayed 24h.",
+        "historical_record": {
+          "available": true, "coverage": "legacy_plus_schema_1", "verified_from": "internal_research_history",
+          "independently_audited": false, "as_of": "2026-07-10T00:00:00Z",
+          "closed_trades": 20, "wins": 10, "losses": 10, "win_rate_pct": 50.0, "profit_factor": 1.97,
+          "expectancy_r": 0.29, "pnl_usd": 202.80, "average_holding_minutes": 857.5,
+          "data_quality": { "schema_1_closed_trades": 2, "legacy_closed_trades": 18, "join_success_pct": 100.0, "critical_issues": 0 },
+          "methodology_note": "Historical research record combining legacy and schema-1.0 outcomes. Legacy rows do not contain the full schema-1.0 field set. Internally generated and not independently audited."
+        }
+      },
+      {
+        "public_name": "QQQ Strategy", "verified_from": "2026-05-26", "as_of": "2026-07-10T00:00:00Z",
+        "data_delay_hours": 24, "sample_status": "insufficient", "insufficient_sample": true,
+        "closed_trades": 1, "wins": 0, "losses": 1, "win_rate_pct": 0, "profit_factor": 0,
+        "expectancy_r": -0.4, "cumulative_return_pct": null, "max_drawdown_pct": null,
+        "average_holding_minutes": 410, "schema_1_signal_rows": 120, "schema_1_trading_days": 33,
+        "methodology_note": "Schema 1.0 closed trades only; delayed 24h."
+      }
+    ]
+  }
+}
