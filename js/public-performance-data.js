@@ -363,6 +363,17 @@
       pnlUsd: 'PnL (USD)', schema1Count: 'Schema 1.0 closed trades', legacyCount: 'Legacy closed trades',
       joinSuccess: 'Join success', criticalIssues: 'Critical data issues', auditState: 'Independently audited',
       auditNo: 'No — internally generated',
+      statusLive: 'Live', statusActive: 'Active',
+      totalClosedTrades: 'Total Closed Trades', netProfit: 'Net Profit', avgHoldTime: 'Average Holding Time', minSuffix: 'min',
+      histTrades: 'Historical Trades', schema1Trades: 'Schema 1.0 Trades', lastUpdated: 'Last Updated',
+      verifiedChip: 'Research Statistics', historicalChip: 'Historical Statistics', trackRecordNote: 'Performance history',
+      aboutData: 'About this data',
+      trustLive: 'Update status', trustPublic: 'Public statistics', trustHistory: 'Performance history', trustMethod: 'Methodology details',
+      footNote: 'Educational research · not investment advice · delayed public snapshot.',
+      infoDelay: 'Figures are a delayed public snapshot of internally generated research logs.',
+      infoAudit: 'Internally generated and not independently audited.',
+      infoHistory: 'Historical figures combine legacy and Schema 1.0 records; legacy rows do not carry the full Schema 1.0 field set.',
+      infoSample: 'Sample sizes remain limited, so figures are observational and not a guarantee of future results.',
       disclaimer: 'Educational research only — not investment advice. Past performance does not guarantee future results.',
       sample: {
         insufficient: 'Insufficient sample — these statistics are observational and are not evidence of stable future performance.',
@@ -396,6 +407,17 @@
       pnlUsd: 'الربح/الخسارة (دولار)', schema1Count: 'صفقات المخطط 1.0 المغلقة', legacyCount: 'الصفقات القديمة المغلقة',
       joinSuccess: 'نجاح الربط', criticalIssues: 'مشكلات بيانات حرجة', auditState: 'مُدقّق من جهة مستقلة',
       auditNo: 'لا — مُنشأ داخليًا',
+      statusLive: 'مباشر', statusActive: 'نشط',
+      totalClosedTrades: 'إجمالي الصفقات المغلقة', netProfit: 'صافي الربح', avgHoldTime: 'متوسط مدة الصفقة', minSuffix: 'دقيقة',
+      histTrades: 'الصفقات التاريخية', schema1Trades: 'صفقات المخطط 1.0', lastUpdated: 'آخر تحديث',
+      verifiedChip: 'إحصاءات بحثية', historicalChip: 'إحصاءات تاريخية', trackRecordNote: 'سجل الأداء',
+      aboutData: 'عن هذه البيانات',
+      trustLive: 'حالة التحديث', trustPublic: 'إحصاءات عامة', trustHistory: 'سجل الأداء', trustMethod: 'تفاصيل المنهجية',
+      footNote: 'بحث تعليمي · ليس نصيحة استثمارية · لقطة عامة مؤجَّلة.',
+      infoDelay: 'الأرقام لقطة عامة مؤجَّلة من سجلات بحثية مُنشأة داخليًا.',
+      infoAudit: 'مُنشأة داخليًا وغير مُدقّقة من جهة خارجية مستقلة.',
+      infoHistory: 'تجمع الأرقام التاريخية بين السجلات القديمة وسجلات المخطط 1.0؛ ولا تحتوي السجلات القديمة على كامل حقول المخطط 1.0.',
+      infoSample: 'أحجام العينات ما زالت محدودة، لذا فالأرقام وصفية وليست ضماناً لنتائج مستقبلية.',
       disclaimer: 'محتوى بحثي تعليمي فقط — وليس نصيحة استثمارية. الأداء السابق لا يضمن النتائج المستقبلية.',
       sample: {
         insufficient: 'حجم العينة غير كافٍ — هذه الإحصاءات وصفية فقط ولا تُعد دليلاً على ثبات الأداء مستقبلًا.',
@@ -571,36 +593,70 @@
     '</section>';
   }
 
-  function renderSystemCard(sys, L) {
+  function fmtMoney(v) { if (v === null || v === undefined) return null; const n = Number(v); return (n < 0 ? '-$' : '$') + Math.abs(n).toFixed(2); }
+  function formatDate(s) { if (!s) return null; const d = new Date(s); return isNaN(d.getTime()) ? String(s).slice(0, 10) : d.toISOString().slice(0, 10); }
+  function bigMetric(label, value) {
+    const na = (value === null || value === undefined);
+    return '<div class="pp-big' + (na ? ' pp-na' : '') + '"><span class="pp-big-value">' + esc(na ? '—' : value) + '</span><span class="pp-big-label">' + esc(label) + '</span></div>';
+  }
+  function smallMetric(label, value) {
+    const na = (value === null || value === undefined);
+    return '<div class="pp-small' + (na ? ' pp-na' : '') + '"><span class="pp-small-label">' + esc(label) + '</span><span class="pp-small-value">' + esc(na ? '—' : value) + '</span></div>';
+  }
+  function trustRow(L) {
+    const items = [L.trustLive, L.trustPublic, L.trustHistory, L.trustMethod];
+    return '<ul class="pp-trust">' + items.map(function (t) { return '<li><span class="pp-check" aria-hidden="true">✓</span>' + esc(t) + '</li>'; }).join('') + '</ul>';
+  }
+  // Collapsible ⓘ panel — ALL transparency lives here (delayed, not audited,
+  // legacy/schema composition, sample context), hidden by default instead of
+  // dominating the page with warning boxes. Nothing is hidden; it is one click
+  // away. Backend methodology notes are English-only, shown only in EN mode to
+  // keep strict language purity.
+  function infoPanel(sys, hist, L, lang) {
+    let lines = '<p>' + esc(L.infoDelay) + '</p><p>' + esc(L.infoAudit) + '</p>';
+    if (hist) lines += '<p>' + esc(L.infoHistory) + '</p>';
+    lines += '<p>' + esc(L.infoSample) + '</p><p class="pp-info-note">' + esc(L.footNote) + '</p>';
+    if (lang === 'en') {
+      if (sys && sys.methodology_note) lines += '<p class="pp-info-note">' + esc(sys.methodology_note) + '</p>';
+      if (hist && hist.methodology_note) lines += '<p class="pp-info-note">' + esc(hist.methodology_note) + '</p>';
+    }
+    return '<details class="pp-info"><summary><span class="pp-info-icon" aria-hidden="true">ⓘ</span>' + esc(L.aboutData) + '</summary><div class="pp-info-body">' + lines + '</div></details>';
+  }
+  // One clean, professional card per strategy. Leads with the fuller track
+  // record when a historical_record exists (else the verified Schema 1.0
+  // figures). Trade counts are always front-and-centre; verified vs historical
+  // composition and every caveat live in the ⓘ panel. Records are shown side by
+  // side, never merged mathematically, and no value is fabricated.
+  function renderSystemCard(sys, L, lang) {
     if (!sys) return '';
-    const warn = L.sample[sys.sample_status] || L.sample.insufficient;
-    const badgeClass = 'pp-badge pp-badge-' + (sys.sample_status || 'insufficient');
-    return '' +
-      '<article class="pp-card" data-sample="' + esc(sys.sample_status || 'insufficient') + '">' +
-        '<header class="pp-card-head"><h3>' + esc(sys.public_name || L.unavailable) + '</h3>' +
-          '<span class="' + badgeClass + '">' + esc(sys.sample_status || 'insufficient') + '</span></header>' +
-        '<p class="pp-schema-tag">' + esc(L.verifiedHeading) + '</p>' +
-        '<p class="pp-sample-warning" role="note">' + esc(warn) + '</p>' +
-        '<div class="pp-metrics">' +
-          metricRow(L.closedTrades, sys.closed_trades === null ? null : String(sys.closed_trades), L.unavailable) +
-          metricRow(L.winRate, fmtPct(sys.win_rate_pct), L.unavailable) +
-          metricRow(L.profitFactor, fmtNum(sys.profit_factor, 2), L.unavailable) +
-          metricRow(L.wins, sys.wins === null ? null : String(sys.wins), L.unavailable) +
-          metricRow(L.losses, sys.losses === null ? null : String(sys.losses), L.unavailable) +
-          metricRow(L.expectancy, fmtNum(sys.expectancy_r, 2), L.unavailable) +
-          metricRow(L.avgHold, sys.average_holding_minutes === null ? null : String(sys.average_holding_minutes), L.unavailable) +
-          metricRow(L.signalRows, sys.schema_1_signal_rows === null ? null : String(sys.schema_1_signal_rows), L.unavailable) +
-          metricRow(L.tradingDays, sys.schema_1_trading_days === null ? null : String(sys.schema_1_trading_days), L.unavailable) +
-          (sys.cumulative_return_pct !== null ? metricRow(L.cumReturn, fmtPct(sys.cumulative_return_pct), L.unavailable) : '') +
-          (sys.max_drawdown_pct !== null ? metricRow(L.maxDd, fmtPct(sys.max_drawdown_pct), L.unavailable) : '') +
-        '</div>' +
-        '<footer class="pp-card-foot">' +
-          '<span>' + esc(L.verifiedFrom) + ': ' + esc(sys.verified_from || L.unavailable) + '</span>' +
-          '<span>' + esc(L.asOf) + ': ' + esc(sys.as_of || L.unavailable) + '</span>' +
-          '<span>' + esc(L.delay) + ': ' + esc(sys.data_delay_hours === null ? L.unavailable : sys.data_delay_hours) + '</span>' +
-          (sys.methodology_note ? '<span class="pp-method">' + esc(sys.methodology_note) + '</span>' : '') +
-        '</footer>' +
-        renderHistoricalCard(sys.historical_record, L) +
+    const hist = (sys.historical_record && sys.historical_record.available !== false) ? sys.historical_record : null;
+    const primary = hist || sys;
+    const isLive = /live|active|running/i.test(String(sys.status || ''));
+    const pill = '<span class="pp-pill' + (isLive ? ' pp-pill-live' : '') + '">' + (isLive ? '<i aria-hidden="true"></i>' : '') + esc(isLive ? L.statusLive : (sys.status || L.statusActive)) + '</span>';
+    const chip = '<span class="pp-chip">' + esc(hist ? L.historicalChip : L.verifiedChip) + '</span>';
+
+    const hero =
+      bigMetric(L.totalClosedTrades, primary.closed_trades === null ? null : String(primary.closed_trades)) +
+      bigMetric(L.winRate, fmtPct(primary.win_rate_pct)) +
+      bigMetric(L.profitFactor, fmtNum(primary.profit_factor, 2)) +
+      (hist ? bigMetric(L.netProfit, fmtMoney(hist.pnl_usd)) : '') +
+      bigMetric(L.avgHoldTime, primary.average_holding_minutes === null ? null : (Math.round(Number(primary.average_holding_minutes)) + ' ' + L.minSuffix));
+
+    const detail =
+      smallMetric(L.wins, primary.wins === null ? null : String(primary.wins)) +
+      smallMetric(L.losses, primary.losses === null ? null : String(primary.losses)) +
+      smallMetric(L.expectancy, fmtNum(primary.expectancy_r, 2)) +
+      smallMetric(L.schema1Trades, sys.closed_trades === null ? null : String(sys.closed_trades)) +
+      (hist ? smallMetric(L.histTrades, hist.closed_trades === null ? null : String(hist.closed_trades)) : '') +
+      smallMetric(L.lastUpdated, formatDate((hist && hist.as_of) || sys.as_of));
+
+    return '<article class="pp-strategy">' +
+      '<header class="pp-strategy-head"><h3>' + esc(sys.public_name || L.unavailable) + '</h3>' +
+        '<div class="pp-strategy-tags">' + chip + pill + '</div></header>' +
+      '<div class="pp-hero">' + hero + '</div>' +
+      '<div class="pp-detail">' + detail + '</div>' +
+      trustRow(L) +
+      infoPanel(sys, hist, L, lang) +
       '</article>';
   }
 
@@ -617,9 +673,8 @@
       '</div>';
   }
 
-  function renderWeekly(weekly, L) {
+  function renderWeekly(weekly, L, lang) {
     if (!weekly) return '';
-    const lang = (isBrowser && (document.documentElement.getAttribute('lang') || 'en').slice(0, 2) === 'ar') ? 'ar' : 'en';
     const title = lang === 'ar' ? weekly.title_ar : weekly.title_en;
     const summary = lang === 'ar' ? weekly.summary_ar : weekly.summary_en;
     let inner;
@@ -629,55 +684,74 @@
       inner = (title ? '<h4>' + esc(title) + '</h4>' : '') +
         ((weekly.week_start || weekly.week_end) ? '<p class="pp-week-range">' + esc(L.week) + ': ' + esc(weekly.week_start || '') + ' → ' + esc(weekly.week_end || '') + '</p>' : '') +
         (summary ? '<p>' + esc(summary) + '</p>' : '') +
-        (weekly.public_observations && weekly.public_observations.length ? '<ul class="pp-observations">' + weekly.public_observations.map(function (o) { return '<li>' + esc(o) + '</li>'; }).join('') + '</ul>' : '') +
-        (weekly.sample_warning ? '<p class="pp-sample-warning">' + esc(weekly.sample_warning) + '</p>' : '');
+        (lang === 'en' && weekly.public_observations && weekly.public_observations.length ? '<ul class="pp-observations">' + weekly.public_observations.map(function (o) { return '<li>' + esc(o) + '</li>'; }).join('') + '</ul>' : '') +
+        (lang === 'en' && weekly.sample_warning ? '<p class="pp-sample-warning">' + esc(weekly.sample_warning) + '</p>' : '');
     }
     return '<section class="pp-weekly"><h3>' + esc(L.weeklyHeading) + '</h3>' + inner + '</section>';
   }
 
   function render(container, result, lang) {
     if (!container) return;
-    const L = LABELS[lang === 'ar' ? 'ar' : 'en'];
+    lang = lang === 'ar' ? 'ar' : 'en';
+    const L = LABELS[lang];
     if (!result || (!result.performance && !result.system && !result.weekly)) {
-      const extra = result && result.integrity_error ? '<div class="pp-stale-banner" role="alert">' + esc(L.integrityError) + '</div>' : '';
-      container.innerHTML = extra + '<div class="pp-unavailable" role="status">' + esc(L.dataUnavailable) + '</div>';
+      const extra = result && result.integrity_error ? '<div class="pp-notice">' + esc(L.integrityError) + '</div>' : '';
+      container.innerHTML = extra + '<div class="pp-notice">' + esc(L.dataUnavailable) + '</div>';
       return;
     }
     let html = '';
-    if (result.stale || result.from_cache) html += '<div class="pp-stale-banner" role="alert">' + esc(L.staleBanner) + '</div>';
-    if (result.integrity_error) html += '<div class="pp-stale-banner" role="alert">' + esc(L.integrityError) + '</div>';
-    if (result.system) html += renderStatusHeader(result, L);
-    html += '<p class="pp-delay-note">' + esc(L.delayNote) + '</p>';
+    if (result.stale || result.from_cache) html += '<div class="pp-notice pp-notice-soft" role="status">' + esc(L.staleBanner) + '</div>';
+    if (result.integrity_error) html += '<div class="pp-notice" role="status">' + esc(L.integrityError) + '</div>';
     if (result.performance && result.performance.systems.length) {
-      html += '<div class="pp-cards">' + result.performance.systems.map(function (s) { return renderSystemCard(s, L); }).join('') + '</div>';
+      html += '<div class="pp-grid">' + result.performance.systems.map(function (s) { return renderSystemCard(s, L, lang); }).join('') + '</div>';
     } else {
-      html += '<div class="pp-unavailable" role="status">' + esc(L.dataUnavailable) + '</div>';
+      html += '<div class="pp-notice" role="status">' + esc(L.dataUnavailable) + '</div>';
     }
-    html += renderWeekly(result.weekly, L);
-    html += '<p class="pp-disclaimer">' + esc(L.disclaimer) + '</p>';
+    html += renderWeekly(result.weekly, L, lang);
     container.innerHTML = html;
   }
 
   // Init: activates only with a configured, SAFE public base URL. With none (or
   // an unsafe one) it renders the honest unavailable state — never fixtures,
   // never the old "Live on Myfxbook".
+  // Resolve the active display language. Prefers an explicit selection from the
+  // page language switcher (so the section is 100% single-language even if the
+  // switcher doesn't update <html lang>), then falls back to <html lang>.
+  function activeLang() {
+    if (init._selectedLang) return init._selectedLang === 'ar' ? 'ar' : 'en';
+    return (isBrowser && (document.documentElement.getAttribute('lang') || 'en').slice(0, 2) === 'ar') ? 'ar' : 'en';
+  }
+
   function init(options) {
     if (!isBrowser) return;
     options = options || {};
     const container = document.querySelector('[data-public-performance]');
     if (!container) return;
-    const lang = (document.documentElement.getAttribute('lang') || 'en').slice(0, 2);
-    const L = LABELS[lang === 'ar' ? 'ar' : 'en'];
     const baseUrl = options.baseUrl || window.PUBLIC_SNAPSHOT_BASE_URL || '';
     if (!isSafeBaseUrl(baseUrl)) {
-      container.innerHTML = '<div class="pp-unavailable" role="status">' + esc(L.dataUnavailable) + '</div>';
+      container.innerHTML = '<div class="pp-notice" role="status">' + esc(LABELS[activeLang()].dataUnavailable) + '</div>';
       return;
     }
     container.setAttribute('aria-busy', 'true');
     load(baseUrl, { nowMs: Date.now() }).then(function (result) {
-      render(container, result, lang);
+      init._last = result;
+      render(container, result, activeLang());
       container.setAttribute('aria-busy', 'false');
     });
+    // Re-render (no refetch) whenever the page language changes, so the section
+    // is always fully in the selected language — never mixed AR/EN.
+    if (!init._langHooked) {
+      init._langHooked = true;
+      const rerender = function () { if (init._last) render(container, init._last, activeLang()); };
+      try {
+        const mo = new MutationObserver(function (muts) { muts.forEach(function (m) { if (m.attributeName === 'lang') rerender(); }); });
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+      } catch (e) { /* no-op */ }
+      document.addEventListener('click', function (e) {
+        const el = e.target && e.target.closest ? e.target.closest('[data-lang]') : null;
+        if (el) { init._selectedLang = el.getAttribute('data-lang'); setTimeout(rerender, 60); }
+      }, true);
+    }
   }
 
   if (isBrowser) {

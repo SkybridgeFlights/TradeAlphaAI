@@ -1476,6 +1476,7 @@ h3 {
 .site-shell .wrap {
   width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .topbar-inner,
@@ -1538,14 +1539,17 @@ html[dir="rtl"] .topbar .lang-menu {
 
   .topbar-inner {
     justify-content: center;
+    flex-wrap: wrap;
   }
 
   .top-actions {
     width: 100%;
     justify-content: center;
+    min-width: 0;
   }
 
   .nav-group {
+    flex: 1 1 100%;
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
@@ -1564,6 +1568,19 @@ html[dir="rtl"] .topbar .lang-menu {
   .section-panel,
   .perf-panel {
     overflow: hidden;
+  }
+
+  body[data-page="performance"] .hero-copy,
+  body[data-page="performance"] .system-status-panel,
+  body[data-page="performance"] .proof-card,
+  body[data-page="performance"] .proof-sidecard {
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  body[data-page="performance"] .hero-actions .cta-btn {
+    width: 100%;
   }
 
   .footer {

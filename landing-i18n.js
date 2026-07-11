@@ -1,7 +1,7 @@
 (function () {
   const translations = {
     ar: {
-      meta: { locale: "ar_AR", homeTitle: "TradeAlpha AI | نظام تداول ذهبي مع أداء موثق", homeDescription: "TradeAlpha AI هو نظام تداول ذهبي احترافي مع مراجعة أداء موثقة عبر Myfxbook، تسعير واضح، ووصول مباشر عبر تيليجرام.", homeUrl: "https://www.tradealphaai.com/", homeOgType: "website", performanceTitle: "TradeAlpha AI | صفحة أداء موثقة لتداول الذهب", performanceDescription: "صفحة أداء مخصصة لـ TradeAlpha AI تعرض ملخص الأداء المباشر، حالة آخر تحديث، ورابط التحقق الخارجي عبر Myfxbook.", performanceUrl: "https://www.tradealphaai.com/performance/tradealpha-ai.html", performanceOgType: "website", image: "https://www.tradealphaai.com/Image/og-image.svg", imageAlt: "معاينة TradeAlpha AI", twitterCard: "summary_large_image" },
+      meta: { locale: "ar_AR", homeTitle: "TradeAlpha AI | نظام تداول ذهبي مع أداء موثق", homeDescription: "TradeAlpha AI هو نظام تداول ذهبي احترافي مع مراجعة أداء موثقة عبر Myfxbook، تسعير واضح، ووصول مباشر عبر تيليجرام.", homeUrl: "https://www.tradealphaai.com/", homeOgType: "website", performanceTitle: "TradeAlpha AI | صفحة أداء تداول الذهب", performanceDescription: "صفحة أداء مخصصة لـ TradeAlpha AI تعرض إحصاءات البحث وسجل الأداء وآخر تحديث متاح.", performanceUrl: "https://www.tradealphaai.com/performance/tradealpha-ai.html", performanceOgType: "website", image: "https://www.tradealphaai.com/Image/og-image.svg", imageAlt: "معاينة TradeAlpha AI", twitterCard: "summary_large_image" },
       pill: "العربية", "brand.tagline": "TRADING & MARKET RESEARCH PLATFORM", "nav.why": "لماذا TradeAlpha", "nav.about": "من نحن", "nav.product": "المنتج", "nav.proof": "الشفافية", "nav.stockAnalyzer": "محلل الأسهم AI", "nav.etfAnalyzer": "محلل ETF", "nav.marketScreener": "فلتر السوق", "nav.methodology": "المنهجية",
       "hero.tickerName": "TradeAlpha AI", "hero.tickerMarket": "سوق الذهب", "hero.tickerAccess": "وصول يدوي عبر تيليجرام", "hero.title": "TradeAlpha AI لتداول الذهب بثقة ووضوح", "hero.lead": "نظام تداول ذهبي بهوية احترافية، نهج منضبط، ووصول مباشر للمتداول الذي يبحث عن تجربة أكثر جدية ونظافة.", "hero.cta": "استعرض TradeAlpha AI", "hero.support": "وصول مباشر عبر تيليجرام مع تجربة اشتراك شخصية وسريعة.", "hero.proof.market.label": "السوق", "hero.proof.market.value": "الذهب", "hero.proof.risk.label": "المخاطر", "hero.proof.risk.value": "متوسطة",
       "overview.kicker": "نظرة عامة", "overview.status": "قيد التشغيل", "overview.lead": "عرض مركز يوضح السوق المستهدف، ملف المخاطرة، طريقة الوصول، ومصدر التحقق الخارجي في واجهة واحدة واضحة.", "overview.row1.key": "النظام", "overview.row1.value": "TradeAlpha AI", "overview.row2.key": "السوق", "overview.row2.value": "الذهب", "overview.row3.key": "ملف المخاطر", "overview.row3.value": "متوسطة", "overview.row4.key": "الوصول", "overview.row4.value": "تسليم عبر تيليجرام", "overview.verify.label": "التحقق", "overview.verify.value": "Myfxbook",
@@ -10,10 +10,10 @@
       "product.eyebrow": "المنتج", "product.title": "TradeAlpha AI", "product.lead": "نظام تداول ذهبي مصمم للمتداول الذي يريد عرضاً واضحاً، تسعيراً مباشراً، ومسار وصول بسيط من دون تعقيد.", "product.badge": "متاح الآن", "product.type": "TradeAlpha AI", "product.card.title": "TradeAlpha AI", "product.card.description": "نظام تداول موجه للذهب بملف مخاطرة متوسط، مصمم ليقدم تجربة دخول واضحة ومباشرة للمتداول الجاد.", "product.meta1.label": "الاسم", "product.meta1.value": "TradeAlpha AI", "product.meta2.label": "السوق", "product.meta2.value": "الذهب", "product.meta3.label": "المخاطر", "product.meta3.value": "متوسطة", "product.meta4.label": "شهري", "product.meta4.value": "$40", "product.meta5.label": "سنوي", "product.meta5.value": "$400", "product.cta": "اشترك عبر تيليجرام", "product.note": "يتم إرسال تفاصيل الوصول عبر تيليجرام بعد تأكيد الاشتراك.",
       "proof.eyebrow": "الأداء والشفافية", "proof.title": "شفافية يمكن الرجوع إليها مباشرة", "proof.lead": "الأداء متاح للمراجعة عبر صفحة Myfxbook العامة، بما يمنح الزائر وسيلة تحقق خارجية واضحة ومباشرة.", "proof.metric1.label": "إجمالي العائد", "proof.metric2.label": "التراجع", "proof.metric3.label": "الصفقات", "proof.updated.label": "آخر تحديث", "proof.note": "راجع صفحة الأداء أو Myfxbook للاطلاع على الأداء من المصدر المرجعي مباشرة.", "proof.cta": "عرض أداء TradeAlpha AI", "proof.side.kicker": "التحقق", "proof.side.title": "ثقة مبنية على الوضوح", "proof.side.body": "صفحة أداء مخصصة تمنح المتداول نقطة مراجعة واضحة قبل الانتقال إلى مصدر التحقق الخارجي.",
       "final.eyebrow": "الخطوة التالية", "final.title": "ابدأ مع TradeAlpha AI عبر تيليجرام", "final.lead": "ابدأ طلب الوصول الآن، وسنرسل لك تفاصيل الاشتراك والوصول عبر تيليجرام بخطوات واضحة وسريعة.", "final.ctaPrimary": "ابدأ عبر بوت تيليجرام", "final.ctaSecondary": "انضم إلى القناة الرسمية", "final.support": "القناة الرسمية مخصصة للتحديثات العامة، بينما يتم بدء الاشتراك والوصول عبر البوت.", "risk.eyebrow": "تحذير المخاطر", "risk.copy": "تحذير المخاطر:\nالتداول في الأسواق المالية ينطوي على مخاطر عالية وقد يؤدي إلى خسارة رأس المال بالكامل.\nالأداء السابق لا يضمن النتائج المستقبلية.\nلا تستثمر أكثر مما تستطيع تحمل خسارته.", "footer.tagline": "وصول احترافي لتداول الذهب عبر تيليجرام.", "footer.socialLabel": "القنوات الرسمية",
-      "perf.brand.tagline": "Performance Page", "perf.nav.product": "المنتج", "perf.nav.verify": "التحقق", "perf.nav.telegram": "تيليجرام", "perf.hero.tickerName": "TradeAlpha AI", "perf.hero.tickerMarket": "الذهب", "perf.hero.tickerRisk": "مخاطر متوسطة", "perf.hero.title": "صفحة أداء TradeAlpha AI", "perf.hero.lead": "متابعة أداء مخصصة لمنتج TradeAlpha AI، مع ملخص مباشر، حالة آخر تحديث، ورابط تحقق خارجي عبر Myfxbook.", "perf.hero.ctaPrimary": "اشترك عبر تيليجرام", "perf.hero.ctaSecondary": "العودة إلى الموقع الرئيسي", "perf.profile.kicker": "ملف المنتج", "perf.profile.status": "تتبع مباشر", "perf.profile.row1.key": "المنتج", "perf.profile.row1.value": "TradeAlpha AI", "perf.profile.row2.key": "السوق", "perf.profile.row2.value": "الذهب", "perf.profile.row3.key": "ملف المخاطر", "perf.profile.row3.value": "متوسطة", "perf.profile.row4.key": "التحقق", "perf.profile.row4.value": "Myfxbook", "perf.section.eyebrow": "الأداء المباشر", "perf.section.title": "ملخص الأداء المباشر", "perf.section.lead": "هذه الصفحة مخصصة لـ TradeAlpha AI فقط، وتعرض مؤشرات الأداء الحية كما تصل من المصدر المتصل، مع زر تحقق خارجي واضح.", "perf.metric1.label": "إجمالي العائد", "perf.metric2.label": "التراجع", "perf.metric3.label": "الصفقات", "perf.updated.label": "آخر تحديث", "perf.note": "يمكن مراجعة الأداء من المصدر المرجعي مباشرة عبر زر التحقق الخارجي أدناه.", "perf.cta": "فتح Myfxbook الموثق", "perf.side.kicker": "سياق الأداء", "perf.side.title": "مخصصة لـ TradeAlpha AI", "perf.side.body": "تعرض هذه الصفحة أداء TradeAlpha AI ضمن مساحة مستقلة وواضحة، بما يسمح بإضافة صفحات أداء منفصلة لمنتجات مستقبلية ضمن نفس الهيكل."
+      "perf.brand.tagline": "Performance Page", "perf.nav.product": "المنتج", "perf.nav.verify": "التحقق", "perf.nav.telegram": "تيليجرام", "perf.hero.tickerName": "TradeAlpha AI", "perf.hero.tickerMarket": "الذهب", "perf.hero.tickerRisk": "مخاطر متوسطة", "perf.hero.title": "صفحة أداء TradeAlpha AI", "perf.hero.lead": "صفحة أداء مخصّصة لـ TradeAlpha AI تعرض أرقام المخطط 1.0 الموثّقة مع سجل تراكمي، بتأخير زمني ولأغراض تعليمية.", "perf.hero.ctaPrimary": "اشترك عبر تيليجرام", "perf.hero.ctaSecondary": "العودة إلى الموقع الرئيسي", "perf.profile.kicker": "ملف المنتج", "perf.profile.status": "تتبع مباشر", "perf.profile.row1.key": "المنتج", "perf.profile.row1.value": "TradeAlpha AI", "perf.profile.row2.key": "السوق", "perf.profile.row2.value": "الذهب", "perf.profile.row3.key": "ملف المخاطر", "perf.profile.row3.value": "متوسطة", "perf.profile.row4.key": "التحقق", "perf.profile.row4.value": "سجلات المخطط 1.0", "perf.section.eyebrow": "الأداء المباشر", "perf.section.title": "ملخص الأداء المباشر", "perf.section.lead": "هذه الصفحة مخصصة لـ TradeAlpha AI فقط، وتعرض مؤشرات الأداء الحية كما تصل من المصدر المتصل، مع زر تحقق خارجي واضح.", "perf.metric1.label": "إجمالي العائد", "perf.metric2.label": "التراجع", "perf.metric3.label": "الصفقات", "perf.updated.label": "آخر تحديث", "perf.note": "يمكن مراجعة الأداء من المصدر المرجعي مباشرة عبر زر التحقق الخارجي أدناه.", "perf.cta": "عرض أداء المخطط 1.0", "perf.side.kicker": "سياق الأداء", "perf.side.title": "مخصصة لـ TradeAlpha AI", "perf.side.body": "تعرض هذه الصفحة أداء TradeAlpha AI ضمن مساحة مستقلة وواضحة، بما يسمح بإضافة صفحات أداء منفصلة لمنتجات مستقبلية ضمن نفس الهيكل.", "perf.snapshot.eyebrow": "أداء موثّق", "perf.snapshot.title": "أداء الاستراتيجيات", "perf.snapshot.lead": "أرقام أداء من سجلات أبحاث داخلية، بتأخير زمني — مع عرض عدد الصفقات دائماً بجانب معدّل الربح ومعامل الربحية."
     },
     en: {
-      meta: { locale: "en_US", homeTitle: "TradeAlpha AI | Gold Trading System with Verified Performance", homeDescription: "TradeAlpha AI is a premium gold trading system with medium risk positioning, verified Myfxbook performance review, and direct Telegram delivery.", homeUrl: "https://www.tradealphaai.com/", homeOgType: "website", performanceTitle: "TradeAlpha AI Performance | Verified Gold Trading Results", performanceDescription: "Review the dedicated TradeAlpha AI performance page with live summary fields, latest update state, and direct Myfxbook verification.", performanceUrl: "https://www.tradealphaai.com/performance/tradealpha-ai.html", performanceOgType: "website", image: "https://www.tradealphaai.com/Image/og-image.svg", imageAlt: "TradeAlpha AI preview", twitterCard: "summary_large_image" },
+      meta: { locale: "en_US", homeTitle: "TradeAlpha AI | Gold Trading System with Verified Performance", homeDescription: "TradeAlpha AI is a premium gold trading system with medium risk positioning, verified Myfxbook performance review, and direct Telegram delivery.", homeUrl: "https://www.tradealphaai.com/", homeOgType: "website", performanceTitle: "TradeAlpha AI | Gold Trading Performance", performanceDescription: "Review TradeAlpha AI research statistics, performance history, and the latest available update.", performanceUrl: "https://www.tradealphaai.com/performance/tradealpha-ai.html", performanceOgType: "website", image: "https://www.tradealphaai.com/Image/og-image.svg", imageAlt: "TradeAlpha AI preview", twitterCard: "summary_large_image" },
       pill: "English", "brand.tagline": "TRADING & MARKET RESEARCH PLATFORM", "nav.why": "Why TradeAlpha", "nav.about": "About", "nav.product": "Product", "nav.proof": "Transparency", "nav.stockAnalyzer": "AI Stock Analyzer", "nav.etfAnalyzer": "ETF Analyzer", "nav.marketScreener": "Market Screener", "nav.methodology": "Methodology",
       "hero.tickerName": "TradeAlpha AI", "hero.tickerMarket": "Gold Market", "hero.tickerAccess": "Manual Telegram Access", "hero.title": "TradeAlpha AI for gold trading with clarity and control", "hero.lead": "A focused gold trading system with a premium identity, disciplined logic, and direct access for traders who want a more serious operating experience.", "hero.cta": "Explore TradeAlpha AI", "hero.support": "Direct Telegram access with a clear and personal subscription flow.", "hero.proof.market.label": "Market", "hero.proof.market.value": "Gold", "hero.proof.risk.label": "Risk", "hero.proof.risk.value": "Medium",
       "overview.kicker": "System Overview", "overview.status": "Operational", "overview.lead": "A focused overview of the target market, risk profile, access method, and external verification source in one clear interface.", "overview.row1.key": "System", "overview.row1.value": "TradeAlpha AI", "overview.row2.key": "Market", "overview.row2.value": "Gold", "overview.row3.key": "Risk Profile", "overview.row3.value": "Medium", "overview.row4.key": "Access", "overview.row4.value": "Telegram Delivery", "overview.verify.label": "Verification", "overview.verify.value": "Myfxbook",
@@ -22,10 +22,10 @@
       "product.eyebrow": "Product", "product.title": "TradeAlpha AI", "product.lead": "A gold trading system for traders who want a clear offer, direct pricing, and a simple access path without unnecessary complexity.", "product.badge": "Available Now", "product.type": "TradeAlpha AI", "product.card.title": "TradeAlpha AI", "product.card.description": "A gold-focused trading system with a medium risk profile, built to offer a clear and direct entry point for serious traders.", "product.meta1.label": "Name", "product.meta1.value": "TradeAlpha AI", "product.meta2.label": "Market", "product.meta2.value": "Gold", "product.meta3.label": "Risk", "product.meta3.value": "Medium", "product.meta4.label": "Monthly", "product.meta4.value": "$40", "product.meta5.label": "Yearly", "product.meta5.value": "$400", "product.cta": "Subscribe via Telegram", "product.note": "Access details are delivered manually on Telegram after payment confirmation.",
       "proof.eyebrow": "Performance / Trust", "proof.title": "Transparency you can review directly", "proof.lead": "Performance is available through the public Myfxbook page, giving visitors a clear and external verification path.", "proof.metric1.label": "Total Gain", "proof.metric2.label": "Drawdown", "proof.metric3.label": "Trades", "proof.updated.label": "Last Updated", "proof.note": "Review the dedicated performance page or Myfxbook for source-level performance verification.", "proof.cta": "View TradeAlpha AI Performance", "proof.side.kicker": "Verification", "proof.side.title": "Trust built on clarity", "proof.side.body": "A dedicated performance page gives traders a clean review point before opening the external verification source.",
       "final.eyebrow": "Next Step", "final.title": "Start with TradeAlpha AI on Telegram", "final.lead": "Request access now and receive subscription and activation details through a clear Telegram-based flow.", "final.ctaPrimary": "Start via Telegram Bot", "final.ctaSecondary": "Join Official Channel", "final.support": "The official channel is for public updates, while subscription and access start through the bot.", "risk.eyebrow": "Risk Disclaimer", "risk.copy": "Risk Disclaimer:\nTrading involves significant risk and may result in the loss of your capital.\nPast performance does not guarantee future results.\nOnly trade with money you can afford to lose.", "footer.tagline": "Professional gold trading access through Telegram.", "footer.socialLabel": "Official Channels",
-      "perf.brand.tagline": "Performance Page", "perf.nav.product": "Product", "perf.nav.verify": "Verification", "perf.nav.telegram": "Telegram", "perf.hero.tickerName": "TradeAlpha AI", "perf.hero.tickerMarket": "Gold", "perf.hero.tickerRisk": "Medium Risk", "perf.hero.title": "TradeAlpha AI Performance Page", "perf.hero.lead": "A dedicated performance page for TradeAlpha AI with live summary fields, last-updated status, and external Myfxbook verification.", "perf.hero.ctaPrimary": "Subscribe via Telegram", "perf.hero.ctaSecondary": "Back to Main Site", "perf.profile.kicker": "Product Profile", "perf.profile.status": "Live Tracking", "perf.profile.row1.key": "Product", "perf.profile.row1.value": "TradeAlpha AI", "perf.profile.row2.key": "Market", "perf.profile.row2.value": "Gold", "perf.profile.row3.key": "Risk Profile", "perf.profile.row3.value": "Medium", "perf.profile.row4.key": "Verification", "perf.profile.row4.value": "Myfxbook", "perf.section.eyebrow": "Live Performance", "perf.section.title": "Live performance summary", "perf.section.lead": "This page is dedicated to TradeAlpha AI and presents live performance fields as they arrive from the connected source, with a clear external verification path.", "perf.metric1.label": "Total Gain", "perf.metric2.label": "Drawdown", "perf.metric3.label": "Trades", "perf.updated.label": "Last Updated", "perf.note": "Review the reference source directly through the external verification button below.", "perf.cta": "Open Verified Myfxbook", "perf.side.kicker": "Performance Context", "perf.side.title": "Dedicated to TradeAlpha AI", "perf.side.body": "This page presents TradeAlpha AI performance in a separate, structured view, making it straightforward to add dedicated performance pages for future products later."
+      "perf.brand.tagline": "Performance Page", "perf.nav.product": "Product", "perf.nav.verify": "Verification", "perf.nav.telegram": "Telegram", "perf.hero.tickerName": "TradeAlpha AI", "perf.hero.tickerMarket": "Gold", "perf.hero.tickerRisk": "Medium Risk", "perf.hero.title": "TradeAlpha AI Performance Page", "perf.hero.lead": "A dedicated performance page for TradeAlpha AI showing verified Schema 1.0 figures with a cumulative track record, delayed and for education.", "perf.hero.ctaPrimary": "Subscribe via Telegram", "perf.hero.ctaSecondary": "Back to Main Site", "perf.profile.kicker": "Product Profile", "perf.profile.status": "Live Tracking", "perf.profile.row1.key": "Product", "perf.profile.row1.value": "TradeAlpha AI", "perf.profile.row2.key": "Market", "perf.profile.row2.value": "Gold", "perf.profile.row3.key": "Risk Profile", "perf.profile.row3.value": "Medium", "perf.profile.row4.key": "Verification", "perf.profile.row4.value": "Schema 1.0 logs", "perf.section.eyebrow": "Live Performance", "perf.section.title": "Live performance summary", "perf.section.lead": "This page is dedicated to TradeAlpha AI and presents live performance fields as they arrive from the connected source, with a clear external verification path.", "perf.metric1.label": "Total Gain", "perf.metric2.label": "Drawdown", "perf.metric3.label": "Trades", "perf.updated.label": "Last Updated", "perf.note": "Review the reference source directly through the external verification button below.", "perf.cta": "View Schema 1.0 Performance", "perf.side.kicker": "Performance Context", "perf.side.title": "Dedicated to TradeAlpha AI", "perf.side.body": "This page presents TradeAlpha AI performance in a separate, structured view, making it straightforward to add dedicated performance pages for future products later.", "perf.snapshot.eyebrow": "Verified Performance", "perf.snapshot.title": "Strategy Performance", "perf.snapshot.lead": "Performance figures from internal research logs, delayed — with trade count always shown next to win rate and profit factor."
     },
     de: {
-      meta: { locale: "de_DE", homeTitle: "TradeAlpha AI | Gold-Trading-System mit verifizierter Performance", homeDescription: "TradeAlpha AI ist ein hochwertiges Gold-Trading-System mit mittlerem Risikoprofil, verifizierter Myfxbook-Performance und direkter Telegram-Auslieferung.", homeUrl: "https://www.tradealphaai.com/", homeOgType: "website", performanceTitle: "TradeAlpha AI Performance | Verifizierte Gold-Trading-Ergebnisse", performanceDescription: "Prüfe die dedizierte TradeAlpha AI Performance-Seite mit Live-Zusammenfassung, Aktualisierungsstatus und direkter Myfxbook-Verifikation.", performanceUrl: "https://www.tradealphaai.com/performance/tradealpha-ai.html", performanceOgType: "website", image: "https://www.tradealphaai.com/Image/og-image.svg", imageAlt: "TradeAlpha AI Vorschau", twitterCard: "summary_large_image" },
+      meta: { locale: "de_DE", homeTitle: "TradeAlpha AI | Gold-Trading-System mit verifizierter Performance", homeDescription: "TradeAlpha AI ist ein hochwertiges Gold-Trading-System mit mittlerem Risikoprofil, verifizierter Myfxbook-Performance und direkter Telegram-Auslieferung.", homeUrl: "https://www.tradealphaai.com/", homeOgType: "website", performanceTitle: "TradeAlpha AI | Gold-Trading-Performance", performanceDescription: "TradeAlpha AI Forschungsstatistiken, Performance-Verlauf und die letzte verfügbare Aktualisierung.", performanceUrl: "https://www.tradealphaai.com/performance/tradealpha-ai.html", performanceOgType: "website", image: "https://www.tradealphaai.com/Image/og-image.svg", imageAlt: "TradeAlpha AI Vorschau", twitterCard: "summary_large_image" },
       pill: "Deutsch", "brand.tagline": "TRADING & MARKET RESEARCH PLATFORM", "nav.why": "Warum TradeAlpha", "nav.about": "Über uns", "nav.product": "Produkt", "nav.proof": "Transparenz", "nav.stockAnalyzer": "AI Aktienanalyse", "nav.etfAnalyzer": "ETF Analyse", "nav.marketScreener": "Markt Screener", "nav.methodology": "Methodik",
       "hero.tickerName": "TradeAlpha AI", "hero.tickerMarket": "Goldmarkt", "hero.tickerAccess": "Manueller Telegram-Zugang", "hero.title": "TradeAlpha AI für Gold-Trading mit Klarheit und Kontrolle", "hero.lead": "Ein fokussiertes Gold-Trading-System mit hochwertiger Identität, disziplinierter Logik und direktem Zugang für Trader, die eine ernsthaftere operative Erfahrung suchen.", "hero.cta": "TradeAlpha AI ansehen", "hero.support": "Direkter Telegram-Zugang mit klarem und persönlichem Subscription-Ablauf.", "hero.proof.market.label": "Markt", "hero.proof.market.value": "Gold", "hero.proof.risk.label": "Risiko", "hero.proof.risk.value": "Mittel",
       "overview.kicker": "Systemüberblick", "overview.status": "Aktiv", "overview.lead": "Ein fokussierter Überblick über Zielmarkt, Risikoprofil, Zugangsweg und externe Verifikationsquelle in einer klaren Oberfläche.", "overview.row1.key": "System", "overview.row1.value": "TradeAlpha AI", "overview.row2.key": "Markt", "overview.row2.value": "Gold", "overview.row3.key": "Risikoprofil", "overview.row3.value": "Mittel", "overview.row4.key": "Zugang", "overview.row4.value": "Telegram-Auslieferung", "overview.verify.label": "Verifikation", "overview.verify.value": "Myfxbook",
@@ -34,7 +34,6 @@
       "product.eyebrow": "Produkt", "product.title": "TradeAlpha AI", "product.lead": "Ein Gold-Trading-System für Trader, die ein klares Angebot, direkte Preise und einen einfachen Zugangsweg ohne unnötige Komplexität wollen.", "product.badge": "Jetzt verfügbar", "product.type": "TradeAlpha AI", "product.card.title": "TradeAlpha AI", "product.card.description": "Ein Gold-Trading-System mit mittlerem Risikoprofil, entwickelt als klarer und direkter Einstiegspunkt für ernsthafte Trader.", "product.meta1.label": "Name", "product.meta1.value": "TradeAlpha AI", "product.meta2.label": "Markt", "product.meta2.value": "Gold", "product.meta3.label": "Risiko", "product.meta3.value": "Mittel", "product.meta4.label": "Monatlich", "product.meta4.value": "$40", "product.meta5.label": "Jährlich", "product.meta5.value": "$400", "product.cta": "Per Telegram abonnieren", "product.note": "Die Zugangsdaten werden nach Zahlungsbestätigung manuell über Telegram übermittelt.",
       "proof.eyebrow": "Performance / Vertrauen", "proof.title": "Transparenz, die direkt geprüft werden kann", "proof.lead": "Die Performance ist über die öffentliche Myfxbook-Seite verfügbar und bietet Besuchern einen klaren externen Verifikationsweg.", "proof.metric1.label": "Gesamtertrag", "proof.metric2.label": "Drawdown", "proof.metric3.label": "Trades", "proof.updated.label": "Zuletzt aktualisiert", "proof.note": "Prüfe die dedizierte Performance-Seite oder Myfxbook für die Verifikation auf Quellenebene.", "proof.cta": "TradeAlpha AI Performance ansehen", "proof.side.kicker": "Verifikation", "proof.side.title": "Vertrauen durch Klarheit", "proof.side.body": "Eine dedizierte Performance-Seite gibt Tradern einen sauberen Prüfpunkt, bevor sie die externe Verifikationsquelle öffnen.",
       "final.eyebrow": "Nächster Schritt", "final.title": "Mit TradeAlpha AI auf Telegram starten", "final.lead": "Zugang jetzt anfragen und Subscription- sowie Aktivierungsdetails über einen klaren Telegram-Ablauf erhalten.", "final.ctaPrimary": "Über Telegram-Bot starten", "final.ctaSecondary": "Offiziellem Kanal beitreten", "final.support": "Der offizielle Kanal dient öffentlichen Updates, während Subscription und Zugang über den Bot starten.", "risk.eyebrow": "Risikohinweis", "risk.copy": "Risikohinweis:\nTrading ist mit erheblichen Risiken verbunden und kann zum Verlust des eingesetzten Kapitals führen.\nDie bisherige Performance garantiert keine zukünftigen Ergebnisse.\nHandle nur mit Kapital, dessen Verlust du dir leisten kannst.", "footer.tagline": "Professioneller Gold-Trading-Zugang über Telegram.", "footer.socialLabel": "Offizielle Kanäle",
-      "perf.brand.tagline": "Performance-Seite", "perf.nav.product": "Produkt", "perf.nav.verify": "Verifikation", "perf.nav.telegram": "Telegram", "perf.hero.tickerName": "TradeAlpha AI", "perf.hero.tickerMarket": "Gold", "perf.hero.tickerRisk": "Mittleres Risiko", "perf.hero.title": "TradeAlpha AI Performance-Seite", "perf.hero.lead": "Eine dedizierte Performance-Seite für TradeAlpha AI mit Live-Zusammenfassung, Aktualisierungsstatus und externer Myfxbook-Verifikation.", "perf.hero.ctaPrimary": "Per Telegram abonnieren", "perf.hero.ctaSecondary": "Zurück zur Hauptseite", "perf.profile.kicker": "Produktprofil", "perf.profile.status": "Live-Tracking", "perf.profile.row1.key": "Produkt", "perf.profile.row1.value": "TradeAlpha AI", "perf.profile.row2.key": "Markt", "perf.profile.row2.value": "Gold", "perf.profile.row3.key": "Risikoprofil", "perf.profile.row3.value": "Mittel", "perf.profile.row4.key": "Verifikation", "perf.profile.row4.value": "Myfxbook", "perf.section.eyebrow": "Live-Performance", "perf.section.title": "Live-Performance-Zusammenfassung", "perf.section.lead": "Diese Seite ist ausschließlich TradeAlpha AI gewidmet und zeigt Live-Performance-Felder aus der verbundenen Quelle sowie einen klaren externen Verifikationsweg.", "perf.metric1.label": "Gesamtertrag", "perf.metric2.label": "Drawdown", "perf.metric3.label": "Trades", "perf.updated.label": "Zuletzt aktualisiert", "perf.note": "Prüfe die Referenzquelle direkt über die externe Verifikations-Schaltfläche unten.", "perf.cta": "Verifiziertes Myfxbook öffnen", "perf.side.kicker": "Performance-Kontext", "perf.side.title": "Dediziert für TradeAlpha AI", "perf.side.body": "Diese Seite zeigt die Performance von TradeAlpha AI in einer separaten, strukturierten Ansicht und erleichtert spätere dedizierte Performance-Seiten für weitere Produkte."
     }
   };
 
@@ -66,7 +65,164 @@
     "perf.backtest.disclaimer2": "All results are from backtesting on historical data."
   });
 
+  Object.assign(translations.ar, {
+    "perf.a11y.primaryNav": "التنقل الرئيسي",
+    "perf.a11y.languageSwitch": "تغيير اللغة",
+    "perf.a11y.pageStatus": "حالة صفحة الأداء",
+    "perf.a11y.signalsSummary": "ملخص أداء إشارات QQQ",
+    "perf.a11y.productSummary": "ملخص أداء TradeAlpha AI",
+    "perf.a11y.backtestSummary": "أداء الاختبار التاريخي لـ TradeAlpha EA",
+    "perf.brand.tagline": "صفحة الأداء",
+    "perf.nav.verify": "الأداء",
+    "perf.hero.lead": "صفحة مخصّصة تعرض إحصاءات أداء TradeAlpha AI وسجله التراكمي في عرض واضح.",
+    "perf.profile.status": "سجل الأداء",
+    "perf.profile.row4.key": "مصدر البيانات",
+    "perf.profile.row4.value": "سجلات المخطط 1.0",
+    "perf.section.eyebrow": "إحصاءات الأداء",
+    "perf.section.title": "نظرة عامة على الأداء",
+    "perf.section.lead": "ملخص منظم لمؤشرات TradeAlpha AI، مع إتاحة السجل التفصيلي في قسم أداء الاستراتيجيات.",
+    "perf.note": "تظهر إحصاءات المخطط 1.0 والسجل التراكمي في القسم أدناه.",
+    "perf.cta": "عرض أداء الاستراتيجيات",
+    "perf.side.kicker": "سياق الأداء",
+    "perf.side.body": "عرض مستقل ومنظم لإحصاءات TradeAlpha AI وسجل أدائه.",
+    "perf.snapshot.eyebrow": "إحصاءات بحثية",
+    "perf.snapshot.title": "أداء الاستراتيجيات",
+    "perf.snapshot.lead": "إحصاءات الأداء مع عرض عدد الصفقات بجانب معدّل الربح ومعامل الربحية.",
+    "perf.snapshot.unavailable": "بيانات الأداء غير متوفرة مؤقتاً",
+    "perf.info.title": "معلومات",
+    "perf.disclosure.title": "معلومات المخاطر والمنهجية",
+    "perf.signals.eyebrow": "إشارات QQQ",
+    "perf.signals.title": "أداء TradeAlpha Signals",
+    "perf.signals.lead": "تظهر إحصاءات QQQ للمخطط 1.0 في قسم أداء الاستراتيجيات أدناه.",
+    "perf.signals.product.label": "المنتج",
+    "perf.signals.market.label": "السوق",
+    "perf.signals.market.value": "QQQ / صندوق ناسداك المتداول",
+    "perf.signals.status.label": "الحالة",
+    "perf.signals.status.value": "الإصدار التجريبي المجاني نشط",
+    "perf.signals.side.kicker": "سياق البيانات",
+    "perf.signals.side.title": "إحصاءات بحثية",
+    "perf.signals.side.body": "سجل منظم لنتائج QQQ وفق المخطط 1.0.",
+    "perf.signals.cta": "انضم مجاناً عبر تيليجرام",
+    "perf.signals.info": "تُسجل نتائج QQQ للمخطط 1.0 داخلياً لأغراض البحث، وتُعرض بتأخير زمني، ولم تخضع لتدقيق مستقل."
+  });
+
+  Object.assign(translations.en, {
+    "perf.a11y.primaryNav": "Primary navigation",
+    "perf.a11y.languageSwitch": "Switch language",
+    "perf.a11y.pageStatus": "Performance page status",
+    "perf.a11y.signalsSummary": "QQQ Signals performance summary",
+    "perf.a11y.productSummary": "TradeAlpha AI performance summary",
+    "perf.a11y.backtestSummary": "TradeAlpha EA historical backtest performance",
+    "perf.nav.verify": "Performance",
+    "perf.hero.lead": "A dedicated page presenting TradeAlpha AI performance statistics and cumulative record in a clear view.",
+    "perf.profile.status": "Performance Record",
+    "perf.profile.row4.key": "Data Source",
+    "perf.profile.row4.value": "Schema 1.0 logs",
+    "perf.section.eyebrow": "Performance Statistics",
+    "perf.section.title": "Performance Overview",
+    "perf.section.lead": "A structured summary of TradeAlpha AI indicators, with the detailed record available in Strategy Performance.",
+    "perf.note": "Schema 1.0 statistics and the cumulative record appear in the section below.",
+    "perf.cta": "View Strategy Performance",
+    "perf.side.kicker": "Performance Context",
+    "perf.side.body": "A dedicated, structured view of TradeAlpha AI statistics and performance record.",
+    "perf.snapshot.eyebrow": "Research Statistics",
+    "perf.snapshot.title": "Strategy Performance",
+    "perf.snapshot.lead": "Performance statistics with trade count shown alongside win rate and profit factor.",
+    "perf.snapshot.unavailable": "Performance data temporarily unavailable",
+    "perf.info.title": "Information",
+    "perf.disclosure.title": "Risk and Methodology Information",
+    "perf.signals.eyebrow": "QQQ Signals",
+    "perf.signals.title": "TradeAlpha Signals Performance",
+    "perf.signals.lead": "QQQ Schema 1.0 statistics appear in the Strategy Performance section below.",
+    "perf.signals.product.label": "Product",
+    "perf.signals.market.label": "Market",
+    "perf.signals.market.value": "QQQ / Nasdaq ETF",
+    "perf.signals.status.label": "Status",
+    "perf.signals.status.value": "Free beta active",
+    "perf.signals.side.kicker": "Data Context",
+    "perf.signals.side.title": "Research Statistics",
+    "perf.signals.side.body": "A structured record of QQQ Schema 1.0 results.",
+    "perf.signals.cta": "Join Free on Telegram",
+    "perf.signals.info": "QQQ Schema 1.0 results are recorded internally for research, displayed with a delay, and have not been independently audited."
+  });
+
+  Object.assign(translations.de, {
+    "perf.a11y.primaryNav": "Hauptnavigation",
+    "perf.a11y.languageSwitch": "Sprache wechseln",
+    "perf.a11y.pageStatus": "Status der Performance-Seite",
+    "perf.a11y.signalsSummary": "QQQ-Signale Performance-Zusammenfassung",
+    "perf.a11y.productSummary": "TradeAlpha AI Performance-Zusammenfassung",
+    "perf.a11y.backtestSummary": "Historische Backtest-Performance von TradeAlpha EA",
+    "perf.brand.tagline": "Performance-Seite",
+    "perf.nav.product": "Produkt",
+    "perf.nav.verify": "Performance",
+    "perf.nav.telegram": "Telegram",
+    "perf.hero.tickerName": "TradeAlpha AI",
+    "perf.hero.tickerMarket": "Gold",
+    "perf.hero.tickerRisk": "Mittleres Risiko",
+    "perf.hero.title": "TradeAlpha AI Performance-Seite",
+    "perf.hero.lead": "Eine dedizierte Seite mit TradeAlpha AI Performance-Statistiken und kumulativem Verlauf in einer klaren Ansicht.",
+    "perf.hero.ctaPrimary": "Per Telegram abonnieren",
+    "perf.hero.ctaSecondary": "Zurück zur Hauptseite",
+    "perf.profile.kicker": "Produktprofil",
+    "perf.profile.status": "Performance-Verlauf",
+    "perf.profile.row1.key": "Produkt",
+    "perf.profile.row1.value": "TradeAlpha AI",
+    "perf.profile.row2.key": "Markt",
+    "perf.profile.row2.value": "Gold",
+    "perf.profile.row3.key": "Risikoprofil",
+    "perf.profile.row3.value": "Mittel",
+    "perf.profile.row4.key": "Datenquelle",
+    "perf.profile.row4.value": "Schema-1.0-Protokolle",
+    "perf.section.eyebrow": "Performance-Statistiken",
+    "perf.section.title": "Performance-Überblick",
+    "perf.section.lead": "Eine strukturierte Zusammenfassung der TradeAlpha AI Kennzahlen mit dem Detailverlauf im Bereich Strategie-Performance.",
+    "perf.metric1.label": "Gesamtertrag",
+    "perf.metric2.label": "Drawdown",
+    "perf.metric3.label": "Trades",
+    "perf.updated.label": "Zuletzt aktualisiert",
+    "perf.note": "Schema-1.0-Statistiken und der kumulative Verlauf erscheinen im folgenden Bereich.",
+    "perf.cta": "Strategie-Performance ansehen",
+    "perf.side.kicker": "Performance-Kontext",
+    "perf.side.title": "TradeAlpha AI im Fokus",
+    "perf.side.body": "Eine dedizierte, strukturierte Ansicht der TradeAlpha AI Statistiken und des Performance-Verlaufs.",
+    "perf.snapshot.eyebrow": "Forschungsstatistiken",
+    "perf.snapshot.title": "Strategie-Performance",
+    "perf.snapshot.lead": "Performance-Statistiken mit der Anzahl der Trades neben Trefferquote und Profitfaktor.",
+    "perf.snapshot.unavailable": "Performance-Daten sind vorübergehend nicht verfügbar",
+    "perf.info.title": "Informationen",
+    "perf.disclosure.title": "Risiko- und Methodikinformationen",
+    "perf.signals.eyebrow": "QQQ-Signale",
+    "perf.signals.title": "TradeAlpha Signals Performance",
+    "perf.signals.lead": "QQQ Schema-1.0-Statistiken erscheinen im Bereich Strategie-Performance.",
+    "perf.signals.product.label": "Produkt",
+    "perf.signals.market.label": "Markt",
+    "perf.signals.market.value": "QQQ / Nasdaq ETF",
+    "perf.signals.status.label": "Status",
+    "perf.signals.status.value": "Kostenlose Beta aktiv",
+    "perf.signals.side.kicker": "Datenkontext",
+    "perf.signals.side.title": "Forschungsstatistiken",
+    "perf.signals.side.body": "Ein strukturierter Verlauf der QQQ Schema-1.0-Ergebnisse.",
+    "perf.signals.cta": "Kostenlos über Telegram teilnehmen",
+    "perf.signals.info": "QQQ Schema-1.0-Ergebnisse werden intern für Forschungszwecke erfasst, zeitverzögert angezeigt und wurden nicht unabhängig geprüft.",
+    "perf.backtest.eyebrow": "XAUUSD EA V9",
+    "perf.backtest.title": "TradeAlpha EA Historischer Backtest",
+    "perf.backtest.subtitle": "10,273 Trades | 20202026",
+    "perf.backtest.totalTrades.label": "Trades insgesamt",
+    "perf.backtest.winRate.label": "Trefferquote",
+    "perf.backtest.pnl.label": "Gesamt-P&L",
+    "perf.backtest.winners.label": "Gewinner",
+    "perf.backtest.losers.label": "Verlierer",
+    "perf.backtest.profitFactor.label": "Profitfaktor",
+    "perf.backtest.disclaimer1": "Die bisherige Performance garantiert keine zukünftigen Ergebnisse.",
+    "perf.backtest.disclaimer2": "Alle Ergebnisse stammen aus Backtests mit historischen Daten."
+  });
+
   function getLanguage() {
+    const requested = new URLSearchParams(window.location.search).get("lang");
+    if (requested && Object.prototype.hasOwnProperty.call(translations, requested)) {
+      return requested;
+    }
     return localStorage.getItem("ta_lang") || document.documentElement.lang || "ar";
   }
 
@@ -122,6 +278,13 @@
       const key = el.getAttribute("data-copy");
       if (Object.prototype.hasOwnProperty.call(map, key)) {
         el.textContent = map[key];
+      }
+    });
+
+    document.querySelectorAll("[data-copy-aria-label]").forEach(function (el) {
+      const key = el.getAttribute("data-copy-aria-label");
+      if (Object.prototype.hasOwnProperty.call(map, key)) {
+        el.setAttribute("aria-label", map[key]);
       }
     });
 

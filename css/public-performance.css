@@ -1,86 +1,105 @@
-/* public-performance.css — Phase 1B consumer surface (System B).
-   Scoped .pp-* styles for the sanitized, snapshot-driven performance block.
-   Neutral tokens so it reads correctly on the dark performance page and in
-   RTL. No promotional styling. */
+/* public-performance.css — institutional performance UI (Phase 1G redesign).
+   Dark, professional, metric-first. Scoped .pp-*. RTL-safe, responsive.
+   No warning-box styling: transparency lives in the collapsible .pp-info. */
 
-[data-public-performance] { display: block; margin-top: 1.25rem; }
+[data-public-performance] { display: block; margin-top: 1.25rem; color: #eef1f6; }
+[data-public-performance] *,
+[data-public-performance] *::before,
+[data-public-performance] *::after { box-sizing: border-box; }
 
-.pp-unavailable {
-  padding: 1rem 1.25rem; border: 1px dashed rgba(255,255,255,.22);
-  border-radius: 12px; color: rgba(255,255,255,.72); font-weight: 500;
-  background: rgba(255,255,255,.03);
+/* ── Grid of strategy cards ─────────────────────────────────────────────── */
+.pp-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+
+.pp-strategy {
+  position: relative; padding: 1.75rem 1.75rem 1.4rem;
+  border: 1px solid rgba(255,255,255,.09); border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+  box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 18px 40px -28px rgba(0,0,0,.8);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-.pp-stale-banner {
-  padding: .7rem 1rem; margin-bottom: .9rem; border-radius: 10px;
-  background: rgba(240,180,40,.12); border: 1px solid rgba(240,180,40,.4);
-  color: #f4c65a; font-weight: 600;
-}
-.pp-delay-note { color: rgba(255,255,255,.6); font-size: .9rem; margin: .25rem 0 1rem; }
+.pp-strategy:hover { transform: translateY(-3px); border-color: rgba(120,170,255,.35);
+  box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 26px 55px -30px rgba(0,0,0,.9); }
 
-.pp-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.pp-card {
-  border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 1.1rem 1.2rem;
-  background: rgba(255,255,255,.03);
-}
-.pp-card-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .5rem; }
-.pp-card-head h3 { margin: 0; font-size: 1.05rem; }
+.pp-strategy-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.pp-strategy-head h3 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; }
+.pp-strategy-tags { display: inline-flex; align-items: center; gap: .5rem; flex-shrink: 0; }
 
-.pp-badge { font-size: .72rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
-  padding: .2rem .55rem; border-radius: 999px; border: 1px solid transparent; }
-.pp-badge-insufficient { background: rgba(220,70,70,.15); color: #ff8f8f; border-color: rgba(220,70,70,.45); }
-.pp-badge-preliminary  { background: rgba(240,180,40,.14); color: #f4c65a; border-color: rgba(240,180,40,.4); }
-.pp-badge-developing   { background: rgba(90,150,240,.14); color: #93bbff; border-color: rgba(90,150,240,.4); }
-.pp-badge-mature       { background: rgba(80,200,140,.14); color: #86e2b3; border-color: rgba(80,200,140,.4); }
+.pp-chip { font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  padding: .28rem .6rem; border-radius: 999px; color: rgba(255,255,255,.72);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.pp-pill { display: inline-flex; align-items: center; gap: .4rem; font-size: .72rem; font-weight: 700;
+  padding: .28rem .65rem; border-radius: 999px; color: rgba(255,255,255,.75);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.pp-pill-live { color: #7ee2a8; background: rgba(80,200,140,.1); border-color: rgba(80,200,140,.4); }
+.pp-pill-live i { width: 7px; height: 7px; border-radius: 50%; background: #37d67a; display: inline-block;
+  box-shadow: 0 0 0 0 rgba(55,214,122,.6); animation: pp-pulse 2s infinite; }
+@keyframes pp-pulse { 0% { box-shadow: 0 0 0 0 rgba(55,214,122,.55); } 70% { box-shadow: 0 0 0 7px rgba(55,214,122,0); } 100% { box-shadow: 0 0 0 0 rgba(55,214,122,0); } }
 
-.pp-sample-warning {
-  margin: .4rem 0 .9rem; padding: .6rem .8rem; border-radius: 10px;
-  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12);
-  color: rgba(255,255,255,.85); font-size: .9rem; line-height: 1.5;
-}
-.pp-card[data-sample="insufficient"] .pp-sample-warning { border-color: rgba(220,70,70,.45); }
+/* ── Hero metrics (large numbers) ───────────────────────────────────────── */
+.pp-hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1.2rem 1rem; margin-bottom: 1.4rem; }
+.pp-big { display: flex; flex-direction: column; gap: .3rem; }
+.pp-big-value { font-size: clamp(1.7rem, 4.4vw, 2.35rem); font-weight: 800; line-height: 1.05;
+  letter-spacing: -.02em; color: #fff; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: plaintext; }
+.pp-big-label { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.pp-big.pp-na .pp-big-value { color: rgba(255,255,255,.32); font-weight: 600; }
 
-.pp-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .9rem; margin-bottom: .75rem; }
-.pp-metric { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
-  border-bottom: 1px solid rgba(255,255,255,.06); padding-bottom: .3rem; }
-.pp-metric-label { color: rgba(255,255,255,.6); font-size: .85rem; }
-.pp-metric-value { font-weight: 700; font-variant-numeric: tabular-nums; }
-.pp-metric.data-unavailable .pp-metric-value { color: rgba(255,255,255,.45); font-weight: 500; font-style: italic; }
+/* ── Detail metrics (smaller) ───────────────────────────────────────────── */
+.pp-detail { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem 1.1rem;
+  padding: 1.1rem 0 .3rem; margin-bottom: 1.1rem; border-top: 1px solid rgba(255,255,255,.07); }
+.pp-small { display: flex; flex-direction: column; gap: .15rem; }
+.pp-small-label { font-size: .72rem; color: rgba(255,255,255,.5); }
+.pp-small-value { font-size: 1rem; font-weight: 700; color: #e7ebf3; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: plaintext; }
+.pp-small.pp-na .pp-small-value { color: rgba(255,255,255,.32); font-weight: 500; }
 
-.pp-card-foot { display: flex; flex-wrap: wrap; gap: .35rem 1rem; color: rgba(255,255,255,.55);
-  font-size: .8rem; border-top: 1px solid rgba(255,255,255,.08); padding-top: .6rem; }
-.pp-method { flex-basis: 100%; }
-.pp-disclaimer { margin-top: 1rem; color: rgba(255,255,255,.55); font-size: .82rem; line-height: 1.6; }
+/* ── Trust row ──────────────────────────────────────────────────────────── */
+.pp-trust { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem .9rem; }
+.pp-trust li { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: rgba(255,255,255,.72); }
+.pp-check { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px;
+  border-radius: 50%; background: rgba(80,200,140,.16); color: #7ee2a8; font-size: .68rem; font-weight: 800; flex-shrink: 0; }
 
-/* Phase 1D additions: status header, schema tag, weekly research. */
-.pp-status { display: flex; flex-wrap: wrap; gap: .4rem .9rem; margin-bottom: .75rem;
-  padding: .6rem .8rem; border-radius: 10px; background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.1); font-size: .85rem; color: rgba(255,255,255,.8); }
-.pp-status-item { white-space: nowrap; }
-.pp-status .pp-source { color: rgba(255,255,255,.55); font-style: italic; white-space: normal; }
-.pp-schema-tag { display: inline-block; margin: 0 0 .5rem; font-size: .72rem; font-weight: 700;
-  letter-spacing: .03em; text-transform: uppercase; color: #86e2b3; }
-.pp-weekly { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.08); }
-.pp-weekly h3 { margin: 0 0 .5rem; font-size: 1.02rem; }
-.pp-weekly h4 { margin: .25rem 0; font-size: .95rem; }
-.pp-week-range { color: rgba(255,255,255,.6); font-size: .85rem; margin: .2rem 0; }
+/* ── Collapsible info (all transparency lives here) ─────────────────────── */
+.pp-info { border-top: 1px solid rgba(255,255,255,.07); padding-top: .5rem; }
+.pp-info > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: .45rem;
+  font-size: .82rem; color: rgba(255,255,255,.55); padding: .3rem 0; user-select: none; }
+.pp-info > summary::-webkit-details-marker { display: none; }
+.pp-info > summary:hover { color: rgba(255,255,255,.8); }
+.pp-info-icon { font-style: normal; opacity: .8; }
+.pp-info-body { padding: .3rem 0 .2rem; }
+.pp-info-body p { margin: .35rem 0; font-size: .82rem; line-height: 1.55; color: rgba(255,255,255,.6); }
+.pp-info-note { color: rgba(255,255,255,.45) !important; font-size: .78rem !important; }
+
+.proof-card > .pp-info,
+.proof-sidecard > .pp-info { margin-top: 1.15rem; }
+.disclosure-panel { padding: 1.1rem 1.4rem; }
+.disclosure-panel .pp-info { border-top: 0; padding-top: 0; }
+.disclosure-panel .pp-info > summary { color: rgba(255,255,255,.72); font-weight: 600; }
+.disclosure-panel .pp-info-body { max-width: 78ch; }
+
+/* ── Notices (unavailable / stale / integrity) — quiet, not alarming ────── */
+.pp-notice { padding: 1rem 1.25rem; border-radius: 12px; color: rgba(255,255,255,.72);
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); margin-bottom: .9rem; font-weight: 500; }
+.pp-notice-soft { color: #e9cf8f; background: rgba(240,180,40,.08); border-color: rgba(240,180,40,.28); }
+
+.pp-footnote { margin-top: 1.4rem; font-size: .78rem; color: rgba(255,255,255,.4); text-align: center; }
+
+/* ── Weekly research (kept, minimal) ────────────────────────────────────── */
+.pp-weekly { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,.08); }
+.pp-weekly h3 { margin: 0 0 .6rem; font-size: 1.05rem; }
+.pp-weekly h4 { margin: .25rem 0; font-size: .98rem; }
+.pp-week-range { color: rgba(255,255,255,.55); font-size: .85rem; margin: .2rem 0; }
 .pp-observations { margin: .5rem 0; padding-inline-start: 1.2rem; color: rgba(255,255,255,.82); }
 .pp-observations li { margin: .2rem 0; }
+.pp-unavailable { color: rgba(255,255,255,.5); font-size: .9rem; }
+.pp-sample-warning { color: rgba(255,255,255,.55); font-size: .82rem; }
 
-/* Historical Research Record — visually distinct + neutral (never green/verified). */
-.pp-historical { margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed rgba(255,255,255,.16); }
-.pp-hist-head { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-bottom: .4rem; }
-.pp-hist-head h4 { margin: 0; font-size: .98rem; color: rgba(255,255,255,.85); }
-.pp-badge-historical { background: rgba(150,150,160,.16); color: #cfcfd6; border: 1px solid rgba(180,160,90,.5); }
-.pp-hist-warning { margin: .35rem 0 .6rem; padding: .55rem .75rem; border-radius: 10px;
-  background: rgba(240,180,40,.08); border: 1px solid rgba(240,180,40,.35); color: #e9cf8f; font-size: .85rem; line-height: 1.5; }
-.pp-hist-limited { margin: .2rem 0 .6rem; color: #e9cf8f; font-size: .82rem; }
-
-/* Mobile: single-column metrics + no horizontal overflow. */
-@media (max-width: 560px) {
-  .pp-metrics { grid-template-columns: 1fr; }
-  .pp-cards { grid-template-columns: 1fr; }
-  .pp-status { font-size: .8rem; }
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .pp-grid { grid-template-columns: 1fr; }
+  .pp-strategy { padding: 1.35rem 1.25rem 1.15rem; }
+  .pp-hero { grid-template-columns: repeat(2, 1fr); gap: 1rem .8rem; }
+  .pp-detail { grid-template-columns: repeat(2, 1fr); }
+  .pp-big-value { font-size: clamp(1.5rem, 8vw, 2rem); }
 }
 
-/* RTL: the page is dir="rtl"; grids/flex already mirror, tabular nums stay LTR. */
-[dir="rtl"] .pp-metric-value { direction: ltr; unicode-bidi: plaintext; }
+/* ── RTL ────────────────────────────────────────────────────────────────── */
+[dir="rtl"] .pp-big-value, [dir="rtl"] .pp-small-value { text-align: start; }

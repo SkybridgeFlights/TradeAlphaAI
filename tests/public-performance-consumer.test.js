@@ -188,20 +188,23 @@ function runLoadTests() {
 // ── render (DOM-free) ─────────────────────────────────────────────────────
 function runRenderTests() {
   const L = PP._labels.en;
+  const Lar = PP._labels.ar;
   const c1 = { innerHTML: '' };
   PP.render(c1, { performance: perfNull, system: null, weekly: null, stale: false }, 'en');
-  ok('(12) render null => "Not available"', c1.innerHTML.indexOf(L.unavailable) !== -1 && c1.innerHTML.indexOf('>0<') === -1);
+  ok('(12) null metric => "—", never 0', c1.innerHTML.indexOf('—') !== -1 && c1.innerHTML.indexOf('>0<') === -1);
 
   const c2 = { innerHTML: '' };
   PP.render(c2, { performance: perfIns, system: null, weekly: null, stale: false }, 'en');
-  ok('(13) render insufficient warning', c2.innerHTML.indexOf('Insufficient sample') !== -1);
-  ok('(14) closed-trade count beside WR/PF', c2.innerHTML.indexOf(L.closedTrades) !== -1 && c2.innerHTML.indexOf(L.winRate) !== -1 && c2.innerHTML.indexOf(L.profitFactor) !== -1);
-  ok('render no promotional words', !/proven|guaranteed|verified success|profitable|superior/i.test(c2.innerHTML));
-  ok('render carries "Not independently audited"-style wording only via system header', c2.innerHTML.indexOf('audited') === -1); // no system => no audit line here
+  ok('(13) sample context preserved in collapsible ⓘ panel', c2.innerHTML.indexOf(L.aboutData) !== -1 && c2.innerHTML.indexOf(L.infoSample) !== -1);
+  ok('(14) closed-trade count beside WR/PF (hero)', c2.innerHTML.indexOf(L.totalClosedTrades) !== -1 && c2.innerHTML.indexOf(L.winRate) !== -1 && c2.innerHTML.indexOf(L.profitFactor) !== -1);
+  ok('render no promotional words', !/\bproven\b|guaranteed|verified success|profitable|superior/i.test(c2.innerHTML));
+  ok('not-audited disclosure kept (in ⓘ, not a banner)', c2.innerHTML.indexOf(L.infoAudit) !== -1);
+  ok('trust row present', c2.innerHTML.indexOf(L.trustPublic) !== -1 && c2.innerHTML.indexOf(L.trustMethod) !== -1);
+  ok('no dominating warning-box classes', c2.innerHTML.indexOf('pp-sample-warning') === -1 && c2.innerHTML.indexOf('pp-hist-warning') === -1);
 
   const c3 = { innerHTML: '' };
   PP.render(c3, { performance: perfIns, system: null, weekly: null, stale: true }, 'en');
-  ok('(11) render stale banner', c3.innerHTML.indexOf(L.staleBanner) !== -1);
+  ok('(11) stale notice shown', c3.innerHTML.indexOf(L.staleBanner) !== -1);
 
   const c4 = { innerHTML: '' };
   PP.render(c4, { performance: null, system: null, weekly: null }, 'en');
@@ -209,19 +212,17 @@ function runRenderTests() {
 
   const c5 = { innerHTML: '' };
   PP.render(c5, { performance: perfIns, system: null, weekly: null, stale: false }, 'ar');
-  ok('(20) Arabic warning + disclaimer', c5.innerHTML.indexOf('حجم العينة غير كافٍ') !== -1 && c5.innerHTML.indexOf('ليس نصيحة استثمارية') !== -1);
+  ok('(20) Arabic footnote + ⓘ present', c5.innerHTML.indexOf('ليس نصيحة استثمارية') !== -1 && c5.innerHTML.indexOf(Lar.infoAudit) !== -1);
+  ok('(20b) AR render carries NO English metric labels (language pure)', c5.innerHTML.indexOf('Win rate') === -1 && c5.innerHTML.indexOf('Total Closed Trades') === -1 && c5.innerHTML.indexOf('About this data') === -1);
 
-  // (24) weekly null state
   const weeklyNull = PP.normalizeWeekly({ week_start: '2026-07-04', week_end: '2026-07-10', title_en: null, summary_en: null, title_ar: null, summary_ar: null, data_collected: {}, public_observations: [] });
   const c6 = { innerHTML: '' };
   PP.render(c6, { performance: perfIns, system: null, weekly: weeklyNull }, 'en');
   ok('(24) weekly null => "not yet available"', c6.innerHTML.indexOf(L.weeklyUnavailable) !== -1);
 
-  // system status header wording
-  const sysView = PP.normalizeSystemSummary(readFix('system_summary.valid.json').payload);
   const c7 = { innerHTML: '' };
-  PP.render(c7, { performance: perfIns, system: sysView, weekly: null, generated_at: '2026-07-11T06:00:00Z' }, 'en');
-  ok('status header shows verified-source + not-audited wording', c7.innerHTML.indexOf('schema 1.0 research logs') !== -1 && c7.innerHTML.indexOf('not independently audited') !== -1);
+  PP.render(c7, { performance: perfIns, system: null, weekly: null }, 'en');
+  ok('footnote present (single, small, non-alarming)', c7.innerHTML.indexOf(L.footNote) !== -1);
 }
 
 // ── production-output safety scans ────────────────────────────────────────
@@ -253,40 +254,41 @@ function runHistoricalTests() {
   ok('(H4) verified (2) vs historical (20) kept separate', gold.closed_trades === 2 && gold.historical_record.closed_trades === 20);
   ok('(H4b) data_quality legacy/schema split', gold.historical_record.data_quality.schema_1_closed_trades === 2 && gold.historical_record.data_quality.legacy_closed_trades === 18);
 
+  const Lar = PP._labels.ar;
   const c = { innerHTML: '' };
   PP.render(c, { performance: norm, system: null, weekly: null }, 'en');
   const h = c.innerHTML;
-  ok('(H2r) Historical section rendered', h.indexOf('Historical Research Record') !== -1);
-  ok('(H3v) Verified Schema 1.0 label present', h.indexOf('Verified Schema 1.0 Research Record') !== -1);
-  ok('(H9) neutral historical badge (not green/verified)', h.indexOf('Historical / Legacy coverage') !== -1);
-  ok('(H7) legacy warning EN present', h.indexOf('Includes legacy pre-schema data') !== -1);
+  ok('(H2r) historical track record is the hero (Net Profit shown)', h.indexOf(L.netProfit) !== -1 && h.indexOf('$202.80') !== -1);
+  ok('(H3v) verified subset visible (Schema 1.0 Trades)', h.indexOf(L.schema1Trades) !== -1);
+  ok('(H9) neutral Historical chip, no green "verified" badge', h.indexOf(L.historicalChip) !== -1 && h.indexOf('pp-badge-mature') === -1);
+  ok('(H7) legacy composition disclosed in ⓘ', h.indexOf(L.infoHistory) !== -1);
   ok('(H5) non-null historical PnL shows $202.80', h.indexOf('$202.80') !== -1);
-  ok('(H11) legacy + schema-1 counts labelled', h.indexOf('Schema 1.0 closed trades') !== -1 && h.indexOf('Legacy closed trades') !== -1);
-  ok('(H10) independently_audited=false shown clearly', h.indexOf('No — internally generated') !== -1);
-  ok('(H12) closed-count beside historical WR/PF', h.indexOf(L.closedTrades) !== -1 && h.indexOf(L.winRate) !== -1 && h.indexOf(L.profitFactor) !== -1);
-  ok('(H13) historical <30 => limited-sample warning', h.indexOf('Limited historical sample') !== -1);
-  ok('(H14) schema-1 insufficient warning unchanged', h.indexOf('Insufficient sample') !== -1);
-  ok('(H15) no balances/positions/account IDs', !/balance|equity_usd|buying_power|open_pnl|position_qty|account_id/i.test(h));
-  ok('(H3promo) no legacy promotional wording', !/\bproven\b|guaranteed|audited performance|stable edge|live account proof/i.test(h));
+  ok('(H11) schema-1 + historical counts labelled', h.indexOf(L.schema1Trades) !== -1 && h.indexOf(L.histTrades) !== -1);
+  ok('(H10) not-audited disclosure kept in ⓘ', h.indexOf(L.infoAudit) !== -1);
+  ok('(H12) closed-count beside historical WR/PF (hero)', h.indexOf(L.totalClosedTrades) !== -1 && h.indexOf(L.winRate) !== -1 && h.indexOf(L.profitFactor) !== -1);
+  ok('(H13) sample context preserved in ⓘ', h.indexOf(L.infoSample) !== -1);
+  ok('(H14) verified schema-1 count remains visible', h.indexOf(L.schema1Trades) !== -1 && h.indexOf('2') !== -1);
+  ok('(H15) no balances/positions/account IDs', !/equity_usd|buying_power|open_pnl|position_qty|account_id|order_id/i.test(h));
+  ok('(H3promo) no promotional wording', !/\bproven\b|guaranteed|audited performance|stable edge|live account proof/i.test(h));
 
   const car = { innerHTML: '' };
   PP.render(car, { performance: norm, system: null, weekly: null }, 'ar');
-  ok('(H8) legacy warning AR present (RTL)', car.innerHTML.indexOf('يتضمن بيانات تاريخية سابقة للمخطط 1.0') !== -1 && car.innerHTML.indexOf('السجل البحثي التاريخي') !== -1);
+  ok('(H8) Arabic historical present, language pure', car.innerHTML.indexOf(Lar.historicalChip) !== -1 && car.innerHTML.indexOf(Lar.infoHistory) !== -1 && car.innerHTML.indexOf('Net Profit') === -1);
 
   const goldFalse = Object.assign({}, gold, { historical_record: PP.normalizeHistorical({ available: false }) });
   const c3 = { innerHTML: '' };
   PP.render(c3, { performance: { as_of: 'x', systems: [goldFalse] }, system: null, weekly: null }, 'en');
-  ok('(H3) available=false => neutral unavailable, no metrics', c3.innerHTML.indexOf('Historical research record not available') !== -1 && c3.innerHTML.indexOf('$202.80') === -1);
+  ok('(H3) available=false => falls back to verified, no net profit', c3.innerHTML.indexOf(L.netProfit) === -1 && c3.innerHTML.indexOf('$202.80') === -1 && c3.innerHTML.indexOf(L.totalClosedTrades) !== -1);
 
   const histNull = PP.normalizeHistorical(Object.assign({}, withHistPayload.systems[0].historical_record, { pnl_usd: null }));
   const goldNull = Object.assign({}, gold, { historical_record: histNull });
   const c6 = { innerHTML: '' };
   PP.render(c6, { performance: { as_of: 'x', systems: [goldNull] }, system: null, weekly: null }, 'en');
-  ok('(H6) null historical PnL => "Not available", never $ or 0', c6.innerHTML.indexOf('PnL (USD)') !== -1 && c6.innerHTML.indexOf('$') === -1 && c6.innerHTML.indexOf(L.unavailable) !== -1);
+  ok('(H6) null historical PnL => "—", never $ or 0', c6.innerHTML.indexOf(L.netProfit) !== -1 && c6.innerHTML.indexOf('$') === -1 && c6.innerHTML.indexOf('—') !== -1);
 
   const cNo = { innerHTML: '' };
   PP.render(cNo, { performance: PP.normalizePerformance(readFix('performance.insufficient.json').payload), system: null, weekly: null }, 'en');
-  ok('(H16) no historical_record => no historical section, no errors', cNo.innerHTML.indexOf('Historical Research Record') === -1);
+  ok('(H16) no historical_record => no Net Profit, verified chip', cNo.innerHTML.indexOf(L.netProfit) === -1 && cNo.innerHTML.indexOf(L.verifiedChip) !== -1);
 }
 
 // ── Phase 1F: immutable versioned snapshot paths (additive) ───────────────
