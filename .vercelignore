@@ -1,0 +1,7 @@
+# Vercel serves from repo root (outputDirectory "."), so anything not excluded
+# here is publicly deployable. Keep development-only assets OUT of production.
+#
+# Phase 1B (SYSTEM B consumer): the public-performance fixtures under tests/ are
+# SYNTHETIC test data and must never be served publicly. Excluding tests/
+# guarantees they cannot be fetched from the deployed site.
+tests/

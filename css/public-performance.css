@@ -1,0 +1,77 @@
+/* public-performance.css — Phase 1B consumer surface (System B).
+   Scoped .pp-* styles for the sanitized, snapshot-driven performance block.
+   Neutral tokens so it reads correctly on the dark performance page and in
+   RTL. No promotional styling. */
+
+[data-public-performance] { display: block; margin-top: 1.25rem; }
+
+.pp-unavailable {
+  padding: 1rem 1.25rem; border: 1px dashed rgba(255,255,255,.22);
+  border-radius: 12px; color: rgba(255,255,255,.72); font-weight: 500;
+  background: rgba(255,255,255,.03);
+}
+.pp-stale-banner {
+  padding: .7rem 1rem; margin-bottom: .9rem; border-radius: 10px;
+  background: rgba(240,180,40,.12); border: 1px solid rgba(240,180,40,.4);
+  color: #f4c65a; font-weight: 600;
+}
+.pp-delay-note { color: rgba(255,255,255,.6); font-size: .9rem; margin: .25rem 0 1rem; }
+
+.pp-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.pp-card {
+  border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 1.1rem 1.2rem;
+  background: rgba(255,255,255,.03);
+}
+.pp-card-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .5rem; }
+.pp-card-head h3 { margin: 0; font-size: 1.05rem; }
+
+.pp-badge { font-size: .72rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+  padding: .2rem .55rem; border-radius: 999px; border: 1px solid transparent; }
+.pp-badge-insufficient { background: rgba(220,70,70,.15); color: #ff8f8f; border-color: rgba(220,70,70,.45); }
+.pp-badge-preliminary  { background: rgba(240,180,40,.14); color: #f4c65a; border-color: rgba(240,180,40,.4); }
+.pp-badge-developing   { background: rgba(90,150,240,.14); color: #93bbff; border-color: rgba(90,150,240,.4); }
+.pp-badge-mature       { background: rgba(80,200,140,.14); color: #86e2b3; border-color: rgba(80,200,140,.4); }
+
+.pp-sample-warning {
+  margin: .4rem 0 .9rem; padding: .6rem .8rem; border-radius: 10px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.85); font-size: .9rem; line-height: 1.5;
+}
+.pp-card[data-sample="insufficient"] .pp-sample-warning { border-color: rgba(220,70,70,.45); }
+
+.pp-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .9rem; margin-bottom: .75rem; }
+.pp-metric { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
+  border-bottom: 1px solid rgba(255,255,255,.06); padding-bottom: .3rem; }
+.pp-metric-label { color: rgba(255,255,255,.6); font-size: .85rem; }
+.pp-metric-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+.pp-metric.data-unavailable .pp-metric-value { color: rgba(255,255,255,.45); font-weight: 500; font-style: italic; }
+
+.pp-card-foot { display: flex; flex-wrap: wrap; gap: .35rem 1rem; color: rgba(255,255,255,.55);
+  font-size: .8rem; border-top: 1px solid rgba(255,255,255,.08); padding-top: .6rem; }
+.pp-method { flex-basis: 100%; }
+.pp-disclaimer { margin-top: 1rem; color: rgba(255,255,255,.55); font-size: .82rem; line-height: 1.6; }
+
+/* Phase 1D additions: status header, schema tag, weekly research. */
+.pp-status { display: flex; flex-wrap: wrap; gap: .4rem .9rem; margin-bottom: .75rem;
+  padding: .6rem .8rem; border-radius: 10px; background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1); font-size: .85rem; color: rgba(255,255,255,.8); }
+.pp-status-item { white-space: nowrap; }
+.pp-status .pp-source { color: rgba(255,255,255,.55); font-style: italic; white-space: normal; }
+.pp-schema-tag { display: inline-block; margin: 0 0 .5rem; font-size: .72rem; font-weight: 700;
+  letter-spacing: .03em; text-transform: uppercase; color: #86e2b3; }
+.pp-weekly { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.08); }
+.pp-weekly h3 { margin: 0 0 .5rem; font-size: 1.02rem; }
+.pp-weekly h4 { margin: .25rem 0; font-size: .95rem; }
+.pp-week-range { color: rgba(255,255,255,.6); font-size: .85rem; margin: .2rem 0; }
+.pp-observations { margin: .5rem 0; padding-inline-start: 1.2rem; color: rgba(255,255,255,.82); }
+.pp-observations li { margin: .2rem 0; }
+
+/* Mobile: single-column metrics + no horizontal overflow. */
+@media (max-width: 560px) {
+  .pp-metrics { grid-template-columns: 1fr; }
+  .pp-cards { grid-template-columns: 1fr; }
+  .pp-status { font-size: .8rem; }
+}
+
+/* RTL: the page is dir="rtl"; grids/flex already mirror, tabular nums stay LTR. */
+[dir="rtl"] .pp-metric-value { direction: ltr; unicode-bidi: plaintext; }
