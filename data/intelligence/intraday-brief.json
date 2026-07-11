@@ -1,45 +1,52 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-10T21:12:53.202Z",
+  "updated_at": "2026-07-11T11:11:58.054Z",
   "verified": true,
   "urgency": "high",
   "pulse_shift": [],
-  "quote_driven_changes": [
+  "quote_driven_changes": [],
+  "new_contradictions": [],
+  "pressure_buildup": [
     {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -2.0552344251766237,
-      "to": -3.468208092485555,
-      "delta": -1.4129736673089313,
-      "en": "vix move changed by -1.41 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -1.41 نقطة مئوية."
+      "kind": "pressure-buildup",
+      "track": "speculative_pressure",
+      "from": 4,
+      "to": 5,
+      "en": "speculative pressure built from 4/5 to 5/5.",
+      "ar": "تصاعد speculative pressure من 4/5 إلى 5/5."
     }
   ],
-  "new_contradictions": [
+  "new_alerts": [
     {
-      "kind": "new-contradiction",
-      "id": "leadership-vs-participation",
-      "en": "A new structural contradiction is active: leadership vs participation.",
-      "ar": "ظهر تناقض هيكلي جديد قيد المتابعة: leadership-vs-participation."
+      "kind": "new-alert",
+      "id": "breadth-deterioration-2026-07-11",
+      "severity": "watch",
+      "en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+      "ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية."
+    },
+    {
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-07-11",
+      "severity": "watch",
+      "en": "Macro divergence persistent — index vs breadth for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     }
   ],
-  "pressure_buildup": [],
-  "new_alerts": [],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
-      "time": "2026-07-10T00:00:00Z",
-      "minutes_until": 0
-    },
-    {
-      "name": "Unemployment Rate",
-      "time": "2026-07-10T12:30:00.000Z",
+      "time": "2026-07-11T00:00:00Z",
       "minutes_until": 0
     },
     {
       "name": "FOMC Press Release",
-      "time": "2026-07-11T00:00:00Z",
-      "minutes_until": 167
+      "time": "2026-07-12T00:00:00Z",
+      "minutes_until": 768
+    },
+    {
+      "name": "FOMC Press Release",
+      "time": "2026-07-13T00:00:00Z",
+      "minutes_until": 2208
     }
   ],
   "wire_event": {
@@ -49,29 +56,26 @@
   },
   "changes": [
     {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -2.0552344251766237,
-      "to": -3.468208092485555,
-      "delta": -1.4129736673089313,
-      "en": "vix move changed by -1.41 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -1.41 نقطة مئوية."
+      "kind": "new-alert",
+      "id": "breadth-deterioration-2026-07-11",
+      "severity": "watch",
+      "en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+      "ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية."
     },
     {
-      "kind": "new-contradiction",
-      "id": "leadership-vs-participation",
-      "en": "A new structural contradiction is active: leadership vs participation.",
-      "ar": "ظهر تناقض هيكلي جديد قيد المتابعة: leadership-vs-participation."
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-07-11",
+      "severity": "watch",
+      "en": "Macro divergence persistent — index vs breadth for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     },
     {
-      "kind": "wire-event",
-      "en": "Wire event: NVDA jumps +4.03% to 210.96",
-      "ar": "حدث على الموجز: NVDA jumps +4.03% to 210.96",
-      "event": {
-        "headline": "NVDA jumps +4.03% to 210.96",
-        "timestamp": "2026-07-10T21:12:49.153Z",
-        "urgency": 90
-      }
+      "kind": "pressure-buildup",
+      "track": "speculative_pressure",
+      "from": 4,
+      "to": 5,
+      "en": "speculative pressure built from 4/5 to 5/5.",
+      "ar": "تصاعد speculative pressure من 4/5 إلى 5/5."
     }
   ],
   "note_en": null,
@@ -108,22 +112,38 @@
       "oil": 4.318016046681266
     },
     "alert_ids": [
-      "positioning-crowding-2026-07-10"
+      "breadth-deterioration-2026-07-11",
+      "macro-divergence-2026-07-11"
     ],
     "alerts": [
       {
-        "id": "positioning-crowding-2026-07-10",
-        "type": "positioning-crowding",
+        "id": "breadth-deterioration-2026-07-11",
+        "type": "breadth-deterioration",
         "severity": "watch",
-        "date": "2026-07-10",
-        "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-        "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+        "date": "2026-07-11",
+        "headline_en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+        "headline_ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية.",
         "derived_from": [
           {
-            "dimension": "ai_concentration_risk",
-            "from": "contained",
-            "to": "elevated",
-            "date": "2026-07-10"
+            "dimension": "breadth_state",
+            "state": "deteriorating",
+            "streak": 2,
+            "date": "2026-07-11"
+          }
+        ]
+      },
+      {
+        "id": "macro-divergence-2026-07-11",
+        "type": "macro-divergence",
+        "severity": "watch",
+        "date": "2026-07-11",
+        "headline_en": "Macro divergence persistent — index vs breadth for 2 consecutive sessions.",
+        "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+        "derived_from": [
+          {
+            "divergence": "index-vs-breadth",
+            "streak": 2,
+            "date": "2026-07-11"
           }
         ]
       }
@@ -137,22 +157,22 @@
       "volatility_pressure": 0,
       "liquidity_pressure": 3,
       "defensive_pressure": 0,
-      "speculative_pressure": 4,
+      "speculative_pressure": 5,
       "concentration_pressure": 5,
       "yield_pressure": 0
     },
     "catalysts": [
       {
         "name": "FOMC Press Release",
-        "time": "2026-07-10T00:00:00Z"
-      },
-      {
-        "name": "Unemployment Rate",
-        "time": "2026-07-10T12:30:00.000Z"
+        "time": "2026-07-11T00:00:00Z"
       },
       {
         "name": "FOMC Press Release",
-        "time": "2026-07-11T00:00:00Z"
+        "time": "2026-07-12T00:00:00Z"
+      },
+      {
+        "name": "FOMC Press Release",
+        "time": "2026-07-13T00:00:00Z"
       }
     ],
     "wire_event": {

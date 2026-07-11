@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-10T21:12:52.797Z",
-  "run_date": "2026-07-10",
+  "updated_at": "2026-07-11T11:11:57.810Z",
+  "run_date": "2026-07-11",
   "verified": true,
-  "sessions_tracked": 27,
+  "sessions_tracked": 28,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "risk-on",
       "phase": "extended",
-      "sessions_in_state": 12,
+      "sessions_in_state": 13,
       "from": {
         "state": "neutral",
         "date": "2026-06-28"
@@ -19,14 +19,14 @@
       "dimension": "volatility_regime",
       "state": "normal",
       "phase": "extended",
-      "sessions_in_state": 19,
+      "sessions_in_state": 20,
       "from": null
     },
     {
       "dimension": "dollar_pressure",
       "state": "stable",
       "phase": "extended",
-      "sessions_in_state": 11,
+      "sessions_in_state": 12,
       "from": {
         "state": "easing",
         "date": "2026-06-29"
@@ -36,14 +36,14 @@
       "dimension": "duration_pressure",
       "state": "neutral",
       "phase": "extended",
-      "sessions_in_state": 19,
+      "sessions_in_state": 20,
       "from": null
     },
     {
       "dimension": "momentum_concentration",
       "state": "balanced",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-07-08"
@@ -52,8 +52,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-07-09"
@@ -62,8 +62,8 @@
     {
       "dimension": "breadth_state",
       "state": "deteriorating",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "confirming",
         "date": "2026-07-09"
@@ -80,21 +80,21 @@
       "dimension": "liquidity_stress",
       "state": "mixed",
       "phase": "extended",
-      "sessions_in_state": 19,
+      "sessions_in_state": 20,
       "from": null
     },
     {
       "dimension": "speculative_appetite",
       "state": "expanding",
-      "phase": "baseline",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": null
     },
     {
       "dimension": "market_fragility",
       "state": "building",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-07-09"
@@ -103,11 +103,43 @@
   ],
   "memory_observations": [
     {
+      "kind": "streak",
+      "dimension": "ai_concentration_risk",
+      "state": "elevated",
+      "sessions": 2,
+      "en": "AI concentration risk holds elevated for a second straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثانية على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
+    },
+    {
+      "kind": "streak",
+      "dimension": "breadth_state",
+      "state": "deteriorating",
+      "sessions": 2,
+      "en": "Second consecutive session of deteriorating breadth beneath headline index strength.",
+      "ar": "الجلسة الثانية على التوالي من تدهور اتساع السوق تحت قوة المؤشرات الرئيسية."
+    },
+    {
+      "kind": "streak",
+      "dimension": "speculative_appetite",
+      "state": "expanding",
+      "sessions": 2,
+      "en": "Speculative appetite expands for a second straight session — risk-seeking behavior is persistent, not episodic.",
+      "ar": "شهية المضاربة تتوسع للجلسة الثانية على التوالي — سلوك السعي للمخاطرة مستمر وليس عابراً."
+    },
+    {
+      "kind": "streak",
+      "dimension": "market_fragility",
+      "state": "building",
+      "sessions": 2,
+      "en": "Market fragility signals build for a second straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثانية على التوالي عبر مدخلات التقلب والاتساع والتركز."
+    },
+    {
       "kind": "divergence",
       "flag": "index-vs-breadth",
-      "sessions": 1,
-      "en": "Headline index strength is masking small-cap weakness this session.",
-      "ar": "قوة المؤشرات الرئيسية تخفي ضعف الأسهم الصغيرة في هذه الجلسة."
+      "sessions": 2,
+      "en": "Headline index strength keeps masking small-cap weakness for a second session.",
+      "ar": "قوة المؤشرات الرئيسية تواصل إخفاء ضعف الأسهم الصغيرة للجلسة الثانية."
     }
   ],
   "causal_links": [
@@ -314,18 +346,33 @@
   },
   "alerts": [
     {
-      "id": "positioning-crowding-2026-07-10",
-      "type": "positioning-crowding",
+      "id": "breadth-deterioration-2026-07-11",
+      "type": "breadth-deterioration",
       "severity": "watch",
-      "date": "2026-07-10",
-      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+      "date": "2026-07-11",
+      "headline_en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+      "headline_ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية.",
       "derived_from": [
         {
-          "dimension": "ai_concentration_risk",
-          "from": "contained",
-          "to": "elevated",
-          "date": "2026-07-10"
+          "dimension": "breadth_state",
+          "state": "deteriorating",
+          "streak": 2,
+          "date": "2026-07-11"
+        }
+      ]
+    },
+    {
+      "id": "macro-divergence-2026-07-11",
+      "type": "macro-divergence",
+      "severity": "watch",
+      "date": "2026-07-11",
+      "headline_en": "Macro divergence persistent — index vs breadth for 2 consecutive sessions.",
+      "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+      "derived_from": [
+        {
+          "divergence": "index-vs-breadth",
+          "streak": 2,
+          "date": "2026-07-11"
         }
       ]
     }
@@ -374,5 +421,5 @@
       "note": "ai concentration risk: elevated -> contained"
     }
   ],
-  "cognition_note": "Cognition state — 10/11 dimensions verified; 1 alert(s); 1 cross-session observation(s); 46 timeline event(s)."
+  "cognition_note": "Cognition state — 10/11 dimensions verified; 2 alert(s); 5 cross-session observation(s); 46 timeline event(s)."
 }
