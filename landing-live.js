@@ -16,6 +16,10 @@
   };
   let lastPayload = null;
 
+  function usesPublicSnapshotPerformance() {
+    return document.body && document.body.dataset.page === "performance";
+  }
+
   function byId(id) {
     return document.getElementById(id);
   }
@@ -115,11 +119,13 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    if (usesPublicSnapshotPerformance()) return;
     applyLiveState();
     loadPerformance();
   });
 
   window.addEventListener("storage", function (event) {
+    if (usesPublicSnapshotPerformance()) return;
     if (event.key === "ta_lang") {
       if (lastPayload) {
         renderPerformance(lastPayload);
@@ -130,6 +136,7 @@
   });
 
   window.addEventListener("ta:languagechange", function () {
+    if (usesPublicSnapshotPerformance()) return;
     if (lastPayload) {
       renderPerformance(lastPayload);
     } else {
