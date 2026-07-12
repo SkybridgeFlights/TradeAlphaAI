@@ -404,10 +404,37 @@ function runPathTests() {
   });
 }
 
+function runChartTests() {
+  const raw = { available:true, record_type:'broker_execution_history', charts:{ version:'1.0', strategy:{
+    curve:{available:true,unit:'return_pct',points:[{time:'2026-02-01T00:00:00Z',value:2},{time:'2026-01-01T00:00:00Z',value:1}]},
+    drawdown:{available:true,unit:'percent',points:[{time:'2026-01-01T00:00:00Z',value:0},{time:'2026-02-01T00:00:00Z',value:-1}]},
+    monthly:{available:true,unit:'return_pct',rows:[{month:'2026-02',value:-1,trades:2},{month:'2026-01',value:2,trades:3}]},
+    trades:{available:true,unit:'usd',rows:[{time:'2026-02-01T00:00:00Z',outcome:'loss',value:-20,unit:'usd',holding_hours:4},{time:'2026-01-01T00:00:00Z',outcome:'win',value:30,unit:'usd',holding_hours:2}]}
+  },account:{curve:{available:true,unit:'return_pct',points:[{time:'2026-01-01T00:00:00Z',value:0}]},drawdown:{available:true,unit:'percent',points:[{time:'2026-01-01T00:00:00Z',value:0}]},monthly:{available:true,unit:'return_pct',rows:[{month:'2026-01',value:1}]}}} };
+  const hist=PP.normalizeHistorical(raw);
+  ok('(C1) chart schema allowlisted', hist.charts.version==='1.0' && hist.charts.strategy.curve.rows.length===2);
+  ok('(C2) chart and trade rows chronological', hist.charts.strategy.curve.rows[0].value===1 && hist.charts.strategy.trades.rows[0].value===30);
+  const sys={public_name:'QQQ Strategy',status:'live',closed_trades:2,wins:1,losses:1,win_rate_pct:50,profit_factor:1,historical_record:hist};
+  const c={innerHTML:''}; PP.render(c,{performance:{as_of:'2026-02-01',systems:[sys]}},'en');
+  ok('(C3) performance and drawdown render', /Realized Strategy Return/.test(c.innerHTML) && /Drawdown/.test(c.innerHTML));
+  ok('(C4) monthly values and trades in tooltip', /Month: 2026-01/.test(c.innerHTML) && /Trades: 3/.test(c.innerHTML));
+  ok('(C5) trade tooltip excludes IDs', /PnL: \+\$30/.test(c.innerHTML) && /Holding Time: 2 hours/.test(c.innerHTML) && !/trade_id|position_id/.test(c.innerHTML));
+  ok('(C6) strategy account toggle present', /data-chart-toggle="strategy"/.test(c.innerHTML) && /data-chart-toggle="account"/.test(c.innerHTML));
+  ok('(C7) negative monthly bar red class', /pp-month[^>]*[\s\S]*?negative/.test(c.innerHTML));
+  const gold={innerHTML:''}; PP.render(gold,{performance:{as_of:'x',systems:[Object.assign({},sys,{public_name:'Gold Strategy'})]}},'en');
+  ok('(C8) Gold naming is research, never equity', /Cumulative Research Performance/.test(gold.innerHTML) && !/account equity/i.test(gold.innerHTML));
+  ok('(C9) Gold has no account toggle', !/data-chart-toggle="account"/.test(gold.innerHTML));
+  const empty={innerHTML:''}; PP.render(empty,{performance:{as_of:'x',systems:[Object.assign({},sys,{historical_record:PP.normalizeHistorical({available:true})})]}},'en');
+  ok('(C10) exact English empty state', empty.innerHTML.indexOf('Time-series data is not available for this record.')!==-1);
+  const emptyAr={innerHTML:''}; PP.render(emptyAr,{performance:{as_of:'x',systems:[Object.assign({},sys,{historical_record:PP.normalizeHistorical({available:true})})]}},'ar');
+  ok('(C11) exact Arabic empty state and RTL-safe markup', emptyAr.innerHTML.indexOf('البيانات الزمنية غير متاحة لهذا السجل.')!==-1);
+  ok('(C12) no canvas/synthetic/interpolation', !/canvas|synthetic|interpolat/i.test(c.innerHTML));
+}
+
 runVerifiedTests()
   .then(runLoadTests)
   .then(runPathTests)
-  .then(function () { runRenderTests(); runScanTests(); runHistoricalTests(); })
+  .then(function () { runRenderTests(); runScanTests(); runHistoricalTests(); runChartTests(); })
   .then(function () {
     console.log('\n[public-performance-consumer] ' + pass + ' passed, ' + fail + ' failed');
     process.exit(fail === 0 ? 0 : 1);

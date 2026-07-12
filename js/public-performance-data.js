@@ -256,6 +256,23 @@
   function normalizeHistorical(hr) {
     if (!isPlainObject(hr)) return null;
     const dq = isPlainObject(hr.data_quality) ? hr.data_quality : {};
+    function series(v, kind) {
+      if (!isPlainObject(v)) return null;
+      const source = kind === 'points' ? v.points : v.rows;
+      const rows = Array.isArray(source) ? source.map(function (p) {
+        p = isPlainObject(p) ? p : {};
+        if (kind === 'points') return { time: safeStr(p.time), value: safeNum(p.value) };
+        if (kind === 'monthly') return { month: safeStr(p.month), value: safeNum(p.value), trades: safeInt(p.trades) };
+        return { time: safeStr(p.time), outcome: safeStr(p.outcome), value: safeNum(p.value), unit: safeStr(p.unit), holding_hours: safeNum(p.holding_hours) };
+      }).filter(function (p) { return (p.time || p.month) && p.value !== null; }) : [];
+      rows.sort(function (a, b) { return String(a.time || a.month).localeCompare(String(b.time || b.month)); });
+      return { available: v.available === true && rows.length > 0, record_type: safeStr(v.record_type), unit: safeStr(v.unit), label_en: safeStr(v.label_en), label_ar: safeStr(v.label_ar), rows: rows };
+    }
+    function chartTrack(v, withTrades) {
+      v = isPlainObject(v) ? v : {};
+      return { curve: series(v.curve, 'points'), drawdown: series(v.drawdown, 'points'), monthly: series(v.monthly, 'monthly'), trades: withTrades ? series(v.trades, 'trades') : null };
+    }
+    const charts = isPlainObject(hr.charts) ? hr.charts : null;
     return {
       available: hr.available !== false, // object present but not explicitly false => available
       coverage: safeStr(hr.coverage),
@@ -289,6 +306,7 @@
       },
       methodology_note: safeStr(hr.methodology_note),
       methodology_short_en: safeStr(hr.methodology_short_en), methodology_short_ar: safeStr(hr.methodology_short_ar),
+      charts: charts ? { version: safeStr(charts.version), strategy: chartTrack(charts.strategy, true), account: chartTrack(charts.account, false) } : null,
     };
   }
 
@@ -657,6 +675,44 @@
     const items = [[L.trustPublic, 'chart'], [L.trustLive, 'calendar'], [L.trustHistory, 'history'], [L.trustMethod, 'shield']];
     return '<ul class="pp-trust">' + items.map(function (item) { return '<li>' + icon(item[1]) + '<span>' + esc(item[0]) + '</span></li>'; }).join('') + '</ul>';
   }
+
+  const CHART_LABELS = {
+    en: { strategy:'Strategy', account:'Account', accountReturn:'Normalized Account Return', realized:'Realized Strategy Return', cumulativeR:'Cumulative Research Performance', drawdown:'Drawdown', monthly:'Monthly Results', timeline:'Trade Timeline', month:'Month', value:'Value', trades:'Trades', outcome:'Outcome', pnl:'PnL', holding:'Holding Time', hours:'hours', empty:'Time-series data is not available for this record.', summary:'Interactive chart. Every value is from the integrity-verified public snapshot.' },
+    ar: { strategy:'الاستراتيجية', account:'الحساب', accountReturn:'عائد الحساب الموحّد', realized:'عائد الاستراتيجية المحقق', cumulativeR:'الأداء البحثي التراكمي', drawdown:'التراجع', monthly:'النتائج الشهرية', timeline:'التسلسل الزمني للصفقات', month:'الشهر', value:'القيمة', trades:'الصفقات', outcome:'النتيجة', pnl:'الربح والخسارة', holding:'مدة الاحتفاظ', hours:'ساعة', empty:'البيانات الزمنية غير متاحة لهذا السجل.', summary:'رسم تفاعلي. كل قيمة مأخوذة من اللقطة العامة التي تم التحقق من سلامتها.' }
+  };
+  function chartValue(v, unit) {
+    const n = Number(v); const sign = n > 0 ? '+' : '';
+    if (unit === 'usd') return (n < 0 ? '-$' : '+$') + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+    if (unit === 'R') return sign + n.toFixed(2) + ' R';
+    return sign + n.toFixed(2) + '%';
+  }
+  function lineChart(series, title, C, tone) {
+    if (!series || !series.available || !series.rows.length) return '<div class="pp-chart-empty" role="status">' + esc(C.empty) + '</div>';
+    const rows = series.rows, vals = rows.map(function(p){return p.value;}), min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = max - min || 1;
+    const xy = rows.map(function(p,i){ return { x: rows.length === 1 ? 50 : 4 + i * 92 / (rows.length - 1), y: 8 + (max - p.value) * 76 / span, p:p }; });
+    const points = xy.map(function(q){return q.x.toFixed(2)+','+q.y.toFixed(2);}).join(' ');
+    const dots = xy.map(function(q){ const tip=formatDate(q.p.time)+' · '+chartValue(q.p.value,series.unit); return '<button class="pp-chart-point" style="--x:'+q.x.toFixed(2)+'%;--y:'+q.y.toFixed(2)+'%" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"></button>'; }).join('');
+    return '<section class="pp-chart-card pp-chart-'+tone+'"><header><h4>'+esc(title)+'</h4><span>'+esc(series.unit || '')+'</span></header><div class="pp-line-wrap"><svg viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true"><line x1="4" y1="84" x2="96" y2="84" class="pp-axis"/><polyline points="'+points+'"/></svg>'+dots+'</div><p class="pp-sr-only">'+esc(C.summary)+'</p></section>';
+  }
+  function monthlyChart(series, C) {
+    if (!series || !series.available || !series.rows.length) return '<section class="pp-chart-card"><header><h4>'+esc(C.monthly)+'</h4></header><div class="pp-chart-empty" role="status">'+esc(C.empty)+'</div></section>';
+    const max=Math.max.apply(null,series.rows.map(function(r){return Math.abs(r.value);} ))||1;
+    const bars=series.rows.map(function(r){ const tip=C.month+': '+r.month+' · '+C.value+': '+chartValue(r.value,series.unit)+(r.trades===null?'':' · '+C.trades+': '+r.trades); return '<button class="pp-month" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"><span class="pp-month-plot"><i class="'+(r.value<0?'negative':'positive')+'" style="height:'+Math.max(3,Math.abs(r.value)/max*46)+'%"></i></span><b>'+esc(r.month)+'</b></button>'; }).join('');
+    return '<section class="pp-chart-card pp-monthly"><header><h4>'+esc(C.monthly)+'</h4><span>'+esc(series.unit||'')+'</span></header><div class="pp-month-bars">'+bars+'</div><p class="pp-sr-only">'+esc(C.summary)+'</p></section>';
+  }
+  function tradeTimeline(series,C) {
+    if (!series || !series.available || !series.rows.length) return '<section class="pp-chart-card"><header><h4>'+esc(C.timeline)+'</h4></header><div class="pp-chart-empty" role="status">'+esc(C.empty)+'</div></section>';
+    const cells=series.rows.map(function(r){const tip=formatDate(r.time)+' · '+C.outcome+': '+r.outcome+' · '+C.pnl+': '+chartValue(r.value,r.unit||series.unit)+' · '+C.holding+': '+r.holding_hours+' '+C.hours;return '<button class="pp-trade '+(r.value<0?'negative':'positive')+'" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"><span></span></button>';}).join('');
+    return '<section class="pp-chart-card pp-timeline"><header><h4>'+esc(C.timeline)+'</h4><span>'+series.rows.length+' '+esc(C.trades)+'</span></header><div class="pp-trade-row">'+cells+'</div><p class="pp-sr-only">'+esc(C.summary)+'</p></section>';
+  }
+  function renderCharts(hist,isGold,lang) {
+    const C=CHART_LABELS[lang], charts=hist&&hist.charts;
+    if (!charts) return '<div class="pp-chart-empty pp-chart-empty-standalone" role="status">'+esc(C.empty)+'</div>';
+    const strategy=charts.strategy||{}, account=charts.account||{};
+    function track(data,kind){const title=kind==='account'?C.accountReturn:(isGold?C.cumulativeR:C.realized);return '<div class="pp-chart-track" data-chart-panel="'+kind+'"'+(kind==='account'?' hidden':'')+'>'+lineChart(data.curve,title,C,'performance')+lineChart(data.drawdown,C.drawdown,C,'drawdown')+monthlyChart(data.monthly,C)+'</div>';}
+    const canAccount=!isGold&&account.curve&&account.curve.available;
+    return '<section class="pp-analytics" aria-label="'+esc(C.summary)+'"><div class="pp-analytics-head">'+(!isGold&&canAccount?'<div class="pp-toggle" role="group" aria-label="'+esc(C.realized)+'"><button type="button" data-chart-toggle="strategy" aria-pressed="true">'+esc(C.strategy)+'</button><button type="button" data-chart-toggle="account" aria-pressed="false">'+esc(C.account)+'</button></div>':'')+'</div>'+track(strategy,'strategy')+(canAccount?track(account,'account'):'')+tradeTimeline(strategy.trades,C)+'</section>';
+  }
   // Collapsible ⓘ panel — ALL transparency lives here (delayed, not audited,
   // legacy/schema composition, sample context), hidden by default instead of
   // dominating the page with warning boxes. Nothing is hidden; it is one click
@@ -752,7 +808,7 @@
     return '<article class="pp-strategy pp-accent-' + accent + '">' +
       '<header class="pp-strategy-head"><div class="pp-strategy-identity"><span class="pp-strategy-icon">' + icon('strategy') + '</span><div><h3>' + esc(name) + '</h3><p>' + esc(subtitle) + '</p><div class="pp-live-meta">' + (liveSince ? '<span>' + esc(L.liveSince) + ' <strong>' + esc(liveSince) + '</strong></span>' : '') + '<span>' + esc(caption) + '</span></div></div></div>' +
         '<div class="pp-strategy-tags">' + chip + pill + '</div></header>' +
-      '<div class="pp-hero">' + hero + '</div>' +
+      '<div class="pp-hero">' + hero + '</div>' + renderCharts(hist, isGold, lang) +
       outcome +
       '<section class="pp-details"><div class="pp-section-label"><span>' + esc(L.detailHeading) + '</span></div><div class="pp-detail">' + detail + '</div></section>' + payoff +
       trustRow(L) +
@@ -823,6 +879,14 @@
     }
     html += renderWeekly(result.weekly, L, lang);
     container.innerHTML = html;
+    if (!container.querySelectorAll) return;
+    Array.prototype.forEach.call(container.querySelectorAll('[data-chart-toggle]'), function(btn) {
+      btn.addEventListener('click', function() {
+        const analytics=btn.closest('.pp-analytics'), selected=btn.getAttribute('data-chart-toggle');
+        Array.prototype.forEach.call(analytics.querySelectorAll('[data-chart-toggle]'),function(b){b.setAttribute('aria-pressed',String(b===btn));});
+        Array.prototype.forEach.call(analytics.querySelectorAll('[data-chart-panel]'),function(p){p.hidden=p.getAttribute('data-chart-panel')!==selected;});
+      });
+    });
   }
 
   // Init: activates only with a configured, SAFE public base URL. With none (or
