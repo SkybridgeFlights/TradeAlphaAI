@@ -191,7 +191,7 @@ function runRenderTests() {
   const Lar = PP._labels.ar;
   const c1 = { innerHTML: '' };
   PP.render(c1, { performance: perfNull, system: null, weekly: null, stale: false }, 'en');
-  ok('(12) null metric => "—", never 0', c1.innerHTML.indexOf('—') !== -1 && c1.innerHTML.indexOf('>0<') === -1);
+  ok('(12) null hero metric => omitted, never shown as unavailable tile', c1.innerHTML.indexOf('pp-big pp-na') === -1);
 
   const c2 = { innerHTML: '' };
   PP.render(c2, { performance: perfIns, system: null, weekly: null, stale: false }, 'en');
@@ -241,6 +241,8 @@ function runScanTests() {
   ok('(23) performance page references no admin snapshot', perfHtml.indexOf('admin_research_health') === -1 && perfHtml.indexOf('admin_phase3') === -1);
   ok('(22) no write token in performance HTML', perfHtml.indexOf('BLOB_READ_WRITE_TOKEN') === -1);
   ok('(25) performance HTML has data-public-performance container', perfHtml.indexOf('data-public-performance') !== -1);
+  ok('(B1) backtest is visually separated from live records', perfHtml.indexOf('backtest-card') !== -1 && perfHtml.indexOf('perf.backtest.state') !== -1);
+  ok('(B2) backtest keeps methodology in accordion', perfHtml.indexOf('backtest-info') !== -1 && perfHtml.indexOf('perf.backtest.disclaimer1') !== -1);
   const css = fs.readFileSync(path.join(__dirname, '..', 'css', 'public-performance.css'), 'utf8');
   ok('(25) mobile media query present in CSS', css.indexOf('@media') !== -1 && css.indexOf('max-width') !== -1);
 }
@@ -265,10 +267,10 @@ function runHistoricalTests() {
   const h = c.innerHTML;
   ok('(H2r) historical track record is the hero (Net Profit shown)', h.indexOf(L.netProfit) !== -1 && h.indexOf('$202.80') !== -1);
   ok('(H3v) verified subset visible (Schema 1.0 Trades)', h.indexOf(L.schema1Trades) !== -1);
-  ok('(H9) neutral Historical chip, no green "verified" badge', h.indexOf(L.historicalChip) !== -1 && h.indexOf('pp-badge-mature') === -1);
+  ok('(H9) neutral research-history source, no "verified" badge', h.indexOf(L.researchHistory) !== -1 && h.indexOf('pp-badge-mature') === -1);
   ok('(H7) legacy composition disclosed in ⓘ', h.indexOf(L.infoHistory) !== -1);
   ok('(H5) non-null historical PnL shows $202.80', h.indexOf('$202.80') !== -1);
-  ok('(H11) schema-1 + historical counts labelled', h.indexOf(L.schema1Trades) !== -1 && h.indexOf(L.histTrades) !== -1);
+  ok('(H11) schema-1 + legacy composition remains in disclosure', h.indexOf(L.schema1Trades) !== -1 && h.indexOf(L.legacyCount) !== -1 && h.indexOf('pp-info-body') !== -1);
   ok('(H10) not-audited disclosure kept in ⓘ', h.indexOf(L.infoAudit) !== -1);
   ok('(H12) closed-count beside historical WR/PF (hero)', h.indexOf(L.totalClosedTrades) !== -1 && h.indexOf(L.winRate) !== -1 && h.indexOf(L.profitFactor) !== -1);
   ok('(H13) sample context preserved in ⓘ', h.indexOf(L.infoSample) !== -1);
@@ -278,7 +280,7 @@ function runHistoricalTests() {
 
   const car = { innerHTML: '' };
   PP.render(car, { performance: norm, system: null, weekly: null }, 'ar');
-  ok('(H8) Arabic historical present, language pure', car.innerHTML.indexOf(Lar.historicalChip) !== -1 && car.innerHTML.indexOf(Lar.infoHistory) !== -1 && car.innerHTML.indexOf('Net Profit') === -1);
+  ok('(H8) Arabic research source present, language pure', car.innerHTML.indexOf(Lar.researchHistory) !== -1 && car.innerHTML.indexOf(Lar.infoHistory) !== -1 && car.innerHTML.indexOf('Net Profit') === -1);
 
   const goldFalse = Object.assign({}, gold, { historical_record: PP.normalizeHistorical({ available: false }) });
   const c3 = { innerHTML: '' };
@@ -289,11 +291,44 @@ function runHistoricalTests() {
   const goldNull = Object.assign({}, gold, { historical_record: histNull });
   const c6 = { innerHTML: '' };
   PP.render(c6, { performance: { as_of: 'x', systems: [goldNull] }, system: null, weekly: null }, 'en');
-  ok('(H6) null historical PnL => "—", never $ or 0', c6.innerHTML.indexOf(L.netProfit) !== -1 && c6.innerHTML.indexOf('$') === -1 && c6.innerHTML.indexOf('—') !== -1);
+  ok('(H6) null historical PnL => truthful R fallback, never $ or fake 0', c6.innerHTML.indexOf(L.expectancy) !== -1 && c6.innerHTML.indexOf('$') === -1);
 
   const cNo = { innerHTML: '' };
   PP.render(cNo, { performance: PP.normalizePerformance(readFix('performance.insufficient.json').payload), system: null, weekly: null }, 'en');
-  ok('(H16) no historical_record => no Net Profit, verified chip', cNo.innerHTML.indexOf(L.netProfit) === -1 && cNo.innerHTML.indexOf(L.verifiedChip) !== -1);
+  ok('(H16) no historical_record => no Net Profit, neutral research source', cNo.innerHTML.indexOf(L.netProfit) === -1 && cNo.innerHTML.indexOf(L.researchHistory) !== -1);
+
+  const investorHist = PP.normalizeHistorical({
+    available: true, record_type: 'broker_execution_history', data_source_label_en: 'Broker execution history',
+    data_source_label_ar: 'سجل تنفيذات الوسيط', live_since: '2026-05-26T14:02:10Z', closed_trades: 13, wins: 4, losses: 9,
+    win_rate_pct: 30.8, profit_factor: 1.62, pnl_usd: 1195.86, net_realized_pnl_usd: 1195.51,
+    realized_return_pct: 1.2, account_return_pct: 1.22, strategy_max_drawdown_pct: 1.54, account_max_drawdown_pct: 1.64,
+    average_winner_usd: 781.14, average_loser_usd: 214.3, payoff_ratio: 3.65, expectancy_usd: 91.96,
+    average_holding_minutes: 3294, average_holding_display_en: '2.3 days', average_holding_display_ar: '2.3 يوم',
+    methodology_short_en: 'Based on completed Alpaca executions.', methodology_short_ar: 'استناداً إلى تنفيذات Alpaca المكتملة.',
+    data_quality: { schema_1_closed_trades: 1, legacy_closed_trades: 12, join_success_pct: 100, critical_issues: 0 }
+  });
+  const investorSys = Object.assign({}, gold, { public_name: 'QQQ Strategy', historical_record: investorHist });
+  const investor = { innerHTML: '' };
+  PP.render(investor, { performance: { as_of: '2026-07-12T08:31:10Z', systems: [investorSys] }, system: null, weekly: null }, 'en');
+  const ih = investor.innerHTML;
+  ok('(I1) QQQ hero order: net profit, PF, win rate, drawdown', ih.indexOf(L.netRealizedProfit) < ih.indexOf(L.profitFactor) && ih.indexOf(L.profitFactor) < ih.indexOf(L.winRate) && ih.indexOf(L.winRate) < ih.indexOf(L.maxDrawdown));
+  ok('(I2) supplied strategy return shown with headline net profit', ih.indexOf('+$1195.86') !== -1 && ih.indexOf('1.20%') !== -1);
+  ok('(I3) account return separate and disclosure-only', ih.indexOf(L.accountReturn) !== -1 && ih.indexOf('1.22%') !== -1 && ih.indexOf('pp-info-body') < ih.indexOf(L.accountReturn));
+  ok('(I4) investor details include averages + payoff + expectancy', ih.indexOf('$781.14') !== -1 && ih.indexOf('$214.30') !== -1 && ih.indexOf('3.65×') !== -1 && ih.indexOf('$91.96') !== -1);
+  ok('(I5) human holding shown; raw minutes disclosure-only', ih.indexOf('2.3 days') !== -1 && ih.indexOf('3294') !== -1 && ih.indexOf('pp-info-body') < ih.indexOf('3294'));
+  ok('(I6) schema metric absent from visible tile grid', !/pp-small[^>]*>[\s\S]*?Schema 1\.0 Trades/.test(ih.split('pp-info')[0]));
+  ok('(I7) payoff explanation supported by supplied values', ih.indexOf('3.65× larger') !== -1);
+  ok('(I8) no false broker certification language', !/Broker Verified|Broker Certified|Independently Audited|Externally Verified/i.test(ih));
+  ok('(I9) summary has counts, no invalid combined total', ih.indexOf(L.summaryStrategies) !== -1 && !/combined (profit|return|drawdown)/i.test(ih));
+
+  const fallbackHist = Object.assign({}, investorHist, { realized_return_pct: null, strategy_max_drawdown_pct: null });
+  const fallback = { innerHTML: '' };
+  PP.render(fallback, { performance: { as_of: 'x', systems: [Object.assign({}, investorSys, { historical_record: fallbackHist })] }, system: null, weekly: null }, 'en');
+  ok('(I10) null return/drawdown fallback never empty or zero', fallback.innerHTML.indexOf(L.closedPositions) !== -1 && fallback.innerHTML.indexOf('pp-big pp-na') === -1);
+
+  const investorAr = { innerHTML: '' };
+  PP.render(investorAr, { performance: { as_of: 'x', systems: [investorSys] }, system: null, weekly: null }, 'ar');
+  ok('(I11) enriched Arabic render remains language-pure', investorAr.innerHTML.indexOf('Average Winner') === -1 && investorAr.innerHTML.indexOf('Broker Execution History') === -1);
 }
 
 // ── Phase 1F: immutable versioned snapshot paths (additive) ───────────────

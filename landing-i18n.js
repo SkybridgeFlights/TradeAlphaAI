@@ -39,7 +39,8 @@
 
   Object.assign(translations.ar, {
     "perf.backtest.eyebrow": "XAUUSD EA V9",
-    "perf.backtest.title": "TradeAlpha EA  اختبار تاريخي للأداء",
+    "perf.backtest.title": "اختبار تاريخي",
+    "perf.backtest.state": "اختبار خلفي · ليس أداءً مباشراً",
     "perf.backtest.subtitle": "10,273 صفقة | 20202026",
     "perf.backtest.totalTrades.label": "إجمالي الصفقات",
     "perf.backtest.winRate.label": "نسبة النجاح",
@@ -53,7 +54,8 @@
 
   Object.assign(translations.en, {
     "perf.backtest.eyebrow": "XAUUSD EA V9",
-    "perf.backtest.title": "TradeAlpha EA  Historical Backtest",
+    "perf.backtest.title": "Historical Backtest",
+    "perf.backtest.state": "Backtest · Not Live Performance",
     "perf.backtest.subtitle": "10,273 trades | 20202026",
     "perf.backtest.totalTrades.label": "Total Trades",
     "perf.backtest.winRate.label": "Win Rate",
@@ -103,7 +105,7 @@
     "perf.signals.side.title": "إحصاءات بحثية",
     "perf.signals.side.body": "سجل منظم لنتائج QQQ وفق المخطط 1.0.",
     "perf.signals.cta": "انضم مجاناً عبر تيليجرام",
-    "perf.signals.info": "تُسجل نتائج QQQ للمخطط 1.0 داخلياً لأغراض البحث، وتُعرض بتأخير زمني، ولم تخضع لتدقيق مستقل."
+    "perf.signals.info": "تُسجل نتائج QQQ للمخطط 1.0 داخلياً لأغراض البحث وتُعرض بتأخير زمني، ولا تتضمن الصفحة ادعاءً بوجود تدقيق خارجي."
   });
 
   Object.assign(translations.en, {
@@ -143,7 +145,7 @@
     "perf.signals.side.title": "Research Statistics",
     "perf.signals.side.body": "A structured record of QQQ Schema 1.0 results.",
     "perf.signals.cta": "Join Free on Telegram",
-    "perf.signals.info": "QQQ Schema 1.0 results are recorded internally for research, displayed with a delay, and have not been independently audited."
+    "perf.signals.info": "QQQ Schema 1.0 results are recorded internally for research and displayed with a delay. No external audit is claimed."
   });
 
   Object.assign(translations.de, {

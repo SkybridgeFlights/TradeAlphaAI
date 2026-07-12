@@ -259,6 +259,9 @@
     return {
       available: hr.available !== false, // object present but not explicitly false => available
       coverage: safeStr(hr.coverage),
+      record_type: safeStr(hr.record_type), data_source: safeStr(hr.data_source),
+      data_source_label_en: safeStr(hr.data_source_label_en), data_source_label_ar: safeStr(hr.data_source_label_ar),
+      live_since: safeStr(hr.live_since),
       verified_from: safeStr(hr.verified_from),
       independently_audited: hr.independently_audited === true,
       as_of: safeStr(hr.as_of),
@@ -269,7 +272,15 @@
       profit_factor: safeNum(hr.profit_factor),
       expectancy_r: safeNum(hr.expectancy_r),
       pnl_usd: safeNum(hr.pnl_usd),
+      net_realized_pnl_usd: safeNum(hr.net_realized_pnl_usd),
+      realized_return_pct: safeNum(hr.realized_return_pct), account_return_pct: safeNum(hr.account_return_pct),
+      strategy_max_drawdown_pct: safeNum(hr.strategy_max_drawdown_pct), account_max_drawdown_pct: safeNum(hr.account_max_drawdown_pct),
+      average_winner_usd: safeNum(hr.average_winner_usd), average_loser_usd: safeNum(hr.average_loser_usd),
+      largest_winner_usd: safeNum(hr.largest_winner_usd), largest_loser_usd: safeNum(hr.largest_loser_usd),
+      payoff_ratio: safeNum(hr.payoff_ratio), expectancy_usd: safeNum(hr.expectancy_usd),
       average_holding_minutes: safeNum(hr.average_holding_minutes),
+      average_holding_hours: safeNum(hr.average_holding_hours),
+      average_holding_display_en: safeStr(hr.average_holding_display_en), average_holding_display_ar: safeStr(hr.average_holding_display_ar),
       data_quality: {
         schema_1_closed_trades: safeInt(dq.schema_1_closed_trades),
         legacy_closed_trades: safeInt(dq.legacy_closed_trades),
@@ -277,6 +288,7 @@
         critical_issues: safeInt(dq.critical_issues),
       },
       methodology_note: safeStr(hr.methodology_note),
+      methodology_short_en: safeStr(hr.methodology_short_en), methodology_short_ar: safeStr(hr.methodology_short_ar),
     };
   }
 
@@ -352,16 +364,16 @@
       systemStatus: 'System status', lastSnapshot: 'Last public snapshot', generated: 'Snapshot generated',
       schemaVerified: 'Schema 1.0 verified data', delayedSnapshot: 'Delayed public snapshot',
       verifiedSource: 'Verified from TradeAlpha schema 1.0 research logs',
-      notAudited: 'Internally generated research record — not independently audited.',
+      notAudited: 'No external audit is claimed.',
       weeklyHeading: 'Weekly research', weeklyUnavailable: 'Public weekly summary not yet available.',
       week: 'Week', observations: 'Observations',
       verifiedHeading: 'Verified Schema 1.0 Research Record',
       histHeading: 'Historical Research Record', histBadge: 'Historical / Legacy coverage',
       histUnavailable: 'Historical research record not available.',
-      histWarning: 'Includes legacy pre-schema data. Legacy rows do not contain the complete Schema 1.0 field set. This record is internally generated and not independently audited.',
+      histWarning: 'Includes legacy pre-schema data. Legacy rows do not contain the complete Schema 1.0 field set. No external audit is claimed.',
       histLimited: 'Limited historical sample — results remain observational and may change materially.',
       pnlUsd: 'PnL (USD)', schema1Count: 'Schema 1.0 closed trades', legacyCount: 'Legacy closed trades',
-      joinSuccess: 'Join success', criticalIssues: 'Critical data issues', auditState: 'Independently audited',
+      joinSuccess: 'Join success', criticalIssues: 'Critical data issues', auditState: 'External audit claim',
       auditNo: 'No — internally generated',
       statusLive: 'Live', statusActive: 'Active',
       totalClosedTrades: 'Total Closed Trades', netProfit: 'Net Profit', avgHoldTime: 'Average Holding Time', minSuffix: 'min',
@@ -371,9 +383,14 @@
       trustLive: 'Update status', trustPublic: 'Public statistics', trustHistory: 'Performance history', trustMethod: 'Methodology details',
       detailHeading: 'Strategy details', outcomeMix: 'Closed-trade outcome mix', exploreStrategy: 'Explore Strategy', learnMethodology: 'Learn Methodology',
       goldSubtitle: 'AI-powered XAUUSD research strategy', qqqSubtitle: 'AI-powered Nasdaq research strategy', strategySubtitle: 'AI-powered market research strategy',
+      brokerHistory: 'Broker Execution History', researchHistory: 'Research Execution History', basedOnAlpaca: 'Based on completed Alpaca executions', basedOnResearch: 'Based on completed internal research outcomes',
+      liveSince: 'Live Since', netRealizedProfit: 'Net Profit', realizedReturn: 'Strategy Return', maxDrawdown: 'Max Drawdown', closedPositions: 'Closed Positions',
+      averageWinner: 'Average Winner', averageLoser: 'Average Loser', payoffRatio: 'Payoff Ratio', expectancyUsd: 'Expectancy (USD)', accountReturn: 'Account Return', accountDrawdown: 'Account Drawdown',
+      payoffExplanation: 'Average winning trades were approximately {ratio}× larger than average losing trades.', technicalDetails: 'Technical data details',
+      summaryStrategies: 'Active strategies', summarySnapshot: 'Latest snapshot', summaryFeed: 'Public data feed', summaryFeedActive: 'Active', summaryBroker: 'Broker execution records', summaryResearch: 'Research histories',
       footNote: 'Educational research · not investment advice · delayed public snapshot.',
       infoDelay: 'Figures are a delayed public snapshot of internally generated research logs.',
-      infoAudit: 'Internally generated and not independently audited.',
+      infoAudit: 'No external audit is claimed.',
       infoHistory: 'Historical figures combine legacy and Schema 1.0 records; legacy rows do not carry the full Schema 1.0 field set.',
       infoSample: 'Sample sizes remain limited, so figures are observational and not a guarantee of future results.',
       disclaimer: 'Educational research only — not investment advice. Past performance does not guarantee future results.',
@@ -417,9 +434,14 @@
       trustLive: 'حالة التحديث', trustPublic: 'إحصاءات عامة', trustHistory: 'سجل الأداء', trustMethod: 'تفاصيل المنهجية',
       detailHeading: 'تفاصيل الاستراتيجية', outcomeMix: 'توزيع نتائج الصفقات المغلقة', exploreStrategy: 'استكشف الاستراتيجية', learnMethodology: 'تعرّف على المنهجية',
       goldSubtitle: 'استراتيجية أبحاث للذهب XAUUSD مدعومة بالذكاء الاصطناعي', qqqSubtitle: 'استراتيجية أبحاث لناسداك مدعومة بالذكاء الاصطناعي', strategySubtitle: 'استراتيجية أبحاث سوقية مدعومة بالذكاء الاصطناعي',
+      brokerHistory: 'سجل تنفيذات الوسيط', researchHistory: 'سجل تنفيذات بحثية', basedOnAlpaca: 'استناداً إلى تنفيذات Alpaca المكتملة', basedOnResearch: 'استناداً إلى نتائج الأبحاث الداخلية المكتملة',
+      liveSince: 'مباشرة منذ', netRealizedProfit: 'صافي الربح', realizedReturn: 'عائد الاستراتيجية', maxDrawdown: 'أقصى تراجع', closedPositions: 'المراكز المغلقة',
+      averageWinner: 'متوسط الصفقة الرابحة', averageLoser: 'متوسط الصفقة الخاسرة', payoffRatio: 'نسبة العائد إلى الخسارة', expectancyUsd: 'التوقع (دولار)', accountReturn: 'عائد الحساب', accountDrawdown: 'تراجع الحساب',
+      payoffExplanation: 'كان متوسط الصفقات الرابحة أكبر بنحو {ratio}× من متوسط الصفقات الخاسرة.', technicalDetails: 'تفاصيل البيانات الفنية',
+      summaryStrategies: 'الاستراتيجيات النشطة', summarySnapshot: 'أحدث لقطة', summaryFeed: 'موجز البيانات العام', summaryFeedActive: 'نشط', summaryBroker: 'سجلات تنفيذات الوسيط', summaryResearch: 'السجلات البحثية',
       footNote: 'بحث تعليمي · ليس نصيحة استثمارية · لقطة عامة مؤجَّلة.',
       infoDelay: 'الأرقام لقطة عامة مؤجَّلة من سجلات بحثية مُنشأة داخليًا.',
-      infoAudit: 'مُنشأة داخليًا وغير مُدقّقة من جهة خارجية مستقلة.',
+      infoAudit: 'لا تتضمن الصفحة أي ادعاء بوجود تدقيق خارجي.',
       infoHistory: 'تجمع الأرقام التاريخية بين السجلات القديمة وسجلات المخطط 1.0؛ ولا تحتوي السجلات القديمة على كامل حقول المخطط 1.0.',
       infoSample: 'أحجام العينات ما زالت محدودة، لذا فالأرقام وصفية وليست ضماناً لنتائج مستقبلية.',
       disclaimer: 'محتوى بحثي تعليمي فقط — وليس نصيحة استثمارية. الأداء السابق لا يضمن النتائج المستقبلية.',
@@ -618,12 +640,12 @@
     };
     return '<svg class="pp-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || paths.chart) + '</svg>';
   }
-  function bigMetric(label, value, tone, iconName) {
+  function bigMetric(label, value, tone, iconName, note) {
     const na = (value === null || value === undefined);
     return '<div class="pp-big pp-tone-' + esc(tone) + (na ? ' pp-na' : '') + '">' +
       '<span class="pp-metric-icon">' + icon(iconName) + '</span>' +
       '<span class="pp-big-value">' + esc(na ? '—' : value) + '</span>' +
-      '<span class="pp-big-label">' + esc(label) + '</span></div>';
+      '<span class="pp-big-label">' + esc(label) + '</span>' + (note ? '<span class="pp-big-note">' + esc(note) + '</span>' : '') + '</div>';
   }
   function smallMetric(label, value, iconName, tone) {
     const na = (value === null || value === undefined);
@@ -644,6 +666,16 @@
     let lines = '<p>' + esc(L.infoDelay) + '</p><p>' + esc(L.infoAudit) + '</p>';
     if (hist) lines += '<p>' + esc(L.infoHistory) + '</p>';
     lines += '<p>' + esc(L.infoSample) + '</p><p class="pp-info-note">' + esc(L.footNote) + '</p>';
+    if (hist) {
+      const dq = hist.data_quality || {};
+      if (hist.account_return_pct !== null) lines += '<p><strong>' + esc(L.accountReturn) + ':</strong> ' + esc(fmtPct(hist.account_return_pct)) + '</p>';
+      if (hist.account_max_drawdown_pct !== null) lines += '<p><strong>' + esc(L.accountDrawdown) + ':</strong> ' + esc(fmtPct(hist.account_max_drawdown_pct)) + '</p>';
+      if (hist.average_holding_minutes !== null) lines += '<p><strong>' + esc(L.avgHold) + ':</strong> ' + esc(String(hist.average_holding_minutes)) + '</p>';
+      if (sys.closed_trades !== null) lines += '<p><strong>' + esc(L.schema1Trades) + ':</strong> ' + esc(String(sys.closed_trades)) + '</p>';
+      if (dq.legacy_closed_trades !== null) lines += '<p><strong>' + esc(L.legacyCount) + ':</strong> ' + esc(String(dq.legacy_closed_trades)) + '</p>';
+      if (dq.join_success_pct !== null) lines += '<p><strong>' + esc(L.joinSuccess) + ':</strong> ' + esc(fmtPct(dq.join_success_pct)) + '</p>';
+      if (dq.critical_issues !== null) lines += '<p><strong>' + esc(L.criticalIssues) + ':</strong> ' + esc(String(dq.critical_issues)) + '</p>';
+    }
     if (lang === 'en') {
       if (sys && sys.methodology_note) lines += '<p class="pp-info-note">' + esc(sys.methodology_note) + '</p>';
       if (hist && hist.methodology_note) lines += '<p class="pp-info-note">' + esc(hist.methodology_note) + '</p>';
@@ -661,28 +693,52 @@
     const primary = hist || sys;
     const isLive = /live|active|running/i.test(String(sys.status || ''));
     const pill = '<span class="pp-pill' + (isLive ? ' pp-pill-live' : '') + '"><i aria-hidden="true"></i>' + esc(isLive ? L.statusLive : (sys.status || L.statusActive)) + '</span>';
-    const chip = '<span class="pp-chip">' + esc(hist ? L.historicalChip : L.verifiedChip) + '</span>';
     const name = sys.public_name || L.unavailable;
     const isGold = /gold|xau/i.test(String(name));
     const isQqq = /qqq|nasdaq/i.test(String(name));
     const subtitle = isGold ? L.goldSubtitle : (isQqq ? L.qqqSubtitle : L.strategySubtitle);
     const accent = isGold ? 'gold' : (isQqq ? 'blue' : 'violet');
     const primaryCta = isGold ? '#tradealpha-ea-backtest' : '#qqq-signals-performance';
+    const sourceLabel = hist && (lang === 'ar' ? hist.data_source_label_ar : hist.data_source_label_en);
+    const source = sourceLabel || (isQqq ? L.brokerHistory : L.researchHistory);
+    const method = hist && (lang === 'ar' ? hist.methodology_short_ar : hist.methodology_short_en);
+    const caption = method || (isQqq ? L.basedOnAlpaca : L.basedOnResearch);
+    const liveSince = hist && hist.live_since ? formatDate(hist.live_since) : null;
+    const updated = formatDate((hist && hist.as_of) || sys.as_of);
+    const chip = '<span class="pp-chip">' + esc(source) + '</span>';
 
-    const hero =
-      bigMetric(L.totalClosedTrades, primary.closed_trades === null ? null : String(primary.closed_trades), 'blue', 'trades') +
-      bigMetric(L.winRate, fmtPct(primary.win_rate_pct), 'green', 'target') +
-      bigMetric(L.profitFactor, fmtNum(primary.profit_factor, 2), 'gold', 'trend') +
-      bigMetric(hist ? L.netProfit : L.expectancy, hist ? fmtMoney(hist.pnl_usd) : fmtNum(primary.expectancy_r, 2), (hist && Number(hist.pnl_usd) < 0) ? 'red' : 'green', hist ? 'dollar' : 'chart');
+    let hero = '';
+    if (isQqq && hist) {
+      const net = hist.pnl_usd;
+      if (net !== null) hero += bigMetric(L.netRealizedProfit, (Number(net) >= 0 ? '+' : '') + fmtMoney(net), Number(net) < 0 ? 'red' : 'green', 'dollar', hist.realized_return_pct !== null ? ((Number(hist.realized_return_pct) >= 0 ? '+' : '') + fmtPct(hist.realized_return_pct) + ' ' + L.realizedReturn.toLowerCase()) : null);
+      if (hist.profit_factor !== null) hero += bigMetric(L.profitFactor, fmtNum(hist.profit_factor, 2), 'gold', 'trend');
+      if (hist.win_rate_pct !== null) hero += bigMetric(L.winRate, fmtPct(hist.win_rate_pct), 'blue', 'target');
+      if (hist.strategy_max_drawdown_pct !== null) hero += bigMetric(L.maxDrawdown, fmtPct(hist.strategy_max_drawdown_pct), 'red', 'loss');
+      else if (hist.closed_trades !== null) hero += bigMetric(L.closedPositions, String(hist.closed_trades), 'blue', 'trades');
+    } else {
+      if (hist && hist.pnl_usd !== null) hero += bigMetric(L.netProfit, fmtMoney(hist.pnl_usd), Number(hist.pnl_usd) < 0 ? 'red' : 'green', 'dollar');
+      else if (primary.expectancy_r !== null) hero += bigMetric(L.expectancy, fmtNum(primary.expectancy_r, 2), Number(primary.expectancy_r) < 0 ? 'red' : 'green', 'chart');
+      if (primary.profit_factor !== null) hero += bigMetric(L.profitFactor, fmtNum(primary.profit_factor, 2), 'gold', 'trend');
+      if (primary.closed_trades !== null) hero += bigMetric(L.totalClosedTrades, String(primary.closed_trades), 'blue', 'trades');
+      if (primary.max_drawdown_pct !== null && primary.max_drawdown_pct !== undefined) hero += bigMetric(L.maxDrawdown, fmtPct(primary.max_drawdown_pct), 'red', 'loss');
+      else if (primary.win_rate_pct !== null) hero += bigMetric(L.winRate, fmtPct(primary.win_rate_pct), 'blue', 'target');
+    }
 
-    const detail =
-      smallMetric(L.wins, primary.wins === null ? null : String(primary.wins), 'trophy', 'green') +
-      smallMetric(L.losses, primary.losses === null ? null : String(primary.losses), 'loss', 'red') +
-      smallMetric(L.expectancy, fmtNum(primary.expectancy_r, 2), 'chart', Number(primary.expectancy_r) < 0 ? 'red' : 'blue') +
-      smallMetric(L.avgHoldTime, primary.average_holding_minutes === null ? null : (Math.round(Number(primary.average_holding_minutes)) + ' ' + L.minSuffix), 'clock', 'blue') +
-      smallMetric(L.schema1Trades, sys.closed_trades === null ? null : String(sys.closed_trades), 'shield', 'gold') +
-      (hist ? smallMetric(L.histTrades, hist.closed_trades === null ? null : String(hist.closed_trades), 'history', 'blue') : '') +
-      smallMetric(L.lastUpdated, formatDate((hist && hist.as_of) || sys.as_of), 'calendar', 'blue');
+    let detail = '';
+    function add(label, value, iconName, tone) { if (value !== null && value !== undefined) detail += smallMetric(label, value, iconName, tone); }
+    if (isQqq) add(L.winRate, fmtPct(primary.win_rate_pct), 'target', 'blue');
+    add(L.wins, primary.wins === null ? null : String(primary.wins), 'trophy', 'green');
+    add(L.losses, primary.losses === null ? null : String(primary.losses), 'loss', 'red');
+    if (hist) {
+      add(L.averageWinner, hist.average_winner_usd === null ? null : fmtMoney(hist.average_winner_usd), 'trend', 'green');
+      add(L.averageLoser, hist.average_loser_usd === null ? null : fmtMoney(hist.average_loser_usd), 'loss', 'red');
+      add(L.payoffRatio, hist.payoff_ratio === null ? null : fmtNum(hist.payoff_ratio, 2) + '×', 'target', 'gold');
+      add(hist.expectancy_usd !== null ? L.expectancyUsd : L.expectancy, hist.expectancy_usd !== null ? fmtMoney(hist.expectancy_usd) : fmtNum(hist.expectancy_r, 2), 'chart', 'blue');
+      add(L.avgHoldTime, lang === 'ar' ? hist.average_holding_display_ar : hist.average_holding_display_en, 'clock', 'blue');
+      if (isQqq) add(L.closedPositions, hist.closed_trades === null ? null : String(hist.closed_trades), 'trades', 'blue');
+    }
+
+    const payoff = hist && hist.average_winner_usd !== null && hist.average_loser_usd !== null && hist.payoff_ratio !== null ? '<div class="pp-payoff">' + icon('trend') + '<span>' + esc(L.payoffExplanation.replace('{ratio}', fmtNum(hist.payoff_ratio, 2))) + '</span></div>' : '';
 
     const total = Number(primary.closed_trades) || 0;
     const wins = Number(primary.wins) || 0;
@@ -694,13 +750,14 @@
       '<div class="pp-outcome-legend"><span><i class="pp-dot-win"></i>' + esc(L.wins) + '</span><span><i class="pp-dot-loss"></i>' + esc(L.losses) + '</span></div></div>';
 
     return '<article class="pp-strategy pp-accent-' + accent + '">' +
-      '<header class="pp-strategy-head"><div class="pp-strategy-identity"><span class="pp-strategy-icon">' + icon('strategy') + '</span><div><h3>' + esc(name) + '</h3><p>' + esc(subtitle) + '</p></div></div>' +
+      '<header class="pp-strategy-head"><div class="pp-strategy-identity"><span class="pp-strategy-icon">' + icon('strategy') + '</span><div><h3>' + esc(name) + '</h3><p>' + esc(subtitle) + '</p><div class="pp-live-meta">' + (liveSince ? '<span>' + esc(L.liveSince) + ' <strong>' + esc(liveSince) + '</strong></span>' : '') + '<span>' + esc(caption) + '</span></div></div></div>' +
         '<div class="pp-strategy-tags">' + chip + pill + '</div></header>' +
       '<div class="pp-hero">' + hero + '</div>' +
       outcome +
-      '<section class="pp-details"><div class="pp-section-label"><span>' + esc(L.detailHeading) + '</span></div><div class="pp-detail">' + detail + '</div></section>' +
+      '<section class="pp-details"><div class="pp-section-label"><span>' + esc(L.detailHeading) + '</span></div><div class="pp-detail">' + detail + '</div></section>' + payoff +
       trustRow(L) +
       '<div class="pp-actions"><a class="pp-btn pp-btn-primary" href="' + primaryCta + '">' + esc(L.exploreStrategy) + icon('arrow') + '</a><a class="pp-btn pp-btn-secondary" href="../methodology.html">' + icon('shield') + esc(L.learnMethodology) + '</a></div>' +
+      '<footer class="pp-card-status">' + (liveSince ? '<span>' + icon('history') + esc(L.liveSince) + ' <b>' + esc(liveSince) + '</b></span>' : '') + '<span>' + icon('calendar') + esc(L.lastUpdated) + ' <b>' + esc(updated || L.unavailable) + '</b></span></footer>' +
       infoPanel(sys, hist, L, lang) +
       '</article>';
   }
@@ -735,6 +792,18 @@
     return '<section class="pp-weekly"><h3>' + esc(L.weeklyHeading) + '</h3>' + inner + '</section>';
   }
 
+  function renderInvestorSummary(performance, L) {
+    const systems = performance && performance.systems ? performance.systems : [];
+    const broker = systems.filter(function (s) { return s.historical_record && s.historical_record.record_type === 'broker_execution_history'; }).length;
+    const research = systems.filter(function (s) { return s.historical_record && s.historical_record.record_type === 'research_history'; }).length;
+    return '<section class="pp-summary" aria-label="' + esc(L.summaryFeed) + '">' +
+      smallMetric(L.summaryStrategies, String(systems.length), 'strategy', 'gold') +
+      smallMetric(L.summarySnapshot, formatDate(performance.as_of), 'calendar', 'blue') +
+      smallMetric(L.summaryFeed, L.summaryFeedActive, 'shield', 'green') +
+      smallMetric(L.summaryBroker, String(broker), 'chart', 'blue') +
+      smallMetric(L.summaryResearch, String(research), 'history', 'gold') + '</section>';
+  }
+
   function render(container, result, lang) {
     if (!container) return;
     lang = lang === 'ar' ? 'ar' : 'en';
@@ -748,7 +817,7 @@
     if (result.stale || result.from_cache) html += '<div class="pp-notice pp-notice-soft" role="status">' + esc(L.staleBanner) + '</div>';
     if (result.integrity_error) html += '<div class="pp-notice" role="status">' + esc(L.integrityError) + '</div>';
     if (result.performance && result.performance.systems.length) {
-      html += '<div class="pp-grid">' + result.performance.systems.map(function (s) { return renderSystemCard(s, L, lang); }).join('') + '</div>';
+      html += renderInvestorSummary(result.performance, L) + '<div class="pp-grid">' + result.performance.systems.map(function (s) { return renderSystemCard(s, L, lang); }).join('') + '</div>';
     } else {
       html += '<div class="pp-notice" role="status">' + esc(L.dataUnavailable) + '</div>';
     }
