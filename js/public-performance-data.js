@@ -677,8 +677,12 @@
   }
 
   const CHART_LABELS = {
-    en: { strategy:'Strategy', account:'Account', accountReturn:'Normalized Account Return', realized:'Realized Strategy Return', cumulativeR:'Cumulative Research Performance', drawdown:'Drawdown', monthly:'Monthly Results', timeline:'Trade Timeline', month:'Month', value:'Value', trades:'Trades', outcome:'Outcome', pnl:'PnL', holding:'Holding Time', hours:'hours', empty:'Time-series data is not available for this record.', summary:'Interactive chart. Every value is from the integrity-verified public snapshot.' },
-    ar: { strategy:'الاستراتيجية', account:'الحساب', accountReturn:'عائد الحساب الموحّد', realized:'عائد الاستراتيجية المحقق', cumulativeR:'الأداء البحثي التراكمي', drawdown:'التراجع', monthly:'النتائج الشهرية', timeline:'التسلسل الزمني للصفقات', month:'الشهر', value:'القيمة', trades:'الصفقات', outcome:'النتيجة', pnl:'الربح والخسارة', holding:'مدة الاحتفاظ', hours:'ساعة', empty:'البيانات الزمنية غير متاحة لهذا السجل.', summary:'رسم تفاعلي. كل قيمة مأخوذة من اللقطة العامة التي تم التحقق من سلامتها.' }
+    en: { strategy:'Strategy', account:'Account', accountReturn:'Normalized Account Return', realized:'Realized Strategy Return', cumulativeR:'Cumulative Research Performance', drawdown:'Drawdown', monthly:'Monthly Results', timeline:'Completed Positions', month:'Month', value:'Value', trades:'Trades', outcome:'Outcome', pnl:'PnL', holding:'Holding Time', hours:'hours', latest:'Latest', empty:'Time-series data is not available for this record.', summary:'Interactive chart. Every value is from the integrity-verified public snapshot.' },
+    ar: { strategy:'الاستراتيجية', account:'الحساب', accountReturn:'عائد الحساب الموحّد', realized:'عائد الاستراتيجية المحقق', cumulativeR:'الأداء البحثي التراكمي', drawdown:'التراجع', monthly:'النتائج الشهرية', timeline:'المراكز المكتملة', month:'الشهر', value:'القيمة', trades:'الصفقات', outcome:'النتيجة', pnl:'الربح والخسارة', holding:'مدة الاحتفاظ', hours:'ساعة', latest:'الأحدث', empty:'البيانات الزمنية غير متاحة لهذا السجل.', summary:'رسم تفاعلي. كل قيمة مأخوذة من اللقطة العامة التي تم التحقق من سلامتها.' }
+  };
+  const EXPERIENCE_LABELS = {
+    en:{overview:'At a glance',liveSince:'Live since',completed:'Completed positions',story:'Performance journey',started:'Started live',active:'Currently active',insights:'Quick insights',limited:'The strategy currently has limited live history.',pfAbove:'Profit factor remains above 1.',pfBelow:'Profit factor is currently below 1.',winnersLarger:'Average winning positions were larger than losing positions.',losersLarger:'Average losing positions were larger than winning positions.',holding:'Average holding time is about {time}.',netProfit:'Net profit',profitFactor:'Profit factor',maxDrawdown:'Maximum drawdown'},
+    ar:{overview:'لمحة سريعة',liveSince:'مباشر منذ',completed:'مراكز مكتملة',story:'مسار الأداء',started:'بدء التشغيل المباشر',active:'نشط حالياً',insights:'ملاحظات سريعة',limited:'للاستراتيجية سجل مباشر محدود حالياً.',pfAbove:'معامل الربحية أعلى من 1.',pfBelow:'معامل الربحية أقل من 1 حالياً.',winnersLarger:'كان متوسط المراكز الرابحة أكبر من متوسط المراكز الخاسرة.',losersLarger:'كان متوسط المراكز الخاسرة أكبر من متوسط المراكز الرابحة.',holding:'متوسط مدة الاحتفاظ نحو {time}.',netProfit:'صافي الربح',profitFactor:'معامل الربحية',maxDrawdown:'أقصى تراجع'}
   };
   function chartValue(v, unit) {
     const n = Number(v); const sign = n > 0 ? '+' : '';
@@ -690,9 +694,10 @@
     if (!series || !series.available || !series.rows.length) return '<div class="pp-chart-empty" role="status">' + esc(C.empty) + '</div>';
     const rows = series.rows, vals = rows.map(function(p){return p.value;}), min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = max - min || 1;
     const xy = rows.map(function(p,i){ return { x: rows.length === 1 ? 50 : 4 + i * 92 / (rows.length - 1), y: 8 + (max - p.value) * 76 / span, p:p }; });
-    const points = xy.map(function(q){return q.x.toFixed(2)+','+q.y.toFixed(2);}).join(' ');
-    const dots = xy.map(function(q){ const tip=formatDate(q.p.time)+' · '+chartValue(q.p.value,series.unit); return '<button class="pp-chart-point" style="--x:'+q.x.toFixed(2)+'%;--y:'+q.y.toFixed(2)+'%" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"></button>'; }).join('');
-    return '<section class="pp-chart-card pp-chart-'+tone+'"><header><h4>'+esc(title)+'</h4><span>'+esc(series.unit || '')+'</span></header><div class="pp-line-wrap"><svg viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true"><line x1="4" y1="84" x2="96" y2="84" class="pp-axis"/><polyline points="'+points+'"/></svg>'+dots+'</div><p class="pp-sr-only">'+esc(C.summary)+'</p></section>';
+    const points = xy.map(function(q){return q.x.toFixed(2)+','+q.y.toFixed(2);}).join(' '), latest=xy[xy.length-1];
+    const dots = xy.map(function(q,i){ const tip=formatDate(q.p.time)+' · '+chartValue(q.p.value,series.unit); return '<button class="pp-chart-point'+(i===xy.length-1?' is-latest':'')+'" style="--x:'+q.x.toFixed(2)+'%;--y:'+q.y.toFixed(2)+'%" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"></button>'; }).join('');
+    const tickCount=rows.length>18?5:Math.min(4,rows.length), ticks=[]; for(let i=0;i<tickCount;i++){const idx=Math.round(i*(rows.length-1)/Math.max(1,tickCount-1));ticks.push('<span style="--x:'+xy[idx].x.toFixed(2)+'%">'+esc(formatDate(rows[idx].time).slice(5))+'</span>');}
+    return '<section class="pp-chart-card pp-chart-'+tone+'"><header><h4>'+esc(title)+'</h4><span>'+esc(series.unit || '')+'</span></header><div class="pp-line-wrap"><svg viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true"><line x1="4" y1="84" x2="96" y2="84" class="pp-axis"/><line x1="4" y1="46" x2="96" y2="46" class="pp-guide"/><polyline points="'+points+'"/></svg>'+dots+'<span class="pp-latest" style="--x:'+latest.x.toFixed(2)+'%;--y:'+latest.y.toFixed(2)+'%">'+esc(C.latest)+' '+esc(chartValue(latest.p.value,series.unit))+'</span><div class="pp-date-ticks">'+ticks.join('')+'</div></div><p class="pp-sr-only">'+esc(C.summary)+'</p></section>';
   }
   function monthlyChart(series, C) {
     if (!series || !series.available || !series.rows.length) return '<section class="pp-chart-card"><header><h4>'+esc(C.monthly)+'</h4></header><div class="pp-chart-empty" role="status">'+esc(C.empty)+'</div></section>';
@@ -702,7 +707,7 @@
   }
   function tradeTimeline(series,C) {
     if (!series || !series.available || !series.rows.length) return '<section class="pp-chart-card"><header><h4>'+esc(C.timeline)+'</h4></header><div class="pp-chart-empty" role="status">'+esc(C.empty)+'</div></section>';
-    const cells=series.rows.map(function(r){const tip=formatDate(r.time)+' · '+C.outcome+': '+r.outcome+' · '+C.pnl+': '+chartValue(r.value,r.unit||series.unit)+' · '+C.holding+': '+r.holding_hours+' '+C.hours;return '<button class="pp-trade '+(r.value<0?'negative':'positive')+'" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"><span></span></button>';}).join('');
+    const cells=series.rows.map(function(r){const state=r.value<0?'negative':(r.value>0?'positive':'breakeven'),mark=state==='positive'?'W':(state==='negative'?'L':'—'),tip=formatDate(r.time)+' · '+C.outcome+': '+r.outcome+' · '+C.pnl+': '+chartValue(r.value,r.unit||series.unit)+' · '+C.holding+': '+r.holding_hours+' '+C.hours;return '<button class="pp-trade '+state+'" aria-label="'+esc(tip)+'" data-tip="'+esc(tip)+'"><span aria-hidden="true">'+mark+'</span></button>';}).join('');
     return '<section class="pp-chart-card pp-timeline"><header><h4>'+esc(C.timeline)+'</h4><span>'+series.rows.length+' '+esc(C.trades)+'</span></header><div class="pp-trade-row">'+cells+'</div><p class="pp-sr-only">'+esc(C.summary)+'</p></section>';
   }
   function renderCharts(hist,isGold,lang) {
@@ -712,6 +717,28 @@
     function track(data,kind){const title=kind==='account'?C.accountReturn:(isGold?C.cumulativeR:C.realized);return '<div class="pp-chart-track" data-chart-panel="'+kind+'"'+(kind==='account'?' hidden':'')+'>'+lineChart(data.curve,title,C,'performance')+lineChart(data.drawdown,C.drawdown,C,'drawdown')+monthlyChart(data.monthly,C)+'</div>';}
     const canAccount=!isGold&&account.curve&&account.curve.available;
     return '<section class="pp-analytics" aria-label="'+esc(C.summary)+'"><div class="pp-analytics-head">'+(!isGold&&canAccount?'<div class="pp-toggle" role="group" aria-label="'+esc(C.realized)+'"><button type="button" data-chart-toggle="strategy" aria-pressed="true">'+esc(C.strategy)+'</button><button type="button" data-chart-toggle="account" aria-pressed="false">'+esc(C.account)+'</button></div>':'')+'</div>'+track(strategy,'strategy')+(canAccount?track(account,'account'):'')+tradeTimeline(strategy.trades,C)+'</section>';
+  }
+  function executiveSummary(name,hist,isLive,L,lang) {
+    if(!hist)return ''; const X=EXPERIENCE_LABELS[lang], source=(lang==='ar'?hist.data_source_label_ar:hist.data_source_label_en)||L.researchHistory;
+    return '<section class="pp-executive" aria-label="'+esc(X.overview)+'"><div class="pp-exec-name"><span>'+icon('strategy')+'</span><div><b>'+esc(name)+'</b><small class="'+(isLive?'is-live':'')+'">'+esc(isLive?L.statusLive:L.statusActive)+'</small></div></div><dl><div><dt>'+esc(X.liveSince)+'</dt><dd>'+esc(formatDate(hist.live_since)||L.unavailable)+'</dd></div><div><dt>'+esc(source)+'</dt><dd>'+esc(hist.closed_trades===null?L.unavailable:(hist.closed_trades+' '+X.completed))+'</dd></div></dl></section>';
+  }
+  function performanceStory(hist,isLive,L,lang) {
+    if(!hist)return ''; const X=EXPERIENCE_LABELS[lang], items=[];
+    if(hist.live_since)items.push([X.started,formatDate(hist.live_since),'calendar']);
+    if(hist.closed_trades!==null)items.push([X.completed,String(hist.closed_trades),'trades']);
+    if(hist.pnl_usd!==null)items.push([X.netProfit,fmtMoney(hist.pnl_usd),'dollar']);
+    if(hist.profit_factor!==null)items.push([X.profitFactor,fmtNum(hist.profit_factor,2),'trend']);
+    if(hist.strategy_max_drawdown_pct!==null)items.push([X.maxDrawdown,fmtPct(hist.strategy_max_drawdown_pct),'loss']);
+    if(isLive)items.push([X.active,L.statusLive,'target']);
+    return '<section class="pp-story" aria-label="'+esc(X.story)+'"><h4>'+esc(X.story)+'</h4><ol>'+items.map(function(v){return '<li><span>'+icon(v[2])+'</span><small>'+esc(v[0])+'</small><b>'+esc(v[1])+'</b></li>';}).join('')+'</ol></section>';
+  }
+  function quickInsights(hist,L,lang) {
+    if(!hist)return ''; const X=EXPERIENCE_LABELS[lang], notes=[];
+    if(hist.average_winner_usd!==null&&hist.average_loser_usd!==null)notes.push(Math.abs(hist.average_winner_usd)>Math.abs(hist.average_loser_usd)?X.winnersLarger:X.losersLarger);
+    if(hist.profit_factor!==null)notes.push(hist.profit_factor>=1?X.pfAbove:X.pfBelow);
+    if(hist.closed_trades!==null&&hist.closed_trades<50)notes.push(X.limited);
+    const hold=(lang==='ar'?hist.average_holding_display_ar:hist.average_holding_display_en);if(hold)notes.push(X.holding.replace('{time}',hold));
+    if(!notes.length)return ''; return '<section class="pp-insights" aria-label="'+esc(X.insights)+'"><h4>'+icon('info')+esc(X.insights)+'</h4><ul>'+notes.slice(0,4).map(function(n){return '<li>'+esc(n)+'</li>';}).join('')+'</ul></section>';
   }
   // Collapsible ⓘ panel — ALL transparency lives here (delayed, not audited,
   // legacy/schema composition, sample context), hidden by default instead of
@@ -808,7 +835,7 @@
     return '<article class="pp-strategy pp-accent-' + accent + '">' +
       '<header class="pp-strategy-head"><div class="pp-strategy-identity"><span class="pp-strategy-icon">' + icon('strategy') + '</span><div><h3>' + esc(name) + '</h3><p>' + esc(subtitle) + '</p><div class="pp-live-meta">' + (liveSince ? '<span>' + esc(L.liveSince) + ' <strong>' + esc(liveSince) + '</strong></span>' : '') + '<span>' + esc(caption) + '</span></div></div></div>' +
         '<div class="pp-strategy-tags">' + chip + pill + '</div></header>' +
-      '<div class="pp-hero">' + hero + '</div>' + renderCharts(hist, isGold, lang) +
+      executiveSummary(name,hist,isLive,L,lang) + '<div class="pp-hero">' + hero + '</div>' + renderCharts(hist, isGold, lang) + performanceStory(hist,isLive,L,lang) + quickInsights(hist,L,lang) +
       outcome +
       '<section class="pp-details"><div class="pp-section-label"><span>' + esc(L.detailHeading) + '</span></div><div class="pp-detail">' + detail + '</div></section>' + payoff +
       trustRow(L) +

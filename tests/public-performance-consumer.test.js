@@ -405,7 +405,7 @@ function runPathTests() {
 }
 
 function runChartTests() {
-  const raw = { available:true, record_type:'broker_execution_history', charts:{ version:'1.0', strategy:{
+  const raw = { available:true, record_type:'broker_execution_history', live_since:'2026-01-01T00:00:00Z', closed_trades:2, profit_factor:1.2, charts:{ version:'1.0', strategy:{
     curve:{available:true,unit:'return_pct',points:[{time:'2026-02-01T00:00:00Z',value:2},{time:'2026-01-01T00:00:00Z',value:1}]},
     drawdown:{available:true,unit:'percent',points:[{time:'2026-01-01T00:00:00Z',value:0},{time:'2026-02-01T00:00:00Z',value:-1}]},
     monthly:{available:true,unit:'return_pct',rows:[{month:'2026-02',value:-1,trades:2},{month:'2026-01',value:2,trades:3}]},
@@ -429,6 +429,19 @@ function runChartTests() {
   const emptyAr={innerHTML:''}; PP.render(emptyAr,{performance:{as_of:'x',systems:[Object.assign({},sys,{historical_record:PP.normalizeHistorical({available:true})})]}},'ar');
   ok('(C11) exact Arabic empty state and RTL-safe markup', emptyAr.innerHTML.indexOf('البيانات الزمنية غير متاحة لهذا السجل.')!==-1);
   ok('(C12) no canvas/synthetic/interpolation', !/canvas|synthetic|interpolat/i.test(c.innerHTML));
+  ok('(C13) compact executive identity avoids return duplication', /pp-executive/.test(c.innerHTML) && /At a glance/.test(c.innerHTML));
+  ok('(C14) performance story uses supplied values', /pp-story/.test(c.innerHTML) && /Completed positions/.test(c.innerHTML));
+  ok('(C15) deterministic limited-history insight', /Quick insights/.test(c.innerHTML) && /limited live history/.test(c.innerHTML));
+  ok('(C16) latest point and adaptive date ticks render', /pp-chart-point is-latest/.test(c.innerHTML) && /pp-date-ticks/.test(c.innerHTML) && /Latest \+2\.00%/.test(c.innerHTML));
+  ok('(C17) timeline has semantic win loss icons', /pp-trade positive/.test(c.innerHTML) && />W<\/span>/.test(c.innerHTML) && />L<\/span>/.test(c.innerHTML));
+  ok('(C18) chart controls are native keyboard controls', /<button[^>]+data-chart-toggle/.test(c.innerHTML) && /<button[^>]+pp-chart-point/.test(c.innerHTML));
+  const src=fs.readFileSync(path.join(__dirname,'..','js','public-performance-data.js'),'utf8');
+  const css=fs.readFileSync(path.join(__dirname,'..','css','public-performance.css'),'utf8');
+  ok('(C19) crosshair and hover marker styles present', /pp-chart-point::before/.test(css) && /is-latest/.test(css));
+  ok('(C20) reduced motion disables chart animation', /prefers-reduced-motion:reduce/.test(css) && /animation:none/.test(css));
+  ok('(C21) mobile touch targets and containment present', /max-width:520px/.test(css) && /min-width:36px;height:40px/.test(css) && /overflow-x:clip/.test(css));
+  ok('(C22) toggle listener does not rerender card', /data-chart-panel/.test(src) && !/btn\.addEventListener[\s\S]{0,500}render\(/.test(src));
+  ok('(C23) no prohibited trust claims introduced in V2 modules', !/Broker Approved|Myfxbook|Guaranteed|Certified/.test(c.innerHTML));
 }
 
 runVerifiedTests()
