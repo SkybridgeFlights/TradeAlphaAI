@@ -200,6 +200,11 @@ function runRenderTests() {
   ok('render no promotional words', !/\bproven\b|guaranteed|verified success|profitable|superior/i.test(c2.innerHTML));
   ok('not-audited disclosure kept (in ⓘ, not a banner)', c2.innerHTML.indexOf(L.infoAudit) !== -1);
   ok('trust row present', c2.innerHTML.indexOf(L.trustPublic) !== -1 && c2.innerHTML.indexOf(L.trustMethod) !== -1);
+  ok('premium card identity and subtitle present', c2.innerHTML.indexOf('pp-strategy-identity') !== -1 && /AI-powered/.test(c2.innerHTML));
+  ok('exactly four hero metrics per strategy', (c2.innerHTML.match(/class="pp-big /g) || []).length === perfIns.systems.length * 4);
+  ok('outcome visualization uses existing closed-trade counts', c2.innerHTML.indexOf('pp-outcome-track') !== -1 && c2.innerHTML.indexOf(L.outcomeMix) !== -1);
+  ok('strategy CTAs and icon chips present', c2.innerHTML.indexOf(L.exploreStrategy) !== -1 && c2.innerHTML.indexOf(L.learnMethodology) !== -1 && c2.innerHTML.indexOf('pp-icon') !== -1);
+  ok('modern disclosure accordion structure present', c2.innerHTML.indexOf('pp-info-reveal') !== -1 && c2.innerHTML.indexOf('pp-info-chevron') !== -1);
   ok('no dominating warning-box classes', c2.innerHTML.indexOf('pp-sample-warning') === -1 && c2.innerHTML.indexOf('pp-hist-warning') === -1);
 
   const c3 = { innerHTML: '' };

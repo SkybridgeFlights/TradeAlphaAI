@@ -369,6 +369,8 @@
       verifiedChip: 'Research Statistics', historicalChip: 'Historical Statistics', trackRecordNote: 'Performance history',
       aboutData: 'About this data',
       trustLive: 'Update status', trustPublic: 'Public statistics', trustHistory: 'Performance history', trustMethod: 'Methodology details',
+      detailHeading: 'Strategy details', outcomeMix: 'Closed-trade outcome mix', exploreStrategy: 'Explore Strategy', learnMethodology: 'Learn Methodology',
+      goldSubtitle: 'AI-powered XAUUSD research strategy', qqqSubtitle: 'AI-powered Nasdaq research strategy', strategySubtitle: 'AI-powered market research strategy',
       footNote: 'Educational research · not investment advice · delayed public snapshot.',
       infoDelay: 'Figures are a delayed public snapshot of internally generated research logs.',
       infoAudit: 'Internally generated and not independently audited.',
@@ -413,6 +415,8 @@
       verifiedChip: 'إحصاءات بحثية', historicalChip: 'إحصاءات تاريخية', trackRecordNote: 'سجل الأداء',
       aboutData: 'عن هذه البيانات',
       trustLive: 'حالة التحديث', trustPublic: 'إحصاءات عامة', trustHistory: 'سجل الأداء', trustMethod: 'تفاصيل المنهجية',
+      detailHeading: 'تفاصيل الاستراتيجية', outcomeMix: 'توزيع نتائج الصفقات المغلقة', exploreStrategy: 'استكشف الاستراتيجية', learnMethodology: 'تعرّف على المنهجية',
+      goldSubtitle: 'استراتيجية أبحاث للذهب XAUUSD مدعومة بالذكاء الاصطناعي', qqqSubtitle: 'استراتيجية أبحاث لناسداك مدعومة بالذكاء الاصطناعي', strategySubtitle: 'استراتيجية أبحاث سوقية مدعومة بالذكاء الاصطناعي',
       footNote: 'بحث تعليمي · ليس نصيحة استثمارية · لقطة عامة مؤجَّلة.',
       infoDelay: 'الأرقام لقطة عامة مؤجَّلة من سجلات بحثية مُنشأة داخليًا.',
       infoAudit: 'مُنشأة داخليًا وغير مُدقّقة من جهة خارجية مستقلة.',
@@ -595,17 +599,41 @@
 
   function fmtMoney(v) { if (v === null || v === undefined) return null; const n = Number(v); return (n < 0 ? '-$' : '$') + Math.abs(n).toFixed(2); }
   function formatDate(s) { if (!s) return null; const d = new Date(s); return isNaN(d.getTime()) ? String(s).slice(0, 10) : d.toISOString().slice(0, 10); }
-  function bigMetric(label, value) {
-    const na = (value === null || value === undefined);
-    return '<div class="pp-big' + (na ? ' pp-na' : '') + '"><span class="pp-big-value">' + esc(na ? '—' : value) + '</span><span class="pp-big-label">' + esc(label) + '</span></div>';
+  function icon(name) {
+    const paths = {
+      strategy: '<path d="M12 3l2.6 5.3 5.9.9-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L12 3z"/>',
+      trades: '<path d="M5 19V9m7 10V5m7 14v-7"/><path d="M3 19h18"/>',
+      target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3m10-10h-3M5 12H2"/>',
+      trend: '<path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/>',
+      dollar: '<path d="M12 3v18m4-14.5c-.8-1-2-1.5-4-1.5-2.2 0-4 1.2-4 3s1.4 2.6 4 3 4 1.2 4 3-1.8 3-4 3c-2 0-3.4-.6-4.4-1.8"/>',
+      trophy: '<path d="M8 4h8v4c0 3-1.8 5-4 5s-4-2-4-5V4z"/><path d="M8 6H5v1c0 2 1.2 3 3.2 3M16 6h3v1c0 2-1.2 3-3.2 3M12 13v4m-4 3h8m-6-3h4"/>',
+      loss: '<path d="M4 7l5 5 4-3 7 8"/><path d="M15 17h5v-5"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      history: '<path d="M4 5v5h5"/><path d="M5.5 16a8 8 0 1 0-.8-7"/><path d="M12 8v5l3 1"/>',
+      shield: '<path d="M12 3l7 3v5c0 4.6-2.8 8-7 10-4.2-2-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-5"/>',
+      chart: '<path d="M4 19V5m0 14h16"/><path d="M7 15l4-4 3 2 5-6"/>',
+      calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/>',
+      info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',
+      arrow: '<path d="M5 12h14m-5-5 5 5-5 5"/>'
+    };
+    return '<svg class="pp-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || paths.chart) + '</svg>';
   }
-  function smallMetric(label, value) {
+  function bigMetric(label, value, tone, iconName) {
     const na = (value === null || value === undefined);
-    return '<div class="pp-small' + (na ? ' pp-na' : '') + '"><span class="pp-small-label">' + esc(label) + '</span><span class="pp-small-value">' + esc(na ? '—' : value) + '</span></div>';
+    return '<div class="pp-big pp-tone-' + esc(tone) + (na ? ' pp-na' : '') + '">' +
+      '<span class="pp-metric-icon">' + icon(iconName) + '</span>' +
+      '<span class="pp-big-value">' + esc(na ? '—' : value) + '</span>' +
+      '<span class="pp-big-label">' + esc(label) + '</span></div>';
+  }
+  function smallMetric(label, value, iconName, tone) {
+    const na = (value === null || value === undefined);
+    return '<div class="pp-small pp-tone-' + esc(tone || 'blue') + (na ? ' pp-na' : '') + '">' +
+      '<span class="pp-small-icon">' + icon(iconName) + '</span><span class="pp-small-copy"><span class="pp-small-label">' + esc(label) +
+      '</span><span class="pp-small-value">' + esc(na ? '—' : value) + '</span></span></div>';
   }
   function trustRow(L) {
-    const items = [L.trustLive, L.trustPublic, L.trustHistory, L.trustMethod];
-    return '<ul class="pp-trust">' + items.map(function (t) { return '<li><span class="pp-check" aria-hidden="true">✓</span>' + esc(t) + '</li>'; }).join('') + '</ul>';
+    const items = [[L.trustPublic, 'chart'], [L.trustLive, 'calendar'], [L.trustHistory, 'history'], [L.trustMethod, 'shield']];
+    return '<ul class="pp-trust">' + items.map(function (item) { return '<li>' + icon(item[1]) + '<span>' + esc(item[0]) + '</span></li>'; }).join('') + '</ul>';
   }
   // Collapsible ⓘ panel — ALL transparency lives here (delayed, not audited,
   // legacy/schema composition, sample context), hidden by default instead of
@@ -620,7 +648,7 @@
       if (sys && sys.methodology_note) lines += '<p class="pp-info-note">' + esc(sys.methodology_note) + '</p>';
       if (hist && hist.methodology_note) lines += '<p class="pp-info-note">' + esc(hist.methodology_note) + '</p>';
     }
-    return '<details class="pp-info"><summary><span class="pp-info-icon" aria-hidden="true">ⓘ</span>' + esc(L.aboutData) + '</summary><div class="pp-info-body">' + lines + '</div></details>';
+    return '<details class="pp-info"><summary><span class="pp-info-summary-icon">' + icon('info') + '</span><span>' + esc(L.aboutData) + '</span><span class="pp-info-chevron" aria-hidden="true"></span></summary><div class="pp-info-reveal"><div class="pp-info-body">' + lines + '</div></div></details>';
   }
   // One clean, professional card per strategy. Leads with the fuller track
   // record when a historical_record exists (else the verified Schema 1.0
@@ -632,30 +660,47 @@
     const hist = (sys.historical_record && sys.historical_record.available !== false) ? sys.historical_record : null;
     const primary = hist || sys;
     const isLive = /live|active|running/i.test(String(sys.status || ''));
-    const pill = '<span class="pp-pill' + (isLive ? ' pp-pill-live' : '') + '">' + (isLive ? '<i aria-hidden="true"></i>' : '') + esc(isLive ? L.statusLive : (sys.status || L.statusActive)) + '</span>';
+    const pill = '<span class="pp-pill' + (isLive ? ' pp-pill-live' : '') + '"><i aria-hidden="true"></i>' + esc(isLive ? L.statusLive : (sys.status || L.statusActive)) + '</span>';
     const chip = '<span class="pp-chip">' + esc(hist ? L.historicalChip : L.verifiedChip) + '</span>';
+    const name = sys.public_name || L.unavailable;
+    const isGold = /gold|xau/i.test(String(name));
+    const isQqq = /qqq|nasdaq/i.test(String(name));
+    const subtitle = isGold ? L.goldSubtitle : (isQqq ? L.qqqSubtitle : L.strategySubtitle);
+    const accent = isGold ? 'gold' : (isQqq ? 'blue' : 'violet');
+    const primaryCta = isGold ? '#tradealpha-ea-backtest' : '#qqq-signals-performance';
 
     const hero =
-      bigMetric(L.totalClosedTrades, primary.closed_trades === null ? null : String(primary.closed_trades)) +
-      bigMetric(L.winRate, fmtPct(primary.win_rate_pct)) +
-      bigMetric(L.profitFactor, fmtNum(primary.profit_factor, 2)) +
-      (hist ? bigMetric(L.netProfit, fmtMoney(hist.pnl_usd)) : '') +
-      bigMetric(L.avgHoldTime, primary.average_holding_minutes === null ? null : (Math.round(Number(primary.average_holding_minutes)) + ' ' + L.minSuffix));
+      bigMetric(L.totalClosedTrades, primary.closed_trades === null ? null : String(primary.closed_trades), 'blue', 'trades') +
+      bigMetric(L.winRate, fmtPct(primary.win_rate_pct), 'green', 'target') +
+      bigMetric(L.profitFactor, fmtNum(primary.profit_factor, 2), 'gold', 'trend') +
+      bigMetric(hist ? L.netProfit : L.expectancy, hist ? fmtMoney(hist.pnl_usd) : fmtNum(primary.expectancy_r, 2), (hist && Number(hist.pnl_usd) < 0) ? 'red' : 'green', hist ? 'dollar' : 'chart');
 
     const detail =
-      smallMetric(L.wins, primary.wins === null ? null : String(primary.wins)) +
-      smallMetric(L.losses, primary.losses === null ? null : String(primary.losses)) +
-      smallMetric(L.expectancy, fmtNum(primary.expectancy_r, 2)) +
-      smallMetric(L.schema1Trades, sys.closed_trades === null ? null : String(sys.closed_trades)) +
-      (hist ? smallMetric(L.histTrades, hist.closed_trades === null ? null : String(hist.closed_trades)) : '') +
-      smallMetric(L.lastUpdated, formatDate((hist && hist.as_of) || sys.as_of));
+      smallMetric(L.wins, primary.wins === null ? null : String(primary.wins), 'trophy', 'green') +
+      smallMetric(L.losses, primary.losses === null ? null : String(primary.losses), 'loss', 'red') +
+      smallMetric(L.expectancy, fmtNum(primary.expectancy_r, 2), 'chart', Number(primary.expectancy_r) < 0 ? 'red' : 'blue') +
+      smallMetric(L.avgHoldTime, primary.average_holding_minutes === null ? null : (Math.round(Number(primary.average_holding_minutes)) + ' ' + L.minSuffix), 'clock', 'blue') +
+      smallMetric(L.schema1Trades, sys.closed_trades === null ? null : String(sys.closed_trades), 'shield', 'gold') +
+      (hist ? smallMetric(L.histTrades, hist.closed_trades === null ? null : String(hist.closed_trades), 'history', 'blue') : '') +
+      smallMetric(L.lastUpdated, formatDate((hist && hist.as_of) || sys.as_of), 'calendar', 'blue');
 
-    return '<article class="pp-strategy">' +
-      '<header class="pp-strategy-head"><h3>' + esc(sys.public_name || L.unavailable) + '</h3>' +
+    const total = Number(primary.closed_trades) || 0;
+    const wins = Number(primary.wins) || 0;
+    const losses = Number(primary.losses) || 0;
+    const winWidth = total > 0 ? Math.max(0, Math.min(100, wins / total * 100)) : 0;
+    const lossWidth = total > 0 ? Math.max(0, Math.min(100, losses / total * 100)) : 0;
+    const outcome = '<div class="pp-outcome"><div class="pp-outcome-head"><span>' + esc(L.outcomeMix) + '</span><span>' + esc(total ? (wins + ' / ' + losses) : '—') + '</span></div>' +
+      '<div class="pp-outcome-track" role="img" aria-label="' + esc(L.outcomeMix) + '"><span class="pp-outcome-win" style="width:' + winWidth + '%"></span><span class="pp-outcome-loss" style="width:' + lossWidth + '%"></span></div>' +
+      '<div class="pp-outcome-legend"><span><i class="pp-dot-win"></i>' + esc(L.wins) + '</span><span><i class="pp-dot-loss"></i>' + esc(L.losses) + '</span></div></div>';
+
+    return '<article class="pp-strategy pp-accent-' + accent + '">' +
+      '<header class="pp-strategy-head"><div class="pp-strategy-identity"><span class="pp-strategy-icon">' + icon('strategy') + '</span><div><h3>' + esc(name) + '</h3><p>' + esc(subtitle) + '</p></div></div>' +
         '<div class="pp-strategy-tags">' + chip + pill + '</div></header>' +
       '<div class="pp-hero">' + hero + '</div>' +
-      '<div class="pp-detail">' + detail + '</div>' +
+      outcome +
+      '<section class="pp-details"><div class="pp-section-label"><span>' + esc(L.detailHeading) + '</span></div><div class="pp-detail">' + detail + '</div></section>' +
       trustRow(L) +
+      '<div class="pp-actions"><a class="pp-btn pp-btn-primary" href="' + primaryCta + '">' + esc(L.exploreStrategy) + icon('arrow') + '</a><a class="pp-btn pp-btn-secondary" href="../methodology.html">' + icon('shield') + esc(L.learnMethodology) + '</a></div>' +
       infoPanel(sys, hist, L, lang) +
       '</article>';
   }
