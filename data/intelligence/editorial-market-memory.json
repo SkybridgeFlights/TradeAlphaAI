@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-14T17:42:23.006Z",
+  "updated_at": "2026-07-14T19:36:48.149Z",
   "run_date": "2026-07-14",
   "verified": true,
   "status": "verified",
@@ -8,6 +8,23 @@
   "memory_note_en": "Verified editorial memory advanced for this market date.",
   "memory_note_ar": "تقدمت الذاكرة التحريرية الموثقة لهذه الجلسة السوقية.",
   "narratives": [
+    {
+      "id": "narrow-leadership",
+      "family": "leadership",
+      "state": "crowded",
+      "sessions": 4,
+      "inactive_sessions": 0,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-07-14",
+      "last_evaluated": "2026-07-14",
+      "active": true,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": [
+        "pulse:momentum_concentration=narrow-megacap",
+        "pulse:breadth_state=confirming"
+      ]
+    },
     {
       "id": "speculative-momentum",
       "family": "positioning",
@@ -61,20 +78,6 @@
   ],
   "archive": [
     {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "invalidated",
-      "sessions": 3,
-      "inactive_sessions": 19,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-06-18",
-      "last_evaluated": "2026-07-14",
-      "active": false,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": []
-    },
-    {
       "id": "dollar-strength",
       "family": "macro",
       "state": "invalidated",
@@ -117,6 +120,20 @@
       "evidence": []
     },
     {
+      "id": "narrow-leadership",
+      "family": "leadership",
+      "state": "invalidated",
+      "sessions": 3,
+      "inactive_sessions": 19,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-07-14",
+      "active": false,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": []
+    },
+    {
       "id": "cross-asset-conflict",
       "family": "cross-asset",
       "state": "invalidated",
@@ -131,7 +148,23 @@
       "evidence": []
     }
   ],
-  "expectations": [],
+  "expectations": [
+    {
+      "id": "narrow-leadership:breadth-broadening",
+      "narrative_id": "narrow-leadership",
+      "status": "fulfilled",
+      "opened_on": "2026-07-14",
+      "opened_at_session": 4,
+      "evaluated_on": "2026-07-14",
+      "expected_dimension": "breadth_state",
+      "expected_values": [
+        "confirming"
+      ],
+      "observed_value": "confirming",
+      "en": "Breadth confirmation materialized in the verified state.",
+      "ar": "تحقق تأكيد اتساع المشاركة في الحالة الموثقة."
+    }
+  ],
   "failed_expectations": [],
   "unresolved_tensions": [
     {
@@ -191,9 +224,9 @@
     }
   ],
   "market_character": {
-    "id": "unresolved-tension",
-    "en": "Unresolved tension",
-    "ar": "توتر غير محسوم"
+    "id": "fragile-optimism",
+    "en": "Fragile optimism",
+    "ar": "تفاؤل هش"
   },
   "current_focus": [
     {
@@ -203,6 +236,14 @@
       "sessions": 28,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
+    },
+    {
+      "kind": "narrative",
+      "id": "narrow-leadership",
+      "state": "crowded",
+      "sessions": 4,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة."
     },
     {
       "kind": "narrative",
@@ -230,17 +271,6 @@
     }
   ],
   "timeline": [
-    {
-      "id": "2026-06-26:intensified:dollar-strength",
-      "date": "2026-06-26",
-      "kind": "intensified",
-      "narrative_id": "dollar-strength",
-      "en": "Dollar pressure continues to shape the cross-asset backdrop.",
-      "ar": "يواصل ضغط الدولار تشكيل الخلفية العامة للعلاقات بين الأصول.",
-      "evidence": [
-        "pulse:dollar_pressure=firming"
-      ]
-    },
     {
       "id": "2026-06-27:persisted:dollar-strength",
       "date": "2026-06-27",
@@ -1286,6 +1316,18 @@
       "evidence": [
         "convergence:yields-growth",
         "convergence:breadth-link"
+      ]
+    },
+    {
+      "id": "2026-07-14:changed:narrow-leadership",
+      "date": "2026-07-14",
+      "kind": "changed",
+      "narrative_id": "narrow-leadership",
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": [
+        "pulse:momentum_concentration=narrow-megacap",
+        "pulse:breadth_state=confirming"
       ]
     }
   ],
