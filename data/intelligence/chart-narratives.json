@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-14T11:37:01.323Z",
+  "updated_at": "2026-07-14T16:21:01.110Z",
   "run_date": "2026-07-14",
   "verified": true,
   "selected": [
@@ -43,47 +43,47 @@
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "breadth-confirmation",
-      "kind": "cross-asset",
-      "visual_type": "breadth",
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
       "symbols": [
-        "AMEX:SPY",
-        "AMEX:RSP"
+        "CRYPTO:BTCUSD",
+        "NASDAQ:QQQ"
       ],
-      "title_en": "Cap-weighted vs equal-weight breadth",
-      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
-      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
-      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
-      "score": 70,
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 18,
       "evidence": [
-        "breadth_state: deteriorating ×5"
+        "liquidity_pressure 3/5"
       ],
       "annotations": [
         {
-          "type": "divergence-highlight",
-          "severity": "high",
-          "label_en": "Divergence — SPY/IWM not confirming (5-session strain)",
-          "label_ar": "انفصال — SPY/IWM لا يؤكد (إجهاد 5 جلسات)",
+          "type": "commentary-label",
+          "severity": "info",
+          "label_en": "Confirmation — BTC/QQQ relationship holding",
+          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
           "evidence": [
-            "convergence:diverges:breadth-link:chain=5"
+            "convergence:confirms:liquidity-beta"
           ]
         },
         {
-          "type": "transition-label",
+          "type": "pressure-band",
           "severity": "elevated",
-          "label_en": "Regime shift — breadth state confirming → deteriorating",
-          "label_ar": "تحوّل النظام — breadth state: confirming ← deteriorating",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
           "evidence": [
-            "cognition:timeline:breadth_state:confirming->deteriorating:2026-07-10"
+            "macro:pressure:liquidity_pressure:3"
           ]
         },
         {
           "type": "catalyst-zone",
           "severity": "info",
-          "label_en": "Catalyst window — FOMC Press Release (2026-07-14)",
-          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-14)",
+          "label_en": "Catalyst window — Consumer Price Index (2026-07-14)",
+          "label_ar": "نافذة محفز — Consumer Price Index (2026-07-14)",
           "evidence": [
-            "pulse:catalyst:FOMC Press Release:2026-07-14"
+            "pulse:catalyst:Consumer Price Index:2026-07-14"
           ]
         }
       ],
