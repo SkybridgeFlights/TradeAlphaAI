@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-15T11:40:46.626Z",
+  "updated_at": "2026-07-15T14:58:12.303Z",
   "run_date": "2026-07-15",
   "verified": true,
   "status": "verified",
@@ -8,23 +8,6 @@
   "memory_note_en": "Verified editorial memory advanced for this market date.",
   "memory_note_ar": "تقدمت الذاكرة التحريرية الموثقة لهذه الجلسة السوقية.",
   "narratives": [
-    {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "crowded",
-      "sessions": 4,
-      "inactive_sessions": 0,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-07-15",
-      "last_evaluated": "2026-07-15",
-      "active": true,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": [
-        "pulse:momentum_concentration=narrow-megacap",
-        "pulse:breadth_state=confirming"
-      ]
-    },
     {
       "id": "speculative-momentum",
       "family": "positioning",
@@ -38,7 +21,6 @@
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
       "evidence": [
-        "pulse:speculative_appetite=expanding",
         "pulse:ai_concentration_risk=elevated"
       ]
     },
@@ -71,12 +53,28 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:yields-growth",
-        "convergence:yields-bonds"
+        "convergence:yields-bonds",
+        "convergence:yields-dollar",
+        "convergence:vix-equities",
+        "convergence:liquidity-beta"
       ]
     }
   ],
   "archive": [
+    {
+      "id": "narrow-leadership",
+      "family": "leadership",
+      "state": "invalidated",
+      "sessions": 3,
+      "inactive_sessions": 20,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-07-15",
+      "active": false,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": []
+    },
     {
       "id": "dollar-strength",
       "family": "macro",
@@ -120,20 +118,6 @@
       "evidence": []
     },
     {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "invalidated",
-      "sessions": 3,
-      "inactive_sessions": 19,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-06-18",
-      "last_evaluated": "2026-07-14",
-      "active": false,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": []
-    },
-    {
       "id": "cross-asset-conflict",
       "family": "cross-asset",
       "state": "invalidated",
@@ -148,23 +132,7 @@
       "evidence": []
     }
   ],
-  "expectations": [
-    {
-      "id": "narrow-leadership:breadth-broadening",
-      "narrative_id": "narrow-leadership",
-      "status": "fulfilled",
-      "opened_on": "2026-07-14",
-      "opened_at_session": 4,
-      "evaluated_on": "2026-07-15",
-      "expected_dimension": "breadth_state",
-      "expected_values": [
-        "confirming"
-      ],
-      "observed_value": "confirming",
-      "en": "Breadth confirmation materialized in the verified state.",
-      "ar": "تحقق تأكيد اتساع المشاركة في الحالة الموثقة."
-    }
-  ],
+  "expectations": [],
   "failed_expectations": [],
   "unresolved_tensions": [
     {
@@ -196,8 +164,10 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:yields-growth",
-        "convergence:yields-bonds"
+        "convergence:yields-bonds",
+        "convergence:yields-dollar",
+        "convergence:vix-equities",
+        "convergence:liquidity-beta"
       ]
     }
   ],
@@ -224,9 +194,9 @@
     }
   ],
   "market_character": {
-    "id": "fragile-optimism",
-    "en": "Fragile optimism",
-    "ar": "تفاؤل هش"
+    "id": "unresolved-tension",
+    "en": "Unresolved tension",
+    "ar": "توتر غير محسوم"
   },
   "current_focus": [
     {
@@ -236,14 +206,6 @@
       "sessions": 29,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
-    },
-    {
-      "kind": "narrative",
-      "id": "narrow-leadership",
-      "state": "crowded",
-      "sessions": 4,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة."
     },
     {
       "kind": "narrative",

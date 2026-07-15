@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-15T11:40:46.485Z",
+  "updated_at": "2026-07-15T14:58:12.165Z",
   "run_date": "2026-07-15",
   "verified": true,
   "sessions_tracked": 32,
@@ -41,12 +41,12 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "narrow-megacap",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "broadening",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "balanced",
-        "date": "2026-07-13"
+        "state": "narrow-megacap",
+        "date": "2026-07-14"
       }
     },
     {
@@ -85,9 +85,9 @@
     },
     {
       "dimension": "speculative_appetite",
-      "state": "expanding",
-      "phase": "extended",
-      "sessions_in_state": 6,
+      "state": "unverified",
+      "phase": "unverified",
+      "sessions_in_state": 0,
       "from": null
     },
     {
@@ -112,27 +112,11 @@
     },
     {
       "kind": "streak",
-      "dimension": "speculative_appetite",
-      "state": "expanding",
-      "sessions": 6,
-      "en": "Speculative appetite expands for a sixth straight session — risk-seeking behavior is persistent, not episodic.",
-      "ar": "شهية المضاربة تتوسع للجلسة السادسة على التوالي — سلوك السعي للمخاطرة مستمر وليس عابراً."
-    },
-    {
-      "kind": "streak",
       "dimension": "market_fragility",
       "state": "building",
       "sessions": 6,
       "en": "Market fragility signals build for a sixth straight session across volatility, breadth, and concentration inputs.",
       "ar": "إشارات هشاشة السوق تتراكم للجلسة السادسة على التوالي عبر مدخلات التقلب والاتساع والتركز."
-    },
-    {
-      "kind": "streak",
-      "dimension": "momentum_concentration",
-      "state": "narrow-megacap",
-      "sessions": 2,
-      "en": "Megacap leadership narrowing extends to a second consecutive session beneath headline strength.",
-      "ar": "تركّز القيادة في الأسهم الكبرى يمتد للجلسة الثانية على التوالي تحت القوة الظاهرة للمؤشرات."
     }
   ],
   "causal_links": [
@@ -145,10 +129,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "us10y": 0.35018603633180156,
-        "qqq": 1.1451
+        "us10y": 0.39656311962988944,
+        "qqq": -0.5502
       }
     },
     {
@@ -160,10 +144,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "neutral",
+      "state": "diverging",
       "evidence": {
-        "us10y": 0.35018603633180156,
-        "dxy": -0.01585100059440374
+        "us10y": 0.39656311962988944,
+        "dxy": -0.2287808259879118
       }
     },
     {
@@ -175,10 +159,10 @@
       "expected": "inverse",
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "dxy": -0.01585100059440374,
-        "gold": 1.2148
+        "dxy": -0.2287808259879118,
+        "gold": 0.0779
       }
     },
     {
@@ -190,10 +174,10 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "vix": -2.3668639053254354,
-        "spy": 0.3858
+        "vix": 2.8409090909090864,
+        "spy": 0.2022
       }
     },
     {
@@ -207,8 +191,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": 3.9945,
-        "qqq": 1.1451
+        "nvda": -0.7271,
+        "qqq": -0.5502
       }
     },
     {
@@ -220,10 +204,10 @@
       "expected": "direct",
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "btc": 3.842,
-        "qqq": 1.1451
+        "btc": 2.08,
+        "qqq": -0.5502
       }
     },
     {
@@ -237,8 +221,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": 0.3858,
-        "iwm": 0.2658
+        "spy": 0.2022,
+        "iwm": 0.6519
       }
     },
     {
@@ -252,20 +236,29 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": 0.35018603633180156,
-        "tlt": 0.2501
+        "us10y": 0.39656311962988944,
+        "tlt": 0.2498
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
-        "source": "causal:vix-equities",
-        "en": "Rising hedging demand pressures the equity tape",
-        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
+        "source": "causal:yields-growth",
+        "en": "Rising yields pressure long-duration growth equities",
+        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
         "evidence": {
-          "vix": -2.3668639053254354,
-          "spy": 0.3858
+          "us10y": 0.39656311962988944,
+          "qqq": -0.5502
+        }
+      },
+      {
+        "source": "causal:dollar-gold",
+        "en": "A firming dollar typically pressures gold",
+        "ar": "تقوّي الدولار يضغط على الذهب عادة",
+        "evidence": {
+          "dxy": -0.2287808259879118,
+          "gold": 0.0779
         }
       },
       {
@@ -273,37 +266,37 @@
         "en": "AI leadership drives the growth complex",
         "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "nvda": 3.9945,
-          "qqq": 1.1451
-        }
-      },
-      {
-        "source": "causal:liquidity-beta",
-        "en": "Crypto trades as the liquidity beta of the growth complex",
-        "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-        "evidence": {
-          "btc": 3.842,
-          "qqq": 1.1451
+          "nvda": -0.7271,
+          "qqq": -0.5502
         }
       }
     ],
     "contradiction": [
       {
-        "source": "causal:yields-growth",
-        "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:yields-dollar",
+        "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": 0.35018603633180156,
-          "qqq": 1.1451
+          "us10y": 0.39656311962988944,
+          "dxy": -0.2287808259879118
         }
       },
       {
-        "source": "causal:yields-bonds",
-        "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:vix-equities",
+        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": 0.35018603633180156,
-          "tlt": 0.2501
+          "vix": 2.8409090909090864,
+          "spy": 0.2022
+        }
+      },
+      {
+        "source": "causal:liquidity-beta",
+        "en": "Divergence on the btc/qqq link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة btc/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "btc": 2.08,
+          "qqq": -0.5502
         }
       }
     ],
@@ -322,24 +315,17 @@
       }
     ],
     "liquidity": [],
-    "speculative": [
-      {
-        "source": "speculative_appetite",
-        "en": "Speculative appetite is expanding across the high-beta complex.",
-        "ar": "شهية المضاربة تتوسع عبر الأصول عالية البيتا."
-      },
-      {
-        "source": "nvda_move",
-        "en": "An outsized sourced AI-leadership move (+3.99%) marks active speculative positioning.",
-        "ar": "تحرك موثق كبير في قيادة الذكاء الاصطناعي (+3.99%) يعكس تمركزاً مضاربياً نشطاً.",
-        "evidence": {
-          "nvda": 3.9945
-        }
-      }
-    ]
+    "speculative": []
   },
   "alerts": [],
   "timeline_tail": [
+    {
+      "date": "2026-07-15",
+      "dimension": "momentum_concentration",
+      "from": "narrow-megacap",
+      "to": "broadening",
+      "note": "momentum concentration: narrow-megacap -> broadening"
+    },
     {
       "date": "2026-07-14",
       "dimension": "momentum_concentration",
@@ -374,14 +360,7 @@
       "from": "contained",
       "to": "elevated",
       "note": "ai concentration risk: contained -> elevated"
-    },
-    {
-      "date": "2026-07-09",
-      "dimension": "market_fragility",
-      "from": "building",
-      "to": "contained",
-      "note": "market fragility: building -> contained"
     }
   ],
-  "cognition_note": "Cognition state — 10/11 dimensions verified; 0 alert(s); 4 cross-session observation(s); 48 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 49 timeline event(s)."
 }
