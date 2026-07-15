@@ -1,17 +1,18 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-14T21:06:14.289Z",
+  "updated_at": "2026-07-15T11:40:46.398Z",
   "status": "live",
-  "item_count": 25,
+  "item_count": 27,
   "clusters": {
-    "ai-momentum": 4,
+    "ai-momentum": 5,
+    "labor": 1,
+    "inflation": 9,
     "growth": 2,
-    "fed": 4,
-    "macro": 7,
-    "inflation": 8
+    "fed": 3,
+    "macro": 7
   },
   "top_story": {
-    "id": "move::NVDA::2026-07-14T21",
+    "id": "move::NVDA::2026-07-15T11",
     "kind": "market_move",
     "headline": "NVDA jumps +3.99% to 211.66",
     "urgency": 90,
@@ -28,6 +29,23 @@
     "attribution": "sourced: https://finnhub.io/"
   },
   "items": [
+    {
+      "id": "move::NVDA::2026-07-15T11",
+      "kind": "market_move",
+      "headline": "NVDA jumps +3.99% to 211.66",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-07-14T19:36:43.802Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
     {
       "id": "move::NVDA::2026-07-14T21",
       "kind": "market_move",
@@ -95,6 +113,48 @@
       "timestamp": "2026-07-14T16:20:57.057Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260716T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-07-16, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-07-16T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::global_acquisition::eu::eurozone-cpi::20260716T100000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Eurozone CPI (2026-07-16, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "inflation",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "sector_tags": [
+        "inflation"
+      ],
+      "timestamp": "2026-07-16T10:00:00.000Z",
+      "source": "global_acquisition",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::forexfactory::gb::gdp-m-m::20260716T060000",
@@ -529,29 +589,6 @@
         "inflation"
       ],
       "timestamp": "2026-07-14T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260713T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-07-13)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-07-13T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
