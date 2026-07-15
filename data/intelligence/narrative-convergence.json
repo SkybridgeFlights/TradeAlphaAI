@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-15T18:13:16.456Z",
+  "updated_at": "2026-07-15T19:46:40.520Z",
   "run_date": "2026-07-15",
   "verified": true,
   "coherence": {
-    "score": 69,
+    "score": 63,
     "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 69/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "ar": "اتساق النظام 69/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
+    "en": "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
     "events_5d": 9,
@@ -38,6 +38,17 @@
     }
   ],
   "confirms": [
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    },
     {
       "id": "dollar-gold",
       "legs": [
@@ -85,6 +96,28 @@
   ],
   "diverges": [
     {
+      "id": "yields-bonds",
+      "legs": [
+        "us10y",
+        "tlt"
+      ],
+      "state": "diverging",
+      "chain_strength": 2,
+      "en": "Rising yields mark down long-duration bonds",
+      "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
+    },
+    {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    },
+    {
       "id": "liquidity-beta",
       "legs": [
         "btc",
@@ -126,15 +159,15 @@
   ],
   "narrative_en": [
     "The regime picture moved: market fragility: building -> contained; ai concentration risk: elevated -> contained; dollar pressure: stable -> easing.",
-    "Regime coherence 69/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "The BTC/QQQ link is not holding; that is where the tape's internal argument lives.",
+    "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The US10Y/TLT link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 69/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
-    "رابط BTC/QQQ لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "رابط US10Y/TLT لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
@@ -178,7 +211,7 @@
       },
       {
         "date": "2026-07-15",
-        "state": "neutral"
+        "state": "confirming"
       }
     ],
     "yields-dollar": [
@@ -220,7 +253,7 @@
       },
       {
         "date": "2026-07-15",
-        "state": "neutral"
+        "state": "diverging"
       }
     ],
     "dollar-gold": [
@@ -472,9 +505,9 @@
       },
       {
         "date": "2026-07-15",
-        "state": "neutral"
+        "state": "diverging"
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 69/100 (tense); velocity accelerating; 4 confirming / 1 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 63/100 (tense); velocity accelerating; 5 confirming / 3 diverging links; 2 underpriced signal(s)."
 }
