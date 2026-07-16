@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-16T18:11:47.411Z",
+  "updated_at": "2026-07-16T19:42:29.021Z",
   "run_date": "2026-07-16",
   "verified": true,
   "selected": [
@@ -43,29 +43,38 @@
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "yields-growth",
-      "kind": "cross-asset",
-      "visual_type": "cross-asset-comparison",
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
       "symbols": [
-        "TVC:US10Y",
+        "CRYPTO:BTCUSD",
         "NASDAQ:QQQ"
       ],
-      "title_en": "Yields vs growth equities",
-      "title_ar": "العوائد مقابل أسهم النمو",
-      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
-      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 50,
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 18,
       "evidence": [
-        "causal:yields-growth diverging ×1"
+        "liquidity_pressure 3/5"
       ],
       "annotations": [
         {
-          "type": "divergence-highlight",
-          "severity": "elevated",
-          "label_en": "Divergence — US10Y/QQQ not confirming",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
+          "type": "commentary-label",
+          "severity": "info",
+          "label_en": "Confirmation — BTC/QQQ relationship holding",
+          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
           "evidence": [
-            "convergence:diverges:yields-growth:chain=1"
+            "convergence:confirms:liquidity-beta"
+          ]
+        },
+        {
+          "type": "pressure-band",
+          "severity": "elevated",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
+          "evidence": [
+            "macro:pressure:liquidity_pressure:3"
           ]
         },
         {
