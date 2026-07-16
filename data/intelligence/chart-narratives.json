@@ -1,43 +1,71 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-16T11:46:00.814Z",
+  "updated_at": "2026-07-16T18:11:47.411Z",
   "run_date": "2026-07-16",
   "verified": true,
   "selected": [
     {
-      "id": "liquidity-beta",
-      "kind": "liquidity",
-      "visual_type": "liquidity-pressure",
+      "id": "dollar-gold",
+      "kind": "cross-asset",
+      "visual_type": "macro-divergence",
       "symbols": [
-        "CRYPTO:BTCUSD",
-        "NASDAQ:QQQ"
+        "TVC:DXY",
+        "OANDA:XAUUSD"
       ],
-      "title_en": "Liquidity beta",
-      "title_ar": "بيتا السيولة",
-      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 68,
+      "title_en": "Dollar vs gold",
+      "title_ar": "الدولار مقابل الذهب",
+      "reading_en": "Gold holding against a firming dollar — an unusual co-move that leaves the relationship structurally unresolved.",
+      "reading_ar": "الذهب يصمد رغم تقوّي الدولار — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
+      "score": 52,
       "evidence": [
-        "causal:liquidity-beta diverging ×2",
-        "liquidity_pressure 3/5"
+        "causal:dollar-gold diverging ×1"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
-          "severity": "high",
-          "label_en": "Divergence — BTC/QQQ not confirming (2-session strain)",
-          "label_ar": "انفصال — BTC/QQQ لا يؤكد (إجهاد 2 جلسات)",
+          "severity": "elevated",
+          "label_en": "Divergence — DXY/GOLD not confirming",
+          "label_ar": "انفصال — DXY/GOLD لا يؤكد",
           "evidence": [
-            "convergence:diverges:liquidity-beta:chain=2"
+            "convergence:diverges:dollar-gold:chain=1"
           ]
         },
         {
-          "type": "pressure-band",
-          "severity": "elevated",
-          "label_en": "Stored pressure — liquidity pressure 3/5",
-          "label_ar": "ضغط مخزّن — 3/5",
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-16)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-16)",
           "evidence": [
-            "macro:pressure:liquidity_pressure:3"
+            "pulse:catalyst:FOMC Press Release:2026-07-16"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "yields-growth",
+      "kind": "cross-asset",
+      "visual_type": "cross-asset-comparison",
+      "symbols": [
+        "TVC:US10Y",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Yields vs growth equities",
+      "title_ar": "العوائد مقابل أسهم النمو",
+      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
+      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
+      "score": 50,
+      "evidence": [
+        "causal:yields-growth diverging ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — US10Y/QQQ not confirming",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
+          "evidence": [
+            "convergence:diverges:yields-growth:chain=1"
           ]
         },
         {

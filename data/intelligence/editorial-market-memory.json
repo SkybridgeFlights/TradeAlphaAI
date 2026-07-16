@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-16T11:46:00.846Z",
+  "updated_at": "2026-07-16T18:11:47.439Z",
   "run_date": "2026-07-16",
   "verified": true,
   "status": "verified",
@@ -11,30 +11,34 @@
     {
       "id": "speculative-momentum",
       "family": "positioning",
-      "state": "weakening",
-      "sessions": 29,
-      "inactive_sessions": 1,
+      "state": "crowded",
+      "sessions": 30,
+      "inactive_sessions": 0,
       "first_seen": "2026-06-15",
-      "last_seen": "2026-07-15",
+      "last_seen": "2026-07-16",
       "last_evaluated": "2026-07-16",
-      "active": false,
+      "active": true,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
-      "evidence": []
+      "evidence": [
+        "pulse:ai_concentration_risk=elevated"
+      ]
     },
     {
       "id": "market-fragility",
       "family": "risk",
-      "state": "invalidated",
-      "sessions": 29,
-      "inactive_sessions": 1,
+      "state": "unresolved",
+      "sessions": 30,
+      "inactive_sessions": 0,
       "first_seen": "2026-06-15",
-      "last_seen": "2026-07-15",
+      "last_seen": "2026-07-16",
       "last_evaluated": "2026-07-16",
-      "active": false,
+      "active": true,
       "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
       "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
-      "evidence": []
+      "evidence": [
+        "pulse:market_fragility=building"
+      ]
     },
     {
       "id": "cross-asset-conflict",
@@ -50,9 +54,26 @@
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
         "convergence:yields-bonds",
-        "convergence:yields-dollar",
-        "convergence:ai-growth",
-        "convergence:liquidity-beta"
+        "convergence:yields-growth",
+        "convergence:dollar-gold"
+      ]
+    },
+    {
+      "id": "gold-resilience",
+      "family": "cross-asset",
+      "state": "unresolved",
+      "sessions": 6,
+      "inactive_sessions": 0,
+      "first_seen": "2026-06-26",
+      "last_seen": "2026-07-16",
+      "last_evaluated": "2026-07-16",
+      "active": true,
+      "en": "Gold continues to resist the pressure normally associated with dollar strength.",
+      "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
+      "evidence": [
+        "convergence:yields-bonds",
+        "convergence:yields-growth",
+        "convergence:dollar-gold"
       ]
     }
   ],
@@ -132,6 +153,22 @@
   "failed_expectations": [],
   "unresolved_tensions": [
     {
+      "id": "market-fragility",
+      "family": "risk",
+      "state": "unresolved",
+      "sessions": 30,
+      "inactive_sessions": 0,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-07-16",
+      "last_evaluated": "2026-07-16",
+      "active": true,
+      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
+      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
+      "evidence": [
+        "pulse:market_fragility=building"
+      ]
+    },
+    {
       "id": "cross-asset-conflict",
       "family": "cross-asset",
       "state": "unresolved",
@@ -145,9 +182,26 @@
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
         "convergence:yields-bonds",
-        "convergence:yields-dollar",
-        "convergence:ai-growth",
-        "convergence:liquidity-beta"
+        "convergence:yields-growth",
+        "convergence:dollar-gold"
+      ]
+    },
+    {
+      "id": "gold-resilience",
+      "family": "cross-asset",
+      "state": "unresolved",
+      "sessions": 6,
+      "inactive_sessions": 0,
+      "first_seen": "2026-06-26",
+      "last_seen": "2026-07-16",
+      "last_evaluated": "2026-07-16",
+      "active": true,
+      "en": "Gold continues to resist the pressure normally associated with dollar strength.",
+      "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
+      "evidence": [
+        "convergence:yields-bonds",
+        "convergence:yields-growth",
+        "convergence:dollar-gold"
       ]
     }
   ],
@@ -161,16 +215,6 @@
       "last_seen": "2026-07-16",
       "en": "accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
       "ar": "ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
-    },
-    {
-      "id": "pressure:speculative_pressure",
-      "kind": "pressure",
-      "sessions": 6,
-      "status": "persistent",
-      "first_seen": "2026-07-11",
-      "last_seen": "2026-07-16",
-      "en": "stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
-      "ar": "شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
     }
   ],
   "market_character": {
@@ -181,19 +225,35 @@
   "current_focus": [
     {
       "kind": "narrative",
+      "id": "speculative-momentum",
+      "state": "crowded",
+      "sessions": 30,
+      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
+      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
+    },
+    {
+      "kind": "narrative",
+      "id": "market-fragility",
+      "state": "unresolved",
+      "sessions": 30,
+      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
+      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب."
+    },
+    {
+      "kind": "narrative",
+      "id": "gold-resilience",
+      "state": "unresolved",
+      "sessions": 6,
+      "en": "Gold continues to resist the pressure normally associated with dollar strength.",
+      "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار."
+    },
+    {
+      "kind": "narrative",
       "id": "cross-asset-conflict",
       "state": "unresolved",
       "sessions": 3,
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي."
-    },
-    {
-      "kind": "narrative",
-      "id": "speculative-momentum",
-      "state": "weakening",
-      "sessions": 29,
-      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
-      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
     },
     {
       "kind": "underpriced-memory",
@@ -205,45 +265,6 @@
     }
   ],
   "timeline": [
-    {
-      "id": "2026-06-28:persisted:cross-asset-conflict",
-      "date": "2026-06-28",
-      "kind": "persisted",
-      "narrative_id": "cross-asset-conflict",
-      "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
-      "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
-      "evidence": [
-        "convergence:yields-growth",
-        "convergence:yields-dollar",
-        "convergence:dollar-gold",
-        "convergence:liquidity-beta"
-      ]
-    },
-    {
-      "id": "2026-06-28:persisted:gold-resilience",
-      "date": "2026-06-28",
-      "kind": "persisted",
-      "narrative_id": "gold-resilience",
-      "en": "Gold continues to resist the pressure normally associated with dollar strength.",
-      "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
-      "evidence": [
-        "convergence:yields-growth",
-        "convergence:yields-dollar",
-        "convergence:dollar-gold",
-        "convergence:liquidity-beta"
-      ]
-    },
-    {
-      "id": "2026-06-29:persisted:dollar-strength",
-      "date": "2026-06-29",
-      "kind": "persisted",
-      "narrative_id": "dollar-strength",
-      "en": "Dollar pressure continues to shape the cross-asset backdrop.",
-      "ar": "يواصل ضغط الدولار تشكيل الخلفية العامة للعلاقات بين الأصول.",
-      "evidence": [
-        "pulse:dollar_pressure=firming"
-      ]
-    },
     {
       "id": "2026-06-29:persisted:speculative-momentum",
       "date": "2026-06-29",
@@ -1262,6 +1283,41 @@
         "convergence:yields-dollar",
         "convergence:ai-growth",
         "convergence:liquidity-beta"
+      ]
+    },
+    {
+      "id": "2026-07-16:intensified:speculative-momentum",
+      "date": "2026-07-16",
+      "kind": "intensified",
+      "narrative_id": "speculative-momentum",
+      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
+      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
+      "evidence": [
+        "pulse:ai_concentration_risk=elevated"
+      ]
+    },
+    {
+      "id": "2026-07-16:intensified:market-fragility",
+      "date": "2026-07-16",
+      "kind": "intensified",
+      "narrative_id": "market-fragility",
+      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
+      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
+      "evidence": [
+        "pulse:market_fragility=building"
+      ]
+    },
+    {
+      "id": "2026-07-16:changed:gold-resilience",
+      "date": "2026-07-16",
+      "kind": "changed",
+      "narrative_id": "gold-resilience",
+      "en": "Gold continues to resist the pressure normally associated with dollar strength.",
+      "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
+      "evidence": [
+        "convergence:yields-bonds",
+        "convergence:yields-growth",
+        "convergence:dollar-gold"
       ]
     }
   ],

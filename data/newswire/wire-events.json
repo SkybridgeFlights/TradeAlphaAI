@@ -1,12 +1,13 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-16T11:46:00.630Z",
+  "updated_at": "2026-07-16T18:11:47.231Z",
   "status": "live",
-  "item_count": 22,
+  "item_count": 19,
   "clusters": {
-    "ai-momentum": 5,
-    "inflation": 7,
-    "fed": 3,
+    "ai-momentum": 4,
+    "volatility": 1,
+    "fed": 4,
+    "inflation": 3,
     "labor": 1,
     "growth": 2,
     "macro": 4
@@ -81,9 +82,26 @@
       "attribution": "sourced: https://finnhub.io/"
     },
     {
-      "id": "move::NVDA::2026-07-14T17",
+      "id": "move::VIX::2026-07-16T18",
       "kind": "market_move",
-      "headline": "NVDA jumps +2.78% to 209.19",
+      "headline": "VIX jumps +9.58% to 16.47",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-07-16T18:11:45.976Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::NVDA::2026-07-16T18",
+      "kind": "market_move",
+      "headline": "NVDA drops -2.65% to 206.86",
       "urgency": 65,
       "market_impact": 70,
       "cluster": "ai-momentum",
@@ -93,26 +111,32 @@
       "sector_tags": [
         "ai-semiconductors"
       ],
-      "timestamp": "2026-07-14T16:20:57.057Z",
+      "timestamp": "2026-07-16T18:11:44.344Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
     },
     {
-      "id": "move::NVDA::2026-07-14T16",
-      "kind": "market_move",
-      "headline": "NVDA jumps +2.78% to 209.19",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260718T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-07-18)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "ai-momentum",
+      "cluster": "fed",
       "asset_tags": [
-        "NVDA"
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
       ],
       "sector_tags": [
-        "ai-semiconductors"
+        "fed"
       ],
-      "timestamp": "2026-07-14T16:20:57.057Z",
-      "source": "Finnhub",
-      "attribution": "sourced: https://finnhub.io/"
+      "timestamp": "2026-07-18T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::global_acquisition::jp::japan-cpi::20260717T230000",
@@ -398,90 +422,6 @@
         "macro"
       ],
       "timestamp": "2026-07-14T20:00:00.000Z",
-      "source": "forexfactory",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::forexfactory::us::core-cpi-m-m::20260714T123000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: Core CPI m/m (2026-07-14)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-07-14T12:30:00.000Z",
-      "source": "forexfactory",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::forexfactory::us::core-cpi-y-y::20260714T123000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: Core CPI y/y (2026-07-14)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-07-14T12:30:00.000Z",
-      "source": "forexfactory",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::forexfactory::us::cpi-m-m::20260714T123000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: CPI m/m (2026-07-14)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-07-14T12:30:00.000Z",
-      "source": "forexfactory",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::forexfactory::us::cpi-y-y::20260714T123000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: CPI y/y (2026-07-14)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-07-14T12:30:00.000Z",
       "source": "forexfactory",
       "attribution": "scheduled release via platform calendar providers"
     }
