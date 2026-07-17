@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-16T21:10:01.275Z",
-  "run_date": "2026-07-16",
+  "updated_at": "2026-07-17T11:25:40.759Z",
+  "run_date": "2026-07-17",
   "verified": true,
-  "sessions_tracked": 33,
+  "sessions_tracked": 34,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "neutral",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "risk-on",
         "date": "2026-07-15"
@@ -19,14 +19,14 @@
       "dimension": "volatility_regime",
       "state": "normal",
       "phase": "extended",
-      "sessions_in_state": 25,
+      "sessions_in_state": 26,
       "from": null
     },
     {
       "dimension": "dollar_pressure",
       "state": "easing",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
         "state": "stable",
         "date": "2026-07-14"
@@ -36,14 +36,14 @@
       "dimension": "duration_pressure",
       "state": "neutral",
       "phase": "extended",
-      "sessions_in_state": 25,
+      "sessions_in_state": 26,
       "from": null
     },
     {
       "dimension": "momentum_concentration",
       "state": "broadening",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "balanced",
         "date": "2026-07-15"
@@ -52,8 +52,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-07-15"
@@ -62,8 +62,8 @@
     {
       "dimension": "breadth_state",
       "state": "mixed",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "confirming",
         "date": "2026-07-15"
@@ -80,7 +80,7 @@
       "dimension": "liquidity_stress",
       "state": "mixed",
       "phase": "extended",
-      "sessions_in_state": 25,
+      "sessions_in_state": 26,
       "from": null
     },
     {
@@ -93,15 +93,32 @@
     {
       "dimension": "market_fragility",
       "state": "building",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-07-15"
       }
     }
   ],
-  "memory_observations": [],
+  "memory_observations": [
+    {
+      "kind": "streak",
+      "dimension": "ai_concentration_risk",
+      "state": "elevated",
+      "sessions": 2,
+      "en": "AI concentration risk holds elevated for a second straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثانية على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
+    },
+    {
+      "kind": "streak",
+      "dimension": "market_fragility",
+      "state": "building",
+      "sessions": 2,
+      "en": "Market fragility signals build for a second straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثانية على التوالي عبر مدخلات التقلب والاتساع والتركز."
+    }
+  ],
   "causal_links": [
     {
       "id": "yields-growth",
@@ -276,24 +293,7 @@
     "liquidity": [],
     "speculative": []
   },
-  "alerts": [
-    {
-      "id": "positioning-crowding-2026-07-16",
-      "type": "positioning-crowding",
-      "severity": "watch",
-      "date": "2026-07-16",
-      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
-      "derived_from": [
-        {
-          "dimension": "ai_concentration_risk",
-          "from": "contained",
-          "to": "elevated",
-          "date": "2026-07-16"
-        }
-      ]
-    }
-  ],
+  "alerts": [],
   "timeline_tail": [
     {
       "date": "2026-07-16",
@@ -338,5 +338,5 @@
       "note": "market fragility: building -> contained"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 0 cross-session observation(s); 57 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 57 timeline event(s)."
 }

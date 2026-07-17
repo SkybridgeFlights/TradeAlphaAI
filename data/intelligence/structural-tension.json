@@ -1,34 +1,34 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-16T21:10:01.440Z",
-  "run_date": "2026-07-16",
+  "updated_at": "2026-07-17T11:25:40.934Z",
+  "run_date": "2026-07-17",
   "verified": true,
   "status": "verified",
   "regime_condition": "unstable-regime",
   "tension_level": "building",
-  "tension_score": 30,
+  "tension_score": 34,
   "tracks": {
     "positioning-strain": {
       "id": "positioning-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 29,
+      "sessions": 30,
       "severity": 2,
       "first_seen": "2026-06-16",
-      "last_seen": "2026-07-16",
-      "last_evaluated": "2026-07-16",
+      "last_seen": "2026-07-17",
+      "last_evaluated": "2026-07-17",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
     "cross-asset-strain": {
       "id": "cross-asset-strain",
       "active": true,
-      "state": "persistent",
-      "sessions": 9,
-      "severity": 1,
+      "state": "intensifying",
+      "sessions": 10,
+      "severity": 2,
       "first_seen": "2026-07-08",
-      "last_seen": "2026-07-16",
-      "last_evaluated": "2026-07-16",
+      "last_seen": "2026-07-17",
+      "last_evaluated": "2026-07-17",
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
     },
@@ -36,11 +36,11 @@
       "id": "liquidity-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 22,
+      "sessions": 23,
       "severity": 1,
       "first_seen": "2026-06-25",
-      "last_seen": "2026-07-16",
-      "last_evaluated": "2026-07-16",
+      "last_seen": "2026-07-17",
+      "last_evaluated": "2026-07-17",
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
     }
@@ -59,35 +59,39 @@
   },
   "narrative_stability": "strained",
   "catalyst_fragility": {
-    "level": "none",
-    "next": null,
-    "en": "No major catalyst sits inside the 72-hour structural window.",
-    "ar": "لا يوجد محفز رئيسي ضمن نافذة الحساسية الهيكلية البالغة 72 ساعة."
+    "level": "moderate",
+    "next": {
+      "name": "Japan CPI",
+      "time": "2026-07-17T23:00:00.000Z",
+      "hours": 11.6
+    },
+    "en": "Japan CPI is the next scheduled test of the current structure.",
+    "ar": "يمثل Japan CPI الاختبار المجدول التالي للبنية الحالية."
   },
   "strain_map": [
     {
       "id": "positioning-strain",
       "state": "persistent",
-      "sessions": 29,
+      "sessions": 30,
       "severity": 2,
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
     {
+      "id": "cross-asset-strain",
+      "state": "intensifying",
+      "sessions": 10,
+      "severity": 2,
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    {
       "id": "liquidity-strain",
       "state": "persistent",
-      "sessions": 22,
+      "sessions": 23,
       "severity": 1,
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
-    },
-    {
-      "id": "cross-asset-strain",
-      "state": "persistent",
-      "sessions": 9,
-      "severity": 1,
-      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
-      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
     }
   ],
   "pressure_memory": [
@@ -282,6 +286,12 @@
       "condition": "unstable-regime",
       "score": 30,
       "change": "faded"
+    },
+    {
+      "date": "2026-07-17",
+      "condition": "unstable-regime",
+      "score": 34,
+      "change": "intensified"
     }
   ],
   "summary_en": "The regime remains intact but internally fragile as several pressure tracks persist. Positioning remains concentrated rather than broadly distributed.",
