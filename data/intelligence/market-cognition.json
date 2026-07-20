@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-20T18:58:22.603Z",
+  "updated_at": "2026-07-20T20:26:02.974Z",
   "run_date": "2026-07-20",
   "verified": true,
   "sessions_tracked": 35,
@@ -41,7 +41,7 @@
     },
     {
       "dimension": "momentum_concentration",
-      "state": "narrow-megacap",
+      "state": "balanced",
       "phase": "emerging",
       "sessions_in_state": 1,
       "from": {
@@ -61,12 +61,12 @@
     },
     {
       "dimension": "breadth_state",
-      "state": "deteriorating",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "mixed",
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
-        "state": "mixed",
-        "date": "2026-07-17"
+        "state": "confirming",
+        "date": "2026-07-15"
       }
     },
     {
@@ -92,12 +92,12 @@
     },
     {
       "dimension": "market_fragility",
-      "state": "building",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "contained",
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
-        "state": "contained",
-        "date": "2026-07-17"
+        "state": "building",
+        "date": "2026-07-16"
       }
     }
   ],
@@ -115,7 +115,7 @@
       "state": "diverging",
       "evidence": {
         "us10y": 0.2835332606324951,
-        "qqq": 0.7378
+        "qqq": 0.105
       }
     },
     {
@@ -130,7 +130,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 0.2835332606324951,
-        "dxy": 0.4557213930348243
+        "dxy": 0.4706467661691532
       }
     },
     {
@@ -144,8 +144,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "confirming",
       "evidence": {
-        "dxy": 0.4557213930348243,
-        "gold": -0.1411
+        "dxy": 0.4706467661691532,
+        "gold": -0.2199
       }
     },
     {
@@ -157,10 +157,10 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "vix": 10.909090909090914,
-        "spy": 0.2233
+        "vix": 13.212121212121211,
+        "spy": -0.1614
       }
     },
     {
@@ -174,8 +174,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": 0.5177,
-        "qqq": 0.7378
+        "nvda": 0.2317,
+        "qqq": 0.105
       }
     },
     {
@@ -189,8 +189,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": 1.4845,
-        "qqq": 0.7378
+        "btc": 1.237,
+        "qqq": 0.105
       }
     },
     {
@@ -202,10 +202,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "spy": 0.2233,
-        "iwm": -0.1394
+        "spy": -0.1614,
+        "iwm": -0.5884
       }
     },
     {
@@ -232,7 +232,7 @@
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
           "us10y": 0.2835332606324951,
-          "dxy": 0.4557213930348243
+          "dxy": 0.4706467661691532
         }
       },
       {
@@ -240,17 +240,17 @@
         "en": "A firming dollar typically pressures gold",
         "ar": "تقوّي الدولار يضغط على الذهب عادة",
         "evidence": {
-          "dxy": 0.4557213930348243,
-          "gold": -0.1411
+          "dxy": 0.4706467661691532,
+          "gold": -0.2199
         }
       },
       {
-        "source": "causal:ai-growth",
-        "en": "AI leadership drives the growth complex",
-        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
+        "source": "causal:vix-equities",
+        "en": "Rising hedging demand pressures the equity tape",
+        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
         "evidence": {
-          "nvda": 0.5177,
-          "qqq": 0.7378
+          "vix": 13.212121212121211,
+          "spy": -0.1614
         }
       }
     ],
@@ -261,35 +261,11 @@
         "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
           "us10y": 0.2835332606324951,
-          "qqq": 0.7378
-        }
-      },
-      {
-        "source": "causal:vix-equities",
-        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "vix": 10.909090909090914,
-          "spy": 0.2233
-        }
-      },
-      {
-        "source": "causal:breadth-link",
-        "en": "Divergence on the spy/iwm link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة spy/iwm — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "spy": 0.2233,
-          "iwm": -0.1394
+          "qqq": 0.105
         }
       }
     ],
-    "fragility": [
-      {
-        "source": "market_fragility",
-        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
-        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
-      }
-    ],
+    "fragility": [],
     "exhaustion": [],
     "liquidity": [],
     "speculative": []

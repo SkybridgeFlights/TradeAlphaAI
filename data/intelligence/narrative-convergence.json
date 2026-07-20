@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-20T18:58:22.677Z",
+  "updated_at": "2026-07-20T20:26:03.049Z",
   "run_date": "2026-07-20",
   "verified": true,
   "coherence": {
-    "score": 58,
-    "band": "tense",
+    "score": 88,
+    "band": "coherent",
     "observed_links": 8,
-    "en": "Regime coherence 58/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "ar": "اتساق النظام 58/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
+    "en": "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
+    "ar": "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
     "events_5d": 18,
@@ -61,6 +61,17 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة"
     },
     {
+      "id": "vix-equities",
+      "legs": [
+        "vix",
+        "spy"
+      ],
+      "state": "confirming",
+      "chain_strength": 9,
+      "en": "Rising hedging demand pressures the equity tape",
+      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
+    },
+    {
       "id": "ai-growth",
       "legs": [
         "nvda",
@@ -81,6 +92,17 @@
       "chain_strength": 3,
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+    },
+    {
+      "id": "breadth-link",
+      "legs": [
+        "spy",
+        "iwm"
+      ],
+      "state": "confirming",
+      "chain_strength": 5,
+      "en": "Healthy advances carry small caps with the index",
+      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     },
     {
       "id": "yields-bonds",
@@ -105,28 +127,6 @@
       "chain_strength": 2,
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
-    {
-      "id": "vix-equities",
-      "legs": [
-        "vix",
-        "spy"
-      ],
-      "state": "diverging",
-      "chain_strength": 1,
-      "en": "Rising hedging demand pressures the equity tape",
-      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
-    },
-    {
-      "id": "breadth-link",
-      "legs": [
-        "spy",
-        "iwm"
-      ],
-      "state": "diverging",
-      "chain_strength": 1,
-      "en": "Healthy advances carry small caps with the index",
-      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
   "weakening": [],
@@ -159,14 +159,14 @@
   ],
   "narrative_en": [
     "The regime picture moved: market fragility: contained -> building; breadth state: mixed -> deteriorating; momentum concentration: broadening -> narrow-megacap.",
-    "Regime coherence 58/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
     "The US10Y/QQQ link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (3/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 58/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
     "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
@@ -337,7 +337,7 @@
       },
       {
         "date": "2026-07-20",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "ai-growth": [
@@ -463,7 +463,7 @@
       },
       {
         "date": "2026-07-20",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "yields-bonds": [
@@ -509,5 +509,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 58/100 (tense); velocity accelerating; 5 confirming / 3 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 88/100 (coherent); velocity accelerating; 7 confirming / 1 diverging links; 2 underpriced signal(s)."
 }
