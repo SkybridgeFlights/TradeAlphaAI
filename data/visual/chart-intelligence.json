@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-17T21:23:20.309Z",
+  "generated_at": "2026-07-20T16:59:20.935Z",
   "source_layer": "chart-intelligence",
   "preview_only": true,
   "chart_types": [
@@ -25,23 +25,23 @@
       "id": "liquidity_regime_snapshot",
       "chart_type": "liquidity_regime_snapshot",
       "analytical_reason": {
-        "regime": "volatility_transition",
+        "regime": "unstable_rally",
         "question": "What is the structural environment macro reactions are landing in?"
       },
       "narrative_hook": {
-        "en": "The liquidity snapshot frames the environment: a volatility transition regime with volatility rejection liquidity and transition state stability.",
-        "ar": "يؤطّر مشهد السيولة البيئة: نظام تحوّل تذبذب مع سيولة رفض تذبذب واستقرار انتقالي."
+        "en": "The liquidity snapshot frames the environment: a unstable rally regime with volatility rejection liquidity and unstable stability.",
+        "ar": "يؤطّر مشهد السيولة البيئة: نظام صعود غير مستقر مع سيولة رفض تذبذب واستقرار غير مستقر."
       },
       "evidence": {
-        "regime": "volatility_transition",
+        "regime": "unstable_rally",
         "liquidity_state": "volatility_rejection",
-        "stability": "transition_state",
-        "coherence": 0.6,
+        "stability": "unstable",
+        "coherence": 0.2,
         "sub_states": {
-          "breadth": "mixed",
+          "breadth": "narrow",
           "volatility": "expansion",
           "yield": "neutral",
-          "dollar": "easing_proxy",
+          "dollar": "tightening_proxy",
           "defensive": "cyclical_leadership"
         }
       },
@@ -51,11 +51,11 @@
       ],
       "graphic": {
         "visual_type": "regime-snapshot",
-        "headline_en": "volatility transition",
-        "headline_ar": "تحوّل تذبذب",
+        "headline_en": "unstable rally",
+        "headline_ar": "صعود غير مستقر",
         "narrative_context": {
-          "en": "Liquidity volatility rejection · stability transition state · coherence 0.6.",
-          "ar": "سيولة رفض تذبذب · استقرار انتقالي · اتساق 0.6."
+          "en": "Liquidity volatility rejection · stability unstable · coherence 0.2.",
+          "ar": "سيولة رفض تذبذب · استقرار غير مستقر · اتساق 0.2."
         },
         "annotations": [
           {
@@ -64,14 +64,14 @@
             "type": "evidence"
           },
           {
-            "label_en": "Stability — transition state",
-            "label_ar": "الاستقرار — انتقالي",
-            "type": "evidence"
+            "label_en": "Stability — unstable",
+            "label_ar": "الاستقرار — غير مستقر",
+            "type": "divergence-highlight"
           },
           {
-            "label_en": "Breadth — mixed",
-            "label_ar": "الاتساع — مختلط",
-            "type": "evidence"
+            "label_en": "Breadth — narrow",
+            "label_ar": "الاتساع — ضيق",
+            "type": "divergence-highlight"
           }
         ],
         "attribution": "Source: TradeAlphaAI macro-reactions + liquidity-regime artifacts"

@@ -1,58 +1,137 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-17T21:23:20.148Z",
-  "run_date": "2026-07-17",
-  "verified": false,
-  "status": "holding_unverified",
-  "regime_condition": "unverified",
-  "tension_level": "unverified",
-  "tension_score": null,
+  "updated_at": "2026-07-20T16:59:20.776Z",
+  "run_date": "2026-07-20",
+  "verified": true,
+  "status": "verified",
+  "regime_condition": "unstable-regime",
+  "tension_level": "building",
+  "tension_score": 46,
   "tracks": {
+    "participation-strain": {
+      "id": "participation-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 2,
+      "first_seen": "2026-07-20",
+      "last_seen": "2026-07-20",
+      "last_evaluated": "2026-07-20",
+      "en": "Participation remains narrower than the headline tape.",
+      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
+    },
     "positioning-strain": {
       "id": "positioning-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 30,
+      "sessions": 31,
       "severity": 2,
       "first_seen": "2026-06-16",
-      "last_seen": "2026-07-17",
-      "last_evaluated": "2026-07-17",
+      "last_seen": "2026-07-20",
+      "last_evaluated": "2026-07-20",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
     "cross-asset-strain": {
       "id": "cross-asset-strain",
       "active": true,
-      "state": "persistent",
-      "sessions": 10,
-      "severity": 1,
+      "state": "intensifying",
+      "sessions": 11,
+      "severity": 2,
       "first_seen": "2026-07-08",
-      "last_seen": "2026-07-17",
-      "last_evaluated": "2026-07-17",
+      "last_seen": "2026-07-20",
+      "last_evaluated": "2026-07-20",
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    "contradiction-strain": {
+      "id": "contradiction-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-07-20",
+      "last_seen": "2026-07-20",
+      "last_evaluated": "2026-07-20",
+      "en": "Internal market signals continue to contradict the headline move.",
+      "ar": "تواصل الإشارات الداخلية للسوق مناقضة الحركة الظاهرة في المؤشرات."
     },
     "liquidity-strain": {
       "id": "liquidity-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 23,
+      "sessions": 24,
       "severity": 1,
       "first_seen": "2026-06-25",
-      "last_seen": "2026-07-17",
-      "last_evaluated": "2026-07-17",
+      "last_seen": "2026-07-20",
+      "last_evaluated": "2026-07-20",
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
     }
   },
-  "active_strains": [],
-  "internal_stability": null,
-  "narrative_stability": "unverified",
-  "catalyst_fragility": {
-    "level": "unverified",
-    "next": null
+  "active_strains": [
+    "participation-strain",
+    "positioning-strain",
+    "cross-asset-strain",
+    "contradiction-strain",
+    "liquidity-strain"
+  ],
+  "internal_stability": {
+    "leadership": "fragile",
+    "cross_asset": "strained",
+    "volatility_alignment": "aligned",
+    "risk_appetite": "risk-on",
+    "liquidity_participation": "uncertain"
   },
-  "strain_map": [],
+  "narrative_stability": "internally-inconsistent",
+  "catalyst_fragility": {
+    "level": "none",
+    "next": null,
+    "en": "No major catalyst sits inside the 72-hour structural window.",
+    "ar": "لا يوجد محفز رئيسي ضمن نافذة الحساسية الهيكلية البالغة 72 ساعة."
+  },
+  "strain_map": [
+    {
+      "id": "positioning-strain",
+      "state": "persistent",
+      "sessions": 31,
+      "severity": 2,
+      "en": "Positioning remains concentrated rather than broadly distributed.",
+      "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
+    },
+    {
+      "id": "cross-asset-strain",
+      "state": "intensifying",
+      "sessions": 11,
+      "severity": 2,
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    {
+      "id": "participation-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 2,
+      "en": "Participation remains narrower than the headline tape.",
+      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
+    },
+    {
+      "id": "liquidity-strain",
+      "state": "persistent",
+      "sessions": 24,
+      "severity": 1,
+      "en": "Liquidity participation is thinning at the margin.",
+      "ar": "تتراجع مساهمة السيولة عند الهامش."
+    },
+    {
+      "id": "contradiction-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Internal market signals continue to contradict the headline move.",
+      "ar": "تواصل الإشارات الداخلية للسوق مناقضة الحركة الظاهرة في المؤشرات."
+    }
+  ],
   "pressure_memory": [
     {
       "date": "2026-06-12",
@@ -251,8 +330,14 @@
       "condition": "unstable-regime",
       "score": 30,
       "change": "stable"
+    },
+    {
+      "date": "2026-07-20",
+      "condition": "unstable-regime",
+      "score": 46,
+      "change": "intensified"
     }
   ],
-  "summary_en": "Structural tension assessment is held until the intelligence stack is fully verified.",
-  "summary_ar": "يظل تقييم التوتر الهيكلي معلقاً إلى حين اكتمال توثيق منظومة الاستخبارات."
+  "summary_en": "The regime remains intact but internally fragile as several pressure tracks persist. Positioning remains concentrated rather than broadly distributed.",
+  "summary_ar": "يبقى النظام قائماً، لكنه هش داخلياً مع استمرار عدة مسارات ضغط. تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
 }

@@ -1,9 +1,105 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-17T21:23:20.088Z",
-  "run_date": "2026-07-17",
-  "verified": false,
-  "selected": [],
+  "updated_at": "2026-07-20T16:59:20.704Z",
+  "run_date": "2026-07-20",
+  "verified": true,
+  "selected": [
+    {
+      "id": "yields-growth",
+      "kind": "cross-asset",
+      "visual_type": "cross-asset-comparison",
+      "symbols": [
+        "TVC:US10Y",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Yields vs growth equities",
+      "title_ar": "العوائد مقابل أسهم النمو",
+      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
+      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
+      "score": 66,
+      "evidence": [
+        "causal:yields-growth diverging ×2",
+        "duration_pressure: building"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "high",
+          "label_en": "Divergence — US10Y/QQQ not confirming (2-session strain)",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 2 جلسات)",
+          "evidence": [
+            "convergence:diverges:yields-growth:chain=2"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — duration pressure neutral → building",
+          "label_ar": "تحوّل النظام — duration pressure: neutral ← building",
+          "evidence": [
+            "cognition:timeline:duration_pressure:neutral->building:2026-07-20"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-20)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-20)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-07-20"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "breadth-confirmation",
+      "kind": "cross-asset",
+      "visual_type": "breadth",
+      "symbols": [
+        "AMEX:SPY",
+        "AMEX:RSP"
+      ],
+      "title_en": "Cap-weighted vs equal-weight breadth",
+      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
+      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
+      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
+      "score": 38,
+      "evidence": [
+        "breadth_state: deteriorating ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — SPY/IWM not confirming",
+          "label_ar": "انفصال — SPY/IWM لا يؤكد",
+          "evidence": [
+            "convergence:diverges:breadth-link:chain=1"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — breadth state mixed → deteriorating",
+          "label_ar": "تحوّل النظام — breadth state: mixed ← deteriorating",
+          "evidence": [
+            "cognition:timeline:breadth_state:mixed->deteriorating:2026-07-20"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-20)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-20)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-07-20"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    }
+  ],
   "supported_visual_types": [
     "price-structure",
     "cross-asset-comparison",
