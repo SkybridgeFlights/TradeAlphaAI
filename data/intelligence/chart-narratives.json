@@ -1,47 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-21T21:20:41.609Z",
-  "run_date": "2026-07-21",
+  "updated_at": "2026-07-22T15:09:18.201Z",
+  "run_date": "2026-07-22",
   "verified": true,
   "selected": [
-    {
-      "id": "yields-growth",
-      "kind": "cross-asset",
-      "visual_type": "cross-asset-comparison",
-      "symbols": [
-        "TVC:US10Y",
-        "NASDAQ:QQQ"
-      ],
-      "title_en": "Yields vs growth equities",
-      "title_ar": "العوائد مقابل أسهم النمو",
-      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
-      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 70,
-      "evidence": [
-        "causal:yields-growth diverging ×3"
-      ],
-      "annotations": [
-        {
-          "type": "divergence-highlight",
-          "severity": "high",
-          "label_en": "Divergence — US10Y/QQQ not confirming (3-session strain)",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 3 جلسات)",
-          "evidence": [
-            "convergence:diverges:yields-growth:chain=3"
-          ]
-        },
-        {
-          "type": "catalyst-zone",
-          "severity": "info",
-          "label_en": "Catalyst window — FOMC Press Release (2026-07-21)",
-          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-21)",
-          "evidence": [
-            "pulse:catalyst:FOMC Press Release:2026-07-21"
-          ]
-        }
-      ],
-      "attribution": "Chart: TradingView · Quotes: sourced market providers"
-    },
     {
       "id": "dollar-gold",
       "kind": "cross-asset",
@@ -52,29 +14,67 @@
       ],
       "title_en": "Dollar vs gold",
       "title_ar": "الدولار مقابل الذهب",
-      "reading_en": "Gold holding against a firming dollar — an unusual co-move that leaves the relationship structurally unresolved.",
-      "reading_ar": "الذهب يصمد رغم تقوّي الدولار — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
-      "score": 52,
+      "reading_en": "Gold holding against a firming dollar for 2 sessions — an unusual co-move that leaves the relationship structurally unresolved.",
+      "reading_ar": "الذهب يصمد رغم تقوّي الدولار منذ 2 جلسات — تحرك متزامن غير معتاد يبقي العلاقة بين الأصلين غير محسومة هيكلياً.",
+      "score": 64,
       "evidence": [
-        "causal:dollar-gold diverging ×1"
+        "causal:dollar-gold diverging ×2"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
-          "severity": "elevated",
-          "label_en": "Divergence — DXY/GOLD not confirming",
-          "label_ar": "انفصال — DXY/GOLD لا يؤكد",
+          "severity": "high",
+          "label_en": "Divergence — DXY/GOLD not confirming (2-session strain)",
+          "label_ar": "انفصال — DXY/GOLD لا يؤكد (إجهاد 2 جلسات)",
           "evidence": [
-            "convergence:diverges:dollar-gold:chain=1"
+            "convergence:diverges:dollar-gold:chain=2"
           ]
         },
         {
           "type": "catalyst-zone",
           "severity": "info",
-          "label_en": "Catalyst window — FOMC Press Release (2026-07-21)",
-          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-21)",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-22)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-22)",
           "evidence": [
-            "pulse:catalyst:FOMC Press Release:2026-07-21"
+            "pulse:catalyst:FOMC Press Release:2026-07-22"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "breadth-confirmation",
+      "kind": "cross-asset",
+      "visual_type": "breadth",
+      "symbols": [
+        "AMEX:SPY",
+        "AMEX:RSP"
+      ],
+      "title_en": "Cap-weighted vs equal-weight breadth",
+      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
+      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
+      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
+      "score": 38,
+      "evidence": [
+        "breadth_state: deteriorating ×1"
+      ],
+      "annotations": [
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — breadth state confirming → deteriorating",
+          "label_ar": "تحوّل النظام — breadth state: confirming ← deteriorating",
+          "evidence": [
+            "cognition:timeline:breadth_state:confirming->deteriorating:2026-07-22"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-07-22)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-07-22)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-07-22"
           ]
         }
       ],

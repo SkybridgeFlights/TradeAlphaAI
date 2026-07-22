@@ -1,13 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-21T21:20:41.461Z",
+  "updated_at": "2026-07-22T15:09:18.012Z",
   "status": "live",
-  "item_count": 23,
+  "item_count": 27,
   "clusters": {
     "volatility": 9,
-    "tape": 8,
+    "tape": 9,
     "ai-momentum": 1,
-    "fed": 3,
+    "fed": 5,
+    "labor": 1,
     "inflation": 2
   },
   "top_story": {
@@ -59,6 +60,23 @@
         "volatility"
       ],
       "timestamp": "2026-07-20T20:26:01.608Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::US10Y::2026-07-22T15",
+      "kind": "market_move",
+      "headline": "US10Y jumps +1.86% to 4.654",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-07-22T15:09:17.057Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
     },
@@ -333,6 +351,73 @@
       "timestamp": "2026-07-20T16:59:19.248Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260724T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-07-24)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-07-24T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260723T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-07-23, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-07-23T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::eu::ecb-rate-decision::20260723T120000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: ECB Rate Decision (2026-07-23, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-07-23T12:00:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260723T000000",
