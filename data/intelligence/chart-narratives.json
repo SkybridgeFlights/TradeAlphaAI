@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-22T16:57:18.399Z",
+  "updated_at": "2026-07-22T18:13:55.977Z",
   "run_date": "2026-07-22",
   "verified": true,
   "selected": [
@@ -43,29 +43,38 @@
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "breadth-confirmation",
-      "kind": "cross-asset",
-      "visual_type": "breadth",
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
       "symbols": [
-        "AMEX:SPY",
-        "AMEX:RSP"
+        "CRYPTO:BTCUSD",
+        "NASDAQ:QQQ"
       ],
-      "title_en": "Cap-weighted vs equal-weight breadth",
-      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
-      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
-      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
-      "score": 38,
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 18,
       "evidence": [
-        "breadth_state: deteriorating ×1"
+        "liquidity_pressure 3/5"
       ],
       "annotations": [
         {
-          "type": "transition-label",
-          "severity": "elevated",
-          "label_en": "Regime shift — breadth state confirming → deteriorating",
-          "label_ar": "تحوّل النظام — breadth state: confirming ← deteriorating",
+          "type": "commentary-label",
+          "severity": "info",
+          "label_en": "Confirmation — BTC/QQQ relationship holding",
+          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
           "evidence": [
-            "cognition:timeline:breadth_state:confirming->deteriorating:2026-07-22"
+            "convergence:confirms:liquidity-beta"
+          ]
+        },
+        {
+          "type": "pressure-band",
+          "severity": "elevated",
+          "label_en": "Stored pressure — liquidity pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
+          "evidence": [
+            "macro:pressure:liquidity_pressure:3"
           ]
         },
         {
