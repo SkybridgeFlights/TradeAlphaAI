@@ -1,34 +1,51 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-22T21:16:12.120Z",
+  "updated_at": "2026-07-23T15:15:58.889Z",
   "status": "live",
-  "item_count": 30,
+  "item_count": 31,
   "clusters": {
-    "ai-momentum": 4,
-    "volatility": 6,
-    "tape": 12,
+    "tape": 15,
+    "ai-momentum": 5,
+    "volatility": 4,
     "fed": 5,
     "labor": 1,
-    "inflation": 2
+    "inflation": 1
   },
   "top_story": {
-    "id": "move::NVDA::2026-07-22T19",
+    "id": "move::US10Y::2026-07-23T15",
     "kind": "market_move",
-    "headline": "NVDA jumps +3.08% to 213.68",
+    "headline": "US10Y jumps +3.72% to 4.71",
     "urgency": 90,
     "market_impact": 95,
-    "cluster": "ai-momentum",
+    "cluster": "tape",
     "asset_tags": [
-      "NVDA"
+      "US10Y"
     ],
     "sector_tags": [
-      "ai-semiconductors"
+      "rates"
     ],
-    "timestamp": "2026-07-22T18:13:52.795Z",
-    "source": "Finnhub",
-    "attribution": "sourced: https://finnhub.io/"
+    "timestamp": "2026-07-23T15:15:58.124Z",
+    "source": "Yahoo Finance",
+    "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::US10Y::2026-07-23T15",
+      "kind": "market_move",
+      "headline": "US10Y jumps +3.72% to 4.71",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-07-23T15:15:58.124Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::NVDA::2026-07-22T19",
       "kind": "market_move",
@@ -64,21 +81,55 @@
       "attribution": "sourced: https://finnhub.io/"
     },
     {
-      "id": "move::VIX::2026-07-20T21",
+      "id": "move::QQQ::2026-07-23T15",
       "kind": "market_move",
-      "headline": "VIX jumps +13.03% to 18.65",
-      "urgency": 90,
-      "market_impact": 95,
-      "cluster": "volatility",
+      "headline": "QQQ drops -2.27% to 689.34",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
       "asset_tags": [
-        "VIX"
+        "QQQ"
       ],
       "sector_tags": [
-        "volatility"
+        "technology"
       ],
-      "timestamp": "2026-07-20T21:45:25.116Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-07-23T15:15:56.187Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::GLD::2026-07-23T15",
+      "kind": "market_move",
+      "headline": "GLD drops -1.97% to 371.66",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "GLD"
+      ],
+      "sector_tags": [
+        "metals"
+      ],
+      "timestamp": "2026-07-23T15:15:56.187Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::NVDA::2026-07-23T15",
+      "kind": "market_move",
+      "headline": "NVDA drops -2.54% to 206.68",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-07-23T15:15:56.187Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
     },
     {
       "id": "move::US10Y::2026-07-22T21",
@@ -387,21 +438,27 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
-      "id": "move::VIX::2026-07-21T15",
-      "kind": "market_move",
-      "headline": "VIX jumps +10.85% to 17.37",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260725T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-07-25)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "volatility",
+      "cluster": "fed",
       "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
         "VIX"
       ],
       "sector_tags": [
-        "volatility"
+        "fed"
       ],
-      "timestamp": "2026-07-21T15:09:06.570Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-07-25T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260724T000000",
@@ -534,50 +591,6 @@
         "fed"
       ],
       "timestamp": "2026-07-22T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::global_acquisition::ca::canada-cpi::20260721T130000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: Canada CPI (2026-07-21, time estimated)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-07-21T13:00:00.000Z",
-      "source": "global_acquisition",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260721T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-07-21)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-07-21T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
