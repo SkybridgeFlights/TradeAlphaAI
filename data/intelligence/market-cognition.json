@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-24T19:57:01.399Z",
+  "updated_at": "2026-07-24T21:12:25.624Z",
   "run_date": "2026-07-24",
   "verified": true,
   "sessions_tracked": 39,
@@ -51,17 +51,17 @@
     },
     {
       "dimension": "ai_concentration_risk",
-      "state": "contained",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "elevated",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "elevated",
-        "date": "2026-07-22"
+        "state": "contained",
+        "date": "2026-07-23"
       }
     },
     {
       "dimension": "breadth_state",
-      "state": "confirming",
+      "state": "deteriorating",
       "phase": "emerging",
       "sessions_in_state": 1,
       "from": {
@@ -92,12 +92,12 @@
     },
     {
       "dimension": "market_fragility",
-      "state": "contained",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "building",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "building",
-        "date": "2026-07-22"
+        "state": "contained",
+        "date": "2026-07-23"
       }
     }
   ],
@@ -109,13 +109,6 @@
       "sessions": 5,
       "en": "Dollar firming persists into a fifth consecutive session, draining global risk appetite at the margin.",
       "ar": "تقوّي الدولار يمتد للجلسة الخامسة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
-    },
-    {
-      "kind": "divergence",
-      "flag": "gold-vs-dollar",
-      "sessions": 1,
-      "en": "Gold is rising against a firming dollar this session — an unusual co-move worth respecting.",
-      "ar": "الذهب يرتفع رغم تقوّي الدولار في هذه الجلسة — تحرك متزامن غير معتاد يستحق الانتباه."
     }
   ],
   "causal_links": [
@@ -131,7 +124,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 1.7616354936929188,
-        "qqq": -0.7587
+        "qqq": -1.1171
       }
     },
     {
@@ -146,7 +139,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 1.7616354936929188,
-        "dxy": 0.47232399247450624
+        "dxy": 0.4703435983760853
       }
     },
     {
@@ -160,8 +153,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": 0.47232399247450624,
-        "gold": 0.2503
+        "dxy": 0.4703435983760853,
+        "gold": 0.1023
       }
     },
     {
@@ -173,10 +166,10 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "vix": 0.7506702412868663,
-        "spy": 0.2262
+        "vix": -0.37533512064343316,
+        "spy": 0.1016
       }
     },
     {
@@ -188,10 +181,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "nvda": -0.0144,
-        "qqq": -0.7587
+        "nvda": -0.9197,
+        "qqq": -1.1171
       }
     },
     {
@@ -205,8 +198,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": -0.9043,
-        "qqq": -0.7587
+        "btc": -1.3908,
+        "qqq": -1.1171
       }
     },
     {
@@ -218,10 +211,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "spy": 0.2262,
-        "iwm": 0.0514
+        "spy": 0.1016,
+        "iwm": -0.315
       }
     },
     {
@@ -236,7 +229,7 @@
       "state": "diverging",
       "evidence": {
         "us10y": 1.7616354936929188,
-        "tlt": 0.1804
+        "tlt": 0.0962
       }
     }
   ],
@@ -248,7 +241,7 @@
         "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
         "evidence": {
           "us10y": 1.7616354936929188,
-          "qqq": -0.7587
+          "qqq": -1.1171
         }
       },
       {
@@ -257,16 +250,16 @@
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
           "us10y": 1.7616354936929188,
-          "dxy": 0.47232399247450624
+          "dxy": 0.4703435983760853
         }
       },
       {
-        "source": "causal:liquidity-beta",
-        "en": "Crypto trades as the liquidity beta of the growth complex",
-        "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
+        "source": "causal:vix-equities",
+        "en": "Rising hedging demand pressures the equity tape",
+        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
         "evidence": {
-          "btc": -0.9043,
-          "qqq": -0.7587
+          "vix": -0.37533512064343316,
+          "spy": 0.1016
         }
       }
     ],
@@ -276,17 +269,17 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": 0.47232399247450624,
-          "gold": 0.2503
+          "dxy": 0.4703435983760853,
+          "gold": 0.1023
         }
       },
       {
-        "source": "causal:vix-equities",
-        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:breadth-link",
+        "en": "Divergence on the spy/iwm link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة spy/iwm — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": 0.7506702412868663,
-          "spy": 0.2262
+          "spy": 0.1016,
+          "iwm": -0.315
         }
       },
       {
@@ -295,17 +288,57 @@
         "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
           "us10y": 1.7616354936929188,
-          "tlt": 0.1804
+          "tlt": 0.0962
         }
       }
     ],
-    "fragility": [],
+    "fragility": [
+      {
+        "source": "market_fragility",
+        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
+        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
+      }
+    ],
     "exhaustion": [],
-    "liquidity": [],
+    "liquidity": [
+      {
+        "source": "dollar+crypto",
+        "en": "A firming dollar alongside soft crypto liquidity beta points to draining marginal liquidity.",
+        "ar": "تقوّي الدولار مع ضعف بيتا سيولة الكريبتو يشير إلى انحسار السيولة الهامشية.",
+        "evidence": {
+          "dxy": 0.4703435983760853,
+          "btc": -1.3908
+        }
+      }
+    ],
     "speculative": []
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "positioning-crowding-2026-07-24",
+      "type": "positioning-crowding",
+      "severity": "watch",
+      "date": "2026-07-24",
+      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
+      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+      "derived_from": [
+        {
+          "dimension": "ai_concentration_risk",
+          "from": "contained",
+          "to": "elevated",
+          "date": "2026-07-24"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
+    {
+      "date": "2026-07-24",
+      "dimension": "ai_concentration_risk",
+      "from": "contained",
+      "to": "elevated",
+      "note": "ai concentration risk: contained -> elevated"
+    },
     {
       "date": "2026-07-24",
       "dimension": "risk_state",
@@ -340,14 +373,7 @@
       "from": "building",
       "to": "contained",
       "note": "market fragility: building -> contained"
-    },
-    {
-      "date": "2026-07-23",
-      "dimension": "ai_concentration_risk",
-      "from": "elevated",
-      "to": "contained",
-      "note": "ai concentration risk: elevated -> contained"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 1 cross-session observation(s); 60 timeline event(s)."
 }

@@ -1,41 +1,98 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-24T19:57:01.854Z",
+  "updated_at": "2026-07-24T21:12:26.064Z",
   "verified": true,
-  "urgency": "elevated",
+  "urgency": "high",
   "pulse_shift": [
     {
       "kind": "pulse-shift",
-      "dimension": "risk_state",
-      "from": "risk-on",
-      "to": "neutral",
-      "en": "risk state shifted from risk-on to neutral.",
-      "ar": "تحولت حالة risk state من risk-on إلى neutral."
+      "dimension": "ai_concentration_risk",
+      "from": "contained",
+      "to": "elevated",
+      "en": "ai concentration risk shifted from contained to elevated.",
+      "ar": "تحولت حالة ai concentration risk من contained إلى elevated."
+    },
+    {
+      "kind": "pulse-shift",
+      "dimension": "breadth_state",
+      "from": "confirming",
+      "to": "deteriorating",
+      "en": "breadth state shifted from confirming to deteriorating.",
+      "ar": "تحولت حالة breadth state من confirming إلى deteriorating."
+    },
+    {
+      "kind": "pulse-shift",
+      "dimension": "market_fragility",
+      "from": "contained",
+      "to": "building",
+      "en": "market fragility shifted from contained to building.",
+      "ar": "تحولت حالة market fragility من contained إلى building."
     }
   ],
   "quote_driven_changes": [
     {
       "kind": "quote-driven-change",
       "asset": "vix",
-      "from": -3.7533512064343126,
-      "to": 0.7506702412868663,
-      "delta": 4.504021447721179,
-      "en": "vix move changed by +4.50 percentage points.",
-      "ar": "تغير تحرك vix بمقدار +4.50 نقطة مئوية."
+      "from": 0.7506702412868663,
+      "to": -0.37533512064343316,
+      "delta": -1.1260053619302994,
+      "en": "vix move changed by -1.13 percentage points.",
+      "ar": "تغير تحرك vix بمقدار -1.13 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "nvda",
+      "from": -0.0144,
+      "to": -0.9197,
+      "delta": -0.9053,
+      "en": "nvda move changed by -0.91 percentage points.",
+      "ar": "تغير تحرك nvda بمقدار -0.91 نقطة مئوية."
     },
     {
       "kind": "quote-driven-change",
       "asset": "oil",
-      "from": 6.5240898714405775,
-      "to": 7.437222155472783,
-      "delta": 0.9131322840322058,
-      "en": "oil move changed by +0.91 percentage points.",
-      "ar": "تغير تحرك oil بمقدار +0.91 نقطة مئوية."
+      "from": 7.437222155472783,
+      "to": 8.698786495254108,
+      "delta": 1.2615643397813248,
+      "en": "oil move changed by +1.26 percentage points.",
+      "ar": "تغير تحرك oil بمقدار +1.26 نقطة مئوية."
     }
   ],
-  "new_contradictions": [],
-  "pressure_buildup": [],
-  "new_alerts": [],
+  "new_contradictions": [
+    {
+      "kind": "new-contradiction",
+      "id": "concentration-vs-breadth",
+      "en": "A new structural contradiction is active: concentration vs breadth.",
+      "ar": "ظهر تناقض هيكلي جديد قيد المتابعة: concentration-vs-breadth."
+    }
+  ],
+  "pressure_buildup": [
+    {
+      "kind": "pressure-buildup",
+      "track": "liquidity_pressure",
+      "from": 4,
+      "to": 5,
+      "en": "liquidity pressure built from 4/5 to 5/5.",
+      "ar": "تصاعد liquidity pressure من 4/5 إلى 5/5."
+    },
+    {
+      "kind": "pressure-buildup",
+      "track": "concentration_pressure",
+      "from": 3,
+      "to": 5,
+      "en": "concentration pressure built from 3/5 to 5/5.",
+      "ar": "تصاعد concentration pressure من 3/5 إلى 5/5."
+    }
+  ],
+  "new_alerts": [
+    {
+      "kind": "new-alert",
+      "id": "positioning-crowding-2026-07-24",
+      "severity": "watch",
+      "en": "AI positioning crowding — concentration risk moved to elevated.",
+      "ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع."
+    }
+  ],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
@@ -45,12 +102,12 @@
     {
       "name": "FOMC Press Release",
       "time": "2026-07-25T00:00:00Z",
-      "minutes_until": 243
+      "minutes_until": 168
     },
     {
       "name": "FOMC Press Release",
       "time": "2026-07-26T00:00:00Z",
-      "minutes_until": 1683
+      "minutes_until": 1608
     }
   ],
   "wire_event": {
@@ -61,37 +118,91 @@
   "changes": [
     {
       "kind": "pulse-shift",
-      "dimension": "risk_state",
-      "from": "risk-on",
-      "to": "neutral",
-      "en": "risk state shifted from risk-on to neutral.",
-      "ar": "تحولت حالة risk state من risk-on إلى neutral."
+      "dimension": "ai_concentration_risk",
+      "from": "contained",
+      "to": "elevated",
+      "en": "ai concentration risk shifted from contained to elevated.",
+      "ar": "تحولت حالة ai concentration risk من contained إلى elevated."
+    },
+    {
+      "kind": "pulse-shift",
+      "dimension": "breadth_state",
+      "from": "confirming",
+      "to": "deteriorating",
+      "en": "breadth state shifted from confirming to deteriorating.",
+      "ar": "تحولت حالة breadth state من confirming إلى deteriorating."
+    },
+    {
+      "kind": "pulse-shift",
+      "dimension": "market_fragility",
+      "from": "contained",
+      "to": "building",
+      "en": "market fragility shifted from contained to building.",
+      "ar": "تحولت حالة market fragility من contained إلى building."
     },
     {
       "kind": "quote-driven-change",
       "asset": "vix",
-      "from": -3.7533512064343126,
-      "to": 0.7506702412868663,
-      "delta": 4.504021447721179,
-      "en": "vix move changed by +4.50 percentage points.",
-      "ar": "تغير تحرك vix بمقدار +4.50 نقطة مئوية."
+      "from": 0.7506702412868663,
+      "to": -0.37533512064343316,
+      "delta": -1.1260053619302994,
+      "en": "vix move changed by -1.13 percentage points.",
+      "ar": "تغير تحرك vix بمقدار -1.13 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "nvda",
+      "from": -0.0144,
+      "to": -0.9197,
+      "delta": -0.9053,
+      "en": "nvda move changed by -0.91 percentage points.",
+      "ar": "تغير تحرك nvda بمقدار -0.91 نقطة مئوية."
     },
     {
       "kind": "quote-driven-change",
       "asset": "oil",
-      "from": 6.5240898714405775,
-      "to": 7.437222155472783,
-      "delta": 0.9131322840322058,
-      "en": "oil move changed by +0.91 percentage points.",
-      "ar": "تغير تحرك oil بمقدار +0.91 نقطة مئوية."
+      "from": 7.437222155472783,
+      "to": 8.698786495254108,
+      "delta": 1.2615643397813248,
+      "en": "oil move changed by +1.26 percentage points.",
+      "ar": "تغير تحرك oil بمقدار +1.26 نقطة مئوية."
+    },
+    {
+      "kind": "new-alert",
+      "id": "positioning-crowding-2026-07-24",
+      "severity": "watch",
+      "en": "AI positioning crowding — concentration risk moved to elevated.",
+      "ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع."
+    },
+    {
+      "kind": "new-contradiction",
+      "id": "concentration-vs-breadth",
+      "en": "A new structural contradiction is active: concentration vs breadth.",
+      "ar": "ظهر تناقض هيكلي جديد قيد المتابعة: concentration-vs-breadth."
+    },
+    {
+      "kind": "pressure-buildup",
+      "track": "liquidity_pressure",
+      "from": 4,
+      "to": 5,
+      "en": "liquidity pressure built from 4/5 to 5/5.",
+      "ar": "تصاعد liquidity pressure من 4/5 إلى 5/5."
+    },
+    {
+      "kind": "pressure-buildup",
+      "track": "concentration_pressure",
+      "from": 3,
+      "to": 5,
+      "en": "concentration pressure built from 3/5 to 5/5.",
+      "ar": "تصاعد concentration pressure من 3/5 إلى 5/5."
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": false,
+    "eligible": true,
     "sent": false,
-    "suppression_reason": "urgency_below_high_threshold"
+    "suppression_reason": null
   },
   "snapshot": {
     "verified": true,
@@ -101,33 +212,54 @@
       "dollar_pressure": "firming",
       "duration_pressure": "neutral",
       "momentum_concentration": "broadening",
-      "ai_concentration_risk": "contained",
-      "breadth_state": "confirming",
+      "ai_concentration_risk": "elevated",
+      "breadth_state": "deteriorating",
       "defensive_rotation": "unverified",
       "liquidity_stress": "mixed",
       "speculative_appetite": "unverified",
-      "market_fragility": "contained"
+      "market_fragility": "building"
     },
     "quote_changes": {
-      "gold": 0.2503,
-      "dxy": 0.47232399247450624,
-      "sp500": 0.2262,
-      "nasdaq": -0.7587,
-      "bitcoin": -0.9043,
-      "vix": 0.7506702412868663,
+      "gold": 0.1023,
+      "dxy": 0.4703435983760853,
+      "sp500": 0.1016,
+      "nasdaq": -1.1171,
+      "bitcoin": -1.3908,
+      "vix": -0.37533512064343316,
       "us10y_yield": 1.7616354936929188,
-      "nvda": -0.0144,
-      "oil": 7.437222155472783
+      "nvda": -0.9197,
+      "oil": 8.698786495254108
     },
-    "alert_ids": [],
-    "alerts": [],
-    "contradiction_ids": [],
+    "alert_ids": [
+      "positioning-crowding-2026-07-24"
+    ],
+    "alerts": [
+      {
+        "id": "positioning-crowding-2026-07-24",
+        "type": "positioning-crowding",
+        "severity": "watch",
+        "date": "2026-07-24",
+        "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
+        "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+        "derived_from": [
+          {
+            "dimension": "ai_concentration_risk",
+            "from": "contained",
+            "to": "elevated",
+            "date": "2026-07-24"
+          }
+        ]
+      }
+    ],
+    "contradiction_ids": [
+      "concentration-vs-breadth"
+    ],
     "pressure": {
       "volatility_pressure": 0,
-      "liquidity_pressure": 4,
+      "liquidity_pressure": 5,
       "defensive_pressure": 0,
       "speculative_pressure": 4,
-      "concentration_pressure": 3,
+      "concentration_pressure": 5,
       "yield_pressure": 0
     },
     "catalysts": [
