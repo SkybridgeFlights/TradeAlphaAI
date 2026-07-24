@@ -1,42 +1,42 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-23T21:32:32.385Z",
+  "generated_at": "2026-07-24T15:51:14.334Z",
   "source_layer": "market-structure",
   "available": true,
   "structural_confidence": 95,
   "coverage_pct": 100,
   "dominant": {
     "dimension": "stability",
-    "state": "unstable"
+    "state": "fragile"
   },
   "dimensions": {
     "participation": {
-      "state": "mixed_participation",
-      "label_en": "mixed participation",
-      "label_ar": "مشاركة مختلطة",
+      "state": "narrow_leadership",
+      "label_en": "narrow leadership",
+      "label_ar": "قيادة ضيقة",
       "evidence": [
-        "leadership=narrow",
-        "breadth=mixed",
-        "session breadth=mixed"
+        "leadership=fragile",
+        "breadth=narrow",
+        "session breadth=deteriorating"
       ]
     },
     "volatility_structure": {
-      "state": "expansion",
-      "label_en": "volatility expansion",
-      "label_ar": "اتساع التذبذب",
+      "state": "contained",
+      "label_en": "contained volatility",
+      "label_ar": "تذبذب محتوى",
       "evidence": [
-        "regime volatility=expansion",
+        "regime volatility=normal",
         "alignment=aligned",
-        "VIX=18.7"
+        "VIX=18.64"
       ]
     },
     "cross_asset": {
-      "state": "coherent",
-      "label_en": "coherent",
-      "label_ar": "متسق",
+      "state": "divergent",
+      "label_en": "cross-asset divergence",
+      "label_ar": "تباعد عبر الأصول",
       "evidence": [
-        "coherence=0.6",
-        "tension cross_asset=coherent"
+        "coherence=0.2",
+        "tension cross_asset=strained"
       ]
     },
     "concentration": {
@@ -45,7 +45,7 @@
       "label_ar": "تركّز محتوى",
       "evidence": [
         "ai_concentration=contained",
-        "momentum_concentration=broadening"
+        "momentum_concentration=balanced"
       ]
     },
     "rotation": {
@@ -53,7 +53,7 @@
       "label_en": "defensive rotation",
       "label_ar": "تدوير دفاعي",
       "evidence": [
-        "leaders=XLI/XLV/XLU",
+        "leaders=XLRE/XLE/XLP",
         "regime defensive=defensive_rotation"
       ]
     },
@@ -63,16 +63,16 @@
       "label_ar": "بنية في طور التحوّل",
       "evidence": [
         "direction=risk_off",
-        "verified_sessions=34",
+        "verified_sessions=35",
         "regime_condition=pressured-regime"
       ]
     },
     "momentum": {
-      "state": "early_deterioration",
-      "label_en": "early momentum deterioration",
-      "label_ar": "تدهور مبكر في الزخم",
+      "state": "deteriorating",
+      "label_en": "momentum deterioration",
+      "label_ar": "تدهور الزخم",
       "evidence": [
-        "participation=mixed_participation",
+        "participation=narrow_leadership",
         "rotation=defensive_rotation",
         "concentration=contained"
       ]
@@ -87,25 +87,25 @@
       ]
     },
     "stability": {
-      "state": "unstable",
-      "label_en": "unstable structure",
-      "label_ar": "بنية غير مستقرة",
+      "state": "fragile",
+      "label_en": "fragile structure",
+      "label_ar": "بنية هشة",
       "evidence": [
-        "regime stability=unstable",
-        "tension=contained",
-        "fragility=contained"
+        "regime stability=fragile",
+        "tension=building",
+        "fragility=building"
       ]
     }
   },
   "homepage_summary": {
     "dominant_structure": {
       "dimension": "stability",
-      "state": "unstable"
+      "state": "fragile"
     },
-    "participation": "mixed_participation",
-    "volatility_structure": "expansion",
-    "cross_asset": "coherent",
-    "structural_stability": "unstable",
+    "participation": "narrow_leadership",
+    "volatility_structure": "contained",
+    "cross_asset": "divergent",
+    "structural_stability": "fragile",
     "structural_confidence": 95
   },
   "attribution": {
