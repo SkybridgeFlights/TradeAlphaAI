@@ -1,18 +1,18 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-24T18:23:11.337Z",
+  "updated_at": "2026-07-24T19:57:01.399Z",
   "run_date": "2026-07-24",
   "verified": true,
   "sessions_tracked": 39,
   "regime_shifts": [
     {
       "dimension": "risk_state",
-      "state": "risk-on",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "neutral",
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
-        "state": "neutral",
-        "date": "2026-07-23"
+        "state": "risk-on",
+        "date": "2026-07-22"
       }
     },
     {
@@ -146,7 +146,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 1.7616354936929188,
-        "dxy": 0.46539261313001173
+        "dxy": 0.47232399247450624
       }
     },
     {
@@ -160,7 +160,7 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": 0.46539261313001173,
+        "dxy": 0.47232399247450624,
         "gold": 0.2503
       }
     },
@@ -173,9 +173,9 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "vix": -3.7533512064343126,
+        "vix": 0.7506702412868663,
         "spy": 0.2262
       }
     },
@@ -257,16 +257,16 @@
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
           "us10y": 1.7616354936929188,
-          "dxy": 0.46539261313001173
+          "dxy": 0.47232399247450624
         }
       },
       {
-        "source": "causal:vix-equities",
-        "en": "Rising hedging demand pressures the equity tape",
-        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
+        "source": "causal:liquidity-beta",
+        "en": "Crypto trades as the liquidity beta of the growth complex",
+        "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
         "evidence": {
-          "vix": -3.7533512064343126,
-          "spy": 0.2262
+          "btc": -0.9043,
+          "qqq": -0.7587
         }
       }
     ],
@@ -276,8 +276,17 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": 0.46539261313001173,
+          "dxy": 0.47232399247450624,
           "gold": 0.2503
+        }
+      },
+      {
+        "source": "causal:vix-equities",
+        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "vix": 0.7506702412868663,
+          "spy": 0.2262
         }
       },
       {
