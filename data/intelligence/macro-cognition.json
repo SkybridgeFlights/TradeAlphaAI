@@ -1,21 +1,32 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-23T21:12:53.895Z",
-  "run_date": "2026-07-23",
+  "updated_at": "2026-07-24T15:01:09.245Z",
+  "run_date": "2026-07-24",
   "verified": true,
   "conviction": {
-    "state": "increasingly-confirmed",
+    "state": "deteriorating-confirmation",
     "regime_confidence": "high",
-    "confirmations": 8,
-    "contradictions": 0,
-    "en": "The structure is increasingly confirmed — cross-asset links and regime persistence agree.",
-    "ar": "البنية تزداد تأكيداً — روابط الأصول واستمرارية النظام متوافقتان."
+    "confirmations": 4,
+    "contradictions": 5,
+    "en": "Confirmation is deteriorating — 5 structural contradiction signal(s) against 4 confirmation(s).",
+    "ar": "التأكيد يتدهور — 5 إشارات تناقض هيكلي مقابل 4 إشارات تأكيد."
   },
-  "contradictions": [],
+  "contradictions": [
+    {
+      "id": "index-vs-breadth",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-07-24",
+      "last_seen": "2026-07-24",
+      "active_today": true,
+      "en": "Headline index strength against weak participation beneath the surface.",
+      "ar": "قوة المؤشرات الرئيسية تقابلها مشاركة ضعيفة تحت السطح."
+    }
+  ],
   "structure": {
-    "class": "stable-structure",
-    "en": "Stable structure — no fragility pattern dominates the verified picture.",
-    "ar": "بنية مستقرة — لا نمط هشاشة يهيمن على الصورة الموثقة."
+    "class": "fragile-trend",
+    "en": "Fragile trend — the advance rests on deteriorating participation and stacking stress inputs.",
+    "ar": "اتجاه هش — الصعود يرتكز على مشاركة متدهورة ومدخلات ضغط متراكمة."
   },
   "pressure": {
     "tracks": {
@@ -27,8 +38,8 @@
         "ar": "ضغط التقلب (انضغاط مخزّن)"
       },
       "liquidity_pressure": {
-        "score": 4,
-        "base_score": 3,
+        "score": 5,
+        "base_score": 4,
         "state": "accumulating",
         "en": "Liquidity stress accumulation",
         "ar": "تراكم ضغط السيولة"
@@ -42,15 +53,15 @@
       },
       "speculative_pressure": {
         "score": 4,
-        "base_score": 5,
-        "state": "releasing",
+        "base_score": 4,
+        "state": "steady",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
       "concentration_pressure": {
         "score": 4,
-        "base_score": 5,
-        "state": "releasing",
+        "base_score": 4,
+        "state": "steady",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
@@ -73,8 +84,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with increasingly confirmed; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع البنية تزداد تأكيداً؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — fragile trend with deteriorating confirmation; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — اتجاه هش مع التأكيد يتدهور؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -92,7 +103,7 @@
     },
     {
       "id": "fragile-upside",
-      "status": "dormant",
+      "status": "active",
       "en": "Fragile upside — the index can extend while participation thins; deteriorating breadth alongside new highs would confirm this path, broadening would invalidate it.",
       "ar": "صعود هش — يمكن للمؤشر أن يمتد بينما تضيق المشاركة؛ تدهور الاتساع مع قمم جديدة يؤكد هذا المسار، واتساع المشاركة يبطله.",
       "derived_from": [
@@ -146,5 +157,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: increasingly-confirmed; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: deteriorating-confirmation; structure: fragile-trend; contradictions active: 1 (0 escalated); elevated pressure tracks: 3."
 }

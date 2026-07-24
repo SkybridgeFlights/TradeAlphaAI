@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-23T21:12:54.411Z",
-  "run_date": "2026-07-23",
+  "updated_at": "2026-07-24T15:01:09.715Z",
+  "run_date": "2026-07-24",
   "verified": true,
   "stale": false,
   "mode": "calm-restraint",
@@ -9,37 +9,37 @@
     "charts": {
       "path": "data/intelligence/chart-narratives.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:53.961Z"
+      "updated_at": "2026-07-24T15:01:09.308Z"
     },
     "cognition": {
       "path": "data/intelligence/market-cognition.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:53.852Z"
+      "updated_at": "2026-07-24T15:01:09.205Z"
     },
     "convergence": {
       "path": "data/intelligence/narrative-convergence.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:53.929Z"
+      "updated_at": "2026-07-24T15:01:09.277Z"
     },
     "tension": {
       "path": "data/intelligence/structural-tension.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:54.038Z"
+      "updated_at": "2026-07-24T15:01:09.378Z"
     },
     "memory": {
       "path": "data/intelligence/editorial-market-memory.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:53.995Z"
+      "updated_at": "2026-07-24T15:01:09.336Z"
     },
     "pulse": {
       "path": "data/intelligence/market-pulse.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:53.818Z"
+      "updated_at": "2026-07-24T15:01:09.174Z"
     },
     "social": {
       "path": "data/social/social-preview.json",
       "verified": true,
-      "updated_at": "2026-07-23T21:12:54.367Z"
+      "updated_at": "2026-07-24T15:01:09.671Z"
     }
   },
   "visual_language": {
@@ -67,7 +67,10 @@
       },
       "evidence_refs": [
         "structural-tension:positioning-strain",
-        "structural-tension:liquidity-strain"
+        "structural-tension:liquidity-strain",
+        "structural-tension:participation-strain",
+        "structural-tension:cross-asset-strain",
+        "structural-tension:contradiction-strain"
       ],
       "chart_symbol_refs": [],
       "annotations": [
@@ -148,31 +151,31 @@
       "verified": true,
       "stale": false,
       "status": "active",
-      "source_hash": "623c98034e38c7c13ad232087a226ded51b2f3a549a7883db01ed93ae0e513f2",
-      "generated_at": "2026-07-23T15:15:59.522Z"
+      "source_hash": "9c626f7aa4df06d952ef48bc982c9e26ef1954405c68a53e9264564d09e2ba31",
+      "generated_at": "2026-07-24T15:01:09.715Z"
     },
     {
-      "id": "chart-liquidity-beta",
-      "visual_type": "market-structure",
-      "headline_en": "Liquidity beta",
-      "headline_ar": "بيتا السيولة",
+      "id": "relationship-dollar-gold",
+      "visual_type": "cross-asset-relationship",
+      "headline_en": "DXY / GOLD relationship is not confirming",
+      "headline_ar": "العلاقة بين DXY وGOLD لا تقدم تأكيداً متماسكاً",
       "narrative_context": {
-        "en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-        "ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم."
+        "en": "A firming dollar typically pressures gold",
+        "ar": "تقوّي الدولار يضغط على الذهب عادة"
       },
       "evidence_refs": [
-        "liquidity_pressure 4/5"
+        "convergence:dollar-gold"
       ],
       "chart_symbol_refs": [
-        "CRYPTOBTCUSD",
-        "NASDAQQQQ"
+        "DXY",
+        "GOLD"
       ],
       "annotations": [
         {
-          "type": "commentary-label",
-          "label_en": "Verified structural relationship",
-          "label_ar": "علاقة هيكلية موثقة",
-          "evidence_ref": "liquidity_pressure 4/5"
+          "type": "divergence-highlight",
+          "label_en": "Verified divergence",
+          "label_ar": "انفصال موثق",
+          "evidence_ref": "convergence:dollar-gold"
         }
       ],
       "allowed_platforms": [
@@ -183,7 +186,7 @@
         "instagram",
         "linkedin"
       ],
-      "visual_priority": 78,
+      "visual_priority": 82,
       "calm_mode_compatible": true,
       "export_targets": [
         {
@@ -231,11 +234,11 @@
       ],
       "rendering_contract": {
         "version": "1.0",
-        "mode": "sourced-chart",
-        "emphasis": "structural-reading",
+        "mode": "relationship-map",
+        "emphasis": "cross-asset-strain",
         "visual_language": "institutional-editorial-v1",
         "data_policy": "verified-evidence-only",
-        "price_series_policy": "sourced-provider-only",
+        "price_series_policy": "none",
         "maximum_labels": 5,
         "maximum_annotations": 3,
         "quiet_area_ratio": 0.28,
@@ -243,17 +246,29 @@
         "static_render": true,
         "hydration_required": false
       },
-      "attribution": "Chart: TradingView · Quotes: sourced market providers",
+      "attribution": "TradeAlphaAI narrative convergence; sourced market relationships.",
       "verified": true,
       "stale": false,
       "status": "active",
-      "source_hash": "94079994d2116e46d3c68bcc05f59a306ec77a5e14c394484592ed5b6b5cfc2b",
-      "generated_at": "2026-07-23T15:15:59.522Z"
+      "source_hash": "a9dd61ce158102064ffccc903251b7f6074dacc1412393404737cc7568b7d0a7",
+      "generated_at": "2026-07-24T15:01:09.715Z"
     }
   ],
   "suppressed": [
     {
-      "id": "memory-dollar-strength",
+      "id": "relationship-ai-growth",
+      "reason": "session-density-limit"
+    },
+    {
+      "id": "chart-dollar-gold",
+      "reason": "session-density-limit"
+    },
+    {
+      "id": "chart-breadth-confirmation",
+      "reason": "session-density-limit"
+    },
+    {
+      "id": "memory-narrow-leadership",
       "reason": "session-density-limit"
     },
     {
