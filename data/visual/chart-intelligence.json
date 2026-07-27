@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-24T21:12:25.960Z",
+  "generated_at": "2026-07-27T15:47:49.539Z",
   "source_layer": "chart-intelligence",
   "preview_only": true,
   "chart_types": [
@@ -25,22 +25,22 @@
       "id": "liquidity_regime_snapshot",
       "chart_type": "liquidity_regime_snapshot",
       "analytical_reason": {
-        "regime": "yield_pressure_regime",
+        "regime": "defensive_rotation",
         "question": "What is the structural environment macro reactions are landing in?"
       },
       "narrative_hook": {
-        "en": "The liquidity snapshot frames the environment: a yield pressure regime regime with yield pressure liquidity and fragile stability.",
-        "ar": "يؤطّر مشهد السيولة البيئة: نظام ضغط العوائد مع سيولة ضغط العوائد واستقرار هش."
+        "en": "The liquidity snapshot frames the environment: a defensive rotation regime with defensive demand liquidity and deteriorating stability.",
+        "ar": "يؤطّر مشهد السيولة البيئة: نظام تدوير دفاعي مع سيولة طلب دفاعي واستقرار يتدهور."
       },
       "evidence": {
-        "regime": "yield_pressure_regime",
-        "liquidity_state": "yield_pressure",
-        "stability": "fragile",
-        "coherence": 0.2,
+        "regime": "defensive_rotation",
+        "liquidity_state": "defensive_demand",
+        "stability": "deteriorating",
+        "coherence": 1,
         "sub_states": {
-          "breadth": "narrow",
-          "volatility": "normal",
-          "yield": "yield_pressure",
+          "breadth": "mixed",
+          "volatility": "expansion",
+          "yield": "neutral",
           "dollar": "tightening_proxy",
           "defensive": "defensive_rotation"
         }
@@ -51,27 +51,27 @@
       ],
       "graphic": {
         "visual_type": "regime-snapshot",
-        "headline_en": "yield pressure regime",
-        "headline_ar": "ضغط العوائد",
+        "headline_en": "defensive rotation",
+        "headline_ar": "تدوير دفاعي",
         "narrative_context": {
-          "en": "Liquidity yield pressure · stability fragile · coherence 0.2.",
-          "ar": "سيولة ضغط العوائد · استقرار هش · اتساق 0.2."
+          "en": "Liquidity defensive demand · stability deteriorating · coherence 1.",
+          "ar": "سيولة طلب دفاعي · استقرار يتدهور · اتساق 1."
         },
         "annotations": [
           {
-            "label_en": "Liquidity — yield pressure",
-            "label_ar": "السيولة — ضغط العوائد",
+            "label_en": "Liquidity — defensive demand",
+            "label_ar": "السيولة — طلب دفاعي",
             "type": "evidence"
           },
           {
-            "label_en": "Stability — fragile",
-            "label_ar": "الاستقرار — هش",
-            "type": "evidence"
-          },
-          {
-            "label_en": "Breadth — narrow",
-            "label_ar": "الاتساع — ضيق",
+            "label_en": "Stability — deteriorating",
+            "label_ar": "الاستقرار — يتدهور",
             "type": "divergence-highlight"
+          },
+          {
+            "label_en": "Breadth — mixed",
+            "label_ar": "الاتساع — مختلط",
+            "type": "evidence"
           }
         ],
         "attribution": "Source: TradeAlphaAI macro-reactions + liquidity-regime artifacts"
