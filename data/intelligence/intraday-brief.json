@@ -1,18 +1,36 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-27T19:45:11.666Z",
+  "updated_at": "2026-07-27T21:17:59.221Z",
   "verified": true,
-  "urgency": "elevated",
-  "pulse_shift": [],
+  "urgency": "high",
+  "pulse_shift": [
+    {
+      "kind": "pulse-shift",
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "confirming",
+      "en": "breadth state shifted from mixed to confirming.",
+      "ar": "تحولت حالة breadth state من mixed إلى confirming."
+    }
+  ],
   "quote_driven_changes": [
     {
       "kind": "quote-driven-change",
+      "asset": "nasdaq",
+      "from": -0.8404,
+      "to": -0.3084,
+      "delta": 0.532,
+      "en": "nasdaq move changed by +0.53 percentage points.",
+      "ar": "تغير تحرك nasdaq بمقدار +0.53 نقطة مئوية."
+    },
+    {
+      "kind": "quote-driven-change",
       "asset": "vix",
-      "from": 13.841642228738998,
-      "to": 10.205278592375358,
-      "delta": -3.6363636363636402,
-      "en": "vix move changed by -3.64 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -3.64 نقطة مئوية."
+      "from": 10.205278592375358,
+      "to": 9.50146627565983,
+      "delta": -0.7038123167155277,
+      "en": "vix move changed by -0.70 percentage points.",
+      "ar": "تغير تحرك vix بمقدار -0.70 نقطة مئوية."
     }
   ],
   "new_contradictions": [],
@@ -27,36 +45,63 @@
     {
       "name": "FOMC Press Release",
       "time": "2026-07-28T00:00:00Z",
-      "minutes_until": 255
+      "minutes_until": 162
     },
     {
       "name": "FOMC Press Release",
       "time": "2026-07-29T00:00:00Z",
-      "minutes_until": 1695
+      "minutes_until": 1602
     }
   ],
   "wire_event": {
-    "headline": "VIX jumps +13.84% to 19.41",
-    "timestamp": "2026-07-27T17:48:41.974Z",
+    "headline": "NVDA drops -4.99% to 196.51",
+    "timestamp": "2026-07-27T21:17:56.001Z",
     "urgency": 90
   },
   "changes": [
     {
+      "kind": "pulse-shift",
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "confirming",
+      "en": "breadth state shifted from mixed to confirming.",
+      "ar": "تحولت حالة breadth state من mixed إلى confirming."
+    },
+    {
+      "kind": "quote-driven-change",
+      "asset": "nasdaq",
+      "from": -0.8404,
+      "to": -0.3084,
+      "delta": 0.532,
+      "en": "nasdaq move changed by +0.53 percentage points.",
+      "ar": "تغير تحرك nasdaq بمقدار +0.53 نقطة مئوية."
+    },
+    {
       "kind": "quote-driven-change",
       "asset": "vix",
-      "from": 13.841642228738998,
-      "to": 10.205278592375358,
-      "delta": -3.6363636363636402,
-      "en": "vix move changed by -3.64 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -3.64 نقطة مئوية."
+      "from": 10.205278592375358,
+      "to": 9.50146627565983,
+      "delta": -0.7038123167155277,
+      "en": "vix move changed by -0.70 percentage points.",
+      "ar": "تغير تحرك vix بمقدار -0.70 نقطة مئوية."
+    },
+    {
+      "kind": "wire-event",
+      "en": "Wire event: NVDA drops -4.99% to 196.51",
+      "ar": "حدث على الموجز: NVDA drops -4.99% to 196.51",
+      "event": {
+        "headline": "NVDA drops -4.99% to 196.51",
+        "timestamp": "2026-07-27T21:17:56.001Z",
+        "urgency": 90
+      }
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": false,
+    "eligible": true,
     "sent": false,
-    "suppression_reason": "urgency_below_high_threshold"
+    "suppression_reason": null
   },
   "snapshot": {
     "verified": true,
@@ -67,22 +112,22 @@
       "duration_pressure": "neutral",
       "momentum_concentration": "broadening",
       "ai_concentration_risk": "elevated",
-      "breadth_state": "mixed",
+      "breadth_state": "confirming",
       "defensive_rotation": "unverified",
       "liquidity_stress": "mixed",
       "speculative_appetite": "unverified",
       "market_fragility": "building"
     },
     "quote_changes": {
-      "gold": 0.5136,
-      "dxy": 0.35890844374134817,
-      "sp500": -0.2693,
-      "nasdaq": -0.8404,
-      "bitcoin": 0.4514,
-      "vix": 10.205278592375358,
+      "gold": 0.7341,
+      "dxy": 0.37275064267351726,
+      "sp500": 0.0217,
+      "nasdaq": -0.3084,
+      "bitcoin": 0.2404,
+      "vix": 9.50146627565983,
       "us10y_yield": 0.2808988764044922,
-      "nvda": -5.1392,
-      "oil": -5.205574110330526
+      "nvda": -4.9942,
+      "oil": -5.666244385581022
     },
     "alert_ids": [],
     "alerts": [],
@@ -110,8 +155,8 @@
       }
     ],
     "wire_event": {
-      "headline": "VIX jumps +13.84% to 19.41",
-      "timestamp": "2026-07-27T17:48:41.974Z",
+      "headline": "NVDA drops -4.99% to 196.51",
+      "timestamp": "2026-07-27T21:17:56.001Z",
       "urgency": 90
     }
   },
