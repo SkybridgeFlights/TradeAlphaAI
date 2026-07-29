@@ -1,21 +1,21 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-28T21:16:57.649Z",
-  "run_date": "2026-07-28",
+  "updated_at": "2026-07-29T15:13:54.548Z",
+  "run_date": "2026-07-29",
   "verified": true,
   "conviction": {
-    "state": "healthy-trend-structure",
+    "state": "fragile-conviction",
     "regime_confidence": "high",
     "confirmations": 4,
-    "contradictions": 3,
-    "en": "Healthy trend structure — confirmations are broad and uncontested across the causal network.",
-    "ar": "بنية اتجاه صحية — التأكيدات واسعة وغير متنازع عليها عبر الشبكة السببية."
+    "contradictions": 4,
+    "en": "Conviction is fragile — the verified picture is mixed, with neither confirmation nor contradiction dominant.",
+    "ar": "القناعة هشة — الصورة الموثقة متباينة، دون هيمنة للتأكيد أو التناقض."
   },
   "contradictions": [],
   "structure": {
-    "class": "healthy-trend",
-    "en": "Healthy trend structure — broad participation with no structural contradictions.",
-    "ar": "بنية اتجاه صحية — مشاركة واسعة دون تناقضات هيكلية."
+    "class": "stable-structure",
+    "en": "Stable structure — no fragility pattern dominates the verified picture.",
+    "ar": "بنية مستقرة — لا نمط هشاشة يهيمن على الصورة الموثقة."
   },
   "pressure": {
     "tracks": {
@@ -41,16 +41,16 @@
         "ar": "ضغط التناوب الدفاعي"
       },
       "speculative_pressure": {
-        "score": 3,
+        "score": 2,
         "base_score": 3,
-        "state": "steady",
+        "state": "releasing",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
       "concentration_pressure": {
-        "score": 4,
-        "base_score": 5,
-        "state": "releasing",
+        "score": 5,
+        "base_score": 4,
+        "state": "accumulating",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
@@ -64,17 +64,16 @@
     },
     "elevated": [
       "liquidity_pressure",
-      "speculative_pressure",
       "concentration_pressure"
     ],
-    "note": "Stored pressure elevated on: liquidity pressure, speculative pressure, concentration pressure."
+    "note": "Stored pressure elevated on: liquidity pressure, concentration pressure."
   },
   "scenarios": [
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — healthy trend with healthy trend structure; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية اتجاه صحية مع بنية اتجاه صحية؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — stable structure with fragile conviction; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — بنية مستقرة مع القناعة هشة؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -82,7 +81,7 @@
     },
     {
       "id": "bullish-continuation",
-      "status": "active",
+      "status": "watch",
       "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
       "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
       "derived_from": [
@@ -123,8 +122,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -146,5 +145,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: healthy-trend-structure; structure: healthy-trend; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: fragile-conviction; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 2."
 }
