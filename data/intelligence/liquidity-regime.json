@@ -1,37 +1,34 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-29T16:51:03.508Z",
+  "generated_at": "2026-07-29T18:11:28.030Z",
   "source_layer": "liquidity-regime",
-  "regime": "volatility_transition",
-  "liquidity_state": "volatility_rejection",
-  "stability": "transition_state",
+  "regime": "indeterminate",
+  "liquidity_state": "easing",
+  "stability": "indeterminate",
   "confidence": 89,
   "observed_dimensions": 8,
   "cross_asset_coherence": {
-    "score": 0.2,
+    "score": 0.6,
     "direction": "risk_off",
     "n": 5
   },
   "sub_states": {
     "breadth": "broad_weakness",
-    "volatility": "expansion",
+    "volatility": "normal",
     "yield": "neutral",
-    "dollar": "neutral",
+    "dollar": "easing_proxy",
     "defensive": "mixed"
   },
-  "narrative": "Volatility conditions are in transition, leaving the regime unresolved across assets. Cross-asset coherence 0.2.",
-  "narrative_tags": [
-    "volatility_transition",
-    "transition_state"
-  ],
+  "narrative": "Insufficient observed cross-asset data to classify the current structural regime.",
+  "narrative_tags": [],
   "attribution": {
     "market_state_source": "data/live-market-state.json",
-    "market_state_generated_at": "2026-07-29T16:51:01.835Z",
+    "market_state_generated_at": "2026-07-29T18:11:26.315Z",
     "market_state_age_hours": 0,
     "reaction_context": {
       "liquidity_stress": false
     },
     "providers": "FRED (rates/vol) + Finnhub (equities/sectors) via update-live-market-state"
   },
-  "note": null
+  "note": "Insufficient observed dimensions — regime indeterminate (no fabrication)."
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-29T16:51:03.208Z",
+  "updated_at": "2026-07-29T18:11:27.720Z",
   "run_date": "2026-07-29",
   "verified": true,
   "sessions_tracked": 40,
@@ -17,22 +17,19 @@
     },
     {
       "dimension": "volatility_regime",
-      "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
-      "from": {
-        "state": "normal",
-        "date": "2026-07-28"
-      }
+      "state": "normal",
+      "phase": "extended",
+      "sessions_in_state": 34,
+      "from": null
     },
     {
       "dimension": "dollar_pressure",
-      "state": "stable",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "state": "easing",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "firming",
-        "date": "2026-07-27"
+        "state": "stable",
+        "date": "2026-07-28"
       }
     },
     {
@@ -117,8 +114,8 @@
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": -1.1056772273017328,
-        "qqq": -1.1503
+        "us10y": -1.4033595577291245,
+        "qqq": -0.1392
       }
     },
     {
@@ -130,10 +127,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "us10y": -1.1056772273017328,
-        "dxy": -0.006898590716472851
+        "us10y": -1.4033595577291245,
+        "dxy": -0.3301468414309587
       }
     },
     {
@@ -145,10 +142,10 @@
       "expected": "inverse",
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "dxy": -0.006898590716472851,
-        "gold": -0.4819
+        "dxy": -0.3301468414309587,
+        "gold": 1.3564
       }
     },
     {
@@ -162,8 +159,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "confirming",
       "evidence": {
-        "vix": 7.005347593582901,
-        "spy": -0.7977
+        "vix": 4.385026737967916,
+        "spy": -0.274
       }
     },
     {
@@ -177,8 +174,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": -2.3654,
-        "qqq": -1.1503
+        "nvda": -1.5786,
+        "qqq": -0.1392
       }
     },
     {
@@ -192,8 +189,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "diverging",
       "evidence": {
-        "btc": 1.1208,
-        "qqq": -1.1503
+        "btc": 1.0567,
+        "qqq": -0.1392
       }
     },
     {
@@ -207,8 +204,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": -0.7977,
-        "iwm": -1.2101
+        "spy": -0.274,
+        "iwm": -0.5386
       }
     },
     {
@@ -222,38 +219,38 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": -1.1056772273017328,
-        "tlt": -0.273
+        "us10y": -1.4033595577291245,
+        "tlt": -0.5461
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
+        "source": "causal:yields-dollar",
+        "en": "Yield support typically firms the dollar",
+        "ar": "دعم العوائد يقوّي الدولار عادة",
+        "evidence": {
+          "us10y": -1.4033595577291245,
+          "dxy": -0.3301468414309587
+        }
+      },
+      {
+        "source": "causal:dollar-gold",
+        "en": "A firming dollar typically pressures gold",
+        "ar": "تقوّي الدولار يضغط على الذهب عادة",
+        "evidence": {
+          "dxy": -0.3301468414309587,
+          "gold": 1.3564
+        }
+      },
+      {
         "source": "causal:vix-equities",
         "en": "Rising hedging demand pressures the equity tape",
         "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
         "evidence": {
-          "vix": 7.005347593582901,
-          "spy": -0.7977
-        }
-      },
-      {
-        "source": "causal:ai-growth",
-        "en": "AI leadership drives the growth complex",
-        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-        "evidence": {
-          "nvda": -2.3654,
-          "qqq": -1.1503
-        }
-      },
-      {
-        "source": "causal:breadth-link",
-        "en": "Healthy advances carry small caps with the index",
-        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-        "evidence": {
-          "spy": -0.7977,
-          "iwm": -1.2101
+          "vix": 4.385026737967916,
+          "spy": -0.274
         }
       }
     ],
@@ -263,8 +260,8 @@
         "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": -1.1056772273017328,
-          "qqq": -1.1503
+          "us10y": -1.4033595577291245,
+          "qqq": -0.1392
         }
       },
       {
@@ -272,8 +269,8 @@
         "en": "Divergence on the btc/qqq link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة btc/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "btc": 1.1208,
-          "qqq": -1.1503
+          "btc": 1.0567,
+          "qqq": -0.1392
         }
       },
       {
@@ -281,8 +278,8 @@
         "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": -1.1056772273017328,
-          "tlt": -0.273
+          "us10y": -1.4033595577291245,
+          "tlt": -0.5461
         }
       }
     ],
@@ -298,22 +295,6 @@
     "speculative": []
   },
   "alerts": [
-    {
-      "id": "volatility-expansion-2026-07-29",
-      "type": "volatility-expansion",
-      "severity": "elevated",
-      "date": "2026-07-29",
-      "headline_en": "Volatility expansion — regime moved from normal to elevated.",
-      "headline_ar": "توسع التقلب — انتقل النظام من الوضع الطبيعي إلى الارتفاع.",
-      "derived_from": [
-        {
-          "dimension": "volatility_regime",
-          "from": "normal",
-          "to": "elevated",
-          "date": "2026-07-29"
-        }
-      ]
-    },
     {
       "id": "positioning-crowding-2026-07-29",
       "type": "positioning-crowding",
@@ -332,6 +313,13 @@
     }
   ],
   "timeline_tail": [
+    {
+      "date": "2026-07-29",
+      "dimension": "dollar_pressure",
+      "from": "stable",
+      "to": "easing",
+      "note": "dollar pressure: stable -> easing"
+    },
     {
       "date": "2026-07-29",
       "dimension": "volatility_regime",
@@ -366,14 +354,7 @@
       "from": "broadening",
       "to": "balanced",
       "note": "momentum concentration: broadening -> balanced"
-    },
-    {
-      "date": "2026-07-28",
-      "dimension": "breadth_state",
-      "from": "confirming",
-      "to": "deteriorating",
-      "note": "breadth state: confirming -> deteriorating"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 2 alert(s); 0 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 0 cross-session observation(s); 60 timeline event(s)."
 }

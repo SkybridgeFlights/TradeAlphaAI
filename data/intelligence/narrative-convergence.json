@@ -1,20 +1,27 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-29T16:51:03.281Z",
+  "updated_at": "2026-07-29T18:11:27.793Z",
   "run_date": "2026-07-29",
   "verified": true,
   "coherence": {
-    "score": 50,
+    "score": 63,
     "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "ar": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
+    "en": "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
-    "events_5d": 15,
+    "events_5d": 16,
     "band": "accelerating"
   },
   "what_changed": [
+    {
+      "date": "2026-07-29",
+      "dimension": "dollar_pressure",
+      "from": "stable",
+      "to": "easing",
+      "note": "dollar pressure: stable -> easing"
+    },
     {
       "date": "2026-07-29",
       "dimension": "volatility_regime",
@@ -28,16 +35,31 @@
       "from": "contained",
       "to": "building",
       "note": "market fragility: contained -> building"
-    },
-    {
-      "date": "2026-07-29",
-      "dimension": "breadth_state",
-      "from": "confirming",
-      "to": "mixed",
-      "note": "breadth state: confirming -> mixed"
     }
   ],
   "confirms": [
+    {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    },
+    {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
     {
       "id": "vix-equities",
       "legs": [
@@ -136,15 +158,15 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: volatility regime: normal -> elevated; market fragility: contained -> building; breadth state: confirming -> mixed.",
-    "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The regime picture moved: dollar pressure: stable -> easing; volatility regime: normal -> elevated; market fragility: contained -> building.",
+    "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
     "The US10Y/QQQ link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
     "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
@@ -231,7 +253,7 @@
       },
       {
         "date": "2026-07-29",
-        "state": "neutral"
+        "state": "confirming"
       }
     ],
     "dollar-gold": [
@@ -273,7 +295,7 @@
       },
       {
         "date": "2026-07-29",
-        "state": "neutral"
+        "state": "confirming"
       }
     ],
     "vix-equities": [
@@ -487,5 +509,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 50/100 (tense); velocity accelerating; 3 confirming / 3 diverging links; 1 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 63/100 (tense); velocity accelerating; 5 confirming / 3 diverging links; 1 underpriced signal(s)."
 }
