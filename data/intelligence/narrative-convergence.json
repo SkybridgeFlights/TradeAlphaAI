@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-30T17:03:51.573Z",
+  "updated_at": "2026-07-30T18:39:42.231Z",
   "run_date": "2026-07-30",
   "verified": true,
   "coherence": {
@@ -11,10 +11,17 @@
     "ar": "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
-    "events_5d": 15,
+    "events_5d": 16,
     "band": "accelerating"
   },
   "what_changed": [
+    {
+      "date": "2026-07-30",
+      "dimension": "risk_state",
+      "from": "neutral",
+      "to": "risk-on",
+      "note": "risk state: neutral -> risk-on"
+    },
     {
       "date": "2026-07-30",
       "dimension": "breadth_state",
@@ -28,13 +35,6 @@
       "from": "contained",
       "to": "elevated",
       "note": "ai concentration risk: contained -> elevated"
-    },
-    {
-      "date": "2026-07-30",
-      "dimension": "momentum_concentration",
-      "from": "balanced",
-      "to": "narrow-megacap",
-      "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
   "confirms": [
@@ -130,10 +130,7 @@
     }
   ],
   "weakening": [],
-  "crowding": {
-    "en": "Positioning is crowded — leadership, concentration, and speculative appetite are stacked on the same trade.",
-    "ar": "التمركزات مزدحمة — القيادة والتركز وشهية المضاربة متراكمة على الصفقة نفسها."
-  },
+  "crowding": null,
   "preparing_for": [
     {
       "name": "Debt to Gross Domestic Product Ratios",
@@ -151,21 +148,28 @@
       "score": 5,
       "en": "accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying.",
       "ar": "ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
+    },
+    {
+      "kind": "pressure",
+      "track": "speculative_pressure",
+      "score": 3,
+      "en": "stacked speculative appetite (3/5) with no active alert — attention the tape is not currently paying.",
+      "ar": "شهية مضاربة متراكمة (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
     }
   ],
   "narrative_en": [
-    "The regime picture moved: breadth state: mixed -> confirming; ai concentration risk: contained -> elevated; momentum concentration: balanced -> narrow-megacap.",
+    "The regime picture moved: risk state: neutral -> risk-on; breadth state: mixed -> confirming; ai concentration risk: contained -> elevated.",
     "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
     "The US10Y/TLT link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
-    "Positioning is crowded — leadership, concentration, and speculative appetite are stacked on the same trade.",
-    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying."
+    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (3/5) with no active alert — attention the tape is not currently paying.",
+    "The next scheduled resolution point is Debt to Gross Domestic Product Ratios."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
     "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
     "رابط US10Y/TLT لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
-    "التمركزات مزدحمة — القيادة والتركز وشهية المضاربة متراكمة على الصفقة نفسها.",
-    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
+    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
+    "نقطة الحسم المجدولة التالية هي Debt to Gross Domestic Product Ratios."
   ],
   "link_history": {
     "yields-growth": [
@@ -505,5 +509,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 88/100 (coherent); velocity accelerating; 7 confirming / 1 diverging links; 1 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 88/100 (coherent); velocity accelerating; 7 confirming / 1 diverging links; 2 underpriced signal(s)."
 }
