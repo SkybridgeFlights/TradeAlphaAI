@@ -1,17 +1,17 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-29T21:03:55.254Z",
+  "updated_at": "2026-07-30T15:16:15.303Z",
   "status": "live",
-  "item_count": 29,
+  "item_count": 31,
   "clusters": {
     "ai-momentum": 4,
-    "volatility": 8,
-    "tape": 1,
+    "tape": 2,
+    "volatility": 7,
     "fed": 8,
+    "inflation": 3,
     "labor": 1,
     "macro": 3,
-    "growth": 3,
-    "inflation": 1
+    "growth": 3
   },
   "top_story": {
     "id": "move::NVDA::2026-07-29T21",
@@ -49,11 +49,28 @@
       "attribution": "sourced: https://finnhub.io/"
     },
     {
-      "id": "move::NVDA::2026-07-27T21",
+      "id": "move::QQQ::2026-07-30T15",
       "kind": "market_move",
-      "headline": "NVDA drops -4.99% to 196.51",
-      "urgency": 90,
-      "market_impact": 95,
+      "headline": "QQQ jumps +2.52% to 678.41",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "QQQ"
+      ],
+      "sector_tags": [
+        "technology"
+      ],
+      "timestamp": "2026-07-30T15:16:11.429Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::NVDA::2026-07-30T15",
+      "kind": "market_move",
+      "headline": "NVDA jumps +2.26% to 194.3",
+      "urgency": 65,
+      "market_impact": 70,
       "cluster": "ai-momentum",
       "asset_tags": [
         "NVDA"
@@ -61,7 +78,7 @@
       "sector_tags": [
         "ai-semiconductors"
       ],
-      "timestamp": "2026-07-27T21:17:56.001Z",
+      "timestamp": "2026-07-30T15:16:11.429Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
     },
@@ -236,21 +253,69 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
-      "id": "move::VIX::2026-07-27T21",
-      "kind": "market_move",
-      "headline": "VIX jumps +9.50% to 18.67",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260801T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-08-01)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "volatility",
+      "cluster": "fed",
       "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
         "VIX"
       ],
       "sector_tags": [
-        "volatility"
+        "fed"
       ],
-      "timestamp": "2026-07-27T21:17:57.449Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-08-01T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::pce::20260731T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: PCE (2026-07-31, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "inflation",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "sector_tags": [
+        "inflation"
+      ],
+      "timestamp": "2026-07-31T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::core-pce::20260731T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Core PCE (2026-07-31, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "inflation",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "sector_tags": [
+        "inflation"
+      ],
+      "timestamp": "2026-07-31T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::schedule_fallback::jp::boj-rate-decision::20260731T030000",
@@ -578,29 +643,6 @@
         "fed"
       ],
       "timestamp": "2026-07-29T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260728T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-07-28)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-07-28T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
