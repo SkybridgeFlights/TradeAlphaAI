@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-30T20:19:06.775Z",
+  "updated_at": "2026-07-30T21:44:39.145Z",
   "run_date": "2026-07-30",
   "verified": true,
   "status": "verified",
@@ -28,16 +28,19 @@
     {
       "id": "speculative-momentum",
       "family": "positioning",
-      "state": "invalidated",
+      "state": "crowded",
       "sessions": 37,
       "inactive_sessions": 0,
       "first_seen": "2026-06-15",
       "last_seen": "2026-07-30",
       "last_evaluated": "2026-07-30",
-      "active": false,
+      "active": true,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
-      "evidence": []
+      "evidence": [
+        "pulse:speculative_appetite=expanding",
+        "pulse:ai_concentration_risk=contained"
+      ]
     },
     {
       "id": "market-fragility",
@@ -214,8 +217,8 @@
       "status": "emerging",
       "first_seen": "2026-07-30",
       "last_seen": "2026-07-30",
-      "en": "stacked speculative appetite (3/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
-      "ar": "شهية مضاربة متراكمة (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
+      "en": "stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
+      "ar": "شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
     }
   ],
   "market_character": {
@@ -224,6 +227,14 @@
     "ar": "تفاؤل هش"
   },
   "current_focus": [
+    {
+      "kind": "narrative",
+      "id": "speculative-momentum",
+      "state": "crowded",
+      "sessions": 37,
+      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
+      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
+    },
     {
       "kind": "narrative",
       "id": "narrow-leadership",
@@ -258,17 +269,6 @@
     }
   ],
   "timeline": [
-    {
-      "id": "2026-07-09:repriced:market-fragility",
-      "date": "2026-07-09",
-      "kind": "repriced",
-      "narrative_id": "market-fragility",
-      "en": "Market fragility remains unresolved across breadth, concentration, and volatility inputs.",
-      "ar": "تبقى هشاشة السوق بلا حسم عبر مؤشرات الاتساع والتركيز والتقلب.",
-      "evidence": [
-        "state-transition:repriced:market-fragility"
-      ]
-    },
     {
       "id": "2026-07-09:changed:gold-resilience",
       "date": "2026-07-09",
@@ -1312,6 +1312,18 @@
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
       "evidence": [
         "state-transition:repriced:speculative-momentum"
+      ]
+    },
+    {
+      "id": "2026-07-30:intensified:speculative-momentum",
+      "date": "2026-07-30",
+      "kind": "intensified",
+      "narrative_id": "speculative-momentum",
+      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
+      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
+      "evidence": [
+        "pulse:speculative_appetite=expanding",
+        "pulse:ai_concentration_risk=contained"
       ]
     }
   ],
