@@ -1,11 +1,14 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-07-30T18:52:28.005Z",
+  "generated_at": "2026-07-30T21:38:42.506Z",
   "source_layer": "market-structure",
   "available": true,
   "structural_confidence": 84,
   "coverage_pct": 78,
-  "dominant": null,
+  "dominant": {
+    "dimension": "volatility_structure",
+    "state": "compression"
+  },
   "dimensions": {
     "participation": {
       "state": "mixed_participation",
@@ -18,13 +21,13 @@
       ]
     },
     "volatility_structure": {
-      "state": "contained",
-      "label_en": "contained volatility",
-      "label_ar": "تذبذب محتوى",
+      "state": "compression",
+      "label_en": "volatility compression",
+      "label_ar": "انضغاط التذبذب",
       "evidence": [
-        "regime volatility=normal",
+        "regime volatility=compression",
         "alignment=aligned",
-        "VIX=17.86"
+        "VIX=17.11"
       ]
     },
     "cross_asset": {
@@ -80,7 +83,7 @@
       "label_ar": "مشاركة سيولة غير مؤكدة",
       "evidence": [
         "liquidity_participation=uncertain",
-        "liquidity_state=easing"
+        "liquidity_state=volatility_absorption"
       ]
     },
     "stability": {
@@ -95,9 +98,12 @@
     }
   },
   "homepage_summary": {
-    "dominant_structure": null,
+    "dominant_structure": {
+      "dimension": "volatility_structure",
+      "state": "compression"
+    },
     "participation": "mixed_participation",
-    "volatility_structure": "contained",
+    "volatility_structure": "compression",
     "cross_asset": "coherent",
     "structural_stability": "indeterminate",
     "structural_confidence": 84
