@@ -1,21 +1,62 @@
 {
   "version": "1.0",
-  "updated_at": "2026-07-30T21:44:39.047Z",
-  "run_date": "2026-07-30",
+  "updated_at": "2026-07-31T17:07:18.653Z",
+  "run_date": "2026-07-31",
   "verified": true,
   "conviction": {
-    "state": "healthy-trend-structure",
+    "state": "deteriorating-confirmation",
     "regime_confidence": "high",
-    "confirmations": 8,
-    "contradictions": 1,
-    "en": "Healthy trend structure — confirmations are broad and uncontested across the causal network.",
-    "ar": "بنية اتجاه صحية — التأكيدات واسعة وغير متنازع عليها عبر الشبكة السببية."
+    "confirmations": 3,
+    "contradictions": 9,
+    "en": "Confirmation is deteriorating — 9 structural contradiction signal(s) against 3 confirmation(s).",
+    "ar": "التأكيد يتدهور — 9 إشارات تناقض هيكلي مقابل 3 إشارات تأكيد."
   },
-  "contradictions": [],
+  "contradictions": [
+    {
+      "id": "index-vs-breadth",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-07-31",
+      "last_seen": "2026-07-31",
+      "active_today": true,
+      "en": "Headline index strength against weak participation beneath the surface.",
+      "ar": "قوة المؤشرات الرئيسية تقابلها مشاركة ضعيفة تحت السطح."
+    },
+    {
+      "id": "dollar-vs-yields",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-07-31",
+      "last_seen": "2026-07-31",
+      "active_today": true,
+      "en": "Dollar softness against rising yields — the rate-support link is not holding.",
+      "ar": "ضعف الدولار رغم ارتفاع العوائد — رابط دعم الفائدة لا يصمد."
+    },
+    {
+      "id": "leadership-vs-participation",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-07-31",
+      "last_seen": "2026-07-31",
+      "active_today": true,
+      "en": "Growth leadership extending while small-cap participation deteriorates.",
+      "ar": "قيادة النمو تمتد بينما تتدهور مشاركة الأسهم الصغيرة."
+    },
+    {
+      "id": "concentration-vs-breadth",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-07-31",
+      "last_seen": "2026-07-31",
+      "active_today": true,
+      "en": "Extreme AI concentration against deteriorating market breadth.",
+      "ar": "تركز حاد في الذكاء الاصطناعي مقابل تدهور اتساع السوق."
+    }
+  ],
   "structure": {
-    "class": "stable-structure",
-    "en": "Stable structure — no fragility pattern dominates the verified picture.",
-    "ar": "بنية مستقرة — لا نمط هشاشة يهيمن على الصورة الموثقة."
+    "class": "fragile-trend",
+    "en": "Fragile trend — the advance rests on deteriorating participation and stacking stress inputs.",
+    "ar": "اتجاه هش — الصعود يرتكز على مشاركة متدهورة ومدخلات ضغط متراكمة."
   },
   "pressure": {
     "tracks": {
@@ -42,22 +83,22 @@
       },
       "speculative_pressure": {
         "score": 4,
-        "base_score": 3,
-        "state": "accumulating",
+        "base_score": 4,
+        "state": "steady",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
       "concentration_pressure": {
         "score": 5,
-        "base_score": 4,
+        "base_score": 5,
         "state": "accumulating",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
       "yield_pressure": {
-        "score": 0,
+        "score": 1,
         "base_score": 0,
-        "state": "dormant",
+        "state": "accumulating",
         "en": "Yield stress accumulation",
         "ar": "تراكم ضغط العوائد"
       }
@@ -73,8 +114,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with healthy trend structure; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع بنية اتجاه صحية؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — fragile trend with deteriorating confirmation; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — اتجاه هش مع التأكيد يتدهور؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -82,7 +123,7 @@
     },
     {
       "id": "bullish-continuation",
-      "status": "active",
+      "status": "watch",
       "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
       "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
       "derived_from": [
@@ -92,7 +133,7 @@
     },
     {
       "id": "fragile-upside",
-      "status": "dormant",
+      "status": "active",
       "en": "Fragile upside — the index can extend while participation thins; deteriorating breadth alongside new highs would confirm this path, broadening would invalidate it.",
       "ar": "صعود هش — يمكن للمؤشر أن يمتد بينما تضيق المشاركة؛ تدهور الاتساع مع قمم جديدة يؤكد هذا المسار، واتساع المشاركة يبطله.",
       "derived_from": [
@@ -123,8 +164,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -133,12 +174,12 @@
     {
       "id": "catalyst-dependency",
       "status": "monitor",
-      "en": "Catalyst dependency — Debt to Gross Domestic Product Ratios is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
-      "ar": "اعتماد على المحفز — Debt to Gross Domestic Product Ratios هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
+      "en": "Catalyst dependency — FOMC Press Release is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
+      "ar": "اعتماد على المحفز — FOMC Press Release هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
       "derived_from": [
         "calendar"
       ],
-      "catalyst": "Debt to Gross Domestic Product Ratios"
+      "catalyst": "FOMC Press Release"
     }
   ],
   "desk_focus": {
@@ -146,5 +187,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: healthy-trend-structure; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: deteriorating-confirmation; structure: fragile-trend; contradictions active: 4 (0 escalated); elevated pressure tracks: 3."
 }
