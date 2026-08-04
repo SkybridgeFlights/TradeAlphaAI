@@ -155,9 +155,15 @@ function chartFigure(ar, etf, intel, chart, audit) {
   const asOf = chart.as_of || 'unknown';
   const bars = chart.bar_count || (chart.series || []).length;
   const hashShort = (chart.series_hash || '').slice(0, 12);
-  const captionEn = 'Verified OHLCV — ' + bars + ' bars from ' + provider + ', as of ' + asOf + '. series_hash=' + hashShort + '.';
-  const captionAr = 'OHLCV موثق — ' + bars + ' شمعة من ' + provider + '، بتاريخ ' + asOf + '. series_hash=' + hashShort + '.';
-  return `<figure class="market-chart"><img src="${esc(svgRel)}" alt="${esc(etf.symbol)} ${esc(t('verified OHLCV', 'OHLCV موثق'))}" loading="lazy" /><figcaption class="ic-caption">${esc(ar ? captionAr : captionEn)}</figcaption></figure>`;
+  // The caption reads as prose. The series hash is a real integrity control and
+  // stays available, but a raw identifier is not default-view copy on a public
+  // page — it moves into a collapsed technical-details block beneath it.
+  const captionEn = 'Verified OHLCV — ' + bars + ' bars from ' + provider + ', as of ' + asOf + '. Series integrity verified.';
+  const captionAr = 'OHLCV موثق — ' + bars + ' شمعة من ' + provider + '، بتاريخ ' + asOf + '. تم التحقق من سلامة السلسلة.';
+  const details = hashShort
+    ? `<details class="etf-evidence"><summary>${esc(t('Technical details', 'تفاصيل تقنية'))}</summary><ul><li>${esc(t('Series hash', 'بصمة السلسلة'))}: <code>${esc(hashShort)}</code></li><li>${esc(t('Observations', 'عدد المشاهدات'))}: ${esc(String(bars))}</li><li>${esc(t('Provider', 'المزود'))}: ${esc(provider)}</li></ul></details>`
+    : '';
+  return `<figure class="market-chart"><img src="${esc(svgRel)}" alt="${esc(etf.symbol)} ${esc(t('verified OHLCV', 'OHLCV موثق'))}" loading="lazy" /><figcaption class="ic-caption">${esc(ar ? captionAr : captionEn)}${details}</figcaption></figure>`;
 }
 
 function qBadge(label, valueEn, valueAr, ar) {
