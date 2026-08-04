@@ -1,37 +1,34 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-03T21:12:08.776Z",
+  "generated_at": "2026-08-04T15:28:46.999Z",
   "source_layer": "liquidity-regime",
-  "regime": "yield_pressure_regime",
-  "liquidity_state": "yield_pressure",
-  "stability": "fragile",
+  "regime": "indeterminate",
+  "liquidity_state": "volatility_absorption",
+  "stability": "indeterminate",
   "confidence": 89,
   "observed_dimensions": 8,
   "cross_asset_coherence": {
-    "score": 1,
+    "score": 0.6,
     "direction": "risk_on",
     "n": 5
   },
   "sub_states": {
-    "breadth": "broad",
+    "breadth": "mixed",
     "volatility": "compression",
-    "yield": "yield_pressure",
-    "dollar": "easing_proxy",
+    "yield": "neutral",
+    "dollar": "neutral",
     "defensive": "cyclical_leadership"
   },
-  "narrative": "Rising yields are exerting pressure across rate-sensitive assets. Cross-asset coherence 1.",
-  "narrative_tags": [
-    "yield_pressure_regime",
-    "fragile"
-  ],
+  "narrative": "Insufficient observed cross-asset data to classify the current structural regime.",
+  "narrative_tags": [],
   "attribution": {
     "market_state_source": "data/live-market-state.json",
-    "market_state_generated_at": "2026-08-03T21:12:07.067Z",
+    "market_state_generated_at": "2026-08-04T15:28:45.227Z",
     "market_state_age_hours": 0,
     "reaction_context": {
       "liquidity_stress": false
     },
     "providers": "FRED (rates/vol) + Finnhub (equities/sectors) via update-live-market-state"
   },
-  "note": null
+  "note": "Insufficient observed dimensions — regime indeterminate (no fabrication)."
 }
