@@ -38,6 +38,24 @@ const ASSET_RSLUGS = (() => { try { return require("./asset-registry").SLUGS; } 
 const SECTOR_RSLUGS = (() => { try { return require("./sector-registry").SLUGS; } catch { return []; } })();
 const EQUITY_RSLUGS = (() => { try { return require("./equity-registry").SLUGS; } catch { return []; } })();
 const ETF_RSLUGS = (() => { try { return require("./etf-registry").SLUGS; } catch { return []; } })();
+// ETF Intelligence Center surfaces. Category and ranking slugs are read from the
+// generators that own them so a new category cannot be added without appearing
+// in the sitemap. existsDir keeps this safe to run before the pages are built.
+const etfCenterDirs = (prefix) => {
+  const categories = (() => {
+    try { return require("./generate-etf-center-pages").CATEGORIES.map((c) => `etfs/categories/${c.slug}/`); } catch { return []; }
+  })();
+  const rankings = (() => {
+    try { return require("./generate-etf-rankings-pages").RANKINGS.map((r) => `etfs/rankings/${r.slug}/`); } catch { return []; }
+  })();
+  return [
+    "etfs/", "etfs/finder/", "etfs/categories/", "etfs/rankings/",
+    "etfs/compare/", "etfs/portfolios/", "etfs/learn/", "etfs/methodology/", "etfs/data-audit/",
+    ...categories,
+    ...rankings,
+  ].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));
+};
+
 const entityResearchDirs = (prefix) => [
   ...ASSET_RSLUGS.map((s) => `research/assets/${s}/`),
   ...SECTOR_RSLUGS.map((s) => `research/sectors/${s}/`),
@@ -66,6 +84,7 @@ const core = [
   .concat(explorerDirs(""))
   .concat(workspaceDirs(""))
   .concat(accountDirs(""))
+  .concat(etfCenterDirs(""))
   .concat(entityResearchDirs(""))
   .concat(rankingDirs(""))
   .concat(existsDir("etfs") ? ["etfs/"] : [])
@@ -141,6 +160,7 @@ function arUrls() {
   for (const rel of explorerDirs("ar/")) out.push(rel);
   for (const rel of workspaceDirs("ar/")) out.push(rel);
   for (const rel of accountDirs("ar/")) out.push(rel);
+  for (const rel of etfCenterDirs("ar/")) out.push(rel);
   for (const rel of entityResearchDirs("ar/")) out.push(rel);
   for (const rel of rankingDirs("ar/")) out.push(rel);
   for (const b of ["markets/","sectors/","equities/"]) if (existsDir(`ar/${b}`)) out.push(`ar/${b}`);

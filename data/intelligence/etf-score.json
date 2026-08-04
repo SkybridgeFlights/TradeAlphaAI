@@ -1,0 +1,3043 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-08-04T17:02:42.557Z",
+  "source_layer": "derived_from_verified_and_computed_inputs",
+  "config_file": "config/etf-score.json",
+  "method": {
+    "note_en": "The TradeAlpha Score describes structural fund quality using only inputs this platform can evidence. Components whose inputs are awaiting a verified source are marked indeterminate and excluded, and the remaining weights are renormalised. It is educational research, not a ranking of expected return and not investment advice.",
+    "note_ar": "يصف مؤشر TradeAlpha جودة الصندوق الهيكلية باستخدام مدخلات يمكن للمنصة إثباتها فقط. وتُصنَّف المكوّنات التي تنتظر مدخلاتها مصدرا موثّقا كغير محددة وتُستبعد، وتُعاد موازنة الأوزان المتبقية. وهو بحث تعليمي، وليس ترتيبا للعائد المتوقع ولا نصيحة استثمارية.",
+    "tax_assumption_en": "Structural tax characteristics are assessed from the perspective of a non-US investor, because domicile and distribution policy change withholding treatment most for that audience. It is not tax advice and does not model any individual circumstances.",
+    "tax_assumption_ar": "تُقيَّم الخصائص الضريبية الهيكلية من منظور مستثمر غير أميركي، لأن مقر الصندوق وسياسة التوزيع يغيّران معاملة الاستقطاع لهذه الفئة أكثر من غيرها. وهي ليست استشارة ضريبية ولا تمثل ظروف أي فرد.",
+    "coverage_note_en": "Expense ratios have no free verifiable source, so the cost component is currently indeterminate for every fund and its weight is redistributed. Scores will change when a verified cost source is connected.",
+    "coverage_note_ar": "لا يوجد مصدر مجاني موثّق لنسب المصاريف، لذا يبقى مكوّن التكلفة غير محدد لكل الصناديق ويُعاد توزيع وزنه. وستتغير الدرجات عند ربط مصدر تكلفة موثّق.",
+    "weights": {
+      "cost": 0.25,
+      "diversification": 0.2,
+      "long_term_suitability": 0.2,
+      "liquidity": 0.15,
+      "tracking_quality": 0.1,
+      "tax_characteristics": 0.1
+    },
+    "labels": [
+      "exceptional",
+      "strong",
+      "solid",
+      "adequate",
+      "limited",
+      "indeterminate"
+    ],
+    "bands": [
+      {
+        "label": "exceptional",
+        "min": 85
+      },
+      {
+        "label": "strong",
+        "min": 72
+      },
+      {
+        "label": "solid",
+        "min": 58
+      },
+      {
+        "label": "adequate",
+        "min": 42
+      },
+      {
+        "label": "limited",
+        "min": 0
+      }
+    ],
+    "min_weight_coverage": 0.5,
+    "scales": {
+      "cost_ter_pct": {
+        "best": 0.03,
+        "worst": 0.75
+      },
+      "liquidity_log10_turnover": {
+        "worst": 6,
+        "best": 10
+      },
+      "tracking_error": {
+        "best": 0,
+        "worst": 0.05
+      },
+      "record_years": {
+        "worst": 0,
+        "best": 15
+      },
+      "drawdown_depth": {
+        "best": 0.2,
+        "worst": 0.7
+      },
+      "volatility_penalty": {
+        "max_points": 30,
+        "per_ratio_above_1": 30
+      }
+    },
+    "breadth_tiers": {
+      "world_equity": 1,
+      "broad_market": 0.9,
+      "emerging_markets": 0.75,
+      "fixed_income": 0.7,
+      "esg": 0.7,
+      "credit": 0.6,
+      "value": 0.6,
+      "growth": 0.55,
+      "dividend_quality": 0.55,
+      "real_estate": 0.4,
+      "sector": 0.35,
+      "commodity": 0.25,
+      "thematic_ai": 0.2,
+      "semiconductors": 0.15
+    },
+    "broad_market_volatility_reference": 0.180234
+  },
+  "coverage": {
+    "total": 39,
+    "scored": 39,
+    "withheld": 0
+  },
+  "etfs": [
+    {
+      "slug": "voo",
+      "symbol": "VOO",
+      "overall": 84.9,
+      "label": "strong",
+      "model_coverage": 0.65,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity",
+        "tracking_quality"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 90,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.90 for TradeAlphaAI category \"broad_market\"",
+            "observed volatility 18.0% versus broad-market reference 18.0% (ratio 1.00)"
+          ]
+        },
+        "liquidity": {
+          "value": 91.3,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 4467.5M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": 82.2,
+          "status": "computed",
+          "evidence": [
+            "annualised tracking error 0.89% versus S&P 500 proxy (SPY), 2511 shared observations",
+            "benchmark provenance: declared"
+          ]
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 76.2,
+          "status": "computed",
+          "evidence": [
+            "diversification component 90.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -34.0%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 84.9 from 4 of 6 components covering 65% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vti",
+      "symbol": "VTI",
+      "overall": 81.1,
+      "label": "strong",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"CRSP US Total Market\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 89.5,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.90 for TradeAlphaAI category \"broad_market\"",
+            "observed volatility 18.3% versus broad-market reference 18.0% (ratio 1.02)"
+          ]
+        },
+        "liquidity": {
+          "value": 77.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 1269.7M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"CRSP US Total Market\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 75.4,
+          "status": "computed",
+          "evidence": [
+            "diversification component 89.5",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -35.0%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 81.1 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "qqq",
+      "symbol": "QQQ",
+      "overall": 66.8,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "this fund is the reference proxy used for Nasdaq-100 — self-comparison withheld"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 47.5,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.55 for TradeAlphaAI category \"growth\"",
+            "observed volatility 22.5% versus broad-market reference 18.0% (ratio 1.25)"
+          ]
+        },
+        "liquidity": {
+          "value": 100,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 31416.7M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "this fund is the reference proxy used for Nasdaq-100 — self-comparison withheld",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 61.3,
+          "status": "computed",
+          "evidence": [
+            "diversification component 47.5",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -35.1%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 66.8 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "schd",
+      "symbol": "SCHD",
+      "overall": 62.3,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Dow Jones U.S. Dividend 100\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 55,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.55 for TradeAlphaAI category \"dividend_quality\"",
+            "observed volatility 16.7% versus broad-market reference 18.0% (ratio 0.93)"
+          ]
+        },
+        "liquidity": {
+          "value": 68.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 556.6M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Dow Jones U.S. Dividend 100\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 65,
+          "status": "computed",
+          "evidence": [
+            "diversification component 55.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.4%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 62.3 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "soxx",
+      "symbol": "SOXX",
+      "overall": 37,
+      "label": "limited",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"ICE Semiconductor Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 0,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.15 for TradeAlphaAI category \"semiconductors\"",
+            "observed volatility 34.6% versus broad-market reference 18.0% (ratio 1.92)"
+          ]
+        },
+        "liquidity": {
+          "value": 84.4,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 2369.8M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"ICE Semiconductor Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 38.4,
+          "status": "computed",
+          "evidence": [
+            "diversification component 0.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -45.8%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 37 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "smh",
+      "symbol": "SMH",
+      "overall": 38,
+      "label": "limited",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"MVIS US Listed Semiconductor 25\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 0,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.15 for TradeAlphaAI category \"semiconductors\"",
+            "observed volatility 33.3% versus broad-market reference 18.0% (ratio 1.85)"
+          ]
+        },
+        "liquidity": {
+          "value": 87.9,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 3282.6M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"MVIS US Listed Semiconductor 25\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 38.7,
+          "status": "computed",
+          "evidence": [
+            "diversification component 0.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -45.3%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 38 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlk",
+      "symbol": "XLK",
+      "overall": 51,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Technology Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 23.5,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 24.9% versus broad-market reference 18.0% (ratio 1.38)"
+          ]
+        },
+        "liquidity": {
+          "value": 83.4,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 2172.0M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Technology Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 54.3,
+          "status": "computed",
+          "evidence": [
+            "diversification component 23.5",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.6%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 51 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlf",
+      "symbol": "XLF",
+      "overall": 50.9,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Financial Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 28.2,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 22.1% versus broad-market reference 18.0% (ratio 1.23)"
+          ]
+        },
+        "liquidity": {
+          "value": 82.7,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 2033.8M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Financial Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 49.7,
+          "status": "computed",
+          "evidence": [
+            "diversification component 28.2",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -42.9%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 50.9 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlv",
+      "symbol": "XLV",
+      "overall": 57.3,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Health Care Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 35,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 16.7% versus broad-market reference 18.0% (ratio 0.92)"
+          ]
+        },
+        "liquidity": {
+          "value": 81.2,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 1762.5M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Health Care Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 61.6,
+          "status": "computed",
+          "evidence": [
+            "diversification component 35.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -28.4%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 57.3 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xle",
+      "symbol": "XLE",
+      "overall": 38.7,
+      "label": "limited",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Energy Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 15.8,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 29.6% versus broad-market reference 18.0% (ratio 1.64)"
+          ]
+        },
+        "liquidity": {
+          "value": 81.2,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 1767.5M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Energy Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 29.6,
+          "status": "computed",
+          "evidence": [
+            "diversification component 15.8",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -66.8%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 38.7 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xli",
+      "symbol": "XLI",
+      "overall": 51.8,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Industrial Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 31.6,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 20.0% versus broad-market reference 18.0% (ratio 1.11)"
+          ]
+        },
+        "liquidity": {
+          "value": 79.7,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 1547.7M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Industrial Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 51.2,
+          "status": "computed",
+          "evidence": [
+            "diversification component 31.6",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -42.3%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 51.8 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlu",
+      "symbol": "XLU",
+      "overall": 52.5,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Utilities Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 32.9,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 19.3% versus broad-market reference 18.0% (ratio 1.07)"
+          ]
+        },
+        "liquidity": {
+          "value": 74.1,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 921.8M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Utilities Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 55.8,
+          "status": "computed",
+          "evidence": [
+            "diversification component 32.9",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -36.1%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 52.5 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlp",
+      "symbol": "XLP",
+      "overall": 56.9,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Consumer Staples Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 35,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 14.9% versus broad-market reference 18.0% (ratio 0.82)"
+          ]
+        },
+        "liquidity": {
+          "value": 76.2,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 1113.3M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Consumer Staples Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 64.2,
+          "status": "computed",
+          "evidence": [
+            "diversification component 35.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -24.5%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 56.9 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xly",
+      "symbol": "XLY",
+      "overall": 49.9,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Consumer Discretionary Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 28.1,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 22.2% versus broad-market reference 18.0% (ratio 1.23)"
+          ]
+        },
+        "liquidity": {
+          "value": 76.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 1160.4M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Consumer Discretionary Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 51.8,
+          "status": "computed",
+          "evidence": [
+            "diversification component 28.1",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -39.7%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 49.9 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlb",
+      "symbol": "XLB",
+      "overall": 49.7,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Materials Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 30.6,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 20.7% versus broad-market reference 18.0% (ratio 1.15)"
+          ]
+        },
+        "liquidity": {
+          "value": 69.2,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 587.1M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Materials Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 54.2,
+          "status": "computed",
+          "evidence": [
+            "diversification component 30.6",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -37.3%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 49.7 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "xlre",
+      "symbol": "XLRE",
+      "overall": 47.1,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Real Estate Select Sector Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 30.9,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.35 for TradeAlphaAI category \"sector\"",
+            "observed volatility 20.5% versus broad-market reference 18.0% (ratio 1.14)"
+          ]
+        },
+        "liquidity": {
+          "value": 60.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 265.6M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Real Estate Select Sector Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 53.3,
+          "status": "computed",
+          "evidence": [
+            "diversification component 30.9",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -38.8%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 47.1 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "ief",
+      "symbol": "IEF",
+      "overall": 72.6,
+      "label": "strong",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"ICE U.S. Treasury 7-10 Year Bond Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 70,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.70 for TradeAlphaAI category \"fixed_income\"",
+            "observed volatility 6.6% versus broad-market reference 18.0% (ratio 0.37)"
+          ]
+        },
+        "liquidity": {
+          "value": 71.3,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 712.7M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"ICE U.S. Treasury 7-10 Year Bond Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 76.3,
+          "status": "computed",
+          "evidence": [
+            "diversification component 70.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -23.9%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 72.6 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "tlt",
+      "symbol": "TLT",
+      "overall": 70.6,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"ICE U.S. Treasury 20+ Year Bond Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 70,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.70 for TradeAlphaAI category \"fixed_income\"",
+            "observed volatility 14.8% versus broad-market reference 18.0% (ratio 0.82)"
+          ]
+        },
+        "liquidity": {
+          "value": 85.4,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 2601.6M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"ICE U.S. Treasury 20+ Year Bond Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 60,
+          "status": "computed",
+          "evidence": [
+            "diversification component 70.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -48.4%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 70.6 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "hyg",
+      "symbol": "HYG",
+      "overall": 72.4,
+      "label": "strong",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Markit iBoxx USD Liquid High Yield Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 60,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.60 for TradeAlphaAI category \"credit\"",
+            "observed volatility 8.2% versus broad-market reference 18.0% (ratio 0.46)"
+          ]
+        },
+        "liquidity": {
+          "value": 86.5,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 2894.9M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Markit iBoxx USD Liquid High Yield Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 74.2,
+          "status": "computed",
+          "evidence": [
+            "diversification component 60.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -22.0%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 72.4 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "lqd",
+      "symbol": "LQD",
+      "overall": 72,
+      "label": "strong",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "no same-currency proxy configured for benchmark \"Markit iBoxx USD Liquid Investment Grade Index\""
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 60,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.60 for TradeAlphaAI category \"credit\"",
+            "observed volatility 8.7% versus broad-market reference 18.0% (ratio 0.48)"
+          ]
+        },
+        "liquidity": {
+          "value": 87.8,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 3257.5M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "no same-currency proxy configured for benchmark \"Markit iBoxx USD Liquid Investment Grade Index\"",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 72.2,
+          "status": "computed",
+          "evidence": [
+            "diversification component 60.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -25.0%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 72 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "spy",
+      "symbol": "SPY",
+      "overall": 87.8,
+      "label": "exceptional",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 90,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.90 for TradeAlphaAI category \"broad_market\"",
+            "observed volatility 18.0% versus broad-market reference 18.0% (ratio 1.00)"
+          ]
+        },
+        "liquidity": {
+          "value": 100,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 45973.4M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 76.4,
+          "status": "computed",
+          "evidence": [
+            "diversification component 90.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.7%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 87.8 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "gld",
+      "symbol": "GLD",
+      "overall": 55.4,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 25,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.25 for TradeAlphaAI category \"commodity\"",
+            "observed volatility 16.1% versus broad-market reference 18.0% (ratio 0.90)"
+          ]
+        },
+        "liquidity": {
+          "value": 90.3,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 4075.8M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 59.6,
+          "status": "computed",
+          "evidence": [
+            "diversification component 25.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -26.4%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 55.4 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vnq",
+      "symbol": "VNQ",
+      "overall": 48.9,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 35.4,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.40 for TradeAlphaAI category \"real_estate\"",
+            "observed volatility 20.8% versus broad-market reference 18.0% (ratio 1.15)"
+          ]
+        },
+        "liquidity": {
+          "value": 62.3,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 311.4M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 52.4,
+          "status": "computed",
+          "evidence": [
+            "diversification component 35.4",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -42.4%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 48.9 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vig",
+      "symbol": "VIG",
+      "overall": 60.5,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 55,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.55 for TradeAlphaAI category \"dividend_quality\"",
+            "observed volatility 16.0% versus broad-market reference 18.0% (ratio 0.89)"
+          ]
+        },
+        "liquidity": {
+          "value": 60.3,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 257.3M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 66.1,
+          "status": "computed",
+          "evidence": [
+            "diversification component 55.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -31.7%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 60.5 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "dgro",
+      "symbol": "DGRO",
+      "overall": 57.4,
+      "label": "adequate",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 55,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.55 for TradeAlphaAI category \"dividend_quality\"",
+            "observed volatility 16.6% versus broad-market reference 18.0% (ratio 0.92)"
+          ]
+        },
+        "liquidity": {
+          "value": 52,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 120.0M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 63.8,
+          "status": "computed",
+          "evidence": [
+            "diversification component 55.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -35.1%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 57.4 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vug",
+      "symbol": "VUG",
+      "overall": 59.1,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 49.1,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.55 for TradeAlphaAI category \"growth\"",
+            "observed volatility 21.6% versus broad-market reference 18.0% (ratio 1.20)"
+          ]
+        },
+        "liquidity": {
+          "value": 69.1,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 581.6M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 61.5,
+          "status": "computed",
+          "evidence": [
+            "diversification component 49.1",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -35.6%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 59.1 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vtv",
+      "symbol": "VTV",
+      "overall": 64.3,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 60,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.60 for TradeAlphaAI category \"value\"",
+            "observed volatility 16.6% versus broad-market reference 18.0% (ratio 0.92)"
+          ]
+        },
+        "liquidity": {
+          "value": 70.1,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 634.5M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 64.3,
+          "status": "computed",
+          "evidence": [
+            "diversification component 60.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -36.8%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 64.3 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "iwm",
+      "symbol": "IWM",
+      "overall": 81.5,
+      "label": "strong",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 81.7,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.90 for TradeAlphaAI category \"broad_market\"",
+            "observed volatility 23.0% versus broad-market reference 18.0% (ratio 1.28)"
+          ]
+        },
+        "liquidity": {
+          "value": 98.2,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 8447.0M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 68.7,
+          "status": "computed",
+          "evidence": [
+            "diversification component 81.7",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -41.1%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 81.5 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "iemg",
+      "symbol": "IEMG",
+      "overall": 70.2,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 71.2,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.75 for TradeAlphaAI category \"emerging_markets\"",
+            "observed volatility 20.3% versus broad-market reference 18.0% (ratio 1.13)"
+          ]
+        },
+        "liquidity": {
+          "value": 73.4,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 861.9M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 66.8,
+          "status": "computed",
+          "evidence": [
+            "diversification component 71.2",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -38.7%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 70.2 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "bnd",
+      "symbol": "BND",
+      "overall": 72.8,
+      "label": "strong",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 70,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.70 for TradeAlphaAI category \"fixed_income\"",
+            "observed volatility 5.5% versus broad-market reference 18.0% (ratio 0.31)"
+          ]
+        },
+        "liquidity": {
+          "value": 68.5,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 548.5M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 78.9,
+          "status": "computed",
+          "evidence": [
+            "diversification component 70.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -18.6%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 72.8 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "botz",
+      "symbol": "BOTZ",
+      "overall": 24.8,
+      "label": "limited",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 6.9,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.20 for TradeAlphaAI category \"thematic_ai\"",
+            "observed volatility 25.9% versus broad-market reference 18.0% (ratio 1.44)"
+          ]
+        },
+        "liquidity": {
+          "value": 36.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 29.2M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 33.9,
+          "status": "computed",
+          "evidence": [
+            "diversification component 6.9",
+            "9.9 years of observable price history",
+            "deepest observed drawdown -55.5%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 24.8 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "esgu",
+      "symbol": "ESGU",
+      "overall": 62.6,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 69.1,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.70 for TradeAlphaAI category \"esg\"",
+            "observed volatility 18.5% versus broad-market reference 18.0% (ratio 1.03)"
+          ]
+        },
+        "liquidity": {
+          "value": 46.1,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 69.7M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 68.6,
+          "status": "computed",
+          "evidence": [
+            "diversification component 69.1",
+            "9.7 years of observable price history",
+            "deepest observed drawdown -33.9%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 62.6 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vwce",
+      "symbol": "VWCE",
+      "overall": 73.4,
+      "label": "strong",
+      "model_coverage": 0.65,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity",
+        "tax_characteristics"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 100,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 1.00 for TradeAlphaAI category \"world_equity\"",
+            "observed volatility 16.1% versus broad-market reference 18.0% (ratio 0.89)"
+          ]
+        },
+        "liquidity": {
+          "value": 36.8,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 29.7M EUR across 251 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": 75,
+          "status": "computed",
+          "evidence": [
+            "accumulating share class, read from the provider fund name: \"Vanguard FTSE All-World UCITS ETF USD Accumulation\"",
+            "fund domicile awaiting a verified source — scored on distribution policy alone"
+          ]
+        },
+        "long_term_suitability": {
+          "value": 73.3,
+          "status": "computed",
+          "evidence": [
+            "diversification component 100.0",
+            "7.0 years of observable price history",
+            "deepest observed drawdown -33.4%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 73.4 from 4 of 6 components covering 65% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality"
+      ]
+    },
+    {
+      "slug": "vwrl",
+      "symbol": "VWRL",
+      "overall": 70,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 100,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 1.00 for TradeAlphaAI category \"world_equity\"",
+            "observed volatility 14.8% versus broad-market reference 18.0% (ratio 0.82)"
+          ]
+        },
+        "liquidity": {
+          "value": 16.7,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 4.6M EUR across 253 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 80,
+          "status": "computed",
+          "evidence": [
+            "diversification component 100.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.3%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 70 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "iwda",
+      "symbol": "IWDA",
+      "overall": 73,
+      "label": "strong",
+      "model_coverage": 0.65,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity",
+        "tax_characteristics"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 100,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 1.00 for TradeAlphaAI category \"world_equity\"",
+            "observed volatility 15.0% versus broad-market reference 18.0% (ratio 0.83)"
+          ]
+        },
+        "liquidity": {
+          "value": 26.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 11.5M EUR across 254 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": 75,
+          "status": "computed",
+          "evidence": [
+            "accumulating share class, read from the provider fund name: \"iShares Core MSCI World UCITS ETF USD (Acc)\"",
+            "fund domicile awaiting a verified source — scored on distribution policy alone"
+          ]
+        },
+        "long_term_suitability": {
+          "value": 79.8,
+          "status": "computed",
+          "evidence": [
+            "diversification component 100.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.6%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 73 from 4 of 6 components covering 65% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality"
+      ]
+    },
+    {
+      "slug": "eunl",
+      "symbol": "EUNL",
+      "overall": 75.6,
+      "label": "strong",
+      "model_coverage": 0.65,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity",
+        "tax_characteristics"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 100,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 1.00 for TradeAlphaAI category \"world_equity\"",
+            "observed volatility 15.1% versus broad-market reference 18.0% (ratio 0.84)"
+          ]
+        },
+        "liquidity": {
+          "value": 38,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 33.2M EUR across 251 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": 75,
+          "status": "computed",
+          "evidence": [
+            "accumulating share class, read from the provider fund name: \"iShares Core MSCI World UCITS ETF USD (Acc)\"",
+            "fund domicile awaiting a verified source — scored on distribution policy alone"
+          ]
+        },
+        "long_term_suitability": {
+          "value": 79.8,
+          "status": "computed",
+          "evidence": [
+            "diversification component 100.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.6%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 75.6 from 4 of 6 components covering 65% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality"
+      ]
+    },
+    {
+      "slug": "vusa",
+      "symbol": "VUSA",
+      "overall": 66.2,
+      "label": "solid",
+      "model_coverage": 0.55,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        },
+        {
+          "component": "tax_characteristics",
+          "reason": "domicile and distribution policy both awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 90,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.90 for TradeAlphaAI category \"broad_market\"",
+            "observed volatility 16.1% versus broad-market reference 18.0% (ratio 0.89)"
+          ]
+        },
+        "liquidity": {
+          "value": 20.6,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 6.6M EUR across 253 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "domicile and distribution policy both awaiting a verified source",
+          "evidence": []
+        },
+        "long_term_suitability": {
+          "value": 76.5,
+          "status": "computed",
+          "evidence": [
+            "diversification component 90.0",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -33.6%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 66.2 from 3 of 6 components covering 55% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality, tax_characteristics"
+      ]
+    },
+    {
+      "slug": "vuaa",
+      "symbol": "VUAA",
+      "overall": 63.3,
+      "label": "solid",
+      "model_coverage": 0.65,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity",
+        "tax_characteristics"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 90,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.90 for TradeAlphaAI category \"broad_market\"",
+            "observed volatility 16.2% versus broad-market reference 18.0% (ratio 0.90)"
+          ]
+        },
+        "liquidity": {
+          "value": 18.1,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 5.3M EUR across 251 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": 75,
+          "status": "computed",
+          "evidence": [
+            "accumulating share class, read from the provider fund name: \"Vanguard S&P 500 UCITS ETF USD Accumulation\"",
+            "fund domicile awaiting a verified source — scored on distribution policy alone"
+          ]
+        },
+        "long_term_suitability": {
+          "value": 64.6,
+          "status": "computed",
+          "evidence": [
+            "diversification component 90.0",
+            "1.6 years of observable price history",
+            "deepest observed drawdown -23.3%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 63.3 from 4 of 6 components covering 65% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality"
+      ]
+    },
+    {
+      "slug": "eimi",
+      "symbol": "EIMI",
+      "overall": 61.7,
+      "label": "solid",
+      "model_coverage": 0.65,
+      "components_evaluated": [
+        "diversification",
+        "long_term_suitability",
+        "liquidity",
+        "tax_characteristics"
+      ],
+      "components_skipped": [
+        {
+          "component": "cost",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it"
+        },
+        {
+          "component": "tracking_quality",
+          "reason": "benchmark index awaiting a verified source"
+        }
+      ],
+      "sub_scores": {
+        "cost": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "expense ratio awaiting a verified source — no free provider publishes it",
+          "evidence": []
+        },
+        "diversification": {
+          "value": 72.9,
+          "status": "computed",
+          "evidence": [
+            "mandate breadth tier 0.75 for TradeAlphaAI category \"emerging_markets\"",
+            "observed volatility 19.3% versus broad-market reference 18.0% (ratio 1.07)"
+          ]
+        },
+        "liquidity": {
+          "value": 30.1,
+          "status": "computed",
+          "evidence": [
+            "median daily turnover 16.0M USD across 252 trailing sessions",
+            "log-scaled across the configured turnover range"
+          ]
+        },
+        "tracking_quality": {
+          "value": null,
+          "status": "indeterminate",
+          "reason": "benchmark index awaiting a verified source",
+          "evidence": []
+        },
+        "tax_characteristics": {
+          "value": 75,
+          "status": "computed",
+          "evidence": [
+            "accumulating share class, read from the provider fund name: \"iShares Core MSCI EM IMI UCITS ETF USD (Acc)\"",
+            "fund domicile awaiting a verified source — scored on distribution policy alone"
+          ]
+        },
+        "long_term_suitability": {
+          "value": 67.4,
+          "status": "computed",
+          "evidence": [
+            "diversification component 72.9",
+            "10.0 years of observable price history",
+            "deepest observed drawdown -38.7%"
+          ]
+        }
+      },
+      "evidence": [
+        "overall 61.7 from 4 of 6 components covering 65% of model weight",
+        "weights renormalised over evaluated components only; awaiting verified data: cost, tracking_quality"
+      ]
+    }
+  ],
+  "attribution": {
+    "sources": [
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "daily OHLCV price series"
+      },
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "risk-free rate proxy ^IRX"
+      }
+    ],
+    "derived_from": [
+      "data/intelligence/etf-analytics.json",
+      "data/intelligence/etf-facts.json",
+      "config/etf-score.json"
+    ],
+    "computed_by": "tools/build-etf-score.js"
+  },
+  "source_hash": "0eabc74b7770f6f48edb055e552ccda653d07cc850662d44f1e4bcaaf3a6a6c8"
+}

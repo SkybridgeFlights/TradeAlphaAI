@@ -25,20 +25,14 @@
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../landing.css" />
   <link rel="stylesheet" href="../../css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/etf-center.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/global-header-canonical.css" />
-<!-- GA4_INSTALLED:G-C8REB6WQP1 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-C8REB6WQP1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-C8REB6WQP1', { anonymize_ip: true });
-</script>
 </head>
 <body class="market-page">
   <!-- GLOBAL_HEADER_START -->
+<a class="skip-link" href="#top">Skip to main content</a>
 <div class="topbar" data-global-header data-locale="en" data-active-section="research">
   <div class="wrap topbar-inner">
     <a class="brand" href="/">
@@ -52,108 +46,70 @@
     <div class="top-actions">
       <nav class="nav-group" aria-label="Primary">
         <a href="/" class="nav-link">Home</a>
-          <a href="/stocks.html" class="nav-link">Stocks</a>
-          <a href="/etfs.html" class="nav-link">ETFs</a>
-          <a href="/ai-stock-screener.html" class="nav-link">Screener</a>
           <div class="nav-menu">
-            <a href="/rankings.html" class="nav-link nav-menu-trigger">Rankings<span class="nav-caret" aria-hidden="true">▾</span></a>
-            <div class="nav-dropdown">
-              <a href="/rankings.html#top-stocks">Stock Rankings</a>
-              <a href="/rankings.html#top-ai-stocks">AI Leadership</a>
-              <a href="/rankings.html#top-semiconductor-stocks">Semiconductor Leadership</a>
-              <a href="/rankings.html#top-growth-stocks">Growth Stocks</a>
-              <a href="/rankings.html#top-dividend-etfs">Dividend ETFs</a>
-              <a href="/rankings.html#top-broad-market-etfs">Broad-Market ETFs</a>
+            <a href="/markets/" class="nav-link nav-menu-trigger">Markets<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/markets/">Assets</a>
+              <a href="/sectors/">Sectors</a>
+              <a href="/equities/">Equities</a>
+              <a href="/etfs/">ETF Intelligence</a>
+              <a href="/etfs/finder/">ETF Finder</a>
+              <a href="/etfs/compare/">Compare ETFs</a>
+              <a href="/etfs/rankings/">ETF Rankings</a>
+              <a href="/stocks.html">Stocks Directory</a>
+              <a href="/etfs.html">ETFs Directory</a>
+              <a href="/markets/" class="nav-dropdown-viewall">View all Markets<span aria-hidden="true">→</span></a>
             </div>
           </div>
-          <div class="nav-menu nav-menu-mega">
-            <a href="/intelligence/" class="nav-link nav-menu-trigger is-active">Market Intelligence<span class="nav-caret" aria-hidden="true">▾</span></a>
-            <div class="nav-dropdown nav-mega-dropdown" role="menu">
-              <div class="nav-mega-grid">
-              <div class="nav-mega-column" style="--col-delay:0ms">
-                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span><span>Intelligence</span></h4>
-                <ul class="nav-mega-list">
-                  <li><a href="/market-terminal/">Market Terminal</a></li>
-                  <li><a href="/market-regime/">Market Regime</a></li>
-                  <li><a href="/rankings/">Rankings</a></li>
-                  <li><a href="/market-map/assets/">Visual Maps</a></li>
-                  <li><a href="/markets/">Assets</a></li>
-                  <li><a href="/sectors/">Sectors</a></li>
-                  <li><a href="/equities/">Equities</a></li>
-                  <li><a href="/etfs/">ETFs</a></li>
-                </ul>
-              </div>
-              <div class="nav-mega-column" style="--col-delay:30ms">
-                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>Research</span></h4>
-                <ul class="nav-mega-list">
-                  <li><a href="/research/">Research Hub</a></li>
-                  <li><a href="/research/feed/">Research Feed</a></li>
-                  <li><a href="/research/regime/">Regime Research</a></li>
-                  <li><a href="/research/assets/">Entity Research</a></li>
-                  <li><a href="/research/etfs/">ETF Research</a></li>
-                  <li><a href="/insights/">Applied Research</a></li>
-                  <li><a href="/articles/">Educational Articles</a></li>
-                </ul>
-              </div>
-              <div class="nav-mega-column" style="--col-delay:60ms">
-                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg></span><span>Changes</span></h4>
-                <ul class="nav-mega-list">
-                  <li><a href="/changes/">Changes Hub</a></li>
-                  <li><a href="/changes/assets/">Asset Changes</a></li>
-                  <li><a href="/changes/sectors/">Sector Changes</a></li>
-                  <li><a href="/changes/equities/">Equity Changes</a></li>
-                  <li><a href="/changes/etfs/">ETF Changes</a></li>
-                  <li><a href="/changes/regime/">Regime Changes</a></li>
-                  <li><a href="/changes/history/">Change History</a></li>
-                </ul>
-              </div>
-              <div class="nav-mega-column" style="--col-delay:90ms">
-                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span>Explorer</span></h4>
-                <ul class="nav-mega-list">
-                  <li><a href="/explorer/">Explorer Home</a></li>
-                  <li><a href="/explorer/events/">Event Explorer</a></li>
-                  <li><a href="/explorer/entity/">Entity Explorer</a></li>
-                  <li><a href="/explorer/network/">Network Explorer</a></li>
-                  <li><a href="/explorer/research/">Research Explorer</a></li>
-                  <li><a href="/explorer/search/">Search Explorer</a></li>
-                </ul>
-              </div>
-              <div class="nav-mega-column" style="--col-delay:120ms">
-                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span><span>Workspace</span></h4>
-                <ul class="nav-mega-list">
-                  <li><a href="/workspace/">Workspace Home</a></li>
-                  <li><a href="/workspace/watchlists/">Watchlists</a></li>
-                  <li><a href="/workspace/monitoring/">Monitoring</a></li>
-                  <li><a href="/workspace/research/">Workspace Research</a></li>
-                  <li><a href="/workspace/regime/">Regime Monitoring</a></li>
-                </ul>
-              </div>
-              <div class="nav-mega-column" style="--col-delay:150ms">
-                <h4 class="nav-mega-title"><span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span><span>Account</span></h4>
-                <ul class="nav-mega-list">
-                  <li><a href="/account/">Account Overview</a></li>
-                  <li><a href="/account/profile/">Profile</a></li>
-                  <li><a href="/account/preferences/">Preferences</a></li>
-                  <li><a href="/account/watchlists/">My Watchlists</a></li>
-                  <li><a href="/account/alerts/">Alerts</a></li>
-                  <li><a href="/account/billing/">Billing</a></li>
-                  <li><a href="/account/mobile/">Mobile App</a></li>
-                </ul>
-              </div>
-              </div>
-              <div class="nav-mega-footer">
-              <div class="nav-mega-footer-row">
-                <span class="nav-mega-footer-title">More Surfaces</span>
-                <div class="nav-mega-footer-links">
-                  <a href="/market-news/">Market News</a><a href="/market-structure/">Market Structure</a><a href="/market-outlook/">Market Outlook</a><a href="/briefs/">Market Briefs</a><a href="/research/history/">Research History</a><a href="/market-map/regime/">Regime Map</a><a href="/market-map/network/">Network Map</a><a href="/market-map/history/">History Map</a><a href="/market-map/etfs/">ETF Map</a>
-                </div>
-              </div>
-              </div>
+          <div class="nav-menu">
+            <a href="/research/" class="nav-link nav-menu-trigger is-active">Research<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/research/">Research Hub</a>
+              <a href="/research/feed/">Research Feed</a>
+              <a href="/market-outlook/">Market Outlook</a>
+              <a href="/market-news/">Market News</a>
+              <a href="/market-structure/">Market Structure</a>
+              <a href="/insights/">Applied Research</a>
+              <a href="/articles/">Educational Articles</a>
+              <a href="/glossary/">Glossary</a>
+              <a href="/research/" class="nav-dropdown-viewall">View all Research<span aria-hidden="true">→</span></a>
             </div>
           </div>
-          <a href="/economic-calendar/" class="nav-link">Economic Calendar</a>
+          <div class="nav-menu">
+            <a href="/intelligence/" class="nav-link nav-menu-trigger is-active">Intelligence<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/market-terminal/">Market Terminal</a>
+              <a href="/market-regime/">Market Regime</a>
+              <a href="/rankings/">Rankings</a>
+              <a href="/market-map/assets/">Maps</a>
+              <a href="/explorer/">Explorer</a>
+              <a href="/changes/">Changes</a>
+              <a href="/intelligence/" class="nav-dropdown-viewall">View all Intelligence<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/tools/" class="nav-link nav-menu-trigger">Tools<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/ai-stock-screener.html">Screener</a>
+              <a href="/economic-calendar/">Economic Calendar</a>
+              <a href="/briefs/">Market Briefs</a>
+              <a href="/newsletter/">Newsletter</a>
+              <a href="/tools/compound-interest/">Compound Interest Calculator</a>
+              <a href="/tools/retirement/">Retirement Calculator</a>
+              <a href="/tools/cagr/">CAGR Calculator</a>
+              <a href="/tools/dividend-yield/">Dividend Yield Calculator</a>
+              <a href="/methodology.html">Methodology</a>
+              <a href="/tools/" class="nav-dropdown-viewall">View all Tools<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
           <a href="/methodology.html" class="nav-link">Methodology</a>
       </nav>
+      <div class="header-search" role="search">
+        <label class="header-search-label" for="header-search-input">
+          <svg class="header-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="header-search-input" class="header-search-input" type="search" placeholder="Search…" autocomplete="off" aria-label="Site search" data-site-search />
+        </label>
+      </div>
       <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">Market Briefs</a>
       <div class="locale-links" aria-label="Language">
         <a class="lang-switch" data-locale-route="ar" href="/ar/research/etfs/">Arabic</a>
@@ -177,46 +133,244 @@
       </button>
     </div>
   </div>
+  <template data-mobile-cards>
+    <div class="m-card" data-card-key="markets">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+        <h3 class="m-card-title">Markets</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/markets/">Assets</a></li><li><a class="m-card-link" href="/sectors/">Sectors</a></li><li><a class="m-card-link" href="/equities/">Equities</a></li><li><a class="m-card-link" href="/etfs/">ETF Intelligence</a></li><li><a class="m-card-link" href="/etfs/finder/">ETF Finder</a></li><li><a class="m-card-link" href="/etfs/compare/">Compare ETFs</a></li></ul>
+      <a class="m-card-viewall" href="/markets/">View all Markets<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="research">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <h3 class="m-card-title">Research</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/research/">Research Hub</a></li><li><a class="m-card-link" href="/research/feed/">Research Feed</a></li><li><a class="m-card-link" href="/insights/">Applied Research</a></li><li><a class="m-card-link" href="/glossary/">Glossary</a></li></ul>
+      <a class="m-card-viewall" href="/research/">View all Research<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="intelligence">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <h3 class="m-card-title">Intelligence</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/market-terminal/">Market Terminal</a></li><li><a class="m-card-link" href="/market-regime/">Market Regime</a></li><li><a class="m-card-link" href="/rankings/">Rankings</a></li><li><a class="m-card-link" href="/explorer/">Explorer</a></li><li><a class="m-card-link" href="/changes/">Changes</a></li></ul>
+      <a class="m-card-viewall" href="/intelligence/">View all Intelligence<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="tools">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6.3 6.3 2.6 2.6 6.3-6.3a4 4 0 0 0 5.4-5.4z"/></svg></span>
+        <h3 class="m-card-title">Tools</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/ai-stock-screener.html">Screener</a></li><li><a class="m-card-link" href="/economic-calendar/">Economic Calendar</a></li><li><a class="m-card-link" href="/briefs/">Market Briefs</a></li><li><a class="m-card-link" href="/newsletter/">Newsletter</a></li><li><a class="m-card-link" href="/tools/compound-interest/">Compound Interest Calc</a></li><li><a class="m-card-link" href="/tools/retirement/">Retirement Calc</a></li><li><a class="m-card-link" href="/tools/cagr/">CAGR Calc</a></li><li><a class="m-card-link" href="/tools/dividend-yield/">Dividend Yield Calc</a></li></ul>
+      <a class="m-card-viewall" href="/tools/">View all Tools<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="workspace">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+        <h3 class="m-card-title">Workspace</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/workspace/watchlists/">My Watchlists</a></li><li><a class="m-card-link" href="/workspace/monitoring/">Monitoring</a></li><li><a class="m-card-link" href="/workspace/regime/">Regime Monitoring</a></li><li><a class="m-card-link" href="/workspace/research/">Workspace Research</a></li></ul>
+      <a class="m-card-viewall" href="/workspace/">Open workspace<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card m-card-account" data-card-key="account" data-mobile-account>
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+        <h3 class="m-card-title">Account</h3>
+      </header>
+      <ul class="m-card-list">
+        <li><a class="m-card-link" href="/account/profile/">Profile</a></li>
+        <li><a class="m-card-link" href="/account/watchlists/">Watchlists</a></li>
+        <li><a class="m-card-link" href="/account/preferences/">Preferences</a></li>
+        <li><a class="m-card-link" href="/account/alerts/">Alerts</a></li>
+      </ul>
+      <div class="m-card-actions">
+        <a class="m-card-cta m-card-cta-signin" data-mobile-signin href="/account/sign-in/">Sign in</a>
+        <a class="m-card-cta m-card-cta-dashboard" data-mobile-dashboard hidden href="/account/">Dashboard</a>
+        <button type="button" class="m-card-cta m-card-cta-signout" data-mobile-signout hidden>Sign out</button>
+      </div>
+    </div></template>
 </div>
 <!-- GLOBAL_HEADER_END -->
 
   <main class="market-shell">
     <div class="wrap">
-      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/research/">Research Hub</a><span>/</span><span>ETF Research</span></nav>
+      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/research/">Research Hub</a><span>/</span><a href="/etfs/">ETF Intelligence</a><span>/</span><span>ETF Research</span></nav>
       <section class="market-hero"><div class="market-hero-panel"><span class="eyebrow">ETF Intelligence Universe</span><h1>ETF Research</h1><p class="market-lead">Institutional ETF research network composed from regime, ranking, relative-strength, history and narrative intelligence.</p></div></section>
       <section class="market-section" id="etf-research-index"><div class="market-section-head"><span class="eyebrow">ETF Research Network</span><h2>ETF universe research</h2></div>
         <p class="market-copy">Institutional ETF research composed from the existing regime, ranking, relative-strength, history and narrative artifacts. Direct evidence is used when available; unavailable data remains explicitly indeterminate.</p>
         <div class="market-grid three">
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">VOO · Low-cost S&amp;P 500 beta wrapper for broad US large-cap exposure</span><h3><a href="/research/etfs/voo/">Vanguard S&amp;P 500 ETF</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">VTI · Total US equity-market wrapper spanning large, mid and small capitalization exposure</span><h3><a href="/research/etfs/vti/">Vanguard Total Stock Market ETF</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">QQQ · Large-cap growth and duration-sensitive equity leadership proxy</span><h3><a href="/research/etfs/qqq/">Invesco QQQ Trust</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">SCHD · Dividend-quality equity exposure with a defensive income tilt</span><h3><a href="/research/etfs/schd/">Schwab U.S. Dividend Equity ETF</a></h3><p class="market-copy">State: neutral · Rank: constructive</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">SOXX · Semiconductor industry exposure tied to AI capex, hardware cycles and chip leadership</span><h3><a href="/research/etfs/soxx/">iShares Semiconductor ETF</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">SMH · Concentrated semiconductor leadership basket with high AI infrastructure sensitivity</span><h3><a href="/research/etfs/smh/">VanEck Semiconductor ETF</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">XLK · Technology sector wrapper for software, hardware and platform leadership</span><h3><a href="/research/etfs/xlk/">Technology Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: constructive</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">XLF · Financial sector wrapper sensitive to rates, credit conditions and yield-curve context</span><h3><a href="/research/etfs/xlf/">Financial Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">XLV · Healthcare sector wrapper with defensive earnings characteristics</span><h3><a href="/research/etfs/xlv/">Health Care Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLE · Energy sector wrapper sensitive to oil, inflation pressure and cyclicality</span><h3><a href="/research/etfs/xle/">Energy Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: weakening</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">XLI · Industrial sector wrapper tied to capital spending, infrastructure and cyclicality</span><h3><a href="/research/etfs/xli/">Industrial Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">XLU · Utilities sector wrapper with defensive and rate-sensitive characteristics</span><h3><a href="/research/etfs/xlu/">Utilities Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">XLP · Consumer staples sector wrapper for defensive consumption exposure</span><h3><a href="/research/etfs/xlp/">Consumer Staples Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">XLY · Consumer discretionary sector wrapper tied to household demand and growth appetite</span><h3><a href="/research/etfs/xly/">Consumer Discretionary Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">XLB · Materials sector wrapper exposed to commodities, global growth and dollar conditions</span><h3><a href="/research/etfs/xlb/">Materials Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">XLRE · Real estate sector wrapper with high sensitivity to rates and financing conditions</span><h3><a href="/research/etfs/xlre/">Real Estate Select Sector SPDR Fund</a></h3><p class="market-copy">State: neutral · Rank: strongest</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">IEF · Intermediate-duration Treasury wrapper for rates and duration context</span><h3><a href="/research/etfs/ief/">iShares 7-10 Year Treasury Bond ETF</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">TLT · Long-duration Treasury wrapper for rates pressure and defensive duration demand</span><h3><a href="/research/etfs/tlt/">iShares 20+ Year Treasury Bond ETF</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">HYG · High-yield credit wrapper for risk appetite and spread conditions</span><h3><a href="/research/etfs/hyg/">iShares iBoxx High Yield Corporate Bond ETF</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
-          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">LQD · Investment-grade credit wrapper balancing duration and corporate-spread context</span><h3><a href="/research/etfs/lqd/">iShares iBoxx Investment Grade Corporate Bond ETF</a></h3><p class="market-copy">State: neutral · Rank: strong</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">VOO · Low-cost S&amp;P 500 beta wrapper for broad US large-cap exposure</span><h3><a href="/research/etfs/voo/">Vanguard S&amp;P 500 ETF</a></h3><p class="market-copy">TradeAlpha Score: 84.9/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">VTI · Total US equity-market wrapper spanning large, mid and small capitalization exposure</span><h3><a href="/research/etfs/vti/">Vanguard Morningstar Total Stock Market ETF</a></h3><p class="market-copy">TradeAlpha Score: 81.1/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">QQQ · Large-cap growth and duration-sensitive equity leadership proxy</span><h3><a href="/research/etfs/qqq/">Invesco QQQ Trust</a></h3><p class="market-copy">TradeAlpha Score: 66.8/100 · Issuer: Invesco</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">SCHD · Dividend-quality equity exposure with a defensive income tilt</span><h3><a href="/research/etfs/schd/">Schwab U.S. Dividend Equity ETF</a></h3><p class="market-copy">TradeAlpha Score: 62.3/100 · Issuer: Schwab</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #c2703c"><span class="market-card-kicker">SOXX · Semiconductor industry exposure tied to AI capex, hardware cycles and chip leadership</span><h3><a href="/research/etfs/soxx/">iShares Semiconductor ETF</a></h3><p class="market-copy">TradeAlpha Score: 37/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #c2703c"><span class="market-card-kicker">SMH · Concentrated semiconductor leadership basket with high AI infrastructure sensitivity</span><h3><a href="/research/etfs/smh/">VanEck Semiconductor ETF</a></h3><p class="market-copy">TradeAlpha Score: 38/100 · Issuer: VanEck</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLK · Technology sector wrapper for software, hardware and platform leadership</span><h3><a href="/research/etfs/xlk/">State Street Technology Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 51/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLF · Financial sector wrapper sensitive to rates, credit conditions and yield-curve context</span><h3><a href="/research/etfs/xlf/">State Street Financial Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 50.9/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLV · Healthcare sector wrapper with defensive earnings characteristics</span><h3><a href="/research/etfs/xlv/">State Street Health Care Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 57.3/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #c2703c"><span class="market-card-kicker">XLE · Energy sector wrapper sensitive to oil, inflation pressure and cyclicality</span><h3><a href="/research/etfs/xle/">State Street Energy Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 38.7/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLI · Industrial sector wrapper tied to capital spending, infrastructure and cyclicality</span><h3><a href="/research/etfs/xli/">State Street Industrial Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 51.8/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLU · Utilities sector wrapper with defensive and rate-sensitive characteristics</span><h3><a href="/research/etfs/xlu/">State Street Utilities Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 52.5/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLP · Consumer staples sector wrapper for defensive consumption exposure</span><h3><a href="/research/etfs/xlp/">State Street Consumer Staples Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 56.9/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLY · Consumer discretionary sector wrapper tied to household demand and growth appetite</span><h3><a href="/research/etfs/xly/">State Street Consumer Discretionary Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 49.9/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLB · Materials sector wrapper exposed to commodities, global growth and dollar conditions</span><h3><a href="/research/etfs/xlb/">State Street Materials Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 49.7/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">XLRE · Real estate sector wrapper with high sensitivity to rates and financing conditions</span><h3><a href="/research/etfs/xlre/">State Street Real Estate Select Sector SPDR ETF</a></h3><p class="market-copy">TradeAlpha Score: 47.1/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">IEF · Intermediate-duration Treasury wrapper for rates and duration context</span><h3><a href="/research/etfs/ief/">iShares 7-10 Year Treasury Bond ETF</a></h3><p class="market-copy">TradeAlpha Score: 72.6/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">TLT · Long-duration Treasury wrapper for rates pressure and defensive duration demand</span><h3><a href="/research/etfs/tlt/">iShares 20+ Year Treasury Bond ETF</a></h3><p class="market-copy">TradeAlpha Score: 70.6/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">HYG · High-yield credit wrapper for risk appetite and spread conditions</span><h3><a href="/research/etfs/hyg/">iShares iBoxx $ High Yield Corporate Bond ETF</a></h3><p class="market-copy">TradeAlpha Score: 72.4/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">LQD · Investment-grade credit wrapper balancing duration and corporate-spread context</span><h3><a href="/research/etfs/lqd/">iShares iBoxx $ Investment Grade Corporate Bond ETF</a></h3><p class="market-copy">TradeAlpha Score: 72/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #1f6f5c"><span class="market-card-kicker">SPY · A US large-cap index wrapper widely used as a liquidity and benchmarking reference</span><h3><a href="/research/etfs/spy/">State Street SPDR S&amp;P 500 ETF Trust</a></h3><p class="market-copy">TradeAlpha Score: 87.8/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">GLD · Gold exposure used for diversification and inflation context</span><h3><a href="/research/etfs/gld/">SPDR Gold Shares</a></h3><p class="market-copy">TradeAlpha Score: 55.4/100 · Issuer: SPDR</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">VNQ · US REIT exposure with high sensitivity to financing conditions and yields</span><h3><a href="/research/etfs/vnq/">Vanguard Real Estate Index Fund ETF Shares</a></h3><p class="market-copy">TradeAlpha Score: 48.9/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">VIG · Dividend-growth equity exposure weighted toward sustained distribution histories</span><h3><a href="/research/etfs/vig/">Vanguard Dividend Appreciation Index Fund ETF Shares</a></h3><p class="market-copy">TradeAlpha Score: 60.5/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #b58b56"><span class="market-card-kicker">DGRO · Core dividend-growth exposure across US large and mid capitalisation companies</span><h3><a href="/research/etfs/dgro/">iShares Core Dividend Growth ETF</a></h3><p class="market-copy">TradeAlpha Score: 57.4/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">VUG · US large-cap growth exposure with elevated duration sensitivity</span><h3><a href="/research/etfs/vug/">Vanguard Morningstar Growth ETF</a></h3><p class="market-copy">TradeAlpha Score: 59.1/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">VTV · US large-cap value exposure with a lower-multiple, cyclical tilt</span><h3><a href="/research/etfs/vtv/">Vanguard Morningstar Value ETF</a></h3><p class="market-copy">TradeAlpha Score: 64.3/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">IWM · US small-capitalisation breadth exposure sensitive to domestic credit conditions</span><h3><a href="/research/etfs/iwm/">iShares Russell 2000 ETF</a></h3><p class="market-copy">TradeAlpha Score: 81.5/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">IEMG · Broad emerging-market equity exposure across large, mid and small capitalisation tiers</span><h3><a href="/research/etfs/iemg/">iShares Core MSCI Emerging Markets ETF</a></h3><p class="market-copy">TradeAlpha Score: 70.2/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">BND · Aggregate US investment-grade bond exposure spanning Treasuries, agency and corporate issues</span><h3><a href="/research/etfs/bnd/">Vanguard Total Bond Market Index Fund</a></h3><p class="market-copy">TradeAlpha Score: 72.8/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #c2703c"><span class="market-card-kicker">BOTZ · Thematic robotics and artificial-intelligence exposure with concentrated holdings</span><h3><a href="/research/etfs/botz/">Global X Robotics &amp; Artificial Intelligence ETF</a></h3><p class="market-copy">TradeAlpha Score: 24.8/100 · Issuer: Global X</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">ESGU · US equity exposure filtered through an extended ESG screening methodology</span><h3><a href="/research/etfs/esgu/">iShares ESG Aware MSCI USA ETF</a></h3><p class="market-copy">TradeAlpha Score: 62.6/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">VWCE · Global equity exposure spanning developed and emerging markets in a single fund</span><h3><a href="/research/etfs/vwce/">Vanguard FTSE All-World UCITS ETF USD Accumulation</a></h3><p class="market-copy">TradeAlpha Score: 73.4/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">VWRL · Global all-world equity exposure listed in Europe</span><h3><a href="/research/etfs/vwrl/">Vanguard FTSE All-World UCITS ETF</a></h3><p class="market-copy">TradeAlpha Score: 70/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">IWDA · Developed-market global equity exposure, widely researched as a portfolio core</span><h3><a href="/research/etfs/iwda/">iShares Core MSCI World UCITS ETF USD (Acc)</a></h3><p class="market-copy">TradeAlpha Score: 73/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #2f8f76"><span class="market-card-kicker">EUNL · Developed-market global equity exposure listed on XETRA</span><h3><a href="/research/etfs/eunl/">iShares Core MSCI World UCITS ETF USD (Acc)</a></h3><p class="market-copy">TradeAlpha Score: 75.6/100 · Issuer: iShares</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">VUSA · European-listed exposure to the US large-cap index</span><h3><a href="/research/etfs/vusa/">Vanguard S&amp;P 500 UCITS ETF</a></h3><p class="market-copy">TradeAlpha Score: 66.2/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">VUAA · European-listed exposure to the US large-cap index</span><h3><a href="/research/etfs/vuaa/">Vanguard S&amp;P 500 UCITS ETF USD Accumulation</a></h3><p class="market-copy">TradeAlpha Score: 63.3/100 · Issuer: Vanguard</p></article>
+          <article class="market-card" style="border-inline-start:4px solid #5a8f7a"><span class="market-card-kicker">EIMI · Broad emerging-market exposure commonly paired with a developed-market core</span><h3><a href="/research/etfs/eimi/">iShares Core MSCI EM IMI UCITS ETF USD (Acc)</a></h3><p class="market-copy">TradeAlpha Score: 61.7/100 · Issuer: iShares</p></article>
         </div></section>
       <section class="market-section" id="etf-research-disclaimer"><div class="market-panel"><p class="market-copy">TradeAlphaAI ETF research describes observed institutional context only. It is not a trading signal, execution instruction or investment advice.</p></div></section>
     </div>
   </main>
 
-  <footer class="site-footer"><div class="wrap site-footer-inner"><div><strong>TradeAlphaAI</strong><p>Educational, non-advisory financial research.</p></div><nav aria-label="Footer navigation"><a href="/insights/">Insights</a><a href="/market-outlook/">Market Outlook</a><a href="/economic-calendar/">Economic Calendar</a><a href="/methodology.html">Methodology</a><a href="/methodology.html#disclaimer">Disclaimer</a></nav><small>&copy; 2026 TradeAlphaAI</small></div></footer>
   <script src="../js/language-router.js" defer></script>
-<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
-<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
-  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
-  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }</script>
+<!-- NEWSLETTER_CTA_INSTALLED:v2 -->
+<aside class="ta-newsletter-cta" role="complementary" aria-label="Join the research newsletter" dir="ltr">
+  <div class="ta-newsletter-inner">
+    <div class="ta-newsletter-text">
+      <h3 class="ta-newsletter-title">Join the research newsletter</h3>
+      <p class="ta-newsletter-blurb">Daily institutional market analysis — stocks, ETFs, and macro. Free.</p>
+    </div>
+    <div id="custom-substack-embed" class="ta-newsletter-form"></div>
+    <p class="ta-newsletter-note">No spam. Unsubscribe in one click.</p>
+  </div>
+</aside>
+<style>
+  .ta-newsletter-cta {
+    margin: 3rem auto 2rem;
+    max-width: 720px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid rgba(34, 211, 195, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(13, 26, 42, 0.6) 0%, rgba(7, 16, 33, 0.85) 100%);
+    color: #e6f7f3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Cairo', sans-serif;
+    box-shadow: 0 12px 36px rgba(34, 211, 195, 0.08);
+  }
+  .ta-newsletter-inner { display: flex; flex-direction: column; gap: 0.9rem; }
+  .ta-newsletter-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #22d3c3;
+  }
+  .ta-newsletter-blurb {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #c2d3e0;
+    line-height: 1.5;
+  }
+  .ta-newsletter-form { margin: 0.25rem 0; min-height: 44px; }
+  .ta-newsletter-form input[type="email"] {
+    background: rgba(7, 16, 33, 0.7) !important;
+    color: #e6f7f3 !important;
+    border-color: rgba(34, 211, 195, 0.35) !important;
+  }
+  .ta-newsletter-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #6b7a8a;
+  }
+  @media (max-width: 600px) {
+    .ta-newsletter-cta { margin: 2rem 1rem 1.5rem; padding: 1.25rem 1.1rem; }
+    .ta-newsletter-title { font-size: 1.05rem; }
+    .ta-newsletter-blurb { font-size: 0.85rem; }
+  }
+</style>
+<script>
+  window.CustomSubstackWidget = {
+    substackUrl: "tradealphaai.substack.com",
+    placeholder: "your@email.com",
+    buttonText: "Subscribe",
+    theme: "custom",
+    colors: {
+      primary: "#22d3c3",
+      input: "#071021",
+      email: "#e6f7f3",
+      text: "#021018"
+    }
+  };
+</script>
+<script src="https://substackapi.com/widget.js" async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- GLOBAL_FOOTER_START -->
+<footer class="site-footer" data-global-footer>
+  <div class="wrap site-footer-inner">
+    <div>
+      <strong>TradeAlpha AI</strong>
+      <p>Educational, non-advisory financial research and market intelligence.</p>
+    </div>
+    <nav aria-label="Footer navigation">
+      <a href="/about/">About</a>
+      <a href="/insights/">Research Library</a>
+      <a href="/market-outlook/">Market Outlook</a>
+      <a href="/economic-calendar/">Economic Calendar</a>
+      <a href="/glossary/">Glossary</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/editorial-policy/">Editorial Policy</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <p class="site-footer-disclaimer">All content on this site is educational research and market context — not investment advice, a recommendation, or a solicitation. Trading involves substantial risk of loss.</p>
+    <small>&copy; 2026 TradeAlphaAI — All rights reserved.</small>
+  </div>
+</footer>
+<!-- GLOBAL_FOOTER_END -->
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script src="/js/search-autocomplete.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
 </body>
 </html>

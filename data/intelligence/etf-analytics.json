@@ -1,0 +1,3887 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-08-04T17:02:41.815Z",
+  "source_layer": "computed_from_observed_prices",
+  "method": {
+    "note_en": "All performance and risk figures are computed by TradeAlphaAI from observed daily closing prices. They are historical measurements, not projections.",
+    "note_ar": "تُحتسب جميع أرقام الأداء والمخاطر في TradeAlphaAI من أسعار الإغلاق اليومية المرصودة. وهي قياسات تاريخية وليست توقعات.",
+    "currency_note_en": "Returns are stated in each fund's own trading currency. Benchmark-relative figures, beta and tracking error are shown only where the fund and the benchmark share a currency, because a cross-currency comparison would measure the exchange rate as well as the fund.",
+    "currency_note_ar": "تُعرض العوائد بعملة تداول كل صندوق. أما الأرقام النسبية مقابل المؤشر ومعامل بيتا وخطأ التتبع فتظهر فقط عند تطابق عملة الصندوق مع عملة المؤشر، لأن المقارنة بين عملتين مختلفتين تقيس سعر الصرف إلى جانب الصندوق.",
+    "trading_days": 252,
+    "min_risk_observations": 60,
+    "benchmarks": {
+      "sp500": {
+        "symbol": "SPY",
+        "label_en": "S&P 500",
+        "label_ar": "مؤشر S&P 500"
+      },
+      "nasdaq100": {
+        "symbol": "QQQ",
+        "label_en": "Nasdaq-100",
+        "label_ar": "مؤشر ناسداك 100"
+      },
+      "world": {
+        "symbol": "URTH",
+        "label_en": "MSCI World",
+        "label_ar": "مؤشر MSCI العالمي"
+      }
+    }
+  },
+  "risk_free": {
+    "rate": 0.03681999921798706,
+    "as_of": "2026-07-31",
+    "symbol": "^IRX",
+    "source_url": "https://finance.yahoo.com/"
+  },
+  "coverage": {
+    "total": 39,
+    "available": 39,
+    "unavailable": 0
+  },
+  "etfs": [
+    {
+      "slug": "voo",
+      "symbol": "VOO",
+      "yahoo_symbol": "VOO",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.195759,
+          "3y": 0.697621,
+          "5y": 0.832004,
+          "10y": null,
+          "since_listing": 3.079327
+        },
+        "annualized": {
+          "1y": 0.195759,
+          "3y": 0.192926,
+          "5y": 0.128718,
+          "10y": null,
+          "since_listing": 0.151153
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.000804,
+          "3y": 0.003806,
+          "5y": 0.005458,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.027766,
+          "3y": -0.126824,
+          "5y": -0.112347,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.010475,
+          "3y": 0.04176,
+          "5y": 0.126636,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.0024,
+            "tracking_error": 0.008906,
+            "correlation": 0.9988,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.7449,
+            "tracking_error": 0.087552,
+            "correlation": 0.9304,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.029,
+            "tracking_error": 0.034588,
+            "correlation": 0.9818,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.128421,
+        "volatility_3y": 0.149596,
+        "volatility_full": 0.180234,
+        "sharpe": 0.6731,
+        "sortino": 0.6343,
+        "max_drawdown": -0.33993,
+        "beta_vs_world_proxy": 1.029,
+        "tracking_error_vs_world_proxy": 0.034588,
+        "correlation_vs_world_proxy": 0.9818,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 7126550,
+        "median_daily_turnover": 4467476261,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VOO?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.873Z",
+        "response_hash": "50fbc455026f073892768487b03faf8cc18231670d858dcb6a8624a171c49e96",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vti",
+      "symbol": "VTI",
+      "yahoo_symbol": "VTI",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.198203,
+          "3y": 0.677306,
+          "5y": 0.744727,
+          "10y": null,
+          "since_listing": 2.899708
+        },
+        "annualized": {
+          "1y": 0.198203,
+          "3y": 0.188149,
+          "5y": 0.117752,
+          "10y": null,
+          "since_listing": 0.145974
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.003248,
+          "3y": -0.016508,
+          "5y": -0.081819,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.025321,
+          "3y": -0.147138,
+          "5y": -0.199624,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.00803,
+          "3y": 0.021446,
+          "5y": 0.039359,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.0155,
+            "tracking_error": 0.016679,
+            "correlation": 0.996,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.7534,
+            "tracking_error": 0.08856,
+            "correlation": 0.9263,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.046,
+            "tracking_error": 0.035145,
+            "correlation": 0.9824,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.131163,
+        "volatility_3y": 0.155,
+        "volatility_full": 0.18311,
+        "sharpe": 0.6407,
+        "sortino": 0.6024,
+        "max_drawdown": -0.350003,
+        "beta_vs_world_proxy": 1.046,
+        "tracking_error_vs_world_proxy": 0.035145,
+        "correlation_vs_world_proxy": 0.9824,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 3781100,
+        "median_daily_turnover": 1269678324,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTI?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.958Z",
+        "response_hash": "4701d2bfe0758ef967d383e5847764e2164fa11e6e9c121e536d5e33bf5a664a",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "qqq",
+      "symbol": "QQQ",
+      "yahoo_symbol": "QQQ",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.223524,
+          "3y": 0.824444,
+          "5y": 0.944351,
+          "10y": null,
+          "since_listing": 5.37406
+        },
+        "annualized": {
+          "1y": 0.223524,
+          "3y": 0.221922,
+          "5y": 0.142234,
+          "10y": null,
+          "since_listing": 0.203758
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.028569,
+          "3y": 0.13063,
+          "5y": 0.117805,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0,
+          "3y": 0,
+          "5y": 0,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.017291,
+          "3y": 0.168584,
+          "5y": 0.238983,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.1684,
+            "tracking_error": 0.086981,
+            "correlation": 0.9321,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 1,
+            "tracking_error": 0,
+            "correlation": 1,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.1877,
+            "tracking_error": 0.100002,
+            "correlation": 0.9073,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.194134,
+        "volatility_3y": 0.204636,
+        "volatility_full": 0.225114,
+        "sharpe": 0.7785,
+        "sortino": 0.7301,
+        "max_drawdown": -0.351187,
+        "beta_vs_world_proxy": 1.1877,
+        "tracking_error_vs_world_proxy": 0.100002,
+        "correlation_vs_world_proxy": 0.9073,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 49761600,
+        "median_daily_turnover": 31416673534,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.427Z",
+        "response_hash": "e6c9e3024b4e07617581b23f3ad1ccaf4d4afbfda0cf11d71117aa67a1127e8a",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "schd",
+      "symbol": "SCHD",
+      "yahoo_symbol": "SCHD",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.309402,
+          "3y": 0.482167,
+          "5y": 0.579698,
+          "10y": null,
+          "since_listing": 2.315595
+        },
+        "annualized": {
+          "1y": 0.309402,
+          "3y": 0.14016,
+          "5y": 0.095758,
+          "10y": null,
+          "since_listing": 0.127507
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.114447,
+          "3y": -0.211647,
+          "5y": -0.246847,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.085877,
+          "3y": -0.342277,
+          "5y": -0.364653,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.103168,
+          "3y": -0.173693,
+          "5y": -0.12567,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.8004,
+            "tracking_error": 0.092854,
+            "correlation": 0.859,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5059,
+            "tracking_error": 0.165521,
+            "correlation": 0.6807,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.831,
+            "tracking_error": 0.091729,
+            "correlation": 0.8542,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.110689,
+        "volatility_3y": 0.131724,
+        "volatility_full": 0.167317,
+        "sharpe": 0.5871,
+        "sortino": 0.5641,
+        "max_drawdown": -0.33367,
+        "beta_vs_world_proxy": 0.831,
+        "tracking_error_vs_world_proxy": 0.091729,
+        "correlation_vs_world_proxy": 0.8542,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 19438350,
+        "median_daily_turnover": 556594347,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SCHD?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.934Z",
+        "response_hash": "f08951b9450ac01247e2f90dd7331c3513524e36d88117013654782f71b84010",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "soxx",
+      "symbol": "SOXX",
+      "yahoo_symbol": "SOXX",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 1.113261,
+          "3y": 1.886584,
+          "5y": 2.427816,
+          "10y": null,
+          "since_listing": 15.122768
+        },
+        "annualized": {
+          "1y": 1.113261,
+          "3y": 0.423841,
+          "5y": 0.279392,
+          "10y": null,
+          "since_listing": 0.320962
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.918306,
+          "3y": 1.19277,
+          "5y": 1.601271,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.889736,
+          "3y": 1.06214,
+          "5y": 1.483465,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.907027,
+          "3y": 1.230724,
+          "5y": 1.722448,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.5467,
+            "tracking_error": 0.227785,
+            "correlation": 0.8038,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 1.3391,
+            "tracking_error": 0.185344,
+            "correlation": 0.8724,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.5988,
+            "tracking_error": 0.233245,
+            "correlation": 0.7957,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.444233,
+        "volatility_3y": 0.392494,
+        "volatility_full": 0.345538,
+        "sharpe": 0.8765,
+        "sortino": 0.8576,
+        "max_drawdown": -0.457537,
+        "beta_vs_world_proxy": 1.5988,
+        "tracking_error_vs_world_proxy": 0.233245,
+        "correlation_vs_world_proxy": 0.7957,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 7203600,
+        "median_daily_turnover": 2369768805,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.965Z",
+        "response_hash": "4ab79b4c108d876b8f080c0be3e40321dc47f1f4f06248bb2060a41ac9ac9425",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "smh",
+      "symbol": "SMH",
+      "yahoo_symbol": "SMH",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.877595,
+          "3y": 2.411143,
+          "5y": 3.204489,
+          "10y": null,
+          "since_listing": 17.702886
+        },
+        "annualized": {
+          "1y": 0.877595,
+          "3y": 0.505336,
+          "5y": 0.332731,
+          "10y": null,
+          "since_listing": 0.340742
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.68264,
+          "3y": 1.717329,
+          "5y": 2.377943,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.654071,
+          "3y": 1.586699,
+          "5y": 2.260138,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.671362,
+          "3y": 1.755283,
+          "5y": 2.499121,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.5008,
+            "tracking_error": 0.215834,
+            "correlation": 0.8085,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 1.3041,
+            "tracking_error": 0.172171,
+            "correlation": 0.8806,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.5511,
+            "tracking_error": 0.221286,
+            "correlation": 0.8001,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.385436,
+        "volatility_3y": 0.367531,
+        "volatility_full": 0.333373,
+        "sharpe": 0.9409,
+        "sortino": 0.9165,
+        "max_drawdown": -0.453026,
+        "beta_vs_world_proxy": 1.5511,
+        "tracking_error_vs_world_proxy": 0.221286,
+        "correlation_vs_world_proxy": 0.8001,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 8377000,
+        "median_daily_turnover": 3282643782,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.942Z",
+        "response_hash": "fdedfc45265af0de26a86972269e9f0f160f6c1f597d0fcbc994a700292707a9",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlk",
+      "symbol": "XLK",
+      "yahoo_symbol": "XLK",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.341785,
+          "3y": 1.005713,
+          "5y": 1.382166,
+          "10y": null,
+          "since_listing": 7.360231
+        },
+        "annualized": {
+          "1y": 0.341785,
+          "3y": 0.26112,
+          "5y": 0.189582,
+          "10y": null,
+          "since_listing": 0.236897
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.146829,
+          "3y": 0.311899,
+          "5y": 0.55562,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.11826,
+          "3y": 0.181269,
+          "5y": 0.437815,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.135551,
+          "3y": 0.349853,
+          "5y": 0.676798,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.2783,
+            "tracking_error": 0.108939,
+            "correlation": 0.9214,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 1.0766,
+            "tracking_error": 0.060276,
+            "correlation": 0.9728,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.2976,
+            "tracking_error": 0.122039,
+            "correlation": 0.8957,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.256239,
+        "volatility_3y": 0.249346,
+        "volatility_full": 0.24914,
+        "sharpe": 0.8356,
+        "sortino": 0.7934,
+        "max_drawdown": -0.335591,
+        "beta_vs_world_proxy": 1.2976,
+        "tracking_error_vs_world_proxy": 0.122039,
+        "correlation_vs_world_proxy": 0.8957,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 14366250,
+        "median_daily_turnover": 2171983845,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.949Z",
+        "response_hash": "4824759f106de6f296773aeeb47f59aa391706d4ef53385f9819f40307e02e31",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlf",
+      "symbol": "XLF",
+      "yahoo_symbol": "XLF",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.104137,
+          "3y": 0.689945,
+          "5y": 0.699852,
+          "10y": null,
+          "since_listing": 2.578506
+        },
+        "annualized": {
+          "1y": 0.104137,
+          "3y": 0.191126,
+          "5y": 0.111942,
+          "10y": null,
+          "since_listing": 0.136154
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.090818,
+          "3y": -0.003869,
+          "5y": -0.126694,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.119388,
+          "3y": -0.134499,
+          "5y": -0.244499,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.102097,
+          "3y": 0.034085,
+          "5y": -0.005516,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.0178,
+            "tracking_error": 0.124033,
+            "correlation": 0.8276,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.62,
+            "tracking_error": 0.191369,
+            "correlation": 0.6319,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.064,
+            "tracking_error": 0.124176,
+            "correlation": 0.8285,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.147833,
+        "volatility_3y": 0.16123,
+        "volatility_full": 0.220866,
+        "sharpe": 0.5267,
+        "sortino": 0.5122,
+        "max_drawdown": -0.428625,
+        "beta_vs_world_proxy": 1.064,
+        "tracking_error_vs_world_proxy": 0.124176,
+        "correlation_vs_world_proxy": 0.8285,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 39017700,
+        "median_daily_turnover": 2033825087,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.113Z",
+        "response_hash": "521a4840625d8dae37a402ea6ab682c5bd2fe4e26c54c5a61628f15b8820f072",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlv",
+      "symbol": "XLV",
+      "yahoo_symbol": "XLV",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.26803,
+          "3y": 0.274154,
+          "5y": 0.332041,
+          "10y": null,
+          "since_listing": 1.559863
+        },
+        "annualized": {
+          "1y": 0.26803,
+          "3y": 0.084112,
+          "5y": 0.059018,
+          "10y": null,
+          "since_listing": 0.09868
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.073075,
+          "3y": -0.41966,
+          "5y": -0.494505,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.044505,
+          "3y": -0.55029,
+          "5y": -0.61231,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.061796,
+          "3y": -0.381706,
+          "5y": -0.373327,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.7064,
+            "tracking_error": 0.120309,
+            "correlation": 0.761,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.4686,
+            "tracking_error": 0.175983,
+            "correlation": 0.6328,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.7263,
+            "tracking_error": 0.120008,
+            "correlation": 0.7493,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.156665,
+        "volatility_3y": 0.144574,
+        "volatility_full": 0.166696,
+        "sharpe": 0.4327,
+        "sortino": 0.4231,
+        "max_drawdown": -0.284043,
+        "beta_vs_world_proxy": 0.7263,
+        "tracking_error_vs_world_proxy": 0.120008,
+        "correlation_vs_world_proxy": 0.7493,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 11891750,
+        "median_daily_turnover": 1762487499,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.082Z",
+        "response_hash": "343ac052d97341cc0ebf118e3e2d0fa36a2c231bf1256a1fdbb6cc69bde7ac36",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xle",
+      "symbol": "XLE",
+      "yahoo_symbol": "XLE",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.408223,
+          "3y": 0.498771,
+          "5y": 1.914455,
+          "10y": null,
+          "since_listing": 1.671501
+        },
+        "annualized": {
+          "1y": 0.408223,
+          "3y": 0.144402,
+          "5y": 0.238544,
+          "10y": null,
+          "since_listing": 0.103386
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.213268,
+          "3y": -0.195043,
+          "5y": 1.087909,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.184698,
+          "3y": -0.325673,
+          "5y": 0.970104,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.201989,
+          "3y": -0.157089,
+          "5y": 1.209087,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.9507,
+            "tracking_error": 0.241693,
+            "correlation": 0.5772,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5134,
+            "tracking_error": 0.293473,
+            "correlation": 0.3907,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.014,
+            "tracking_error": 0.238923,
+            "correlation": 0.5895,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.210839,
+        "volatility_3y": 0.21623,
+        "volatility_full": 0.295779,
+        "sharpe": 0.3604,
+        "sortino": 0.3482,
+        "max_drawdown": -0.66813,
+        "beta_vs_world_proxy": 1.014,
+        "tracking_error_vs_world_proxy": 0.238923,
+        "correlation_vs_world_proxy": 0.5895,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 34773300,
+        "median_daily_turnover": 1767511783,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.352Z",
+        "response_hash": "e65101187c2181ece17311e09b1d79ec65ac0d1ac047641a87d4957660dbb725",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xli",
+      "symbol": "XLI",
+      "yahoo_symbol": "XLI",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.198327,
+          "3y": 0.700607,
+          "5y": 0.889412,
+          "10y": null,
+          "since_listing": 2.700042
+        },
+        "annualized": {
+          "1y": 0.198327,
+          "3y": 0.193625,
+          "5y": 0.135704,
+          "10y": null,
+          "since_listing": 0.13996
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.003372,
+          "3y": 0.006793,
+          "5y": 0.062866,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.025197,
+          "3y": -0.123837,
+          "5y": -0.054939,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.007906,
+          "3y": 0.044747,
+          "5y": 0.184044,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.9781,
+            "tracking_error": 0.096667,
+            "correlation": 0.8763,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.6351,
+            "tracking_error": 0.162741,
+            "correlation": 0.7133,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.0224,
+            "tracking_error": 0.096344,
+            "correlation": 0.8771,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.169534,
+        "volatility_3y": 0.16659,
+        "volatility_full": 0.200448,
+        "sharpe": 0.5755,
+        "sortino": 0.5492,
+        "max_drawdown": -0.423341,
+        "beta_vs_world_proxy": 1.0224,
+        "tracking_error_vs_world_proxy": 0.096344,
+        "correlation_vs_world_proxy": 0.8771,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 9581850,
+        "median_daily_turnover": 1547693938,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.267Z",
+        "response_hash": "93a10e1cb0878e32b2a4827f7e5d9bfe9891171b618207565d64ff45fccb0187",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlu",
+      "symbol": "XLU",
+      "yahoo_symbol": "XLU",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.064241,
+          "3y": 0.447342,
+          "5y": 0.550879,
+          "10y": null,
+          "since_listing": 1.364776
+        },
+        "annualized": {
+          "1y": 0.064241,
+          "3y": 0.131159,
+          "5y": 0.091731,
+          "10y": null,
+          "since_listing": 0.089995
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.130714,
+          "3y": -0.246472,
+          "5y": -0.275667,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.159283,
+          "3y": -0.377102,
+          "5y": -0.393472,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.141992,
+          "3y": -0.208518,
+          "5y": -0.154489,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.5901,
+            "tracking_error": 0.17739,
+            "correlation": 0.5488,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.3413,
+            "tracking_error": 0.231009,
+            "correlation": 0.3979,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.6164,
+            "tracking_error": 0.174334,
+            "correlation": 0.549,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.150195,
+        "volatility_3y": 0.164044,
+        "volatility_full": 0.193073,
+        "sharpe": 0.3569,
+        "sortino": 0.3405,
+        "max_drawdown": -0.360668,
+        "beta_vs_world_proxy": 0.6164,
+        "tracking_error_vs_world_proxy": 0.174334,
+        "correlation_vs_world_proxy": 0.549,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 21537850,
+        "median_daily_turnover": 921758498,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.245Z",
+        "response_hash": "741ac28a5bc2bddb3c68387a02466b7f7073a4f26bbb34294075a9d60b9862d9",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlp",
+      "symbol": "XLP",
+      "yahoo_symbol": "XLP",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.095623,
+          "3y": 0.218109,
+          "5y": 0.362949,
+          "10y": null,
+          "since_listing": 1.041056
+        },
+        "annualized": {
+          "1y": 0.095623,
+          "3y": 0.067977,
+          "5y": 0.063888,
+          "10y": null,
+          "since_listing": 0.074046
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.099332,
+          "3y": -0.475705,
+          "5y": -0.463597,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.127901,
+          "3y": -0.606335,
+          "5y": -0.581402,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.11061,
+          "3y": -0.437751,
+          "5y": -0.342419,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.5347,
+            "tracking_error": 0.140936,
+            "correlation": 0.6459,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.3277,
+            "tracking_error": 0.198927,
+            "correlation": 0.4961,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.5532,
+            "tracking_error": 0.137688,
+            "correlation": 0.6399,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.141569,
+        "volatility_3y": 0.128231,
+        "volatility_full": 0.148674,
+        "sharpe": 0.3131,
+        "sortino": 0.3037,
+        "max_drawdown": -0.245123,
+        "beta_vs_world_proxy": 0.5532,
+        "tracking_error_vs_world_proxy": 0.137688,
+        "correlation_vs_world_proxy": 0.6399,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 14037600,
+        "median_daily_turnover": 1113251850,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.120Z",
+        "response_hash": "a26b67b55681be6e67fcae0ceba81c1a567c4c17dd8336dc3fc38893ee021bda",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xly",
+      "symbol": "XLY",
+      "yahoo_symbol": "XLY",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.056695,
+          "3y": 0.36945,
+          "5y": 0.337054,
+          "10y": null,
+          "since_listing": 2.191534
+        },
+        "annualized": {
+          "1y": 0.056695,
+          "3y": 0.110492,
+          "5y": 0.059814,
+          "10y": null,
+          "since_listing": 0.12321
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.13826,
+          "3y": -0.324365,
+          "5y": -0.489491,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.16683,
+          "3y": -0.454995,
+          "5y": -0.607297,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.149539,
+          "3y": -0.286411,
+          "5y": -0.368314,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.1027,
+            "tracking_error": 0.101682,
+            "correlation": 0.8926,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.8605,
+            "tracking_error": 0.112596,
+            "correlation": 0.8732,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.1352,
+            "tracking_error": 0.107903,
+            "correlation": 0.88,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.19553,
+        "volatility_3y": 0.210827,
+        "volatility_full": 0.22184,
+        "sharpe": 0.4736,
+        "sortino": 0.445,
+        "max_drawdown": -0.396696,
+        "beta_vs_world_proxy": 1.1352,
+        "tracking_error_vs_world_proxy": 0.107903,
+        "correlation_vs_world_proxy": 0.88,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 9863150,
+        "median_daily_turnover": 1160353810,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.363Z",
+        "response_hash": "cc649805c7f24547f1fd0d49aa70910d54c069ada3f97e8f880349ce7c40cbf3",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlb",
+      "symbol": "XLB",
+      "yahoo_symbol": "XLB",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.170606,
+          "3y": 0.246453,
+          "5y": 0.341718,
+          "10y": null,
+          "since_listing": 1.533518
+        },
+        "annualized": {
+          "1y": 0.170606,
+          "3y": 0.076197,
+          "5y": 0.060553,
+          "10y": null,
+          "since_listing": 0.097543
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.024349,
+          "3y": -0.447361,
+          "5y": -0.484828,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.052918,
+          "3y": -0.577991,
+          "5y": -0.602633,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.035627,
+          "3y": -0.409407,
+          "5y": -0.36365,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.9533,
+            "tracking_error": 0.116368,
+            "correlation": 0.8277,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.6177,
+            "tracking_error": 0.175636,
+            "correlation": 0.6723,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.016,
+            "tracking_error": 0.110736,
+            "correlation": 0.8447,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.177019,
+        "volatility_3y": 0.173345,
+        "volatility_full": 0.206834,
+        "sharpe": 0.3801,
+        "sortino": 0.3717,
+        "max_drawdown": -0.372742,
+        "beta_vs_world_proxy": 1.016,
+        "tracking_error_vs_world_proxy": 0.110736,
+        "correlation_vs_world_proxy": 0.8447,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 12389200,
+        "median_daily_turnover": 587077340,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.328Z",
+        "response_hash": "90aa839784ceb6486d9b8f5e664f99b30a0838fc98b0229263e8128fbbf351b0",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "xlre",
+      "symbol": "XLRE",
+      "yahoo_symbol": "XLRE",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.125909,
+          "3y": 0.307376,
+          "5y": 0.14815,
+          "10y": null,
+          "since_listing": 0.868556
+        },
+        "annualized": {
+          "1y": 0.125909,
+          "3y": 0.093453,
+          "5y": 0.028016,
+          "10y": null,
+          "since_listing": 0.064593
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.069046,
+          "3y": -0.386438,
+          "5y": -0.678395,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.097615,
+          "3y": -0.517068,
+          "5y": -0.796201,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.080324,
+          "3y": -0.348484,
+          "5y": -0.557218,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.7939,
+            "tracking_error": 0.151454,
+            "correlation": 0.6966,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5003,
+            "tracking_error": 0.204615,
+            "correlation": 0.5502,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.8345,
+            "tracking_error": 0.1487,
+            "correlation": 0.7011,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.141304,
+        "volatility_3y": 0.169187,
+        "volatility_full": 0.204688,
+        "sharpe": 0.2331,
+        "sortino": 0.2196,
+        "max_drawdown": -0.388248,
+        "beta_vs_world_proxy": 0.8345,
+        "tracking_error_vs_world_proxy": 0.1487,
+        "correlation_vs_world_proxy": 0.7011,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 6457650,
+        "median_daily_turnover": 265590213,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.335Z",
+        "response_hash": "010a325a45735b7d63f80526435d43103c5e14d903a80da3bd5a4c7a5dbf1c91",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "ief",
+      "symbol": "IEF",
+      "yahoo_symbol": "IEF",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.017736,
+          "3y": 0.082455,
+          "5y": -0.091038,
+          "10y": null,
+          "since_listing": 0.038025
+        },
+        "annualized": {
+          "1y": 0.017736,
+          "3y": 0.026762,
+          "5y": -0.018909,
+          "10y": null,
+          "since_listing": 0.003743
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.177219,
+          "3y": -0.611359,
+          "5y": -0.917584,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.205788,
+          "3y": -0.741989,
+          "5y": -1.035389,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.188498,
+          "3y": -0.573405,
+          "5y": -0.796407,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": -0.0407,
+            "tracking_error": 0.198111,
+            "correlation": -0.1107,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": -0.0193,
+            "tracking_error": 0.238751,
+            "correlation": -0.0657,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": -0.034,
+            "tracking_error": 0.18961,
+            "correlation": -0.0883,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.046745,
+        "volatility_3y": 0.064363,
+        "volatility_full": 0.066101,
+        "sharpe": -0.4573,
+        "sortino": -0.4555,
+        "max_drawdown": -0.239248,
+        "beta_vs_world_proxy": -0.034,
+        "tracking_error_vs_world_proxy": 0.18961,
+        "correlation_vs_world_proxy": -0.0883,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 7594400,
+        "median_daily_turnover": 712726685,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.474Z",
+        "response_hash": "1ab0255b586f93cce3dec9abe3eceadfa1bdba0ae7b99caea177cf9fed811338",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "tlt",
+      "symbol": "TLT",
+      "yahoo_symbol": "TLT",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": -0.010605,
+          "3y": -0.068511,
+          "5y": -0.353079,
+          "10y": null,
+          "since_listing": -0.220443
+        },
+        "annualized": {
+          "1y": -0.010605,
+          "3y": -0.023379,
+          "5y": -0.08342,
+          "10y": null,
+          "since_listing": -0.024625
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.205561,
+          "3y": -0.762325,
+          "5y": -1.179625,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.23413,
+          "3y": -0.892955,
+          "5y": -1.29743,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.216839,
+          "3y": -0.724371,
+          "5y": -1.058447,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": -0.114,
+            "tracking_error": 0.248225,
+            "correlation": -0.138,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": -0.056,
+            "tracking_error": 0.279927,
+            "correlation": -0.0849,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": -0.1058,
+            "tracking_error": 0.240504,
+            "correlation": -0.1226,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.093407,
+        "volatility_3y": 0.137546,
+        "volatility_full": 0.148365,
+        "sharpe": -0.3381,
+        "sortino": -0.3335,
+        "max_drawdown": -0.483511,
+        "beta_vs_world_proxy": -0.1058,
+        "tracking_error_vs_world_proxy": 0.240504,
+        "correlation_vs_world_proxy": -0.1226,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 30218650,
+        "median_daily_turnover": 2601587382,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.501Z",
+        "response_hash": "d63332a57140c965341f68324128d548f0a71922f7da89372b19ff3cd34d3f0e",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "hyg",
+      "symbol": "HYG",
+      "yahoo_symbol": "HYG",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.048442,
+          "3y": 0.256786,
+          "5y": 0.196943,
+          "10y": null,
+          "since_listing": 0.573128
+        },
+        "annualized": {
+          "1y": 0.048442,
+          "3y": 0.079163,
+          "5y": 0.036608,
+          "10y": null,
+          "since_listing": 0.046406
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.146513,
+          "3y": -0.437028,
+          "5y": -0.629603,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.175082,
+          "3y": -0.567658,
+          "5y": -0.747408,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.157792,
+          "3y": -0.399074,
+          "5y": -0.508425,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.3544,
+            "tracking_error": 0.127023,
+            "correlation": 0.775,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.2507,
+            "tracking_error": 0.178932,
+            "correlation": 0.687,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.377,
+            "tracking_error": 0.118407,
+            "correlation": 0.7894,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.038568,
+        "volatility_3y": 0.051215,
+        "volatility_full": 0.08213,
+        "sharpe": 0.1546,
+        "sortino": 0.1522,
+        "max_drawdown": -0.220287,
+        "beta_vs_world_proxy": 0.377,
+        "tracking_error_vs_world_proxy": 0.118407,
+        "correlation_vs_world_proxy": 0.7894,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 37264800,
+        "median_daily_turnover": 2894855525,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.522Z",
+        "response_hash": "fb9426389d8642a7a342348fb311b20d04b9b1d5707e62557b61a79e753e6b08",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "lqd",
+      "symbol": "LQD",
+      "yahoo_symbol": "LQD",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.018535,
+          "3y": 0.125443,
+          "5y": -0.053332,
+          "10y": null,
+          "since_listing": 0.225442
+        },
+        "annualized": {
+          "1y": 0.018535,
+          "3y": 0.040178,
+          "5y": -0.010902,
+          "10y": null,
+          "since_listing": 0.020563
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.17642,
+          "3y": -0.568371,
+          "5y": -0.879878,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.204989,
+          "3y": -0.699002,
+          "5y": -0.997683,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.187698,
+          "3y": -0.530417,
+          "5y": -0.7587,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.1522,
+            "tracking_error": 0.173147,
+            "correlation": 0.3146,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.1138,
+            "tracking_error": 0.216085,
+            "correlation": 0.2948,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.1714,
+            "tracking_error": 0.164266,
+            "correlation": 0.3393,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.052861,
+        "volatility_3y": 0.072136,
+        "volatility_full": 0.086876,
+        "sharpe": -0.1379,
+        "sortino": -0.1354,
+        "max_drawdown": -0.249549,
+        "beta_vs_world_proxy": 0.1714,
+        "tracking_error_vs_world_proxy": 0.164266,
+        "correlation_vs_world_proxy": 0.3393,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 30480200,
+        "median_daily_turnover": 3257469965,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.544Z",
+        "response_hash": "7372a12bd089c367b5f11b9f6cb4c04fbe84d9b7208ec8c82ba3276d884bdf1f",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "spy",
+      "symbol": "SPY",
+      "yahoo_symbol": "SPY",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.194955,
+          "3y": 0.693814,
+          "5y": 0.826546,
+          "10y": null,
+          "since_listing": 3.052437
+        },
+        "annualized": {
+          "1y": 0.194955,
+          "3y": 0.192034,
+          "5y": 0.128044,
+          "10y": null,
+          "since_listing": 0.150391
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0,
+          "3y": 0,
+          "5y": 0,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.028569,
+          "3y": -0.13063,
+          "5y": -0.117805,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.011278,
+          "3y": 0.037954,
+          "5y": 0.121178,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1,
+            "tracking_error": 0,
+            "correlation": 1,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.7436,
+            "tracking_error": 0.086981,
+            "correlation": 0.9321,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.0249,
+            "tracking_error": 0.034705,
+            "correlation": 0.9814,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.129116,
+        "volatility_3y": 0.153592,
+        "volatility_full": 0.179584,
+        "sharpe": 0.6712,
+        "sortino": 0.6328,
+        "max_drawdown": -0.337173,
+        "beta_vs_world_proxy": 1.0249,
+        "tracking_error_vs_world_proxy": 0.034705,
+        "correlation_vs_world_proxy": 0.9814,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 68517100,
+        "median_daily_turnover": 45973444701,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:36.230Z",
+        "response_hash": "e2d2b62d3a0d958fcf4eec4bbd6881a74e74d34d39558a2db8a26cd20c383231",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "gld",
+      "symbol": "GLD",
+      "yahoo_symbol": "GLD",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.226367,
+          "3y": 1.03751,
+          "5y": 1.190555,
+          "10y": null,
+          "since_listing": 1.860861
+        },
+        "annualized": {
+          "1y": 0.226367,
+          "3y": 0.267749,
+          "5y": 0.169798,
+          "10y": null,
+          "since_listing": 0.110977
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.031411,
+          "3y": 0.343696,
+          "5y": 0.364009,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.002842,
+          "3y": 0.213066,
+          "5y": 0.246204,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.020133,
+          "3y": 0.38165,
+          "5y": 0.485187,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.0962,
+            "tracking_error": 0.228262,
+            "correlation": 0.1071,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.0892,
+            "tracking_error": 0.260177,
+            "correlation": 0.1244,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.148,
+            "tracking_error": 0.216515,
+            "correlation": 0.1577,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.281775,
+        "volatility_3y": 0.207486,
+        "volatility_full": 0.161435,
+        "sharpe": 0.5109,
+        "sortino": 0.4854,
+        "max_drawdown": -0.264045,
+        "beta_vs_world_proxy": 0.148,
+        "tracking_error_vs_world_proxy": 0.216515,
+        "correlation_vs_world_proxy": 0.1577,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 10469500,
+        "median_daily_turnover": 4075826195,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.482Z",
+        "response_hash": "75f2f5bc95e93ee611c630201325fe115bb93f3c35cf1dbc00b882ff2a033968",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vnq",
+      "symbol": "VNQ",
+      "yahoo_symbol": "VNQ",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.153042,
+          "3y": 0.306984,
+          "5y": 0.130626,
+          "10y": null,
+          "since_listing": 0.62955
+        },
+        "annualized": {
+          "1y": 0.153042,
+          "3y": 0.093344,
+          "5y": 0.024858,
+          "10y": null,
+          "since_listing": 0.050104
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.041913,
+          "3y": -0.38683,
+          "5y": -0.69592,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.070482,
+          "3y": -0.517461,
+          "5y": -0.813725,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.053191,
+          "3y": -0.348877,
+          "5y": -0.574742,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.8276,
+            "tracking_error": 0.148235,
+            "correlation": 0.7159,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5175,
+            "tracking_error": 0.203308,
+            "correlation": 0.5611,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.8757,
+            "tracking_error": 0.144514,
+            "correlation": 0.7253,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.138125,
+        "volatility_3y": 0.168788,
+        "volatility_full": 0.207618,
+        "sharpe": 0.1669,
+        "sortino": 0.1564,
+        "max_drawdown": -0.423982,
+        "beta_vs_world_proxy": 0.8757,
+        "tracking_error_vs_world_proxy": 0.144514,
+        "correlation_vs_world_proxy": 0.7253,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 3441800,
+        "median_daily_turnover": 311364578,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.590Z",
+        "response_hash": "c4ca99cac5f11d6f9ca16d20872e2882a1317ec9a53469900c01ca21aca90f61",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vig",
+      "symbol": "VIG",
+      "yahoo_symbol": "VIG",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.179627,
+          "3y": 0.517626,
+          "5y": 0.646953,
+          "10y": null,
+          "since_listing": 2.397457
+        },
+        "annualized": {
+          "1y": 0.179627,
+          "3y": 0.149181,
+          "5y": 0.104934,
+          "10y": null,
+          "since_listing": 0.130264
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.015328,
+          "3y": -0.176188,
+          "5y": -0.179593,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.043897,
+          "3y": -0.306818,
+          "5y": -0.297398,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.026606,
+          "3y": -0.138234,
+          "5y": -0.058415,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.8487,
+            "tracking_error": 0.056539,
+            "correlation": 0.9509,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5847,
+            "tracking_error": 0.130766,
+            "correlation": 0.8213,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.874,
+            "tracking_error": 0.059717,
+            "correlation": 0.9378,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.101234,
+        "volatility_3y": 0.12275,
+        "volatility_full": 0.160265,
+        "sharpe": 0.621,
+        "sortino": 0.5892,
+        "max_drawdown": -0.317163,
+        "beta_vs_world_proxy": 0.874,
+        "tracking_error_vs_world_proxy": 0.059717,
+        "correlation_vs_world_proxy": 0.9378,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 1170350,
+        "median_daily_turnover": 257344742,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VIG?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.706Z",
+        "response_hash": "8c032b597ed908e60f43df40305b2114f7450c56bd0b3610975e997da0371fb5",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "dgro",
+      "symbol": "DGRO",
+      "yahoo_symbol": "DGRO",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.232304,
+          "3y": 0.568669,
+          "5y": 0.693261,
+          "10y": null,
+          "since_listing": 2.519236
+        },
+        "annualized": {
+          "1y": 0.232304,
+          "3y": 0.161922,
+          "5y": 0.111079,
+          "10y": null,
+          "since_listing": 0.134256
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.037349,
+          "3y": -0.125145,
+          "5y": -0.133285,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.008779,
+          "3y": -0.255776,
+          "5y": -0.25109,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.02607,
+          "3y": -0.087191,
+          "5y": -0.012107,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.8613,
+            "tracking_error": 0.06486,
+            "correlation": 0.9325,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5682,
+            "tracking_error": 0.143546,
+            "correlation": 0.7711,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.8921,
+            "tracking_error": 0.065755,
+            "correlation": 0.9249,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.095807,
+        "volatility_3y": 0.118124,
+        "volatility_full": 0.165871,
+        "sharpe": 0.6269,
+        "sortino": 0.5949,
+        "max_drawdown": -0.351032,
+        "beta_vs_world_proxy": 0.8921,
+        "tracking_error_vs_world_proxy": 0.065755,
+        "correlation_vs_world_proxy": 0.9249,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 1703200,
+        "median_daily_turnover": 120014100,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/DGRO?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.751Z",
+        "response_hash": "dc5a52d176ce5cedd7c13f609086db8c6cf4ea7aad04e7fe5f9a43aba41f7a14",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vug",
+      "symbol": "VUG",
+      "yahoo_symbol": "VUG",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.127912,
+          "3y": 0.77442,
+          "5y": 0.778606,
+          "10y": null,
+          "since_listing": 3.945316
+        },
+        "annualized": {
+          "1y": 0.127912,
+          "3y": 0.21065,
+          "5y": 0.12206,
+          "10y": null,
+          "since_listing": 0.173555
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.067043,
+          "3y": 0.080606,
+          "5y": -0.04794,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.095612,
+          "3y": -0.050025,
+          "5y": -0.165745,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.078321,
+          "3y": 0.118559,
+          "5y": 0.073237,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.1476,
+            "tracking_error": 0.068829,
+            "correlation": 0.9556,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.9405,
+            "tracking_error": 0.043091,
+            "correlation": 0.9818,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.1692,
+            "tracking_error": 0.083217,
+            "correlation": 0.9324,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.17778,
+        "volatility_3y": 0.197834,
+        "volatility_full": 0.215651,
+        "sharpe": 0.6848,
+        "sortino": 0.6437,
+        "max_drawdown": -0.35613,
+        "beta_vs_world_proxy": 1.1692,
+        "tracking_error_vs_world_proxy": 0.083217,
+        "correlation_vs_world_proxy": 0.9324,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 7139850,
+        "median_daily_turnover": 581564855,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUG?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.732Z",
+        "response_hash": "267c4463ab59d314e03a4d24cd7657352f0fef463f61020bf6e862be2198686c",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vtv",
+      "symbol": "VTV",
+      "yahoo_symbol": "VTV",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.268318,
+          "3y": 0.602923,
+          "5y": 0.787112,
+          "10y": null,
+          "since_listing": 2.254048
+        },
+        "annualized": {
+          "1y": 0.268318,
+          "3y": 0.170319,
+          "5y": 0.123131,
+          "10y": null,
+          "since_listing": 0.125394
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.073362,
+          "3y": -0.090891,
+          "5y": -0.039434,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.044793,
+          "3y": -0.221522,
+          "5y": -0.157239,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.062084,
+          "3y": -0.052938,
+          "5y": 0.081744,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.8426,
+            "tracking_error": 0.07438,
+            "correlation": 0.9103,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.5368,
+            "tracking_error": 0.154609,
+            "correlation": 0.7269,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.8777,
+            "tracking_error": 0.072723,
+            "correlation": 0.9081,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.103275,
+        "volatility_3y": 0.12302,
+        "volatility_full": 0.16622,
+        "sharpe": 0.5787,
+        "sortino": 0.5516,
+        "max_drawdown": -0.367814,
+        "beta_vs_world_proxy": 0.8777,
+        "tracking_error_vs_world_proxy": 0.072723,
+        "correlation_vs_world_proxy": 0.9081,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 3194050,
+        "median_daily_turnover": 634525043,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTV?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.714Z",
+        "response_hash": "e0c429025c90cb0662d007bcc5e23d771b8d11593741d17c4d8232539d2e5ee6",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "iwm",
+      "symbol": "IWM",
+      "yahoo_symbol": "IWM",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.341103,
+          "3y": 0.518216,
+          "5y": 0.408954,
+          "10y": null,
+          "since_listing": 1.737819
+        },
+        "annualized": {
+          "1y": 0.341103,
+          "3y": 0.14933,
+          "5y": 0.070975,
+          "10y": null,
+          "since_listing": 0.106098
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.146148,
+          "3y": -0.175598,
+          "5y": -0.417592,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.117578,
+          "3y": -0.306228,
+          "5y": -0.535397,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.134869,
+          "3y": -0.137644,
+          "5y": -0.296414,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.1064,
+            "tracking_error": 0.117827,
+            "correlation": 0.8631,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.7786,
+            "tracking_error": 0.15737,
+            "correlation": 0.7613,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 1.1669,
+            "tracking_error": 0.116415,
+            "correlation": 0.8717,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.194157,
+        "volatility_3y": 0.211535,
+        "volatility_full": 0.230212,
+        "sharpe": 0.3979,
+        "sortino": 0.3828,
+        "max_drawdown": -0.411333,
+        "beta_vs_world_proxy": 1.1669,
+        "tracking_error_vs_world_proxy": 0.116415,
+        "correlation_vs_world_proxy": 0.8717,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 33456450,
+        "median_daily_turnover": 8446993284,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.745Z",
+        "response_hash": "541c25a55bf5109cdc18693d57611f631201b936eb414def386d3747c1d40ec5",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "iemg",
+      "symbol": "IEMG",
+      "yahoo_symbol": "IEMG",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "PCX",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.31928,
+          "3y": 0.622456,
+          "5y": 0.410582,
+          "10y": null,
+          "since_listing": 1.312529
+        },
+        "annualized": {
+          "1y": 0.31928,
+          "3y": 0.175054,
+          "5y": 0.071223,
+          "10y": null,
+          "since_listing": 0.087559
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.124325,
+          "3y": -0.071358,
+          "5y": -0.415963,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.095756,
+          "3y": -0.201988,
+          "5y": -0.533769,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.113047,
+          "3y": -0.033404,
+          "5y": -0.294786,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.8467,
+            "tracking_error": 0.137661,
+            "correlation": 0.7481,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.6626,
+            "tracking_error": 0.15757,
+            "correlation": 0.7339,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.9431,
+            "tracking_error": 0.122902,
+            "correlation": 0.7979,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.23748,
+        "volatility_3y": 0.191253,
+        "volatility_full": 0.203251,
+        "sharpe": 0.3385,
+        "sortino": 0.3199,
+        "max_drawdown": -0.387065,
+        "beta_vs_world_proxy": 0.9431,
+        "tracking_error_vs_world_proxy": 0.122902,
+        "correlation_vs_world_proxy": 0.7979,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 12046750,
+        "median_daily_turnover": 861944769,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEMG?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:38.036Z",
+        "response_hash": "e50873d3a9731a0823140d7e1fe460abc69a5ca449d64ce65d0efae2dddaa9a3",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "bnd",
+      "symbol": "BND",
+      "yahoo_symbol": "BND",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2511,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.026354,
+          "3y": 0.115209,
+          "5y": -0.023352,
+          "10y": null,
+          "since_listing": 0.150094
+        },
+        "annualized": {
+          "1y": 0.026354,
+          "3y": 0.037016,
+          "5y": -0.004715,
+          "10y": null,
+          "since_listing": 0.0141
+        },
+        "observed_years": 9.99
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.168602,
+          "3y": -0.578606,
+          "5y": -0.849898,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.197171,
+          "3y": -0.709236,
+          "5y": -0.967703,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.17988,
+          "3y": -0.540652,
+          "5y": -0.72872,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.0466,
+            "tracking_error": 0.179738,
+            "correlation": 0.1513,
+            "shared_observations": 2511
+          },
+          "nasdaq100": {
+            "beta": 0.0366,
+            "tracking_error": 0.223683,
+            "correlation": 0.1487,
+            "shared_observations": 2511
+          },
+          "world": {
+            "beta": 0.0582,
+            "tracking_error": 0.170867,
+            "correlation": 0.1808,
+            "shared_observations": 2511
+          }
+        },
+        "volatility_1y": 0.037059,
+        "volatility_3y": 0.052073,
+        "volatility_full": 0.055351,
+        "sharpe": -0.3719,
+        "sortino": -0.3578,
+        "max_drawdown": -0.185821,
+        "beta_vs_world_proxy": 0.0582,
+        "tracking_error_vs_world_proxy": 0.170867,
+        "correlation_vs_world_proxy": 0.1808,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 7589000,
+        "median_daily_turnover": 548519932,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2511 observed daily closes 2016-08-04..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BND?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.993Z",
+        "response_hash": "3ab73278a39cb60c5bea3423f80ceb1758a4a061ef411f541913244f643c75ed",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "botz",
+      "symbol": "BOTZ",
+      "yahoo_symbol": "BOTZ",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2484,
+      "first_observation": "2016-09-13",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.057358,
+          "3y": 0.219325,
+          "5y": 0.037437,
+          "10y": null,
+          "since_listing": 1.486585
+        },
+        "annualized": {
+          "1y": 0.057358,
+          "3y": 0.068333,
+          "5y": 0.007378,
+          "10y": null,
+          "since_listing": 0.096598
+        },
+        "observed_years": 9.88
+      },
+      "relative": {
+        "sp500": {
+          "1y": -0.137597,
+          "3y": -0.474489,
+          "5y": -0.789109,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.166167,
+          "3y": -0.605119,
+          "5y": -0.906915,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.148876,
+          "3y": -0.436535,
+          "5y": -0.667932,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 1.2238,
+            "tracking_error": 0.141471,
+            "correlation": 0.8519,
+            "shared_observations": 2484
+          },
+          "nasdaq100": {
+            "beta": 0.9731,
+            "tracking_error": 0.136712,
+            "correlation": 0.8495,
+            "shared_observations": 2484
+          },
+          "world": {
+            "beta": 1.3135,
+            "tracking_error": 0.136481,
+            "correlation": 0.875,
+            "shared_observations": 2484
+          }
+        },
+        "volatility_1y": 0.264141,
+        "volatility_3y": 0.25264,
+        "volatility_full": 0.25889,
+        "sharpe": 0.3471,
+        "sortino": 0.338,
+        "max_drawdown": -0.555369,
+        "beta_vs_world_proxy": 1.3135,
+        "tracking_error_vs_world_proxy": 0.136481,
+        "correlation_vs_world_proxy": 0.875,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 777000,
+        "median_daily_turnover": 29170530,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2484 observed daily closes 2016-09-13..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BOTZ?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.904Z",
+        "response_hash": "63f3a291841f33bab469fba9847a39f4630ac060abeba6857c368b4d755b8661",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "esgu",
+      "symbol": "ESGU",
+      "yahoo_symbol": "ESGU",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "NGM",
+      "bars": 2425,
+      "first_observation": "2016-12-06",
+      "last_observation": "2026-07-31",
+      "performance": {
+        "cumulative": {
+          "1y": 0.196022,
+          "3y": 0.680668,
+          "5y": 0.736875,
+          "10y": null,
+          "since_listing": 2.887831
+        },
+        "annualized": {
+          "1y": 0.196022,
+          "3y": 0.188942,
+          "5y": 0.116744,
+          "10y": null,
+          "since_listing": 0.151118
+        },
+        "observed_years": 9.65
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.001067,
+          "3y": -0.013146,
+          "5y": -0.089671,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": -0.027503,
+          "3y": -0.143777,
+          "5y": -0.207476,
+          "10y": null
+        },
+        "world": {
+          "1y": -0.010212,
+          "3y": 0.024808,
+          "5y": 0.031507,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.9989,
+            "tracking_error": 0.037349,
+            "correlation": 0.9795,
+            "shared_observations": 2425
+          },
+          "nasdaq100": {
+            "beta": 0.7485,
+            "tracking_error": 0.092557,
+            "correlation": 0.92,
+            "shared_observations": 2425
+          },
+          "world": {
+            "beta": 1.029,
+            "tracking_error": 0.048722,
+            "correlation": 0.9652,
+            "shared_observations": 2425
+          }
+        },
+        "volatility_1y": 0.131677,
+        "volatility_3y": 0.153966,
+        "volatility_full": 0.185429,
+        "sharpe": 0.6594,
+        "sortino": 0.6439,
+        "max_drawdown": -0.338714,
+        "beta_vs_world_proxy": 1.029,
+        "tracking_error_vs_world_proxy": 0.048722,
+        "correlation_vs_world_proxy": 0.9652,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 461000,
+        "median_daily_turnover": 69700487,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2425 observed daily closes 2016-12-06..2026-07-31 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/ESGU?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.932Z",
+        "response_hash": "6b85c0d8676a16ab55d317a14151657e788c08151b3261d890dfed8fda18372d",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vwce",
+      "symbol": "VWCE",
+      "yahoo_symbol": "VWCE.DE",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "EUR",
+      "exchange": "GER",
+      "bars": 1782,
+      "first_observation": "2019-07-29",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.244604,
+          "3y": 0.633038,
+          "5y": 0.728739,
+          "10y": null,
+          "since_listing": 1.311482
+        },
+        "annualized": {
+          "1y": 0.244604,
+          "3y": 0.177603,
+          "5y": 0.115696,
+          "10y": null,
+          "since_listing": 0.126825
+        },
+        "observed_years": 7.02
+      },
+      "relative": {
+        "sp500": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "nasdaq100": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "world": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "unavailable": "currency_mismatch"
+          },
+          "nasdaq100": {
+            "unavailable": "currency_mismatch"
+          },
+          "world": {
+            "unavailable": "currency_mismatch"
+          }
+        },
+        "volatility_1y": 0.115288,
+        "volatility_3y": 0.130122,
+        "volatility_full": 0.161036,
+        "sharpe": 0.5928,
+        "sortino": 0.5338,
+        "max_drawdown": -0.334308,
+        "beta_vs_world_proxy": null,
+        "tracking_error_vs_world_proxy": null,
+        "correlation_vs_world_proxy": null,
+        "benchmark_comparability": "suppressed_currency_mismatch:EUR_vs_USD"
+      },
+      "liquidity": {
+        "median_daily_volume": 202108,
+        "median_daily_turnover": 29687465,
+        "currency": "EUR",
+        "observations": 251
+      },
+      "evidence": [
+        "1782 observed daily closes 2019-07-29..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.841Z",
+        "response_hash": "ac059ecb9689a9102947ed088dd5b9d83b6701c8b5d8b0fd9b2e16727798c3d4",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vwrl",
+      "symbol": "VWRL",
+      "yahoo_symbol": "VWRL.AS",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "EUR",
+      "exchange": "AMS",
+      "bars": 2556,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.243627,
+          "3y": 0.634066,
+          "5y": 0.728599,
+          "10y": 2.134449,
+          "since_listing": 2.134449
+        },
+        "annualized": {
+          "1y": 0.243627,
+          "3y": 0.17785,
+          "5y": 0.115678,
+          "10y": 0.121027,
+          "since_listing": 0.121042
+        },
+        "observed_years": 10
+      },
+      "relative": {
+        "sp500": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "nasdaq100": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "world": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "unavailable": "currency_mismatch"
+          },
+          "nasdaq100": {
+            "unavailable": "currency_mismatch"
+          },
+          "world": {
+            "unavailable": "currency_mismatch"
+          }
+        },
+        "volatility_1y": 0.114069,
+        "volatility_3y": 0.129511,
+        "volatility_full": 0.148083,
+        "sharpe": 0.5913,
+        "sortino": 0.5432,
+        "max_drawdown": -0.332733,
+        "beta_vs_world_proxy": null,
+        "tracking_error_vs_world_proxy": null,
+        "correlation_vs_world_proxy": null,
+        "benchmark_comparability": "suppressed_currency_mismatch:EUR_vs_USD"
+      },
+      "liquidity": {
+        "median_daily_volume": 33220,
+        "median_daily_turnover": 4637319,
+        "currency": "EUR",
+        "observations": 253
+      },
+      "evidence": [
+        "2556 observed daily closes 2016-08-04..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWRL.AS?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.969Z",
+        "response_hash": "24bcde5b60e1614c564adb49fdc7211f5fec63eb369196b0965b98b915d456f9",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "iwda",
+      "symbol": "IWDA",
+      "yahoo_symbol": "IWDA.AS",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "EUR",
+      "exchange": "AMS",
+      "bars": 2557,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.230724,
+          "3y": 0.634384,
+          "5y": 0.768882,
+          "10y": 2.29788,
+          "since_listing": 2.29788
+        },
+        "annualized": {
+          "1y": 0.230724,
+          "3y": 0.177926,
+          "5y": 0.12083,
+          "10y": 0.126739,
+          "since_listing": 0.126755
+        },
+        "observed_years": 10
+      },
+      "relative": {
+        "sp500": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "nasdaq100": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "world": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "unavailable": "currency_mismatch"
+          },
+          "nasdaq100": {
+            "unavailable": "currency_mismatch"
+          },
+          "world": {
+            "unavailable": "currency_mismatch"
+          }
+        },
+        "volatility_1y": 0.108699,
+        "volatility_3y": 0.131235,
+        "volatility_full": 0.149738,
+        "sharpe": 0.6195,
+        "sortino": 0.5691,
+        "max_drawdown": -0.336333,
+        "beta_vs_world_proxy": null,
+        "tracking_error_vs_world_proxy": null,
+        "correlation_vs_world_proxy": null,
+        "benchmark_comparability": "suppressed_currency_mismatch:EUR_vs_USD"
+      },
+      "liquidity": {
+        "median_daily_volume": 100254,
+        "median_daily_turnover": 11540876,
+        "currency": "EUR",
+        "observations": 254
+      },
+      "evidence": [
+        "2557 observed daily closes 2016-08-04..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWDA.AS?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:37.948Z",
+        "response_hash": "895f7990b582e303fdce0ddf1391aefca38a6d3b89cf07e14f53c4cec0f7fcdb",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "eunl",
+      "symbol": "EUNL",
+      "yahoo_symbol": "EUNL.DE",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "EUR",
+      "exchange": "GER",
+      "bars": 2538,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.231023,
+          "3y": 0.634236,
+          "5y": 0.769104,
+          "10y": 2.299168,
+          "since_listing": 2.299168
+        },
+        "annualized": {
+          "1y": 0.231023,
+          "3y": 0.177891,
+          "5y": 0.120858,
+          "10y": 0.126783,
+          "since_listing": 0.126799
+        },
+        "observed_years": 10
+      },
+      "relative": {
+        "sp500": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "nasdaq100": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "world": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "unavailable": "currency_mismatch"
+          },
+          "nasdaq100": {
+            "unavailable": "currency_mismatch"
+          },
+          "world": {
+            "unavailable": "currency_mismatch"
+          }
+        },
+        "volatility_1y": 0.110816,
+        "volatility_3y": 0.132302,
+        "volatility_full": 0.151412,
+        "sharpe": 0.6205,
+        "sortino": 0.5696,
+        "max_drawdown": -0.336322,
+        "beta_vs_world_proxy": null,
+        "tracking_error_vs_world_proxy": null,
+        "correlation_vs_world_proxy": null,
+        "benchmark_comparability": "suppressed_currency_mismatch:EUR_vs_USD"
+      },
+      "liquidity": {
+        "median_daily_volume": 289208,
+        "median_daily_turnover": 33204717,
+        "currency": "EUR",
+        "observations": 251
+      },
+      "evidence": [
+        "2538 observed daily closes 2016-08-04..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EUNL.DE?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:38.085Z",
+        "response_hash": "cb994edbccd7594a2de9d5549b9356e39c0f9d32add01968685977a713235c77",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vusa",
+      "symbol": "VUSA",
+      "yahoo_symbol": "VUSA.AS",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "EUR",
+      "exchange": "AMS",
+      "bars": 2555,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.224877,
+          "3y": 0.666328,
+          "5y": 0.88458,
+          "10y": 2.900196,
+          "since_listing": 2.900196
+        },
+        "annualized": {
+          "1y": 0.224877,
+          "3y": 0.185551,
+          "5y": 0.135123,
+          "10y": 0.1458,
+          "since_listing": 0.145818
+        },
+        "observed_years": 10
+      },
+      "relative": {
+        "sp500": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "nasdaq100": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "world": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "unavailable": "currency_mismatch"
+          },
+          "nasdaq100": {
+            "unavailable": "currency_mismatch"
+          },
+          "world": {
+            "unavailable": "currency_mismatch"
+          }
+        },
+        "volatility_1y": 0.114546,
+        "volatility_3y": 0.142138,
+        "volatility_full": 0.160667,
+        "sharpe": 0.6916,
+        "sortino": 0.6464,
+        "max_drawdown": -0.336386,
+        "beta_vs_world_proxy": null,
+        "tracking_error_vs_world_proxy": null,
+        "correlation_vs_world_proxy": null,
+        "benchmark_comparability": "suppressed_currency_mismatch:EUR_vs_USD"
+      },
+      "liquidity": {
+        "median_daily_volume": 60149,
+        "median_daily_turnover": 6641294,
+        "currency": "EUR",
+        "observations": 253
+      },
+      "evidence": [
+        "2555 observed daily closes 2016-08-04..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUSA.AS?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:38.178Z",
+        "response_hash": "1ebbdb3f1eeb315eac9123f6258c14bd3de3b44dbc105250222aeee89b9eed30",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "vuaa",
+      "symbol": "VUAA",
+      "yahoo_symbol": "VUAA.DE",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "EUR",
+      "exchange": "GER",
+      "bars": 401,
+      "first_observation": "2024-12-30",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.224958,
+          "3y": null,
+          "5y": null,
+          "10y": null,
+          "since_listing": 0.186589
+        },
+        "annualized": {
+          "1y": 0.224958,
+          "3y": null,
+          "5y": null,
+          "10y": null,
+          "since_listing": 0.113341
+        },
+        "observed_years": 1.59
+      },
+      "relative": {
+        "sp500": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "nasdaq100": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        },
+        "world": {
+          "unavailable": "currency_mismatch",
+          "fund_currency": "EUR",
+          "benchmark_currency": "USD"
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "unavailable": "currency_mismatch"
+          },
+          "nasdaq100": {
+            "unavailable": "currency_mismatch"
+          },
+          "world": {
+            "unavailable": "currency_mismatch"
+          }
+        },
+        "volatility_1y": 0.115944,
+        "volatility_3y": null,
+        "volatility_full": 0.162116,
+        "sharpe": 0.5231,
+        "sortino": 0.4877,
+        "max_drawdown": -0.233272,
+        "beta_vs_world_proxy": null,
+        "tracking_error_vs_world_proxy": null,
+        "correlation_vs_world_proxy": null,
+        "benchmark_comparability": "suppressed_currency_mismatch:EUR_vs_USD"
+      },
+      "liquidity": {
+        "median_daily_volume": 46928,
+        "median_daily_turnover": 5315065,
+        "currency": "EUR",
+        "observations": 251
+      },
+      "evidence": [
+        "401 observed daily closes 2024-12-30..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUAA.DE?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:38.026Z",
+        "response_hash": "4d19094ebd3d3d4526b458169b11e050ad4cafd29a2fc80e75624d8421390be7",
+        "range": "10y"
+      }
+    },
+    {
+      "slug": "eimi",
+      "symbol": "EIMI",
+      "yahoo_symbol": "EIMI.L",
+      "available": true,
+      "return_basis": "total_return",
+      "currency": "USD",
+      "exchange": "LSE",
+      "bars": 2525,
+      "first_observation": "2016-08-04",
+      "last_observation": "2026-08-04",
+      "performance": {
+        "cumulative": {
+          "1y": 0.335097,
+          "3y": 0.687042,
+          "5y": 0.431775,
+          "10y": 1.356158,
+          "since_listing": 1.356158
+        },
+        "annualized": {
+          "1y": 0.335097,
+          "3y": 0.190443,
+          "5y": 0.074422,
+          "10y": 0.089483,
+          "since_listing": 0.089494
+        },
+        "observed_years": 10
+      },
+      "relative": {
+        "sp500": {
+          "1y": 0.116247,
+          "3y": -0.076413,
+          "5y": -0.412765,
+          "10y": null
+        },
+        "nasdaq100": {
+          "1y": 0.087427,
+          "3y": -0.2225,
+          "5y": -0.52185,
+          "10y": null
+        },
+        "world": {
+          "1y": 0.108944,
+          "3y": -0.040737,
+          "5y": -0.291574,
+          "10y": null
+        }
+      },
+      "risk": {
+        "vs_benchmarks": {
+          "sp500": {
+            "beta": 0.5611,
+            "tracking_error": 0.184733,
+            "correlation": 0.5193,
+            "shared_observations": 2465
+          },
+          "nasdaq100": {
+            "beta": 0.43,
+            "tracking_error": 0.212905,
+            "correlation": 0.5002,
+            "shared_observations": 2465
+          },
+          "world": {
+            "beta": 0.6613,
+            "tracking_error": 0.168674,
+            "correlation": 0.5863,
+            "shared_observations": 2465
+          }
+        },
+        "volatility_1y": 0.221901,
+        "volatility_3y": 0.184324,
+        "volatility_full": 0.192992,
+        "sharpe": 0.3531,
+        "sortino": 0.3355,
+        "max_drawdown": -0.387349,
+        "beta_vs_world_proxy": 0.6613,
+        "tracking_error_vs_world_proxy": 0.168674,
+        "correlation_vs_world_proxy": 0.5863,
+        "benchmark_comparability": "same_currency"
+      },
+      "liquidity": {
+        "median_daily_volume": 344010,
+        "median_daily_turnover": 16018671,
+        "currency": "USD",
+        "observations": 252
+      },
+      "evidence": [
+        "2525 observed daily closes 2016-08-04..2026-08-04 from Yahoo public chart endpoint",
+        "return basis: total_return (distributions reinvested)",
+        "risk-free input 3.68% from ^IRX as of 2026-07-31"
+      ],
+      "source": {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EIMI.L?interval=1d&range=10y&events=div%2Csplit",
+        "fetched_at": "2026-08-04T07:20:38.170Z",
+        "response_hash": "359955790b22753460325a9f88d60f4b7bea04c46ffcb74495bc8619fe170c90",
+        "range": "10y"
+      }
+    }
+  ],
+  "attribution": {
+    "sources": [
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "daily OHLCV price series"
+      },
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "risk-free rate proxy ^IRX"
+      }
+    ],
+    "computed_by": "tools/build-etf-analytics.js"
+  },
+  "source_hash": "bb7d1dab8381cb7b1eb777dae5f2c23a49ac6f791457a2538d416f6a8b2d9c4b"
+}

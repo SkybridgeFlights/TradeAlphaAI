@@ -1,0 +1,61 @@
+{
+  "$comment": "Single source of truth for the TradeAlpha ETF Score. tools/build-etf-score.js reads this file and never hard-codes any of it; tools/generate-etf-methodology-page.js publishes it verbatim so the documented model and the running model cannot diverge. check-etf-center.js --check=score-config validates it. Changing a weight here changes the score, the methodology page and the validator in one edit.",
+  "version": 2,
+  "weights": {
+    "cost": 0.25,
+    "diversification": 0.20,
+    "long_term_suitability": 0.20,
+    "liquidity": 0.15,
+    "tracking_quality": 0.10,
+    "tax_characteristics": 0.10
+  },
+  "min_weight_coverage": 0.5,
+  "$comment_coverage": "Minimum share of total model weight that must be evaluable before an overall score is published at all. Below this the fund shows its individual components and the headline is withheld.",
+  "bands": [
+    { "label": "exceptional", "min": 85 },
+    { "label": "strong", "min": 72 },
+    { "label": "solid", "min": 58 },
+    { "label": "adequate", "min": 42 },
+    { "label": "limited", "min": 0 }
+  ],
+  "indeterminate_label": "indeterminate",
+  "scales": {
+    "$comment": "Each scale maps a measured value onto 0-100. 'best' scores 100, 'worst' scores 0, and values outside the range clamp.",
+    "cost_ter_pct": { "best": 0.03, "worst": 0.75 },
+    "liquidity_log10_turnover": { "worst": 6, "best": 10 },
+    "tracking_error": { "best": 0, "worst": 0.05 },
+    "record_years": { "worst": 0, "best": 15 },
+    "drawdown_depth": { "best": 0.20, "worst": 0.70 },
+    "volatility_penalty": { "max_points": 30, "per_ratio_above_1": 30 }
+  },
+  "tax_characteristics": {
+    "$comment": "Structural tax scoring. The perspective is stated openly on the methodology page and validated as present.",
+    "base": 50,
+    "accumulating_bonus": 25,
+    "ireland_domicile_bonus": 25,
+    "us_domicile_penalty": 10
+  },
+  "breadth_tiers": {
+    "$comment": "Mandate breadth by category, 0-1. Used by the diversification component. Adding a category here is all that is needed for a new exposure type to score.",
+    "world_equity": 1.0,
+    "broad_market": 0.9,
+    "emerging_markets": 0.75,
+    "fixed_income": 0.7,
+    "esg": 0.7,
+    "credit": 0.6,
+    "value": 0.6,
+    "growth": 0.55,
+    "dividend_quality": 0.55,
+    "real_estate": 0.4,
+    "sector": 0.35,
+    "commodity": 0.25,
+    "thematic_ai": 0.2,
+    "semiconductors": 0.15
+  },
+  "tracking_proxies": {
+    "$comment": "Benchmark families with a same-currency proxy we can measure against. A fund is never scored against itself.",
+    "S&P 500": { "key": "sp500", "currency": "USD", "proxy_symbol": "SPY" },
+    "Nasdaq-100": { "key": "nasdaq100", "currency": "USD", "proxy_symbol": "QQQ" },
+    "MSCI World": { "key": "world", "currency": "USD", "proxy_symbol": "URTH" }
+  }
+}
