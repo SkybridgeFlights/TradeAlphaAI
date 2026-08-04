@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ETF Score Methodology | TradeAlphaAI</title>
+  <meta name="description" content="How the TradeAlpha ETF Score is calculated: every component, its weight, the inputs behind it, the assumptions stated openly and the limits acknowledged." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.tradealphaai.com/etfs/methodology/" />
+  <link rel="alternate" hreflang="en" href="https://www.tradealphaai.com/etfs/methodology/" />
+  <link rel="alternate" hreflang="ar" href="https://www.tradealphaai.com/ar/etfs/methodology/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.tradealphaai.com/etfs/methodology/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="TradeAlphaAI" />
+  <meta property="og:title" content="ETF Score Methodology | TradeAlphaAI" />
+  <meta property="og:description" content="How the TradeAlpha ETF Score is calculated: every component, its weight, the inputs behind it, the assumptions stated openly and the limits acknowledged." />
+  <meta property="og:url" content="https://www.tradealphaai.com/etfs/methodology/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ETF Score Methodology | TradeAlphaAI" />
+  <meta name="twitter:description" content="How the TradeAlpha ETF Score is calculated: every component, its weight, the inputs behind it, the assumptions stated openly and the limits acknowledged." />
+  <meta name="twitter:image" content="https://www.tradealphaai.com/Image/og-image.svg" />
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../landing.css" />
+  <link rel="stylesheet" href="../../css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/etf-center.css" />
+  <link rel="stylesheet" href="/css/global-layout.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.tradealphaai.com/"},{"@type":"ListItem","position":2,"name":"ETF Intelligence","item":"https://www.tradealphaai.com/etfs/"},{"@type":"ListItem","position":3,"name":"ETF Score Methodology","item":"https://www.tradealphaai.com/etfs/methodology/"}]}</script>
+  <link rel="stylesheet" href="/css/global-header.css" />
+  <link rel="stylesheet" href="/css/global-header-canonical.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global-footer.css" />
+</head>
+<body class="market-page">
+  <!-- GLOBAL_HEADER_START -->
+<a class="skip-link" href="#top">Skip to main content</a>
+<div class="topbar" data-global-header data-locale="en" data-active-section="etfs">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>TradeAlpha AI</strong>
+        <span>TRADING &amp; MARKET RESEARCH PLATFORM</span>
+      </span>
+    </a>
+
+    <div class="top-actions">
+      <nav class="nav-group" aria-label="Primary">
+        <a href="/" class="nav-link">Home</a>
+          <div class="nav-menu">
+            <a href="/markets/" class="nav-link nav-menu-trigger is-active">Markets<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/markets/">Assets</a>
+              <a href="/sectors/">Sectors</a>
+              <a href="/equities/">Equities</a>
+              <a href="/etfs/">ETF Intelligence</a>
+              <a href="/etfs/finder/">ETF Finder</a>
+              <a href="/etfs/compare/">Compare ETFs</a>
+              <a href="/etfs/rankings/">ETF Rankings</a>
+              <a href="/stocks.html">Stocks Directory</a>
+              <a href="/etfs.html">ETFs Directory</a>
+              <a href="/markets/" class="nav-dropdown-viewall">View all Markets<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/research/" class="nav-link nav-menu-trigger">Research<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/research/">Research Hub</a>
+              <a href="/research/feed/">Research Feed</a>
+              <a href="/market-outlook/">Market Outlook</a>
+              <a href="/market-news/">Market News</a>
+              <a href="/market-structure/">Market Structure</a>
+              <a href="/insights/">Applied Research</a>
+              <a href="/articles/">Educational Articles</a>
+              <a href="/glossary/">Glossary</a>
+              <a href="/research/" class="nav-dropdown-viewall">View all Research<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/intelligence/" class="nav-link nav-menu-trigger">Intelligence<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/market-terminal/">Market Terminal</a>
+              <a href="/market-regime/">Market Regime</a>
+              <a href="/rankings/">Rankings</a>
+              <a href="/market-map/assets/">Maps</a>
+              <a href="/explorer/">Explorer</a>
+              <a href="/changes/">Changes</a>
+              <a href="/intelligence/" class="nav-dropdown-viewall">View all Intelligence<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="nav-menu">
+            <a href="/tools/" class="nav-link nav-menu-trigger">Tools<span class="nav-caret" aria-hidden="true">▾</span></a>
+            <div class="nav-dropdown nav-dropdown-compact">
+              <a href="/ai-stock-screener.html">Screener</a>
+              <a href="/economic-calendar/">Economic Calendar</a>
+              <a href="/briefs/">Market Briefs</a>
+              <a href="/newsletter/">Newsletter</a>
+              <a href="/tools/compound-interest/">Compound Interest Calculator</a>
+              <a href="/tools/retirement/">Retirement Calculator</a>
+              <a href="/tools/cagr/">CAGR Calculator</a>
+              <a href="/tools/dividend-yield/">Dividend Yield Calculator</a>
+              <a href="/methodology.html">Methodology</a>
+              <a href="/tools/" class="nav-dropdown-viewall">View all Tools<span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <a href="/methodology.html" class="nav-link">Methodology</a>
+      </nav>
+      <div class="header-search" role="search">
+        <label class="header-search-label" for="header-search-input">
+          <svg class="header-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="header-search-input" class="header-search-input" type="search" placeholder="Search…" autocomplete="off" aria-label="Site search" data-site-search />
+        </label>
+      </div>
+      <a href="https://t.me/TradeAlphaSignals_bot" target="_blank" rel="noopener noreferrer" class="header-signal-cta">Market Briefs</a>
+      <div class="locale-links" aria-label="Language">
+        <a class="lang-switch" data-locale-route="ar" href="/ar/etfs/methodology/">Arabic</a>
+        <a class="lang-switch" data-locale-route="en" href="/etfs/methodology/">English</a>
+      </div>
+      <div class="header-account" data-account-action data-signed-in-label="Account" data-signed-in-href="/account/" data-locale="en">
+        <a class="header-account-link header-account-cta" data-account-signed-out href="/account/sign-in/">
+          <span class="header-account-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+          <span class="header-account-label">Sign in</span>
+        </a>
+        <a class="header-account-dashboard" data-account-dashboard href="/account/" hidden>
+          <span class="header-account-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+          <span class="header-account-label">Account</span>
+        </a>
+        <div class="header-account-mount" data-account-mount hidden></div>
+      </div>
+      <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+  <template data-mobile-cards>
+    <div class="m-card" data-card-key="markets">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+        <h3 class="m-card-title">Markets</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/markets/">Assets</a></li><li><a class="m-card-link" href="/sectors/">Sectors</a></li><li><a class="m-card-link" href="/equities/">Equities</a></li><li><a class="m-card-link" href="/etfs/">ETF Intelligence</a></li><li><a class="m-card-link" href="/etfs/finder/">ETF Finder</a></li><li><a class="m-card-link" href="/etfs/compare/">Compare ETFs</a></li></ul>
+      <a class="m-card-viewall" href="/markets/">View all Markets<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="research">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <h3 class="m-card-title">Research</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/research/">Research Hub</a></li><li><a class="m-card-link" href="/research/feed/">Research Feed</a></li><li><a class="m-card-link" href="/insights/">Applied Research</a></li><li><a class="m-card-link" href="/glossary/">Glossary</a></li></ul>
+      <a class="m-card-viewall" href="/research/">View all Research<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="intelligence">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <h3 class="m-card-title">Intelligence</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/market-terminal/">Market Terminal</a></li><li><a class="m-card-link" href="/market-regime/">Market Regime</a></li><li><a class="m-card-link" href="/rankings/">Rankings</a></li><li><a class="m-card-link" href="/explorer/">Explorer</a></li><li><a class="m-card-link" href="/changes/">Changes</a></li></ul>
+      <a class="m-card-viewall" href="/intelligence/">View all Intelligence<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="tools">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6.3 6.3 2.6 2.6 6.3-6.3a4 4 0 0 0 5.4-5.4z"/></svg></span>
+        <h3 class="m-card-title">Tools</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/ai-stock-screener.html">Screener</a></li><li><a class="m-card-link" href="/economic-calendar/">Economic Calendar</a></li><li><a class="m-card-link" href="/briefs/">Market Briefs</a></li><li><a class="m-card-link" href="/newsletter/">Newsletter</a></li><li><a class="m-card-link" href="/tools/compound-interest/">Compound Interest Calc</a></li><li><a class="m-card-link" href="/tools/retirement/">Retirement Calc</a></li><li><a class="m-card-link" href="/tools/cagr/">CAGR Calc</a></li><li><a class="m-card-link" href="/tools/dividend-yield/">Dividend Yield Calc</a></li></ul>
+      <a class="m-card-viewall" href="/tools/">View all Tools<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card" data-card-key="workspace">
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+        <h3 class="m-card-title">Workspace</h3>
+      </header>
+      <ul class="m-card-list"><li><a class="m-card-link" href="/workspace/watchlists/">My Watchlists</a></li><li><a class="m-card-link" href="/workspace/monitoring/">Monitoring</a></li><li><a class="m-card-link" href="/workspace/regime/">Regime Monitoring</a></li><li><a class="m-card-link" href="/workspace/research/">Workspace Research</a></li></ul>
+      <a class="m-card-viewall" href="/workspace/">Open workspace<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="m-card m-card-account" data-card-key="account" data-mobile-account>
+      <header class="m-card-head">
+        <span class="m-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+        <h3 class="m-card-title">Account</h3>
+      </header>
+      <ul class="m-card-list">
+        <li><a class="m-card-link" href="/account/profile/">Profile</a></li>
+        <li><a class="m-card-link" href="/account/watchlists/">Watchlists</a></li>
+        <li><a class="m-card-link" href="/account/preferences/">Preferences</a></li>
+        <li><a class="m-card-link" href="/account/alerts/">Alerts</a></li>
+      </ul>
+      <div class="m-card-actions">
+        <a class="m-card-cta m-card-cta-signin" data-mobile-signin href="/account/sign-in/">Sign in</a>
+        <a class="m-card-cta m-card-cta-dashboard" data-mobile-dashboard hidden href="/account/">Dashboard</a>
+        <button type="button" class="m-card-cta m-card-cta-signout" data-mobile-signout hidden>Sign out</button>
+      </div>
+    </div></template>
+</div>
+<!-- GLOBAL_HEADER_END -->
+
+  <main class="market-shell">
+    <div class="wrap">
+      <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/etfs/">ETF Intelligence</a><span>/</span><span>ETF Score Methodology</span></nav>
+      <section class="market-hero"><div class="market-hero-panel">
+        <span class="eyebrow">Methodology</span>
+        <h1>ETF Score Methodology</h1>
+        <p class="market-lead">How the TradeAlpha ETF Score is calculated: every component, its weight, the inputs behind it, the assumptions stated openly and the limits acknowledged.</p>
+      </div></section>
+      <section class="market-section" id="etf-method-overview">
+        <div class="market-section-head"><span class="eyebrow">What this measures</span><h2>The TradeAlpha Score</h2></div>
+        <div class="market-panel">
+          <p class="market-copy">The TradeAlpha Score describes the structural quality of a fund — what it costs to own, how broadly it is spread, how easily it trades, how closely it follows its index, and how it is structured. It does not describe what a fund is going to do next, and it is not a ranking of expected return.</p>
+          <p class="market-copy">Every component is computed from inputs this platform can evidence. Where an input does not exist, the component is marked indeterminate, dropped from the total, and the remaining weights are rebalanced so the result is never quietly padded with an assumption.</p>
+          <div class="etf-grid narrow" style="margin-block-start:16px">
+            <div class="etf-stat"><span class="etf-stat-label">Funds covered</span><strong class="etf-stat-value">39</strong></div>
+            <div class="etf-stat"><span class="etf-stat-label">Funds scored</span><strong class="etf-stat-value">39</strong></div>
+            <div class="etf-stat"><span class="etf-stat-label">Verified fields</span><strong class="etf-stat-value">195</strong></div>
+            <div class="etf-stat"><span class="etf-stat-label">Awaiting verified data</span><strong class="etf-stat-value">287</strong></div>
+            <div class="etf-stat"><span class="etf-stat-label">Coverage floor</span><strong class="etf-stat-value">50%</strong><span class="etf-stat-note">of model weight required</span></div>
+          </div>
+        </div>
+      </section>
+      <section class="market-section" id="etf-method-components">
+        <div class="market-section-head"><span class="eyebrow">Components</span><h2>Weights and inputs</h2></div>
+        <div class="etf-table-wrap"><table class="etf-table">
+    <thead><tr>
+      <th scope="col">Component</th>
+      <th scope="col">Weight</th>
+      <th scope="col">What it measures</th>
+      <th scope="col">Where the input comes from</th>
+    </tr></thead>
+    <tbody>
+<tr><th scope="row">Cost</th><td class="num">25%</td><td style="white-space:normal">The published total expense ratio, mapped across the 0.03%–0.75% range that index-tracking funds occupy. Cheaper scores higher.</td><td style="white-space:normal">Requires a verified expense ratio. No free provider publishes one today, so this component is currently indeterminate for every fund and its weight is redistributed.</td></tr>
+<tr><th scope="row">Diversification</th><td class="num">20%</td><td style="white-space:normal">How broad the mandate is, reduced where the fund has actually behaved far more volatilely than the broad market — a concentrated fund is concentrated regardless of how its mandate reads.</td><td style="white-space:normal">Mandate breadth tier plus observed volatility versus a broad-market reference.</td></tr>
+<tr><th scope="row">Long-horizon composite</th><td class="num">20%</td><td style="white-space:normal">Combines the cost and diversification components with the length of observable history and the depth of the worst recorded drawdown.</td><td style="white-space:normal">Derived from the other components plus observed price history.</td></tr>
+<tr><th scope="row">Liquidity</th><td class="num">15%</td><td style="white-space:normal">Median daily turnover over the trailing year, on a logarithmic scale spanning 1M to 10B units of the listing currency.</td><td style="white-space:normal">Computed from observed exchange volume and closing prices.</td></tr>
+<tr><th scope="row">Tracking quality</th><td class="num">10%</td><td style="white-space:normal">Annualised tracking error against a same-currency proxy for the index the fund states it tracks. Scored only where such a proxy exists, and never against the fund itself.</td><td style="white-space:normal">Computed from observed prices; indeterminate for most funds, which is stated openly on each page.</td></tr>
+<tr><th scope="row">Structural tax characteristics</th><td class="num">10%</td><td style="white-space:normal">Fund domicile and distribution policy — the two structural features that change withholding treatment most.</td><td style="white-space:normal">Distribution policy read from the provider fund name where it states one; fund domicile is awaiting a verified source.</td></tr>
+    </tbody>
+  </table></div>
+      </section>
+      <section class="market-section" id="etf-method-bands">
+        <div class="market-section-head"><span class="eyebrow">Bands</span><h2>How the label is assigned</h2></div>
+        <div class="etf-table-wrap"><table class="etf-table">
+    <thead><tr><th scope="col">Label</th><th scope="col">Overall score</th></tr></thead>
+    <tbody>
+<tr><th scope="row" style="text-transform:capitalize">exceptional</th><td class="num">85 – 100</td></tr>
+<tr><th scope="row" style="text-transform:capitalize">strong</th><td class="num">72 – 84.9</td></tr>
+<tr><th scope="row" style="text-transform:capitalize">solid</th><td class="num">58 – 71.9</td></tr>
+<tr><th scope="row" style="text-transform:capitalize">adequate</th><td class="num">42 – 57.9</td></tr>
+<tr><th scope="row" style="text-transform:capitalize">limited</th><td class="num">0 – 41.9</td></tr>
+<tr><th scope="row" style="text-transform:capitalize">indeterminate</th><td class="num">below the coverage floor</td></tr>
+    </tbody>
+  </table></div>
+      </section>
+      <section class="market-section" id="etf-method-tiers">
+        <div class="market-section-head"><span class="eyebrow">Data policy</span><h2>Where every number comes from</h2></div>
+        <div class="market-panel">
+          <p class="market-copy">Every figure on an ETF page belongs to one of three tiers.</p>
+          <div class="etf-grid" style="margin-block-start:14px">
+            <article class="market-card"><h3>Computed</h3><p class="market-copy">Performance, volatility, Sharpe, Sortino, beta, maximum drawdown, tracking error and similarity. Calculated by TradeAlphaAI from observed daily closing prices, refreshed on every build.</p></article>
+            <article class="market-card"><h3>Verified</h3><p class="market-copy">Fund name, trading currency, exchange and first trading date, returned by a data provider and stored with the hash of that response. Issuer and distribution policy are read from the verified fund name, which is quoted alongside them.</p></article>
+            <article class="market-card"><h3>Awaiting verified data</h3><p class="market-copy">Expense ratio, ISIN, domicile, replication method, fund size and inception date have no free verifiable source. They are shown with that status on every surface rather than estimated, and the fund still appears in every ranking and table.</p></article>
+          </div>
+        </div><div class="etf-note">No value anywhere in this section is asserted from prior knowledge. Every field is traceable to a provider response, a computation over verified prices, or a labelled TradeAlphaAI classification — and a validator rejects the build if any factual field lacks one of those. Connecting a verified data source will populate the awaiting fields automatically, without changing a single page.</div>
+      </section>
+      <section class="market-section" id="etf-method-currency">
+        <div class="market-section-head"><span class="eyebrow">Currency</span><h2>Why some comparisons are withheld</h2></div>
+        <div class="market-panel">
+          <p class="market-copy">Returns are stated in each fund's own trading currency. Benchmark-relative figures, beta and tracking error are shown only where the fund and the benchmark share a currency, because a cross-currency comparison would measure the exchange rate as well as the fund.</p>
+          <p class="market-copy">This is why a European fund shows its returns but not a benchmark-relative figure: comparing a euro-quoted fund against a dollar-quoted index would report the exchange-rate move as if the fund had produced it.</p>
+        </div>
+      </section>
+      <section class="market-section" id="etf-method-assumption">
+        <div class="market-section-head"><span class="eyebrow">Stated assumption</span><h2>The tax perspective used</h2></div>
+        <div class="market-panel">
+          <p class="market-copy">Structural tax characteristics are assessed from the perspective of a non-US investor, because domicile and distribution policy change withholding treatment most for that audience. It is not tax advice and does not model any individual circumstances.</p>
+          <p class="market-copy">Tax treatment depends on where an individual is resident and on rules that change. The component describes fund structure only; it cannot and does not model any individual situation.</p>
+        </div>
+      </section>
+      <section class="market-section" id="etf-method-limits">
+        <div class="market-section-head"><span class="eyebrow">Limits</span><h2>What this does not cover</h2></div>
+        <div class="market-panel"><ul class="market-copy">
+          <li>Tracking quality is indeterminate for most funds, because a same-currency proxy for their index is not available from free data.</li>
+          <li>Holdings and country weights are not yet published for every fund. Where they are absent the section is omitted rather than estimated.</li>
+          <li>Fund size is a point-in-time figure shown with its date, not a live number.</li>
+          <li>Turnover uses adjusted closing prices, so it ranks relative liquidity rather than stating an exact traded amount.</li>
+          <li>Historical measurement describes what has already happened. It carries no implication about what follows.</li>
+        </ul></div>
+      </section>
+      <section class="market-section" id="etf-method-reproduce">
+        <div class="market-section-head"><span class="eyebrow">Reproducibility</span><h2>Checking the numbers</h2></div>
+        <div class="market-panel"><p class="market-copy">Each component on a fund page lists the evidence it used — the observation count, the window, the source document. Because the weights and bands on this page are published, any score shown on the site can be recomputed from those figures.</p></div>
+      </section>
+      <section class="market-section" id="etf-center-disclaimer"><div class="market-panel"><p class="market-copy">TradeAlphaAI ETF intelligence describes observed structure, cost and historical measurement only. It is not a trading signal, execution instruction or investment advice.</p></div></section>
+    </div>
+  </main>
+
+  <script src="../js/language-router.js" defer></script>
+<!-- NEWSLETTER_CTA_INSTALLED:v2 -->
+<aside class="ta-newsletter-cta" role="complementary" aria-label="Join the research newsletter" dir="ltr">
+  <div class="ta-newsletter-inner">
+    <div class="ta-newsletter-text">
+      <h3 class="ta-newsletter-title">Join the research newsletter</h3>
+      <p class="ta-newsletter-blurb">Daily institutional market analysis — stocks, ETFs, and macro. Free.</p>
+    </div>
+    <div id="custom-substack-embed" class="ta-newsletter-form"></div>
+    <p class="ta-newsletter-note">No spam. Unsubscribe in one click.</p>
+  </div>
+</aside>
+<style>
+  .ta-newsletter-cta {
+    margin: 3rem auto 2rem;
+    max-width: 720px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid rgba(34, 211, 195, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(13, 26, 42, 0.6) 0%, rgba(7, 16, 33, 0.85) 100%);
+    color: #e6f7f3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Cairo', sans-serif;
+    box-shadow: 0 12px 36px rgba(34, 211, 195, 0.08);
+  }
+  .ta-newsletter-inner { display: flex; flex-direction: column; gap: 0.9rem; }
+  .ta-newsletter-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #22d3c3;
+  }
+  .ta-newsletter-blurb {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #c2d3e0;
+    line-height: 1.5;
+  }
+  .ta-newsletter-form { margin: 0.25rem 0; min-height: 44px; }
+  .ta-newsletter-form input[type="email"] {
+    background: rgba(7, 16, 33, 0.7) !important;
+    color: #e6f7f3 !important;
+    border-color: rgba(34, 211, 195, 0.35) !important;
+  }
+  .ta-newsletter-note {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #6b7a8a;
+  }
+  @media (max-width: 600px) {
+    .ta-newsletter-cta { margin: 2rem 1rem 1.5rem; padding: 1.25rem 1.1rem; }
+    .ta-newsletter-title { font-size: 1.05rem; }
+    .ta-newsletter-blurb { font-size: 0.85rem; }
+  }
+</style>
+<script>
+  window.CustomSubstackWidget = {
+    substackUrl: "tradealphaai.substack.com",
+    placeholder: "your@email.com",
+    buttonText: "Subscribe",
+    theme: "custom",
+    colors: {
+      primary: "#22d3c3",
+      input: "#071021",
+      email: "#e6f7f3",
+      text: "#021018"
+    }
+  };
+</script>
+<script src="https://substackapi.com/widget.js" async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- GLOBAL_FOOTER_START -->
+<footer class="site-footer" data-global-footer>
+  <div class="wrap site-footer-inner">
+    <div>
+      <strong>TradeAlpha AI</strong>
+      <p>Educational, non-advisory financial research and market intelligence.</p>
+    </div>
+    <nav aria-label="Footer navigation">
+      <a href="/about/">About</a>
+      <a href="/insights/">Research Library</a>
+      <a href="/market-outlook/">Market Outlook</a>
+      <a href="/economic-calendar/">Economic Calendar</a>
+      <a href="/glossary/">Glossary</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/editorial-policy/">Editorial Policy</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <p class="site-footer-disclaimer">All content on this site is educational research and market context — not investment advice, a recommendation, or a solicitation. Trading involves substantial risk of loss.</p>
+    <small>&copy; 2026 TradeAlphaAI — All rights reserved.</small>
+  </div>
+</footer>
+<!-- GLOBAL_FOOTER_END -->
+  <script src="/js/clerk-config.js"></script><script src="/js/clerk-bootstrap.js" defer></script><script src="/js/global-header.js" defer></script><script src="/js/search-autocomplete.js" defer></script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").then(function (reg) { try { reg.update(); } catch (e) {} reg.addEventListener("updatefound", function () { var nw = reg.installing; if (!nw) return; nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) { try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {} } }); }); }).catch(function () {}); var reloaded = false; navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; window.location.reload(); }); }); }</script>
+</body>
+</html>

@@ -8,6 +8,12 @@ const fs = require('fs');
 const path = require('path');
 const { ETFS, BY_SYMBOL } = require('./etf-registry');
 const { recentChangesBlock } = require('./recent-changes');
+// ETF Intelligence Center — widened coverage plus the premium research sections.
+// The 20 registry ETFs keep every section check-etf-research.js requires; the
+// wider universe adds funds that carry the computed and curated sections only.
+const { UNIVERSE, BY_SLUG } = require('./etf-universe');
+const { premiumSections, heroExtra } = require('./etf-detail-sections');
+const P = require('./etf-provenance');
 
 const ROOT = path.resolve(__dirname, '..');
 const WRITE = process.argv.includes('--write');
@@ -73,6 +79,7 @@ function head(ar, slugPath, titleEn, titleAr, descEn, descAr) {
   <link rel="stylesheet" href="${rel}styles.css" />
   <link rel="stylesheet" href="${rel}landing.css" />
   <link rel="stylesheet" href="${rel}css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/etf-center.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
   <link rel="stylesheet" href="/css/global-header-canonical.css" />
@@ -104,14 +111,31 @@ function detailHref(etf, ar) {
   return `${ar ? '/ar' : ''}/research/etfs/${etf.slug}/`;
 }
 
-function indexBody(ar, intelligenceBySymbol, rankingBySymbol) {
+const SCORE_COLOR = {
+  exceptional: '#1f6f5c', strong: '#2f8f76', solid: '#5a8f7a',
+  adequate: '#b58b56', limited: '#c2703c', indeterminate: '#3a4250',
+};
+
+function indexBody(ar, intelligenceBySymbol, rankingBySymbol, scoreBySlug, factsBySlug) {
   const t = (en, arText) => (ar ? arText : en);
-  const cards = ETFS.map((etf) => {
-    const intel = intelligenceBySymbol.get(etf.symbol);
-    const rank = rankingBySymbol.get(etf.symbol);
-    const state = rank && rank.available ? rank.rank_label : (intel && intel.confidence ? intel.confidence.state : 'indeterminate');
-    const summary = `${t('State', 'الحالة')}: ${labelNode(intel && intel.structure, ar)} · ${t('Rank', 'الترتيب')}: ${rankingLabel(rank, ar)}`;
-    return card(`${etf.symbol} · ${ar ? etf.role_ar : etf.role_en}`, etf.fund_name, summary, detailHref(etf, ar), COLOR[state] || COLOR.indeterminate);
+  const cards = UNIVERSE.map((entry) => {
+    const score = scoreBySlug ? scoreBySlug.get(entry.slug) : null;
+    const facts = factsBySlug ? factsBySlug.get(entry.slug) : null;
+    const fields = (facts && facts.fields) || {};
+    // Fund name and issuer are shown only where a provider verified them.
+    const name = P.hasValue(fields.fund_name) ? fields.fund_name.value : entry.ticker;
+    const issuer = P.hasValue(fields.issuer) ? fields.issuer.value : null;
+    const parts = [];
+    if (score && score.overall !== null) parts.push(`${t('TradeAlpha Score', 'مؤشر TradeAlpha')}: ${score.overall}/100`);
+    if (issuer) parts.push(`${t('Issuer', 'الجهة المُصدِرة')}: ${issuer}`);
+    if (!parts.length) parts.push(t(P.AWAITING_EN, P.AWAITING_AR));
+    return card(
+      `${entry.ticker} · ${ar ? entry.role_ar : entry.role_en}`,
+      name,
+      parts.join(' · '),
+      `${ar ? '/ar' : ''}/research/etfs/${entry.slug}/`,
+      SCORE_COLOR[score ? score.label : 'indeterminate'] || SCORE_COLOR.indeterminate,
+    );
   }).join('\n');
   return `      <section class="market-section" id="etf-research-index"><div class="market-section-head"><span class="eyebrow">${esc(t('ETF Research Network', 'شبكة أبحاث صناديق المؤشرات'))}</span><h2>${esc(t('ETF universe research', 'أبحاث عالم صناديق المؤشرات'))}</h2></div>
         <p class="market-copy">${esc(t('Institutional ETF research composed from the existing regime, ranking, relative-strength, history and narrative artifacts. Direct evidence is used when available; unavailable data remains explicitly indeterminate.', 'أبحاث مؤسسية لصناديق المؤشرات مركبة من مصادر النظام والترتيب والقوة النسبية والتاريخ والسردية القائمة. تستخدم الأدلة المباشرة عند توافرها، وتبقى البيانات غير المتاحة مصنفة بوضوح كغير محددة.'))}</p>
@@ -131,9 +155,15 @@ function chartFigure(ar, etf, intel, chart, audit) {
   const asOf = chart.as_of || 'unknown';
   const bars = chart.bar_count || (chart.series || []).length;
   const hashShort = (chart.series_hash || '').slice(0, 12);
-  const captionEn = 'Verified OHLCV — ' + bars + ' bars from ' + provider + ', as of ' + asOf + '. series_hash=' + hashShort + '.';
-  const captionAr = 'OHLCV موثق — ' + bars + ' شمعة من ' + provider + '، بتاريخ ' + asOf + '. series_hash=' + hashShort + '.';
-  return `<figure class="market-chart"><img src="${esc(svgRel)}" alt="${esc(etf.symbol)} ${esc(t('verified OHLCV', 'OHLCV موثق'))}" loading="lazy" /><figcaption class="ic-caption">${esc(ar ? captionAr : captionEn)}</figcaption></figure>`;
+  // The caption reads as prose. The series hash is a real integrity control and
+  // stays available, but a raw identifier is not default-view copy on a public
+  // page — it moves into a collapsed technical-details block beneath it.
+  const captionEn = 'Verified OHLCV — ' + bars + ' bars from ' + provider + ', as of ' + asOf + '. Series integrity verified.';
+  const captionAr = 'OHLCV موثق — ' + bars + ' شمعة من ' + provider + '، بتاريخ ' + asOf + '. تم التحقق من سلامة السلسلة.';
+  const details = hashShort
+    ? `<details class="etf-evidence"><summary>${esc(t('Technical details', 'تفاصيل تقنية'))}</summary><ul><li>${esc(t('Series hash', 'بصمة السلسلة'))}: <code>${esc(hashShort)}</code></li><li>${esc(t('Observations', 'عدد المشاهدات'))}: ${esc(String(bars))}</li><li>${esc(t('Provider', 'المزود'))}: ${esc(provider)}</li></ul></details>`
+    : '';
+  return `<figure class="market-chart"><img src="${esc(svgRel)}" alt="${esc(etf.symbol)} ${esc(t('verified OHLCV', 'OHLCV موثق'))}" loading="lazy" /><figcaption class="ic-caption">${esc(ar ? captionAr : captionEn)}${details}</figcaption></figure>`;
 }
 
 function qBadge(label, valueEn, valueAr, ar) {
@@ -153,7 +183,14 @@ function detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history, cha
     return rel ? `<a href="${detailHref(rel, ar)}">${esc(symbol)}</a>` : `<span>${esc(symbol)}</span>`;
   }).join(' · ');
   const externalResearch = (etf.research_links || []).map((href) => `<a href="${esc((ar ? '/ar' : '') + href)}">${esc(href.replace(/^\/insights\//, '').replace(/\/$/, ''))}</a>`).join(' · ');
-  const evidence = (intel.evidence || []).concat(rank.evidence || []).slice(0, 8).map((entry) => `<li>${esc(entry)}</li>`).join('');
+  // Evidence lines are authored machine-side (`registry category=broad_market`).
+  // Readable form only — the artifact keeps its exact wording.
+  const readable = (entry) => String(entry)
+    .replace(/_/g, ' ')
+    .replace(/([a-z])=/g, '$1: ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const evidence = (intel.evidence || []).concat(rank.evidence || []).slice(0, 8).map((entry) => `<li>${esc(readable(entry))}</li>`).join('');
   const chartNote = intel.chart_available
     ? t('A verified OHLCV chart is available for this ETF in the chart manifest.', 'يتوافر لهذا الصندوق رسم OHLCV موثق ضمن سجل الرسوم.')
     : t('Verified ETF OHLCV chart coverage is not available in the current local manifest, so no chart is rendered here.', 'لا تتوافر تغطية رسم OHLCV موثقة لهذا الصندوق ضمن السجل المحلي الحالي، لذلك لا يتم عرض رسم هنا.');
@@ -195,14 +232,14 @@ ${recentChangesBlock(ar, 'etf', etf.symbol)}
         <div class="market-panel"><p class="market-copy">${esc(t('Evidence', 'الأدلة'))}:</p><ul class="market-copy">${evidence}</ul></div></section>`;
 }
 
-function page(ar, slugPath, titleEn, titleAr, descEn, descAr, body) {
+function page(ar, slugPath, titleEn, titleAr, descEn, descAr, body, hero = '') {
   const parts = templateHeader(ar, slugPath);
   const t = (en, arText) => (ar ? arText : en);
-  const crumb = `<nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><a href="${ar ? '/ar/research/' : '/research/'}">${esc(t('Research Hub', 'مركز الأبحاث'))}</a><span>/</span><span>${esc(ar ? titleAr : titleEn)}</span></nav>`;
+  const crumb = `<nav class="breadcrumb"><a href="${ar ? '/ar/' : '/'}">${esc(t('Home', 'الرئيسية'))}</a><span>/</span><a href="${ar ? '/ar/research/' : '/research/'}">${esc(t('Research Hub', 'مركز الأبحاث'))}</a><span>/</span><a href="${ar ? '/ar/etfs/' : '/etfs/'}">${esc(t('ETF Intelligence', 'استخبارات الصناديق'))}</a><span>/</span><span>${esc(ar ? titleAr : titleEn)}</span></nav>`;
   const main = `  <main class="market-shell">
     <div class="wrap">
       ${crumb}
-      <section class="market-hero"><div class="market-hero-panel"><span class="eyebrow">${esc(t('ETF Intelligence Universe', 'عالم استخبارات صناديق المؤشرات'))}</span><h1>${esc(ar ? titleAr : titleEn)}</h1><p class="market-lead">${esc(ar ? descAr : descEn)}</p></div></section>
+      <section class="market-hero"><div class="market-hero-panel"><span class="eyebrow">${esc(t('ETF Intelligence Universe', 'عالم استخبارات صناديق المؤشرات'))}</span><h1>${esc(ar ? titleAr : titleEn)}</h1><p class="market-lead">${esc(ar ? descAr : descEn)}</p>${hero}</div></section>
 ${body}
       <section class="market-section" id="etf-research-disclaimer"><div class="market-panel"><p class="market-copy">${esc(t('TradeAlphaAI ETF research describes observed institutional context only. It is not a trading signal, execution instruction or investment advice.', 'تصف أبحاث صناديق المؤشرات في TradeAlphaAI السياق المؤسسي المرصود فقط. وهي ليست إشارة تداول أو تعليمات تنفيذ أو نصيحة استثمارية.'))}</p></div></section>
     </div>
@@ -216,6 +253,17 @@ ${main}
 ${parts.footer}`;
 }
 
+/** Index of the ETF Center artifacts, keyed by slug. */
+function centerData() {
+  const bySlugOf = (artifact) => new Map(((artifact && artifact.etfs) || []).map((e) => [e.slug, e]));
+  return {
+    facts: bySlugOf(readJson('etf-facts.json', {})),
+    analytics: bySlugOf(readJson('etf-analytics.json', {})),
+    score: bySlugOf(readJson('etf-score.json', {})),
+    similarity: bySlugOf(readJson('etf-similarity.json', {})),
+  };
+}
+
 function buildPages() {
   const intelligence = readJson('etf-intelligence.json', {});
   const rankings = readJson('etf-rankings.json', {});
@@ -223,6 +271,7 @@ function buildPages() {
   const charts = readJson('etf-charts.json', {});
   const audit = readJson('etf-provider-audit.json', {});
   const quality = readJson('etf-data-quality.json', {});
+  const center = centerData();
   const intelligenceBySymbol = bySymbol(intelligence.etfs);
   const rankingBySymbol = bySymbol(rankings.items);
   const chartsBySymbol = new Map(((charts.charts) || []).filter((c) => c.verified === true).map((c) => [c.symbol, c]));
@@ -235,17 +284,44 @@ function buildPages() {
     const descAr = 'شبكة أبحاث مؤسسية لصناديق المؤشرات مركبة من استخبارات النظام والترتيب والقوة النسبية والتاريخ والسردية.';
     pages.push({
       out: path.join(ROOT, ar ? 'ar/research/etfs/index.html' : 'research/etfs/index.html'),
-      html: page(ar, slugPath, 'ETF Research', 'أبحاث صناديق المؤشرات', descEn, descAr, indexBody(ar, intelligenceBySymbol, rankingBySymbol))
+      html: page(ar, slugPath, 'ETF Research', 'أبحاث صناديق المؤشرات', descEn, descAr, indexBody(ar, intelligenceBySymbol, rankingBySymbol, center.score, center.facts))
     });
   }
-  for (const etf of ETFS) {
+  for (const entry of UNIVERSE) {
+    const registryEtf = BY_SYMBOL.get(entry.symbol) || null;
+    const data = {
+      facts: center.facts.get(entry.slug) || null,
+      analytics: center.analytics.get(entry.slug) || null,
+      score: center.score.get(entry.slug) || null,
+      similarity: center.similarity.get(entry.slug) || null,
+      factsBySlug: center.facts,
+    };
+
     for (const ar of [false, true]) {
-      const slugPath = `research/etfs/${etf.slug}/`;
-      const descEn = `Institutional ETF research read for ${etf.symbol}: regime alignment, ranking position, history, liquidity and related research.`;
-      const descAr = `قراءة بحثية مؤسسية لصندوق ${etf.symbol}: مواءمة النظام، موقع الترتيب، التاريخ، السيولة والأبحاث ذات الصلة.`;
+      const slugPath = `research/etfs/${entry.slug}/`;
+      const verifiedName = data.facts && P.hasValue(data.facts.fields.fund_name)
+        ? data.facts.fields.fund_name.value
+        : entry.ticker;
+      const descEn = `${verifiedName} (${entry.ticker}) research: TradeAlpha Score, performance and risk measured from verified daily prices, plus a field-by-field provenance audit.`;
+      const descAr = `بحث ${verifiedName} (${entry.ticker}): مؤشر TradeAlpha، الأداء والمخاطر المقاسة من أسعار يومية موثّقة، إضافة إلى تدقيق لمصدر كل حقل.`;
+
+      // Registry funds keep the institutional intelligence sections that the
+      // Phase 214 validator requires; wider-universe funds carry the computed
+      // and curated sections only, rather than empty placeholders.
+      const institutional = registryEtf
+        ? detailBody(ar, registryEtf, intelligenceBySymbol, rankingBySymbol, history, chartsBySymbol, auditBySymbol, qualityBySymbol)
+        : '';
+
+      const body = [premiumSections(ar, entry, data), institutional].filter(Boolean).join('\n');
+
       pages.push({
-        out: path.join(ROOT, ar ? `ar/research/etfs/${etf.slug}/index.html` : `research/etfs/${etf.slug}/index.html`),
-        html: page(ar, slugPath, `${etf.symbol} ETF Research`, `أبحاث ${etf.symbol}`, descEn, descAr, detailBody(ar, etf, intelligenceBySymbol, rankingBySymbol, history, chartsBySymbol, auditBySymbol, qualityBySymbol))
+        out: path.join(ROOT, ar ? `ar/research/etfs/${entry.slug}/index.html` : `research/etfs/${entry.slug}/index.html`),
+        html: page(
+          ar, slugPath,
+          `${entry.ticker} ETF Research`, `أبحاث ${entry.ticker}`,
+          descEn, descAr, body,
+          heroExtra(ar, entry, data.facts, data.analytics, data.score),
+        ),
       });
     }
   }

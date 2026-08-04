@@ -1,0 +1,751 @@
+{
+  "$comment": "ETF coverage universe. DATA ONLY — this file names which funds the Center covers and how TradeAlphaAI classifies them. It deliberately contains NO factual claims about the funds (no TER, ISIN, issuer, benchmark, domicile, replication, distribution or inception): those are resolved at build time from a provider response or marked awaiting verified data. Adding a fund means adding an entry here; no code change is required.",
+  "$comment_scale": "The pipeline is built to scale: builders fetch concurrently with an on-disk cache, similarity is bucketed rather than all-pairs, and bulky series are sharded out of the main artifact. Thousands of entries here are supported.",
+  "schema_version": 2,
+  "count": 39,
+  "etfs": [
+    {
+      "symbol": "VOO",
+      "ticker": "VOO",
+      "slug": "voo",
+      "yahoo_symbol": "VOO",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "broad_market",
+        "exposure_type": "large_cap_beta",
+        "role_en": "Low-cost S&P 500 beta wrapper for broad US large-cap exposure",
+        "role_ar": "غلاف منخفض التكلفة لمؤشر S&P 500 لقياس بيتا الأسهم الأميركية كبيرة رأس المال"
+      },
+      "related": [
+        "SPY",
+        "VTI",
+        "QQQ",
+        "XLK"
+      ]
+    },
+    {
+      "symbol": "VTI",
+      "ticker": "VTI",
+      "slug": "vti",
+      "yahoo_symbol": "VTI",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "broad_market",
+        "exposure_type": "total_market_beta",
+        "role_en": "Total US equity-market wrapper spanning large, mid and small capitalization exposure",
+        "role_ar": "غلاف شامل للأسهم الأميركية يضم التعرض للشركات الكبيرة والمتوسطة والصغيرة"
+      },
+      "related": [
+        "VOO",
+        "IWM",
+        "SPY"
+      ]
+    },
+    {
+      "symbol": "QQQ",
+      "ticker": "QQQ",
+      "slug": "qqq",
+      "yahoo_symbol": "QQQ",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "growth",
+        "exposure_type": "large_cap_growth",
+        "role_en": "Large-cap growth and duration-sensitive equity leadership proxy",
+        "role_ar": "مؤشر بديل لقيادة أسهم النمو الكبيرة ذات الحساسية المرتفعة للعوائد"
+      },
+      "related": [
+        "XLK",
+        "SMH",
+        "SOXX",
+        "VOO"
+      ]
+    },
+    {
+      "symbol": "SCHD",
+      "ticker": "SCHD",
+      "slug": "schd",
+      "yahoo_symbol": "SCHD",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "dividend_quality",
+        "exposure_type": "dividend_quality",
+        "role_en": "Dividend-quality equity exposure with a defensive income tilt",
+        "role_ar": "تعرض للأسهم ذات جودة توزيعات مع ميل دفاعي للدخل"
+      },
+      "related": [
+        "XLP",
+        "XLV",
+        "XLF"
+      ]
+    },
+    {
+      "symbol": "SOXX",
+      "ticker": "SOXX",
+      "slug": "soxx",
+      "yahoo_symbol": "SOXX",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "semiconductors",
+        "exposure_type": "industry_concentration",
+        "role_en": "Semiconductor industry exposure tied to AI capex, hardware cycles and chip leadership",
+        "role_ar": "تعرض لصناعة أشباه الموصلات المرتبطة بإنفاق الذكاء الاصطناعي ودورات العتاد وقيادة الرقائق"
+      },
+      "related": [
+        "SMH",
+        "XLK",
+        "QQQ"
+      ]
+    },
+    {
+      "symbol": "SMH",
+      "ticker": "SMH",
+      "slug": "smh",
+      "yahoo_symbol": "SMH",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "semiconductors",
+        "exposure_type": "industry_concentration",
+        "role_en": "Concentrated semiconductor leadership basket with high AI infrastructure sensitivity",
+        "role_ar": "سلة مركزة لقيادة أشباه الموصلات ذات حساسية عالية لبنية الذكاء الاصطناعي"
+      },
+      "related": [
+        "SOXX",
+        "XLK",
+        "QQQ"
+      ]
+    },
+    {
+      "symbol": "XLK",
+      "ticker": "XLK",
+      "slug": "xlk",
+      "yahoo_symbol": "XLK",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "technology_sector",
+        "role_en": "Technology sector wrapper for software, hardware and platform leadership",
+        "role_ar": "غلاف قطاع التكنولوجيا لقيادة البرمجيات والعتاد والمنصات"
+      },
+      "related": [
+        "QQQ",
+        "SMH",
+        "SOXX"
+      ]
+    },
+    {
+      "symbol": "XLF",
+      "ticker": "XLF",
+      "slug": "xlf",
+      "yahoo_symbol": "XLF",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "financials_sector",
+        "role_en": "Financial sector wrapper sensitive to rates, credit conditions and yield-curve context",
+        "role_ar": "غلاف قطاع مالي حساس للعوائد وظروف الائتمان وسياق منحنى العائد"
+      },
+      "related": [
+        "XLI",
+        "XLRE",
+        "VOO"
+      ]
+    },
+    {
+      "symbol": "XLV",
+      "ticker": "XLV",
+      "slug": "xlv",
+      "yahoo_symbol": "XLV",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "healthcare_sector",
+        "role_en": "Healthcare sector wrapper with defensive earnings characteristics",
+        "role_ar": "غلاف قطاع الرعاية الصحية بخصائص أرباح دفاعية"
+      },
+      "related": [
+        "XLP",
+        "XLU",
+        "SCHD"
+      ]
+    },
+    {
+      "symbol": "XLE",
+      "ticker": "XLE",
+      "slug": "xle",
+      "yahoo_symbol": "XLE",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "energy_sector",
+        "role_en": "Energy sector wrapper sensitive to oil, inflation pressure and cyclicality",
+        "role_ar": "غلاف قطاع الطاقة الحساس للنفط وضغط التضخم والدورة الاقتصادية"
+      },
+      "related": [
+        "XLF",
+        "XLI",
+        "XLB"
+      ]
+    },
+    {
+      "symbol": "XLI",
+      "ticker": "XLI",
+      "slug": "xli",
+      "yahoo_symbol": "XLI",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "industrials_sector",
+        "role_en": "Industrial sector wrapper tied to capital spending, infrastructure and cyclicality",
+        "role_ar": "غلاف قطاع صناعي مرتبط بالإنفاق الرأسمالي والبنية التحتية والدورة الاقتصادية"
+      },
+      "related": [
+        "XLF",
+        "XLE",
+        "XLB"
+      ]
+    },
+    {
+      "symbol": "XLU",
+      "ticker": "XLU",
+      "slug": "xlu",
+      "yahoo_symbol": "XLU",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "utilities_sector",
+        "role_en": "Utilities sector wrapper with defensive and rate-sensitive characteristics",
+        "role_ar": "غلاف قطاع المرافق بخصائص دفاعية وحساسية للعوائد"
+      },
+      "related": [
+        "XLV",
+        "XLP",
+        "TLT"
+      ]
+    },
+    {
+      "symbol": "XLP",
+      "ticker": "XLP",
+      "slug": "xlp",
+      "yahoo_symbol": "XLP",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "staples_sector",
+        "role_en": "Consumer staples sector wrapper for defensive consumption exposure",
+        "role_ar": "غلاف قطاع السلع الاستهلاكية الأساسية للتعرض الدفاعي للاستهلاك"
+      },
+      "related": [
+        "XLV",
+        "XLU",
+        "SCHD"
+      ]
+    },
+    {
+      "symbol": "XLY",
+      "ticker": "XLY",
+      "slug": "xly",
+      "yahoo_symbol": "XLY",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "discretionary_sector",
+        "role_en": "Consumer discretionary sector wrapper tied to household demand and growth appetite",
+        "role_ar": "غلاف قطاع السلع الكمالية المرتبط بطلب الأسر وشهية النمو"
+      },
+      "related": [
+        "QQQ",
+        "XLF",
+        "VOO"
+      ]
+    },
+    {
+      "symbol": "XLB",
+      "ticker": "XLB",
+      "slug": "xlb",
+      "yahoo_symbol": "XLB",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "materials_sector",
+        "role_en": "Materials sector wrapper exposed to commodities, global growth and dollar conditions",
+        "role_ar": "غلاف قطاع المواد المعرض للسلع والنمو العالمي وظروف الدولار"
+      },
+      "related": [
+        "XLE",
+        "XLI",
+        "UUP"
+      ]
+    },
+    {
+      "symbol": "XLRE",
+      "ticker": "XLRE",
+      "slug": "xlre",
+      "yahoo_symbol": "XLRE",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "sector",
+        "exposure_type": "real_estate_sector",
+        "role_en": "Real estate sector wrapper with high sensitivity to rates and financing conditions",
+        "role_ar": "غلاف قطاع العقارات ذو حساسية مرتفعة للعوائد وظروف التمويل"
+      },
+      "related": [
+        "TLT",
+        "XLF",
+        "XLU"
+      ]
+    },
+    {
+      "symbol": "IEF",
+      "ticker": "IEF",
+      "slug": "ief",
+      "yahoo_symbol": "IEF",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "fixed_income",
+        "exposure_type": "intermediate_duration_treasuries",
+        "role_en": "Intermediate-duration Treasury wrapper for rates and duration context",
+        "role_ar": "غلاف سندات خزانة متوسطة المدة لسياق العوائد والمدة"
+      },
+      "related": [
+        "TLT",
+        "LQD",
+        "HYG"
+      ]
+    },
+    {
+      "symbol": "TLT",
+      "ticker": "TLT",
+      "slug": "tlt",
+      "yahoo_symbol": "TLT",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "fixed_income",
+        "exposure_type": "long_duration_treasuries",
+        "role_en": "Long-duration Treasury wrapper for rates pressure and defensive duration demand",
+        "role_ar": "غلاف سندات خزانة طويلة المدة لضغط العوائد وطلب المدة الدفاعية"
+      },
+      "related": [
+        "IEF",
+        "XLU",
+        "XLRE"
+      ]
+    },
+    {
+      "symbol": "HYG",
+      "ticker": "HYG",
+      "slug": "hyg",
+      "yahoo_symbol": "HYG",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "credit",
+        "exposure_type": "high_yield_credit",
+        "role_en": "High-yield credit wrapper for risk appetite and spread conditions",
+        "role_ar": "غلاف ائتمان عالي العائد لقياس شهية المخاطر وظروف الفروقات"
+      },
+      "related": [
+        "LQD",
+        "SPY",
+        "XLF"
+      ]
+    },
+    {
+      "symbol": "LQD",
+      "ticker": "LQD",
+      "slug": "lqd",
+      "yahoo_symbol": "LQD",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": "credit",
+        "exposure_type": "investment_grade_credit",
+        "role_en": "Investment-grade credit wrapper balancing duration and corporate-spread context",
+        "role_ar": "غلاف ائتمان استثماري يوازن بين المدة وسياق فروقات الشركات"
+      },
+      "related": [
+        "HYG",
+        "IEF",
+        "TLT"
+      ]
+    },
+    {
+      "symbol": "SPY",
+      "ticker": "SPY",
+      "slug": "spy",
+      "yahoo_symbol": "SPY",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "broad_market",
+        "exposure_type": "large_cap_beta",
+        "role_en": "A US large-cap index wrapper widely used as a liquidity and benchmarking reference",
+        "role_ar": "غلاف لمؤشر الأسهم الأميركية الكبيرة يُستخدم على نطاق واسع كمرجع للسيولة والقياس"
+      },
+      "related": [
+        "VOO",
+        "VTI",
+        "QQQ"
+      ]
+    },
+    {
+      "symbol": "GLD",
+      "ticker": "GLD",
+      "slug": "gld",
+      "yahoo_symbol": "GLD",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "commodity",
+        "exposure_type": "physical_gold",
+        "role_en": "Gold exposure used for diversification and inflation context",
+        "role_ar": "تعرض للذهب يُستخدم لسياق التنويع والتضخم"
+      },
+      "related": [
+        "GDX",
+        "TLT",
+        "VOO"
+      ]
+    },
+    {
+      "symbol": "VNQ",
+      "ticker": "VNQ",
+      "slug": "vnq",
+      "yahoo_symbol": "VNQ",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "real_estate",
+        "exposure_type": "us_reits",
+        "role_en": "US REIT exposure with high sensitivity to financing conditions and yields",
+        "role_ar": "تعرض لصناديق الاستثمار العقاري الأميركية بحساسية مرتفعة لظروف التمويل والعوائد"
+      },
+      "related": [
+        "XLRE",
+        "TLT",
+        "XLF"
+      ]
+    },
+    {
+      "symbol": "VIG",
+      "ticker": "VIG",
+      "slug": "vig",
+      "yahoo_symbol": "VIG",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "dividend_quality",
+        "exposure_type": "dividend_growth",
+        "role_en": "Dividend-growth equity exposure weighted toward sustained distribution histories",
+        "role_ar": "تعرض لأسهم نمو التوزيعات مع ترجيح للشركات ذات سجل توزيعات مستدام"
+      },
+      "related": [
+        "SCHD",
+        "DGRO",
+        "XLP"
+      ]
+    },
+    {
+      "symbol": "DGRO",
+      "ticker": "DGRO",
+      "slug": "dgro",
+      "yahoo_symbol": "DGRO",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "dividend_quality",
+        "exposure_type": "dividend_growth",
+        "role_en": "Core dividend-growth exposure across US large and mid capitalisation companies",
+        "role_ar": "تعرض أساسي لنمو التوزيعات عبر الشركات الأميركية الكبيرة والمتوسطة"
+      },
+      "related": [
+        "VIG",
+        "SCHD",
+        "XLV"
+      ]
+    },
+    {
+      "symbol": "VUG",
+      "ticker": "VUG",
+      "slug": "vug",
+      "yahoo_symbol": "VUG",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "growth",
+        "exposure_type": "large_cap_growth",
+        "role_en": "US large-cap growth exposure with elevated duration sensitivity",
+        "role_ar": "تعرض لأسهم النمو الأميركية الكبيرة بحساسية مرتفعة للمدة"
+      },
+      "related": [
+        "QQQ",
+        "SCHG",
+        "XLK"
+      ]
+    },
+    {
+      "symbol": "VTV",
+      "ticker": "VTV",
+      "slug": "vtv",
+      "yahoo_symbol": "VTV",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "value",
+        "exposure_type": "large_cap_value",
+        "role_en": "US large-cap value exposure with a lower-multiple, cyclical tilt",
+        "role_ar": "تعرض لأسهم القيمة الأميركية الكبيرة بميل دوري ومضاعفات أقل"
+      },
+      "related": [
+        "SCHD",
+        "XLF",
+        "VOO"
+      ]
+    },
+    {
+      "symbol": "IWM",
+      "ticker": "IWM",
+      "slug": "iwm",
+      "yahoo_symbol": "IWM",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "broad_market",
+        "exposure_type": "small_cap_beta",
+        "role_en": "US small-capitalisation breadth exposure sensitive to domestic credit conditions",
+        "role_ar": "تعرض لاتساع الشركات الأميركية الصغيرة وحساسية لظروف الائتمان المحلية"
+      },
+      "related": [
+        "VTI",
+        "RSP",
+        "XLF"
+      ]
+    },
+    {
+      "symbol": "IEMG",
+      "ticker": "IEMG",
+      "slug": "iemg",
+      "yahoo_symbol": "IEMG",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "emerging_markets",
+        "exposure_type": "em_broad_equity",
+        "role_en": "Broad emerging-market equity exposure across large, mid and small capitalisation tiers",
+        "role_ar": "تعرض واسع لأسهم الأسواق الناشئة عبر الشرائح الكبيرة والمتوسطة والصغيرة"
+      },
+      "related": [
+        "EEM",
+        "VXUS",
+        "EFA"
+      ]
+    },
+    {
+      "symbol": "BND",
+      "ticker": "BND",
+      "slug": "bnd",
+      "yahoo_symbol": "BND",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "fixed_income",
+        "exposure_type": "aggregate_bond",
+        "role_en": "Aggregate US investment-grade bond exposure spanning Treasuries, agency and corporate issues",
+        "role_ar": "تعرض تجميعي للسندات الأميركية الاستثمارية يشمل الخزانة والوكالات والشركات"
+      },
+      "related": [
+        "IEF",
+        "LQD",
+        "TLT"
+      ]
+    },
+    {
+      "symbol": "BOTZ",
+      "ticker": "BOTZ",
+      "slug": "botz",
+      "yahoo_symbol": "BOTZ",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "thematic_ai",
+        "exposure_type": "robotics_ai_theme",
+        "role_en": "Thematic robotics and artificial-intelligence exposure with concentrated holdings",
+        "role_ar": "تعرض موضوعي للروبوتات والذكاء الاصطناعي بمكونات مركزة"
+      },
+      "related": [
+        "ROBO",
+        "ARKQ",
+        "SMH"
+      ]
+    },
+    {
+      "symbol": "ESGU",
+      "ticker": "ESGU",
+      "slug": "esgu",
+      "yahoo_symbol": "ESGU",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": "esg",
+        "exposure_type": "esg_screened_us_equity",
+        "role_en": "US equity exposure filtered through an extended ESG screening methodology",
+        "role_ar": "تعرض للأسهم الأميركية مُرشَّح عبر منهجية فرز موسعة للحوكمة البيئية والاجتماعية"
+      },
+      "related": [
+        "VOO",
+        "VTI",
+        "XLK"
+      ]
+    },
+    {
+      "symbol": "VWCE",
+      "ticker": "VWCE",
+      "slug": "vwce",
+      "yahoo_symbol": "VWCE.DE",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "world_equity",
+        "exposure_type": "global_all_cap_beta",
+        "role_en": "Global equity exposure spanning developed and emerging markets in a single fund",
+        "role_ar": "تعرض عالمي للأسهم يشمل الأسواق المتقدمة والناشئة في صندوق واحد"
+      },
+      "related": [
+        "VWRL",
+        "IWDA",
+        "EIMI"
+      ]
+    },
+    {
+      "symbol": "VWRL",
+      "ticker": "VWRL",
+      "slug": "vwrl",
+      "yahoo_symbol": "VWRL.AS",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "world_equity",
+        "exposure_type": "global_all_cap_beta",
+        "role_en": "Global all-world equity exposure listed in Europe",
+        "role_ar": "تعرض عالمي شامل للأسهم مدرج في أوروبا"
+      },
+      "related": [
+        "VWCE",
+        "IWDA",
+        "VUSA"
+      ]
+    },
+    {
+      "symbol": "IWDA",
+      "ticker": "IWDA",
+      "slug": "iwda",
+      "yahoo_symbol": "IWDA.AS",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "world_equity",
+        "exposure_type": "developed_market_beta",
+        "role_en": "Developed-market global equity exposure, widely researched as a portfolio core",
+        "role_ar": "تعرض عالمي لأسهم الأسواق المتقدمة، يكثر بحثه كنواة للمحفظة"
+      },
+      "related": [
+        "EUNL",
+        "VWCE",
+        "EIMI"
+      ]
+    },
+    {
+      "symbol": "EUNL",
+      "ticker": "EUNL",
+      "slug": "eunl",
+      "yahoo_symbol": "EUNL.DE",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "world_equity",
+        "exposure_type": "developed_market_beta",
+        "role_en": "Developed-market global equity exposure listed on XETRA",
+        "role_ar": "تعرض عالمي لأسهم الأسواق المتقدمة مدرج في بورصة XETRA"
+      },
+      "related": [
+        "IWDA",
+        "VWCE",
+        "EIMI"
+      ]
+    },
+    {
+      "symbol": "VUSA",
+      "ticker": "VUSA",
+      "slug": "vusa",
+      "yahoo_symbol": "VUSA.AS",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "broad_market",
+        "exposure_type": "large_cap_beta",
+        "role_en": "European-listed exposure to the US large-cap index",
+        "role_ar": "تعرض مدرج في أوروبا لمؤشر الأسهم الأميركية الكبيرة"
+      },
+      "related": [
+        "VUAA",
+        "VWCE",
+        "SPY"
+      ]
+    },
+    {
+      "symbol": "VUAA",
+      "ticker": "VUAA",
+      "slug": "vuaa",
+      "yahoo_symbol": "VUAA.DE",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "broad_market",
+        "exposure_type": "large_cap_beta",
+        "role_en": "European-listed exposure to the US large-cap index",
+        "role_ar": "تعرض مدرج في أوروبا لمؤشر الأسهم الأميركية الكبيرة"
+      },
+      "related": [
+        "VUSA",
+        "VWCE",
+        "IWDA"
+      ]
+    },
+    {
+      "symbol": "EIMI",
+      "ticker": "EIMI",
+      "slug": "eimi",
+      "yahoo_symbol": "EIMI.L",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": "emerging_markets",
+        "exposure_type": "em_broad_equity",
+        "role_en": "Broad emerging-market exposure commonly paired with a developed-market core",
+        "role_ar": "تعرض واسع للأسواق الناشئة يُقرن عادة بنواة من الأسواق المتقدمة"
+      },
+      "related": [
+        "IWDA",
+        "IEMG",
+        "VWCE"
+      ]
+    }
+  ]
+}

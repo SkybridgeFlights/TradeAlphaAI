@@ -1,0 +1,2868 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-08-04T17:47:24.548Z",
+  "source_layer": "computed_from_observed_prices",
+  "method": {
+    "note_en": "Similarity blends observed return correlation, volatility proximity and structural agreement between two funds. It describes how alike two funds have behaved — it is not a ranking or an endorsement.",
+    "note_ar": "يمزج مقياس التشابه بين الارتباط المرصود للعوائد وتقارب التذبذب والاتفاق الهيكلي بين صندوقين. وهو يصف مدى تشابه سلوك الصندوقين، وليس ترتيبا أو تزكية.",
+    "weights": {
+      "correlation": 0.6,
+      "structural_agreement": 0.25,
+      "volatility_proximity": 0.15
+    },
+    "min_shared_months": 24,
+    "currency_rule": "correlation computed only between funds quoted in the same currency",
+    "candidate_rule": "candidates bounded to 60 same-currency funds sharing a category or exposure type, so cost stays near-linear as the universe grows",
+    "comparisons_performed": 856
+  },
+  "coverage": {
+    "total": 39,
+    "available": 38,
+    "unavailable": 1
+  },
+  "etfs": [
+    {
+      "slug": "voo",
+      "symbol": "VOO",
+      "available": true,
+      "peers": [
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 87.4,
+          "components": {
+            "correlation": 0.9999,
+            "volatility_proximity": 0.9964,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 82,
+          "components": {
+            "correlation": 0.9961,
+            "volatility_proximity": 0.9843,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 74.4,
+          "components": {
+            "correlation": 0.9977,
+            "volatility_proximity": 0.972,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "iwm",
+          "symbol": "IWM",
+          "similarity_pct": 70.9,
+          "components": {
+            "correlation": 0.8615,
+            "volatility_proximity": 0.7829,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 70.2,
+          "components": {
+            "correlation": 0.948,
+            "volatility_proximity": 0.8892,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 69.6,
+          "components": {
+            "correlation": 0.9306,
+            "volatility_proximity": 0.9203,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vti",
+      "symbol": "VTI",
+      "available": true,
+      "peers": [
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 82,
+          "components": {
+            "correlation": 0.9961,
+            "volatility_proximity": 0.9843,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 82,
+          "components": {
+            "correlation": 0.9961,
+            "volatility_proximity": 0.9807,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 74.6,
+          "components": {
+            "correlation": 0.9964,
+            "volatility_proximity": 0.9875,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "iwm",
+          "symbol": "IWM",
+          "similarity_pct": 73.3,
+          "components": {
+            "correlation": 0.898,
+            "volatility_proximity": 0.7954,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 69.7,
+          "components": {
+            "correlation": 0.9427,
+            "volatility_proximity": 0.8752,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 69.4,
+          "components": {
+            "correlation": 0.9301,
+            "volatility_proximity": 0.9059,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "qqq",
+      "symbol": "QQQ",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vug",
+          "symbol": "VUG",
+          "similarity_pct": 85.5,
+          "components": {
+            "correlation": 0.9775,
+            "volatility_proximity": 0.958,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlk",
+          "symbol": "XLK",
+          "similarity_pct": 71.6,
+          "components": {
+            "correlation": 0.9678,
+            "volatility_proximity": 0.9036,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 67.8,
+          "components": {
+            "correlation": 0.9234,
+            "volatility_proximity": 0.8237,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 67.2,
+          "components": {
+            "correlation": 0.8735,
+            "volatility_proximity": 0.9855,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 66.8,
+          "components": {
+            "correlation": 0.9133,
+            "volatility_proximity": 0.8006,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 66.8,
+          "components": {
+            "correlation": 0.9131,
+            "volatility_proximity": 0.7977,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "schd",
+      "symbol": "SCHD",
+      "available": true,
+      "peers": [
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 79.2,
+          "components": {
+            "correlation": 0.9471,
+            "volatility_proximity": 0.9914,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 75.6,
+          "components": {
+            "correlation": 0.8957,
+            "volatility_proximity": 0.9579,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vtv",
+          "symbol": "VTV",
+          "similarity_pct": 71.7,
+          "components": {
+            "correlation": 0.9473,
+            "volatility_proximity": 0.9934,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 65.7,
+          "components": {
+            "correlation": 0.8927,
+            "volatility_proximity": 0.8089,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 64.1,
+          "components": {
+            "correlation": 0.8591,
+            "volatility_proximity": 0.8347,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 63.8,
+          "components": {
+            "correlation": 0.8299,
+            "volatility_proximity": 0.9317,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "soxx",
+      "symbol": "SOXX",
+      "available": true,
+      "peers": [
+        {
+          "slug": "smh",
+          "symbol": "SMH",
+          "similarity_pct": 86.1,
+          "components": {
+            "correlation": 0.9851,
+            "volatility_proximity": 0.9648,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlk",
+          "symbol": "XLK",
+          "similarity_pct": 62.4,
+          "components": {
+            "correlation": 0.8595,
+            "volatility_proximity": 0.721,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "qqq",
+          "symbol": "QQQ",
+          "similarity_pct": 60.1,
+          "components": {
+            "correlation": 0.8396,
+            "volatility_proximity": 0.6515,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "botz",
+          "symbol": "BOTZ",
+          "similarity_pct": 59.2,
+          "components": {
+            "correlation": 0.7994,
+            "volatility_proximity": 0.7492,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "vug",
+          "symbol": "VUG",
+          "similarity_pct": 55.8,
+          "components": {
+            "correlation": 0.7735,
+            "volatility_proximity": 0.6241,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 53.3,
+          "components": {
+            "correlation": 0.7546,
+            "volatility_proximity": 0.5366,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "smh",
+      "symbol": "SMH",
+      "available": true,
+      "peers": [
+        {
+          "slug": "soxx",
+          "symbol": "SOXX",
+          "similarity_pct": 86.1,
+          "components": {
+            "correlation": 0.9851,
+            "volatility_proximity": 0.9648,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlk",
+          "symbol": "XLK",
+          "similarity_pct": 63.8,
+          "components": {
+            "correlation": 0.8763,
+            "volatility_proximity": 0.7473,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "qqq",
+          "symbol": "QQQ",
+          "similarity_pct": 62,
+          "components": {
+            "correlation": 0.8641,
+            "volatility_proximity": 0.6753,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "botz",
+          "symbol": "BOTZ",
+          "similarity_pct": 60.8,
+          "components": {
+            "correlation": 0.8195,
+            "volatility_proximity": 0.7766,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "vug",
+          "symbol": "VUG",
+          "similarity_pct": 58.3,
+          "components": {
+            "correlation": 0.8094,
+            "volatility_proximity": 0.6469,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 55.1,
+          "components": {
+            "correlation": 0.7795,
+            "volatility_proximity": 0.5562,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlk",
+      "symbol": "XLK",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 68.3,
+          "components": {
+            "correlation": 0.7908,
+            "volatility_proximity": 0.8904,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 58.9,
+          "components": {
+            "correlation": 0.6563,
+            "volatility_proximity": 0.8046,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 53.6,
+          "components": {
+            "correlation": 0.5601,
+            "volatility_proximity": 0.8302,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 53.2,
+          "components": {
+            "correlation": 0.5564,
+            "volatility_proximity": 0.8216,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 52.1,
+          "components": {
+            "correlation": 0.5215,
+            "volatility_proximity": 0.8865,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 44.9,
+          "components": {
+            "correlation": 0.4553,
+            "volatility_proximity": 0.6691,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlf",
+      "symbol": "XLF",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 71.1,
+          "components": {
+            "correlation": 0.8334,
+            "volatility_proximity": 0.9076,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 68,
+          "components": {
+            "correlation": 0.7736,
+            "volatility_proximity": 0.9365,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 62.5,
+          "components": {
+            "correlation": 0.6678,
+            "volatility_proximity": 0.9956,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 58.2,
+          "components": {
+            "correlation": 0.6137,
+            "volatility_proximity": 0.9268,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xle",
+          "symbol": "XLE",
+          "similarity_pct": 58,
+          "components": {
+            "correlation": 0.6543,
+            "volatility_proximity": 0.7467,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 54.2,
+          "components": {
+            "correlation": 0.5889,
+            "volatility_proximity": 0.7547,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlv",
+      "symbol": "XLV",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 61.4,
+          "components": {
+            "correlation": 0.6971,
+            "volatility_proximity": 0.8059,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlp",
+          "symbol": "XLP",
+          "similarity_pct": 60.8,
+          "components": {
+            "correlation": 0.6655,
+            "volatility_proximity": 0.8919,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 59.4,
+          "components": {
+            "correlation": 0.6576,
+            "volatility_proximity": 0.8316,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 58.3,
+          "components": {
+            "correlation": 0.6431,
+            "volatility_proximity": 0.8144,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 54.2,
+          "components": {
+            "correlation": 0.5889,
+            "volatility_proximity": 0.7547,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 50.1,
+          "components": {
+            "correlation": 0.5223,
+            "volatility_proximity": 0.7514,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xle",
+      "symbol": "XLE",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 58,
+          "components": {
+            "correlation": 0.6543,
+            "volatility_proximity": 0.7467,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 54.5,
+          "components": {
+            "correlation": 0.6085,
+            "volatility_proximity": 0.6993,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 52.6,
+          "components": {
+            "correlation": 0.5828,
+            "volatility_proximity": 0.6777,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 43.3,
+          "components": {
+            "correlation": 0.4093,
+            "volatility_proximity": 0.75,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 40.6,
+          "components": {
+            "correlation": 0.3781,
+            "volatility_proximity": 0.692,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 40.5,
+          "components": {
+            "correlation": 0.4093,
+            "volatility_proximity": 0.5636,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xli",
+      "symbol": "XLI",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 74.2,
+          "components": {
+            "correlation": 0.8697,
+            "volatility_proximity": 0.9691,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 71.1,
+          "components": {
+            "correlation": 0.8334,
+            "volatility_proximity": 0.9076,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 66,
+          "components": {
+            "correlation": 0.7486,
+            "volatility_proximity": 0.9036,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 64.2,
+          "components": {
+            "correlation": 0.7006,
+            "volatility_proximity": 0.9793,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 59.4,
+          "components": {
+            "correlation": 0.6576,
+            "volatility_proximity": 0.8316,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlp",
+          "symbol": "XLP",
+          "similarity_pct": 59.4,
+          "components": {
+            "correlation": 0.6795,
+            "volatility_proximity": 0.7417,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlu",
+      "symbol": "XLU",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 62.1,
+          "components": {
+            "correlation": 0.6734,
+            "volatility_proximity": 0.9433,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlp",
+          "symbol": "XLP",
+          "similarity_pct": 57.5,
+          "components": {
+            "correlation": 0.6403,
+            "volatility_proximity": 0.77,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 53.4,
+          "components": {
+            "correlation": 0.5314,
+            "volatility_proximity": 0.9335,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 52.2,
+          "components": {
+            "correlation": 0.5043,
+            "volatility_proximity": 0.9632,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 47.5,
+          "components": {
+            "correlation": 0.4506,
+            "volatility_proximity": 0.8634,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 41.9,
+          "components": {
+            "correlation": 0.3552,
+            "volatility_proximity": 0.8703,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlp",
+      "symbol": "XLP",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 61.7,
+          "components": {
+            "correlation": 0.7213,
+            "volatility_proximity": 0.7263,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 60.8,
+          "components": {
+            "correlation": 0.6655,
+            "volatility_proximity": 0.8919,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 60.1,
+          "components": {
+            "correlation": 0.697,
+            "volatility_proximity": 0.7188,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 59.4,
+          "components": {
+            "correlation": 0.6795,
+            "volatility_proximity": 0.7417,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlu",
+          "symbol": "XLU",
+          "similarity_pct": 57.5,
+          "components": {
+            "correlation": 0.6403,
+            "volatility_proximity": 0.77,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 49.4,
+          "components": {
+            "correlation": 0.5299,
+            "volatility_proximity": 0.6731,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xly",
+      "symbol": "XLY",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlk",
+          "symbol": "XLK",
+          "similarity_pct": 68.3,
+          "components": {
+            "correlation": 0.7908,
+            "volatility_proximity": 0.8904,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 66,
+          "components": {
+            "correlation": 0.7486,
+            "volatility_proximity": 0.9036,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 64.7,
+          "components": {
+            "correlation": 0.7195,
+            "volatility_proximity": 0.9324,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 62.6,
+          "components": {
+            "correlation": 0.6876,
+            "volatility_proximity": 0.9227,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 62.5,
+          "components": {
+            "correlation": 0.6678,
+            "volatility_proximity": 0.9956,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 50.1,
+          "components": {
+            "correlation": 0.5223,
+            "volatility_proximity": 0.7514,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlb",
+      "symbol": "XLB",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 74.2,
+          "components": {
+            "correlation": 0.8697,
+            "volatility_proximity": 0.9691,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 68,
+          "components": {
+            "correlation": 0.7736,
+            "volatility_proximity": 0.9365,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 66.7,
+          "components": {
+            "correlation": 0.7396,
+            "volatility_proximity": 0.9896,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 64.7,
+          "components": {
+            "correlation": 0.7195,
+            "volatility_proximity": 0.9324,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 61.4,
+          "components": {
+            "correlation": 0.6971,
+            "volatility_proximity": 0.8059,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlp",
+          "symbol": "XLP",
+          "similarity_pct": 60.1,
+          "components": {
+            "correlation": 0.697,
+            "volatility_proximity": 0.7188,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "xlre",
+      "symbol": "XLRE",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 66.7,
+          "components": {
+            "correlation": 0.7396,
+            "volatility_proximity": 0.9896,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 64.2,
+          "components": {
+            "correlation": 0.7006,
+            "volatility_proximity": 0.9793,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xly",
+          "symbol": "XLY",
+          "similarity_pct": 62.6,
+          "components": {
+            "correlation": 0.6876,
+            "volatility_proximity": 0.9227,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlu",
+          "symbol": "XLU",
+          "similarity_pct": 62.1,
+          "components": {
+            "correlation": 0.6734,
+            "volatility_proximity": 0.9433,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlp",
+          "symbol": "XLP",
+          "similarity_pct": 61.7,
+          "components": {
+            "correlation": 0.7213,
+            "volatility_proximity": 0.7263,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlv",
+          "symbol": "XLV",
+          "similarity_pct": 58.3,
+          "components": {
+            "correlation": 0.6431,
+            "volatility_proximity": 0.8144,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "ief",
+      "symbol": "IEF",
+      "available": true,
+      "peers": [
+        {
+          "slug": "bnd",
+          "symbol": "BND",
+          "similarity_pct": 75.2,
+          "components": {
+            "correlation": 0.919,
+            "volatility_proximity": 0.8374,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "tlt",
+          "symbol": "TLT",
+          "similarity_pct": 70.1,
+          "components": {
+            "correlation": 0.9326,
+            "volatility_proximity": 0.4455,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "lqd",
+          "symbol": "LQD",
+          "similarity_pct": 58,
+          "components": {
+            "correlation": 0.7761,
+            "volatility_proximity": 0.7609,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "hyg",
+          "symbol": "HYG",
+          "similarity_pct": 32.6,
+          "components": {
+            "correlation": 0.3426,
+            "volatility_proximity": 0.8048,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 30.6,
+          "components": {
+            "correlation": 0.429,
+            "volatility_proximity": 0.3229,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "gld",
+          "symbol": "GLD",
+          "similarity_pct": 30.1,
+          "components": {
+            "correlation": 0.3992,
+            "volatility_proximity": 0.4095,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "tlt",
+      "symbol": "TLT",
+      "available": true,
+      "peers": [
+        {
+          "slug": "ief",
+          "symbol": "IEF",
+          "similarity_pct": 70.1,
+          "components": {
+            "correlation": 0.9326,
+            "volatility_proximity": 0.4455,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "bnd",
+          "symbol": "BND",
+          "similarity_pct": 66.1,
+          "components": {
+            "correlation": 0.8839,
+            "volatility_proximity": 0.3731,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "lqd",
+          "symbol": "LQD",
+          "similarity_pct": 54.6,
+          "components": {
+            "correlation": 0.7636,
+            "volatility_proximity": 0.5856,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 38.6,
+          "components": {
+            "correlation": 0.4614,
+            "volatility_proximity": 0.7248,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "gld",
+          "symbol": "GLD",
+          "similarity_pct": 35.6,
+          "components": {
+            "correlation": 0.364,
+            "volatility_proximity": 0.919,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vnq",
+          "symbol": "VNQ",
+          "similarity_pct": 35.3,
+          "components": {
+            "correlation": 0.4095,
+            "volatility_proximity": 0.7146,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "hyg",
+      "symbol": "HYG",
+      "available": true,
+      "peers": [
+        {
+          "slug": "lqd",
+          "symbol": "LQD",
+          "similarity_pct": 68.5,
+          "components": {
+            "correlation": 0.7802,
+            "volatility_proximity": 0.9454,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 56.1,
+          "components": {
+            "correlation": 0.8225,
+            "volatility_proximity": 0.4485,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 55.8,
+          "components": {
+            "correlation": 0.8152,
+            "volatility_proximity": 0.4557,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 55.8,
+          "components": {
+            "correlation": 0.8158,
+            "volatility_proximity": 0.4573,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 55.7,
+          "components": {
+            "correlation": 0.8169,
+            "volatility_proximity": 0.4429,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 55.2,
+          "components": {
+            "correlation": 0.7962,
+            "volatility_proximity": 0.4951,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "lqd",
+      "symbol": "LQD",
+      "available": true,
+      "peers": [
+        {
+          "slug": "hyg",
+          "symbol": "HYG",
+          "similarity_pct": 68.5,
+          "components": {
+            "correlation": 0.7802,
+            "volatility_proximity": 0.9454,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "bnd",
+          "symbol": "BND",
+          "similarity_pct": 66.5,
+          "components": {
+            "correlation": 0.9489,
+            "volatility_proximity": 0.6371,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "ief",
+          "symbol": "IEF",
+          "similarity_pct": 58,
+          "components": {
+            "correlation": 0.7761,
+            "volatility_proximity": 0.7609,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "tlt",
+          "symbol": "TLT",
+          "similarity_pct": 54.6,
+          "components": {
+            "correlation": 0.7636,
+            "volatility_proximity": 0.5856,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 48.3,
+          "components": {
+            "correlation": 0.6984,
+            "volatility_proximity": 0.4244,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vnq",
+          "symbol": "VNQ",
+          "similarity_pct": 48,
+          "components": {
+            "correlation": 0.6958,
+            "volatility_proximity": 0.4184,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "spy",
+      "symbol": "SPY",
+      "available": true,
+      "peers": [
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 87.4,
+          "components": {
+            "correlation": 0.9999,
+            "volatility_proximity": 0.9964,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 82,
+          "components": {
+            "correlation": 0.9961,
+            "volatility_proximity": 0.9807,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 74.4,
+          "components": {
+            "correlation": 0.9977,
+            "volatility_proximity": 0.9685,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "iwm",
+          "symbol": "IWM",
+          "similarity_pct": 70.9,
+          "components": {
+            "correlation": 0.8616,
+            "volatility_proximity": 0.7801,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 70.3,
+          "components": {
+            "correlation": 0.948,
+            "volatility_proximity": 0.8924,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 69.7,
+          "components": {
+            "correlation": 0.9308,
+            "volatility_proximity": 0.9236,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "gld",
+      "symbol": "GLD",
+      "available": true,
+      "peers": [
+        {
+          "slug": "tlt",
+          "symbol": "TLT",
+          "similarity_pct": 35.6,
+          "components": {
+            "correlation": 0.364,
+            "volatility_proximity": 0.919,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "iemg",
+          "symbol": "IEMG",
+          "similarity_pct": 34.5,
+          "components": {
+            "correlation": 0.3758,
+            "volatility_proximity": 0.7943,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlu",
+          "symbol": "XLU",
+          "similarity_pct": 34.1,
+          "components": {
+            "correlation": 0.3592,
+            "volatility_proximity": 0.8361,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlp",
+          "symbol": "XLP",
+          "similarity_pct": 33,
+          "components": {
+            "correlation": 0.3199,
+            "volatility_proximity": 0.921,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "lqd",
+          "symbol": "LQD",
+          "similarity_pct": 30.8,
+          "components": {
+            "correlation": 0.3782,
+            "volatility_proximity": 0.5381,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "bnd",
+          "symbol": "BND",
+          "similarity_pct": 30.2,
+          "components": {
+            "correlation": 0.4173,
+            "volatility_proximity": 0.3429,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vnq",
+      "symbol": "VNQ",
+      "available": true,
+      "peers": [
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 73.9,
+          "components": {
+            "correlation": 0.9849,
+            "volatility_proximity": 0.9859,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 60.5,
+          "components": {
+            "correlation": 0.7886,
+            "volatility_proximity": 0.882,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 60.4,
+          "components": {
+            "correlation": 0.7577,
+            "volatility_proximity": 0.9962,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 60.3,
+          "components": {
+            "correlation": 0.805,
+            "volatility_proximity": 0.7989,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 60.1,
+          "components": {
+            "correlation": 0.8092,
+            "volatility_proximity": 0.7719,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 60.1,
+          "components": {
+            "correlation": 0.779,
+            "volatility_proximity": 0.8931,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vig",
+      "symbol": "VIG",
+      "available": true,
+      "peers": [
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 85.5,
+          "components": {
+            "correlation": 0.9749,
+            "volatility_proximity": 0.9662,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "schd",
+          "symbol": "SCHD",
+          "similarity_pct": 75.6,
+          "components": {
+            "correlation": 0.8957,
+            "volatility_proximity": 0.9579,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vtv",
+          "symbol": "VTV",
+          "similarity_pct": 70.9,
+          "components": {
+            "correlation": 0.9402,
+            "volatility_proximity": 0.9642,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 70.3,
+          "components": {
+            "correlation": 0.948,
+            "volatility_proximity": 0.8924,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 70.2,
+          "components": {
+            "correlation": 0.948,
+            "volatility_proximity": 0.8892,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 69.7,
+          "components": {
+            "correlation": 0.9427,
+            "volatility_proximity": 0.8752,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "dgro",
+      "symbol": "DGRO",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 85.5,
+          "components": {
+            "correlation": 0.9749,
+            "volatility_proximity": 0.9662,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "schd",
+          "symbol": "SCHD",
+          "similarity_pct": 79.2,
+          "components": {
+            "correlation": 0.9471,
+            "volatility_proximity": 0.9914,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vtv",
+          "symbol": "VTV",
+          "similarity_pct": 73.9,
+          "components": {
+            "correlation": 0.9817,
+            "volatility_proximity": 0.9979,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 69.7,
+          "components": {
+            "correlation": 0.9308,
+            "volatility_proximity": 0.9236,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 69.6,
+          "components": {
+            "correlation": 0.9306,
+            "volatility_proximity": 0.9203,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 69.4,
+          "components": {
+            "correlation": 0.9301,
+            "volatility_proximity": 0.9059,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vug",
+      "symbol": "VUG",
+      "available": true,
+      "peers": [
+        {
+          "slug": "qqq",
+          "symbol": "QQQ",
+          "similarity_pct": 85.5,
+          "components": {
+            "correlation": 0.9775,
+            "volatility_proximity": 0.958,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 69.9,
+          "components": {
+            "correlation": 0.95,
+            "volatility_proximity": 0.8599,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "xlk",
+          "symbol": "XLK",
+          "similarity_pct": 69.5,
+          "components": {
+            "correlation": 0.9415,
+            "volatility_proximity": 0.8656,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 69.1,
+          "components": {
+            "correlation": 0.9431,
+            "volatility_proximity": 0.8358,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 69.1,
+          "components": {
+            "correlation": 0.9429,
+            "volatility_proximity": 0.8328,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 69,
+          "components": {
+            "correlation": 0.9372,
+            "volatility_proximity": 0.8491,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vtv",
+      "symbol": "VTV",
+      "available": true,
+      "peers": [
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 73.9,
+          "components": {
+            "correlation": 0.9817,
+            "volatility_proximity": 0.9979,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "schd",
+          "symbol": "SCHD",
+          "similarity_pct": 71.7,
+          "components": {
+            "correlation": 0.9473,
+            "volatility_proximity": 0.9934,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 70.9,
+          "components": {
+            "correlation": 0.9402,
+            "volatility_proximity": 0.9642,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 68,
+          "components": {
+            "correlation": 0.9267,
+            "volatility_proximity": 0.8292,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 67.7,
+          "components": {
+            "correlation": 0.9007,
+            "volatility_proximity": 0.9078,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 67.6,
+          "components": {
+            "correlation": 0.8957,
+            "volatility_proximity": 0.9222,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "iwm",
+      "symbol": "IWM",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 73.3,
+          "components": {
+            "correlation": 0.898,
+            "volatility_proximity": 0.7954,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 70.9,
+          "components": {
+            "correlation": 0.8615,
+            "volatility_proximity": 0.7829,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 70.9,
+          "components": {
+            "correlation": 0.8616,
+            "volatility_proximity": 0.7801,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xli",
+          "symbol": "XLI",
+          "similarity_pct": 64.6,
+          "components": {
+            "correlation": 0.8586,
+            "volatility_proximity": 0.8707,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 64.4,
+          "components": {
+            "correlation": 0.8715,
+            "volatility_proximity": 0.8055,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "xlf",
+          "symbol": "XLF",
+          "similarity_pct": 63.8,
+          "components": {
+            "correlation": 0.8232,
+            "volatility_proximity": 0.9594,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "iemg",
+      "symbol": "IEMG",
+      "available": true,
+      "peers": [
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 56.4,
+          "components": {
+            "correlation": 0.7115,
+            "volatility_proximity": 0.9123,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "botz",
+          "symbol": "BOTZ",
+          "similarity_pct": 56.1,
+          "components": {
+            "correlation": 0.7393,
+            "volatility_proximity": 0.7851,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 56,
+          "components": {
+            "correlation": 0.7077,
+            "volatility_proximity": 0.9009,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 55.3,
+          "components": {
+            "correlation": 0.6997,
+            "volatility_proximity": 0.8868,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlb",
+          "symbol": "XLB",
+          "similarity_pct": 55.2,
+          "components": {
+            "correlation": 0.674,
+            "volatility_proximity": 0.9827,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 55.2,
+          "components": {
+            "correlation": 0.6995,
+            "volatility_proximity": 0.8836,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 116 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "bnd",
+      "symbol": "BND",
+      "available": true,
+      "peers": [
+        {
+          "slug": "ief",
+          "symbol": "IEF",
+          "similarity_pct": 75.2,
+          "components": {
+            "correlation": 0.919,
+            "volatility_proximity": 0.8374,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "lqd",
+          "symbol": "LQD",
+          "similarity_pct": 66.5,
+          "components": {
+            "correlation": 0.9489,
+            "volatility_proximity": 0.6371,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "tlt",
+          "symbol": "TLT",
+          "similarity_pct": 66.1,
+          "components": {
+            "correlation": 0.8839,
+            "volatility_proximity": 0.3731,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "hyg",
+          "symbol": "HYG",
+          "similarity_pct": 47.3,
+          "components": {
+            "correlation": 0.6202,
+            "volatility_proximity": 0.6739,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "xlre",
+          "symbol": "XLRE",
+          "similarity_pct": 41.4,
+          "components": {
+            "correlation": 0.6219,
+            "volatility_proximity": 0.2704,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vnq",
+          "symbol": "VNQ",
+          "similarity_pct": 40,
+          "components": {
+            "correlation": 0.6006,
+            "volatility_proximity": 0.2666,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "botz",
+      "symbol": "BOTZ",
+      "available": true,
+      "peers": [
+        {
+          "slug": "qqq",
+          "symbol": "QQQ",
+          "similarity_pct": 64.5,
+          "components": {
+            "correlation": 0.8577,
+            "volatility_proximity": 0.8695,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "vug",
+          "symbol": "VUG",
+          "similarity_pct": 63.5,
+          "components": {
+            "correlation": 0.8493,
+            "volatility_proximity": 0.833,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "xlk",
+          "symbol": "XLK",
+          "similarity_pct": 63.3,
+          "components": {
+            "correlation": 0.814,
+            "volatility_proximity": 0.9623,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 61.5,
+          "components": {
+            "correlation": 0.8452,
+            "volatility_proximity": 0.7162,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 61.4,
+          "components": {
+            "correlation": 0.846,
+            "volatility_proximity": 0.7073,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        },
+        {
+          "slug": "smh",
+          "symbol": "SMH",
+          "similarity_pct": 60.8,
+          "components": {
+            "correlation": 0.8195,
+            "volatility_proximity": 0.7766,
+            "structural_agreement": 0
+          },
+          "shared_months": 119
+        }
+      ],
+      "evidence": [
+        "similarity measured across 119 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "esgu",
+      "symbol": "ESGU",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 74.6,
+          "components": {
+            "correlation": 0.9964,
+            "volatility_proximity": 0.9875,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 74.4,
+          "components": {
+            "correlation": 0.9977,
+            "volatility_proximity": 0.972,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 74.4,
+          "components": {
+            "correlation": 0.9977,
+            "volatility_proximity": 0.9685,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "vug",
+          "symbol": "VUG",
+          "similarity_pct": 69.9,
+          "components": {
+            "correlation": 0.95,
+            "volatility_proximity": 0.8599,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "vig",
+          "symbol": "VIG",
+          "similarity_pct": 69.4,
+          "components": {
+            "correlation": 0.9399,
+            "volatility_proximity": 0.8643,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        },
+        {
+          "slug": "dgro",
+          "symbol": "DGRO",
+          "similarity_pct": 68.7,
+          "components": {
+            "correlation": 0.922,
+            "volatility_proximity": 0.8945,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        }
+      ],
+      "evidence": [
+        "similarity measured across 116 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vwce",
+      "symbol": "VWCE",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vwrl",
+          "symbol": "VWRL",
+          "similarity_pct": 86.2,
+          "components": {
+            "correlation": 0.9986,
+            "volatility_proximity": 0.9196,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "eunl",
+          "symbol": "EUNL",
+          "similarity_pct": 81.2,
+          "components": {
+            "correlation": 0.994,
+            "volatility_proximity": 0.9402,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "iwda",
+          "symbol": "IWDA",
+          "similarity_pct": 81,
+          "components": {
+            "correlation": 0.9922,
+            "volatility_proximity": 0.9298,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "vusa",
+          "symbol": "VUSA",
+          "similarity_pct": 72.9,
+          "components": {
+            "correlation": 0.9651,
+            "volatility_proximity": 0.9977,
+            "structural_agreement": 0
+          },
+          "shared_months": 86
+        }
+      ],
+      "evidence": [
+        "similarity measured across 86 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vwrl",
+      "symbol": "VWRL",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vwce",
+          "symbol": "VWCE",
+          "similarity_pct": 86.2,
+          "components": {
+            "correlation": 0.9986,
+            "volatility_proximity": 0.9196,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "iwda",
+          "symbol": "IWDA",
+          "similarity_pct": 82,
+          "components": {
+            "correlation": 0.9938,
+            "volatility_proximity": 0.9889,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "eunl",
+          "symbol": "EUNL",
+          "similarity_pct": 81.7,
+          "components": {
+            "correlation": 0.9927,
+            "volatility_proximity": 0.978,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "vusa",
+          "symbol": "VUSA",
+          "similarity_pct": 71.8,
+          "components": {
+            "correlation": 0.9661,
+            "volatility_proximity": 0.9217,
+            "structural_agreement": 0
+          },
+          "shared_months": 121
+        }
+      ],
+      "evidence": [
+        "similarity measured across 86 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "iwda",
+      "symbol": "IWDA",
+      "available": true,
+      "peers": [
+        {
+          "slug": "eunl",
+          "symbol": "EUNL",
+          "similarity_pct": 87.2,
+          "components": {
+            "correlation": 0.9986,
+            "volatility_proximity": 0.9889,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "vwrl",
+          "symbol": "VWRL",
+          "similarity_pct": 82,
+          "components": {
+            "correlation": 0.9938,
+            "volatility_proximity": 0.9889,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "vwce",
+          "symbol": "VWCE",
+          "similarity_pct": 81,
+          "components": {
+            "correlation": 0.9922,
+            "volatility_proximity": 0.9298,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "vusa",
+          "symbol": "VUSA",
+          "similarity_pct": 72.9,
+          "components": {
+            "correlation": 0.9815,
+            "volatility_proximity": 0.932,
+            "structural_agreement": 0
+          },
+          "shared_months": 121
+        }
+      ],
+      "evidence": [
+        "similarity measured across 121 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "eunl",
+      "symbol": "EUNL",
+      "available": true,
+      "peers": [
+        {
+          "slug": "iwda",
+          "symbol": "IWDA",
+          "similarity_pct": 87.2,
+          "components": {
+            "correlation": 0.9986,
+            "volatility_proximity": 0.9889,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "vwrl",
+          "symbol": "VWRL",
+          "similarity_pct": 81.7,
+          "components": {
+            "correlation": 0.9927,
+            "volatility_proximity": 0.978,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "vwce",
+          "symbol": "VWCE",
+          "similarity_pct": 81.2,
+          "components": {
+            "correlation": 0.994,
+            "volatility_proximity": 0.9402,
+            "structural_agreement": 0.3
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "vusa",
+          "symbol": "VUSA",
+          "similarity_pct": 72.9,
+          "components": {
+            "correlation": 0.9788,
+            "volatility_proximity": 0.9424,
+            "structural_agreement": 0
+          },
+          "shared_months": 121
+        }
+      ],
+      "evidence": [
+        "similarity measured across 121 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vusa",
+      "symbol": "VUSA",
+      "available": true,
+      "peers": [
+        {
+          "slug": "vwce",
+          "symbol": "VWCE",
+          "similarity_pct": 72.9,
+          "components": {
+            "correlation": 0.9651,
+            "volatility_proximity": 0.9977,
+            "structural_agreement": 0
+          },
+          "shared_months": 86
+        },
+        {
+          "slug": "iwda",
+          "symbol": "IWDA",
+          "similarity_pct": 72.9,
+          "components": {
+            "correlation": 0.9815,
+            "volatility_proximity": 0.932,
+            "structural_agreement": 0
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "eunl",
+          "symbol": "EUNL",
+          "similarity_pct": 72.9,
+          "components": {
+            "correlation": 0.9788,
+            "volatility_proximity": 0.9424,
+            "structural_agreement": 0
+          },
+          "shared_months": 121
+        },
+        {
+          "slug": "vwrl",
+          "symbol": "VWRL",
+          "similarity_pct": 71.8,
+          "components": {
+            "correlation": 0.9661,
+            "volatility_proximity": 0.9217,
+            "structural_agreement": 0
+          },
+          "shared_months": 121
+        }
+      ],
+      "evidence": [
+        "similarity measured across 86 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    },
+    {
+      "slug": "vuaa",
+      "symbol": "VUAA",
+      "available": false,
+      "peers": [],
+      "evidence": [
+        "no comparable peer with sufficient shared history in the same currency",
+        "proxy substitution suppressed — no estimated similarity published"
+      ]
+    },
+    {
+      "slug": "eimi",
+      "symbol": "EIMI",
+      "available": true,
+      "peers": [
+        {
+          "slug": "iemg",
+          "symbol": "IEMG",
+          "similarity_pct": 26.7,
+          "components": {
+            "correlation": -0.0385,
+            "volatility_proximity": 0.9495,
+            "structural_agreement": 0.5
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "voo",
+          "symbol": "VOO",
+          "similarity_pct": 16.6,
+          "components": {
+            "correlation": 0.0428,
+            "volatility_proximity": 0.9339,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vti",
+          "symbol": "VTI",
+          "similarity_pct": 16.6,
+          "components": {
+            "correlation": 0.0388,
+            "volatility_proximity": 0.9488,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "spy",
+          "symbol": "SPY",
+          "similarity_pct": 16.4,
+          "components": {
+            "correlation": 0.0405,
+            "volatility_proximity": 0.9305,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "vug",
+          "symbol": "VUG",
+          "similarity_pct": 16.4,
+          "components": {
+            "correlation": 0.0501,
+            "volatility_proximity": 0.8949,
+            "structural_agreement": 0
+          },
+          "shared_months": 120
+        },
+        {
+          "slug": "esgu",
+          "symbol": "ESGU",
+          "similarity_pct": 16.4,
+          "components": {
+            "correlation": 0.0331,
+            "volatility_proximity": 0.9608,
+            "structural_agreement": 0
+          },
+          "shared_months": 116
+        }
+      ],
+      "evidence": [
+        "similarity measured across 120 shared monthly observations",
+        "components: correlation 60%, structure 25%, volatility proximity 15%"
+      ]
+    }
+  ],
+  "attribution": {
+    "sources": [
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "daily OHLCV price series"
+      },
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "risk-free rate proxy ^IRX"
+      }
+    ],
+    "derived_from": "data/intelligence/etf-analytics.json",
+    "computed_by": "tools/build-etf-similarity.js"
+  },
+  "source_hash": "d8279cf65291cfd3edcc23aea0b04045c3f109e49202cd4df8e38459e7d1058e"
+}

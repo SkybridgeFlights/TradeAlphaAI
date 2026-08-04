@@ -1,0 +1,5214 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-08-04T17:47:24.026Z",
+  "source_layer": "verified_provider_facts",
+  "method": {
+    "note_en": "Every field on this page states where it came from. Values marked verified were returned by a data provider and are stored with that response's hash. Values marked derived were read out of a verified string, which is quoted. Values marked awaiting verified data have no free, checkable source — they are published as absent rather than estimated.",
+    "note_ar": "يوضح كل حقل هنا مصدره. فالقيم الموسومة بـ\"موثّق\" وردت من مزود بيانات وتُخزَّن مع بصمة استجابته. والقيم الموسومة بـ\"مشتق\" قُرئت من نص موثّق يُقتبس نصه. أما الموسومة بـ\"بانتظار بيانات موثّقة\" فلا يوجد لها مصدر مجاني قابل للتحقق، وتُنشر كغائبة بدلا من تقديرها.",
+    "no_model_knowledge_en": "No field in this dataset is asserted from prior knowledge. Fund expense ratios, identifiers, domicile, replication method, fund size and inception dates are not published because no free verifiable source supplies them.",
+    "no_model_knowledge_ar": "لا يُؤكَّد أي حقل في هذه البيانات استنادا إلى معرفة سابقة. ولا تُنشر نسب المصاريف والمعرّفات والمقر وطريقة المحاكاة وحجم الصندوق وتواريخ التأسيس لعدم توفر مصدر مجاني قابل للتحقق يوفرها.",
+    "provenance_classes": [
+      "fetched",
+      "derived",
+      "declared",
+      "unavailable"
+    ],
+    "issuer_brands_recognised": [
+      "Vanguard",
+      "iShares",
+      "SPDR",
+      "Invesco",
+      "Schwab",
+      "VanEck",
+      "Xtrackers",
+      "Amundi",
+      "Fidelity",
+      "JPMorgan",
+      "Global X",
+      "ARK",
+      "WisdomTree"
+    ]
+  },
+  "coverage": {
+    "total": 39,
+    "resolved": 39,
+    "totals": {
+      "fetched": 195,
+      "derived": 44,
+      "declared": 0,
+      "unavailable": 287,
+      "registry": 20
+    }
+  },
+  "etfs": [
+    {
+      "slug": "voo",
+      "symbol": "VOO",
+      "ticker": "VOO",
+      "yahoo_symbol": "VOO",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "broad_market",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard S&P 500 ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VOO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "0fc8d0951859094d1edced7e66007152fcd70d4e6fea488a7b9ef8a6fabec938",
+            "fetched_at": "2026-08-04T07:17:44.921Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VOO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "0fc8d0951859094d1edced7e66007152fcd70d4e6fea488a7b9ef8a6fabec938",
+            "fetched_at": "2026-08-04T07:17:44.921Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VOO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "0fc8d0951859094d1edced7e66007152fcd70d4e6fea488a7b9ef8a6fabec938",
+            "fetched_at": "2026-08-04T07:17:44.921Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VOO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "0fc8d0951859094d1edced7e66007152fcd70d4e6fea488a7b9ef8a6fabec938",
+            "fetched_at": "2026-08-04T07:17:44.921Z"
+          }
+        },
+        "listing_date": {
+          "value": "2010-09-09",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VOO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "0fc8d0951859094d1edced7e66007152fcd70d4e6fea488a7b9ef8a6fabec938",
+            "fetched_at": "2026-08-04T07:17:44.921Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VOO"
+          ],
+          "from_text": "Vanguard S&P 500 ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "S&P 500",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vti",
+      "symbol": "VTI",
+      "ticker": "VTI",
+      "yahoo_symbol": "VTI",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "broad_market",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "total_market_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard Morningstar Total Stock Market ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "7261d08e8f3cef25db0a3779fd0b4ff9928ce28cb68b33eb112b65257db36ac6",
+            "fetched_at": "2026-08-04T07:17:44.894Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "7261d08e8f3cef25db0a3779fd0b4ff9928ce28cb68b33eb112b65257db36ac6",
+            "fetched_at": "2026-08-04T07:17:44.894Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "7261d08e8f3cef25db0a3779fd0b4ff9928ce28cb68b33eb112b65257db36ac6",
+            "fetched_at": "2026-08-04T07:17:44.894Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "7261d08e8f3cef25db0a3779fd0b4ff9928ce28cb68b33eb112b65257db36ac6",
+            "fetched_at": "2026-08-04T07:17:44.894Z"
+          }
+        },
+        "listing_date": {
+          "value": "2001-06-15",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "7261d08e8f3cef25db0a3779fd0b4ff9928ce28cb68b33eb112b65257db36ac6",
+            "fetched_at": "2026-08-04T07:17:44.894Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VTI"
+          ],
+          "from_text": "Vanguard Morningstar Total Stock Market ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "CRSP US Total Market",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "qqq",
+      "symbol": "QQQ",
+      "ticker": "QQQ",
+      "yahoo_symbol": "QQQ",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "growth",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_growth",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Invesco QQQ Trust",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "274069794e673aa1c9443589e44e9aa960e8fde8d956cc72b3d7fc02e53f33ab",
+            "fetched_at": "2026-08-04T07:17:44.879Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "274069794e673aa1c9443589e44e9aa960e8fde8d956cc72b3d7fc02e53f33ab",
+            "fetched_at": "2026-08-04T07:17:44.879Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "274069794e673aa1c9443589e44e9aa960e8fde8d956cc72b3d7fc02e53f33ab",
+            "fetched_at": "2026-08-04T07:17:44.879Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "274069794e673aa1c9443589e44e9aa960e8fde8d956cc72b3d7fc02e53f33ab",
+            "fetched_at": "2026-08-04T07:17:44.879Z"
+          }
+        },
+        "listing_date": {
+          "value": "1999-03-10",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "274069794e673aa1c9443589e44e9aa960e8fde8d956cc72b3d7fc02e53f33ab",
+            "fetched_at": "2026-08-04T07:17:44.879Z"
+          }
+        },
+        "issuer": {
+          "value": "Invesco",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for QQQ"
+          ],
+          "from_text": "Invesco QQQ Trust"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Nasdaq-100",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "schd",
+      "symbol": "SCHD",
+      "ticker": "SCHD",
+      "yahoo_symbol": "SCHD",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "dividend_quality",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "dividend_quality",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Schwab U.S. Dividend Equity ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SCHD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8f168f0f81c62d0ec3b4671bd0904d075dce487c2615ac63bf0e4eacb91b0ed3",
+            "fetched_at": "2026-08-04T07:17:44.875Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SCHD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8f168f0f81c62d0ec3b4671bd0904d075dce487c2615ac63bf0e4eacb91b0ed3",
+            "fetched_at": "2026-08-04T07:17:44.875Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SCHD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8f168f0f81c62d0ec3b4671bd0904d075dce487c2615ac63bf0e4eacb91b0ed3",
+            "fetched_at": "2026-08-04T07:17:44.875Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SCHD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8f168f0f81c62d0ec3b4671bd0904d075dce487c2615ac63bf0e4eacb91b0ed3",
+            "fetched_at": "2026-08-04T07:17:44.875Z"
+          }
+        },
+        "listing_date": {
+          "value": "2011-10-20",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SCHD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8f168f0f81c62d0ec3b4671bd0904d075dce487c2615ac63bf0e4eacb91b0ed3",
+            "fetched_at": "2026-08-04T07:17:44.875Z"
+          }
+        },
+        "issuer": {
+          "value": "Schwab",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for SCHD"
+          ],
+          "from_text": "Schwab U.S. Dividend Equity ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Dow Jones U.S. Dividend 100",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "soxx",
+      "symbol": "SOXX",
+      "ticker": "SOXX",
+      "yahoo_symbol": "SOXX",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "semiconductors",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "industry_concentration",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Semiconductor ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "68337a27b1de5891f10dfd2dd3c603c8a9d5cb740801f2836f5dd28b530303c5",
+            "fetched_at": "2026-08-04T07:17:44.899Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "68337a27b1de5891f10dfd2dd3c603c8a9d5cb740801f2836f5dd28b530303c5",
+            "fetched_at": "2026-08-04T07:17:44.899Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "68337a27b1de5891f10dfd2dd3c603c8a9d5cb740801f2836f5dd28b530303c5",
+            "fetched_at": "2026-08-04T07:17:44.899Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "68337a27b1de5891f10dfd2dd3c603c8a9d5cb740801f2836f5dd28b530303c5",
+            "fetched_at": "2026-08-04T07:17:44.899Z"
+          }
+        },
+        "listing_date": {
+          "value": "2001-07-13",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "68337a27b1de5891f10dfd2dd3c603c8a9d5cb740801f2836f5dd28b530303c5",
+            "fetched_at": "2026-08-04T07:17:44.899Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for SOXX"
+          ],
+          "from_text": "iShares Semiconductor ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "ICE Semiconductor Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "smh",
+      "symbol": "SMH",
+      "ticker": "SMH",
+      "yahoo_symbol": "SMH",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "semiconductors",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "industry_concentration",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "VanEck Semiconductor ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4dc9654bf57a468584644a592239e5e86d5fd98cb341532975726c55bf3a1775",
+            "fetched_at": "2026-08-04T07:17:44.898Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4dc9654bf57a468584644a592239e5e86d5fd98cb341532975726c55bf3a1775",
+            "fetched_at": "2026-08-04T07:17:44.898Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4dc9654bf57a468584644a592239e5e86d5fd98cb341532975726c55bf3a1775",
+            "fetched_at": "2026-08-04T07:17:44.898Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4dc9654bf57a468584644a592239e5e86d5fd98cb341532975726c55bf3a1775",
+            "fetched_at": "2026-08-04T07:17:44.898Z"
+          }
+        },
+        "listing_date": {
+          "value": "2000-06-05",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4dc9654bf57a468584644a592239e5e86d5fd98cb341532975726c55bf3a1775",
+            "fetched_at": "2026-08-04T07:17:44.898Z"
+          }
+        },
+        "issuer": {
+          "value": "VanEck",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for SMH"
+          ],
+          "from_text": "VanEck Semiconductor ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "MVIS US Listed Semiconductor 25",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlk",
+      "symbol": "XLK",
+      "ticker": "XLK",
+      "yahoo_symbol": "XLK",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "technology_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Technology Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "755b2d8d2c7a73357633221a3310b13f9ff99d177bd1cfe50631e634a366e77d",
+            "fetched_at": "2026-08-04T07:17:44.989Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "755b2d8d2c7a73357633221a3310b13f9ff99d177bd1cfe50631e634a366e77d",
+            "fetched_at": "2026-08-04T07:17:44.989Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "755b2d8d2c7a73357633221a3310b13f9ff99d177bd1cfe50631e634a366e77d",
+            "fetched_at": "2026-08-04T07:17:44.989Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "755b2d8d2c7a73357633221a3310b13f9ff99d177bd1cfe50631e634a366e77d",
+            "fetched_at": "2026-08-04T07:17:44.989Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "755b2d8d2c7a73357633221a3310b13f9ff99d177bd1cfe50631e634a366e77d",
+            "fetched_at": "2026-08-04T07:17:44.989Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLK"
+          ],
+          "from_text": "State Street Technology Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Technology Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlf",
+      "symbol": "XLF",
+      "ticker": "XLF",
+      "yahoo_symbol": "XLF",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "financials_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Financial Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e5bfe680562b4007dec838d33388045850377fc28b9c9ce4a0afc88c55cbf55d",
+            "fetched_at": "2026-08-04T07:17:44.968Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e5bfe680562b4007dec838d33388045850377fc28b9c9ce4a0afc88c55cbf55d",
+            "fetched_at": "2026-08-04T07:17:44.968Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e5bfe680562b4007dec838d33388045850377fc28b9c9ce4a0afc88c55cbf55d",
+            "fetched_at": "2026-08-04T07:17:44.968Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e5bfe680562b4007dec838d33388045850377fc28b9c9ce4a0afc88c55cbf55d",
+            "fetched_at": "2026-08-04T07:17:44.968Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e5bfe680562b4007dec838d33388045850377fc28b9c9ce4a0afc88c55cbf55d",
+            "fetched_at": "2026-08-04T07:17:44.968Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLF"
+          ],
+          "from_text": "State Street Financial Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Financial Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlv",
+      "symbol": "XLV",
+      "ticker": "XLV",
+      "yahoo_symbol": "XLV",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "healthcare_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Health Care Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e58271bcdcc54969eddee4a102c2978722b541d5e6577f128986da43d7da1ac",
+            "fetched_at": "2026-08-04T07:17:45.054Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e58271bcdcc54969eddee4a102c2978722b541d5e6577f128986da43d7da1ac",
+            "fetched_at": "2026-08-04T07:17:45.054Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e58271bcdcc54969eddee4a102c2978722b541d5e6577f128986da43d7da1ac",
+            "fetched_at": "2026-08-04T07:17:45.054Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e58271bcdcc54969eddee4a102c2978722b541d5e6577f128986da43d7da1ac",
+            "fetched_at": "2026-08-04T07:17:45.054Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e58271bcdcc54969eddee4a102c2978722b541d5e6577f128986da43d7da1ac",
+            "fetched_at": "2026-08-04T07:17:45.054Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLV"
+          ],
+          "from_text": "State Street Health Care Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Health Care Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xle",
+      "symbol": "XLE",
+      "ticker": "XLE",
+      "yahoo_symbol": "XLE",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "energy_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Energy Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6782eb4c99ba36d2f63045f947a8d30a77afa82d6d4a1b0e83bc22853a677679",
+            "fetched_at": "2026-08-04T07:17:45.169Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6782eb4c99ba36d2f63045f947a8d30a77afa82d6d4a1b0e83bc22853a677679",
+            "fetched_at": "2026-08-04T07:17:45.169Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6782eb4c99ba36d2f63045f947a8d30a77afa82d6d4a1b0e83bc22853a677679",
+            "fetched_at": "2026-08-04T07:17:45.169Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6782eb4c99ba36d2f63045f947a8d30a77afa82d6d4a1b0e83bc22853a677679",
+            "fetched_at": "2026-08-04T07:17:45.169Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6782eb4c99ba36d2f63045f947a8d30a77afa82d6d4a1b0e83bc22853a677679",
+            "fetched_at": "2026-08-04T07:17:45.169Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLE"
+          ],
+          "from_text": "State Street Energy Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Energy Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xli",
+      "symbol": "XLI",
+      "ticker": "XLI",
+      "yahoo_symbol": "XLI",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "industrials_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Industrial Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4b6cdf2ea4ac71bdbefc3937df1e93fce7ac62d448ed19cae628af4f320a53a9",
+            "fetched_at": "2026-08-04T07:17:44.997Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4b6cdf2ea4ac71bdbefc3937df1e93fce7ac62d448ed19cae628af4f320a53a9",
+            "fetched_at": "2026-08-04T07:17:44.997Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4b6cdf2ea4ac71bdbefc3937df1e93fce7ac62d448ed19cae628af4f320a53a9",
+            "fetched_at": "2026-08-04T07:17:44.997Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4b6cdf2ea4ac71bdbefc3937df1e93fce7ac62d448ed19cae628af4f320a53a9",
+            "fetched_at": "2026-08-04T07:17:44.997Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4b6cdf2ea4ac71bdbefc3937df1e93fce7ac62d448ed19cae628af4f320a53a9",
+            "fetched_at": "2026-08-04T07:17:44.997Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLI"
+          ],
+          "from_text": "State Street Industrial Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Industrial Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlu",
+      "symbol": "XLU",
+      "ticker": "XLU",
+      "yahoo_symbol": "XLU",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "utilities_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Utilities Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f94e92906b9e4ef94df003cf0cec9eb2a5888feb657371a1865598ecd359af5d",
+            "fetched_at": "2026-08-04T07:17:45.050Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f94e92906b9e4ef94df003cf0cec9eb2a5888feb657371a1865598ecd359af5d",
+            "fetched_at": "2026-08-04T07:17:45.050Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f94e92906b9e4ef94df003cf0cec9eb2a5888feb657371a1865598ecd359af5d",
+            "fetched_at": "2026-08-04T07:17:45.050Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f94e92906b9e4ef94df003cf0cec9eb2a5888feb657371a1865598ecd359af5d",
+            "fetched_at": "2026-08-04T07:17:45.050Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f94e92906b9e4ef94df003cf0cec9eb2a5888feb657371a1865598ecd359af5d",
+            "fetched_at": "2026-08-04T07:17:45.050Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLU"
+          ],
+          "from_text": "State Street Utilities Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Utilities Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlp",
+      "symbol": "XLP",
+      "ticker": "XLP",
+      "yahoo_symbol": "XLP",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "staples_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Consumer Staples Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "3a0468e86e9c5d1eee6a7b50f6f4df32d46f2d68633aa2f35be041aabf556fa6",
+            "fetched_at": "2026-08-04T07:17:45.061Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "3a0468e86e9c5d1eee6a7b50f6f4df32d46f2d68633aa2f35be041aabf556fa6",
+            "fetched_at": "2026-08-04T07:17:45.061Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "3a0468e86e9c5d1eee6a7b50f6f4df32d46f2d68633aa2f35be041aabf556fa6",
+            "fetched_at": "2026-08-04T07:17:45.061Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "3a0468e86e9c5d1eee6a7b50f6f4df32d46f2d68633aa2f35be041aabf556fa6",
+            "fetched_at": "2026-08-04T07:17:45.061Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "3a0468e86e9c5d1eee6a7b50f6f4df32d46f2d68633aa2f35be041aabf556fa6",
+            "fetched_at": "2026-08-04T07:17:45.061Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLP"
+          ],
+          "from_text": "State Street Consumer Staples Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Consumer Staples Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xly",
+      "symbol": "XLY",
+      "ticker": "XLY",
+      "yahoo_symbol": "XLY",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "discretionary_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Consumer Discretionary Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "24a506dd25b745a556d66ec3087bd395262843fa8975c6de289a880de1554429",
+            "fetched_at": "2026-08-04T07:17:45.098Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "24a506dd25b745a556d66ec3087bd395262843fa8975c6de289a880de1554429",
+            "fetched_at": "2026-08-04T07:17:45.098Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "24a506dd25b745a556d66ec3087bd395262843fa8975c6de289a880de1554429",
+            "fetched_at": "2026-08-04T07:17:45.098Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "24a506dd25b745a556d66ec3087bd395262843fa8975c6de289a880de1554429",
+            "fetched_at": "2026-08-04T07:17:45.098Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "24a506dd25b745a556d66ec3087bd395262843fa8975c6de289a880de1554429",
+            "fetched_at": "2026-08-04T07:17:45.098Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLY"
+          ],
+          "from_text": "State Street Consumer Discretionary Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Consumer Discretionary Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlb",
+      "symbol": "XLB",
+      "ticker": "XLB",
+      "yahoo_symbol": "XLB",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "materials_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Materials Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e7916670a96b95813256459b1bd1b65de944d3123c878d179cd27798cbbc18f6",
+            "fetched_at": "2026-08-04T07:17:45.107Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e7916670a96b95813256459b1bd1b65de944d3123c878d179cd27798cbbc18f6",
+            "fetched_at": "2026-08-04T07:17:45.107Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e7916670a96b95813256459b1bd1b65de944d3123c878d179cd27798cbbc18f6",
+            "fetched_at": "2026-08-04T07:17:45.107Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e7916670a96b95813256459b1bd1b65de944d3123c878d179cd27798cbbc18f6",
+            "fetched_at": "2026-08-04T07:17:45.107Z"
+          }
+        },
+        "listing_date": {
+          "value": "1998-12-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "e7916670a96b95813256459b1bd1b65de944d3123c878d179cd27798cbbc18f6",
+            "fetched_at": "2026-08-04T07:17:45.107Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLB"
+          ],
+          "from_text": "State Street Materials Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Materials Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "xlre",
+      "symbol": "XLRE",
+      "ticker": "XLRE",
+      "yahoo_symbol": "XLRE",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "real_estate_sector",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street Real Estate Select Sector SPDR ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "50f85dca3170ac052ac84c409a787ce3735baccbaea7918f6d29d9fb183f841d",
+            "fetched_at": "2026-08-04T07:17:45.131Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "50f85dca3170ac052ac84c409a787ce3735baccbaea7918f6d29d9fb183f841d",
+            "fetched_at": "2026-08-04T07:17:45.131Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "50f85dca3170ac052ac84c409a787ce3735baccbaea7918f6d29d9fb183f841d",
+            "fetched_at": "2026-08-04T07:17:45.131Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "50f85dca3170ac052ac84c409a787ce3735baccbaea7918f6d29d9fb183f841d",
+            "fetched_at": "2026-08-04T07:17:45.131Z"
+          }
+        },
+        "listing_date": {
+          "value": "2015-10-08",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "50f85dca3170ac052ac84c409a787ce3735baccbaea7918f6d29d9fb183f841d",
+            "fetched_at": "2026-08-04T07:17:45.131Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for XLRE"
+          ],
+          "from_text": "State Street Real Estate Select Sector SPDR ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Real Estate Select Sector Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "ief",
+      "symbol": "IEF",
+      "ticker": "IEF",
+      "yahoo_symbol": "IEF",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "fixed_income",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "intermediate_duration_treasuries",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares 7-10 Year Treasury Bond ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "434465c30765d03d9258578d90937d1e7ab3c84b33bf315e38076c7a3ef4c66d",
+            "fetched_at": "2026-08-04T07:17:45.167Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "434465c30765d03d9258578d90937d1e7ab3c84b33bf315e38076c7a3ef4c66d",
+            "fetched_at": "2026-08-04T07:17:45.167Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "434465c30765d03d9258578d90937d1e7ab3c84b33bf315e38076c7a3ef4c66d",
+            "fetched_at": "2026-08-04T07:17:45.167Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "434465c30765d03d9258578d90937d1e7ab3c84b33bf315e38076c7a3ef4c66d",
+            "fetched_at": "2026-08-04T07:17:45.167Z"
+          }
+        },
+        "listing_date": {
+          "value": "2002-07-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "434465c30765d03d9258578d90937d1e7ab3c84b33bf315e38076c7a3ef4c66d",
+            "fetched_at": "2026-08-04T07:17:45.167Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for IEF"
+          ],
+          "from_text": "iShares 7-10 Year Treasury Bond ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "ICE U.S. Treasury 7-10 Year Bond Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "tlt",
+      "symbol": "TLT",
+      "ticker": "TLT",
+      "yahoo_symbol": "TLT",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "fixed_income",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "long_duration_treasuries",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares 20+ Year Treasury Bond ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4be8865b34bbd13d1c36b60c49f7503ca04ad4cd3421672a3ae1ef473f191491",
+            "fetched_at": "2026-08-04T07:17:45.156Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4be8865b34bbd13d1c36b60c49f7503ca04ad4cd3421672a3ae1ef473f191491",
+            "fetched_at": "2026-08-04T07:17:45.156Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4be8865b34bbd13d1c36b60c49f7503ca04ad4cd3421672a3ae1ef473f191491",
+            "fetched_at": "2026-08-04T07:17:45.156Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4be8865b34bbd13d1c36b60c49f7503ca04ad4cd3421672a3ae1ef473f191491",
+            "fetched_at": "2026-08-04T07:17:45.156Z"
+          }
+        },
+        "listing_date": {
+          "value": "2002-07-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4be8865b34bbd13d1c36b60c49f7503ca04ad4cd3421672a3ae1ef473f191491",
+            "fetched_at": "2026-08-04T07:17:45.156Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for TLT"
+          ],
+          "from_text": "iShares 20+ Year Treasury Bond ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "ICE U.S. Treasury 20+ Year Bond Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "hyg",
+      "symbol": "HYG",
+      "ticker": "HYG",
+      "yahoo_symbol": "HYG",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "credit",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "high_yield_credit",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares iBoxx $ High Yield Corporate Bond ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4a96d5fbbdf77c1193654cfdd74c9228c252df0a82296d966128760ec0f7e4ed",
+            "fetched_at": "2026-08-04T07:17:45.219Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4a96d5fbbdf77c1193654cfdd74c9228c252df0a82296d966128760ec0f7e4ed",
+            "fetched_at": "2026-08-04T07:17:45.219Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4a96d5fbbdf77c1193654cfdd74c9228c252df0a82296d966128760ec0f7e4ed",
+            "fetched_at": "2026-08-04T07:17:45.219Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4a96d5fbbdf77c1193654cfdd74c9228c252df0a82296d966128760ec0f7e4ed",
+            "fetched_at": "2026-08-04T07:17:45.219Z"
+          }
+        },
+        "listing_date": {
+          "value": "2007-04-11",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/HYG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4a96d5fbbdf77c1193654cfdd74c9228c252df0a82296d966128760ec0f7e4ed",
+            "fetched_at": "2026-08-04T07:17:45.219Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for HYG"
+          ],
+          "from_text": "iShares iBoxx $ High Yield Corporate Bond ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Markit iBoxx USD Liquid High Yield Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "lqd",
+      "symbol": "LQD",
+      "ticker": "LQD",
+      "yahoo_symbol": "LQD",
+      "region": "us",
+      "registry_backed": true,
+      "classification": {
+        "category": {
+          "value": "credit",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "investment_grade_credit",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares iBoxx $ Investment Grade Corporate Bond ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6d5254c92053f8db114177471e74e3ac82f6e8736ebec8a4545c904e0b66fac1",
+            "fetched_at": "2026-08-04T07:17:45.207Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6d5254c92053f8db114177471e74e3ac82f6e8736ebec8a4545c904e0b66fac1",
+            "fetched_at": "2026-08-04T07:17:45.207Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6d5254c92053f8db114177471e74e3ac82f6e8736ebec8a4545c904e0b66fac1",
+            "fetched_at": "2026-08-04T07:17:45.207Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6d5254c92053f8db114177471e74e3ac82f6e8736ebec8a4545c904e0b66fac1",
+            "fetched_at": "2026-08-04T07:17:45.207Z"
+          }
+        },
+        "listing_date": {
+          "value": "2002-07-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/LQD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "6d5254c92053f8db114177471e74e3ac82f6e8736ebec8a4545c904e0b66fac1",
+            "fetched_at": "2026-08-04T07:17:45.207Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for LQD"
+          ],
+          "from_text": "iShares iBoxx $ Investment Grade Corporate Bond ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": "Markit iBoxx USD Liquid Investment Grade Index",
+          "provenance": "declared",
+          "basis": "repo_registry_phase_214"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 1
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "7 field(s) awaiting a verified source; 1 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "spy",
+      "symbol": "SPY",
+      "ticker": "SPY",
+      "yahoo_symbol": "SPY",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "broad_market",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "State Street SPDR S&P 500 ETF Trust",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "33d92b8b1a2f146eb6ca806dd3b51bfea9dee15691952c24eabb304a2f7a5274",
+            "fetched_at": "2026-08-04T07:17:45.244Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "33d92b8b1a2f146eb6ca806dd3b51bfea9dee15691952c24eabb304a2f7a5274",
+            "fetched_at": "2026-08-04T07:17:45.244Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "33d92b8b1a2f146eb6ca806dd3b51bfea9dee15691952c24eabb304a2f7a5274",
+            "fetched_at": "2026-08-04T07:17:45.244Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "33d92b8b1a2f146eb6ca806dd3b51bfea9dee15691952c24eabb304a2f7a5274",
+            "fetched_at": "2026-08-04T07:17:45.244Z"
+          }
+        },
+        "listing_date": {
+          "value": "1993-01-29",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "33d92b8b1a2f146eb6ca806dd3b51bfea9dee15691952c24eabb304a2f7a5274",
+            "fetched_at": "2026-08-04T07:17:45.244Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for SPY"
+          ],
+          "from_text": "State Street SPDR S&P 500 ETF Trust"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "gld",
+      "symbol": "GLD",
+      "ticker": "GLD",
+      "yahoo_symbol": "GLD",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "commodity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "physical_gold",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "SPDR Gold Shares",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "026b632683ed3bf05b32b26d0388b05d3c06556c4fe501da09c01b60c267f1d1",
+            "fetched_at": "2026-08-04T07:17:45.225Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "026b632683ed3bf05b32b26d0388b05d3c06556c4fe501da09c01b60c267f1d1",
+            "fetched_at": "2026-08-04T07:17:45.225Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "026b632683ed3bf05b32b26d0388b05d3c06556c4fe501da09c01b60c267f1d1",
+            "fetched_at": "2026-08-04T07:17:45.225Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "026b632683ed3bf05b32b26d0388b05d3c06556c4fe501da09c01b60c267f1d1",
+            "fetched_at": "2026-08-04T07:17:45.225Z"
+          }
+        },
+        "listing_date": {
+          "value": "2004-11-18",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "026b632683ed3bf05b32b26d0388b05d3c06556c4fe501da09c01b60c267f1d1",
+            "fetched_at": "2026-08-04T07:17:45.225Z"
+          }
+        },
+        "issuer": {
+          "value": "SPDR",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for GLD"
+          ],
+          "from_text": "SPDR Gold Shares"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vnq",
+      "symbol": "VNQ",
+      "ticker": "VNQ",
+      "yahoo_symbol": "VNQ",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "real_estate",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "us_reits",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard Real Estate Index Fund ETF Shares",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "881fc50701982bbc7351af07d692495c7abf886a26494985c8ccde661a394c5d",
+            "fetched_at": "2026-08-04T07:17:45.268Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "881fc50701982bbc7351af07d692495c7abf886a26494985c8ccde661a394c5d",
+            "fetched_at": "2026-08-04T07:17:45.268Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "881fc50701982bbc7351af07d692495c7abf886a26494985c8ccde661a394c5d",
+            "fetched_at": "2026-08-04T07:17:45.268Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "881fc50701982bbc7351af07d692495c7abf886a26494985c8ccde661a394c5d",
+            "fetched_at": "2026-08-04T07:17:45.268Z"
+          }
+        },
+        "listing_date": {
+          "value": "2004-09-29",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "881fc50701982bbc7351af07d692495c7abf886a26494985c8ccde661a394c5d",
+            "fetched_at": "2026-08-04T07:17:45.268Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VNQ"
+          ],
+          "from_text": "Vanguard Real Estate Index Fund ETF Shares"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vig",
+      "symbol": "VIG",
+      "ticker": "VIG",
+      "yahoo_symbol": "VIG",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "dividend_quality",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "dividend_growth",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard Dividend Appreciation Index Fund ETF Shares",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VIG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c4d1cae22554489a42a6734b67e98bb5f58b9bd61b3e9329e51cdca4af6fcb34",
+            "fetched_at": "2026-08-04T07:17:45.329Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VIG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c4d1cae22554489a42a6734b67e98bb5f58b9bd61b3e9329e51cdca4af6fcb34",
+            "fetched_at": "2026-08-04T07:17:45.329Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VIG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c4d1cae22554489a42a6734b67e98bb5f58b9bd61b3e9329e51cdca4af6fcb34",
+            "fetched_at": "2026-08-04T07:17:45.329Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VIG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c4d1cae22554489a42a6734b67e98bb5f58b9bd61b3e9329e51cdca4af6fcb34",
+            "fetched_at": "2026-08-04T07:17:45.329Z"
+          }
+        },
+        "listing_date": {
+          "value": "2006-05-02",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VIG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c4d1cae22554489a42a6734b67e98bb5f58b9bd61b3e9329e51cdca4af6fcb34",
+            "fetched_at": "2026-08-04T07:17:45.329Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VIG"
+          ],
+          "from_text": "Vanguard Dividend Appreciation Index Fund ETF Shares"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "dgro",
+      "symbol": "DGRO",
+      "ticker": "DGRO",
+      "yahoo_symbol": "DGRO",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "dividend_quality",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "dividend_growth",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Core Dividend Growth ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/DGRO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bc1c8b224d1251e808e2534344d129077596034eca0b175c3e24adbfaa445827",
+            "fetched_at": "2026-08-04T07:17:45.293Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/DGRO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bc1c8b224d1251e808e2534344d129077596034eca0b175c3e24adbfaa445827",
+            "fetched_at": "2026-08-04T07:17:45.293Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/DGRO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bc1c8b224d1251e808e2534344d129077596034eca0b175c3e24adbfaa445827",
+            "fetched_at": "2026-08-04T07:17:45.293Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/DGRO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bc1c8b224d1251e808e2534344d129077596034eca0b175c3e24adbfaa445827",
+            "fetched_at": "2026-08-04T07:17:45.293Z"
+          }
+        },
+        "listing_date": {
+          "value": "2014-06-12",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/DGRO?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bc1c8b224d1251e808e2534344d129077596034eca0b175c3e24adbfaa445827",
+            "fetched_at": "2026-08-04T07:17:45.293Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for DGRO"
+          ],
+          "from_text": "iShares Core Dividend Growth ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vug",
+      "symbol": "VUG",
+      "ticker": "VUG",
+      "yahoo_symbol": "VUG",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "growth",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_growth",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard Morningstar Growth ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4ba2d1a81dd4fcac38cc3f784bee00a9a185ba086436e8268b2319646d44733f",
+            "fetched_at": "2026-08-04T07:17:45.325Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4ba2d1a81dd4fcac38cc3f784bee00a9a185ba086436e8268b2319646d44733f",
+            "fetched_at": "2026-08-04T07:17:45.325Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4ba2d1a81dd4fcac38cc3f784bee00a9a185ba086436e8268b2319646d44733f",
+            "fetched_at": "2026-08-04T07:17:45.325Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4ba2d1a81dd4fcac38cc3f784bee00a9a185ba086436e8268b2319646d44733f",
+            "fetched_at": "2026-08-04T07:17:45.325Z"
+          }
+        },
+        "listing_date": {
+          "value": "2004-01-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "4ba2d1a81dd4fcac38cc3f784bee00a9a185ba086436e8268b2319646d44733f",
+            "fetched_at": "2026-08-04T07:17:45.325Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VUG"
+          ],
+          "from_text": "Vanguard Morningstar Growth ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vtv",
+      "symbol": "VTV",
+      "ticker": "VTV",
+      "yahoo_symbol": "VTV",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "value",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_value",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard Morningstar Value ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8063d0e83a62cd44b2a1dd643089d1d51e824f803c7ef435a4c375404cbb6633",
+            "fetched_at": "2026-08-04T07:17:45.316Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8063d0e83a62cd44b2a1dd643089d1d51e824f803c7ef435a4c375404cbb6633",
+            "fetched_at": "2026-08-04T07:17:45.316Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8063d0e83a62cd44b2a1dd643089d1d51e824f803c7ef435a4c375404cbb6633",
+            "fetched_at": "2026-08-04T07:17:45.316Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8063d0e83a62cd44b2a1dd643089d1d51e824f803c7ef435a4c375404cbb6633",
+            "fetched_at": "2026-08-04T07:17:45.316Z"
+          }
+        },
+        "listing_date": {
+          "value": "2004-01-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VTV?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "8063d0e83a62cd44b2a1dd643089d1d51e824f803c7ef435a4c375404cbb6633",
+            "fetched_at": "2026-08-04T07:17:45.316Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VTV"
+          ],
+          "from_text": "Vanguard Morningstar Value ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "iwm",
+      "symbol": "IWM",
+      "ticker": "IWM",
+      "yahoo_symbol": "IWM",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "broad_market",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "small_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Russell 2000 ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d1b213a5cbd324fba9dc2f4329bcc9f03654a29951f2d9dfe9e72fd1842d841f",
+            "fetched_at": "2026-08-04T07:17:45.353Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d1b213a5cbd324fba9dc2f4329bcc9f03654a29951f2d9dfe9e72fd1842d841f",
+            "fetched_at": "2026-08-04T07:17:45.353Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d1b213a5cbd324fba9dc2f4329bcc9f03654a29951f2d9dfe9e72fd1842d841f",
+            "fetched_at": "2026-08-04T07:17:45.353Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d1b213a5cbd324fba9dc2f4329bcc9f03654a29951f2d9dfe9e72fd1842d841f",
+            "fetched_at": "2026-08-04T07:17:45.353Z"
+          }
+        },
+        "listing_date": {
+          "value": "2000-05-26",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWM?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d1b213a5cbd324fba9dc2f4329bcc9f03654a29951f2d9dfe9e72fd1842d841f",
+            "fetched_at": "2026-08-04T07:17:45.353Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for IWM"
+          ],
+          "from_text": "iShares Russell 2000 ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "iemg",
+      "symbol": "IEMG",
+      "ticker": "IEMG",
+      "yahoo_symbol": "IEMG",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "emerging_markets",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "em_broad_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Core MSCI Emerging Markets ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEMG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "be8a2cf73bff2e3502a01b5e8e7b6daee96d0dac9c0a967bd095a28a019b9545",
+            "fetched_at": "2026-08-04T07:17:45.357Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEMG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "be8a2cf73bff2e3502a01b5e8e7b6daee96d0dac9c0a967bd095a28a019b9545",
+            "fetched_at": "2026-08-04T07:17:45.357Z"
+          }
+        },
+        "exchange": {
+          "value": "NYSEArca",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEMG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "be8a2cf73bff2e3502a01b5e8e7b6daee96d0dac9c0a967bd095a28a019b9545",
+            "fetched_at": "2026-08-04T07:17:45.357Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEMG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "be8a2cf73bff2e3502a01b5e8e7b6daee96d0dac9c0a967bd095a28a019b9545",
+            "fetched_at": "2026-08-04T07:17:45.357Z"
+          }
+        },
+        "listing_date": {
+          "value": "2012-10-24",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IEMG?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "be8a2cf73bff2e3502a01b5e8e7b6daee96d0dac9c0a967bd095a28a019b9545",
+            "fetched_at": "2026-08-04T07:17:45.357Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for IEMG"
+          ],
+          "from_text": "iShares Core MSCI Emerging Markets ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "bnd",
+      "symbol": "BND",
+      "ticker": "BND",
+      "yahoo_symbol": "BND",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "fixed_income",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "aggregate_bond",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard Total Bond Market Index Fund",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BND?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "1634e2c62ccce8b12d721d4716d56c60aebde90cf3b1a3563b251415bb781de8",
+            "fetched_at": "2026-08-04T07:17:45.386Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BND?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "1634e2c62ccce8b12d721d4716d56c60aebde90cf3b1a3563b251415bb781de8",
+            "fetched_at": "2026-08-04T07:17:45.386Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BND?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "1634e2c62ccce8b12d721d4716d56c60aebde90cf3b1a3563b251415bb781de8",
+            "fetched_at": "2026-08-04T07:17:45.386Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BND?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "1634e2c62ccce8b12d721d4716d56c60aebde90cf3b1a3563b251415bb781de8",
+            "fetched_at": "2026-08-04T07:17:45.386Z"
+          }
+        },
+        "listing_date": {
+          "value": "2007-04-10",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BND?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "1634e2c62ccce8b12d721d4716d56c60aebde90cf3b1a3563b251415bb781de8",
+            "fetched_at": "2026-08-04T07:17:45.386Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for BND"
+          ],
+          "from_text": "Vanguard Total Bond Market Index Fund"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "botz",
+      "symbol": "BOTZ",
+      "ticker": "BOTZ",
+      "yahoo_symbol": "BOTZ",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "thematic_ai",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "robotics_ai_theme",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Global X Robotics & Artificial Intelligence ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BOTZ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f91164bf45f7554fe6f88df1568affaf2a5cc375ef7fe1c54c31e9b4f77750c5",
+            "fetched_at": "2026-08-04T07:17:45.406Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BOTZ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f91164bf45f7554fe6f88df1568affaf2a5cc375ef7fe1c54c31e9b4f77750c5",
+            "fetched_at": "2026-08-04T07:17:45.406Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BOTZ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f91164bf45f7554fe6f88df1568affaf2a5cc375ef7fe1c54c31e9b4f77750c5",
+            "fetched_at": "2026-08-04T07:17:45.406Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BOTZ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f91164bf45f7554fe6f88df1568affaf2a5cc375ef7fe1c54c31e9b4f77750c5",
+            "fetched_at": "2026-08-04T07:17:45.406Z"
+          }
+        },
+        "listing_date": {
+          "value": "2016-09-13",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/BOTZ?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "f91164bf45f7554fe6f88df1568affaf2a5cc375ef7fe1c54c31e9b4f77750c5",
+            "fetched_at": "2026-08-04T07:17:45.406Z"
+          }
+        },
+        "issuer": {
+          "value": "Global X",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for BOTZ"
+          ],
+          "from_text": "Global X Robotics & Artificial Intelligence ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "esgu",
+      "symbol": "ESGU",
+      "ticker": "ESGU",
+      "yahoo_symbol": "ESGU",
+      "region": "us",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "esg",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "esg_screened_us_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares ESG Aware MSCI USA ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/ESGU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "77db9da39196d3b7d9a907da439d7d90a5850504878dcbef82b2cb013170b136",
+            "fetched_at": "2026-08-04T07:17:45.407Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/ESGU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "77db9da39196d3b7d9a907da439d7d90a5850504878dcbef82b2cb013170b136",
+            "fetched_at": "2026-08-04T07:17:45.407Z"
+          }
+        },
+        "exchange": {
+          "value": "NasdaqGM",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/ESGU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "77db9da39196d3b7d9a907da439d7d90a5850504878dcbef82b2cb013170b136",
+            "fetched_at": "2026-08-04T07:17:45.407Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/ESGU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "77db9da39196d3b7d9a907da439d7d90a5850504878dcbef82b2cb013170b136",
+            "fetched_at": "2026-08-04T07:17:45.407Z"
+          }
+        },
+        "listing_date": {
+          "value": "2016-12-06",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/ESGU?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "77db9da39196d3b7d9a907da439d7d90a5850504878dcbef82b2cb013170b136",
+            "fetched_at": "2026-08-04T07:17:45.407Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for ESGU"
+          ],
+          "from_text": "iShares ESG Aware MSCI USA ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vwce",
+      "symbol": "VWCE",
+      "ticker": "VWCE",
+      "yahoo_symbol": "VWCE.DE",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "world_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "global_all_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard FTSE All-World UCITS ETF USD Accumulation",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "44730f77c8d2ade31e67312259cc89d8672d5bcfc14d1343701af57343fdb1b4",
+            "fetched_at": "2026-08-04T07:17:45.405Z"
+          }
+        },
+        "currency": {
+          "value": "EUR",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "44730f77c8d2ade31e67312259cc89d8672d5bcfc14d1343701af57343fdb1b4",
+            "fetched_at": "2026-08-04T07:17:45.405Z"
+          }
+        },
+        "exchange": {
+          "value": "XETRA",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "44730f77c8d2ade31e67312259cc89d8672d5bcfc14d1343701af57343fdb1b4",
+            "fetched_at": "2026-08-04T07:17:45.405Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "44730f77c8d2ade31e67312259cc89d8672d5bcfc14d1343701af57343fdb1b4",
+            "fetched_at": "2026-08-04T07:17:45.405Z"
+          }
+        },
+        "listing_date": {
+          "value": "2019-07-29",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "44730f77c8d2ade31e67312259cc89d8672d5bcfc14d1343701af57343fdb1b4",
+            "fetched_at": "2026-08-04T07:17:45.405Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VWCE.DE"
+          ],
+          "from_text": "Vanguard FTSE All-World UCITS ETF USD Accumulation"
+        },
+        "distribution": {
+          "value": "accumulating",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VWCE.DE"
+          ],
+          "from_text": "Vanguard FTSE All-World UCITS ETF USD Accumulation"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 2,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 2 derived from verified text",
+        "7 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vwrl",
+      "symbol": "VWRL",
+      "ticker": "VWRL",
+      "yahoo_symbol": "VWRL.AS",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "world_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "global_all_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard FTSE All-World UCITS ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWRL.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c89965a4e85b6b0537fa360488186a92012efa94d7be775147115b1ccc9db64b",
+            "fetched_at": "2026-08-04T07:17:45.437Z"
+          }
+        },
+        "currency": {
+          "value": "EUR",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWRL.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c89965a4e85b6b0537fa360488186a92012efa94d7be775147115b1ccc9db64b",
+            "fetched_at": "2026-08-04T07:17:45.437Z"
+          }
+        },
+        "exchange": {
+          "value": "Amsterdam",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWRL.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c89965a4e85b6b0537fa360488186a92012efa94d7be775147115b1ccc9db64b",
+            "fetched_at": "2026-08-04T07:17:45.437Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWRL.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c89965a4e85b6b0537fa360488186a92012efa94d7be775147115b1ccc9db64b",
+            "fetched_at": "2026-08-04T07:17:45.437Z"
+          }
+        },
+        "listing_date": {
+          "value": "2012-05-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VWRL.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "c89965a4e85b6b0537fa360488186a92012efa94d7be775147115b1ccc9db64b",
+            "fetched_at": "2026-08-04T07:17:45.437Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VWRL.AS"
+          ],
+          "from_text": "Vanguard FTSE All-World UCITS ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "iwda",
+      "symbol": "IWDA",
+      "ticker": "IWDA",
+      "yahoo_symbol": "IWDA.AS",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "world_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "developed_market_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Core MSCI World UCITS ETF USD (Acc)",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWDA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e33f890e265f089fa392d2ed18e95d35ae02c7a012d525d9eb38c63c9dd9f80",
+            "fetched_at": "2026-08-04T07:17:45.438Z"
+          }
+        },
+        "currency": {
+          "value": "EUR",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWDA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e33f890e265f089fa392d2ed18e95d35ae02c7a012d525d9eb38c63c9dd9f80",
+            "fetched_at": "2026-08-04T07:17:45.438Z"
+          }
+        },
+        "exchange": {
+          "value": "Amsterdam",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWDA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e33f890e265f089fa392d2ed18e95d35ae02c7a012d525d9eb38c63c9dd9f80",
+            "fetched_at": "2026-08-04T07:17:45.438Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWDA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e33f890e265f089fa392d2ed18e95d35ae02c7a012d525d9eb38c63c9dd9f80",
+            "fetched_at": "2026-08-04T07:17:45.438Z"
+          }
+        },
+        "listing_date": {
+          "value": "2009-09-25",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/IWDA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "2e33f890e265f089fa392d2ed18e95d35ae02c7a012d525d9eb38c63c9dd9f80",
+            "fetched_at": "2026-08-04T07:17:45.438Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for IWDA.AS"
+          ],
+          "from_text": "iShares Core MSCI World UCITS ETF USD (Acc)"
+        },
+        "distribution": {
+          "value": "accumulating",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for IWDA.AS"
+          ],
+          "from_text": "iShares Core MSCI World UCITS ETF USD (Acc)"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 2,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 2 derived from verified text",
+        "7 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "eunl",
+      "symbol": "EUNL",
+      "ticker": "EUNL",
+      "yahoo_symbol": "EUNL.DE",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "world_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "developed_market_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Core MSCI World UCITS ETF USD (Acc)",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EUNL.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "969ec81f59738413781f88df9ab3b6697656a78a3681556224dc45489660f1a2",
+            "fetched_at": "2026-08-04T07:17:45.457Z"
+          }
+        },
+        "currency": {
+          "value": "EUR",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EUNL.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "969ec81f59738413781f88df9ab3b6697656a78a3681556224dc45489660f1a2",
+            "fetched_at": "2026-08-04T07:17:45.457Z"
+          }
+        },
+        "exchange": {
+          "value": "XETRA",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EUNL.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "969ec81f59738413781f88df9ab3b6697656a78a3681556224dc45489660f1a2",
+            "fetched_at": "2026-08-04T07:17:45.457Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EUNL.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "969ec81f59738413781f88df9ab3b6697656a78a3681556224dc45489660f1a2",
+            "fetched_at": "2026-08-04T07:17:45.457Z"
+          }
+        },
+        "listing_date": {
+          "value": "2009-09-25",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EUNL.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "969ec81f59738413781f88df9ab3b6697656a78a3681556224dc45489660f1a2",
+            "fetched_at": "2026-08-04T07:17:45.457Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for EUNL.DE"
+          ],
+          "from_text": "iShares Core MSCI World UCITS ETF USD (Acc)"
+        },
+        "distribution": {
+          "value": "accumulating",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for EUNL.DE"
+          ],
+          "from_text": "iShares Core MSCI World UCITS ETF USD (Acc)"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 2,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 2 derived from verified text",
+        "7 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vusa",
+      "symbol": "VUSA",
+      "ticker": "VUSA",
+      "yahoo_symbol": "VUSA.AS",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "broad_market",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard S&P 500 UCITS ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUSA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d614ce4b87f8126c88bba158e95912502db1fae4dd7e299716e0429c17e610c8",
+            "fetched_at": "2026-08-04T07:17:45.492Z"
+          }
+        },
+        "currency": {
+          "value": "EUR",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUSA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d614ce4b87f8126c88bba158e95912502db1fae4dd7e299716e0429c17e610c8",
+            "fetched_at": "2026-08-04T07:17:45.492Z"
+          }
+        },
+        "exchange": {
+          "value": "Amsterdam",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUSA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d614ce4b87f8126c88bba158e95912502db1fae4dd7e299716e0429c17e610c8",
+            "fetched_at": "2026-08-04T07:17:45.492Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUSA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d614ce4b87f8126c88bba158e95912502db1fae4dd7e299716e0429c17e610c8",
+            "fetched_at": "2026-08-04T07:17:45.492Z"
+          }
+        },
+        "listing_date": {
+          "value": "2012-05-22",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUSA.AS?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "d614ce4b87f8126c88bba158e95912502db1fae4dd7e299716e0429c17e610c8",
+            "fetched_at": "2026-08-04T07:17:45.492Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VUSA.AS"
+          ],
+          "from_text": "Vanguard S&P 500 UCITS ETF"
+        },
+        "distribution": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source",
+          "note": "fund name does not state a single distribution policy"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 1,
+        "declared": 0,
+        "unavailable": 8,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 1 derived from verified text",
+        "8 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "vuaa",
+      "symbol": "VUAA",
+      "ticker": "VUAA",
+      "yahoo_symbol": "VUAA.DE",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "broad_market",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "large_cap_beta",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "Vanguard S&P 500 UCITS ETF USD Accumulation",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUAA.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bf59428f7fd1fb5324767408559eb0779a2a1b9e16c5dbb81763d599d69a2341",
+            "fetched_at": "2026-08-04T07:17:45.478Z"
+          }
+        },
+        "currency": {
+          "value": "EUR",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUAA.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bf59428f7fd1fb5324767408559eb0779a2a1b9e16c5dbb81763d599d69a2341",
+            "fetched_at": "2026-08-04T07:17:45.478Z"
+          }
+        },
+        "exchange": {
+          "value": "XETRA",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUAA.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bf59428f7fd1fb5324767408559eb0779a2a1b9e16c5dbb81763d599d69a2341",
+            "fetched_at": "2026-08-04T07:17:45.478Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUAA.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bf59428f7fd1fb5324767408559eb0779a2a1b9e16c5dbb81763d599d69a2341",
+            "fetched_at": "2026-08-04T07:17:45.478Z"
+          }
+        },
+        "listing_date": {
+          "value": "2024-12-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/VUAA.DE?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "bf59428f7fd1fb5324767408559eb0779a2a1b9e16c5dbb81763d599d69a2341",
+            "fetched_at": "2026-08-04T07:17:45.478Z"
+          }
+        },
+        "issuer": {
+          "value": "Vanguard",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VUAA.DE"
+          ],
+          "from_text": "Vanguard S&P 500 UCITS ETF USD Accumulation"
+        },
+        "distribution": {
+          "value": "accumulating",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for VUAA.DE"
+          ],
+          "from_text": "Vanguard S&P 500 UCITS ETF USD Accumulation"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 2,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 2 derived from verified text",
+        "7 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    },
+    {
+      "slug": "eimi",
+      "symbol": "EIMI",
+      "ticker": "EIMI",
+      "yahoo_symbol": "EIMI.L",
+      "region": "ucits",
+      "registry_backed": false,
+      "classification": {
+        "category": {
+          "value": "emerging_markets",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        },
+        "exposure_type": {
+          "value": "em_broad_equity",
+          "provenance": "declared",
+          "basis": "tradealphaai_exposure_classification"
+        }
+      },
+      "fields": {
+        "fund_name": {
+          "value": "iShares Core MSCI EM IMI UCITS ETF USD (Acc)",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EIMI.L?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "65a8ecd85e254aea78f3981ea8d01f38519f4b5e9c8ca1fe64ee64b9c9c70f90",
+            "fetched_at": "2026-08-04T07:17:45.486Z"
+          }
+        },
+        "currency": {
+          "value": "USD",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EIMI.L?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "65a8ecd85e254aea78f3981ea8d01f38519f4b5e9c8ca1fe64ee64b9c9c70f90",
+            "fetched_at": "2026-08-04T07:17:45.486Z"
+          }
+        },
+        "exchange": {
+          "value": "LSE",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EIMI.L?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "65a8ecd85e254aea78f3981ea8d01f38519f4b5e9c8ca1fe64ee64b9c9c70f90",
+            "fetched_at": "2026-08-04T07:17:45.486Z"
+          }
+        },
+        "instrument_type": {
+          "value": "ETF",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EIMI.L?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "65a8ecd85e254aea78f3981ea8d01f38519f4b5e9c8ca1fe64ee64b9c9c70f90",
+            "fetched_at": "2026-08-04T07:17:45.486Z"
+          }
+        },
+        "listing_date": {
+          "value": "2014-05-30",
+          "provenance": "fetched",
+          "source": {
+            "provider": "Yahoo",
+            "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/EIMI.L?interval=1d&range=5d&events=div%2Csplit",
+            "response_hash": "65a8ecd85e254aea78f3981ea8d01f38519f4b5e9c8ca1fe64ee64b9c9c70f90",
+            "fetched_at": "2026-08-04T07:17:45.486Z"
+          }
+        },
+        "issuer": {
+          "value": "iShares",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for EIMI.L"
+          ],
+          "from_text": "iShares Core MSCI EM IMI UCITS ETF USD (Acc)"
+        },
+        "distribution": {
+          "value": "accumulating",
+          "provenance": "derived",
+          "inputs": [
+            "provider fund name for EIMI.L"
+          ],
+          "from_text": "iShares Core MSCI EM IMI UCITS ETF USD (Acc)"
+        },
+        "benchmark": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "isin": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "ter_pct": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "aum": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "domicile": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "replication": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        },
+        "inception": {
+          "value": null,
+          "provenance": "unavailable",
+          "reason": "no_free_verifiable_source"
+        }
+      },
+      "provenance_counts": {
+        "fetched": 5,
+        "derived": 2,
+        "declared": 0,
+        "unavailable": 7,
+        "registry": 0
+      },
+      "evidence": [
+        "5 field(s) verified from a provider response, 2 derived from verified text",
+        "7 field(s) awaiting a verified source; 0 inherited from the project registry"
+      ]
+    }
+  ],
+  "attribution": {
+    "sources": [
+      {
+        "provider": "Yahoo",
+        "source_url": "https://finance.yahoo.com/",
+        "role": "instrument metadata (fund name, currency, exchange, listing date)"
+      }
+    ],
+    "computed_by": "tools/build-etf-facts.js"
+  },
+  "source_hash": "bd1daad5be0040acf16ea045d79c23bae30e72b3b673d95576f7c2190443c6a6"
+}

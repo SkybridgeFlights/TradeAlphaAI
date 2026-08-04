@@ -136,8 +136,22 @@ jobs:
           node tools/build-etf-map.js --write || echo "[tech-intel] ETF map degraded — continuing"
           node tools/generate-etf-research-pages.js --write || echo "[tech-intel] ETF research pages degraded — continuing"
           node tools/generate-etf-map-pages.js --write || echo "[tech-intel] ETF map pages degraded — continuing"
-          node tools/generate-etf-discovery-pages.js --write || echo "[tech-intel] ETF discovery pages degraded — continuing"
           node tools/generate-etf-coverage-pages.js --write || echo "[tech-intel] ETF coverage dashboard degraded — continuing"
+          # ETF Intelligence Center. Data first (analytics fetches observed prices
+          # and must precede similarity and scoring, which derive from it), then
+          # the page surfaces. generate-etf-center-pages.js owns /etfs/, taking
+          # over from generate-etf-discovery-pages.js, and satisfies every rule
+          # check:etf-discovery enforces on that route.
+          node tools/build-etf-analytics.js --write || echo "[tech-intel] ETF analytics degraded — continuing"
+          node tools/build-etf-facts.js --write || echo "[tech-intel] ETF facts degraded — continuing"
+          node tools/build-etf-similarity.js --write || echo "[tech-intel] ETF similarity degraded — continuing"
+          node tools/build-etf-score.js --write || echo "[tech-intel] ETF score degraded — continuing"
+          node tools/generate-etf-center-pages.js --write || echo "[tech-intel] ETF center pages degraded — continuing"
+          node tools/generate-etf-rankings-pages.js --write || echo "[tech-intel] ETF rankings pages degraded — continuing"
+          node tools/generate-etf-compare-pages.js --write || echo "[tech-intel] ETF compare pages degraded — continuing"
+          node tools/generate-etf-guide-pages.js --write || echo "[tech-intel] ETF guide pages degraded — continuing"
+          node tools/generate-etf-methodology-page.js --write || echo "[tech-intel] ETF methodology page degraded — continuing"
+          node tools/generate-etf-audit-page.js --write || echo "[tech-intel] ETF data audit page degraded — continuing"
           # Phase 216 — Change Intelligence Alerts & Monitoring. Build the
           # change-events + classifications + timeline BEFORE entity research
           # pages and entity detail pages so the Recent Changes section on
@@ -290,6 +304,13 @@ jobs:
           npm run check:etf-coverage
           npm run check:etf-activation
           npm run check:etf-provider-integrity
+          npm run check:etf-universe
+          npm run check:etf-facts
+          npm run check:etf-score-config
+          npm run check:etf-analytics
+          npm run check:etf-similarity
+          npm run check:etf-score
+          npm run check:etf-center-pages
           # Phase 216 — Change Intelligence Alerts & Monitoring validators.
           npm run check:change-events
           npm run check:change-classifications
@@ -430,8 +451,17 @@ jobs:
               node tools/build-etf-map.js --write || echo "[tech-intel] ETF map regen degraded"
               node tools/generate-etf-research-pages.js --write || echo "[tech-intel] ETF research pages regen degraded"
               node tools/generate-etf-map-pages.js --write || echo "[tech-intel] ETF map pages regen degraded"
-              node tools/generate-etf-discovery-pages.js --write || echo "[tech-intel] ETF discovery pages regen degraded"
               node tools/generate-etf-coverage-pages.js --write || echo "[tech-intel] ETF coverage dashboard regen degraded"
+              node tools/build-etf-analytics.js --write || echo "[tech-intel] ETF analytics regen degraded"
+              node tools/build-etf-facts.js --write || echo "[tech-intel] ETF facts regen degraded"
+              node tools/build-etf-similarity.js --write || echo "[tech-intel] ETF similarity regen degraded"
+              node tools/build-etf-score.js --write || echo "[tech-intel] ETF score regen degraded"
+              node tools/generate-etf-center-pages.js --write || echo "[tech-intel] ETF center pages regen degraded"
+              node tools/generate-etf-rankings-pages.js --write || echo "[tech-intel] ETF rankings pages regen degraded"
+              node tools/generate-etf-compare-pages.js --write || echo "[tech-intel] ETF compare pages regen degraded"
+              node tools/generate-etf-guide-pages.js --write || echo "[tech-intel] ETF guide pages regen degraded"
+              node tools/generate-etf-methodology-page.js --write || echo "[tech-intel] ETF methodology page regen degraded"
+              node tools/generate-etf-audit-page.js --write || echo "[tech-intel] ETF data audit page regen degraded"
               node tools/build-change-events.js --write || echo "[tech-intel] change events regen degraded"
               node tools/build-change-timeline.js --write || echo "[tech-intel] change timeline regen degraded"
               node tools/generate-changes-pages.js --write || echo "[tech-intel] changes pages regen degraded"
@@ -470,6 +500,13 @@ jobs:
               npm run check:etf-coverage
               npm run check:etf-activation
               npm run check:etf-provider-integrity
+              npm run check:etf-universe
+              npm run check:etf-facts
+          npm run check:etf-score-config
+              npm run check:etf-analytics
+              npm run check:etf-similarity
+              npm run check:etf-score
+              npm run check:etf-center-pages
               npm run check:change-events
               npm run check:change-classifications
               npm run check:changes-hub
