@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-05T16:13:45.918Z",
+  "generated_at": "2026-08-05T18:58:53.222Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 89,
-  "coverage_pct": 89,
+  "structural_confidence": 84,
+  "coverage_pct": 78,
   "dominant": {
     "dimension": "stability",
     "state": "deteriorating"
@@ -21,13 +21,13 @@
       ]
     },
     "volatility_structure": {
-      "state": "contained",
-      "label_en": "contained volatility",
-      "label_ar": "تذبذب محتوى",
+      "state": "compression",
+      "label_en": "volatility compression",
+      "label_ar": "انضغاط التذبذب",
       "evidence": [
-        "regime volatility=normal",
+        "regime volatility=compression",
         "alignment=aligned",
-        "VIX=16.37"
+        "VIX=15.64"
       ]
     },
     "cross_asset": {
@@ -49,12 +49,12 @@
       ]
     },
     "rotation": {
-      "state": "defensive_rotation",
-      "label_en": "defensive rotation",
-      "label_ar": "تدوير دفاعي",
+      "state": "cyclical_leadership",
+      "label_en": "cyclical leadership",
+      "label_ar": "قيادة دورية",
       "evidence": [
-        "leaders=XLV",
-        "regime defensive=defensive_rotation"
+        "leaders=XLV/XLF/XLK",
+        "regime defensive=cyclical_leadership"
       ]
     },
     "persistence": {
@@ -68,12 +68,12 @@
       ]
     },
     "momentum": {
-      "state": "early_deterioration",
-      "label_en": "early momentum deterioration",
-      "label_ar": "تدهور مبكر في الزخم",
+      "state": "indeterminate",
+      "label_en": "indeterminate",
+      "label_ar": "غير محدد",
       "evidence": [
         "participation=indeterminate",
-        "rotation=defensive_rotation",
+        "rotation=cyclical_leadership",
         "concentration=elevated"
       ]
     },
@@ -83,7 +83,7 @@
       "label_ar": "مشاركة سيولة غير مؤكدة",
       "evidence": [
         "liquidity_participation=uncertain",
-        "liquidity_state=defensive_demand"
+        "liquidity_state=volatility_absorption"
       ]
     },
     "stability": {
@@ -103,10 +103,10 @@
       "state": "deteriorating"
     },
     "participation": "indeterminate",
-    "volatility_structure": "contained",
+    "volatility_structure": "compression",
     "cross_asset": "divergent",
     "structural_stability": "deteriorating",
-    "structural_confidence": 89
+    "structural_confidence": 84
   },
   "attribution": {
     "sources": [
