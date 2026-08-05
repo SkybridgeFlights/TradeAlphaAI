@@ -1,16 +1,18 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-04T20:52:08.168Z",
+  "updated_at": "2026-08-05T12:04:01.052Z",
   "status": "live",
-  "item_count": 28,
+  "item_count": 37,
   "clusters": {
-    "volatility": 8,
-    "tape": 10,
-    "ai-momentum": 6,
-    "fed": 4
+    "volatility": 9,
+    "tape": 13,
+    "ai-momentum": 7,
+    "macro": 1,
+    "fed": 6,
+    "labor": 1
   },
   "top_story": {
-    "id": "move::VIX::2026-08-04T20",
+    "id": "move::VIX::2026-08-05T12",
     "kind": "market_move",
     "headline": "VIX drops -20.14% to 16.5",
     "urgency": 90,
@@ -27,6 +29,23 @@
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::VIX::2026-08-05T12",
+      "kind": "market_move",
+      "headline": "VIX drops -20.14% to 16.5",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-08-04T20:52:06.928Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::VIX::2026-08-04T20",
       "kind": "market_move",
@@ -60,6 +79,40 @@
       "timestamp": "2026-08-04T19:09:37.387Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::QQQ::2026-08-05T12",
+      "kind": "market_move",
+      "headline": "QQQ jumps +3.54% to 724.87",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "QQQ"
+      ],
+      "sector_tags": [
+        "technology"
+      ],
+      "timestamp": "2026-08-04T19:09:35.499Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::NVDA::2026-08-05T12",
+      "kind": "market_move",
+      "headline": "NVDA jumps +3.07% to 212.99",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-08-04T19:09:35.499Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
     },
     {
       "id": "move::QQQ::2026-08-04T20",
@@ -283,6 +336,40 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
+      "id": "move::SPY::2026-08-05T12",
+      "kind": "market_move",
+      "headline": "SPY jumps +2.01% to 772.91",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "SPY"
+      ],
+      "sector_tags": [
+        "broad-market"
+      ],
+      "timestamp": "2026-08-04T19:09:35.499Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::IWM::2026-08-05T12",
+      "kind": "market_move",
+      "headline": "IWM jumps +2.02% to 302.21",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "IWM"
+      ],
+      "sector_tags": [
+        "small-cap"
+      ],
+      "timestamp": "2026-08-04T19:09:35.499Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
       "id": "move::SPY::2026-08-04T20",
       "kind": "market_move",
       "headline": "SPY jumps +2.01% to 772.91",
@@ -434,6 +521,94 @@
       "timestamp": "2026-08-03T15:47:57.361Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::employment-situation::20260807T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Employment Situation (2026-08-07)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "macro",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "macro"
+      ],
+      "timestamp": "2026-08-07T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260807T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-08-07)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-08-07T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260806T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-08-06, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-08-06T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::gb::boe-rate-decision::20260806T110000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: BoE Rate Decision (2026-08-06, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-08-06T11:00:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260806T000000",
