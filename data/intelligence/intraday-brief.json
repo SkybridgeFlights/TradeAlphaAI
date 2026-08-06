@@ -1,38 +1,36 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-05T20:36:04.818Z",
+  "updated_at": "2026-08-06T12:07:05.185Z",
   "verified": true,
-  "urgency": "notable",
+  "urgency": "elevated",
   "pulse_shift": [],
-  "quote_driven_changes": [
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -8.484493856056169,
-      "to": -7.489760093621997,
-      "delta": 0.9947337624341719,
-      "en": "vix move changed by +0.99 percentage points.",
-      "ar": "تغير تحرك vix بمقدار +0.99 نقطة مئوية."
-    }
-  ],
+  "quote_driven_changes": [],
   "new_contradictions": [],
   "pressure_buildup": [],
-  "new_alerts": [],
+  "new_alerts": [
+    {
+      "kind": "new-alert",
+      "id": "breadth-deterioration-2026-08-06",
+      "severity": "watch",
+      "en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+      "ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية."
+    }
+  ],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
-      "time": "2026-08-05T00:00:00Z",
-      "minutes_until": 0
-    },
-    {
-      "name": "FOMC Press Release",
       "time": "2026-08-06T00:00:00Z",
-      "minutes_until": 204
+      "minutes_until": 0
     },
     {
       "name": "BoE Rate Decision",
       "time": "2026-08-06T11:00:00.000Z",
-      "minutes_until": 864
+      "minutes_until": 0
+    },
+    {
+      "name": "Initial Jobless Claims",
+      "time": "2026-08-06T12:30:00.000Z",
+      "minutes_until": 23
     }
   ],
   "wire_event": {
@@ -42,13 +40,11 @@
   },
   "changes": [
     {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -8.484493856056169,
-      "to": -7.489760093621997,
-      "delta": 0.9947337624341719,
-      "en": "vix move changed by +0.99 percentage points.",
-      "ar": "تغير تحرك vix بمقدار +0.99 نقطة مئوية."
+      "kind": "new-alert",
+      "id": "breadth-deterioration-2026-08-06",
+      "severity": "watch",
+      "en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+      "ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية."
     }
   ],
   "note_en": null,
@@ -85,22 +81,22 @@
       "oil": -11.397189087043824
     },
     "alert_ids": [
-      "positioning-crowding-2026-08-05"
+      "breadth-deterioration-2026-08-06"
     ],
     "alerts": [
       {
-        "id": "positioning-crowding-2026-08-05",
-        "type": "positioning-crowding",
+        "id": "breadth-deterioration-2026-08-06",
+        "type": "breadth-deterioration",
         "severity": "watch",
-        "date": "2026-08-05",
-        "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-        "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+        "date": "2026-08-06",
+        "headline_en": "Breadth deterioration persists — 2 consecutive verified sessions.",
+        "headline_ar": "تدهور اتساع السوق مستمر — 2 جلسات موثقة متتالية.",
         "derived_from": [
           {
-            "dimension": "ai_concentration_risk",
-            "from": "contained",
-            "to": "elevated",
-            "date": "2026-08-05"
+            "dimension": "breadth_state",
+            "state": "deteriorating",
+            "streak": 2,
+            "date": "2026-08-06"
           }
         ]
       }
@@ -119,15 +115,15 @@
     "catalysts": [
       {
         "name": "FOMC Press Release",
-        "time": "2026-08-05T00:00:00Z"
-      },
-      {
-        "name": "FOMC Press Release",
         "time": "2026-08-06T00:00:00Z"
       },
       {
         "name": "BoE Rate Decision",
         "time": "2026-08-06T11:00:00.000Z"
+      },
+      {
+        "name": "Initial Jobless Claims",
+        "time": "2026-08-06T12:30:00.000Z"
       }
     ],
     "wire_event": {
