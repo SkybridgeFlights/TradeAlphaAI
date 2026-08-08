@@ -188,16 +188,21 @@ function processFile(file) {
   const hasLandingFooter = /<footer[^>]*class="footer[\s"]/i.test(newHtml);
   if (!hasLandingFooter) {
     newHtml = newHtml.replace('</head>', `  ${globalFooterStyles()}\n</head>`);
-    // Drop a previously baked canonical footer (marker block).
+    // Drop a previously baked canonical footer (marker block) together with the
+    // whitespace in front of it. Removing the block alone left that whitespace
+    // behind while the re-insert below added its own newline, so every rebake
+    // grew the file by one blank line — the reason this pass could not safely
+    // run in a scheduled workflow. Stripping both sides makes a rebake a fixed
+    // point: remove leading whitespace here, re-emit exactly one newline there.
     const fStart = newHtml.indexOf(FOOTER_MARKER_START);
     const fEnd = newHtml.indexOf(FOOTER_MARKER_END);
     if (fStart >= 0 && fEnd > fStart) {
-      newHtml = newHtml.slice(0, fStart) + newHtml.slice(fEnd + FOOTER_MARKER_END.length);
+      newHtml = newHtml.slice(0, fStart).replace(/\s*$/, '') + newHtml.slice(fEnd + FOOTER_MARKER_END.length);
     }
     // Drop legacy per-template site-footer blocks so the canonical one is the
     // single source of truth.
     newHtml = newHtml.replace(/[ \t]*<footer class="site-footer">[\s\S]*?<\/footer>[ \t]*(?:\r?\n)?/g, '');
-    newHtml = newHtml.replace(/<\/body>/i, `${renderGlobalFooter(ar ? 'ar' : 'en')}\n</body>`);
+    newHtml = newHtml.replace(/\s*<\/body>/i, `\n${renderGlobalFooter(ar ? 'ar' : 'en')}\n</body>`);
   }
 
   // Strip every script the global header owns so we don't accumulate copies

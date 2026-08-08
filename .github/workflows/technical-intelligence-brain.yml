@@ -207,6 +207,13 @@ jobs:
           # Phase 200 — refresh the institutional market terminal from the freshly
           # rebuilt regime/tactical/structure/cross-asset/chart artifacts.
           node tools/generate-market-terminal.js --write || echo "[tech-intel] market terminal degraded — continuing"
+          # Bake the canonical header/footer over everything regenerated above.
+          # The page generators emit their own <head> and stop short of the
+          # global footer CSS and font preconnects, so without this pass the
+          # pages this workflow rewrites ship missing those assets until some
+          # other workflow happens to rebake them. Runs after every generator
+          # and before the sitemap so the gate below sees the final markup.
+          node tools/apply-global-header.js || echo "[tech-intel] global header bake degraded — continuing"
           node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded — continuing"
 
       - name: Refresh social distribution (preview-only)
@@ -487,6 +494,7 @@ jobs:
               node tools/generate-entity-research-pages.js --write || echo "[tech-intel] entity research pages regen degraded"
               node tools/generate-ranking-pages.js --write || echo "[tech-intel] ranking pages regen degraded"
               node tools/generate-structure-index.js --write || echo "[tech-intel] structure index regen degraded"
+              node tools/apply-global-header.js || echo "[tech-intel] global header bake regen degraded"
               node tools/generate-seo-sitemaps.js || echo "[tech-intel] sitemap regen degraded"
               node tools/build-social-intelligence.js --write || echo "[tech-intel] social regen degraded"
               node tools/build-distribution-plan.js --write || echo "[tech-intel] distribution regen degraded"
