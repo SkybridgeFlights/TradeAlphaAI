@@ -349,6 +349,16 @@ jobs:
           npm run check:monitoring
           npm run check:watchlist-research
           npm run check:workspace-discovery
+          # Phase 228 — Portfolio intelligence validators. The guide generator
+          # above rewrites /etfs/portfolio-models/, so these have to run in the
+          # gate or a regression in that surface ships unnoticed.
+          npm run check:portfolio-schema
+          npm run check:portfolio-analytics
+          npm run check:portfolio-costs
+          npm run check:portfolio-overlap
+          npm run check:portfolio-provenance
+          npm run check:portfolio-pages
+          npm run check:portfolio-discovery
           npm run check:visual-composition
           npm run check:tactical-context
           npm run check:chart-intelligence
@@ -542,6 +552,13 @@ jobs:
               npm run check:monitoring
               npm run check:watchlist-research
               npm run check:workspace-discovery
+              npm run check:portfolio-schema
+              npm run check:portfolio-analytics
+              npm run check:portfolio-costs
+              npm run check:portfolio-overlap
+              npm run check:portfolio-provenance
+              npm run check:portfolio-pages
+              npm run check:portfolio-discovery
               stage_intended
               git -c core.editor=true rebase --continue || git rebase --abort
             fi

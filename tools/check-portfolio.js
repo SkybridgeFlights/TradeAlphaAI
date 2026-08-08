@@ -11,7 +11,7 @@
 //   --check=costs       TER is never zero; coverage thresholds enforced
 //   --check=overlap     evidence discipline; holdings overlap never invented
 //   --check=provenance  no metric published without a stated basis
-//   --check=pages       public model page: framing, EN/AR parity, no advice
+//   --check=pages       public model page: framing, EN/AR parity, stated counts, no advice
 //   --check=discovery   route registration and retired-route redirect
 //   --self-test         negative tests for every rule above
 //
@@ -322,6 +322,31 @@ function validateProvenance(result) {
 
 const MODEL_ROUTE = 'etfs/portfolio-models/';
 
+// Both spellings of each Arabic numeral: 3-10 take reverse gender agreement, so
+// the heading (بنى, feminine) and the description (نماذج, masculine) legitimately
+// use different words for the same count. Either must resolve to the same number.
+const COUNT_WORDS = {
+  six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  'ست': 6, 'ستة': 6, 'سبع': 7, 'سبعة': 7, 'ثماني': 8,
+  'ثمانية': 8, 'تسع': 9, 'تسعة': 9, 'عشر': 10, 'عشرة': 10,
+};
+
+// A stated count that has drifted from the rendered set is the failure this page
+// is most prone to: a model gets added to the generator and the prose keeps the
+// old number. Returns [label, statedCount] for every claim found in the page.
+function statedCounts(html, ar) {
+  const patterns = ar
+    ? [['heading', /<h2>(\S+) بنى توضيحية<\/h2>/], ['description', /content="(\S+) نماذج توزيع تعليمية/]]
+    : [['heading', /<h2>([A-Za-z]+) illustrative structures<\/h2>/], ['description', /content="([A-Za-z]+) illustrative educational allocation models/]];
+  const found = [];
+  for (const [label, re] of patterns) {
+    const m = html.match(re);
+    if (!m) { found.push([label, null]); continue; }
+    found.push([label, COUNT_WORDS[m[1].toLowerCase()] ?? `unrecognised "${m[1]}"`]);
+  }
+  return found;
+}
+
 function validatePages() {
   const failures = [];
   for (const ar of [false, true]) {
@@ -359,6 +384,10 @@ function validatePages() {
     if (/\b(undefined|NaN|\[object Object\])\b/.test(main)) failures.push(`${rel}: leaks undefined/NaN`);
     const models = (main.match(/id="model-/g) || []).length;
     if (models < 6) failures.push(`${rel}: only ${models} models rendered`);
+    for (const [label, stated] of statedCounts(html, ar)) {
+      if (stated === null) failures.push(`${rel}: ${label} states no model count`);
+      else if (stated !== models) failures.push(`${rel}: ${label} claims ${stated} models but ${models} rendered`);
+    }
   }
 
   // EN/AR structural parity.
@@ -545,6 +574,14 @@ function selfTest() {
     ['advice negated is allowed', () => (findAssertedAdvice('There is no best portfolio on this page.') ? ['caught'] : []), false],
     ['advice rebalance-now caught', () => (findAssertedAdvice('You should rebalance now to fix this.') ? ['caught'] : []), true],
     ['advice disclaimer allowed', () => (findAssertedAdvice('This is not a recommended action and never an instruction.') ? ['caught'] : []), false],
+
+    // Stated-count drift, in both languages. Arabic is checked in both gender
+    // forms because the heading and the description legitimately differ.
+    ['count EN heading resolves', () => (statedCounts('<h2>Eight illustrative structures</h2>', false)[0][1] === 8 ? [] : ['bad']), false],
+    ['count EN drift is caught', () => (statedCounts('<h2>Six illustrative structures</h2>', false)[0][1] === 8 ? [] : ['drift']), true],
+    ['count AR feminine heading resolves', () => (statedCounts('<h2>ثماني بنى توضيحية</h2>', true)[0][1] === 8 ? [] : ['bad']), false],
+    ['count AR masculine description resolves', () => (statedCounts('content="ثمانية نماذج توزيع تعليمية', true)[1][1] === 8 ? [] : ['bad']), false],
+    ['count absent claim is caught', () => (statedCounts('<h2>Models</h2>', false)[0][1] === null ? ['missing'] : []), true],
   ];
 
   let ok = 0;

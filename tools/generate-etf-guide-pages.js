@@ -117,22 +117,30 @@ const MODELS = [
 // Categorical slots from css/etf-center.css, assigned in fixed order.
 const SLOT_COLORS = ['var(--etf-cat-1)', 'var(--etf-cat-2)', 'var(--etf-cat-3)', 'var(--etf-cat-4)', 'var(--etf-cat-5)'];
 
-function modelCard(ar, model, data) {
-  const t = tr(ar);
-  const holdings = model.holdings
-    .map(([slug, weight]) => ({ entry: BY_SLUG.get(slug), weight, slug }))
-    .filter((h) => h.entry);
-  if (!holdings.length) return '';
+const modelHoldings = (model) => model.holdings
+  .map(([slug, weight]) => ({ entry: BY_SLUG.get(slug), weight, slug }))
+  .filter((h) => h.entry);
 
-  // Blended cost, computed only when every constituent publishes a TER.
+// Blended cost, computed only when every constituent publishes a TER. Returns
+// complete:false when any one is awaiting data, because a cost blended over a
+// subset of the allocation would understate it while looking authoritative.
+function blendedCost(holdings, data) {
   let blended = 0;
-  let complete = true;
   for (const holding of holdings) {
     const facts = data.facts.get(holding.slug);
     const ter = facts && P.hasValue(facts.fields.ter_pct) ? facts.fields.ter_pct.value : null;
-    if (ter === null) { complete = false; break; }
+    if (ter === null) return { blended: 0, complete: false };
     blended += ter * (holding.weight / 100);
   }
+  return { blended, complete: true };
+}
+
+function modelCard(ar, model, data) {
+  const t = tr(ar);
+  const holdings = modelHoldings(model);
+  if (!holdings.length) return '';
+
+  const { blended, complete } = blendedCost(holdings, data);
 
   const segments = holdings.map((h, i) => `<span class="etf-alloc-seg" style="inline-size:${h.weight}%;background:${SLOT_COLORS[i % SLOT_COLORS.length]}" title="${esc(h.entry.ticker)} ${h.weight}%"></span>`).join('');
   const legend = holdings.map((h, i) => `<span class="etf-legend-item"><span class="etf-legend-swatch" style="background:${SLOT_COLORS[i % SLOT_COLORS.length]}"></span><a href="${esc(detailHref(ar, h.slug))}">${esc(h.entry.ticker)}</a> <span class="etf-legend-value">${h.weight}%</span></span>`).join('');
@@ -192,9 +200,28 @@ function notYourPortfolioSection(ar) {
       </section>`;
 }
 
+// Written out rather than rendered as a digit, because it reads as prose. Arabic
+// numerals 3-10 take reverse gender agreement, so the same count needs two forms:
+// `fem` attaches to a feminine plural (بنى), `masc` to a masculine one (نماذج).
+// Covers the plausible range only; an 11th model falls back to a digit, which
+// check:portfolio-pages rejects, so the omission surfaces rather than ships.
+const COUNT_WORDS = {
+  6: { en: 'Six', fem: 'ست', masc: 'ستة' },
+  7: { en: 'Seven', fem: 'سبع', masc: 'سبعة' },
+  8: { en: 'Eight', fem: 'ثماني', masc: 'ثمانية' },
+  9: { en: 'Nine', fem: 'تسع', masc: 'تسعة' },
+  10: { en: 'Ten', fem: 'عشر', masc: 'عشرة' },
+};
+const countEn = (n) => (COUNT_WORDS[n] ? COUNT_WORDS[n].en : String(n));
+const countAr = (n, gender) => (COUNT_WORDS[n] ? COUNT_WORDS[n][gender] : String(n));
+
 function portfoliosBody(ar, data) {
   const t = tr(ar);
-  const cards = MODELS.map((model) => modelCard(ar, model, data)).filter(Boolean).join('\n');
+  const rendered = MODELS.map((model) => ({ model, holdings: modelHoldings(model) }))
+    .filter((m) => m.holdings.length);
+  const cards = rendered.map(({ model }) => modelCard(ar, model, data)).filter(Boolean).join('\n');
+  // How many models actually printed a cost figure decides which note is true.
+  const withCost = rendered.filter((m) => blendedCost(m.holdings, data).complete).length;
 
   return `      <section class="market-section" id="etf-portfolios-intro">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Educational models', 'نماذج تعليمية'))}</span><h2>${esc(t('How exposures combine', 'كيف تتجمع أنواع التعرض'))}</h2></div>
@@ -212,18 +239,23 @@ function portfoliosBody(ar, data) {
 ${assumptionsSection(ar)}
 ${notYourPortfolioSection(ar)}
       <section class="market-section" id="etf-portfolios-models">
-        <div class="market-section-head"><span class="eyebrow">${esc(t('Models', 'النماذج'))}</span><h2>${esc(t('Six illustrative structures', 'ست بنى توضيحية'))}</h2></div>
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Models', 'النماذج'))}</span><h2>${esc(t(`${countEn(rendered.length)} illustrative structures`, `${countAr(rendered.length, 'fem')} بنى توضيحية`))}</h2></div>
 ${cards}
       </section>
       <section class="market-section" id="etf-portfolios-note">
         <div class="market-panel">
-        <p class="etf-pending-note">${esc(t(
-    'Blended annual cost is not shown for these models: it requires a verified expense ratio for every constituent, and no free source publishes one today. Each model still shows exactly what it holds and in what proportion.',
-    'لا تظهر التكلفة السنوية المجمّعة لهذه النماذج: فهي تتطلب نسبة مصاريف موثّقة لكل مكوّن، ولا يوفرها أي مصدر مجاني اليوم. ويظل كل نموذج يعرض بدقة ما يحتويه وبأي نسبة.',
-  ))}</p>
+        <p class="etf-pending-note">${esc(withCost === 0
+    ? t(
+      'Blended annual cost is not shown for any model on this page: it requires a verified expense ratio for every constituent, and none of these models has a complete set today. Each model still shows exactly what it holds and in what proportion.',
+      'لا تظهر التكلفة السنوية المجمّعة لأي نموذج في هذه الصفحة: فهي تتطلب نسبة مصاريف موثّقة لكل مكوّن، ولا يكتمل ذلك في أي من هذه النماذج اليوم. ويظل كل نموذج يعرض بدقة ما يحتويه وبأي نسبة.',
+    )
+    : t(
+      'Blended annual cost is shown only for models whose every constituent publishes a verified expense ratio. Where it is absent, at least one constituent is still awaiting data, and blending over the rest would understate the figure. Each model still shows exactly what it holds and in what proportion.',
+      'تظهر التكلفة السنوية المجمّعة فقط للنماذج التي تتوفر لكل مكوّناتها نسبة مصاريف موثّقة. وحيثما غابت، فذلك لأن أحد المكوّنات على الأقل ما زال ينتظر البيانات، وحساب المتوسط على البقية وحدها سيُظهر التكلفة أقل من حقيقتها. ويظل كل نموذج يعرض بدقة ما يحتويه وبأي نسبة.',
+    ))}</p>
         <p class="market-copy">${esc(t(
-    'Blended cost is the only figure computed for these models. Combined historical return is deliberately not shown: constituents have different observation windows and trading currencies, so a blended back-test would be an artefact of those mismatches rather than a measurement.',
-    'التكلفة المجمّعة هي الرقم الوحيد المحتسب لهذه النماذج. أما العائد التاريخي المجمّع فلا يُعرض عمدا: إذ تختلف نوافذ الرصد وعملات التداول بين المكوّنات، ما يجعل أي اختبار رجعي مجمّع نتاجا لهذا التباين لا قياسا حقيقيا.',
+    'Combined historical return is deliberately not shown for any model: constituents have different observation windows and trading currencies, so a blended back-test would be an artefact of those mismatches rather than a measurement.',
+    'ولا يُعرض العائد التاريخي المجمّع عمدا لأي نموذج: إذ تختلف نوافذ الرصد وعملات التداول بين المكوّنات، ما يجعل أي اختبار رجعي مجمّع نتاجا لهذا التباين لا قياسا حقيقيا.',
   ))}</p></div>
       </section>`;
 }
@@ -321,8 +353,8 @@ function buildPages() {
         slugPath: 'etfs/portfolio-models/',
         titleEn: 'Educational Portfolio Models',
         titleAr: 'نماذج المحافظ التعليمية',
-        descEn: 'Six illustrative educational allocation models built from covered ETFs, each with the idea it demonstrates, what it gives up, and its blended annual cost.',
-        descAr: 'ستة نماذج توزيع تعليمية توضيحية مبنية من الصناديق المغطاة، مع الفكرة التي يوضّحها كل نموذج وما يتنازل عنه وتكلفته السنوية المجمّعة.',
+        descEn: `${countEn(MODELS.length)} illustrative educational allocation models built from covered ETFs, each with the idea it demonstrates, what it gives up, and the constituents behind it.`,
+        descAr: `${countAr(MODELS.length, 'masc')} نماذج توزيع تعليمية توضيحية مبنية من الصناديق المغطاة، مع الفكرة التي يوضّحها كل نموذج وما يتنازل عنه والمكوّنات التي يقوم عليها.`,
         eyebrowEn: 'Allocation models', eyebrowAr: 'نماذج التوزيع',
         trail: [[ar ? 'نماذج المحافظ' : 'Portfolio models', null]],
         body: portfoliosBody(ar, data),
