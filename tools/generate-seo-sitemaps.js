@@ -50,7 +50,7 @@ const etfCenterDirs = (prefix) => {
   })();
   return [
     "etfs/", "etfs/finder/", "etfs/categories/", "etfs/rankings/",
-    "etfs/compare/", "etfs/portfolios/", "etfs/learn/", "etfs/methodology/", "etfs/data-audit/",
+    "etfs/compare/", "etfs/portfolio-models/", "etfs/learn/", "etfs/methodology/", "etfs/data-audit/",
     ...categories,
     ...rankings,
   ].map((rel) => `${prefix}${rel}`).filter((rel) => existsDir(rel));

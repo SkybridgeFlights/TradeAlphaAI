@@ -184,7 +184,7 @@ function homeBody(ar, data) {
     ['/etfs/finder/', t('ETF Finder', 'باحث الصناديق'), t('Filter the full universe by cost, region, structure, risk and score.', 'رشّح العالم الكامل حسب التكلفة والمنطقة والبنية والمخاطر والدرجة.')],
     ['/etfs/rankings/', t('Rankings', 'الترتيبات'), t('Lowest cost, most traded, and the strongest scores in each category.', 'الأقل تكلفة والأكثر تداولا وأقوى الدرجات في كل فئة.')],
     ['/etfs/compare/', t('Compare', 'المقارنة'), t('Put two to four funds side by side across every measured dimension.', 'ضع صندوقين إلى أربعة جنبا إلى جنب عبر كل بعد مقاس.')],
-    ['/etfs/portfolios/', t('Allocation models', 'نماذج التوزيع'), t('Illustrative educational portfolios built from covered funds.', 'محافظ تعليمية توضيحية مبنية من الصناديق المغطاة.')],
+    ['/etfs/portfolio-models/', t('Allocation models', 'نماذج التوزيع'), t('Illustrative educational portfolios built from covered funds.', 'محافظ تعليمية توضيحية مبنية من الصناديق المغطاة.')],
     ['/etfs/learn/', t('Learn', 'تعلّم'), t('How ETFs are built, what they cost, and how to read the numbers.', 'كيف تُبنى صناديق المؤشرات وكم تكلّف وكيف تُقرأ أرقامها.')],
     ['/etfs/methodology/', t('Methodology', 'المنهجية'), t('Every formula behind the TradeAlpha Score, published in full.', 'كل معادلة وراء مؤشر TradeAlpha، منشورة بالكامل.')],
   ].map(([href, title, desc]) => `          <a class="market-card etf-card-link" href="${esc(ar ? `/ar${href}` : href)}"><h3>${esc(title)}</h3><p class="market-copy">${esc(desc)}</p></a>`).join('\n');

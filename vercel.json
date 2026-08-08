@@ -31,15 +31,36 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, OPTIONS"
+        }
       ]
     },
     {
       "source": "/js/clerk-config.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/etfs/portfolios/",
+      "destination": "/etfs/portfolio-models/",
+      "permanent": true
+    },
+    {
+      "source": "/ar/etfs/portfolios/",
+      "destination": "/ar/etfs/portfolio-models/",
+      "permanent": true
     }
   ]
 }

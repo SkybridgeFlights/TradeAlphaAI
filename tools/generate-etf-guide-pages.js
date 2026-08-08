@@ -94,6 +94,24 @@ const MODELS = [
     tradeoffAr: 'تضيّق مرشحات التوزيعات نطاق الفرص، وقد تخضع التوزيعات للضريبة عند استلامها تبعا لمكان إقامة المستثمر.',
     holdings: [['schd', 60], ['lqd', 25], ['vig', 15]],
   },
+  {
+    slug: 'growth-tilt',
+    en: 'Growth tilt', ar: 'ميل نحو النمو',
+    ideaEn: 'A broad core deliberately tilted toward growth-classified equity. Illustrates what a factor tilt does to a portfolio: it concentrates the bet on one style rather than adding breadth.',
+    ideaAr: 'نواة واسعة مع ميل متعمد نحو الأسهم المصنفة كأسهم نمو. ويوضح هذا ما يفعله الميل العاملي بالمحفظة: فهو يركّز الاعتماد على نمط واحد بدلا من إضافة اتساع.',
+    tradeoffEn: 'Growth-classified funds in this universe have shown higher volatility and deeper drawdowns than the broad market. A tilt raises both, and it can underperform the very index it is built from for long stretches.',
+    tradeoffAr: 'أظهرت صناديق النمو في هذا العالم تذبذبا أعلى وتراجعات أعمق من السوق الواسع. والميل يرفع الاثنين، وقد يتخلف عن المؤشر نفسه الذي بُني منه لفترات طويلة.',
+    holdings: [['vwce', 70], ['vug', 20], ['qqq', 10]],
+  },
+  {
+    slug: 'defensive',
+    en: 'Defensive', ar: 'دفاعي',
+    ideaEn: 'A structure weighted toward sectors and instruments whose measured drawdowns have been shallower than the broad market. Illustrates trading expected participation for a smoother observed path.',
+    ideaAr: 'بنية مرجّحة نحو قطاعات وأدوات كانت تراجعاتها المقاسة أقل عمقا من السوق الواسع. ويوضح هذا مقايضة المشاركة المتوقعة بمسار مرصود أكثر سلاسة.',
+    tradeoffEn: 'Defensive positioning has historically lagged in rising markets, and "defensive" describes past behaviour rather than a property that must persist. Bond holdings carry their own interest-rate risk.',
+    tradeoffAr: 'تخلّف التمركز الدفاعي تاريخيا في الأسواق الصاعدة، و"الدفاعي" يصف سلوكا سابقا لا خاصية يجب أن تستمر. كما تحمل السندات مخاطر أسعار الفائدة الخاصة بها.',
+    holdings: [['vwce', 45], ['bnd', 30], ['xlv', 15], ['gld', 10]],
+  },
 ];
 
 // Categorical slots from css/etf-center.css, assigned in fixed order.
@@ -125,10 +143,53 @@ function modelCard(ar, model, data) {
           <div class="etf-legend">${legend}</div>
           <p class="market-copy" style="margin-block-start:14px"><strong>${esc(t('What it illustrates', 'ما يوضّحه'))}:</strong> ${esc(ar ? model.ideaAr : model.ideaEn)}</p>
           <p class="market-copy"><strong>${esc(t('What it gives up', 'ما يتنازل عنه'))}:</strong> ${esc(ar ? model.tradeoffAr : model.tradeoffEn)}</p>
+          <p class="etf-source">${esc(t('Constituents', 'المكوّنات'))}: ${holdings.map((h) => `<a href="${esc(detailHref(ar, h.slug))}">${esc(h.entry.ticker)}</a>`).join(' · ')} — ${esc(t('each with its own verified and awaiting-data status on its research page.', 'ولكل منها حالته الموثّقة أو المنتظِرة للبيانات في صفحة بحثه.'))}</p>
           ${complete
     ? `<div class="etf-grid narrow" style="margin-block-start:14px">${stat(t('Blended annual cost', 'التكلفة السنوية المجمّعة'), `${blended.toFixed(3)}%`, t('weighted by the allocation above', 'مرجّحة حسب التوزيع أعلاه'))}</div>`
     : ''}
         </article>`;
+}
+
+// Assumptions that apply to every model on the page. Stated once, prominently,
+// because a weighted allocation implies a set of premises and a reader cannot
+// evaluate the illustration without seeing them.
+const MODEL_ASSUMPTIONS = [
+  ['Weights are round numbers chosen for legibility, not optimisation output. Nothing here was fitted to historical returns.',
+   'الأوزان أرقام صحيحة اختيرت للوضوح، وليست ناتج تحسين. ولم يُلائَم أي شيء هنا مع العوائد التاريخية.'],
+  ['Every constituent is a fund the Center already covers, so each one links to its own measured evidence rather than being asserted here.',
+   'كل مكوّن هو صندوق يغطيه المركز أصلا، لذا يرتبط كل منها بأدلته المقاسة بدلا من تأكيده هنا.'],
+  ['No rebalancing schedule, contribution pattern, tax treatment or trading cost is modelled. Those change outcomes materially and depend on the individual.',
+   'لا يُحتسب أي جدول لإعادة الموازنة أو نمط للمساهمات أو معاملة ضريبية أو تكلفة تداول. وهذه تغيّر النتائج جوهريا وتعتمد على الفرد.'],
+  ['Combined historical return is deliberately not shown: constituents have different observation windows and trading currencies, so a blended back-test would measure that mismatch rather than the structure.',
+   'لا يُعرض العائد التاريخي المجمّع عمدا: إذ تختلف نوافذ الرصد وعملات التداول بين المكوّنات، ما يجعل الاختبار الرجعي المجمّع يقيس هذا التباين لا البنية.'],
+];
+
+function assumptionsSection(ar) {
+  const t = tr(ar);
+  const items = MODEL_ASSUMPTIONS.map(([en, arText]) => `<li>${esc(ar ? arText : en)}</li>`).join('');
+  return `      <section class="market-section" id="etf-model-assumptions">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Assumptions', 'الافتراضات'))}</span><h2>${esc(t('What these models assume', 'ما تفترضه هذه النماذج'))}</h2></div>
+        <div class="market-panel"><ul class="market-copy">${items}</ul></div>
+      </section>`;
+}
+
+// The models are illustrations on a public page. Nothing here reads a signed-in
+// account, and choosing to hold something is an act only the holder can take.
+function notYourPortfolioSection(ar) {
+  const t = tr(ar);
+  return `      <section class="market-section" id="etf-model-boundary">
+        <div class="market-section-head"><span class="eyebrow">${esc(t('Scope', 'النطاق'))}</span><h2>${esc(t('These are illustrations, not a portfolio', 'هذه أمثلة توضيحية وليست محفظة'))}</h2></div>
+        <div class="market-panel">
+          <p class="market-copy">${esc(t(
+    'Nothing on this page is connected to any account. Opening it creates nothing, saves nothing and changes nothing. If you keep a portfolio on TradeAlphaAI, it contains only what you entered yourself — a model shown here is never copied into it, silently or otherwise.',
+    'لا يرتبط أي شيء في هذه الصفحة بأي حساب. ففتحها لا يُنشئ شيئا ولا يحفظ شيئا ولا يغيّر شيئا. وإن كنت تحتفظ بمحفظة في TradeAlphaAI فهي تتضمن ما أدخلته بنفسك فقط — ولا يُنسخ أي نموذج معروض هنا إليها، لا ضمنا ولا غير ذلك.',
+  ))}</p>
+          <p class="market-copy">${esc(t(
+    'There is no best portfolio on this page and no ranking between the models. Each shows a different structural trade-off; which trade-offs matter depends on circumstances this site cannot see.',
+    'لا توجد محفظة أفضل في هذه الصفحة ولا ترتيب بين النماذج. فكل نموذج يُظهر مقايضة هيكلية مختلفة، وأي المقايضات تهم يعتمد على ظروف لا يستطيع هذا الموقع الاطلاع عليها.',
+  ))}</p>
+        </div>
+      </section>`;
 }
 
 function portfoliosBody(ar, data) {
@@ -148,6 +209,8 @@ function portfoliosBody(ar, data) {
   ))}</div>
         </div>
       </section>
+${assumptionsSection(ar)}
+${notYourPortfolioSection(ar)}
       <section class="market-section" id="etf-portfolios-models">
         <div class="market-section-head"><span class="eyebrow">${esc(t('Models', 'النماذج'))}</span><h2>${esc(t('Six illustrative structures', 'ست بنى توضيحية'))}</h2></div>
 ${cards}
@@ -252,16 +315,16 @@ function buildPages() {
   const pages = [];
   for (const ar of [false, true]) {
     pages.push({
-      out: path.join(ROOT, ar ? 'ar/etfs/portfolios/index.html' : 'etfs/portfolios/index.html'),
+      out: path.join(ROOT, ar ? 'ar/etfs/portfolio-models/index.html' : 'etfs/portfolio-models/index.html'),
       html: shell.page({
         ar,
-        slugPath: 'etfs/portfolios/',
-        titleEn: 'ETF Allocation Models',
-        titleAr: 'نماذج توزيع صناديق المؤشرات',
+        slugPath: 'etfs/portfolio-models/',
+        titleEn: 'Educational Portfolio Models',
+        titleAr: 'نماذج المحافظ التعليمية',
         descEn: 'Six illustrative educational allocation models built from covered ETFs, each with the idea it demonstrates, what it gives up, and its blended annual cost.',
         descAr: 'ستة نماذج توزيع تعليمية توضيحية مبنية من الصناديق المغطاة، مع الفكرة التي يوضّحها كل نموذج وما يتنازل عنه وتكلفته السنوية المجمّعة.',
         eyebrowEn: 'Allocation models', eyebrowAr: 'نماذج التوزيع',
-        trail: [[ar ? 'نماذج التوزيع' : 'Allocation models', null]],
+        trail: [[ar ? 'نماذج المحافظ' : 'Portfolio models', null]],
         body: portfoliosBody(ar, data),
       }),
     });
