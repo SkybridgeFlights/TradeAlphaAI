@@ -13,11 +13,15 @@
 //   --check=provenance  no metric published without a stated basis
 //   --check=pages       public model page: framing, EN/AR parity, stated counts, no advice
 //   --check=discovery   route registration and retired-route redirect
+//   --check=api         auth-before-query, no-store, 405, parameterised SQL
+//   --check=ownership   every child row reached through the account gate
+//   --check=snapshots   history stored as read, never recomputed
 //   --self-test         negative tests for every rule above
 //
-// The api / ownership / snapshots subcommands are deliberately absent until the
-// routes exist: a validator that passes because it has nothing to inspect is
-// worse than no validator, since it reports green for an untested surface.
+// api / ownership / snapshots arrived with the CP2 routes. They were withheld
+// until then on the principle that a validator which passes because it has
+// nothing to inspect is worse than no validator: it reports green for a surface
+// nobody has tested. Each one fails loudly if its route files go missing.
 
 const fs = require('fs');
 const path = require('path');
@@ -453,6 +457,198 @@ function loadFixture() {
   return { analytics, overlap, artifacts };
 }
 
+// ---------------------------------------------------------------------------
+// api / ownership / snapshots — Phase 228 CP2
+//
+// These are static checks over the route sources. They cannot prove runtime
+// behaviour, but the properties they enforce are structural: a route either
+// verifies the session before it queries or it does not, and a child query
+// either goes through the ownership gate or it does not. Both are decidable by
+// reading the file, and both are the kind of thing a later edit silently drops.
+// ---------------------------------------------------------------------------
+
+const PORTFOLIO_ROUTES = [
+  'api/account/portfolios.js',
+  'api/account/portfolios/positions.js',
+  'api/account/portfolios/targets.js',
+  'api/account/portfolios/transactions.js',
+  'api/account/portfolios/analytics.js',
+  'api/account/portfolios/snapshots.js',
+];
+
+const PERSISTENCE = 'db/portfolios.js';
+const CHILD_TABLES = [
+  'portfolio_positions', 'portfolio_targets', 'portfolio_transactions', 'portfolio_snapshots',
+];
+
+const readRoute = (rel) => {
+  const file = path.join(ROOT, rel);
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+};
+
+// Sources are loaded once and passed in, so the self-test can hand these
+// validators a mutated copy and prove each rule actually fires. A validator
+// that only ever sees a passing tree is an assertion nobody has tested.
+function loadSources() {
+  const out = {};
+  for (const rel of [...PORTFOLIO_ROUTES, PERSISTENCE]) out[rel] = readRoute(rel);
+  return out;
+}
+
+function loadVercelFunctions() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')).functions || {};
+  } catch { return {}; }
+}
+
+function validateApi(sources = loadSources(), functions = loadVercelFunctions()) {
+  const failures = [];
+
+  for (const rel of PORTFOLIO_ROUTES) {
+    const src = sources[rel];
+    if (src === null) { failures.push(`${rel}: missing`); continue; }
+
+    // Authentication must happen before the first query, not merely somewhere
+    // in the file. Comparing offsets catches a route that queries first and
+    // verifies afterwards, which would read another account's rows and only
+    // then reject the caller.
+    const auth = src.indexOf('requireAccount(req)');
+    if (auth < 0) { failures.push(`${rel}: does not call requireAccount`); continue; }
+    const firstSql = src.search(/\bsql`/);
+    if (firstSql >= 0 && firstSql < auth) failures.push(`${rel}: queries before requireAccount`);
+
+    if (!/getSql\(\)/.test(src)) failures.push(`${rel}: does not obtain a sql client`);
+    if (!/ensureAccountSchema\(sql\)/.test(src)) failures.push(`${rel}: missing ensureAccountSchema`);
+    if (!/ensureAccount\(sql, accountId\)/.test(src)) failures.push(`${rel}: missing ensureAccount`);
+
+    // Personal data must never be cached by a shared proxy.
+    if (!/Cache-Control['"]?,\s*['"]no-store/.test(src)) failures.push(`${rel}: does not set Cache-Control: no-store`);
+
+    if (!/statusCode = 405/.test(src)) failures.push(`${rel}: no 405 fallback for unhandled methods`);
+    if (!/sendError\(res, err\)/.test(src)) failures.push(`${rel}: does not route errors through sendError`);
+
+    // A template literal passed to sql() is a concatenated query; the tagged
+    // form sql`...` is the parameterised one. Only the latter is acceptable.
+    if (/\bsql\(\s*`/.test(src)) failures.push(`${rel}: builds SQL by interpolation instead of the tagged template`);
+
+    const advice = findAssertedAdvice(src.replace(/^\s*\/\/.*$/gm, ' '));
+    if (advice) failures.push(`${rel}: asserted advice language "${advice.match}"`);
+
+    if (!functions[rel]) failures.push(`${rel}: not registered in vercel.json functions`);
+  }
+
+  if (!sources[PERSISTENCE]) failures.push(`${PERSISTENCE}: missing`);
+  return failures;
+}
+
+function validateOwnership(sources = loadSources()) {
+  const failures = [];
+  const persistence = sources[PERSISTENCE];
+  if (!persistence) return [`${PERSISTENCE}: missing`];
+
+  // The gate itself must scope by account in SQL. Without this the rest of the
+  // check is meaningless, because every other query trusts the id it returns.
+  const gate = persistence.match(/async function findOwnedPortfolio[\s\S]*?\n}/);
+  if (!gate) failures.push(`${PERSISTENCE}: findOwnedPortfolio not found`);
+  else if (!/account_id = \$\{accountId\}/.test(gate[0])) {
+    failures.push(`${PERSISTENCE}: findOwnedPortfolio does not filter by account_id`);
+  }
+
+  // Every child query is scoped by a portfolio id that came from the gate. The
+  // schema deliberately gives child tables no account_id column, so a child
+  // query mentioning one is reaching for something that does not exist — a sign
+  // the ownership model has drifted.
+  for (const table of CHILD_TABLES) {
+    const statements = persistence.match(new RegExp(`(FROM|INTO|UPDATE)\\s+${table}[\\s\\S]{0,400}?\``, 'g')) || [];
+    if (!statements.length) continue;
+    for (const stmt of statements) {
+      if (/account_id/.test(stmt)) {
+        failures.push(`${PERSISTENCE}: query on ${table} references account_id, which that table does not have`);
+      }
+      if (!/portfolio_id\s*=\s*\$\{/.test(stmt) && !/portfolio_id,/.test(stmt)) {
+        failures.push(`${PERSISTENCE}: query on ${table} is not scoped by portfolio_id`);
+      }
+    }
+  }
+
+  // Portfolio-level reads and writes must always carry the owner.
+  const portfolioStatements = persistence.match(/(FROM|INTO|UPDATE)\s+portfolios\b[\s\S]{0,400}?`/g) || [];
+  for (const stmt of portfolioStatements) {
+    if (!/account_id/.test(stmt)) failures.push(`${PERSISTENCE}: a portfolios query is not scoped by account_id`);
+  }
+
+  // Routes must not let a caller name a row by primary key. Accepting a
+  // portfolio_id from the client would bypass the slug lookup that carries the
+  // ownership check.
+  for (const rel of PORTFOLIO_ROUTES) {
+    const src = sources[rel];
+    if (!src) continue;
+    if (/searchParams\.get\(['"]portfolio_id['"]\)/.test(src) || /body\.portfolio_id/.test(src)) {
+      failures.push(`${rel}: accepts a client-supplied portfolio_id, bypassing the ownership lookup`);
+    }
+    // Any route touching a child table must resolve the parent first.
+    const touchesChild = CHILD_TABLES.some((t) => src.includes(t));
+    const usesGate = /requireOwnedPortfolio|findOwnedPortfolio/.test(src);
+    if (touchesChild && !usesGate) failures.push(`${rel}: reads a child table without resolving ownership`);
+  }
+
+  // A portfolio owned by someone else must be indistinguishable from one that
+  // does not exist. A 403 here would confirm the slug is taken.
+  if (/status:\s*403|httpError\(403, ['"]portfolio/.test(persistence)) {
+    failures.push(`${PERSISTENCE}: returns 403 for a portfolio, which discloses that it exists`);
+  }
+  if (!/httpError\(404, 'portfolio not found'\)/.test(persistence)) {
+    failures.push(`${PERSISTENCE}: requireOwnedPortfolio does not 404 on a foreign or missing portfolio`);
+  }
+  return failures;
+}
+
+function validateSnapshots(sources = loadSources()) {
+  const failures = [];
+  const persistence = sources[PERSISTENCE];
+  const route = sources['api/account/portfolios/snapshots.js'];
+  if (!persistence) return [`${PERSISTENCE}: missing`];
+  if (!route) return ['api/account/portfolios/snapshots.js: missing'];
+
+  const save = persistence.match(/async function saveSnapshot[\s\S]*?\n}/);
+  if (!save) failures.push(`${PERSISTENCE}: saveSnapshot not found`);
+  else {
+    // One row per portfolio per day. Without the upsert the table records how
+    // often somebody pressed save rather than how the portfolio changed.
+    if (!/ON CONFLICT \(portfolio_id, snapshot_date\) DO UPDATE/.test(save[0])) {
+      failures.push(`${PERSISTENCE}: saveSnapshot does not upsert on (portfolio_id, snapshot_date)`);
+    }
+    if (!/requireOwnedPortfolio/.test(save[0])) {
+      failures.push(`${PERSISTENCE}: saveSnapshot does not resolve ownership`);
+    }
+  }
+
+  // Reading history must never recompute it. A stored row is what the platform
+  // could see that day; regenerating it from today's data would present a
+  // restatement as history.
+  const getBlock = route.match(/req\.method === 'GET'[\s\S]*?\n    }/);
+  if (getBlock && /analysePortfolio\(/.test(getBlock[0])) {
+    failures.push('snapshots route recomputes analytics when reading history');
+  }
+  const list = persistence.match(/async function listSnapshots[\s\S]*?\n}/);
+  if (list && /analysePortfolio\(/.test(list[0])) {
+    failures.push(`${PERSISTENCE}: listSnapshots recomputes instead of returning stored rows`);
+  }
+
+  // A withheld figure must be stored as NULL, never coerced to zero: a later
+  // reader cannot tell a real zero from a missing one.
+  if (/total_value:\s*(0|['"]0['"])\b/.test(route)) {
+    failures.push('snapshots route stores 0 for a withheld total');
+  }
+  if (!/\.available/.test(route)) {
+    failures.push('snapshots route does not check availability before storing a figure');
+  }
+  if (!/analytics_json/.test(persistence)) {
+    failures.push(`${PERSISTENCE}: snapshot does not persist the analytics blob`);
+  }
+  return failures;
+}
+
 const CHECKS = {
   schema: () => ({ name: 'check:portfolio-schema', failures: validateSchema(fs.existsSync(MIGRATION) ? fs.readFileSync(MIGRATION, 'utf8') : null) }),
   analytics: () => ({ name: 'check:portfolio-analytics', failures: validateAnalytics(loadFixture().analytics) }),
@@ -461,6 +657,9 @@ const CHECKS = {
   provenance: () => ({ name: 'check:portfolio-provenance', failures: validateProvenance(loadFixture().analytics) }),
   pages: () => ({ name: 'check:portfolio-pages', failures: validatePages() }),
   discovery: () => ({ name: 'check:portfolio-discovery', failures: validateDiscovery() }),
+  api: () => ({ name: 'check:portfolio-api', failures: validateApi() }),
+  ownership: () => ({ name: 'check:portfolio-ownership', failures: validateOwnership() }),
+  snapshots: () => ({ name: 'check:portfolio-snapshots', failures: validateSnapshots() }),
 };
 
 function failFor(name, failures) {
@@ -476,6 +675,9 @@ function selfTest() {
   const sql = fs.readFileSync(MIGRATION, 'utf8');
   const { analytics, overlap } = loadFixture();
   const clone = (o) => JSON.parse(JSON.stringify(o));
+  const sources = () => loadSources();
+  const ROUTE_A = 'api/account/portfolios.js';
+  const ROUTE_S = 'api/account/portfolios/snapshots.js';
 
   const cases = [
     ['schema clean', () => validateSchema(sql), false],
@@ -582,6 +784,54 @@ function selfTest() {
     ['count AR feminine heading resolves', () => (statedCounts('<h2>ثماني بنى توضيحية</h2>', true)[0][1] === 8 ? [] : ['bad']), false],
     ['count AR masculine description resolves', () => (statedCounts('content="ثمانية نماذج توزيع تعليمية', true)[1][1] === 8 ? [] : ['bad']), false],
     ['count absent claim is caught', () => (statedCounts('<h2>Models</h2>', false)[0][1] === null ? ['missing'] : []), true],
+
+    // CP2 route checks. Each rule is exercised against a mutated copy of the
+    // real sources, so a rule that no longer fires shows up here rather than
+    // passing quietly against a tree that happens to be clean.
+    ['api clean', () => validateApi(), false],
+    ['api route missing', () => validateApi({ ...sources(), [ROUTE_A]: null }), true],
+    ['api queries before auth', () => validateApi({
+      ...sources(),
+      [ROUTE_A]: 'await sql`SELECT 1`;\nconst { accountId } = await requireAccount(req);',
+    }), true],
+    ['api without no-store', () => validateApi({
+      ...sources(), [ROUTE_A]: sources()[ROUTE_A].replace(/no-store/g, 'max-age=60'),
+    }), true],
+    ['api without 405', () => validateApi({
+      ...sources(), [ROUTE_A]: sources()[ROUTE_A].replace(/statusCode = 405/g, 'statusCode = 200'),
+    }), true],
+    ['api interpolated SQL', () => validateApi({
+      ...sources(), [ROUTE_A]: `${sources()[ROUTE_A]}\nawait sql(\`SELECT \${x}\`);`,
+    }), true],
+    ['api unregistered function', () => validateApi(sources(), {}), true],
+
+    ['ownership clean', () => validateOwnership(), false],
+    ['ownership gate unscoped', () => validateOwnership({
+      ...sources(),
+      [PERSISTENCE]: sources()[PERSISTENCE].replace('account_id = ${accountId} AND slug', 'slug'),
+    }), true],
+    ['ownership client-supplied id', () => validateOwnership({
+      ...sources(),
+      [ROUTE_A]: `${sources()[ROUTE_A]}\nconst id = url.searchParams.get('portfolio_id');`,
+    }), true],
+    ['ownership child without gate', () => validateOwnership({
+      ...sources(),
+      [ROUTE_A]: 'portfolio_positions read with no ownership lookup',
+    }), true],
+
+    ['snapshots clean', () => validateSnapshots(), false],
+    ['snapshots without daily upsert', () => validateSnapshots({
+      ...sources(),
+      [PERSISTENCE]: sources()[PERSISTENCE].replace('ON CONFLICT (portfolio_id, snapshot_date) DO UPDATE', 'ON CONFLICT DO NOTHING'),
+    }), true],
+    ['snapshots recompute on read', () => validateSnapshots({
+      ...sources(),
+      [ROUTE_S]: sources()[ROUTE_S].replace("if (req.method === 'GET') {", "if (req.method === 'GET') {\n      analysePortfolio();"),
+    }), true],
+    ['snapshots zero for withheld total', () => validateSnapshots({
+      ...sources(),
+      [ROUTE_S]: sources()[ROUTE_S].replace(/total_value: [^,]+,/, 'total_value: 0,'),
+    }), true],
   ];
 
   let ok = 0;

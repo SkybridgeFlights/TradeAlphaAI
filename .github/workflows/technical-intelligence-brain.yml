@@ -366,6 +366,9 @@ jobs:
           npm run check:portfolio-provenance
           npm run check:portfolio-pages
           npm run check:portfolio-discovery
+          npm run check:portfolio-api
+          npm run check:portfolio-ownership
+          npm run check:portfolio-snapshots
           npm run check:visual-composition
           npm run check:tactical-context
           npm run check:chart-intelligence
@@ -567,6 +570,9 @@ jobs:
               npm run check:portfolio-provenance
               npm run check:portfolio-pages
               npm run check:portfolio-discovery
+              npm run check:portfolio-api
+              npm run check:portfolio-ownership
+              npm run check:portfolio-snapshots
               stage_intended
               git -c core.editor=true rebase --continue || git rebase --abort
             fi
