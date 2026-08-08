@@ -489,9 +489,11 @@ const readRoute = (rel) => {
 // Sources are loaded once and passed in, so the self-test can hand these
 // validators a mutated copy and prove each rule actually fires. A validator
 // that only ever sees a passing tree is an assertion nobody has tested.
+const AUTH = 'db/auth.js';
+
 function loadSources() {
   const out = {};
-  for (const rel of [...PORTFOLIO_ROUTES, PERSISTENCE]) out[rel] = readRoute(rel);
+  for (const rel of [...PORTFOLIO_ROUTES, PERSISTENCE, AUTH]) out[rel] = readRoute(rel);
   return out;
 }
 
@@ -538,6 +540,33 @@ function validateApi(sources = loadSources(), functions = loadVercelFunctions())
   }
 
   if (!sources[PERSISTENCE]) failures.push(`${PERSISTENCE}: missing`);
+
+  // Every route above funnels its errors through one responder, so that is the
+  // single place an internal message could escape. A 4xx message is written for
+  // the caller and passes through; anything else must be generalised, because
+  // driver and constraint text names tables, columns and environment variables.
+  const auth = sources[AUTH];
+  if (!auth) failures.push(`${AUTH}: missing`);
+  else {
+    const responder = auth.match(/function sendError[\s\S]*?\n}/);
+    if (!responder) failures.push(`${AUTH}: sendError not found`);
+    else {
+      const body = responder[0];
+      if (!/'internal_error'/.test(body)) {
+        failures.push(`${AUTH}: sendError has no generic body for unplanned errors`);
+      }
+      // The 4xx passthrough must be conditional. An unconditional err.message
+      // is the leak this rule exists to prevent.
+      const guarded = /status\s*>=\s*400\s*&&\s*status\s*<\s*500/.test(body);
+      if (!guarded) failures.push(`${AUTH}: sendError does not distinguish deliberate 4xx from unplanned errors`);
+      if (guarded && /error:\s*\(?err\s*&&\s*err\.message/.test(body)) {
+        failures.push(`${AUTH}: sendError returns err.message unconditionally`);
+      }
+      if (!/console\.error/.test(body)) {
+        failures.push(`${AUTH}: sendError discards the internal error instead of logging it`);
+      }
+    }
+  }
   return failures;
 }
 
@@ -804,6 +833,14 @@ function selfTest() {
       ...sources(), [ROUTE_A]: `${sources()[ROUTE_A]}\nawait sql(\`SELECT \${x}\`);`,
     }), true],
     ['api unregistered function', () => validateApi(sources(), {}), true],
+    ['api sendError leaking message', () => validateApi({
+      ...sources(),
+      [AUTH]: 'function sendError(res, err) {\n  const body = { error: err && err.message || \'internal_error\' };\n  res.end(JSON.stringify(body));\n}',
+    }), true],
+    ['api sendError without logging', () => validateApi({
+      ...sources(),
+      [AUTH]: sources()[AUTH].replace(/console\.error/g, 'void 0 && noop'),
+    }), true],
 
     ['ownership clean', () => validateOwnership(), false],
     ['ownership gate unscoped', () => validateOwnership({

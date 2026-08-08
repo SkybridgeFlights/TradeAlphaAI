@@ -40,14 +40,32 @@ async function requireAccount(req) {
   return { accountId, claims };
 }
 
-// Standard error responder for API routes — strips internal detail in
-// production to avoid leaking server context.
+// Standard error responder for API routes.
+//
+// A deliberate 4xx carries a message the caller needs in order to correct the
+// request — a missing field, an uncovered symbol, a slug already in use — so
+// those pass through unchanged. Every one of them is written for a client.
+//
+// Anything else is unplanned: a driver fault, a constraint this code did not
+// anticipate, a misconfigured deployment. Those messages are written for an
+// operator reading a log and routinely name tables, columns and environment
+// variables. Returning one to an anonymous caller hands out a partial map of
+// the schema in exchange for nothing, so the response is a fixed string and the
+// real error goes to the server log instead — where it was always more useful.
 function sendError(res, err) {
   const status = (err && err.status) || 500;
-  const body = { error: err && err.message || 'internal_error' };
+  const deliberate = status >= 400 && status < 500;
+  if (!deliberate) {
+    console.error('[api] unhandled error', {
+      status,
+      message: (err && err.message) || String(err),
+      detail: (err && err.detail) || null,
+      stack: (err && err.stack) || null,
+    });
+  }
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(body));
+  res.end(JSON.stringify({ error: deliberate ? (err.message || 'request_error') : 'internal_error' }));
 }
 
 module.exports = { requireAccount, sendError };
