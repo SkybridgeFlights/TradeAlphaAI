@@ -54,6 +54,7 @@ const shardOf = (symbol) => {
   for (let i = 0; i < symbol.length; i += 1) h = ((h << 5) - h + symbol.charCodeAt(i)) | 0;
   return Math.abs(h) % SHARD_COUNT;
 };
+const rotationIndex = (n) => Math.floor(Date.now() / 86400000) % n;
 const shardPath = (i) => path.join(SHARD_DIR, `${String(i).padStart(2, '0')}.json`);
 
 function readShard(i) {
@@ -118,7 +119,17 @@ function selectSymbols(all, existing) {
   }
 
   let pool = all;
-  const rotation = arg('shard');
+
+  // --rotate=N derives today's slice from the UTC day number, so a daily job
+  // needs no state and no cursor: day D always maps to the same slice, a missed
+  // run resumes on schedule, and two runs on one day are idempotent.
+  // --shard=k/n stays available for manual targeting.
+  let rotation = arg('shard');
+  if (!rotation && arg('rotate')) {
+    const n = Number(arg('rotate'));
+    if (!Number.isInteger(n) || n < 1) throw new Error('--rotate must be a positive integer');
+    rotation = `${rotationIndex(n)}/${n}`;
+  }
   if (rotation) {
     const [k, n] = rotation.split('/').map(Number);
     if (!Number.isInteger(k) || !Number.isInteger(n) || n < 1 || k < 0 || k >= n) {
@@ -140,9 +151,14 @@ function selectSymbols(all, existing) {
     skippedFresh = candidates - pool.length;
   }
 
+  // Never-attempted symbols first: those are the ones a holder cannot value at
+  // all, whereas a stale quote still yields a figure. Coverage therefore grows
+  // as fast as the daily budget allows.
+  pool.sort((a, b) => ((existing.has(a) ? 1 : 0) - (existing.has(b) ? 1 : 0)) || a.localeCompare(b));
+
   const max = Number(arg('max') || 0);
   const targets = max > 0 ? pool.slice(0, max) : pool;
-  return { targets, skippedFresh, mode: rotation ? `rotation ${rotation}` : 'staleness' };
+  return { targets, skippedFresh, mode: rotation ? `rotation ${rotation}` : 'staleness', rotation };
 }
 
 // ---------------------------------------------------------------------------
@@ -161,7 +177,7 @@ async function main() {
     for (const [sym, q] of Object.entries(s.quotes || {})) existing.set(sym, q);
   }
 
-  const { targets, skippedFresh, mode } = selectSymbols(all, existing);
+  const { targets, skippedFresh, mode, rotation } = selectSymbols(all, existing);
   console.log(`[price-layer] registry=${all.length} mode=${mode} to_fetch=${targets.length} skipped_still_fresh=${skippedFresh} concurrency=${CONCURRENCY}`);
   if (has('dry-run')) { console.log('[price-layer] dry-run — no fetches, no writes'); return; }
 
@@ -234,6 +250,28 @@ async function main() {
   };
   fs.writeFileSync(MANIFEST, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 
+  // Operational coverage report — published every run so progress toward full
+  // price coverage is visible without reading 64 shards.
+  const report = {
+    generated_at: new Date().toISOString(),
+    shard_processed: rotation || null,
+    recordable: all.length,
+    priced: totalOk,
+    unresolved: totalUnresolved,
+    not_yet_attempted: all.length - totalOk - totalUnresolved,
+    cache_hits_still_fresh: skippedFresh,
+    fetched_this_run: targets.length,
+    shards_written: touched.size,
+    runtime_ms: Date.now() - t0,
+    artifact_bytes: bytes,
+    priced_pct: Math.round((totalOk / all.length) * 1000) / 10,
+    provider: PROVIDER,
+    paid_provider_required: false,
+  };
+  fs.writeFileSync(path.join(OUT_DIR, 'coverage-report.json'), JSON.stringify(report, null, 2) + '\n', 'utf8');
+  console.log('[price-layer] REPORT ' + JSON.stringify(report));
+
+
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
   console.log(`[price-layer] fetched=${targets.length} ok=${ok} unresolved=${unresolved} in ${secs}s`);
   console.log(`[price-layer] priced=${totalOk}/${all.length} shards_written=${touched.size} total_artifact=${Math.round(bytes / 1024)} KB`);
@@ -244,4 +282,4 @@ if (require.main === module) {
   main().catch((e) => { console.error('[price-layer] FAIL:', e.message); process.exit(1); });
 }
 
-module.exports = { shardOf, SHARD_COUNT, fetchQuote, selectSymbols };
+module.exports = { shardOf, SHARD_COUNT, fetchQuote, selectSymbols, rotationIndex };

@@ -1,0 +1,139 @@
+name: Price Rotation
+
+# Phase 229 — daily price coverage rotation for the Recordable Universe.
+#
+# WHY A THIRD WORKFLOW. There are now three, each with exactly the authority it
+# needs and no more:
+#   technical-intelligence-brain.yml  writes, publishes, dispatches Telegram
+#   portfolio-validators.yml          READ-ONLY, no secrets, runs on PRs
+#   this one                          writes ONLY data/prices/**, no secrets
+#
+# It commits, so it holds contents: write — which is precisely why it must not
+# also run on pull_request, and why the validator workflow stays separate and
+# read-only. A write-capable job triggered by untrusted branch content is the
+# thing that arrangement exists to prevent.
+#
+# NO SECRETS. Yahoo's chart endpoint is keyless, so this workflow references no
+# secret at all. Nothing here can leak a credential, and no paid provider is
+# required — the free-tier-first constraint holds.
+#
+# ROTATION. --rotate=7 derives today's slice from the UTC day number, so the job
+# is stateless: day D always maps to the same slice, a missed day resumes on
+# schedule without a cursor to repair, and two runs in one day are idempotent
+# because the freshness filter skips what was just fetched. One seventh of the
+# universe per day means full coverage inside a week, and thereafter each symbol
+# is revisited weekly.
+#
+# BUDGET. --max caps the work regardless of how large the registry grows, so a
+# run cannot become unbounded. At the measured ~66 symbols/second a 1,700-symbol
+# slice is roughly half a minute of compute.
+
+on:
+  # 06:20 UTC — after US markets have settled and staggered away from the
+  # validator workflow at 05:17 so the two never contend.
+  schedule:
+    - cron: '20 6 * * *'
+
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: 'Comma-separated symbols to refresh immediately (priority path for newly held, unpriced holdings). Leave blank for the normal daily rotation.'
+        required: false
+        type: string
+      max:
+        description: 'Maximum symbols to fetch this run'
+        required: false
+        default: '2000'
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: price-rotation
+  cancel-in-progress: false
+
+jobs:
+  rotate:
+    name: Refresh one seventh of the recordable universe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Priority path: an operator (or a future automation) can refresh specific
+      # symbols immediately — a holding someone just added that has no quote yet
+      # — without waiting for its slice to come round.
+      - name: Targeted refresh (priority path)
+        if: inputs.symbols != ''
+        run: node tools/build-price-layer.js --symbols="${{ inputs.symbols }}"
+
+      - name: Daily rotation
+        if: inputs.symbols == ''
+        run: node tools/build-price-layer.js --rotate=7 --max=${{ inputs.max || '2000' }}
+
+      # Validate BEFORE committing: a bad shard must never reach main.
+      - name: Validate price layer
+        run: |
+          npm run check:price-integrity
+          npm run check:price-currency
+          npm run check:price-freshness
+          npm run check:price-coverage
+          npm run check:price-fallback
+          node tools/check-price-layer.js --self-test
+
+      - name: Coverage report
+        run: |
+          echo "### Price coverage" >> "$GITHUB_STEP_SUMMARY"
+          node -e "
+            const r = require('./data/prices/coverage-report.json');
+            const rows = [
+              ['Shard processed', r.shard_processed || 'targeted refresh'],
+              ['Recordable', r.recordable],
+              ['Priced', r.priced + ' (' + r.priced_pct + '%)'],
+              ['Unresolved', r.unresolved],
+              ['Not yet attempted', r.not_yet_attempted],
+              ['Cache hits (still fresh)', r.cache_hits_still_fresh],
+              ['Fetched this run', r.fetched_this_run],
+              ['Shards written', r.shards_written],
+              ['Runtime', (r.runtime_ms / 1000).toFixed(1) + 's'],
+              ['Artifact size', Math.round(r.artifact_bytes / 1024) + ' KB'],
+              ['Provider', r.provider + ' (free, keyless)'],
+            ];
+            console.log('| Metric | Value |'); console.log('| --- | --- |');
+            for (const [k, v] of rows) console.log('| ' + k + ' | ' + v + ' |');
+          " >> "$GITHUB_STEP_SUMMARY"
+
+      # Only data/prices/** is ever staged. This job has no business touching
+      # anything else, and naming the paths explicitly is what enforces that.
+      - name: Commit refreshed quotes
+        run: |
+          if [ -z "$(git status --porcelain data/prices)" ]; then
+            echo "[price-rotation] no quote changes — nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/prices
+          SHARD=$(node -e "console.log(require('./data/prices/coverage-report.json').shard_processed || 'targeted')")
+          PRICED=$(node -e "const r=require('./data/prices/coverage-report.json');console.log(r.priced+'/'+r.recordable+' ('+r.priced_pct+'%)')")
+          git commit -m "Price rotation: shard ${SHARD}, priced ${PRICED}"
+          for attempt in 1 2 3; do
+            if git push; then exit 0; fi
+            git pull --rebase --autostash || git rebase --abort || true
+            sleep $((attempt * 5))
+          done
+          echo "[price-rotation] push failed after retries"; exit 1

@@ -53,6 +53,7 @@ on:
       - 'vercel.json'
       - '.github/workflows/portfolio-validators.yml'
       - '.github/workflows/technical-intelligence-brain.yml'
+      - '.github/workflows/price-rotation.yml'
 
   # Daily, because the publishing workflows regenerate the pages these checks
   # cover; a regression introduced by a scheduled rebuild would otherwise sit
@@ -149,6 +150,8 @@ jobs:
         run: npm run check:price-currency
       - name: Valuation fallback
         run: npm run check:price-fallback
+      - name: Price rotation wiring
+        run: npm run check:price-rotation
       - name: Price layer self-test
         run: node tools/check-price-layer.js --self-test
 

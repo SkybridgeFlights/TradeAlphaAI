@@ -7,6 +7,7 @@
 //   --check=integrity   shard structure, no duplicates, no fabricated fields
 //   --check=currency    every priced quote names a plausible currency
 //   --check=fallback    valuation uses the price layer without granting coverage
+//   --check=rotation    daily shard rotation is scheduled, capped and keyless
 //   --self-test         negative tests for every rule above
 
 const fs = require('fs');
@@ -159,13 +160,87 @@ function validateFallback() {
   return failures;
 }
 
+// ---------------------------------------------------------------------------
+// rotation — the automation that grows coverage must not quietly stop
+// ---------------------------------------------------------------------------
+
+const ROTATION_WORKFLOW = '.github/workflows/price-rotation.yml';
+const PAID_PROVIDERS = ['financialmodelingprep', 'finnhub', 'alphavantage', 'polygon', 'eodhistorical'];
+
+function validateRotation(workflow = undefined) {
+  const failures = [];
+  const file = path.join(ROOT, ROTATION_WORKFLOW);
+  const raw = workflow === undefined
+    ? (fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null)
+    : workflow;
+  if (!raw) return [`${ROTATION_WORKFLOW} missing — price coverage would stop growing`];
+
+  // Strip comments so a commented-out schedule cannot read as an active one —
+  // the exact way the publishing workflow's cron went dormant unnoticed.
+  const active = raw.split(/\r?\n/).map((l) => l.replace(/(^|\s)#.*$/, '')).join('\n');
+
+  if (!/^\s{2}schedule:/m.test(active)) failures.push(`${ROTATION_WORKFLOW}: no active schedule`);
+  if (!/^\s*-\s*cron:\s*['"][^'"]+['"]/m.test(active)) failures.push(`${ROTATION_WORKFLOW}: no active cron expression`);
+
+  // Rotation must be requested, with a divisor that revisits symbols at a
+  // sensible cadence: 1 would refetch everything daily, >31 less than monthly.
+  const rot = /--rotate=(\d+)/.exec(active);
+  if (!rot) failures.push(`${ROTATION_WORKFLOW}: does not invoke --rotate`);
+  else {
+    const n = Number(rot[1]);
+    if (!Number.isInteger(n) || n < 2) failures.push(`${ROTATION_WORKFLOW}: --rotate=${rot[1]} is not a valid multi-day divisor`);
+    else if (n > 31) failures.push(`${ROTATION_WORKFLOW}: --rotate=${n} revisits a symbol less than monthly`);
+  }
+
+  // A scheduled run with no slice and no cap would attempt all 11,589 symbols
+  // every day — the specific waste this design exists to prevent.
+  if (/node tools\/build-price-layer\.js\s*$/m.test(active)) {
+    failures.push(`${ROTATION_WORKFLOW}: an unbounded full-universe run is scheduled`);
+  }
+  if (/--all\b/.test(active)) failures.push(`${ROTATION_WORKFLOW}: --all ignores freshness and refetches everything`);
+  if (!/--max=/.test(active)) failures.push(`${ROTATION_WORKFLOW}: no --max budget cap`);
+
+  // Free-tier-first: keyless, therefore no secret and no paid provider.
+  if (/\$\{\{\s*secrets\./.test(active)) failures.push(`${ROTATION_WORKFLOW}: references a secret — this pipeline is keyless`);
+  for (const paid of PAID_PROVIDERS) {
+    if (new RegExp(paid, 'i').test(active)) failures.push(`${ROTATION_WORKFLOW}: references ${paid} — a paid provider must not become required`);
+  }
+
+  // Validate before committing, and stage only the price artifacts.
+  if (!/check:price-integrity/.test(active)) failures.push(`${ROTATION_WORKFLOW}: commits without validating integrity`);
+  if (!/git add data\/prices/.test(active)) failures.push(`${ROTATION_WORKFLOW}: must stage only data/prices`);
+  if (/git add -A|git add \./.test(active)) failures.push(`${ROTATION_WORKFLOW}: stages everything — it may only touch data/prices`);
+  if (!/coverage-report\.json/.test(active)) failures.push(`${ROTATION_WORKFLOW}: publishes no coverage report`);
+
+  // This job holds write permission, so it must never be reachable from a PR.
+  if (/^\s{2}pull_request:/m.test(active)) {
+    failures.push(`${ROTATION_WORKFLOW}: must not run on pull_request — it holds write permission`);
+  }
+  // And the PR-triggered validator workflow must stay read-only. Comments are
+  // stripped first: that file's header explains why the PUBLISHING workflow
+  // holds `contents: write`, and matching prose about another workflow would
+  // be a false positive.
+  const vf = path.join(ROOT, '.github/workflows/portfolio-validators.yml');
+  if (fs.existsSync(vf)) {
+    const vActive = fs.readFileSync(vf, 'utf8')
+      .split(/\r?\n/).map((l) => l.replace(/(^|\s)#.*$/, '')).join('\n');
+    if (/contents:\s*write/.test(vActive)) failures.push('portfolio-validators.yml: must remain contents: read');
+  }
+  return failures;
+}
+
 const CHECKS = {
   coverage: () => ({ name: 'check:price-coverage', failures: validateCoverage() }),
   freshness: () => ({ name: 'check:price-freshness', failures: validateFreshness() }),
   integrity: () => ({ name: 'check:price-integrity', failures: validateIntegrity() }),
   currency: () => ({ name: 'check:price-currency', failures: validateCurrency() }),
   fallback: () => ({ name: 'check:price-fallback', failures: validateFallback() }),
+  rotation: () => ({ name: 'check:price-rotation', failures: validateRotation() }),
 };
+
+const RAW_ROTATION = (() => {
+  try { return fs.readFileSync(path.join(ROOT, ROTATION_WORKFLOW), 'utf8'); } catch { return ''; }
+})();
 
 function selfTest() {
   const real = layer.loadAll();
@@ -196,6 +271,28 @@ function selfTest() {
     ['currency missing', () => validateCurrency(mk({ currency: undefined })), true],
 
     ['fallback clean', () => validateFallback(), false],
+
+    // Rotation. Each rule is exercised against a deliberately weakened
+    // workflow, because these are the rules that keep coverage growing at all.
+    ['rotation clean', () => validateRotation(), false],
+    ['rotation workflow missing', () => validateRotation(null), true],
+    ['rotation schedule commented out', () => validateRotation(
+      RAW_ROTATION.replace(/^(\s*)schedule:/m, '$1# schedule:').replace(/^(\s*)- cron:/m, '$1# - cron:')), true],
+    ['rotation --rotate removed', () => validateRotation(RAW_ROTATION.replace(/--rotate=7/g, '')), true],
+    ['rotation divisor of 1 (refetch everything daily)', () => validateRotation(RAW_ROTATION.replace(/--rotate=7/g, '--rotate=1')), true],
+    ['rotation divisor too large', () => validateRotation(RAW_ROTATION.replace(/--rotate=7/g, '--rotate=90')), true],
+    ['rotation unbounded full-universe run', () => validateRotation(
+      `${RAW_ROTATION}\n      - run: node tools/build-price-layer.js\n`), true],
+    ['rotation --all refetch', () => validateRotation(RAW_ROTATION.replace(/--rotate=7/g, '--rotate=7 --all')), true],
+    ['rotation budget cap removed', () => validateRotation(RAW_ROTATION.replace(/--max=/g, '--nomax=')), true],
+    ['rotation requires a paid provider', () => validateRotation(
+      `${RAW_ROTATION}\n      - run: curl https://financialmodelingprep.com/api\n`), true],
+    ['rotation references a secret', () => validateRotation(
+      `${RAW_ROTATION}\n        env:\n          K: \${{ secrets.TOKEN }}\n`), true],
+    ['rotation stages everything', () => validateRotation(RAW_ROTATION.replace('git add data/prices', 'git add -A')), true],
+    ['rotation commits without validating', () => validateRotation(RAW_ROTATION.replace(/check:price-integrity/g, 'true')), true],
+    ['rotation triggered by pull_request', () => validateRotation(RAW_ROTATION.replace('  schedule:', '  pull_request:\n  schedule:')), true],
+    ['rotation drops the coverage report', () => validateRotation(RAW_ROTATION.replace(/coverage-report\.json/g, 'x.json')), true],
   ];
 
   let ok = 0;
@@ -224,4 +321,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { validateCoverage, validateFreshness, validateIntegrity, validateCurrency, validateFallback };
+module.exports = { validateCoverage, validateFreshness, validateIntegrity, validateCurrency, validateFallback, validateRotation };
