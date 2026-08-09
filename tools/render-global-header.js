@@ -144,84 +144,83 @@ function renderMobileCards(ar, signInHref, accountHref, signInLabel, accountLabe
   return inHtml + accountCard;
 }
 
+// Mobile drawer mirrors the desktop IA exactly: same five destinations, same
+// ordering, same names. A visitor who learns the structure on one device does
+// not have to relearn it on the other.
 const MOBILE_CARDS_EN = [
-  { key: 'markets', title: 'Markets', viewAll: ['/markets/', 'View all Markets'], items: [
+  { key: 'intelligence', title: 'Market Intelligence', viewAll: ['/intelligence/', 'Open Market Intelligence'], items: [
+    ['/market-terminal/', 'Market Terminal'],
+    ['/market-regime/', 'Market Regime'],
     ['/markets/', 'Assets'],
     ['/sectors/', 'Sectors'],
-    ['/equities/', 'Equities'],
-    ['/etfs/', 'ETF Intelligence'],
+    ['/explorer/', 'Intelligence Explorer'],
+  ]},
+  { key: 'markets', title: 'ETF Center', viewAll: ['/etfs/', 'Open ETF Center'], items: [
     ['/etfs/finder/', 'ETF Finder'],
-    ['/etfs/compare/', 'Compare ETFs'],
+    ['/etfs/compare/', 'ETF Compare'],
+    ['/etfs/rankings/', 'ETF Rankings'],
+    ['/etfs/categories/', 'ETF Categories'],
+    ['/etfs/portfolio-models/', 'Portfolio Models'],
+    ['/etfs/methodology/', 'Methodology'],
+  ]},
+  { key: 'workspace', title: 'My Investments', viewAll: ['/account/portfolios/', 'Open My Investments'], items: [
+    ['/account/portfolios/', 'My Portfolios'],
+    ['/account/watchlists/', 'Watchlists'],
+    ['/account/alerts/', 'Alerts'],
+    ['/workspace/', 'Workspace'],
   ]},
   { key: 'research', title: 'Research', viewAll: ['/research/', 'View all Research'], items: [
     ['/research/', 'Research Hub'],
     ['/research/feed/', 'Research Feed'],
     ['/insights/', 'Applied Research'],
+    ['/articles/', 'Educational Articles'],
     ['/glossary/', 'Glossary'],
   ]},
-  { key: 'intelligence', title: 'Intelligence', viewAll: ['/intelligence/', 'View all Intelligence'], items: [
-    ['/market-terminal/', 'Market Terminal'],
-    ['/market-regime/', 'Market Regime'],
-    ['/rankings/', 'Rankings'],
-    ['/explorer/', 'Explorer'],
-    ['/changes/', 'Changes'],
-  ]},
   { key: 'tools', title: 'Tools', viewAll: ['/tools/', 'View all Tools'], items: [
-    ['/ai-stock-screener.html', 'Screener'],
+    ['/ai-stock-screener.html', 'AI Screener'],
     ['/economic-calendar/', 'Economic Calendar'],
     ['/briefs/', 'Market Briefs'],
-    ['/newsletter/', 'Newsletter'],
-    ['/tools/compound-interest/', 'Compound Interest Calc'],
-    ['/tools/retirement/', 'Retirement Calc'],
-    ['/tools/cagr/', 'CAGR Calc'],
-    ['/tools/dividend-yield/', 'Dividend Yield Calc'],
-  ]},
-  { key: 'workspace', title: 'Workspace', viewAll: ['/workspace/', 'Open workspace'], items: [
-    ['/workspace/watchlists/', 'My Watchlists'],
-    ['/workspace/monitoring/', 'Monitoring'],
-    ['/workspace/regime/', 'Regime Monitoring'],
-    ['/workspace/research/', 'Workspace Research'],
+    ['/tools/compound-interest/', 'Compound Interest'],
   ]},
 ];
+
 const MOBILE_CARDS_AR = [
-  { key: 'markets', title: 'الأسواق', viewAll: ['/ar/markets/', 'عرض كل الأسواق'], items: [
+  { key: 'intelligence', title: 'استخبارات السوق', viewAll: ['/ar/intelligence/', 'افتح استخبارات السوق'], items: [
+    ['/ar/market-terminal/', 'منصة السوق'],
+    ['/ar/market-regime/', 'نظام السوق'],
     ['/ar/markets/', 'الأصول'],
     ['/ar/sectors/', 'القطاعات'],
-    ['/ar/equities/', 'الأسهم الفردية'],
-    ['/ar/etfs/', 'استخبارات الصناديق'],
+    ['/ar/explorer/', 'مستكشف الاستخبارات'],
+  ]},
+  { key: 'markets', title: 'مركز الصناديق', viewAll: ['/ar/etfs/', 'افتح مركز الصناديق'], items: [
     ['/ar/etfs/finder/', 'باحث الصناديق'],
     ['/ar/etfs/compare/', 'مقارنة الصناديق'],
+    ['/ar/etfs/rankings/', 'ترتيبات الصناديق'],
+    ['/ar/etfs/categories/', 'فئات الصناديق'],
+    ['/ar/etfs/portfolio-models/', 'نماذج المحافظ'],
+    ['/ar/etfs/methodology/', 'المنهجية'],
+  ]},
+  { key: 'workspace', title: 'استثماراتي', viewAll: ['/ar/account/portfolios/', 'افتح استثماراتي'], items: [
+    ['/ar/account/portfolios/', 'محافظي'],
+    ['/ar/account/watchlists/', 'قوائم المتابعة'],
+    ['/ar/account/alerts/', 'التنبيهات'],
+    ['/ar/workspace/', 'مساحة العمل'],
   ]},
   { key: 'research', title: 'الأبحاث', viewAll: ['/ar/research/', 'عرض كل الأبحاث'], items: [
     ['/ar/research/', 'مركز الأبحاث'],
-    ['/ar/research/feed/', 'تغذية الأبحاث'],
+    ['/ar/research/feed/', 'تدفق الأبحاث'],
     ['/ar/insights/', 'الأبحاث التطبيقية'],
-    ['/ar/glossary/', 'قاموس المصطلحات'],
-  ]},
-  { key: 'intelligence', title: 'الاستخبارات', viewAll: ['/ar/intelligence/', 'عرض كل الاستخبارات'], items: [
-    ['/ar/market-terminal/', 'طرفية السوق'],
-    ['/ar/market-regime/', 'نظام السوق'],
-    ['/ar/rankings/', 'الترتيب'],
-    ['/ar/explorer/', 'المستكشف'],
-    ['/ar/changes/', 'التغيّرات'],
+    ['/ar/articles/', 'مقالات تعليمية'],
+    ['/ar/glossary/', 'المسرد'],
   ]},
   { key: 'tools', title: 'الأدوات', viewAll: ['/ar/tools/', 'عرض كل الأدوات'], items: [
-    ['/ar/ai-stock-screener.html', 'ماسح السوق'],
+    ['/ar/ai-stock-screener.html', 'الفارز الذكي'],
     ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
-    ['/ar/briefs/', 'الإحاطات'],
-    ['/ar/newsletter/', 'النشرة اليومية'],
+    ['/ar/briefs/', 'موجزات السوق'],
     ['/ar/tools/compound-interest/', 'الفائدة المركبة'],
-    ['/ar/tools/retirement/', 'حاسبة التقاعد'],
-    ['/ar/tools/cagr/', 'CAGR'],
-    ['/ar/tools/dividend-yield/', 'عائد الأرباح'],
-  ]},
-  { key: 'workspace', title: 'مساحة المتابعة', viewAll: ['/ar/workspace/', 'افتح مساحة المتابعة'], items: [
-    ['/ar/workspace/watchlists/', 'قوائم المتابعة'],
-    ['/ar/workspace/monitoring/', 'المتابعة'],
-    ['/ar/workspace/regime/', 'متابعة النظام'],
-    ['/ar/workspace/research/', 'أبحاث المتابعة'],
   ]},
 ];
+
 const MOBILE_CARD_ICONS = {
   markets:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>',
   research:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
@@ -302,36 +301,116 @@ function globalHeaderScripts() {
 }
 
 function englishLinks() {
-  // 6-item focused top-level. Each non-Home item exposes a short
-  // dropdown (≤7 items) with a "View all" terminal link. Account is
-  // INTENTIONALLY absent — it lives in the right-side header action.
+  // Phase 230 — navigation organised around the QUESTION a visitor arrived
+  // with, not the content type the platform happens to publish.
+  //
+  //   Market Intelligence  what's happening        (observed market state)
+  //   ETF Center           what should I own       (fund research product)
+  //   My Investments       what do I own           (the holder's own data)
+  //   Research             why should I believe it (written analysis)
+  //   Tools                do the work for me      (utilities)
+  //
+  // The old top level — Markets / Research / Intelligence / Tools — sorted by
+  // publishing category, and three of those four read as synonyms to anyone
+  // outside the company: a visitor could not predict whether "market regime"
+  // lived under Markets, Research or Intelligence. Worse, it had no concept for
+  // "mine", which is why the portfolio product ended up filed under Account
+  // next to billing, with a single inbound link.
+  //
+  // Research and Intelligence ARE merged, but along a better seam than simply
+  // concatenating them: Market Intelligence holds what the platform OBSERVES
+  // (terminal, regime, maps, explorer, changes), Research holds what it WRITES
+  // (hub, feed, insights, articles, glossary). Pouring both into one menu would
+  // have produced a fourteen-item dropdown — the exact clutter to avoid.
   return [
     { key: 'home', href: '/', label: 'Home' },
     {
-      key: 'markets', href: '/markets/', label: 'Markets',
-      activeKeys: ['stocks', 'etfs', 'markets', 'sectors', 'equities', 'compare'],
-      children: [
-        ['/markets/', 'Assets'],
-        ['/sectors/', 'Sectors'],
-        ['/equities/', 'Equities'],
-        ['/etfs/', 'ETF Intelligence'],
-        ['/etfs/finder/', 'ETF Finder'],
-        ['/etfs/compare/', 'Compare ETFs'],
-        ['/etfs/rankings/', 'ETF Rankings'],
-        ['/stocks.html', 'Stocks Directory'],
-        ['/etfs.html', 'ETFs Directory'],
+      key: 'intelligence', href: '/intelligence/', label: 'Market Intelligence',
+      activeKeys: ['intelligence', 'markets', 'sectors', 'equities', 'stocks', 'market-terminal',
+        'market-regime', 'relative-rankings', 'market-map', 'explorer', 'changes', 'economic-calendar'],
+      groups: [
+        { title: 'Live market state', items: [
+          ['/market-terminal/', 'Market Terminal'],
+          ['/market-regime/', 'Market Regime'],
+          ['/market-map/assets/', 'Market Maps'],
+          ['/economic-calendar/', 'Economic Calendar'],
+        ] },
+        { title: 'Coverage', items: [
+          ['/markets/', 'Assets'],
+          ['/sectors/', 'Sectors'],
+          ['/equities/', 'Equities'],
+          ['/rankings/', 'Cross-Asset Rankings'],
+        ] },
+        { title: 'Signals', items: [
+          ['/explorer/', 'Intelligence Explorer'],
+          ['/changes/', 'Change Intelligence'],
+          ['/market-structure/', 'Market Structure'],
+        ] },
       ],
-      viewAll: ['/markets/', 'View all Markets'],
+      footer: [{ title: 'Directories', items: [['/stocks.html', 'Stocks'], ['/etfs.html', 'ETFs']] }],
+      viewAll: ['/intelligence/', 'Open Market Intelligence'],
+    },
+    {
+      // The ETF Center is a product, and its menu is its table of contents.
+      // DISCOVER / LEARN / TRUST are the three jobs a fund researcher does.
+      // The TRUST column is deliberate: this platform's edge is that it
+      // withholds what it cannot verify, and that discipline was invisible —
+      // Methodology sat two clicks deep and Coverage had one inbound link.
+      key: 'etfs', href: '/etfs/', label: 'ETF Center',
+      activeKeys: ['etfs', 'etf-finder', 'etf-compare', 'etf-rankings', 'etf-categories',
+        'etf-learn', 'etf-methodology', 'etf-coverage', 'etf-data-audit', 'portfolio-models'],
+      groups: [
+        { title: 'Discover', items: [
+          ['/etfs/finder/', 'ETF Finder'],
+          ['/etfs/compare/', 'ETF Compare'],
+          ['/etfs/rankings/', 'ETF Rankings'],
+        ] },
+        { title: 'Learn', items: [
+          ['/etfs/categories/', 'ETF Categories'],
+          ['/etfs/portfolio-models/', 'Portfolio Models'],
+          ['/etfs/learn/', 'ETF Learn'],
+        ] },
+        { title: 'Trust', items: [
+          ['/etfs/methodology/', 'Methodology'],
+          ['/etfs/coverage/', 'Coverage'],
+          ['/etfs/data-audit/', 'Data Audit'],
+        ] },
+      ],
+      viewAll: ['/etfs/', 'Open ETF Center'],
+    },
+    {
+      // Promoted out of Account. This is the only section that acts on the
+      // visitor's own data, and it had one inbound link before this change.
+      // Named "My Investments" rather than "Portfolio" because it also holds
+      // watchlists, alerts and the workspace, none of which are portfolios.
+      key: 'investments', href: '/account/portfolios/', label: 'My Investments',
+      activeKeys: ['portfolios', 'account-portfolios', 'watchlists', 'alerts', 'workspace'],
+      groups: [
+        { title: 'Portfolios', items: [
+          ['/account/portfolios/', 'My Portfolios'],
+          ['/etfs/portfolio-models/', 'Portfolio Models'],
+        ] },
+        { title: 'Tracking', items: [
+          ['/account/watchlists/', 'Watchlists'],
+          ['/account/alerts/', 'Alerts'],
+          ['/workspace/', 'Workspace'],
+        ] },
+        { title: 'Account', items: [
+          ['/account/', 'Account Overview'],
+          ['/account/preferences/', 'Preferences'],
+          ['/account/profile/', 'Profile'],
+        ] },
+      ],
+      viewAll: ['/account/portfolios/', 'Open My Investments'],
     },
     {
       key: 'research', href: '/research/', label: 'Research',
-      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure', 'glossary'],
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'glossary', 'newsletter'],
       children: [
         ['/research/', 'Research Hub'],
         ['/research/feed/', 'Research Feed'],
         ['/market-outlook/', 'Market Outlook'],
         ['/market-news/', 'Market News'],
-        ['/market-structure/', 'Market Structure'],
         ['/insights/', 'Applied Research'],
         ['/articles/', 'Educational Articles'],
         ['/glossary/', 'Glossary'],
@@ -339,102 +418,128 @@ function englishLinks() {
       viewAll: ['/research/', 'View all Research'],
     },
     {
-      key: 'intelligence', href: '/intelligence/', label: 'Intelligence',
-      activeKeys: ['intelligence', 'market-terminal', 'market-regime', 'relative-rankings', 'market-map', 'explorer', 'changes', 'market-structure', 'market-outlook'],
-      children: [
-        ['/market-terminal/', 'Market Terminal'],
-        ['/market-regime/', 'Market Regime'],
-        ['/rankings/', 'Rankings'],
-        ['/market-map/assets/', 'Maps'],
-        ['/explorer/', 'Explorer'],
-        ['/changes/', 'Changes'],
-      ],
-      viewAll: ['/intelligence/', 'View all Intelligence'],
-    },
-    {
       key: 'tools', href: '/tools/', label: 'Tools',
-      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs', 'newsletter', 'compound-interest', 'retirement', 'cagr', 'dividend-yield'],
+      activeKeys: ['tools', 'screener', 'compound-interest', 'retirement', 'cagr', 'dividend-yield', 'methodology'],
       children: [
-        ['/ai-stock-screener.html', 'Screener'],
-        ['/economic-calendar/', 'Economic Calendar'],
+        ['/ai-stock-screener.html', 'AI Screener'],
         ['/briefs/', 'Market Briefs'],
         ['/newsletter/', 'Newsletter'],
-        ['/tools/compound-interest/', 'Compound Interest Calculator'],
-        ['/tools/retirement/', 'Retirement Calculator'],
-        ['/tools/cagr/', 'CAGR Calculator'],
-        ['/tools/dividend-yield/', 'Dividend Yield Calculator'],
-        ['/methodology.html', 'Methodology'],
+        ['/tools/compound-interest/', 'Compound Interest'],
+        ['/tools/retirement/', 'Retirement'],
+        ['/tools/cagr/', 'CAGR'],
+        ['/tools/dividend-yield/', 'Dividend Yield'],
+        ['/methodology.html', 'Platform Methodology'],
       ],
       viewAll: ['/tools/', 'View all Tools'],
     },
-    { key: 'methodology', href: '/methodology.html', label: 'Methodology' },
   ];
 }
 
 function arabicLinks() {
+  // Arabic mirrors the English information architecture exactly — same five
+  // destinations, same three ETF Center groups, same promotion of the personal
+  // investing surface. Parity is structural, not a translation afterthought.
   return [
     { key: 'home', href: '/ar/', label: 'الرئيسية' },
     {
-      key: 'markets', href: '/ar/markets/', label: 'الأسواق',
-      activeKeys: ['stocks', 'etfs', 'markets', 'sectors', 'equities', 'compare'],
-      children: [
-        ['/ar/markets/', 'الأصول'],
-        ['/ar/sectors/', 'القطاعات'],
-        ['/ar/equities/', 'الأسهم الفردية'],
-        ['/ar/etfs/', 'استخبارات الصناديق'],
-        ['/ar/etfs/finder/', 'باحث الصناديق'],
-        ['/ar/etfs/compare/', 'مقارنة الصناديق'],
-        ['/ar/etfs/rankings/', 'ترتيبات الصناديق'],
-        ['/ar/stocks.html', 'دليل الأسهم'],
-        ['/ar/etfs.html', 'دليل الصناديق'],
+      key: 'intelligence', href: '/ar/intelligence/', label: 'استخبارات السوق',
+      activeKeys: ['intelligence', 'markets', 'sectors', 'equities', 'stocks', 'market-terminal',
+        'market-regime', 'relative-rankings', 'market-map', 'explorer', 'changes', 'economic-calendar'],
+      groups: [
+        { title: 'حالة السوق الحية', items: [
+          ['/ar/market-terminal/', 'منصة السوق'],
+          ['/ar/market-regime/', 'نظام السوق'],
+          ['/ar/market-map/assets/', 'خرائط السوق'],
+          ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
+        ] },
+        { title: 'التغطية', items: [
+          ['/ar/markets/', 'الأصول'],
+          ['/ar/sectors/', 'القطاعات'],
+          ['/ar/equities/', 'الأسهم الفردية'],
+          ['/ar/rankings/', 'الترتيبات عبر الأصول'],
+        ] },
+        { title: 'الإشارات', items: [
+          ['/ar/explorer/', 'مستكشف الاستخبارات'],
+          ['/ar/changes/', 'استخبارات التغيّرات'],
+          ['/ar/market-structure/', 'بنية السوق'],
+        ] },
       ],
-      viewAll: ['/ar/markets/', 'عرض كل الأسواق'],
+      footer: [{ title: 'الأدلة', items: [['/ar/stocks.html', 'الأسهم'], ['/ar/etfs.html', 'الصناديق']] }],
+      viewAll: ['/ar/intelligence/', 'افتح استخبارات السوق'],
+    },
+    {
+      key: 'etfs', href: '/ar/etfs/', label: 'مركز الصناديق',
+      activeKeys: ['etfs', 'etf-finder', 'etf-compare', 'etf-rankings', 'etf-categories',
+        'etf-learn', 'etf-methodology', 'etf-coverage', 'etf-data-audit', 'portfolio-models'],
+      groups: [
+        { title: 'اكتشف', items: [
+          ['/ar/etfs/finder/', 'باحث الصناديق'],
+          ['/ar/etfs/compare/', 'مقارنة الصناديق'],
+          ['/ar/etfs/rankings/', 'ترتيبات الصناديق'],
+        ] },
+        { title: 'تعلّم', items: [
+          ['/ar/etfs/categories/', 'فئات الصناديق'],
+          ['/ar/etfs/portfolio-models/', 'نماذج المحافظ'],
+          ['/ar/etfs/learn/', 'تعلّم الصناديق'],
+        ] },
+        { title: 'الثقة', items: [
+          ['/ar/etfs/methodology/', 'المنهجية'],
+          ['/ar/etfs/coverage/', 'التغطية'],
+          ['/ar/etfs/data-audit/', 'تدقيق البيانات'],
+        ] },
+      ],
+      viewAll: ['/ar/etfs/', 'افتح مركز الصناديق'],
+    },
+    {
+      key: 'investments', href: '/ar/account/portfolios/', label: 'استثماراتي',
+      activeKeys: ['portfolios', 'account-portfolios', 'watchlists', 'alerts', 'workspace'],
+      groups: [
+        { title: 'المحافظ', items: [
+          ['/ar/account/portfolios/', 'محافظي'],
+          ['/ar/etfs/portfolio-models/', 'نماذج المحافظ'],
+        ] },
+        { title: 'المتابعة', items: [
+          ['/ar/account/watchlists/', 'قوائم المتابعة'],
+          ['/ar/account/alerts/', 'التنبيهات'],
+          ['/ar/workspace/', 'مساحة العمل'],
+        ] },
+        { title: 'الحساب', items: [
+          ['/ar/account/', 'نظرة عامة على الحساب'],
+          ['/ar/account/preferences/', 'التفضيلات'],
+          ['/ar/account/profile/', 'الملف الشخصي'],
+        ] },
+      ],
+      viewAll: ['/ar/account/portfolios/', 'افتح استثماراتي'],
     },
     {
       key: 'research', href: '/ar/research/', label: 'الأبحاث',
-      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'market-structure', 'glossary'],
+      activeKeys: ['research', 'insights', 'articles', 'briefs', 'market-news', 'market-outlook', 'glossary', 'newsletter'],
       children: [
         ['/ar/research/', 'مركز الأبحاث'],
-        ['/ar/research/feed/', 'تغذية الأبحاث'],
+        ['/ar/research/feed/', 'تدفق الأبحاث'],
         ['/ar/market-outlook/', 'نظرة السوق'],
         ['/ar/market-news/', 'أخبار السوق'],
-        ['/ar/market-structure/', 'بنية السوق'],
         ['/ar/insights/', 'الأبحاث التطبيقية'],
-        ['/ar/articles/', 'المقالات التعليمية'],
-        ['/ar/glossary/', 'قاموس المصطلحات'],
+        ['/ar/articles/', 'مقالات تعليمية'],
+        ['/ar/glossary/', 'المسرد'],
       ],
       viewAll: ['/ar/research/', 'عرض كل الأبحاث'],
     },
     {
-      key: 'intelligence', href: '/ar/intelligence/', label: 'الاستخبارات',
-      activeKeys: ['intelligence', 'market-terminal', 'market-regime', 'relative-rankings', 'market-map', 'explorer', 'changes', 'market-structure', 'market-outlook'],
-      children: [
-        ['/ar/market-terminal/', 'طرفية السوق'],
-        ['/ar/market-regime/', 'نظام السوق'],
-        ['/ar/rankings/', 'الترتيب'],
-        ['/ar/market-map/assets/', 'الخرائط'],
-        ['/ar/explorer/', 'المستكشف'],
-        ['/ar/changes/', 'التغيّرات'],
-      ],
-      viewAll: ['/ar/intelligence/', 'عرض كل الاستخبارات'],
-    },
-    {
       key: 'tools', href: '/ar/tools/', label: 'الأدوات',
-      activeKeys: ['tools', 'screener', 'economic-calendar', 'briefs', 'newsletter', 'compound-interest', 'retirement', 'cagr', 'dividend-yield'],
+      activeKeys: ['tools', 'screener', 'compound-interest', 'retirement', 'cagr', 'dividend-yield', 'methodology'],
       children: [
-        ['/ar/ai-stock-screener.html', 'ماسح السوق'],
-        ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
-        ['/ar/briefs/', 'الإحاطات'],
-        ['/ar/newsletter/', 'النشرة اليومية'],
-        ['/ar/tools/compound-interest/', 'حاسبة الفائدة المركبة'],
-        ['/ar/tools/retirement/', 'حاسبة التقاعد'],
-        ['/ar/tools/cagr/', 'حاسبة النمو السنوي المركب'],
-        ['/ar/tools/dividend-yield/', 'حاسبة عائد الأرباح'],
-        ['/ar/methodology.html', 'المنهجية'],
+        ['/ar/ai-stock-screener.html', 'الفارز الذكي'],
+        ['/ar/briefs/', 'موجزات السوق'],
+        ['/ar/newsletter/', 'النشرة'],
+        ['/ar/tools/compound-interest/', 'الفائدة المركبة'],
+        ['/ar/tools/retirement/', 'التقاعد'],
+        ['/ar/tools/cagr/', 'معدل النمو السنوي'],
+        ['/ar/tools/dividend-yield/', 'عائد التوزيعات'],
+        ['/ar/methodology.html', 'منهجية المنصّة'],
       ],
       viewAll: ['/ar/tools/', 'عرض كل الأدوات'],
     },
-    { key: 'methodology', href: '/ar/methodology.html', label: 'المنهجية' },
   ];
 }
 
