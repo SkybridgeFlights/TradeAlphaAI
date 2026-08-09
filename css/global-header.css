@@ -639,3 +639,18 @@ body { min-width: 0; overflow-x: hidden; }
 }
 
 [dir="rtl"] .search-suggest-panel { left: auto; right: 0; }
+
+/* ── Phase 231 — dropdown stacking order ──────────────────────────────────
+   The search box, locale switcher and account action are LATER siblings of
+   .nav-group inside .top-actions, so without an explicit stacking order they
+   paint over an open dropdown. Raising .nav-dropdown alone does not fix it:
+   that z-index only competes inside its own parent's stacking context. The
+   container has to win, which is why the rule targets .nav-group.
+
+   Symptom this fixes: with the Phase 230 labels ("ETF Center", "My
+   Investments") sitting further right than the old ones, their panels land
+   underneath the locale pills and the first row was unreadable. */
+.top-actions > .nav-group { position: relative; z-index: 1150; }
+
+/* Keep the panel to a readable measure rather than letting it stretch. */
+.nav-dropdown-compact { min-width: 232px; max-width: 320px; }

@@ -551,8 +551,33 @@ function renderNavItem(item, active, ar) {
     return `<a href="${item.href}" class="nav-link${activeClass}"${current}>${item.label}</a>`;
   }
   const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
-  // Mega-menu path — multi-column grouped dropdown.
-  if (item.groups) {
+
+  // Phase 231 — the multi-column mega panel is DISABLED in production.
+  //
+  // Phase 230 switched three menus onto the mega renderer because it already
+  // existed in this file. It existed but had never been used by any nav item,
+  // so its CSS had never rendered in production — and it shipped overlapping
+  // the search box and the language switcher, with one column heading hidden
+  // behind the locale pill. Every validator passed while it looked like that,
+  // which is precisely why "the renderer exists" is not evidence it works.
+  //
+  // The group DATA is deliberately kept: it is the correct information
+  // architecture (ETF Center reads Discover / Learn / Trust) and it drives the
+  // ordering below. Only the presentation falls back to the compact dropdown
+  // that has been rendering correctly in production for months. Re-enable by
+  // fixing .nav-mega-dropdown positioning and width in css/global-header.css,
+  // then verifying in a browser at desktop, tablet and mobile in BOTH
+  // languages before flipping this flag.
+  const MEGA_PANEL_ENABLED = false;
+
+  if (item.groups && !MEGA_PANEL_ENABLED) {
+    // Flatten in group order so the architecture survives the fallback: the
+    // same links appear in the same sequence, just in one proven column.
+    item = { ...item, children: item.groups.flatMap((g) => g.items)
+      .concat((item.footer || []).flatMap((f) => f.items)) };
+  }
+
+  if (item.groups && MEGA_PANEL_ENABLED) {
     const columnsHtml = item.groups.map((group, idx) => {
       const iconKey = group.icon || GROUP_TITLE_TO_ICON[group.title] || 'default';
       const icon = NAV_GROUP_ICONS[iconKey] || NAV_GROUP_ICONS.default;
