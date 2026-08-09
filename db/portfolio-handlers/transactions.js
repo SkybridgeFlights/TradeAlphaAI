@@ -14,17 +14,17 @@
 // verbs invites being read as one. `executed_at` cannot be in the future for the
 // same reason: a planned trade must not sit in history as though it happened.
 
-const { getSql } = require('../../../db/client');
-const { requireAccount, sendError } = require('../../../db/auth');
-const { ensureAccountSchema } = require('../../../db/schema');
-const { ensureAccount } = require('../../../db/account');
+const { getSql } = require('../client');
+const { requireAccount, sendError } = require('../auth');
+const { ensureAccountSchema } = require('../schema');
+const { ensureAccount } = require('../account');
 const {
   normalizeTransactionBody,
   addTransaction,
   deleteTransaction,
   requireOwnedPortfolio,
   listTransactions,
-} = require('../../../db/portfolios');
+} = require('../portfolios');
 
 const json = (res, status, payload) => {
   res.statusCode = status;

@@ -1,6 +1,17 @@
 'use strict';
 
-// Phase 228 CP2 — portfolio collection.
+// Phase 228 CP2 — portfolio surface, served by ONE serverless function.
+//
+// The sub-resources live in db/portfolio-handlers/ rather than as sibling files
+// under api/, because every .js under api/ becomes its own Serverless Function
+// and six of them pushed this project past its per-deployment function ceiling
+// — the build succeeded and the deploy step failed. Keeping them as plain
+// modules behind a path dispatch costs nothing at runtime (one warm function
+// instead of six cold ones) and mirrors what api/account/watchlists.js already
+// does for its /entities sub-resource.
+//
+// vercel.json rewrites /api/account/portfolios/<sub> onto this file; the
+// dispatch below routes on that suffix.
 //
 // GET    /api/account/portfolios              — portfolios for this account
 // GET    /api/account/portfolios?slug=x       — one portfolio with its children
@@ -28,6 +39,14 @@ const {
   listTransactions,
 } = require('../../db/portfolios');
 
+const SUB_HANDLERS = {
+  positions: require('../../db/portfolio-handlers/positions'),
+  targets: require('../../db/portfolio-handlers/targets'),
+  transactions: require('../../db/portfolio-handlers/transactions'),
+  analytics: require('../../db/portfolio-handlers/analytics'),
+  snapshots: require('../../db/portfolio-handlers/snapshots'),
+};
+
 const json = (res, status, payload) => {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
@@ -36,6 +55,14 @@ const json = (res, status, payload) => {
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
+
+  // Sub-resource dispatch happens before anything else, including auth, because
+  // each sub-handler performs its own verification. Routing on the path alone
+  // reads no request state and cannot leak anything.
+  const sub = /\/portfolios\/([a-z]+)\/?$/.exec(new URL(req.url, 'http://localhost').pathname);
+  if (sub && SUB_HANDLERS[sub[1]]) return SUB_HANDLERS[sub[1]](req, res);
+  if (sub) { json(res, 404, { error: 'no such portfolio sub-resource' }); return undefined; }
+
   try {
     const { accountId } = await requireAccount(req);
     const sql = getSql();

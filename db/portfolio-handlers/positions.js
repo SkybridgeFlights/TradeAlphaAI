@@ -19,17 +19,17 @@
 // sector ETF such as XLK resolves as 'etf' rather than 'sector', since that is
 // what it is; sending instrument_type='sector' for it is rejected as a mismatch.
 
-const { getSql } = require('../../../db/client');
-const { requireAccount, sendError } = require('../../../db/auth');
-const { ensureAccountSchema } = require('../../../db/schema');
-const { ensureAccount } = require('../../../db/account');
+const { getSql } = require('../client');
+const { requireAccount, sendError } = require('../auth');
+const { ensureAccountSchema } = require('../schema');
+const { ensureAccount } = require('../account');
 const {
   normalizePositionBody,
   upsertPosition,
   deletePosition,
   requireOwnedPortfolio,
   listPositions,
-} = require('../../../db/portfolios');
+} = require('../portfolios');
 
 const json = (res, status, payload) => {
   res.statusCode = status;

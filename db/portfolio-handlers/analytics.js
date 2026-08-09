@@ -21,13 +21,13 @@
 // This is measurement, not advice. Nothing in the response ranks a holding,
 // suggests a change, or evaluates whether a portfolio is good.
 
-const { getSql } = require('../../../db/client');
-const { requireAccount, sendError } = require('../../../db/auth');
-const { ensureAccountSchema } = require('../../../db/schema');
-const { ensureAccount } = require('../../../db/account');
-const { requireOwnedPortfolio, listPositions, listTargets } = require('../../../db/portfolios');
-const { loadArtifacts } = require('../../../tools/portfolio-artifacts');
-const { analysePortfolio } = require('../../../tools/portfolio-analytics');
+const { getSql } = require('../client');
+const { requireAccount, sendError } = require('../auth');
+const { ensureAccountSchema } = require('../schema');
+const { ensureAccount } = require('../account');
+const { requireOwnedPortfolio, listPositions, listTargets } = require('../portfolios');
+const { loadArtifacts } = require('../../tools/portfolio-artifacts');
+const { analysePortfolio } = require('../../tools/portfolio-analytics');
 
 const json = (res, status, payload) => {
   res.statusCode = status;

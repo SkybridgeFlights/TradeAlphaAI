@@ -467,14 +467,19 @@ function loadFixture() {
 // reading the file, and both are the kind of thing a later edit silently drops.
 // ---------------------------------------------------------------------------
 
-const PORTFOLIO_ROUTES = [
-  'api/account/portfolios.js',
-  'api/account/portfolios/positions.js',
-  'api/account/portfolios/targets.js',
-  'api/account/portfolios/transactions.js',
-  'api/account/portfolios/analytics.js',
-  'api/account/portfolios/snapshots.js',
+// The surface is one Serverless Function plus five plain handler modules it
+// dispatches to. Only the first is a deployable function; the rest must NOT sit
+// under api/, or each becomes its own function and the deployment exceeds the
+// per-project ceiling. The api check enforces both halves of that.
+const ENTRY_ROUTE = 'api/account/portfolios.js';
+const SUB_HANDLERS = [
+  'db/portfolio-handlers/positions.js',
+  'db/portfolio-handlers/targets.js',
+  'db/portfolio-handlers/transactions.js',
+  'db/portfolio-handlers/analytics.js',
+  'db/portfolio-handlers/snapshots.js',
 ];
+const PORTFOLIO_ROUTES = [ENTRY_ROUTE, ...SUB_HANDLERS];
 
 const PERSISTENCE = 'db/portfolios.js';
 const CHILD_TABLES = [
@@ -536,7 +541,26 @@ function validateApi(sources = loadSources(), functions = loadVercelFunctions())
     const advice = findAssertedAdvice(src.replace(/^\s*\/\/.*$/gm, ' '));
     if (advice) failures.push(`${rel}: asserted advice language "${advice.match}"`);
 
-    if (!functions[rel]) failures.push(`${rel}: not registered in vercel.json functions`);
+    // Only the entry route is a deployable function.
+    if (rel === ENTRY_ROUTE && !functions[rel]) {
+      failures.push(`${rel}: not registered in vercel.json functions`);
+    }
+  }
+
+  // Guard the constraint that broke the first production deploy: a sub-handler
+  // placed under api/ silently becomes another Serverless Function.
+  for (const rel of SUB_HANDLERS) {
+    if (rel.startsWith('api/')) failures.push(`${rel}: sub-handlers must live outside api/`);
+  }
+  if (fs.existsSync(path.join(ROOT, 'api/account/portfolios'))) {
+    failures.push('api/account/portfolios/ exists — each file there becomes its own Serverless Function');
+  }
+  const entry = sources[ENTRY_ROUTE] || '';
+  for (const rel of SUB_HANDLERS) {
+    const name = path.basename(rel, '.js');
+    if (!entry.includes(`portfolio-handlers/${name}`)) {
+      failures.push(`${ENTRY_ROUTE}: does not dispatch to ${name}`);
+    }
   }
 
   if (!sources[PERSISTENCE]) failures.push(`${PERSISTENCE}: missing`);
@@ -635,9 +659,9 @@ function validateOwnership(sources = loadSources()) {
 function validateSnapshots(sources = loadSources()) {
   const failures = [];
   const persistence = sources[PERSISTENCE];
-  const route = sources['api/account/portfolios/snapshots.js'];
+  const route = sources['db/portfolio-handlers/snapshots.js'];
   if (!persistence) return [`${PERSISTENCE}: missing`];
-  if (!route) return ['api/account/portfolios/snapshots.js: missing'];
+  if (!route) return ['db/portfolio-handlers/snapshots.js: missing'];
 
   const save = persistence.match(/async function saveSnapshot[\s\S]*?\n}/);
   if (!save) failures.push(`${PERSISTENCE}: saveSnapshot not found`);
@@ -706,7 +730,7 @@ function selfTest() {
   const clone = (o) => JSON.parse(JSON.stringify(o));
   const sources = () => loadSources();
   const ROUTE_A = 'api/account/portfolios.js';
-  const ROUTE_S = 'api/account/portfolios/snapshots.js';
+  const ROUTE_S = 'db/portfolio-handlers/snapshots.js';
 
   const cases = [
     ['schema clean', () => validateSchema(sql), false],

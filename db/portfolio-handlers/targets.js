@@ -17,16 +17,16 @@
 // a target to a market view, ranks one allocation against another, or suggests
 // a change.
 
-const { getSql } = require('../../../db/client');
-const { requireAccount, sendError } = require('../../../db/auth');
-const { ensureAccountSchema } = require('../../../db/schema');
-const { ensureAccount } = require('../../../db/account');
+const { getSql } = require('../client');
+const { requireAccount, sendError } = require('../auth');
+const { ensureAccountSchema } = require('../schema');
+const { ensureAccount } = require('../account');
 const {
   parseBody,
   setTargets,
   requireOwnedPortfolio,
   listTargets,
-} = require('../../../db/portfolios');
+} = require('../portfolios');
 
 const json = (res, status, payload) => {
   res.statusCode = status;

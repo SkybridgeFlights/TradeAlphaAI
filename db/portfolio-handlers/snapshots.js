@@ -18,19 +18,19 @@
 // appending, so the series measures the portfolio and not how often somebody
 // pressed save.
 
-const { getSql } = require('../../../db/client');
-const { requireAccount, sendError } = require('../../../db/auth');
-const { ensureAccountSchema } = require('../../../db/schema');
-const { ensureAccount } = require('../../../db/account');
+const { getSql } = require('../client');
+const { requireAccount, sendError } = require('../auth');
+const { ensureAccountSchema } = require('../schema');
+const { ensureAccount } = require('../account');
 const {
   parseBody,
   requireOwnedPortfolio,
   listPositions,
   listSnapshots,
   saveSnapshot,
-} = require('../../../db/portfolios');
-const { loadArtifacts } = require('../../../tools/portfolio-artifacts');
-const { analysePortfolio } = require('../../../tools/portfolio-analytics');
+} = require('../portfolios');
+const { loadArtifacts } = require('../../tools/portfolio-artifacts');
+const { analysePortfolio } = require('../../tools/portfolio-analytics');
 
 const json = (res, status, payload) => {
   res.statusCode = status;
