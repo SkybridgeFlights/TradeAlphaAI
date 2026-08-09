@@ -1,0 +1,123 @@
+name: Portfolio Validators
+
+# Phase 228 — automatic enforcement of the portfolio security, ownership and
+# provenance rules.
+#
+# WHY THIS IS A SEPARATE WORKFLOW, not extra triggers on
+# technical-intelligence-brain.yml:
+#
+#   That workflow holds `contents: write`, regenerates ~1100 pages, commits,
+#   rebases, pushes, and dispatches Telegram. Giving it a pull_request or an
+#   active schedule would run the publishing pipeline on every PR — writing to
+#   the repository from untrusted branch content and firing distribution on a
+#   proposal. This job instead does one thing, needs nothing, and writes nothing.
+#
+# COST: every check here is static or fixture-based — no database, no browser,
+# no network. A run is a checkout, a cached npm ci and ~12 node invocations,
+# well under two minutes. A daily cadence therefore costs on the order of an
+# hour of Actions time per month, which is why it can be daily rather than
+# weekly and still respect the free-tier-first constraint.
+#
+# SECRETS: none. This workflow references no secret, and the validators were
+# confirmed to pass with DATABASE_URL, CLERK_SECRET_KEY and
+# CLERK_PUBLISHABLE_KEY all absent. Nothing here can leak a credential, which
+# is what makes it safe to run on pull requests.
+
+on:
+  # Path-filtered so unrelated content changes — the autonomous publishing
+  # workflows rewrite hundreds of pages — do not queue a run.
+  pull_request:
+    paths:
+      - 'api/account/**'
+      - 'db/**'
+      - 'tools/check-portfolio*.js'
+      - 'tools/portfolio-*.js'
+      - 'tools/etf-provenance.js'
+      - 'tools/generate-etf-guide-pages.js'
+      - 'tools/generate-account-pages.js'
+      - 'js/account-portfolios.js'
+      - 'js/account-shared.js'
+      - 'account/portfolios/**'
+      - 'ar/account/portfolios/**'
+      - 'etfs/portfolio-models/**'
+      - 'ar/etfs/portfolio-models/**'
+      - 'package.json'
+      - 'vercel.json'
+      - '.github/workflows/portfolio-validators.yml'
+      - '.github/workflows/technical-intelligence-brain.yml'
+
+  # Daily, because the publishing workflows regenerate the pages these checks
+  # cover; a regression introduced by a scheduled rebuild would otherwise sit
+  # undetected until someone opened a PR. 05:17 UTC is off-peak and off the
+  # hour, where GitHub's scheduler is least congested.
+  schedule:
+    - cron: '17 5 * * *'
+
+  workflow_dispatch:
+
+# Read-only. This job must never be able to write to the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-validators-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Portfolio security, ownership and provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # The self-test mutates known-good input and asserts every rule fires. It
+      # runs FIRST: if the validators themselves are broken, a green suite below
+      # would mean nothing.
+      - name: Validator self-test
+        run: node tools/check-portfolio.js --self-test
+
+      # Structure and safety of the persisted surface.
+      - name: Schema
+        run: npm run check:portfolio-schema
+      - name: API contract
+        run: npm run check:portfolio-api
+      - name: Ownership isolation
+        run: npm run check:portfolio-ownership
+      - name: Snapshots
+        run: npm run check:portfolio-snapshots
+
+      # Measurement honesty.
+      - name: Analytics
+        run: npm run check:portfolio-analytics
+      - name: Cost withholding
+        run: npm run check:portfolio-costs
+      - name: Overlap evidence
+        run: npm run check:portfolio-overlap
+      - name: Provenance
+        run: npm run check:portfolio-provenance
+
+      # Public surface.
+      - name: Pages
+        run: npm run check:portfolio-pages
+      - name: Discovery
+        run: npm run check:portfolio-discovery
+
+      # Guards this workflow against being silently weakened — a PR that drops
+      # the schedule, the path filters, a validator step, or that grants write
+      # permission fails here.
+      - name: CI wiring
+        run: npm run check:portfolio-ci

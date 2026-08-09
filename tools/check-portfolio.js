@@ -16,6 +16,7 @@
 //   --check=api         auth-before-query, no-store, 405, parameterised SQL
 //   --check=ownership   every child row reached through the account gate
 //   --check=snapshots   history stored as read, never recomputed
+//   --check=ci          the validators actually run: PR trigger, live schedule, read-only
 //   --self-test         negative tests for every rule above
 //
 // api / ownership / snapshots arrived with the CP2 routes. They were withheld
@@ -656,6 +657,85 @@ function validateOwnership(sources = loadSources()) {
   return failures;
 }
 
+// ---------------------------------------------------------------------------
+// ci — the enforcement itself must not be quietly removable
+//
+// Every other check in this file is only worth as much as the thing that runs
+// it. Before this existed, all ten lived in a workflow whose cron was commented
+// out, so they fired only on manual dispatch and nobody would have noticed. The
+// rules below are the ones whose removal would restore that silence.
+// ---------------------------------------------------------------------------
+
+const CI_WORKFLOW = '.github/workflows/portfolio-validators.yml';
+
+const REQUIRED_CHECK_STEPS = [
+  'schema', 'api', 'ownership', 'snapshots', 'analytics',
+  'costs', 'overlap', 'provenance', 'pages', 'discovery',
+];
+
+const REQUIRED_PR_PATHS = [
+  'api/account/**', 'db/**', 'tools/check-portfolio*.js', 'tools/portfolio-*.js',
+  'account/portfolios/**', 'ar/account/portfolios/**', 'package.json', 'vercel.json',
+];
+
+function validateCi(workflow = readRoute(CI_WORKFLOW)) {
+  const failures = [];
+  if (workflow === null) return [`${CI_WORKFLOW}: missing — the validators would only run on manual dispatch`];
+
+  // Strip comments so a rule cannot be satisfied by prose describing it, and a
+  // commented-out trigger cannot read as an active one. This is exactly how the
+  // cron in technical-intelligence-brain.yml went dormant unnoticed.
+  const active = workflow.split(/\r?\n/).map((l) => l.replace(/(^|\s)#.*$/, '')).join('\n');
+
+  // A literal tab in indentation makes a workflow unparseable, and GitHub only
+  // reports that after the push. Cheapest possible guard against shipping a
+  // workflow that silently never runs.
+  if (/^[ ]*\t/m.test(workflow)) failures.push(`${CI_WORKFLOW}: contains a tab in indentation — YAML forbids it`);
+
+  if (!/^on:/m.test(active)) failures.push(`${CI_WORKFLOW}: no trigger block`);
+  if (!/^\s{2}pull_request:/m.test(active)) failures.push(`${CI_WORKFLOW}: no pull_request trigger`);
+
+  // An active schedule, not a commented one.
+  if (!/^\s{2}schedule:/m.test(active)) failures.push(`${CI_WORKFLOW}: no active schedule`);
+  else if (!/^\s*-\s*cron:\s*['"][^'"]+['"]/m.test(active)) failures.push(`${CI_WORKFLOW}: schedule has no active cron expression`);
+
+  // Path filters must still cover the surfaces that matter.
+  for (const p of REQUIRED_PR_PATHS) {
+    if (!active.includes(`'${p}'`)) failures.push(`${CI_WORKFLOW}: pull_request paths missing ${p}`);
+  }
+
+  // Every validator must actually be invoked.
+  for (const name of REQUIRED_CHECK_STEPS) {
+    if (!new RegExp(`npm run check:portfolio-${name}\\b`).test(active)) {
+      failures.push(`${CI_WORKFLOW}: does not run check:portfolio-${name}`);
+    }
+  }
+  if (!/--self-test/.test(active)) failures.push(`${CI_WORKFLOW}: does not run the validator self-test`);
+  if (!/npm run check:portfolio-ci\b/.test(active)) failures.push(`${CI_WORKFLOW}: does not run check:portfolio-ci (this guard)`);
+
+  // Read-only. A PR-triggered job that can write to the repository is a far
+  // worse problem than the one this workflow solves.
+  if (!/^permissions:/m.test(active)) failures.push(`${CI_WORKFLOW}: no explicit permissions block`);
+  if (!/contents:\s*read/.test(active)) failures.push(`${CI_WORKFLOW}: contents permission must be read`);
+  if (/contents:\s*write/.test(active)) failures.push(`${CI_WORKFLOW}: must not request write permission`);
+
+  // Must stay cheap and self-contained: no secrets, no publishing, no pushing.
+  if (/\$\{\{\s*secrets\./.test(active)) failures.push(`${CI_WORKFLOW}: references a secret — these checks need none`);
+  for (const forbidden of ['git push', 'telegram', 'send-published']) {
+    if (new RegExp(forbidden, 'i').test(active)) failures.push(`${CI_WORKFLOW}: must not perform "${forbidden}"`);
+  }
+
+  // The publishing workflow must keep its own protections.
+  const brain = readRoute('.github/workflows/technical-intelligence-brain.yml');
+  if (brain) {
+    const brainActive = brain.split(/\r?\n/).map((l) => l.replace(/(^|\s)#.*$/, '')).join('\n');
+    if (/^\s{2}pull_request:/m.test(brainActive)) {
+      failures.push('technical-intelligence-brain.yml: must not run on pull_request — it writes to the repository');
+    }
+  }
+  return failures;
+}
+
 function validateSnapshots(sources = loadSources()) {
   const failures = [];
   const persistence = sources[PERSISTENCE];
@@ -713,6 +793,7 @@ const CHECKS = {
   api: () => ({ name: 'check:portfolio-api', failures: validateApi() }),
   ownership: () => ({ name: 'check:portfolio-ownership', failures: validateOwnership() }),
   snapshots: () => ({ name: 'check:portfolio-snapshots', failures: validateSnapshots() }),
+  ci: () => ({ name: 'check:portfolio-ci', failures: validateCi() }),
 };
 
 function failFor(name, failures) {
@@ -879,6 +960,21 @@ function selfTest() {
       ...sources(),
       [ROUTE_A]: 'portfolio_positions read with no ownership lookup',
     }), true],
+
+    // CI wiring. These are the rules that keep every other rule running, so
+    // each one is exercised against a deliberately weakened workflow.
+    ['ci clean', () => validateCi(), false],
+    ['ci workflow missing', () => validateCi(null), true],
+    ['ci schedule commented out', () => validateCi(
+      readRoute(CI_WORKFLOW).replace(/^(\s*)schedule:/m, '$1# schedule:').replace(/^(\s*)- cron:/m, '$1# - cron:'),
+    ), true],
+    ['ci pull_request removed', () => validateCi(readRoute(CI_WORKFLOW).replace(/^\s{2}pull_request:/m, '  # pull_request:')), true],
+    ['ci a validator step dropped', () => validateCi(readRoute(CI_WORKFLOW).replace('npm run check:portfolio-ownership', 'true')), true],
+    ['ci self-test dropped', () => validateCi(readRoute(CI_WORKFLOW).replace(/--self-test/g, '--check=schema')), true],
+    ['ci path filter narrowed', () => validateCi(readRoute(CI_WORKFLOW).replace("      - 'db/**'\n", '')), true],
+    ['ci granted write permission', () => validateCi(readRoute(CI_WORKFLOW).replace('contents: read', 'contents: write')), true],
+    ['ci references a secret', () => validateCi(`${readRoute(CI_WORKFLOW)}\n        env:\n          X: \${{ secrets.TOKEN }}\n`), true],
+    ['ci pushes', () => validateCi(`${readRoute(CI_WORKFLOW)}\n      - run: git push origin main\n`), true],
 
     ['snapshots clean', () => validateSnapshots(), false],
     ['snapshots without daily upsert', () => validateSnapshots({
