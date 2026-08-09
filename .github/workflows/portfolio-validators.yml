@@ -45,6 +45,10 @@ on:
       - 'tools/generate-account-pages.js'
       - 'js/account-portfolios.js'
       - 'js/account-shared.js'
+      - 'js/global-header.js'
+      - 'js/mobile-nav.js'
+      - 'tools/render-global-header.js'
+      - 'tools/check-header-a11y.js'
       - 'account/portfolios/**'
       - 'ar/account/portfolios/**'
       - 'etfs/portfolio-models/**'
@@ -154,6 +158,15 @@ jobs:
         run: npm run check:price-rotation
       - name: Price layer self-test
         run: node tools/check-price-layer.js --self-test
+
+      # Phase 231 — header keyboard accessibility. The dropdowns were
+      # keyboard-unreachable in production for months while every existing
+      # validator stayed green, because none of them asserted an interaction
+      # model. These do.
+      - name: Header accessibility
+        run: npm run check:header-a11y
+      - name: Header accessibility self-test
+        run: node tools/check-header-a11y.js --self-test
 
       # Guards this workflow against being silently weakened — a PR that drops
       # the schedule, the path filters, a validator step, or that grants write
