@@ -105,6 +105,42 @@
     return el('div', { style: 'overflow-x:auto;-webkit-overflow-scrolling:touch' }, [node]);
   }
 
+  // Coverage is a property of what we have researched, not a judgement of the
+  // holding. A basic-coverage symbol is fully supported: it is held, priced and
+  // weighted like any other. The chip says what we know, never what is missing.
+  var COVERAGE_TEXT = {
+    basic: { en: 'Basic', ar: 'أساسية', title_en: 'Identity and price history — held, priced and included in your allocation.', title_ar: 'الهوية وسجل الأسعار — محتفَظ به ومسعّر ومُدرَج في توزيعك.' },
+    research: { en: 'Research', ar: 'بحثية', title_en: 'Adds observed risk statistics, correlation and a TradeAlpha Score.', title_ar: 'يضيف إحصاءات المخاطر المرصودة والارتباط ودرجة TradeAlpha.' },
+    full_intelligence: { en: 'Full intelligence', ar: 'استخبارات كاملة', title_en: 'Adds verified fund facts, each carrying its source.', title_ar: 'يضيف حقائق موثّقة عن الصندوق، ولكل منها مصدره.' },
+  };
+
+  function coverageChip(level) {
+    var c = COVERAGE_TEXT[level] || COVERAGE_TEXT.basic;
+    var span = el('span', {
+      text: isAr ? c.ar : c.en,
+      title: isAr ? c.title_ar : c.title_en,
+      style: 'display:inline-block;font-size:.72rem;padding:1px 7px;border:1px solid currentColor;border-radius:10px;opacity:.75;white-space:nowrap',
+    });
+    return span;
+  }
+
+  function coverageLegend() {
+    var items = ['basic', 'research', 'full_intelligence'].map(function (lv) {
+      var c = COVERAGE_TEXT[lv];
+      return el('li', { style: 'margin-bottom:4px' }, [
+        coverageChip(lv),
+        el('span', { text: ' ' + (isAr ? c.title_ar : c.title_en), style: 'font-size:.88rem;opacity:.85' }),
+      ]);
+    });
+    return el('details', { style: 'margin-block-start:10px' }, [
+      el('summary', {
+        text: t('What the coverage labels mean', 'ما تعنيه علامات التغطية'),
+        style: 'cursor:pointer;font-size:.88rem',
+      }),
+      el('ul', { style: 'margin:8px 0 0;padding-inline-start:18px;list-style:none' }, items),
+    ]);
+  }
+
   function table(headers, rows) {
     var thead = el('thead', null, [el('tr', null, headers.map(function (h) {
       return el('th', { text: h, style: 'text-align:start;padding:6px 10px;white-space:nowrap;font-size:.8rem' });
@@ -230,8 +266,18 @@
           + '&symbol=' + encodeURIComponent(pos.symbol), { method: 'DELETE' })
           .then(load).catch(function (e) { busy(false); status(msg, describeError(e), 'error'); });
       }, 'danger');
+      var symCell = el('td', { style: 'padding:6px 10px;border-top:1px solid rgba(128,128,128,.3)' }, [
+        el('div', null, [
+          el('strong', { text: pos.symbol }),
+          el('span', { text: ' ' }),
+          coverageChip(pos.coverage || 'basic'),
+        ]),
+        pos.listing_name
+          ? el('div', { text: pos.listing_name, style: 'font-size:.8rem;opacity:.7;margin-block-start:2px' })
+          : null,
+      ]);
       return el('tr', null, [
-        td(pos.symbol),
+        symCell,
         td(pos.instrument_type),
         el('td', { style: 'padding:6px 10px;border-top:1px solid rgba(128,128,128,.3)' }, [qty]),
         el('td', { style: 'padding:6px 10px;border-top:1px solid rgba(128,128,128,.3)' }, [save, del]),
@@ -247,8 +293,9 @@
       posRows.length
         ? table([t('Symbol', 'الرمز'), t('Type', 'النوع'), t('Quantity', 'الكمية'), t('Actions', 'إجراءات')], posRows)
         : el('p', { 'class': 'market-copy', text: t('No positions yet.', 'لا توجد مراكز بعد.') }),
+      posRows.length ? coverageLegend() : null,
       el('h4', { text: t('Add or update a position', 'أضف مركزا أو حدّثه'), style: 'margin-block-end:6px' }),
-      field(t('Symbol (must be covered by this platform)', 'الرمز (يجب أن يكون مغطى في هذه المنصّة)'), symIn),
+      field(t('Symbol — any US-listed stock or ETF', 'الرمز — أي سهم أو صندوق مدرج في الولايات المتحدة'), symIn),
       field(t('Quantity', 'الكمية'), qIn),
       field(t('Average cost (optional)', 'متوسط التكلفة (اختياري)'), costIn),
       button(t('Save position', 'حفظ المركز'), function () {

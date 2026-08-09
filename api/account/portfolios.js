@@ -37,6 +37,7 @@ const {
   listPositions,
   listTargets,
   listTransactions,
+  withCoverage,
 } = require('../../db/portfolios');
 
 const SUB_HANDLERS = {
@@ -82,7 +83,13 @@ module.exports = async function handler(req, res) {
         listTargets(sql, portfolio.id),
         listTransactions(sql, portfolio.id, 50),
       ]);
-      json(res, 200, { portfolio: { ...portfolio, positions, targets, transactions } });
+      const { loadArtifacts } = require('../../tools/portfolio-artifacts');
+      let artifacts = null;
+      try { artifacts = loadArtifacts(); } catch { /* coverage degrades to basic */ }
+      json(res, 200, {
+        portfolio: { ...portfolio, positions: withCoverage(positions, artifacts), targets, transactions },
+        coverage_levels: require('../../tools/symbol-registry').COVERAGE_LABELS,
+      });
       return;
     }
 

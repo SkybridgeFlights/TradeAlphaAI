@@ -160,12 +160,16 @@ function validatePositionInput(input) {
     return { error: `instrument_type must be one of ${[...INSTRUMENT_TYPES].join(',')}` };
   }
 
+  // A symbol resolves when it is a listing this platform can identify. Research
+  // coverage is a separate axis, reported alongside the position — a holder
+  // recording a legitimate listing we have not researched has done nothing
+  // wrong, and the error path must not imply otherwise.
   const resolved = resolveSymbol(input.symbol, input.instrument_type || null);
   if (!resolved) {
     return {
       error: input.instrument_type
-        ? `symbol ${input.symbol} is not a covered ${input.instrument_type}`
-        : `symbol ${input.symbol} is not covered by this platform`,
+        ? `${input.symbol} is not listed as a ${input.instrument_type} in our symbol directory`
+        : `${input.symbol} is not in our symbol directory — check the ticker, or it may be listed outside the US markets we index`,
     };
   }
 
@@ -190,6 +194,10 @@ function validatePositionInput(input) {
       instrument_type: resolved.instrument_type,
       symbol: resolved.symbol,
       slug: resolved.slug,
+      // Not persisted — the schema stores what the holder owns, not what we
+      // happen to know about it today. Coverage is recomputed on read so it
+      // improves automatically as the intelligence universe grows.
+      _coverage: resolved.coverage,
       quantity: quantity.value === null ? '0' : quantity.value,
       average_cost: averageCost.value,
       current_value_override: override.value,
@@ -619,6 +627,26 @@ async function saveSnapshot(sql, accountId, portfolioSlug, computed) {
   return rows[0];
 }
 
+/**
+ * Annotate stored positions with their CURRENT coverage level.
+ *
+ * Computed on read rather than stored, so a holding automatically gains
+ * research or full-intelligence coverage the day the intelligence universe
+ * reaches it — without a migration and without rewriting anyone's rows.
+ */
+function withCoverage(positions, artifacts = null) {
+  const registry = require('../tools/symbol-registry');
+  return (positions || []).map((p) => {
+    const hit = registry.resolve(p.symbol, null, artifacts);
+    return {
+      ...p,
+      coverage: hit ? hit.coverage : registry.COVERAGE.BASIC,
+      listing_name: hit ? hit.name : null,
+      exchange: hit ? hit.exchange : null,
+    };
+  });
+}
+
 // Invested capital is deliberately NOT computed here. The CP5 engine already
 // reports it, from holder-recorded contribution amounts, with an availability
 // flag and a stated basis. A second definition in the persistence layer — say,
@@ -658,4 +686,5 @@ module.exports = {
   deleteTransaction,
   listSnapshots,
   saveSnapshot,
+  withCoverage,
 };

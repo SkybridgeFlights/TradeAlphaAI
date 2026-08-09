@@ -93,14 +93,34 @@ function supportedSymbols() {
 
 let symbolCache = null;
 
-/** Resolve and validate a symbol. Returns null when unsupported. */
-function resolveSymbol(symbol, instrumentType) {
-  if (typeof symbol !== 'string') return null;
-  if (!symbolCache) symbolCache = supportedSymbols();
-  const found = symbolCache.get(symbol.trim().toUpperCase());
-  if (!found) return null;
-  if (instrumentType && found.instrument_type !== instrumentType) return null;
-  return found;
+/**
+ * Resolve a symbol through the single registry (tools/symbol-registry.js).
+ *
+ * Returns null only when the symbol is in neither universe — a string this
+ * platform cannot identify as a listing at all. A symbol that is recordable but
+ * not researched RESOLVES, carrying `coverage: 'basic'`; it is a normal state,
+ * not a rejection. Callers must not describe such a symbol as unsupported.
+ *
+ * `slug` is null for basic-coverage symbols, because a slug is the key into the
+ * research artifacts and inventing one would imply research that does not exist.
+ * The analytics engine already treats a position it cannot value as unvaluable
+ * and discloses it, which is exactly the right behaviour here.
+ */
+function resolveSymbol(symbol, instrumentType, artifacts = null) {
+  const registry = require('./symbol-registry');
+  const hit = registry.resolve(symbol, instrumentType || null, artifacts);
+  if (!hit) return null;
+  return {
+    instrument_type: hit.instrument_type,
+    symbol: hit.symbol,
+    // Basic-coverage symbols have no research slug; fall back to the lowercased
+    // ticker so the persistence layer still has a stable, non-null key.
+    slug: hit.slug || hit.symbol.toLowerCase(),
+    coverage: hit.coverage,
+    name: hit.name,
+    exchange: hit.exchange,
+    researched: hit.in_intelligence_universe,
+  };
 }
 
 module.exports = { loadArtifacts, supportedSymbols, resolveSymbol, readJson, indexBySlug };

@@ -32,6 +32,10 @@ on:
       - 'db/**'
       - 'tools/check-portfolio*.js'
       - 'tools/portfolio-*.js'
+      - 'tools/symbol-registry.js'
+      - 'tools/build-symbol-registry.js'
+      - 'tools/check-symbol-registry.js'
+      - 'data/intelligence/symbol-registry.json'
       - 'tools/etf-provenance.js'
       - 'tools/generate-etf-guide-pages.js'
       - 'tools/generate-account-pages.js'
@@ -115,6 +119,18 @@ jobs:
         run: npm run check:portfolio-pages
       - name: Discovery
         run: npm run check:portfolio-discovery
+
+      # Phase 229 — the two-universe symbol architecture. The registry must stay
+      # generated and identity-only, resolution must stay single-sourced, and a
+      # basic-coverage holding must never be described as unsupported.
+      - name: Symbol registry
+        run: npm run check:symbol-registry
+      - name: Symbol architecture
+        run: npm run check:symbol-architecture
+      - name: Coverage language
+        run: npm run check:symbol-language
+      - name: Symbol registry self-test
+        run: node tools/check-symbol-registry.js --self-test
 
       # Guards this workflow against being silently weakened — a PR that drops
       # the schedule, the path filters, a validator step, or that grants write
