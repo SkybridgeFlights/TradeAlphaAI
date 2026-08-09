@@ -364,3 +364,86 @@
     }
   });
 }());
+
+/* ── Phase 231 — keyboard access for the header dropdowns ──────────────────
+ *
+ * ROOT CAUSE this fixes: the menu state logic above is bound to `click` only.
+ * There was no focusin/focusout listener anywhere in the header scripts, and
+ * the click handler actively strips `.is-open` from every menu. Since the CSS
+ * opener is `.nav-menu:hover, .nav-menu:focus-within, .nav-menu.is-open`, a
+ * keyboard user could reach the five top-level triggers but never the ~50
+ * links inside them: the panels stayed `visibility: hidden`, which removes
+ * their descendants from the tab order entirely.
+ *
+ * The CSS was correct the whole time. This is an interaction-model gap.
+ *
+ * Design notes:
+ *   - focusin/focusout are used because they BUBBLE; focus/blur do not, so a
+ *     listener on .nav-menu would never see focus landing on a child link.
+ *   - focusout fires before the next element receives focus, so relatedTarget
+ *     is what tells us whether focus is still inside the group. Checking it is
+ *     what lets focus move from the trigger into the panel without closing —
+ *     no timers, no dwell hacks.
+ *   - Mouse behaviour is untouched. `:hover` still opens, the click handler
+ *     still runs, and this module only adds/removes the same `.is-open` class
+ *     they already use, so the three paths cannot disagree.
+ */
+(function () {
+  'use strict';
+
+  function initAccessibleNav(root) {
+    var scope = root || document;
+    var menus = scope.querySelectorAll('.nav-menu');
+    if (!menus.length) return;
+
+    Array.prototype.forEach.call(menus, function (menu) {
+      if (menu.getAttribute('data-a11y-nav') === '1') return; // idempotent
+      menu.setAttribute('data-a11y-nav', '1');
+
+      var trigger = menu.querySelector('.nav-menu-trigger');
+      var panel = menu.querySelector('.nav-dropdown');
+      if (!trigger || !panel) return;
+
+      // A trigger that opens a menu must advertise that it does.
+      trigger.setAttribute('aria-haspopup', 'true');
+      trigger.setAttribute('aria-expanded', 'false');
+
+      function open() {
+        menu.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+      function close() {
+        menu.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      menu.addEventListener('focusin', open);
+
+      menu.addEventListener('focusout', function (event) {
+        // relatedTarget is where focus is GOING. If it is still inside this
+        // menu, focus is simply moving from the trigger into the panel (or
+        // between panel links) and the menu must stay open.
+        var next = event.relatedTarget;
+        if (next && menu.contains(next)) return;
+        close();
+      });
+
+      menu.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape' && event.key !== 'Esc') return;
+        if (!menu.classList.contains('is-open')) return;
+        event.stopPropagation();          // do not also close the mobile drawer
+        close();
+        trigger.focus();                   // focus returns to where it started
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAccessibleNav(); });
+  } else {
+    initAccessibleNav();
+  }
+
+  // The canonical header is injected on some surfaces after first paint.
+  window.__initAccessibleNav__ = initAccessibleNav;
+}());
