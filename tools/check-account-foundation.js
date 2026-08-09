@@ -41,6 +41,16 @@ const REQUIRED_SECTIONS = {
 // Anti-signal / anti-forecast scoped to account artifacts. Bare 'signal',
 // 'forecast', 'target' MUST NOT be banned — disclaimers legitimately negate
 // them ("not a signal, forecast or recommendation").
+// Visible page text: script and style bodies removed, then all tags — which
+// takes attribute values with them.
+function visibleText(html) {
+  return String(html || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
 const FORBIDDEN_LANG = [
   /\bplaceholder\b/i, /\btbd\b/i, /\blorem\b/i,
   /\bbuy\b/i, /\bsell\b/i, /\bguaranteed\b/i,
@@ -221,7 +231,14 @@ function checkPages() {
       if (loc === 'AR' && !html.includes('dir="rtl"')) fails.push(`${loc} ${dir}: missing dir=rtl`);
       if (/\b(undefined|NaN)\b/.test(html)) fails.push(`${loc} ${dir}: leaks undefined/NaN`);
       if (html.includes('data/intelligence/') && html.includes('.json')) fails.push(`${loc} ${dir}: leaks raw artifact URL`);
-      for (const re of FORBIDDEN_LANG) if (re.test(html)) fails.push(`${loc} ${dir}: forbidden language ${re}`);
+      // Test what a reader actually sees, not the markup around it. Scanning
+      // raw HTML matched attribute names too, so the global header's
+      // `placeholder="…"` search box tripped the unfinished-copy rule on every
+      // regenerated account page. The rule is about visible wording; strip
+      // scripts, styles and tags before applying it.
+      for (const re of FORBIDDEN_LANG) {
+        if (re.test(visibleText(html))) fails.push(`${loc} ${dir}: forbidden language ${re}`);
+      }
       // Required sections.
       const baseDir = dir.replace(/^ar\//, '');
       const required = REQUIRED_SECTIONS[baseDir] || [];

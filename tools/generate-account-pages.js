@@ -30,6 +30,9 @@ const SURFACES = {
   alerts: { rel: 'account/alerts/', title_en: 'Account Alerts', title_ar: 'تنبيهات الحساب',
     desc_en: 'Allowed alert classes and their source artifacts — contracts only, no dispatch. Future Premium features will subscribe to these classes.',
     desc_ar: 'أصناف التنبيهات المسموح بها ومصادرها — عقود فقط دون إرسال. ستشترك ميزات Premium المستقبلية في هذه الأصناف.' },
+  portfolios: { rel: 'account/portfolios/', title_en: 'Your Portfolios', title_ar: 'محافظك',
+    desc_en: 'Record the holdings you already own and read what they add up to — allocation, concentration and cost, measured from the platform\'s published ETF data. Educational measurement, never advice.',
+    desc_ar: 'سجّل ما تملكه فعلا واقرأ ما تشكّله مجتمعة — التوزيع والتركّز والتكلفة، مقيسة من بيانات الصناديق المنشورة في المنصّة. قياس تعليمي، وليس نصيحة.' },
   workspace: { rel: 'account/workspace/', title_en: 'Account Workspace', title_ar: 'مساحة عمل الحساب',
     desc_en: 'Personal workspace state contract — saved workspaces, monitored entities, followed research, followed regimes and followed watchlists. Future accounts plug into this surface.',
     desc_ar: 'عقد حالة مساحة العمل الشخصية — مساحات العمل المحفوظة والكيانات المرصودة والأبحاث والأنظمة وقوائم المتابعة المُتابَعة. ستتصل الحسابات المستقبلية بهذا السطح.' },
@@ -109,8 +112,10 @@ function shell(ar, surface, body, relPath, surfaceKey) {
   // contract-summary HTML).
   // Phase 221-Pg + premium polish — live-data surfaces load Clerk + the
   // per-surface app module. Overview becomes the dashboard surface.
-  const liveSurfaces = new Set(['preferences', 'watchlists', 'overview']);
-  const surfaceScriptMap = { overview: 'dashboard', preferences: 'preferences', watchlists: 'watchlists' };
+  const liveSurfaces = new Set(['preferences', 'watchlists', 'overview', 'portfolios']);
+  const surfaceScriptMap = {
+    overview: 'dashboard', preferences: 'preferences', watchlists: 'watchlists', portfolios: 'portfolios',
+  };
   const appScript = surfaceScriptMap[surfaceKey];
   const liveScripts = liveSurfaces.has(surfaceKey) && appScript
     ? '\n  <script src="/js/clerk-config.js"></script>\n  <script src="/js/clerk-bootstrap.js" defer></script>\n  <script src="/js/account-shared.js" defer></script>\n  <script src="/js/account-' + appScript + '.js" defer></script>'
@@ -183,6 +188,7 @@ function overviewBody(ar, data) {
         <a href="${ar ? '/ar/account/watchlists/' : '/account/watchlists/'}">${esc(t(ar, 'Watchlists', 'قوائم المتابعة'))}</a>
         <a href="${ar ? '/ar/account/preferences/' : '/account/preferences/'}">${esc(t(ar, 'Preferences', 'التفضيلات'))}</a>
         <a href="${ar ? '/ar/account/alerts/' : '/account/alerts/'}">${esc(t(ar, 'Alerts', 'التنبيهات'))}</a>
+        <a href="${ar ? '/ar/account/portfolios/' : '/account/portfolios/'}">${esc(t(ar, 'Portfolios', 'المحافظ'))}</a>
         <a href="${ar ? '/ar/account/workspace/' : '/account/workspace/'}">${esc(t(ar, 'Workspace', 'مساحة العمل'))}</a>
       </nav>`;
 }
@@ -243,12 +249,41 @@ ${['followed_research', 'followed_regimes', 'followed_watchlists'].map((k) => ca
         <div class="market-panel"><p class="market-copy">${esc(t(ar, `${(ws.monitored_entities && ws.monitored_entities.count) || 0} entities are monitored in the default workspace today. Personal monitored sets require an account.`, `${(ws.monitored_entities && ws.monitored_entities.count) || 0} كيان مرصود في مساحة العمل الافتراضية اليوم. تتطلب المجموعات الشخصية حساباً.`))}</p></div></section>`;
 }
 
+// Phase 228 CP2/E — the portfolio surface is entirely client-rendered, because
+// every row on it belongs to one signed-in holder and must never be baked into
+// a static page. The server ships an empty, labelled container plus the
+// boundary statement; account-portfolios.js fills it after Clerk resolves.
+//
+// One surface serves both views: the list, and a detail view when ?slug= is
+// present. That keeps the authenticated surface to a single generated page in
+// each language rather than a route per view.
+function portfoliosBody(ar, data) {
+  return `      <section class="market-section" id="account-portfolios-app">
+        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Your holdings', 'ما تملكه'))}</span><h2>${esc(t(ar, 'Portfolios', 'المحافظ'))}</h2></div>
+        <div data-account-app="portfolios" data-loading-label="${esc(t(ar, 'Loading…', 'يتم التحميل…'))}">
+          <p class="market-copy">${esc(t(ar, 'Loading…', 'يتم التحميل…'))}</p>
+        </div>
+      </section>
+      <section class="market-section" id="account-portfolios-boundary">
+        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Scope', 'النطاق'))}</span><h2>${esc(t(ar, 'What this surface does', 'ما تفعله هذه الصفحة'))}</h2></div>
+        <div class="market-panel">
+          <p class="market-copy">${esc(t(ar,
+    'A portfolio here contains only what you entered yourself. Nothing is imported from a broker, nothing is bought or sold, and no model shown elsewhere on this site is ever copied into it.',
+    'تحتوي المحفظة هنا على ما أدخلته بنفسك فقط. لا شيء يُستورد من وسيط، ولا يُشترى شيء أو يُباع، ولا يُنسخ إليها أي نموذج معروض في مكان آخر من هذا الموقع.'))}</p>
+          <p class="market-copy">${esc(t(ar,
+    'Figures are measured from the platform\'s published data and are withheld where that data is incomplete, rather than estimated. Nothing on this page ranks your holdings or tells you what to do with them.',
+    'تُقاس الأرقام من البيانات المنشورة في المنصّة، وتُحجب عند نقص تلك البيانات بدلا من تقديرها. ولا يرتّب أي شيء في هذه الصفحة ممتلكاتك ولا يخبرك بما تفعله بها.'))}</p>
+        </div>
+      </section>`;
+}
+
 function bodyFor(key, ar, data) {
   if (key === 'overview') return overviewBody(ar, data);
   if (key === 'watchlists') return watchlistsBody(ar, data);
   if (key === 'preferences') return preferencesBody(ar, data);
   if (key === 'alerts') return alertsBody(ar, data);
   if (key === 'workspace') return workspaceBody(ar, data);
+  if (key === 'portfolios') return portfoliosBody(ar, data);
   return '';
 }
 
