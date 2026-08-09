@@ -50,6 +50,9 @@ function loadArtifacts(options = {}) {
     scoreBySlug: indexBySlug(score),
     similarityBySlug: indexBySlug(similarity),
     series: seriesDoc.series || {},
+    // Recordable-universe quotes. Loaded lazily by the price layer, so a
+    // request that values four positions reads four shards, not all 64.
+    prices: { get: (symbol) => require('./price-layer').getRecord(symbol) },
     riskFree: analytics.risk_free || null,
     generated_at: {
       facts: facts.generated_at || null,

@@ -36,6 +36,10 @@ on:
       - 'tools/build-symbol-registry.js'
       - 'tools/check-symbol-registry.js'
       - 'data/intelligence/symbol-registry.json'
+      - 'data/prices/**'
+      - 'tools/price-layer.js'
+      - 'tools/build-price-layer.js'
+      - 'tools/check-price-layer.js'
       - 'tools/etf-provenance.js'
       - 'tools/generate-etf-guide-pages.js'
       - 'tools/generate-account-pages.js'
@@ -131,6 +135,22 @@ jobs:
         run: npm run check:symbol-language
       - name: Symbol registry self-test
         run: node tools/check-symbol-registry.js --self-test
+
+      # Phase 229 — price layer for the recordable universe. Quotes only:
+      # these checks fail if a research field ever appears in a shard, if a
+      # quote is future-dated, or if pricing starts granting coverage.
+      - name: Price coverage
+        run: npm run check:price-coverage
+      - name: Price freshness
+        run: npm run check:price-freshness
+      - name: Price integrity
+        run: npm run check:price-integrity
+      - name: Price currency
+        run: npm run check:price-currency
+      - name: Valuation fallback
+        run: npm run check:price-fallback
+      - name: Price layer self-test
+        run: node tools/check-price-layer.js --self-test
 
       # Guards this workflow against being silently weakened — a PR that drops
       # the schedule, the path filters, a validator step, or that grants write

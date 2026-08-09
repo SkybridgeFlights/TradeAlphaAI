@@ -106,6 +106,27 @@ function valuePosition(position, artifacts) {
     };
   }
 
+  // Recordable-universe fallback. A holding outside the intelligence universe
+  // has no monthly series and no analytics record, but it does have an observed
+  // quote — so it can be valued and weighted like any other position.
+  //
+  // This is pricing ONLY. It supplies no history, so the risk, correlation and
+  // score blocks continue to exclude the position and report reduced coverage,
+  // and its coverage level stays "basic". Being valuable and being researched
+  // are deliberately different things.
+  const quote = artifacts.prices && artifacts.prices.get
+    ? artifacts.prices.get(String(position.symbol || '').toUpperCase())
+    : null;
+  if (quote && quote.status === 'ok' && Number.isFinite(quote.price)
+      && Number.isFinite(quantity) && quantity > 0) {
+    return {
+      value: quantity * quote.price,
+      currency: quote.currency || null,
+      basis: VALUATION.OBSERVED,
+      as_of: quote.as_of || null,
+    };
+  }
+
   return { value: null, currency: analytics ? analytics.currency : null, basis: VALUATION.UNAVAILABLE };
 }
 
