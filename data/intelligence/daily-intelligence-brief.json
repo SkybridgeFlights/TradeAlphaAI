@@ -1,12 +1,12 @@
 {
   "version": "2.0",
   "product": "Daily Market Brief 2.0",
-  "updated_at": "2026-08-10T16:25:41.574Z",
+  "updated_at": "2026-08-10T17:28:22.216Z",
   "run_date": "2026-08-10",
   "verified": true,
   "desk_lead": {
-    "en": "Macro Desk: The regime picture moved: breadth state: confirming -> deteriorating; dollar pressure: easing -> stable; breadth state: mixed -> confirming. Regime coherence 51/100 — the tape is internally tense; confirmations and divergences are competing. The SPY/IWM link is not holding; that is where the tape's internal argument lives.",
-    "ar": "مكتب الماكرو: صورة النظام تحركت عبر تحولات موثقة جديدة. اتساق النظام 51/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. رابط SPY/IWM لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق."
+    "en": "Macro Desk: The regime picture moved: breadth state: confirming -> deteriorating; dollar pressure: easing -> stable; breadth state: mixed -> confirming. Regime coherence 51/100 — the tape is internally tense; confirmations and divergences are competing. The DXY/GOLD link is not holding; that is where the tape's internal argument lives.",
+    "ar": "مكتب الماكرو: صورة النظام تحركت عبر تحولات موثقة جديدة. اتساق النظام 51/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس. رابط DXY/GOLD لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق."
   },
   "regime": {
     "state": "momentum-exhaustion",
@@ -46,6 +46,17 @@
   ],
   "confirms": [
     {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "confirming",
+      "chain_strength": 6,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    },
+    {
       "id": "vix-equities",
       "legs": [
         "vix",
@@ -69,6 +80,17 @@
     }
   ],
   "diverges": [
+    {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
     {
       "id": "breadth-link",
       "legs": [
@@ -163,14 +185,14 @@
       "rank": 1,
       "asset": "VIX",
       "score": 52,
-      "live_change_pct": -8.303030303030297,
+      "live_change_pct": -7.393939393939397,
       "drivers_en": [
-        "sourced move magnitude -8.30%",
+        "sourced move magnitude -7.39%",
         "confirming vix/equities relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -8.30%",
+        "حجم التحرك الموثق -7.39%",
         "تأكيد في علاقة vix/equities",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
@@ -193,6 +215,22 @@
     },
     {
       "rank": 3,
+      "asset": "DXY",
+      "score": 49,
+      "live_change_pct": 0.10933895074732558,
+      "drivers_en": [
+        "sourced move magnitude +0.11%",
+        "confirming yields/dollar relationship",
+        "diverging dollar/gold relationship"
+      ],
+      "drivers_ar": [
+        "حجم التحرك الموثق +0.11%",
+        "تأكيد في علاقة yields/dollar",
+        "تباعد في علاقة dollar/gold"
+      ]
+    },
+    {
+      "rank": 4,
       "asset": "SPY",
       "score": 49,
       "live_change_pct": 0.0711,
@@ -208,33 +246,19 @@
       ]
     },
     {
-      "rank": 4,
-      "asset": "NVDA",
-      "score": 46,
-      "live_change_pct": -1.8039,
-      "drivers_en": [
-        "sourced move magnitude -1.80%",
-        "speculative pressure at 4/5",
-        "concentration pressure at 5/5"
-      ],
-      "drivers_ar": [
-        "حجم التحرك الموثق -1.80%",
-        "مسار ضغط نشط عند 4/5",
-        "مسار ضغط نشط عند 5/5"
-      ]
-    },
-    {
       "rank": 5,
-      "asset": "OIL",
-      "score": 45,
-      "live_change_pct": 7.750598245147565,
+      "asset": "US10Y",
+      "score": 48,
+      "live_change_pct": 1.5776961314026454,
       "drivers_en": [
-        "sourced move magnitude +7.75%",
-        "direct relevance to the next scheduled catalyst"
+        "sourced move magnitude +1.58%",
+        "confirming yields/dollar relationship",
+        "confirming yields/bonds relationship"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +7.75%",
-        "حساسية مباشرة للمحفز المجدول التالي"
+        "حجم التحرك الموثق +1.58%",
+        "تأكيد في علاقة yields/dollar",
+        "تأكيد في علاقة yields/bonds"
       ]
     }
   ],
@@ -243,14 +267,14 @@
       "rank": 1,
       "asset": "VIX",
       "score": 52,
-      "live_change_pct": -8.303030303030297,
+      "live_change_pct": -7.393939393939397,
       "drivers_en": [
-        "sourced move magnitude -8.30%",
+        "sourced move magnitude -7.39%",
         "confirming vix/equities relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق -8.30%",
+        "حجم التحرك الموثق -7.39%",
         "تأكيد في علاقة vix/equities",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
@@ -273,6 +297,22 @@
     },
     {
       "rank": 3,
+      "asset": "DXY",
+      "score": 49,
+      "live_change_pct": 0.10933895074732558,
+      "drivers_en": [
+        "sourced move magnitude +0.11%",
+        "confirming yields/dollar relationship",
+        "diverging dollar/gold relationship"
+      ],
+      "drivers_ar": [
+        "حجم التحرك الموثق +0.11%",
+        "تأكيد في علاقة yields/dollar",
+        "تباعد في علاقة dollar/gold"
+      ]
+    },
+    {
+      "rank": 4,
       "asset": "SPY",
       "score": 49,
       "live_change_pct": 0.0711,
@@ -288,7 +328,23 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 5,
+      "asset": "US10Y",
+      "score": 48,
+      "live_change_pct": 1.5776961314026454,
+      "drivers_en": [
+        "sourced move magnitude +1.58%",
+        "confirming yields/dollar relationship",
+        "confirming yields/bonds relationship"
+      ],
+      "drivers_ar": [
+        "حجم التحرك الموثق +1.58%",
+        "تأكيد في علاقة yields/dollar",
+        "تأكيد في علاقة yields/bonds"
+      ]
+    },
+    {
+      "rank": 6,
       "asset": "NVDA",
       "score": 46,
       "live_change_pct": -1.8039,
@@ -304,21 +360,21 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 7,
       "asset": "OIL",
       "score": 45,
-      "live_change_pct": 7.750598245147565,
+      "live_change_pct": 8.348843392714706,
       "drivers_en": [
-        "sourced move magnitude +7.75%",
+        "sourced move magnitude +8.35%",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
-        "حجم التحرك الموثق +7.75%",
+        "حجم التحرك الموثق +8.35%",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     },
     {
-      "rank": 6,
+      "rank": 8,
       "asset": "BTC",
       "score": 44,
       "live_change_pct": -1.6414,
@@ -334,46 +390,18 @@
       ]
     },
     {
-      "rank": 7,
-      "asset": "US10Y",
-      "score": 38,
-      "live_change_pct": 1.3615733736762614,
-      "drivers_en": [
-        "sourced move magnitude +1.36%",
-        "confirming yields/bonds relationship",
-        "direct relevance to the next scheduled catalyst"
-      ],
-      "drivers_ar": [
-        "حجم التحرك الموثق +1.36%",
-        "تأكيد في علاقة yields/bonds",
-        "حساسية مباشرة للمحفز المجدول التالي"
-      ]
-    },
-    {
-      "rank": 8,
-      "asset": "DXY",
-      "score": 27,
-      "live_change_pct": 0.019059083157794622,
-      "drivers_en": [
-        "liquidity pressure at 5/5",
-        "direct relevance to the next scheduled catalyst"
-      ],
-      "drivers_ar": [
-        "مسار ضغط نشط عند 5/5",
-        "حساسية مباشرة للمحفز المجدول التالي"
-      ]
-    },
-    {
       "rank": 9,
       "asset": "GOLD",
-      "score": 21,
+      "score": 35,
       "live_change_pct": 0.4668,
       "drivers_en": [
         "sourced move magnitude +0.47%",
+        "diverging dollar/gold relationship",
         "direct relevance to the next scheduled catalyst"
       ],
       "drivers_ar": [
         "حجم التحرك الموثق +0.47%",
+        "تباعد في علاقة dollar/gold",
         "حساسية مباشرة للمحفز المجدول التالي"
       ]
     }

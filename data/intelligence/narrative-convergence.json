@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-10T16:25:41.253Z",
+  "updated_at": "2026-08-10T17:28:21.854Z",
   "run_date": "2026-08-10",
   "verified": true,
   "coherence": {
@@ -39,6 +39,17 @@
   ],
   "confirms": [
     {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "confirming",
+      "chain_strength": 6,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    },
+    {
       "id": "vix-equities",
       "legs": [
         "vix",
@@ -62,6 +73,17 @@
     }
   ],
   "diverges": [
+    {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
     {
       "id": "breadth-link",
       "legs": [
@@ -112,14 +134,14 @@
   "narrative_en": [
     "The regime picture moved: breadth state: confirming -> deteriorating; dollar pressure: easing -> stable; breadth state: mixed -> confirming.",
     "Regime coherence 51/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "The SPY/IWM link is not holding; that is where the tape's internal argument lives.",
+    "The DXY/GOLD link is not holding; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
     "اتساق النظام 51/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
-    "رابط SPY/IWM لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "رابط DXY/GOLD لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
@@ -205,7 +227,7 @@
       },
       {
         "date": "2026-08-10",
-        "state": "neutral"
+        "state": "confirming"
       }
     ],
     "dollar-gold": [
@@ -247,7 +269,7 @@
       },
       {
         "date": "2026-08-10",
-        "state": "neutral"
+        "state": "diverging"
       }
     ],
     "vix-equities": [
@@ -461,5 +483,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 51/100 (tense); velocity accelerating; 2 confirming / 1 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 51/100 (tense); velocity accelerating; 3 confirming / 2 diverging links; 2 underpriced signal(s)."
 }
