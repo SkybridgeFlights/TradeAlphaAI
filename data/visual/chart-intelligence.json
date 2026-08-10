@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-10T15:31:51.116Z",
+  "generated_at": "2026-08-10T16:25:41.506Z",
   "source_layer": "chart-intelligence",
   "preview_only": true,
   "chart_types": [
@@ -25,20 +25,20 @@
       "id": "liquidity_regime_snapshot",
       "chart_type": "liquidity_regime_snapshot",
       "analytical_reason": {
-        "regime": "crowded_growth_positioning",
+        "regime": "macro_fragility",
         "question": "What is the structural environment macro reactions are landing in?"
       },
       "narrative_hook": {
-        "en": "The liquidity snapshot frames the environment: a crowded growth positioning regime with volatility absorption liquidity and fragile stability.",
-        "ar": "يؤطّر مشهد السيولة البيئة: نظام تمركز نمو مزدحم مع سيولة امتصاص تذبذب واستقرار هش."
+        "en": "The liquidity snapshot frames the environment: a macro fragility regime with volatility absorption liquidity and deteriorating stability.",
+        "ar": "يؤطّر مشهد السيولة البيئة: نظام هشاشة كلية مع سيولة امتصاص تذبذب واستقرار يتدهور."
       },
       "evidence": {
-        "regime": "crowded_growth_positioning",
+        "regime": "macro_fragility",
         "liquidity_state": "volatility_absorption",
-        "stability": "fragile",
-        "coherence": 0.6,
+        "stability": "deteriorating",
+        "coherence": 0.2,
         "sub_states": {
-          "breadth": "narrow",
+          "breadth": "flat",
           "volatility": "compression",
           "yield": "neutral",
           "dollar": "neutral",
@@ -51,11 +51,11 @@
       ],
       "graphic": {
         "visual_type": "regime-snapshot",
-        "headline_en": "crowded growth positioning",
-        "headline_ar": "تمركز نمو مزدحم",
+        "headline_en": "macro fragility",
+        "headline_ar": "هشاشة كلية",
         "narrative_context": {
-          "en": "Liquidity volatility absorption · stability fragile · coherence 0.6.",
-          "ar": "سيولة امتصاص تذبذب · استقرار هش · اتساق 0.6."
+          "en": "Liquidity volatility absorption · stability deteriorating · coherence 0.2.",
+          "ar": "سيولة امتصاص تذبذب · استقرار يتدهور · اتساق 0.2."
         },
         "annotations": [
           {
@@ -64,14 +64,14 @@
             "type": "evidence"
           },
           {
-            "label_en": "Stability — fragile",
-            "label_ar": "الاستقرار — هش",
-            "type": "evidence"
+            "label_en": "Stability — deteriorating",
+            "label_ar": "الاستقرار — يتدهور",
+            "type": "divergence-highlight"
           },
           {
-            "label_en": "Breadth — narrow",
-            "label_ar": "الاتساع — ضيق",
-            "type": "divergence-highlight"
+            "label_en": "Breadth — flat",
+            "label_ar": "الاتساع — ثابت",
+            "type": "evidence"
           }
         ],
         "attribution": "Source: TradeAlphaAI macro-reactions + liquidity-regime artifacts"

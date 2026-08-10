@@ -1,43 +1,42 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-10T15:31:50.881Z",
+  "updated_at": "2026-08-10T16:25:41.281Z",
   "run_date": "2026-08-10",
   "verified": true,
   "selected": [
     {
-      "id": "liquidity-beta",
-      "kind": "liquidity",
-      "visual_type": "liquidity-pressure",
+      "id": "breadth-confirmation",
+      "kind": "cross-asset",
+      "visual_type": "breadth",
       "symbols": [
-        "CRYPTO:BTCUSD",
-        "NASDAQ:QQQ"
+        "AMEX:SPY",
+        "AMEX:RSP"
       ],
-      "title_en": "Liquidity beta",
-      "title_ar": "بيتا السيولة",
-      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 70,
+      "title_en": "Cap-weighted vs equal-weight breadth",
+      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
+      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
+      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
+      "score": 38,
       "evidence": [
-        "causal:liquidity-beta diverging ×1",
-        "liquidity_pressure 5/5"
+        "breadth_state: deteriorating ×1"
       ],
       "annotations": [
         {
           "type": "divergence-highlight",
           "severity": "elevated",
-          "label_en": "Divergence — BTC/QQQ not confirming",
-          "label_ar": "انفصال — BTC/QQQ لا يؤكد",
+          "label_en": "Divergence — SPY/IWM not confirming",
+          "label_ar": "انفصال — SPY/IWM لا يؤكد",
           "evidence": [
-            "convergence:diverges:liquidity-beta:chain=1"
+            "convergence:diverges:breadth-link:chain=1"
           ]
         },
         {
-          "type": "pressure-band",
-          "severity": "high",
-          "label_en": "Stored pressure — liquidity pressure 5/5",
-          "label_ar": "ضغط مخزّن — 5/5",
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — breadth state confirming → deteriorating",
+          "label_ar": "تحوّل النظام — breadth state: confirming ← deteriorating",
           "evidence": [
-            "macro:pressure:liquidity_pressure:5"
+            "cognition:timeline:breadth_state:confirming->deteriorating:2026-08-10"
           ]
         },
         {
@@ -53,29 +52,29 @@
       "attribution": "Chart: TradingView · Quotes: sourced market providers"
     },
     {
-      "id": "yields-growth",
-      "kind": "cross-asset",
-      "visual_type": "cross-asset-comparison",
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
       "symbols": [
-        "TVC:US10Y",
+        "CRYPTO:BTCUSD",
         "NASDAQ:QQQ"
       ],
-      "title_en": "Yields vs growth equities",
-      "title_ar": "العوائد مقابل أسهم النمو",
-      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
-      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 50,
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 30,
       "evidence": [
-        "causal:yields-growth diverging ×1"
+        "liquidity_pressure 5/5"
       ],
       "annotations": [
         {
-          "type": "divergence-highlight",
-          "severity": "elevated",
-          "label_en": "Divergence — US10Y/QQQ not confirming",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
+          "type": "pressure-band",
+          "severity": "high",
+          "label_en": "Stored pressure — liquidity pressure 5/5",
+          "label_ar": "ضغط مخزّن — 5/5",
           "evidence": [
-            "convergence:diverges:yields-growth:chain=1"
+            "macro:pressure:liquidity_pressure:5"
           ]
         },
         {
