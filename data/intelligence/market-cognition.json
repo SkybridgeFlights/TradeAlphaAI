@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-10T18:25:28.080Z",
+  "updated_at": "2026-08-10T19:33:37.435Z",
   "run_date": "2026-08-10",
   "verified": true,
   "sessions_tracked": 40,
@@ -64,7 +64,7 @@
     },
     {
       "dimension": "breadth_state",
-      "state": "deteriorating",
+      "state": "mixed",
       "phase": "emerging",
       "sessions_in_state": 1,
       "from": {
@@ -132,10 +132,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
         "us10y": 1.5560838556299992,
-        "qqq": 0.0304
+        "qqq": -0.1646
       }
     },
     {
@@ -150,7 +150,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 1.5560838556299992,
-        "dxy": 0.10833584110743716
+        "dxy": 0.11937004714615285
       }
     },
     {
@@ -164,8 +164,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": 0.10833584110743716,
-        "gold": 0.4668
+        "dxy": 0.11937004714615285,
+        "gold": 1.0616
       }
     },
     {
@@ -177,10 +177,10 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "vix": -7.030303030303031,
-        "spy": 0.0711
+        "vix": -6.9696969696969715,
+        "spy": -0.0556
       }
     },
     {
@@ -192,10 +192,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "nvda": -1.8039,
-        "qqq": 0.0304
+        "nvda": -2.1656,
+        "qqq": -0.1646
       }
     },
     {
@@ -207,10 +207,10 @@
       "expected": "direct",
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "btc": -1.6414,
-        "qqq": 0.0304
+        "btc": -1.7289,
+        "qqq": -0.1646
       }
     },
     {
@@ -222,10 +222,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "spy": 0.0711,
-        "iwm": -0.5339
+        "spy": -0.0556,
+        "iwm": -0.5438
       }
     },
     {
@@ -240,37 +240,37 @@
       "state": "confirming",
       "evidence": {
         "us10y": 1.5560838556299992,
-        "tlt": -0.5921
+        "tlt": -0.8096
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
+        "source": "causal:yields-growth",
+        "en": "Rising yields pressure long-duration growth equities",
+        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
+        "evidence": {
+          "us10y": 1.5560838556299992,
+          "qqq": -0.1646
+        }
+      },
+      {
         "source": "causal:yields-dollar",
         "en": "Yield support typically firms the dollar",
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
           "us10y": 1.5560838556299992,
-          "dxy": 0.10833584110743716
+          "dxy": 0.11937004714615285
         }
       },
       {
-        "source": "causal:vix-equities",
-        "en": "Rising hedging demand pressures the equity tape",
-        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
+        "source": "causal:ai-growth",
+        "en": "AI leadership drives the growth complex",
+        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "vix": -7.030303030303031,
-          "spy": 0.0711
-        }
-      },
-      {
-        "source": "causal:yields-bonds",
-        "en": "Rising yields mark down long-duration bonds",
-        "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-        "evidence": {
-          "us10y": 1.5560838556299992,
-          "tlt": -0.5921
+          "nvda": -2.1656,
+          "qqq": -0.1646
         }
       }
     ],
@@ -280,23 +280,18 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": 0.10833584110743716,
-          "gold": 0.4668
+          "dxy": 0.11937004714615285,
+          "gold": 1.0616
         }
       },
       {
-        "source": "causal:breadth-link",
-        "en": "Divergence on the spy/iwm link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة spy/iwm — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:vix-equities",
+        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "spy": 0.0711,
-          "iwm": -0.5339
+          "vix": -6.9696969696969715,
+          "spy": -0.0556
         }
-      },
-      {
-        "source": "breadth_state",
-        "en": "Index strength is contradicted by deteriorating participation beneath the surface.",
-        "ar": "قوة المؤشر تناقضها مشاركة متدهورة تحت السطح."
       }
     ],
     "fragility": [
