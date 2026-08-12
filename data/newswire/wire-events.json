@@ -1,20 +1,21 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-11T20:54:52.447Z",
+  "updated_at": "2026-08-12T14:22:33.633Z",
   "status": "live",
-  "item_count": 33,
+  "item_count": 34,
   "clusters": {
-    "ai-momentum": 6,
-    "volatility": 5,
-    "growth": 3,
+    "ai-momentum": 7,
+    "volatility": 4,
     "fed": 5,
+    "growth": 3,
+    "labor": 1,
     "inflation": 9,
     "macro": 5
   },
   "top_story": {
-    "id": "move::NVDA::2026-08-10T21",
+    "id": "move::NVDA::2026-08-12T14",
     "kind": "market_move",
-    "headline": "NVDA drops -2.17% to 219.11",
+    "headline": "NVDA jumps +2.73% to 223.44",
     "urgency": 65,
     "market_impact": 70,
     "cluster": "ai-momentum",
@@ -24,11 +25,28 @@
     "sector_tags": [
       "ai-semiconductors"
     ],
-    "timestamp": "2026-08-10T19:33:34.205Z",
+    "timestamp": "2026-08-12T14:22:30.713Z",
     "source": "Finnhub",
     "attribution": "sourced: https://finnhub.io/"
   },
   "items": [
+    {
+      "id": "move::NVDA::2026-08-12T14",
+      "kind": "market_move",
+      "headline": "NVDA jumps +2.73% to 223.44",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-08-12T14:22:30.713Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
     {
       "id": "move::NVDA::2026-08-10T21",
       "kind": "market_move",
@@ -200,21 +218,69 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
-      "id": "move::VIX::2026-08-10T14",
-      "kind": "market_move",
-      "headline": "VIX drops -7.88% to 15.2",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260814T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-08-14)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "volatility",
+      "cluster": "fed",
       "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
         "VIX"
       ],
       "sector_tags": [
-        "volatility"
+        "fed"
       ],
-      "timestamp": "2026-08-10T14:22:16.129Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-08-14T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::national-accounts-gdp-eurostat::20260814T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: National Accounts - GDP (Eurostat) (2026-08-14)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "growth",
+      "asset_tags": [
+        "Treasury yields",
+        "SPY",
+        "IWM",
+        "Oil",
+        "Defensive sectors"
+      ],
+      "sector_tags": [
+        "growth"
+      ],
+      "timestamp": "2026-08-14T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260813T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-08-13, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-08-13T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::forexfactory::gb::gdp-m-m::20260813T060000",
@@ -647,50 +713,6 @@
         "fed"
       ],
       "timestamp": "2026-08-11T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::global_acquisition::jp::japan-gdp::20260810T090000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: Japan GDP (2026-08-10, time estimated)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "growth",
-      "asset_tags": [
-        "Treasury yields",
-        "SPY",
-        "IWM",
-        "Oil",
-        "Defensive sectors"
-      ],
-      "sector_tags": [
-        "growth"
-      ],
-      "timestamp": "2026-08-10T09:00:00.000Z",
-      "source": "global_acquisition",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260810T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-08-10)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-08-10T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
