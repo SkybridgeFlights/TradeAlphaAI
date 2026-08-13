@@ -1,20 +1,27 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-13T14:24:26.573Z",
+  "updated_at": "2026-08-13T17:31:20.168Z",
   "run_date": "2026-08-13",
   "verified": true,
   "coherence": {
-    "score": 88,
+    "score": 75,
     "band": "coherent",
     "observed_links": 8,
-    "en": "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
+    "ar": "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
-    "events_5d": 14,
+    "events_5d": 15,
     "band": "accelerating"
   },
   "what_changed": [
+    {
+      "date": "2026-08-13",
+      "dimension": "momentum_concentration",
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
+    },
     {
       "date": "2026-08-13",
       "dimension": "market_fragility",
@@ -28,13 +35,6 @@
       "from": "elevated",
       "to": "contained",
       "note": "ai concentration risk: elevated -> contained"
-    },
-    {
-      "date": "2026-08-13",
-      "dimension": "duration_pressure",
-      "from": "neutral",
-      "to": "relaxing",
-      "note": "duration pressure: neutral -> relaxing"
     }
   ],
   "confirms": [
@@ -48,6 +48,17 @@
       "chain_strength": 1,
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    },
+    {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
     },
     {
       "id": "vix-equities",
@@ -72,17 +83,6 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
-      "id": "liquidity-beta",
-      "legs": [
-        "btc",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 1,
-      "en": "Crypto trades as the liquidity beta of the growth complex",
-      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
-    },
-    {
       "id": "breadth-link",
       "legs": [
         "spy",
@@ -105,7 +105,30 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
     }
   ],
-  "diverges": [],
+  "diverges": [
+    {
+      "id": "liquidity-beta",
+      "legs": [
+        "btc",
+        "qqq"
+      ],
+      "state": "diverging",
+      "chain_strength": 3,
+      "en": "Crypto trades as the liquidity beta of the growth complex",
+      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+    },
+    {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
+    }
+  ],
   "weakening": [],
   "crowding": null,
   "preparing_for": [
@@ -135,14 +158,16 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: market fragility: building -> contained; ai concentration risk: elevated -> contained; duration pressure: neutral -> relaxing.",
-    "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
+    "The regime picture moved: momentum concentration: balanced -> narrow-megacap; market fragility: building -> contained; ai concentration risk: elevated -> contained.",
+    "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
+    "The BTC/QQQ link is not holding — a 3-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
+    "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
+    "رابط BTC/QQQ لا يصمد — إجهاد مستمر منذ 3 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
@@ -228,7 +253,7 @@
       },
       {
         "date": "2026-08-13",
-        "state": "neutral"
+        "state": "diverging"
       }
     ],
     "dollar-gold": [
@@ -270,7 +295,7 @@
       },
       {
         "date": "2026-08-13",
-        "state": "neutral"
+        "state": "confirming"
       }
     ],
     "vix-equities": [
@@ -396,7 +421,7 @@
       },
       {
         "date": "2026-08-13",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "breadth-link": [
@@ -484,5 +509,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 88/100 (coherent); velocity accelerating; 6 confirming / 0 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 75/100 (coherent); velocity accelerating; 6 confirming / 2 diverging links; 2 underpriced signal(s)."
 }

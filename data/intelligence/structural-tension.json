@@ -1,13 +1,25 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-13T14:24:26.661Z",
+  "updated_at": "2026-08-13T17:31:20.277Z",
   "run_date": "2026-08-13",
   "verified": true,
   "status": "verified",
   "regime_condition": "pressured-regime",
-  "tension_level": "contained",
-  "tension_score": 23,
+  "tension_level": "building",
+  "tension_score": 35,
   "tracks": {
+    "participation-strain": {
+      "id": "participation-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-08-13",
+      "last_seen": "2026-08-13",
+      "last_evaluated": "2026-08-13",
+      "en": "Participation remains narrower than the headline tape.",
+      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
+    },
     "positioning-strain": {
       "id": "positioning-strain",
       "active": true,
@@ -22,12 +34,12 @@
     },
     "cross-asset-strain": {
       "id": "cross-asset-strain",
-      "active": false,
-      "state": "resolving",
-      "sessions": 3,
-      "severity": 0,
-      "first_seen": "2026-08-10",
-      "last_seen": "2026-08-12",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 2,
+      "first_seen": "2026-08-13",
+      "last_seen": "2026-08-13",
       "last_evaluated": "2026-08-13",
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
@@ -46,17 +58,19 @@
     }
   },
   "active_strains": [
+    "participation-strain",
     "positioning-strain",
+    "cross-asset-strain",
     "liquidity-strain"
   ],
   "internal_stability": {
-    "leadership": "broad",
+    "leadership": "narrow",
     "cross_asset": "coherent",
     "volatility_alignment": "aligned",
     "risk_appetite": "risk-on",
     "liquidity_participation": "uncertain"
   },
-  "narrative_stability": "losing-confirmation",
+  "narrative_stability": "internally-inconsistent",
   "catalyst_fragility": {
     "level": "none",
     "next": null,
@@ -79,6 +93,22 @@
       "severity": 2,
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
+    },
+    {
+      "id": "cross-asset-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 2,
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    {
+      "id": "participation-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Participation remains narrower than the headline tape.",
+      "ar": "تبقى المشاركة أضيق من الصورة التي تعكسها المؤشرات الرئيسية."
     }
   ],
   "pressure_memory": [
@@ -319,7 +349,7 @@
     {
       "date": "2026-08-13",
       "condition": "pressured-regime",
-      "score": 23,
+      "score": 35,
       "change": "faded"
     }
   ],

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-13T14:24:26.953Z",
+  "updated_at": "2026-08-13T17:31:20.639Z",
   "run_date": "2026-08-13",
   "verified": true,
   "stale": false,
@@ -9,37 +9,37 @@
     "charts": {
       "path": "data/intelligence/chart-narratives.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.600Z"
+      "updated_at": "2026-08-13T17:31:20.199Z"
     },
     "cognition": {
       "path": "data/intelligence/market-cognition.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.511Z"
+      "updated_at": "2026-08-13T17:31:20.092Z"
     },
     "convergence": {
       "path": "data/intelligence/narrative-convergence.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.573Z"
+      "updated_at": "2026-08-13T17:31:20.168Z"
     },
     "tension": {
       "path": "data/intelligence/structural-tension.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.661Z"
+      "updated_at": "2026-08-13T17:31:20.277Z"
     },
     "memory": {
       "path": "data/intelligence/editorial-market-memory.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.627Z"
+      "updated_at": "2026-08-13T17:31:20.232Z"
     },
     "pulse": {
       "path": "data/intelligence/market-pulse.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.484Z"
+      "updated_at": "2026-08-13T17:31:20.058Z"
     },
     "social": {
       "path": "data/social/social-preview.json",
       "verified": true,
-      "updated_at": "2026-08-13T14:24:26.915Z"
+      "updated_at": "2026-08-13T17:31:20.594Z"
     }
   },
   "visual_language": {
@@ -67,7 +67,9 @@
       },
       "evidence_refs": [
         "structural-tension:positioning-strain",
-        "structural-tension:liquidity-strain"
+        "structural-tension:liquidity-strain",
+        "structural-tension:cross-asset-strain",
+        "structural-tension:participation-strain"
       ],
       "chart_symbol_refs": [],
       "annotations": [
@@ -148,31 +150,31 @@
       "verified": true,
       "stale": false,
       "status": "active",
-      "source_hash": "623c98034e38c7c13ad232087a226ded51b2f3a549a7883db01ed93ae0e513f2",
-      "generated_at": "2026-08-13T14:24:26.953Z"
+      "source_hash": "44250c62242d9600d0653294992ad1bc1e00c2149db3dcd81ec2602e7154a605",
+      "generated_at": "2026-08-13T17:31:20.639Z"
     },
     {
-      "id": "chart-liquidity-beta",
-      "visual_type": "market-structure",
-      "headline_en": "Liquidity beta",
-      "headline_ar": "بيتا السيولة",
+      "id": "relationship-liquidity-beta",
+      "visual_type": "cross-asset-relationship",
+      "headline_en": "BTC / QQQ relationship is not confirming",
+      "headline_ar": "العلاقة بين BTC وQQQ لا تقدم تأكيداً متماسكاً",
       "narrative_context": {
-        "en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-        "ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم."
+        "en": "Crypto trades as the liquidity beta of the growth complex",
+        "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
       },
       "evidence_refs": [
-        "liquidity_pressure 5/5"
+        "convergence:liquidity-beta"
       ],
       "chart_symbol_refs": [
-        "CRYPTOBTCUSD",
-        "NASDAQQQQ"
+        "BTC",
+        "QQQ"
       ],
       "annotations": [
         {
-          "type": "commentary-label",
-          "label_en": "Verified structural relationship",
-          "label_ar": "علاقة هيكلية موثقة",
-          "evidence_ref": "liquidity_pressure 5/5"
+          "type": "divergence-highlight",
+          "label_en": "Verified divergence",
+          "label_ar": "انفصال موثق",
+          "evidence_ref": "convergence:liquidity-beta"
         }
       ],
       "allowed_platforms": [
@@ -183,7 +185,7 @@
         "instagram",
         "linkedin"
       ],
-      "visual_priority": 78,
+      "visual_priority": 82,
       "calm_mode_compatible": true,
       "export_targets": [
         {
@@ -231,11 +233,11 @@
       ],
       "rendering_contract": {
         "version": "1.0",
-        "mode": "sourced-chart",
-        "emphasis": "structural-reading",
+        "mode": "relationship-map",
+        "emphasis": "cross-asset-strain",
         "visual_language": "institutional-editorial-v1",
         "data_policy": "verified-evidence-only",
-        "price_series_policy": "sourced-provider-only",
+        "price_series_policy": "none",
         "maximum_labels": 5,
         "maximum_annotations": 3,
         "quiet_area_ratio": 0.28,
@@ -243,15 +245,27 @@
         "static_render": true,
         "hydration_required": false
       },
-      "attribution": "Chart: TradingView · Quotes: sourced market providers",
+      "attribution": "TradeAlphaAI narrative convergence; sourced market relationships.",
       "verified": true,
       "stale": false,
       "status": "active",
-      "source_hash": "1ab1145dc6eedcca01362d7f93cd7f81d9de4956b24d8211887026ecffd6ee6c",
-      "generated_at": "2026-08-13T14:24:26.953Z"
+      "source_hash": "19d95785bab0931e826a7caab47528198a52ff4f8bb185952f6d73a18e202c26",
+      "generated_at": "2026-08-13T17:31:20.639Z"
     }
   ],
   "suppressed": [
+    {
+      "id": "relationship-yields-dollar",
+      "reason": "session-density-limit"
+    },
+    {
+      "id": "chart-liquidity-beta",
+      "reason": "session-density-limit"
+    },
+    {
+      "id": "memory-narrow-leadership",
+      "reason": "session-density-limit"
+    },
     {
       "id": "catalyst-fomc-press-release",
       "reason": "session-density-limit"
