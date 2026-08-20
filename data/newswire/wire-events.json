@@ -1,33 +1,51 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-19T17:53:28.854Z",
+  "updated_at": "2026-08-20T13:51:14.091Z",
   "status": "live",
-  "item_count": 14,
+  "item_count": 15,
   "clusters": {
-    "tape": 4,
+    "tape": 5,
+    "volatility": 1,
     "fed": 4,
-    "labor": 1,
     "inflation": 3,
-    "growth": 2
+    "labor": 1,
+    "growth": 1
   },
   "top_story": {
-    "id": "move::GLD::2026-08-19T17",
+    "id": "move::BTC::2026-08-20T13",
     "kind": "market_move",
-    "headline": "GLD jumps +3.46% to 412.34",
+    "headline": "BTC jumps +10.09% to 71628",
     "urgency": 90,
     "market_impact": 95,
     "cluster": "tape",
     "asset_tags": [
-      "GLD"
+      "BTC"
     ],
     "sector_tags": [
-      "metals"
+      "crypto"
     ],
-    "timestamp": "2026-08-19T16:38:16.778Z",
+    "timestamp": "2026-08-20T13:51:11.344Z",
     "source": "Finnhub",
     "attribution": "sourced: https://finnhub.io/"
   },
   "items": [
+    {
+      "id": "move::BTC::2026-08-20T13",
+      "kind": "market_move",
+      "headline": "BTC jumps +10.09% to 71628",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "BTC"
+      ],
+      "sector_tags": [
+        "crypto"
+      ],
+      "timestamp": "2026-08-20T13:51:11.344Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
     {
       "id": "move::GLD::2026-08-19T17",
       "kind": "market_move",
@@ -95,6 +113,67 @@
       "timestamp": "2026-08-19T16:38:16.778Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::VIX::2026-08-20T13",
+      "kind": "market_move",
+      "headline": "VIX jumps +8.91% to 15.52",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-08-20T13:51:12.782Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260822T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-08-22)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-08-22T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::global_acquisition::jp::japan-cpi::20260821T230000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Japan CPI (2026-08-21, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "inflation",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "sector_tags": [
+        "inflation"
+      ],
+      "timestamp": "2026-08-21T23:00:00.000Z",
+      "source": "global_acquisition",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260821T000000",
@@ -246,71 +325,6 @@
         "fed"
       ],
       "timestamp": "2026-08-19T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::global_acquisition::ca::canada-cpi::20260818T130000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: Canada CPI (2026-08-18, time estimated)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-08-18T13:00:00.000Z",
-      "source": "global_acquisition",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::global_acquisition::cn::china-gdp::20260818T090000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: China GDP (2026-08-18, time estimated)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "growth",
-      "asset_tags": [
-        "Treasury yields",
-        "SPY",
-        "IWM",
-        "Oil",
-        "Defensive sectors"
-      ],
-      "sector_tags": [
-        "growth"
-      ],
-      "timestamp": "2026-08-18T09:00:00.000Z",
-      "source": "global_acquisition",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260818T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-08-18)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-08-18T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
