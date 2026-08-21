@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-21T19:30:09.540Z",
+  "updated_at": "2026-08-21T19:49:16.676Z",
   "run_date": "2026-08-21",
   "verified": true,
   "sessions_tracked": 40,
@@ -142,7 +142,7 @@
       "state": "diverging",
       "evidence": {
         "us10y": 0.296359017781546,
-        "dxy": -0.8199518265756798
+        "dxy": -0.8139301485347321
       }
     },
     {
@@ -156,7 +156,7 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "confirming",
       "evidence": {
-        "dxy": -0.8199518265756798,
+        "dxy": -0.8139301485347321,
         "gold": 2.1071
       }
     },
@@ -169,9 +169,9 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "vix": 0.394996708360767,
+        "vix": -0.06583278472679255,
         "spy": 0.3698
       }
     },
@@ -243,8 +243,17 @@
         "en": "A firming dollar typically pressures gold",
         "ar": "تقوّي الدولار يضغط على الذهب عادة",
         "evidence": {
-          "dxy": -0.8199518265756798,
+          "dxy": -0.8139301485347321,
           "gold": 2.1071
+        }
+      },
+      {
+        "source": "causal:vix-equities",
+        "en": "Rising hedging demand pressures the equity tape",
+        "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
+        "evidence": {
+          "vix": -0.06583278472679255,
+          "spy": 0.3698
         }
       },
       {
@@ -254,15 +263,6 @@
         "evidence": {
           "btc": 5.863,
           "qqq": 0.263
-        }
-      },
-      {
-        "source": "causal:breadth-link",
-        "en": "Healthy advances carry small caps with the index",
-        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-        "evidence": {
-          "spy": 0.3698,
-          "iwm": 0.7693
         }
       }
     ],
@@ -282,16 +282,16 @@
         "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
           "us10y": 0.296359017781546,
-          "dxy": -0.8199518265756798
+          "dxy": -0.8139301485347321
         }
       },
       {
-        "source": "causal:vix-equities",
-        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:ai-growth",
+        "en": "Divergence on the nvda/qqq link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة nvda/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": 0.394996708360767,
-          "spy": 0.3698
+          "nvda": -0.8024,
+          "qqq": 0.263
         }
       }
     ],
