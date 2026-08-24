@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-24T19:58:47.332Z",
+  "updated_at": "2026-08-24T20:38:03.656Z",
   "run_date": "2026-08-24",
   "verified": true,
   "coherence": {
-    "score": 44,
-    "band": "conflicted",
+    "score": 56,
+    "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 44/100 — cross-asset relationships are openly conflicted this session.",
-    "ar": "اتساق النظام 44/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة."
+    "en": "Regime coherence 56/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 56/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
     "events_5d": 11,
@@ -38,6 +38,17 @@
     }
   ],
   "confirms": [
+    {
+      "id": "vix-equities",
+      "legs": [
+        "vix",
+        "spy"
+      ],
+      "state": "confirming",
+      "chain_strength": 2,
+      "en": "Rising hedging demand pressures the equity tape",
+      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
+    },
     {
       "id": "ai-growth",
       "legs": [
@@ -72,17 +83,6 @@
       "chain_strength": 1,
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة"
-    },
-    {
-      "id": "vix-equities",
-      "legs": [
-        "vix",
-        "spy"
-      ],
-      "state": "diverging",
-      "chain_strength": 1,
-      "en": "Rising hedging demand pressures the equity tape",
-      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
     },
     {
       "id": "liquidity-beta",
@@ -126,14 +126,14 @@
   ],
   "narrative_en": [
     "The regime picture moved: market fragility: contained -> building; breadth state: confirming -> mixed; ai concentration risk: contained -> elevated.",
-    "Regime coherence 44/100 — cross-asset relationships are openly conflicted this session.",
+    "Regime coherence 56/100 — the tape is internally tense; confirmations and divergences are competing.",
     "The DXY/GOLD link is not holding; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 44/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة.",
+    "اتساق النظام 56/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
     "رابط DXY/GOLD لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
@@ -304,7 +304,7 @@
       },
       {
         "date": "2026-08-24",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "ai-growth": [
@@ -476,5 +476,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 44/100 (conflicted); velocity accelerating; 2 confirming / 3 diverging links; 1 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 56/100 (tense); velocity accelerating; 3 confirming / 2 diverging links; 1 underpriced signal(s)."
 }
