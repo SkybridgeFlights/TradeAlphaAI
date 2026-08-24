@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-24T18:50:26.151Z",
+  "updated_at": "2026-08-24T19:34:59.067Z",
   "run_date": "2026-08-24",
   "verified": true,
   "sessions_tracked": 40,
@@ -123,9 +123,9 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "diverging",
+      "state": "neutral",
       "evidence": {
-        "us10y": -0.12749681257969034,
+        "us10y": -0.042498937526576026,
         "qqq": -0.7233
       }
     },
@@ -138,10 +138,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "diverging",
+      "state": "neutral",
       "evidence": {
-        "us10y": -0.12749681257969034,
-        "dxy": 0.1871901244561391
+        "us10y": -0.042498937526576026,
+        "dxy": 0.2023677021147454
       }
     },
     {
@@ -155,7 +155,7 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": 0.1871901244561391,
+        "dxy": 0.2023677021147454,
         "gold": 0.3968
       }
     },
@@ -170,7 +170,7 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": -0.9469696969696992,
+        "vix": -0.3787878787878819,
         "spy": -0.1776
       }
     },
@@ -228,9 +228,9 @@
       "expected": "inverse",
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "us10y": -0.12749681257969034,
+        "us10y": -0.042498937526576026,
         "tlt": 0.7434
       }
     }
@@ -254,43 +254,34 @@
           "spy": -0.1776,
           "iwm": -0.6167
         }
-      },
-      {
-        "source": "causal:yields-bonds",
-        "en": "Rising yields mark down long-duration bonds",
-        "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-        "evidence": {
-          "us10y": -0.12749681257969034,
-          "tlt": 0.7434
-        }
       }
     ],
     "contradiction": [
-      {
-        "source": "causal:yields-growth",
-        "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "us10y": -0.12749681257969034,
-          "qqq": -0.7233
-        }
-      },
-      {
-        "source": "causal:yields-dollar",
-        "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "us10y": -0.12749681257969034,
-          "dxy": 0.1871901244561391
-        }
-      },
       {
         "source": "causal:dollar-gold",
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": 0.1871901244561391,
+          "dxy": 0.2023677021147454,
           "gold": 0.3968
+        }
+      },
+      {
+        "source": "causal:vix-equities",
+        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "vix": -0.3787878787878819,
+          "spy": -0.1776
+        }
+      },
+      {
+        "source": "causal:liquidity-beta",
+        "en": "Divergence on the btc/qqq link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة btc/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "btc": 2.2738,
+          "qqq": -0.7233
         }
       }
     ],
