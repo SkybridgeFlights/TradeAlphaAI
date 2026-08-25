@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-25T14:52:35.135Z",
+  "updated_at": "2026-08-25T15:50:59.719Z",
   "run_date": "2026-08-25",
   "verified": true,
   "sessions_tracked": 40,
@@ -132,9 +132,9 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "us10y": 0,
+        "us10y": -0.3008811519449677,
         "qqq": 0.9316
       }
     },
@@ -149,8 +149,8 @@
       "ar": "دعم العوائد يقوّي الدولار عادة",
       "state": "neutral",
       "evidence": {
-        "us10y": 0,
-        "dxy": 0.06774519716885043
+        "us10y": -0.3008811519449677,
+        "dxy": 0.035389282103131026
       }
     },
     {
@@ -162,9 +162,9 @@
       "expected": "inverse",
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "dxy": 0.06774519716885043,
+        "dxy": 0.035389282103131026,
         "gold": -0.8859
       }
     },
@@ -179,7 +179,7 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": 6.178643384822028,
+        "vix": 4.566823371390193,
         "spy": 0.3602
       }
     },
@@ -237,9 +237,9 @@
       "expected": "inverse",
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "us10y": 0,
+        "us10y": -0.3008811519449677,
         "tlt": 0.5935
       }
     }
@@ -247,12 +247,12 @@
   "signals": {
     "confirmation": [
       {
-        "source": "causal:dollar-gold",
-        "en": "A firming dollar typically pressures gold",
-        "ar": "تقوّي الدولار يضغط على الذهب عادة",
+        "source": "causal:yields-growth",
+        "en": "Rising yields pressure long-duration growth equities",
+        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
         "evidence": {
-          "dxy": 0.06774519716885043,
-          "gold": -0.8859
+          "us10y": -0.3008811519449677,
+          "qqq": 0.9316
         }
       },
       {
@@ -280,7 +280,7 @@
         "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": 6.178643384822028,
+          "vix": 4.566823371390193,
           "spy": 0.3602
         }
       },
