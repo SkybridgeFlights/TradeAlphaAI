@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-25T20:36:18.158Z",
-  "run_date": "2026-08-25",
+  "updated_at": "2026-08-26T14:51:22.539Z",
+  "run_date": "2026-08-26",
   "verified": true,
   "coherence": {
-    "score": 75,
-    "band": "coherent",
+    "score": 50,
+    "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
     "events_5d": 10,
@@ -16,38 +16,38 @@
   },
   "what_changed": [
     {
+      "date": "2026-08-26",
+      "dimension": "breadth_state",
+      "from": "confirming",
+      "to": "mixed",
+      "note": "breadth state: confirming -> mixed"
+    },
+    {
+      "date": "2026-08-26",
+      "dimension": "dollar_pressure",
+      "from": "stable",
+      "to": "firming",
+      "note": "dollar pressure: stable -> firming"
+    },
+    {
       "date": "2026-08-25",
       "dimension": "breadth_state",
       "from": "mixed",
       "to": "confirming",
       "note": "breadth state: mixed -> confirming"
-    },
-    {
-      "date": "2026-08-24",
-      "dimension": "market_fragility",
-      "from": "contained",
-      "to": "building",
-      "note": "market fragility: contained -> building"
-    },
-    {
-      "date": "2026-08-24",
-      "dimension": "breadth_state",
-      "from": "confirming",
-      "to": "mixed",
-      "note": "breadth state: confirming -> mixed"
     }
   ],
   "confirms": [
     {
-      "id": "yields-growth",
+      "id": "dollar-gold",
       "legs": [
-        "us10y",
-        "qqq"
+        "dxy",
+        "gold"
       ],
       "state": "confirming",
       "chain_strength": 1,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
     },
     {
       "id": "ai-growth",
@@ -56,7 +56,7 @@
         "qqq"
       ],
       "state": "confirming",
-      "chain_strength": 2,
+      "chain_strength": 3,
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
@@ -67,20 +67,33 @@
         "qqq"
       ],
       "state": "confirming",
-      "chain_strength": 1,
+      "chain_strength": 2,
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+    }
+  ],
+  "diverges": [
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
     },
     {
-      "id": "breadth-link",
+      "id": "yields-dollar",
       "legs": [
-        "spy",
-        "iwm"
+        "us10y",
+        "dxy"
       ],
-      "state": "confirming",
-      "chain_strength": 5,
-      "en": "Healthy advances carry small caps with the index",
-      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
     },
     {
       "id": "yields-bonds",
@@ -88,34 +101,21 @@
         "us10y",
         "tlt"
       ],
-      "state": "confirming",
+      "state": "diverging",
       "chain_strength": 1,
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
-    }
-  ],
-  "diverges": [
-    {
-      "id": "vix-equities",
-      "legs": [
-        "vix",
-        "spy"
-      ],
-      "state": "diverging",
-      "chain_strength": 1,
-      "en": "Rising hedging demand pressures the equity tape",
-      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
     }
   ],
   "weakening": [],
   "crowding": null,
   "preparing_for": [
     {
-      "name": "FOMC Press Release",
-      "time": "2026-08-25T00:00:00Z"
+      "name": "Debt to Gross Domestic Product Ratios",
+      "time": "2026-08-26T00:00:00Z"
     },
     {
-      "name": "Debt to Gross Domestic Product Ratios",
+      "name": "FOMC Press Release",
       "time": "2026-08-26T00:00:00Z"
     }
   ],
@@ -136,26 +136,22 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: breadth state: mixed -> confirming; market fragility: contained -> building; breadth state: confirming -> mixed.",
-    "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "The VIX/SPY link is not holding; that is where the tape's internal argument lives.",
+    "The regime picture moved: breadth state: confirming -> mixed; dollar pressure: stable -> firming; breadth state: mixed -> confirming.",
+    "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The US10Y/QQQ link is not holding; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
-    "The next scheduled resolution point is FOMC Press Release."
+    "The next scheduled resolution point is Debt to Gross Domestic Product Ratios."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
-    "رابط VIX/SPY لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "رابط US10Y/QQQ لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
-    "نقطة الحسم المجدولة التالية هي FOMC Press Release."
+    "نقطة الحسم المجدولة التالية هي Debt to Gross Domestic Product Ratios."
   ],
   "link_history": {
     "yields-growth": [
       {
-        "date": "2026-08-10",
-        "state": "confirming"
-      },
-      {
         "date": "2026-08-11",
         "state": "diverging"
       },
@@ -190,14 +186,14 @@
       {
         "date": "2026-08-25",
         "state": "confirming"
+      },
+      {
+        "date": "2026-08-26",
+        "state": "diverging"
       }
     ],
     "yields-dollar": [
       {
-        "date": "2026-08-10",
-        "state": "confirming"
-      },
-      {
         "date": "2026-08-11",
         "state": "diverging"
       },
@@ -232,14 +228,14 @@
       {
         "date": "2026-08-25",
         "state": "neutral"
+      },
+      {
+        "date": "2026-08-26",
+        "state": "diverging"
       }
     ],
     "dollar-gold": [
       {
-        "date": "2026-08-10",
-        "state": "diverging"
-      },
-      {
         "date": "2026-08-11",
         "state": "neutral"
       },
@@ -274,14 +270,14 @@
       {
         "date": "2026-08-25",
         "state": "neutral"
+      },
+      {
+        "date": "2026-08-26",
+        "state": "confirming"
       }
     ],
     "vix-equities": [
       {
-        "date": "2026-08-10",
-        "state": "diverging"
-      },
-      {
         "date": "2026-08-11",
         "state": "confirming"
       },
@@ -316,13 +312,13 @@
       {
         "date": "2026-08-25",
         "state": "diverging"
+      },
+      {
+        "date": "2026-08-26",
+        "state": "neutral"
       }
     ],
     "ai-growth": [
-      {
-        "date": "2026-08-10",
-        "state": "confirming"
-      },
       {
         "date": "2026-08-11",
         "state": "confirming"
@@ -357,15 +353,15 @@
       },
       {
         "date": "2026-08-25",
+        "state": "confirming"
+      },
+      {
+        "date": "2026-08-26",
         "state": "confirming"
       }
     ],
     "liquidity-beta": [
       {
-        "date": "2026-08-10",
-        "state": "confirming"
-      },
-      {
         "date": "2026-08-11",
         "state": "diverging"
       },
@@ -399,15 +395,15 @@
       },
       {
         "date": "2026-08-25",
+        "state": "confirming"
+      },
+      {
+        "date": "2026-08-26",
         "state": "confirming"
       }
     ],
     "breadth-link": [
       {
-        "date": "2026-08-10",
-        "state": "confirming"
-      },
-      {
         "date": "2026-08-11",
         "state": "confirming"
       },
@@ -442,14 +438,14 @@
       {
         "date": "2026-08-25",
         "state": "confirming"
+      },
+      {
+        "date": "2026-08-26",
+        "state": "neutral"
       }
     ],
     "yields-bonds": [
       {
-        "date": "2026-08-10",
-        "state": "confirming"
-      },
-      {
         "date": "2026-08-11",
         "state": "diverging"
       },
@@ -484,8 +480,12 @@
       {
         "date": "2026-08-25",
         "state": "confirming"
+      },
+      {
+        "date": "2026-08-26",
+        "state": "diverging"
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 75/100 (coherent); velocity accelerating; 5 confirming / 1 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 50/100 (tense); velocity accelerating; 3 confirming / 3 diverging links; 2 underpriced signal(s)."
 }

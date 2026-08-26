@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-25T20:36:18.124Z",
-  "run_date": "2026-08-25",
+  "updated_at": "2026-08-26T14:51:22.505Z",
+  "run_date": "2026-08-26",
   "verified": true,
   "conviction": {
-    "state": "healthy-trend-structure",
+    "state": "fragile-conviction",
     "regime_confidence": "high",
-    "confirmations": 6,
-    "contradictions": 1,
-    "en": "Healthy trend structure — confirmations are broad and uncontested across the causal network.",
-    "ar": "بنية اتجاه صحية — التأكيدات واسعة وغير متنازع عليها عبر الشبكة السببية."
+    "confirmations": 3,
+    "contradictions": 3,
+    "en": "Conviction is fragile — the verified picture is mixed, with neither confirmation nor contradiction dominant.",
+    "ar": "القناعة هشة — الصورة الموثقة متباينة، دون هيمنة للتأكيد أو التناقض."
   },
   "contradictions": [],
   "structure": {
@@ -29,7 +29,7 @@
       "liquidity_pressure": {
         "score": 5,
         "base_score": 5,
-        "state": "steady",
+        "state": "accumulating",
         "en": "Liquidity stress accumulation",
         "ar": "تراكم ضغط السيولة"
       },
@@ -42,8 +42,8 @@
       },
       "speculative_pressure": {
         "score": 5,
-        "base_score": 4,
-        "state": "accumulating",
+        "base_score": 5,
+        "state": "steady",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
@@ -73,8 +73,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with healthy trend structure; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع بنية اتجاه صحية؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — stable structure with fragile conviction; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — بنية مستقرة مع القناعة هشة؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -82,7 +82,7 @@
     },
     {
       "id": "bullish-continuation",
-      "status": "active",
+      "status": "watch",
       "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
       "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
       "derived_from": [
@@ -123,8 +123,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -133,12 +133,12 @@
     {
       "id": "catalyst-dependency",
       "status": "monitor",
-      "en": "Catalyst dependency — FOMC Press Release is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
-      "ar": "اعتماد على المحفز — FOMC Press Release هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
+      "en": "Catalyst dependency — Debt to Gross Domestic Product Ratios is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
+      "ar": "اعتماد على المحفز — Debt to Gross Domestic Product Ratios هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
       "derived_from": [
         "calendar"
       ],
-      "catalyst": "FOMC Press Release"
+      "catalyst": "Debt to Gross Domestic Product Ratios"
     }
   ],
   "desk_focus": {
@@ -146,5 +146,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: healthy-trend-structure; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: fragile-conviction; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
 }
