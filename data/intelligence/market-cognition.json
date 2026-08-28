@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-26T16:23:03.857Z",
-  "run_date": "2026-08-26",
+  "updated_at": "2026-08-28T22:59:07.330Z",
+  "run_date": "2026-08-28",
   "verified": true,
   "sessions_tracked": 40,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "risk-on",
-      "phase": "established",
-      "sessions_in_state": 4,
+      "phase": "extended",
+      "sessions_in_state": 5,
       "from": {
         "state": "neutral",
         "date": "2026-08-20"
@@ -19,7 +19,7 @@
       "dimension": "volatility_regime",
       "state": "normal",
       "phase": "extended",
-      "sessions_in_state": 21,
+      "sessions_in_state": 22,
       "from": {
         "state": "elevated",
         "date": "2026-07-29"
@@ -28,8 +28,8 @@
     {
       "dimension": "dollar_pressure",
       "state": "firming",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "stable",
         "date": "2026-08-25"
@@ -37,16 +37,19 @@
     },
     {
       "dimension": "duration_pressure",
-      "state": "neutral",
-      "phase": "extended",
-      "sessions_in_state": 40,
-      "from": null
+      "state": "building",
+      "phase": "emerging",
+      "sessions_in_state": 1,
+      "from": {
+        "state": "neutral",
+        "date": "2026-08-26"
+      }
     },
     {
       "dimension": "momentum_concentration",
       "state": "balanced",
       "phase": "extended",
-      "sessions_in_state": 8,
+      "sessions_in_state": 9,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-08-13"
@@ -56,7 +59,7 @@
       "dimension": "ai_concentration_risk",
       "state": "elevated",
       "phase": "established",
-      "sessions_in_state": 3,
+      "sessions_in_state": 4,
       "from": {
         "state": "contained",
         "date": "2026-08-21"
@@ -65,8 +68,8 @@
     {
       "dimension": "breadth_state",
       "state": "mixed",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "confirming",
         "date": "2026-08-25"
@@ -97,7 +100,7 @@
       "dimension": "market_fragility",
       "state": "building",
       "phase": "established",
-      "sessions_in_state": 3,
+      "sessions_in_state": 4,
       "from": {
         "state": "contained",
         "date": "2026-08-21"
@@ -109,17 +112,25 @@
       "kind": "streak",
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "sessions": 3,
-      "en": "AI concentration risk holds elevated for a third straight session — crowding pressure is building, not resetting.",
-      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثالثة على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
+      "sessions": 4,
+      "en": "AI concentration risk holds elevated for a fourth straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الرابعة على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
     },
     {
       "kind": "streak",
       "dimension": "market_fragility",
       "state": "building",
-      "sessions": 3,
-      "en": "Market fragility signals build for a third straight session across volatility, breadth, and concentration inputs.",
-      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثالثة على التوالي عبر مدخلات التقلب والاتساع والتركز."
+      "sessions": 4,
+      "en": "Market fragility signals build for a fourth straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة الرابعة على التوالي عبر مدخلات التقلب والاتساع والتركز."
+    },
+    {
+      "kind": "streak",
+      "dimension": "dollar_pressure",
+      "state": "firming",
+      "sessions": 2,
+      "en": "Dollar firming persists into a second consecutive session, draining global risk appetite at the margin.",
+      "ar": "تقوّي الدولار يمتد للجلسة الثانية على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
     }
   ],
   "causal_links": [
@@ -132,10 +143,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "us10y": -0.5962521294718821,
-        "qqq": -0.1027
+        "us10y": 0.34013605442176903,
+        "qqq": -0.649
       }
     },
     {
@@ -147,10 +158,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "us10y": -0.5962521294718821,
-        "dxy": 0.35728744939272133
+        "us10y": 0.34013605442176903,
+        "dxy": 0.6838383838383907
       }
     },
     {
@@ -164,8 +175,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "confirming",
       "evidence": {
-        "dxy": 0.35728744939272133,
-        "gold": -1.1587
+        "dxy": 0.6838383838383907,
+        "gold": -3.2442
       }
     },
     {
@@ -177,10 +188,10 @@
       "expected": "inverse",
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
-      "state": "neutral",
+      "state": "diverging",
       "evidence": {
-        "vix": -2.6858213616489786,
-        "spy": -0.0392
+        "vix": -8.958990536277604,
+        "spy": -0.2269
       }
     },
     {
@@ -194,8 +205,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": -0.9247,
-        "qqq": -0.1027
+        "nvda": -4.575,
+        "qqq": -0.649
       }
     },
     {
@@ -209,8 +220,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": -1.5884,
-        "qqq": -0.1027
+        "btc": -3.1681,
+        "qqq": -0.649
       }
     },
     {
@@ -222,10 +233,10 @@
       "expected": "direct",
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "spy": -0.0392,
-        "iwm": -0.1571
+        "spy": -0.2269,
+        "iwm": -1.3542
       }
     },
     {
@@ -237,69 +248,51 @@
       "expected": "inverse",
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "us10y": -0.5962521294718821,
-        "tlt": -0.3235
+        "us10y": 0.34013605442176903,
+        "tlt": -0.3007
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
+        "source": "causal:yields-growth",
+        "en": "Rising yields pressure long-duration growth equities",
+        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
+        "evidence": {
+          "us10y": 0.34013605442176903,
+          "qqq": -0.649
+        }
+      },
+      {
+        "source": "causal:yields-dollar",
+        "en": "Yield support typically firms the dollar",
+        "ar": "دعم العوائد يقوّي الدولار عادة",
+        "evidence": {
+          "us10y": 0.34013605442176903,
+          "dxy": 0.6838383838383907
+        }
+      },
+      {
         "source": "causal:dollar-gold",
         "en": "A firming dollar typically pressures gold",
         "ar": "تقوّي الدولار يضغط على الذهب عادة",
         "evidence": {
-          "dxy": 0.35728744939272133,
-          "gold": -1.1587
-        }
-      },
-      {
-        "source": "causal:ai-growth",
-        "en": "AI leadership drives the growth complex",
-        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-        "evidence": {
-          "nvda": -0.9247,
-          "qqq": -0.1027
-        }
-      },
-      {
-        "source": "causal:liquidity-beta",
-        "en": "Crypto trades as the liquidity beta of the growth complex",
-        "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-        "evidence": {
-          "btc": -1.5884,
-          "qqq": -0.1027
+          "dxy": 0.6838383838383907,
+          "gold": -3.2442
         }
       }
     ],
     "contradiction": [
       {
-        "source": "causal:yields-growth",
-        "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "source": "causal:vix-equities",
+        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": -0.5962521294718821,
-          "qqq": -0.1027
-        }
-      },
-      {
-        "source": "causal:yields-dollar",
-        "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "us10y": -0.5962521294718821,
-          "dxy": 0.35728744939272133
-        }
-      },
-      {
-        "source": "causal:yields-bonds",
-        "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "us10y": -0.5962521294718821,
-          "tlt": -0.3235
+          "vix": -8.958990536277604,
+          "spy": -0.2269
         }
       }
     ],
@@ -323,15 +316,48 @@
         "en": "A firming dollar alongside soft crypto liquidity beta points to draining marginal liquidity.",
         "ar": "تقوّي الدولار مع ضعف بيتا سيولة الكريبتو يشير إلى انحسار السيولة الهامشية.",
         "evidence": {
-          "dxy": 0.35728744939272133,
-          "btc": -1.5884
+          "dxy": 0.6838383838383907,
+          "btc": -3.1681
         }
       }
     ],
-    "speculative": []
+    "speculative": [
+      {
+        "source": "nvda_move",
+        "en": "An outsized sourced AI-leadership move (-4.58%) marks active speculative positioning.",
+        "ar": "تحرك موثق كبير في قيادة الذكاء الاصطناعي (-4.58%) يعكس تمركزاً مضاربياً نشطاً.",
+        "evidence": {
+          "nvda": -4.575
+        }
+      }
+    ]
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "yield-pressure-2026-08-28",
+      "type": "yield-pressure",
+      "severity": "watch",
+      "date": "2026-08-28",
+      "headline_en": "Yield pressure building — duration stress returned this session.",
+      "headline_ar": "ضغط العوائد يتصاعد — عاد ضغط الحساسية للفائدة في هذه الجلسة.",
+      "derived_from": [
+        {
+          "dimension": "duration_pressure",
+          "state": "building",
+          "streak": 1,
+          "date": "2026-08-28"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
+    {
+      "date": "2026-08-28",
+      "dimension": "duration_pressure",
+      "from": "neutral",
+      "to": "building",
+      "note": "duration pressure: neutral -> building"
+    },
     {
       "date": "2026-08-26",
       "dimension": "breadth_state",
@@ -366,14 +392,7 @@
       "from": "confirming",
       "to": "mixed",
       "note": "breadth state: confirming -> mixed"
-    },
-    {
-      "date": "2026-08-24",
-      "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "note": "ai concentration risk: contained -> elevated"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 3 cross-session observation(s); 60 timeline event(s)."
 }
