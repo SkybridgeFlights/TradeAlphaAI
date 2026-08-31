@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-08-31T19:28:41.764Z",
+  "updated_at": "2026-08-31T23:18:41.001Z",
   "run_date": "2026-08-31",
   "verified": true,
   "sessions_tracked": 40,
@@ -135,10 +135,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
         "us10y": 2.565216641517569,
-        "qqq": -0.1815
+        "qqq": 0.0461
       }
     },
     {
@@ -153,7 +153,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 2.565216641517569,
-        "dxy": 0.25108399717656066
+        "dxy": 0.24503378037712514
       }
     },
     {
@@ -167,8 +167,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "confirming",
       "evidence": {
-        "dxy": 0.25108399717656066,
-        "gold": -0.4353
+        "dxy": 0.24503378037712514,
+        "gold": -0.1149
       }
     },
     {
@@ -182,8 +182,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": -2.7184466019417473,
-        "spy": -0.3782
+        "vix": -3.430420711974106,
+        "spy": -0.299
       }
     },
     {
@@ -195,10 +195,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "diverging",
+      "state": "neutral",
       "evidence": {
-        "nvda": 0.9699,
-        "qqq": -0.1815
+        "nvda": 1.4847,
+        "qqq": 0.0461
       }
     },
     {
@@ -210,10 +210,10 @@
       "expected": "direct",
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-      "state": "diverging",
+      "state": "neutral",
       "evidence": {
-        "btc": 0.2099,
-        "qqq": -0.1815
+        "btc": 0.3208,
+        "qqq": 0.0461
       }
     },
     {
@@ -227,8 +227,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": -0.3782,
-        "iwm": -0.7473
+        "spy": -0.299,
+        "iwm": -0.6154
       }
     },
     {
@@ -243,28 +243,19 @@
       "state": "confirming",
       "evidence": {
         "us10y": 2.565216641517569,
-        "tlt": -0.5068
+        "tlt": -0.4344
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
-        "source": "causal:yields-growth",
-        "en": "Rising yields pressure long-duration growth equities",
-        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-        "evidence": {
-          "us10y": 2.565216641517569,
-          "qqq": -0.1815
-        }
-      },
-      {
         "source": "causal:yields-dollar",
         "en": "Yield support typically firms the dollar",
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
           "us10y": 2.565216641517569,
-          "dxy": 0.25108399717656066
+          "dxy": 0.24503378037712514
         }
       },
       {
@@ -272,8 +263,17 @@
         "en": "A firming dollar typically pressures gold",
         "ar": "تقوّي الدولار يضغط على الذهب عادة",
         "evidence": {
-          "dxy": 0.25108399717656066,
-          "gold": -0.4353
+          "dxy": 0.24503378037712514,
+          "gold": -0.1149
+        }
+      },
+      {
+        "source": "causal:breadth-link",
+        "en": "Healthy advances carry small caps with the index",
+        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
+        "evidence": {
+          "spy": -0.299,
+          "iwm": -0.6154
         }
       }
     ],
@@ -283,26 +283,8 @@
         "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": -2.7184466019417473,
-          "spy": -0.3782
-        }
-      },
-      {
-        "source": "causal:ai-growth",
-        "en": "Divergence on the nvda/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة nvda/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "nvda": 0.9699,
-          "qqq": -0.1815
-        }
-      },
-      {
-        "source": "causal:liquidity-beta",
-        "en": "Divergence on the btc/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة btc/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "btc": 0.2099,
-          "qqq": -0.1815
+          "vix": -3.430420711974106,
+          "spy": -0.299
         }
       }
     ],
