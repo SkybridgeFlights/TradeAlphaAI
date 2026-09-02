@@ -1,31 +1,68 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-01T22:46:29.730Z",
+  "updated_at": "2026-09-02T17:05:41.562Z",
   "status": "live",
-  "item_count": 13,
+  "item_count": 18,
   "clusters": {
-    "tape": 8,
+    "ai-momentum": 1,
+    "tape": 9,
     "volatility": 2,
-    "fed": 3
+    "macro": 1,
+    "fed": 4,
+    "labor": 1
   },
   "top_story": {
-    "id": "move::US10Y::2026-09-01T22",
+    "id": "move::NVDA::2026-09-02T17",
     "kind": "market_move",
-    "headline": "US10Y jumps +2.83% to 4.796",
-    "urgency": 65,
-    "market_impact": 70,
-    "cluster": "tape",
+    "headline": "NVDA jumps +3.70% to 225.49",
+    "urgency": 90,
+    "market_impact": 95,
+    "cluster": "ai-momentum",
     "asset_tags": [
-      "US10Y"
+      "NVDA"
     ],
     "sector_tags": [
-      "rates"
+      "ai-semiconductors"
     ],
-    "timestamp": "2026-09-01T22:46:28.837Z",
-    "source": "Yahoo Finance",
-    "attribution": "sourced: https://finance.yahoo.com/"
+    "timestamp": "2026-09-02T17:05:36.010Z",
+    "source": "Finnhub",
+    "attribution": "sourced: https://finnhub.io/"
   },
   "items": [
+    {
+      "id": "move::NVDA::2026-09-02T17",
+      "kind": "market_move",
+      "headline": "NVDA jumps +3.70% to 225.49",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-09-02T17:05:36.010Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::US10Y::2026-09-02T17",
+      "kind": "market_move",
+      "headline": "US10Y jumps +2.65% to 4.796",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-09-02T17:05:40.797Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::US10Y::2026-09-01T22",
       "kind": "market_move",
@@ -195,6 +232,71 @@
       "timestamp": "2026-08-31T19:28:40.893Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::employment-situation::20260904T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Employment Situation (2026-09-04)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "macro",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "macro"
+      ],
+      "timestamp": "2026-09-04T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260904T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-09-04)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-09-04T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260903T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-09-03, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-09-03T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260903T000000",
