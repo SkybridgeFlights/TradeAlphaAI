@@ -1,57 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-02T17:05:41.742Z",
+  "updated_at": "2026-09-02T20:02:47.920Z",
   "run_date": "2026-09-02",
   "verified": true,
   "selected": [
-    {
-      "id": "liquidity-beta",
-      "kind": "liquidity",
-      "visual_type": "liquidity-pressure",
-      "symbols": [
-        "CRYPTO:BTCUSD",
-        "NASDAQ:QQQ"
-      ],
-      "title_en": "Liquidity beta",
-      "title_ar": "بيتا السيولة",
-      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
-      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
-      "score": 70,
-      "evidence": [
-        "causal:liquidity-beta diverging ×1",
-        "liquidity_pressure 5/5"
-      ],
-      "annotations": [
-        {
-          "type": "divergence-highlight",
-          "severity": "elevated",
-          "label_en": "Divergence — BTC/QQQ not confirming",
-          "label_ar": "انفصال — BTC/QQQ لا يؤكد",
-          "evidence": [
-            "convergence:diverges:liquidity-beta:chain=1"
-          ]
-        },
-        {
-          "type": "pressure-band",
-          "severity": "high",
-          "label_en": "Stored pressure — liquidity pressure 5/5",
-          "label_ar": "ضغط مخزّن — 5/5",
-          "evidence": [
-            "macro:pressure:liquidity_pressure:5"
-          ]
-        },
-        {
-          "type": "catalyst-zone",
-          "severity": "info",
-          "label_en": "Catalyst window — FOMC Press Release (2026-09-02)",
-          "label_ar": "نافذة محفز — FOMC Press Release (2026-09-02)",
-          "evidence": [
-            "pulse:catalyst:FOMC Press Release:2026-09-02"
-          ]
-        }
-      ],
-      "attribution": "Chart: TradingView · Quotes: sourced market providers"
-    },
     {
       "id": "yields-growth",
       "kind": "cross-asset",
@@ -76,6 +28,53 @@
           "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
           "evidence": [
             "convergence:diverges:yields-growth:chain=1"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-09-02)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-09-02)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-09-02"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "liquidity-beta",
+      "kind": "liquidity",
+      "visual_type": "liquidity-pressure",
+      "symbols": [
+        "CRYPTO:BTCUSD",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Liquidity beta",
+      "title_ar": "بيتا السيولة",
+      "reading_en": "Crypto against the growth complex — the marginal liquidity read: when the liquidity beta decouples, funding conditions are usually speaking first.",
+      "reading_ar": "الكريبتو مقابل قطاع النمو — قراءة السيولة الهامشية: حين تنفصل بيتا السيولة، تكون أوضاع التمويل عادة أول من يتكلم.",
+      "score": 30,
+      "evidence": [
+        "liquidity_pressure 5/5"
+      ],
+      "annotations": [
+        {
+          "type": "commentary-label",
+          "severity": "info",
+          "label_en": "Confirmation — BTC/QQQ relationship holding",
+          "label_ar": "تأكيد — علاقة BTC/QQQ صامدة",
+          "evidence": [
+            "convergence:confirms:liquidity-beta"
+          ]
+        },
+        {
+          "type": "pressure-band",
+          "severity": "high",
+          "label_en": "Stored pressure — liquidity pressure 5/5",
+          "label_ar": "ضغط مخزّن — 5/5",
+          "evidence": [
+            "macro:pressure:liquidity_pressure:5"
           ]
         },
         {
