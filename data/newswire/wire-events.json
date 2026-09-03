@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-02T22:32:03.085Z",
+  "updated_at": "2026-09-03T16:59:49.992Z",
   "status": "live",
-  "item_count": 21,
+  "item_count": 24,
   "clusters": {
     "ai-momentum": 3,
-    "tape": 10,
+    "tape": 11,
     "volatility": 2,
-    "macro": 1,
     "fed": 4,
-    "labor": 1
+    "labor": 3,
+    "macro": 1
   },
   "top_story": {
     "id": "move::NVDA::2026-09-02T22",
@@ -77,6 +77,40 @@
         "ai-semiconductors"
       ],
       "timestamp": "2026-09-02T17:05:36.010Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::GLD::2026-09-03T16",
+      "kind": "market_move",
+      "headline": "GLD jumps +2.13% to 411.34",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "GLD"
+      ],
+      "sector_tags": [
+        "metals"
+      ],
+      "timestamp": "2026-09-03T16:59:46.560Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::BTC::2026-09-03T16",
+      "kind": "market_move",
+      "headline": "BTC jumps +4.92% to 80982.51",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "BTC"
+      ],
+      "sector_tags": [
+        "crypto"
+      ],
+      "timestamp": "2026-09-03T16:59:46.560Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
     },
@@ -268,21 +302,69 @@
       "attribution": "sourced: https://finnhub.io/"
     },
     {
-      "id": "move::US10Y::2026-08-31T23",
-      "kind": "market_move",
-      "headline": "US10Y jumps +2.57% to 4.7580004",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260905T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-09-05)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "tape",
+      "cluster": "fed",
       "asset_tags": [
-        "US10Y"
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
       ],
       "sector_tags": [
-        "rates"
+        "fed"
       ],
-      "timestamp": "2026-08-31T23:18:40.043Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-09-05T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::nonfarm-payrolls::20260904T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Nonfarm Payrolls (2026-09-04, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-09-04T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::unemployment-rate::20260904T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Unemployment Rate (2026-09-04, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-09-04T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::employment-situation::20260904T000000",
@@ -392,29 +474,6 @@
         "fed"
       ],
       "timestamp": "2026-09-02T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260901T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-09-01)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-09-01T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
