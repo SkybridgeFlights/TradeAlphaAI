@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-04T19:22:32.567Z",
+  "updated_at": "2026-09-04T21:43:36.638Z",
   "run_date": "2026-09-04",
   "verified": false,
   "sessions_tracked": 40,
@@ -118,10 +118,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "neutral",
+      "state": "diverging",
       "evidence": {
         "us10y": 0.5464480874316898,
-        "qqq": 0.0223
+        "qqq": 0.1797
       }
     },
     {
@@ -136,7 +136,7 @@
       "state": "diverging",
       "evidence": {
         "us10y": 0.5464480874316898,
-        "dxy": -0.2685306245600021
+        "dxy": -0.27456502061753024
       }
     },
     {
@@ -150,8 +150,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": -0.2685306245600021,
-        "gold": -0.9873
+        "dxy": -0.27456502061753024,
+        "gold": -0.841
       }
     },
     {
@@ -165,8 +165,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": -5.294906166219834,
-        "spy": -0.4397
+        "vix": -2.6139410187667598,
+        "spy": -0.3854
       }
     },
     {
@@ -178,10 +178,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "neutral",
+      "state": "confirming",
       "evidence": {
-        "nvda": 0.7266,
-        "qqq": 0.0223
+        "nvda": 0.8361,
+        "qqq": 0.1797
       }
     },
     {
@@ -193,10 +193,10 @@
       "expected": "direct",
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-      "state": "neutral",
+      "state": "diverging",
       "evidence": {
-        "btc": -2.1782,
-        "qqq": 0.0223
+        "btc": -2.2006,
+        "qqq": 0.1797
       }
     },
     {
@@ -210,8 +210,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "diverging",
       "evidence": {
-        "spy": -0.4397,
-        "iwm": 0.1694
+        "spy": -0.3854,
+        "iwm": 0.2778
       }
     },
     {
@@ -226,20 +226,39 @@
       "state": "diverging",
       "evidence": {
         "us10y": 0.5464480874316898,
-        "tlt": 0.195
+        "tlt": 0.1706
       }
     }
   ],
   "signals": {
-    "confirmation": [],
+    "confirmation": [
+      {
+        "source": "causal:ai-growth",
+        "en": "AI leadership drives the growth complex",
+        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
+        "evidence": {
+          "nvda": 0.8361,
+          "qqq": 0.1797
+        }
+      }
+    ],
     "contradiction": [
+      {
+        "source": "causal:yields-growth",
+        "en": "Divergence on the us10y/qqq link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة us10y/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "us10y": 0.5464480874316898,
+          "qqq": 0.1797
+        }
+      },
       {
         "source": "causal:yields-dollar",
         "en": "Divergence on the us10y/dxy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/dxy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
           "us10y": 0.5464480874316898,
-          "dxy": -0.2685306245600021
+          "dxy": -0.27456502061753024
         }
       },
       {
@@ -247,17 +266,8 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": -0.2685306245600021,
-          "gold": -0.9873
-        }
-      },
-      {
-        "source": "causal:vix-equities",
-        "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "vix": -5.294906166219834,
-          "spy": -0.4397
+          "dxy": -0.27456502061753024,
+          "gold": -0.841
         }
       }
     ],
