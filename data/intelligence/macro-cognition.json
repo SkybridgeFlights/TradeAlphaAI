@@ -1,26 +1,26 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-03T22:28:21.715Z",
-  "run_date": "2026-09-03",
+  "updated_at": "2026-09-04T16:48:41.508Z",
+  "run_date": "2026-09-04",
   "verified": true,
   "conviction": {
-    "state": "increasingly-confirmed",
+    "state": "deteriorating-confirmation",
     "regime_confidence": "high",
-    "confirmations": 6,
-    "contradictions": 4,
-    "en": "The structure is increasingly confirmed — cross-asset links and regime persistence agree.",
-    "ar": "البنية تزداد تأكيداً — روابط الأصول واستمرارية النظام متوافقتان."
+    "confirmations": 1,
+    "contradictions": 8,
+    "en": "Confirmation is deteriorating — 8 structural contradiction signal(s) against 1 confirmation(s).",
+    "ar": "التأكيد يتدهور — 8 إشارات تناقض هيكلي مقابل 1 إشارات تأكيد."
   },
   "contradictions": [
     {
-      "id": "dollar-vs-yields",
+      "id": "calm-vs-fragility",
       "sessions": 1,
       "escalated": false,
-      "first_seen": "2026-09-03",
-      "last_seen": "2026-09-03",
+      "first_seen": "2026-09-04",
+      "last_seen": "2026-09-04",
       "active_today": true,
-      "en": "Dollar softness against rising yields — the rate-support link is not holding.",
-      "ar": "ضعف الدولار رغم ارتفاع العوائد — رابط دعم الفائدة لا يصمد."
+      "en": "Compressed volatility against building fragility — calm the structure does not confirm.",
+      "ar": "تقلب منضغط مقابل هشاشة متصاعدة — هدوء لا تؤكده بنية السوق."
     }
   ],
   "structure": {
@@ -31,9 +31,9 @@
   "pressure": {
     "tracks": {
       "volatility_pressure": {
-        "score": 0,
+        "score": 1,
         "base_score": 0,
-        "state": "dormant",
+        "state": "accumulating",
         "en": "Volatility pressure (stored compression)",
         "ar": "ضغط التقلب (انضغاط مخزّن)"
       },
@@ -53,15 +53,15 @@
       },
       "speculative_pressure": {
         "score": 5,
-        "base_score": 4,
-        "state": "accumulating",
+        "base_score": 5,
+        "state": "steady",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
       "concentration_pressure": {
         "score": 5,
         "base_score": 5,
-        "state": "steady",
+        "state": "accumulating",
         "en": "Momentum concentration intensity",
         "ar": "كثافة تركز الزخم"
       },
@@ -84,8 +84,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with increasingly confirmed; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع البنية تزداد تأكيداً؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — stable structure with deteriorating confirmation; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — بنية مستقرة مع التأكيد يتدهور؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -123,7 +123,7 @@
     },
     {
       "id": "volatility-expansion",
-      "status": "dormant",
+      "status": "watch",
       "en": "Volatility expansion — stored compression is the fuel; a catalyst that breaks the range would release it. VIX regime change is the confirming signal.",
       "ar": "توسع التقلب — الانضغاط المخزّن هو الوقود؛ ومحفز يكسر النطاق سيطلقه. تغير نظام VIX هو إشارة التأكيد.",
       "derived_from": [
@@ -134,8 +134,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -144,12 +144,12 @@
     {
       "id": "catalyst-dependency",
       "status": "monitor",
-      "en": "Catalyst dependency — FOMC Press Release is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
-      "ar": "اعتماد على المحفز — FOMC Press Release هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
+      "en": "Catalyst dependency — Employment Situation is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
+      "ar": "اعتماد على المحفز — Employment Situation هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
       "derived_from": [
         "calendar"
       ],
-      "catalyst": "FOMC Press Release"
+      "catalyst": "Employment Situation"
     }
   ],
   "desk_focus": {
@@ -157,5 +157,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: increasingly-confirmed; structure: stable-structure; contradictions active: 1 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: deteriorating-confirmation; structure: stable-structure; contradictions active: 1 (0 escalated); elevated pressure tracks: 3."
 }
