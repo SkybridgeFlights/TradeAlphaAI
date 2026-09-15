@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-14T21:58:29.331Z",
-  "run_date": "2026-09-14",
+  "updated_at": "2026-09-15T17:36:55.931Z",
+  "run_date": "2026-09-15",
   "verified": true,
   "status": "verified",
   "regime_condition": "unstable-regime",
@@ -12,11 +12,11 @@
       "id": "positioning-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 68,
+      "sessions": 69,
       "severity": 2,
       "first_seen": "2026-06-16",
-      "last_seen": "2026-09-14",
-      "last_evaluated": "2026-09-14",
+      "last_seen": "2026-09-15",
+      "last_evaluated": "2026-09-15",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
     },
@@ -24,23 +24,35 @@
       "id": "cross-asset-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 7,
-      "severity": 2,
+      "sessions": 8,
+      "severity": 1,
       "first_seen": "2026-09-02",
-      "last_seen": "2026-09-14",
-      "last_evaluated": "2026-09-14",
+      "last_seen": "2026-09-15",
+      "last_evaluated": "2026-09-15",
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    "contradiction-strain": {
+      "id": "contradiction-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-09-15",
+      "last_seen": "2026-09-15",
+      "last_evaluated": "2026-09-15",
+      "en": "Internal market signals continue to contradict the headline move.",
+      "ar": "تواصل الإشارات الداخلية للسوق مناقضة الحركة الظاهرة في المؤشرات."
     },
     "liquidity-strain": {
       "id": "liquidity-strain",
       "active": true,
       "state": "persistent",
-      "sessions": 61,
+      "sessions": 62,
       "severity": 2,
       "first_seen": "2026-06-25",
-      "last_seen": "2026-09-14",
-      "last_evaluated": "2026-09-14",
+      "last_seen": "2026-09-15",
+      "last_evaluated": "2026-09-15",
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
     }
@@ -48,6 +60,7 @@
   "active_strains": [
     "positioning-strain",
     "cross-asset-strain",
+    "contradiction-strain",
     "liquidity-strain"
   ],
   "internal_stability": {
@@ -57,22 +70,22 @@
     "risk_appetite": "risk-on",
     "liquidity_participation": "uncertain"
   },
-  "narrative_stability": "strained",
+  "narrative_stability": "internally-inconsistent",
   "catalyst_fragility": {
     "level": "moderate",
     "next": {
-      "name": "Canada CPI",
-      "time": "2026-09-15T13:00:00.000Z",
-      "hours": 15
+      "name": "United Kingdom CPI",
+      "time": "2026-09-16T07:00:00.000Z",
+      "hours": 13.4
     },
-    "en": "Canada CPI is the next scheduled test of the current structure.",
-    "ar": "يمثل Canada CPI الاختبار المجدول التالي للبنية الحالية."
+    "en": "United Kingdom CPI is the next scheduled test of the current structure.",
+    "ar": "يمثل United Kingdom CPI الاختبار المجدول التالي للبنية الحالية."
   },
   "strain_map": [
     {
       "id": "positioning-strain",
       "state": "persistent",
-      "sessions": 68,
+      "sessions": 69,
       "severity": 2,
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
@@ -80,7 +93,7 @@
     {
       "id": "liquidity-strain",
       "state": "persistent",
-      "sessions": 61,
+      "sessions": 62,
       "severity": 2,
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
@@ -88,19 +101,21 @@
     {
       "id": "cross-asset-strain",
       "state": "persistent",
-      "sessions": 7,
-      "severity": 2,
+      "sessions": 8,
+      "severity": 1,
       "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
       "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
+    },
+    {
+      "id": "contradiction-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Internal market signals continue to contradict the headline move.",
+      "ar": "تواصل الإشارات الداخلية للسوق مناقضة الحركة الظاهرة في المؤشرات."
     }
   ],
   "pressure_memory": [
-    {
-      "date": "2026-07-16",
-      "condition": "unstable-regime",
-      "score": 30,
-      "change": "faded"
-    },
     {
       "date": "2026-07-17",
       "condition": "unstable-regime",
@@ -331,6 +346,12 @@
     },
     {
       "date": "2026-09-14",
+      "condition": "unstable-regime",
+      "score": 38,
+      "change": "stable"
+    },
+    {
+      "date": "2026-09-15",
       "condition": "unstable-regime",
       "score": 38,
       "change": "stable"

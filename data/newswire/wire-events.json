@@ -1,18 +1,20 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-14T21:58:29.067Z",
+  "updated_at": "2026-09-15T17:36:55.677Z",
   "status": "live",
-  "item_count": 7,
+  "item_count": 11,
   "clusters": {
-    "tape": 2,
+    "tape": 3,
     "ai-momentum": 2,
-    "volatility": 1,
+    "volatility": 2,
+    "fed": 1,
+    "growth": 1,
     "inflation": 2
   },
   "top_story": {
-    "id": "move::US10Y::2026-09-14T21",
+    "id": "move::US10Y::2026-09-15T17",
     "kind": "market_move",
-    "headline": "US10Y jumps +3.23% to 4.961",
+    "headline": "US10Y jumps +3.66% to 5.014",
     "urgency": 90,
     "market_impact": 95,
     "cluster": "tape",
@@ -22,11 +24,28 @@
     "sector_tags": [
       "rates"
     ],
-    "timestamp": "2026-09-14T21:58:28.250Z",
+    "timestamp": "2026-09-15T17:36:54.901Z",
     "source": "Yahoo Finance",
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::US10Y::2026-09-15T17",
+      "kind": "market_move",
+      "headline": "US10Y jumps +3.66% to 5.014",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-09-15T17:36:54.901Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::US10Y::2026-09-14T21",
       "kind": "market_move",
@@ -79,6 +98,23 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
+      "id": "move::VIX::2026-09-15T17",
+      "kind": "market_move",
+      "headline": "VIX jumps +7.17% to 17.64",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-09-15T17:36:54.357Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
       "id": "move::VIX::2026-09-14T21",
       "kind": "market_move",
       "headline": "VIX jumps +8.78% to 17.1",
@@ -111,6 +147,50 @@
       "timestamp": "2026-09-14T18:29:56.401Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::fomc-rate-decision::20260916T180000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Rate Decision (2026-09-16, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-09-16T18:00:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::retail-sales::20260916T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Retail Sales (2026-09-16, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "growth",
+      "asset_tags": [
+        "Treasury yields",
+        "SPY",
+        "IWM",
+        "Oil",
+        "Defensive sectors"
+      ],
+      "sector_tags": [
+        "growth"
+      ],
+      "timestamp": "2026-09-16T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::global_acquisition::gb::united-kingdom-cpi::20260916T070000",
