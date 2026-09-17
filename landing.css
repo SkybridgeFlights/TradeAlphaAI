@@ -1995,3 +1995,20 @@ html[dir="rtl"] .topbar .lang-menu {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Phase 231 Step 2 — homepage product discovery */
+.product-discovery-panel { display:grid; gap:18px; }
+.product-discovery-copy { max-width:760px; }
+.product-discovery-copy h2 { margin:7px 0 8px; }
+.product-discovery-copy p { margin:0; color:var(--text-soft); }
+.product-discovery-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+.product-discovery-card { display:flex; flex-direction:column; min-height:190px; padding:20px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); color:inherit; text-decoration:none; transition:transform .18s ease,border-color .18s ease,background .18s ease; }
+.product-discovery-card:hover,.product-discovery-card:focus-visible { transform:translateY(-2px); border-color:rgba(216,177,90,.42); background:linear-gradient(145deg,rgba(216,177,90,.08),rgba(255,255,255,.018)); }
+.product-discovery-card:focus-visible { outline:2px solid #d8b15a; outline-offset:3px; }
+.product-discovery-card-primary { border-color:rgba(216,177,90,.28); }
+.product-discovery-kicker { color:var(--muted); font-size:.74rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.product-discovery-card strong { margin:10px 0 8px; font-size:1.08rem; }
+.product-discovery-card > span:not(.product-discovery-kicker) { color:var(--text-soft); font-size:.9rem; line-height:1.55; }
+.product-discovery-card em { margin-top:auto; padding-top:18px; color:#d8b15a; font-size:.86rem; font-style:normal; font-weight:700; }
+@media (min-width:760px) { .product-discovery-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (prefers-reduced-motion:reduce) { .product-discovery-card { transition:none; } .product-discovery-card:hover,.product-discovery-card:focus-visible { transform:none; } }
