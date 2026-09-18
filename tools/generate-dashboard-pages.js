@@ -125,8 +125,8 @@ function renderDashboard(dash, ar) {
   <meta property="og:url" content="${canonical}">
   <link rel="canonical" href="${canonical}">
   <link rel="alternate" hreflang="${ar ? 'en' : 'ar'}" href="https://www.tradealphaai.com${altHref}">
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="../landing.css">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/landing.css">
   <link rel="stylesheet" href="/css/global-header.css">
   <link rel="stylesheet" href="/css/global-layout.css">
   <link rel="stylesheet" href="/css/responsive.css">

@@ -123,8 +123,8 @@ function buildHead(ar, surf) {
   const title = `${ar ? surf.title_ar : surf.title_en} | TradeAlphaAI`;
   const desc = ar ? surf.lead_ar : surf.lead_en;
   const css = ar
-    ? ['/css/global-header.css', '../../../styles.css', '../../../landing.css', '../../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = { '@context': 'https://schema.org', '@graph': [
     { '@type': 'CollectionPage', name: title, description: desc, url, inLanguage: ar ? 'ar' : 'en', publisher: { '@type': 'Organization', name: 'TradeAlphaAI', url: 'https://www.tradealphaai.com' } },
     { '@type': 'BreadcrumbList', itemListElement: [

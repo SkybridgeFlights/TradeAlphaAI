@@ -50,8 +50,8 @@ function buildHead(ar, asset) {
     ? `قراءة مؤسسية لـ ${asset.symbol}: ${asset.role_ar}. الحالة الهيكلية والسياق التكتيكي والسيولة والعلاقات عبر الأصول وتوافر المخطط المرصود. سياق تعليمي وليس نصيحة استثمارية أو إشارات تداول.`
     : `Institutional read of ${asset.symbol}: ${asset.role_en}. Structure state, tactical context, liquidity, cross-asset relationships and observed-chart availability. Educational context, not investment advice or trading signals.`;
   const css = ar
-    ? ['/css/global-header.css', '../../../styles.css', '../../../landing.css', '../../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [

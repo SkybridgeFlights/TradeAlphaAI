@@ -99,8 +99,8 @@ function buildHead(ar) {
     ? 'لوحة مؤسسية مركزية: نظام السيولة، والسياق التكتيكي، وبنية السوق، والحالة عبر الأصول، وتوافر المخططات متعددة الأصول، ومخطط SPY المرصود — تركيب حتمي لإشارات موثّقة. سياق تعليمي وليس نصيحة استثمارية أو إشارات تداول.'
     : 'A centralized institutional dashboard: liquidity regime, tactical context, market structure, cross-asset state, multi-asset chart availability and the observed SPY chart — a deterministic composition of verified signals. Educational context, not investment advice or trading signals.';
   const css = ar
-    ? ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../styles.css', '../landing.css', '../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [

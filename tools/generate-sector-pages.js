@@ -34,8 +34,8 @@ function buildHead(ar, sector) {
     ? `قراءة مؤسسية لقطاع ${sector.name_ar}: ${sector.role_ar}. البنية والتكتيك والسيولة والمشاركة وسياق التدوير والحساسية الكلية وتوافر المخطط المرصود. سياق تعليمي وليس نصيحة استثمارية.`
     : `Institutional read of the ${sector.name_en} sector: ${sector.role_en}. Structure, tactical, liquidity and participation states, rotation context, macro sensitivity and observed-chart availability. Educational context, not investment advice.`;
   const css = ar
-    ? ['/css/global-header.css', '../../../styles.css', '../../../landing.css', '../../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = { '@context': 'https://schema.org', '@graph': [
     { '@type': 'CollectionPage', name: title, description: desc, url: base, inLanguage: ar ? 'ar' : 'en', publisher: { '@type': 'Organization', name: 'TradeAlphaAI', url: 'https://www.tradealphaai.com' } },
     { '@type': 'BreadcrumbList', itemListElement: [

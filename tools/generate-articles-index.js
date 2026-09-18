@@ -32,8 +32,8 @@ function buildHead(ar) {
   const desc = ar ? 'تعليم مؤسسي عميق في بنية السوق: اتساع السوق وحساسية الفائدة وانضغاط التقلب والتركز وأنظمة السيولة والتأكيد عبر الأصول. تحليل سببي لا شروح للمبتدئين. سياق تعليمي وليس نصيحة استثمارية.'
     : 'Deep institutional market-structure education: breadth, duration sensitivity, volatility compression, concentration, liquidity regimes, and cross-asset confirmation. Causal analysis, not beginner explainers. Educational context, not investment advice.';
   const css = ar
-    ? ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../styles.css', '../landing.css', '../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [

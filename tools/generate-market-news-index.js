@@ -50,8 +50,8 @@ function buildHead(ar) {
   const desc = ar ? 'تحليل مؤسسي سريع لتفاعلات السوق مع التضخم والوظائف والفيدرالي وصدمات العوائد والدولار والنفط والتقلب — تفسير عبر الأصول لا إعادة صياغة أخبار. سياق تعليمي وليس نصيحة استثمارية.'
     : 'Fast institutional analysis of market reactions to inflation, labor, the Fed, yield/dollar/oil shocks and volatility — cross-asset interpretation, not news rewriting. Educational context, not investment advice.';
   const css = ar
-    ? ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../styles.css', '../landing.css', '../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [

@@ -52,8 +52,8 @@ function buildHead(ar) {
   const desc = ar ? 'موجزات سوق مؤسسية بإيقاع منصة طرفية: الموجز الصباحي ونبض منتصف الجلسة وتدفقات الإغلاق والموجز الكلي الأسبوعي. سياق تعليمي وليس نصيحة استثمارية.'
     : 'Terminal-rhythm institutional market briefs: Morning Brief, Midday Pulse, Closing Flow, and Weekend Macro Brief. Educational context, not investment advice.';
   const css = ar
-    ? ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../styles.css', '../landing.css', '../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [

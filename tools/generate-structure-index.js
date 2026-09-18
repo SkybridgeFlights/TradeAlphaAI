@@ -44,8 +44,8 @@ function buildHead(ar) {
   const desc = ar ? 'تفسير مؤسسي لبنية السوق: المشاركة والاتساع والتذبذب والاتساق عبر الأصول والتدوير والتركّز والاستقرار الهيكلي — تركيب حتمي لإشارات موثّقة لا تحليل تداول أو إشارات. سياق تعليمي وليس نصيحة استثمارية.'
     : 'Institutional interpretation of market structure: participation, breadth, volatility structure, cross-asset coherence, rotation, concentration and stability — a deterministic composition of verified signals, not trading analysis or signals. Educational context, not investment advice.';
   const css = ar
-    ? ['/css/global-header.css', '../../styles.css', '../../landing.css', '../../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
-    : ['/css/global-header.css', '../styles.css', '../landing.css', '../css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
+    ? ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css']
+    : ['/css/global-header.css', '/styles.css', '/landing.css', '/css/market/market-portal.css', '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css'];
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
