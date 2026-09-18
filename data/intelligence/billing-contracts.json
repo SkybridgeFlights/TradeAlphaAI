@@ -1,116 +1,64 @@
 {
   "schema_version": "1.2",
-  "generated_at": "2026-09-18T17:04:10.251Z",
+  "generated_at": "2026-09-18T22:08:17.948Z",
   "source_layer": "billing-contracts",
   "contracts_version": "1.2.0",
   "mode": "live",
   "enabled": true,
   "allowed_providers": [
-    "litecoin"
+    "telegram_litecoin"
   ],
   "allowed_tiers": [
     "free",
-    "premium",
-    "institutional"
+    "monthly",
+    "yearly"
   ],
-  "primary_provider": "litecoin",
+  "primary_provider": "telegram_litecoin",
   "providers": [
     {
-      "id": "litecoin",
-      "label_en": "Litecoin (LTC)",
-      "label_ar": "لايتكوين (LTC)",
-      "network": "Litecoin mainnet",
-      "address": "ltc1qzq97jf6dk9v3tuetc0zlwtz7wuasrc5s4zt6qu",
-      "uri": "litecoin:ltc1qzq97jf6dk9v3tuetc0zlwtz7wuasrc5s4zt6qu",
-      "env_vars": [],
-      "flow_description_en": "Send the exact LTC amount for the selected plan to the displayed Litecoin address. Keep the transaction ID for payment verification.",
-      "flow_description_ar": "أرسل مبلغ LTC المحدد للخطة إلى عنوان لايتكوين الظاهر واحتفظ بمعرّف المعاملة للتحقق من الدفع."
+      "id": "telegram_litecoin",
+      "label_en": "Telegram + Litecoin",
+      "label_ar": "تيليغرام + لايتكوين",
+      "env_vars": []
     }
   ],
   "tiers": {
     "free": {
       "label_en": "Free",
       "label_ar": "مجاني",
-      "monthly_usd": 0,
-      "capabilities": {
-        "personal_watchlists_max": 3,
-        "watchlist_entities_max_per_list": 12,
-        "alert_classes": [
-          "regime_change",
-          "change_event"
-        ],
-        "alert_channels": [
-          "in_app"
-        ],
-        "alert_cadence": "standard",
-        "copilot_queries_per_day": 0
-      },
-      "public_content": "all public surfaces accessible"
+      "monthly_usd": 0
     },
-    "premium": {
-      "label_en": "Premium",
-      "label_ar": "بريميوم",
-      "monthly_usd": null,
-      "capabilities": {
-        "personal_watchlists_max": 25,
-        "watchlist_entities_max_per_list": 50,
-        "alert_classes": [
-          "regime_change",
-          "ranking_change",
-          "leadership_change",
-          "narrative_change",
-          "watchlist_change",
-          "research_change",
-          "change_event"
-        ],
-        "alert_channels": [
-          "in_app",
-          "email",
-          "telegram"
-        ],
-        "alert_cadence": "faster",
-        "copilot_queries_per_day": 50
-      },
-      "public_content": "all public surfaces accessible"
+    "monthly": {
+      "label_en": "Monthly",
+      "label_ar": "شهري",
+      "monthly_usd": 44
     },
-    "institutional": {
-      "label_en": "Institutional",
-      "label_ar": "مؤسسات",
-      "monthly_usd": null,
-      "capabilities": {
-        "personal_watchlists_max": 100,
-        "watchlist_entities_max_per_list": 200,
-        "alert_classes": [
-          "regime_change",
-          "ranking_change",
-          "leadership_change",
-          "narrative_change",
-          "watchlist_change",
-          "research_change",
-          "change_event"
-        ],
-        "alert_channels": [
-          "in_app",
-          "email",
-          "telegram"
-        ],
-        "alert_cadence": "priority",
-        "copilot_queries_per_day": 500,
-        "custom_research_briefs": true,
-        "export_csv": true
-      },
-      "public_content": "all public surfaces accessible"
+    "yearly": {
+      "label_en": "Yearly",
+      "label_ar": "سنوي",
+      "yearly_usd": 484
     }
+  },
+  "checkout": {
+    "type": "telegram_bot",
+    "bot_username": "TradeAlphaSupport_bot",
+    "url": "https://t.me/TradeAlphaSupport_bot",
+    "payment_method": "litecoin",
+    "monthly_usd": 44,
+    "yearly_usd": 484,
+    "proof_required": true,
+    "txid_required": true,
+    "admin_confirmation": true,
+    "license_activation": true
   },
   "governance": {
     "litecoin_only": true,
+    "website_collects_payment": false,
+    "telegram_checkout": true,
     "no_private_keys_in_repo": true,
     "no_seed_phrases_in_repo": true,
     "no_card_data": true,
-    "no_public_content_gates": true,
-    "no_dark_patterns": true,
-    "website_collects_payment": false,
-    "telegram_checkout": true
+    "no_dark_patterns": true
   },
   "pages": [
     "/account/billing/",
@@ -124,18 +72,6 @@
     "sources": [
       "tools/build-billing-contracts.js"
     ],
-    "note": "Subscription checkout, Litecoin instructions, proof/TXID submission, admin confirmation, and license activation are handled by the official Telegram bot."
-  },
-  "checkout": {
-    "type": "telegram_bot",
-    "bot_username": "TradeAlphaSupport_bot",
-    "url": "https://t.me/TradeAlphaSupport_bot",
-    "payment_method": "litecoin",
-    "monthly_usd": 44,
-    "yearly_usd": 484,
-    "proof_required": true,
-    "txid_required": true,
-    "admin_confirmation": true,
-    "license_activation": true
+    "note": "Checkout, payment proof, TXID collection, admin confirmation, and license activation are handled by the official TradeAlpha customer Telegram bot."
   }
 }

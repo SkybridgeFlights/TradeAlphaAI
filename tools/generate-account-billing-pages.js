@@ -1,117 +1,18 @@
 'use strict';
-
-// Phase 225 — /account/billing/ + /account/subscription/ EN+AR (4 pages).
-
-const fs = require('fs');
-const path = require('path');
-const { renderGlobalHeader, globalHeaderScripts } = require('./render-global-header');
-
-const ROOT = path.resolve(__dirname, '..');
-const J = (n) => path.join(ROOT, 'data', 'intelligence', n);
-const WRITE = process.argv.includes('--write');
-
-function readJson(p, f = {}) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return f; } }
-function esc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-function t(ar, en, arText) { return ar ? arText : en; }
-
-const SURFACES = {
-  billing: { rel: 'account/billing/', title_en: 'Account Billing', title_ar: 'فوترة الحساب',
-    desc_en: 'Billing contract — provider, env vars, hosted-checkout flow. Foundation only; no payments collected, no subscriptions stored.',
-    desc_ar: 'عقد الفوترة — المزوّد وأسماء متغيرات البيئة وتدفّق المحفظة المستضافة. مرحلة التأسيس فقط؛ لا تُجمع مدفوعات ولا تُخزَّن اشتراكات.' },
-  subscription: { rel: 'account/subscription/', title_en: 'Account Subscription', title_ar: 'اشتراك الحساب',
-    desc_en: 'Tier comparison — free, premium, institutional. Public intelligence stays free at every tier; tiers modulate personal scope only.',
-    desc_ar: 'مقارنة الطبقات — مجاني وبريميوم ومؤسسي. تبقى الاستخبارات العامة مجانية في كل طبقة؛ تعدّل الطبقات النطاق الشخصي فقط.' },
+const fs=require('fs'),path=require('path');
+const {renderGlobalHeader,globalHeaderScripts}=require('./render-global-header');
+const ROOT=path.resolve(__dirname,'..'),J=n=>path.join(ROOT,'data','intelligence',n),WRITE=process.argv.includes('--write');
+const BOT='https://t.me/TradeAlphaSupport_bot';
+function readJson(p,f={}){try{return JSON.parse(fs.readFileSync(p,'utf8'));}catch{return f;}}
+function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function t(ar,en,a){return ar?a:en;}
+const SURFACES={
+ billing:{rel:'account/billing/',title_en:'Account Billing',title_ar:'الدفع والاشتراك',desc_en:'Subscription checkout is handled securely through the official TradeAlpha customer bot on Telegram.',desc_ar:'يتم الاشتراك والدفع بالكامل عبر بوت عملاء TradeAlpha الرسمي على تيليغرام.'},
+ subscription:{rel:'account/subscription/',title_en:'EA Subscription',title_ar:'اشتراك TradeAlpha EA',desc_en:'Choose a monthly or yearly EA license, then continue to Telegram for Litecoin payment and activation.',desc_ar:'اختر الترخيص الشهري أو السنوي، ثم انتقل إلى تيليغرام لإتمام دفع Litecoin وتفعيل الترخيص.'}
 };
-
-function head(ar, surface) {
-  const url = `https://www.tradealphaai.com/${ar ? 'ar/' : ''}${surface.rel}`;
-  const enUrl = `https://www.tradealphaai.com/${surface.rel}`;
-  const arUrl = `https://www.tradealphaai.com/ar/${surface.rel}`;
-  const depth = (ar ? 1 : 0) + surface.rel.split('/').filter(Boolean).length;
-  const prefix = '../'.repeat(depth);
-  const css = ['/css/global-header.css', `${prefix}styles.css`, `${prefix}landing.css`, `${prefix}css/market/market-portal.css`, '/css/global-layout.css', '/css/responsive.css', '/css/global-header-canonical.css', '/css/account-premium.css'];
-  const title = `${ar ? surface.title_ar : surface.title_en} | TradeAlphaAI`;
-  const desc = ar ? surface.desc_ar : surface.desc_en;
-  return `<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${esc(title)}</title>
-  <meta name="description" content="${esc(desc)}" />
-  <meta name="robots" content="noindex,follow" />
-  <link rel="canonical" href="${url}" />
-  <link rel="alternate" hreflang="en" href="${enUrl}" />
-  <link rel="alternate" hreflang="ar" href="${arUrl}" />
-  <meta property="og:locale" content="${ar ? 'ar_AR' : 'en_US'}" /><meta property="og:title" content="${esc(title)}" />
-${css.map((href) => `  <link rel="stylesheet" href="${href}" />`).join('\n')}
-</head>`;
-}
-
-function shell(ar, surface, body) {
-  const lang = ar ? 'ar' : 'en';
-  const header = renderGlobalHeader({ locale: lang, activePage: 'account', arabicHref: `/ar/${surface.rel}`, englishHref: `/${surface.rel}` });
-  return `<!doctype html>
-<html lang="${lang}"${ar ? ' dir="rtl"' : ''}>
-${head(ar, surface)}
-<body>
-${header}
-  <main class="market-shell">
-    <section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar, 'Your account', 'حسابك'))}</span><h1>${esc(ar ? surface.title_ar : surface.title_en)}</h1><p>${esc(ar ? surface.desc_ar : surface.desc_en)}</p></div></section>
-${body}
-    <section class="market-section" id="billing-disclaimer"><div class="market-panel"><p class="market-copy">${esc(t(ar, 'Billing is foundation-only — no payments are collected, no subscriptions stored, no card numbers in this repo. Public intelligence remains FREE at every tier; subscriptions only modulate the personal scope (watchlist counts, alert breadth, copilot quota). Not investment advice.', 'الفوترة في مرحلة التأسيس فقط — لا تُجمع مدفوعات ولا تُخزَّن اشتراكات ولا أرقام بطاقات في هذا المستودع. تبقى الاستخبارات العامة مجانية في كل طبقة؛ تعدّل الاشتراكات النطاق الشخصي فقط (عدد قوائم المتابعة، نطاق التنبيهات، حصة المساعد). ليست نصيحة استثمارية.'))}</p></div></section>
-  </main>
-  ${globalHeaderScripts()}
-  <script src="/js/account-billing.js" defer></script>
-</body>
-</html>
-`;
-}
-
-function billingBody(ar, data) {
-  const b = data.billing || {};
-  const provider = (b.providers && b.providers[0]) || {};
-  const envRows = (provider.env_vars || []).map((v) => `<tr><td><code>${esc(v.name)}</code></td><td>${esc(v.surface)}</td><td>${esc(v.required ? 'required' : 'optional')}</td><td>${esc(v.value_present ? 'present' : 'absent')}</td></tr>`).join('\n');
-  return `    <section class="market-section" id="billing-status"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Status', 'الحالة'))}</span><h2>${esc(t(ar, 'Billing status', 'حالة الفوترة'))}</h2></div>
-      <div class="market-grid three">
-        <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Mode', 'الوضع'))}</span><h3>${esc(b.mode || 'contract')}</h3><p class="market-copy">${esc(t(ar, 'Contract phase — no live Stripe wiring.', 'مرحلة العقد — لا ربط Stripe حيّ.'))}</p></article>
-        <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Provider', 'المزوّد'))}</span><h3>${esc(provider.label_en || 'Stripe')}</h3><p class="market-copy">${esc(t(ar, 'Hosted checkout flow planned for live wiring.', 'تدفّق محفظة مستضافة مخطّط للربط الحيّ.'))}</p></article>
-        <article class="market-card"><span class="market-card-kicker">${esc(t(ar, 'Card numbers in repo', 'أرقام البطاقات في المستودع'))}</span><h3>${esc(t(ar, 'none', 'لا شيء'))}</h3><p class="market-copy">${esc(t(ar, 'No payment data ever stored in this repo.', 'لا تُخزَّن بيانات دفع في هذا المستودع أبداً.'))}</p></article>
-      </div></section>
-    <section class="market-section" id="billing-env"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Env vars', 'متغيرات البيئة'))}</span><h2>${esc(t(ar, 'Env-var contract (names only)', 'عقد متغيرات البيئة (الأسماء فقط)'))}</h2></div>
-      <div class="market-panel"><table class="market-table" style="width:100%;border-collapse:collapse"><thead><tr><th>${esc(t(ar, 'Name', 'الاسم'))}</th><th>${esc(t(ar, 'Surface', 'السطح'))}</th><th>${esc(t(ar, 'Required', 'مطلوب'))}</th><th>${esc(t(ar, 'Value', 'القيمة'))}</th></tr></thead><tbody>
-${envRows}
-      </tbody></table></div></section>
-    <section class="market-section" id="billing-flow"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Flow', 'التدفّق'))}</span><h2>${esc(t(ar, 'Future hosted-checkout flow', 'تدفّق المحفظة المستضافة المستقبلي'))}</h2></div>
-      <div class="market-panel"><p class="market-copy">${esc(ar ? provider.flow_description_ar : provider.flow_description_en)}</p></div></section>`;
-}
-
-function subscriptionBody(ar, data) {
-  const b = data.billing || {};
-  const tiers = b.tiers || {};
-  return `    <section class="market-section" id="subscription-tiers"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Tiers', 'الطبقات'))}</span><h2>${esc(t(ar, 'Tier comparison', 'مقارنة الطبقات'))}</h2></div>
-      <div class="market-grid three">
-${Object.entries(tiers).map(([id, ti]) => `        <article class="market-card"><span class="market-card-kicker">${esc(ar ? ti.label_ar : ti.label_en)}</span><h3>${esc(ti.monthly_usd === 0 ? (ar ? 'مجاناً' : 'Free') : (ti.monthly_usd === null ? (ar ? 'بانتظار التسعير' : 'pricing TBD') : ('$' + ti.monthly_usd + '/mo')))}</h3><ul class="market-copy">
-  <li>${esc(t(ar, 'Personal watchlists', 'قوائم متابعة شخصية'))}: ${esc(ti.capabilities.personal_watchlists_max)}</li>
-  <li>${esc(t(ar, 'Alert classes', 'أصناف التنبيهات'))}: ${esc(ti.capabilities.alert_classes.length)} / 7</li>
-  <li>${esc(t(ar, 'Channels', 'القنوات'))}: ${esc((ti.capabilities.alert_channels || []).join(', '))}</li>
-  <li>${esc(t(ar, 'Copilot queries/day', 'استعلامات المساعد/يوم'))}: ${esc(ti.capabilities.copilot_queries_per_day)}</li>
-        </ul></article>`).join('\n')}
-      </div></section>
-    <section class="market-section" id="subscription-no-gates"><div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Public content', 'المحتوى العام'))}</span><h2>${esc(t(ar, 'No public content gates', 'لا حواجز للمحتوى العام'))}</h2></div>
-      <div class="market-panel"><p class="market-copy">${esc(t(ar, 'All Phase 200-224 surfaces (research, changes, explorer, workspace, market terminal, ETF intelligence, regime, narratives, rankings, history) remain ACCESSIBLE at every tier including free. Subscriptions only modulate the per-account PERSONAL scope.', 'تبقى جميع أسطح المراحل 200-224 (الأبحاث، التغيّرات، المستكشف، مساحة العمل، الطرفية، استخبارات الصناديق، النظام، السرديات، الترتيب، التاريخ) متاحة في كل طبقة بما فيها المجانية. تعدّل الاشتراكات النطاق الشخصي لكل حساب فقط.'))}</p></div></section>`;
-}
-
-function load() { return { billing: readJson(J('billing-contracts.json'), {}) }; }
-function bodyFor(key, ar, data) { if (key === 'billing') return billingBody(ar, data); if (key === 'subscription') return subscriptionBody(ar, data); return ''; }
-
-function main() {
-  const data = load();
-  let count = 0;
-  for (const [key, surface] of Object.entries(SURFACES)) {
-    for (const ar of [false, true]) {
-      const html = shell(ar, surface, bodyFor(key, ar, data));
-      if (WRITE) { const out = path.join(ROOT, ar ? `ar/${surface.rel}` : surface.rel, 'index.html'); fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, html, 'utf8'); count += 1; }
-    }
-  }
-  console.log(WRITE ? `[account-billing-pages] wrote ${count} pages` : `[account-billing-pages] dry-run ${Object.keys(SURFACES).length * 2} pages`);
-}
-
-if (require.main === module) main();
+function head(ar,s){const url='https://www.tradealphaai.com/'+(ar?'ar/':'')+s.rel,en='https://www.tradealphaai.com/'+s.rel,aa='https://www.tradealphaai.com/ar/'+s.rel,depth=(ar?1:0)+s.rel.split('/').filter(Boolean).length,prefix='../'.repeat(depth),css=['/css/global-header.css',prefix+'styles.css',prefix+'landing.css',prefix+'css/market/market-portal.css','/css/global-layout.css','/css/responsive.css','/css/global-header-canonical.css','/css/account-premium.css'];return `<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(ar?s.title_ar:s.title_en)} | TradeAlphaAI</title><meta name="description" content="${esc(ar?s.desc_ar:s.desc_en)}"><link rel="canonical" href="${url}"><link rel="alternate" hreflang="en" href="${en}"><link rel="alternate" hreflang="ar" href="${aa}">${css.map(x=>'<link rel="stylesheet" href="'+x+'">').join('')}</head>`;}
+function shell(ar,s,body){const lang=ar?'ar':'en',header=renderGlobalHeader({locale:lang,activePage:'account',arabicHref:'/ar/'+s.rel,englishHref:'/'+s.rel});return `<!doctype html><html lang="${lang}"${ar?' dir="rtl"':''}>${head(ar,s)}<body>${header}<main class="market-shell"><section class="market-hero"><div class="market-hero-copy"><span class="eyebrow">${esc(t(ar,'TradeAlpha EA','TradeAlpha EA'))}</span><h1>${esc(ar?s.title_ar:s.title_en)}</h1><p>${esc(ar?s.desc_ar:s.desc_en)}</p></div></section>${body}<section class="market-section"><div class="market-panel"><p class="market-copy">${esc(t(ar,'The website does not collect payment. The official Telegram bot provides the Litecoin payment instructions, collects payment proof and TXID, and routes the request for admin confirmation and license activation.','الموقع لا يستلم الدفعات. يرسل بوت تيليغرام الرسمي تعليمات دفع Litecoin ويستلم إثبات الدفع وTXID ثم يحيل الطلب لتأكيد الإدارة وتفعيل الترخيص.'))}</p></div></section></main>${globalHeaderScripts()}<script src="/js/account-billing.js" defer></script></body></html>`;}
+function billingBody(ar,b){const c=b.checkout||{};return `<section class="market-section"><div class="market-section-head"><span class="eyebrow">${esc(t(ar,'Checkout','الدفع'))}</span><h2>${esc(t(ar,'Telegram-managed checkout','الدفع عبر تيليغرام'))}</h2></div><div class="market-grid three"><article class="market-card"><span class="market-card-kicker">${esc(t(ar,'Payment','الدفع'))}</span><h3>Litecoin (LTC)</h3><p class="market-copy">${esc(t(ar,'Payment instructions are provided by the customer bot.','تعليمات الدفع يرسلها بوت العملاء.'))}</p></article><article class="market-card"><span class="market-card-kicker">${esc(t(ar,'Verification','التحقق'))}</span><h3>${esc(t(ar,'Proof + TXID','الإثبات + TXID'))}</h3><p class="market-copy">${esc(t(ar,'Payment is manually confirmed before activation.','يتم تأكيد الدفع يدويًا قبل التفعيل.'))}</p></article><article class="market-card"><span class="market-card-kicker">${esc(t(ar,'Activation','التفعيل'))}</span><h3>${esc(t(ar,'MT5 license','ترخيص MT5'))}</h3><p class="market-copy">${esc(t(ar,'The license is activated after payment confirmation.','يتم تفعيل الترخيص بعد تأكيد الدفع.'))}</p></article></div><div class="market-panel" style="margin-top:16px"><a class="cta-btn primary" href="${esc(c.url||BOT)}" target="_blank" rel="noopener noreferrer">${esc(t(ar,'Open subscription bot on Telegram','فتح بوت الاشتراك على تيليغرام'))}</a></div></section>`;}
+function subscriptionBody(ar,b){const c=b.checkout||{};return `<section class="market-section"><div class="market-section-head"><span class="eyebrow">${esc(t(ar,'Plans','الخطط'))}</span><h2>${esc(t(ar,'Choose your EA license','اختر ترخيص EA'))}</h2></div><div class="market-grid three"><article class="market-card"><span class="market-card-kicker">${esc(t(ar,'Monthly','شهري'))}</span><h3>$${esc(c.monthly_usd||44)} / month</h3><p class="market-copy">${esc(t(ar,'30-day TradeAlpha EA license.','ترخيص TradeAlpha EA لمدة 30 يومًا.'))}</p></article><article class="market-card"><span class="market-card-kicker">${esc(t(ar,'Yearly','سنوي'))}</span><h3>$${esc(c.yearly_usd||484)} / year</h3><p class="market-copy">${esc(t(ar,'365-day TradeAlpha EA license.','ترخيص TradeAlpha EA لمدة 365 يومًا.'))}</p></article><article class="market-card"><span class="market-card-kicker">${esc(t(ar,'Onboarding','بدء الاشتراك'))}</span><h3>Telegram</h3><p class="market-copy">${esc(t(ar,'Account details, Litecoin payment, proof, TXID, and activation are handled in the customer bot.','بيانات الحساب ودفع Litecoin والإثبات وTXID والتفعيل تتم عبر بوت العملاء.'))}</p></article></div><div class="market-panel" style="margin-top:16px"><a class="cta-btn primary" href="${esc(c.url||BOT)}" target="_blank" rel="noopener noreferrer">${esc(t(ar,'Continue on Telegram','المتابعة على تيليغرام'))}</a></div></section>`;}
+function main(){const b=readJson(J('billing-contracts.json'),{});let n=0;for(const [k,s] of Object.entries(SURFACES))for(const ar of [false,true]){const body=k==='billing'?billingBody(ar,b):subscriptionBody(ar,b),html=shell(ar,s,body);if(WRITE){const out=path.join(ROOT,ar?'ar/'+s.rel:s.rel,'index.html');fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,html,'utf8');n++;}}console.log(WRITE?'[account-billing-pages] wrote '+n+' pages':'[account-billing-pages] dry-run 4 pages');}
+if(require.main===module)main();
