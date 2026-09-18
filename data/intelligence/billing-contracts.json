@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "generated_at": "2026-09-18T17:04:10.251Z",
   "source_layer": "billing-contracts",
-  "contracts_version": "1.1.0",
+  "contracts_version": "1.2.0",
   "mode": "live",
   "enabled": true,
   "allowed_providers": [
@@ -108,7 +108,9 @@
     "no_seed_phrases_in_repo": true,
     "no_card_data": true,
     "no_public_content_gates": true,
-    "no_dark_patterns": true
+    "no_dark_patterns": true,
+    "website_collects_payment": false,
+    "telegram_checkout": true
   },
   "pages": [
     "/account/billing/",
@@ -122,6 +124,18 @@
     "sources": [
       "tools/build-billing-contracts.js"
     ],
-    "note": "Litecoin-only payment surface. Public LTC receive address only; no wallet secrets are stored."
+    "note": "Subscription checkout, Litecoin instructions, proof/TXID submission, admin confirmation, and license activation are handled by the official Telegram bot."
+  },
+  "checkout": {
+    "type": "telegram_bot",
+    "bot_username": "TradeAlphaSupport_bot",
+    "url": "https://t.me/TradeAlphaSupport_bot",
+    "payment_method": "litecoin",
+    "monthly_usd": 44,
+    "yearly_usd": 484,
+    "proof_required": true,
+    "txid_required": true,
+    "admin_confirmation": true,
+    "license_activation": true
   }
 }
