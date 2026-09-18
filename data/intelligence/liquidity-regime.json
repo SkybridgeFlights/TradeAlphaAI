@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-18T17:01:17.159Z",
+  "generated_at": "2026-09-18T19:30:00.501Z",
   "source_layer": "liquidity-regime",
-  "regime": "indeterminate",
+  "regime": "macro_fragility",
   "liquidity_state": "volatility_absorption",
-  "stability": "indeterminate",
+  "stability": "deteriorating",
   "confidence": 89,
   "observed_dimensions": 8,
   "cross_asset_coherence": {
-    "score": 0.6,
+    "score": 0.2,
     "direction": "risk_off",
     "n": 5
   },
@@ -17,18 +17,21 @@
     "volatility": "compression",
     "yield": "neutral",
     "dollar": "tightening_proxy",
-    "defensive": "indeterminate"
+    "defensive": "cyclical_leadership"
   },
-  "narrative": "Insufficient observed cross-asset data to classify the current structural regime.",
-  "narrative_tags": [],
+  "narrative": "Cross-asset participation is incoherent beneath the surface, indicating macro fragility. Cross-asset coherence 0.2.",
+  "narrative_tags": [
+    "macro_fragility",
+    "deteriorating"
+  ],
   "attribution": {
     "market_state_source": "data/live-market-state.json",
-    "market_state_generated_at": "2026-09-18T17:01:15.468Z",
+    "market_state_generated_at": "2026-09-18T19:29:58.897Z",
     "market_state_age_hours": 0,
     "reaction_context": {
       "liquidity_stress": false
     },
     "providers": "FRED (rates/vol) + Finnhub (equities/sectors) via update-live-market-state"
   },
-  "note": "Insufficient observed dimensions — regime indeterminate (no fabrication)."
+  "note": null
 }
