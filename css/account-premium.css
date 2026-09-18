@@ -434,3 +434,25 @@ main[data-account-surface="account/"] .market-hero h1 {
 #profile-fields th,
 #profile-fields td { padding: 8px 10px; font-size: 12.5px; }
 
+
+/* Phase 233 — customer journey polish for live Clerk surfaces. */
+main[data-account-surface="account/sign-in/"],
+main[data-account-surface="account/sign-up/"] { max-width: 1080px; }
+main[data-account-surface="account/sign-in/"] .market-hero,
+main[data-account-surface="account/sign-up/"] .market-hero { padding-block: 22px 14px; }
+main[data-account-surface="account/sign-in/"] .market-hero h1,
+main[data-account-surface="account/sign-up/"] .market-hero h1 { font-size: clamp(24px,3vw,34px); margin: 5px 0 7px; }
+#clerk-auth { max-width: 520px; margin-inline: auto; }
+#clerk-auth .market-panel { padding: clamp(14px,3vw,22px); }
+[data-clerk-mount="sign-in"], [data-clerk-mount="sign-up"] { min-height: 420px; }
+[data-clerk-mount="sign-in"] .cl-rootBox,
+[data-clerk-mount="sign-up"] .cl-rootBox { width: 100%; }
+[data-clerk-mount="sign-in"] .cl-card,
+[data-clerk-mount="sign-up"] .cl-card { width: 100%; max-width: 480px; margin-inline: auto; box-shadow: none !important; }
+[data-clerk-status="loading"] { min-height: 20px; }
+@media (max-width: 600px) {
+  main[data-account-surface="account/sign-in/"], main[data-account-surface="account/sign-up/"] { padding-inline: 14px; }
+  main[data-account-surface="account/sign-in/"] .market-hero, main[data-account-surface="account/sign-up/"] .market-hero { padding-block: 14px 8px; }
+  #clerk-auth .market-panel { padding: 10px; }
+  [data-clerk-mount="sign-in"], [data-clerk-mount="sign-up"] { min-height: 380px; }
+}
