@@ -22,10 +22,6 @@ const STEPS = [
   ['auth-foundation',     ['tools/build-auth-foundation.js', '--write']],
   ['account-foundation',  ['tools/build-account-foundation.js', '--write']],
   ['auth-pages',          ['tools/generate-auth-pages.js', '--write']],
-  // Phase 234 - billing activation is environment-driven. With all Stripe
-  // variables present these artifacts advertise live mode; otherwise contract.
-  ['billing-contracts',   ['tools/build-billing-contracts.js', '--write']],
-  ['billing-pages',       ['tools/generate-account-billing-pages.js', '--write']],
   // Phase 221-Pg — apply Postgres migrations. Idempotent + advisory-
   // locked so concurrent deploys cannot race. Skips gracefully when
   // DATABASE_URL is missing (e.g. preview deploy without Neon branch).
