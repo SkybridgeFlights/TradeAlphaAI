@@ -2012,3 +2012,35 @@ html[dir="rtl"] .topbar .lang-menu {
 .product-discovery-card em { margin-top:auto; padding-top:18px; color:#d8b15a; font-size:.86rem; font-style:normal; font-weight:700; }
 @media (min-width:760px) { .product-discovery-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (prefers-reduced-motion:reduce) { .product-discovery-card { transition:none; } .product-discovery-card:hover,.product-discovery-card:focus-visible { transform:none; } }
+
+/* Phase 232 — homepage experience polish: clearer hierarchy, faster below-fold rendering,
+   consistent interaction feedback, and calmer mobile spacing. */
+.hero-panel { box-shadow: 0 30px 90px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.035); }
+.hero-copy h1 { text-wrap: balance; max-width: 18ch; }
+.hero-lead { max-width: 62ch; text-wrap: pretty; }
+.section-head h2, .product-discovery-copy h2 { text-wrap: balance; }
+.section-head p, .product-discovery-copy p { text-wrap: pretty; }
+.section[id] { scroll-margin-top: 96px; }
+.section-panel, .perf-panel, .product-discovery-card, .how-step-card, .trust-card, .article-card { backface-visibility: hidden; }
+.product-discovery-card, .how-step-card, .trust-card, .article-card { will-change: transform; }
+.product-discovery-card:active, .how-step-card:active, .trust-card:active, .article-card:active { transform: translateY(0); }
+#systems, #how-it-works, #why, #about, #proof, #research, #market-insights-hub,
+#latest-market-outlook, #market-intelligence-status, #intelligence-feed,
+#market-research-spotlights, #latest-market-research, #rotating-market-themes, #risk {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 720px;
+}
+:where(a,button,input,select,textarea):focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+@media (max-width: 759px) {
+  .hero-copy h1 { max-width: 15ch; }
+  .hero-actions, .cta-row { gap: 10px; }
+  .hero-actions .cta-btn { width: 100%; justify-content: center; }
+  .section { padding-block: clamp(34px, 9vw, 52px); }
+  .section-tight { padding-block: clamp(24px, 7vw, 40px); }
+  .product-discovery-card { min-height: 0; padding: 18px; }
+  .product-discovery-card em { padding-top: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
