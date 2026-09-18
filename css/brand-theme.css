@@ -1,0 +1,76 @@
+/* TradeAlphaAI unified brand theme — Phase 246
+   Canonical palette for every public/account/research/market surface.
+   Semantic success/warning/danger colors intentionally remain component-owned. */
+:root{
+  --brand-bg:#07111f;
+  --brand-bg-deep:#050d18;
+  --brand-surface:#0b1727;
+  --brand-surface-2:#0e1c2e;
+  --brand-surface-3:#112238;
+  --brand-gold:#d8b15a;
+  --brand-gold-bright:#f0cf78;
+  --brand-gold-soft:rgba(216,177,90,.10);
+  --brand-text:#f2f5f8;
+  --brand-text-soft:#b3bfcd;
+  --brand-muted:#7f8da0;
+  --brand-border:rgba(167,184,204,.12);
+  --brand-border-strong:rgba(216,177,90,.22);
+  --brand-shadow:0 22px 60px rgba(0,0,0,.22);
+  --brand-radius:20px;
+}
+html{background:var(--brand-bg-deep)}
+body{background:
+  radial-gradient(circle at 50% -12%,rgba(216,177,90,.055),transparent 31rem),
+  linear-gradient(180deg,var(--brand-bg-deep) 0,var(--brand-bg) 28rem,var(--brand-bg) 100%)!important;
+  color:var(--brand-text)}
+body::selection{background:rgba(216,177,90,.28);color:#fff}
+.global-header,.site-header,.header-shell{background:rgba(5,13,24,.92)!important;border-color:rgba(216,177,90,.13)!important}
+main{color:var(--brand-text)}
+main :is(h1,h2,h3,h4,h5,h6){color:var(--brand-text)}
+main :is(p,li,dd,.muted,.subtitle,.lede,.description){color:var(--brand-text-soft)}
+main :is(.eyebrow,.section-kicker,.market-eyebrow,.kicker,.overline){color:var(--brand-gold)!important}
+main :is(.section-panel,.market-panel,.market-card,.hub-card,.hub-primary-card,.hub-secondary-card,.tool-card,.article-card,.research-card,.insight-card,.account-card,.billing-card,.subscription-card,.etf-card,.stock-card,.screener-card,.metric-card,.stat-card,.data-card,.feature-card,.product-card,.how-step-card,.trust-card){
+  background:linear-gradient(145deg,rgba(14,28,46,.92),rgba(8,18,31,.94))!important;
+  border-color:var(--brand-border)!important;
+  box-shadow:var(--brand-shadow)
+}
+main :is(.section-panel,.market-panel,.market-card,.hub-card,.hub-primary-card,.hub-secondary-card,.tool-card,.article-card,.research-card,.insight-card,.account-card,.billing-card,.subscription-card,.etf-card,.stock-card,.screener-card,.metric-card,.stat-card,.data-card,.feature-card,.product-card,.how-step-card,.trust-card):hover{border-color:var(--brand-border-strong)!important}
+main :is(.hero-panel,.market-hero,.hub-hero,.account-hero,.billing-hero,.subscription-hero){
+  border-color:rgba(216,177,90,.16)!important
+}
+main a:not(.cta):not(.cta-btn):not(.btn):not(.button):not([class*="status"]):not([class*="badge"]){color:var(--brand-gold-bright)}
+main a:not(.cta):not(.cta-btn):not(.btn):not(.button):visited{color:var(--brand-gold-bright)}
+main :is(.cta,.cta-btn,.btn-primary,.button-primary,[class*="primary-cta"]){
+  background:linear-gradient(135deg,var(--brand-gold-bright),var(--brand-gold))!important;
+  border-color:transparent!important;color:#09111d!important;
+  box-shadow:0 12px 30px rgba(216,177,90,.17)
+}
+main :is(.btn-secondary,.cta-secondary,.button-secondary){
+  background:rgba(255,255,255,.035)!important;border-color:var(--brand-border-strong)!important;color:var(--brand-text)!important
+}
+main :is(input,select,textarea){background:rgba(7,17,31,.82);border-color:var(--brand-border);color:var(--brand-text)}
+main :is(input,select,textarea):focus{border-color:rgba(216,177,90,.48);box-shadow:0 0 0 3px rgba(216,177,90,.08)}
+main :is(.market-tabs,.filter-bar,.toolbar,.tab-list){border-color:var(--brand-border)}
+main :is(.market-tabs,.filter-bar,.toolbar,.tab-list) :is(a,button){color:var(--brand-text-soft);border-color:var(--brand-border)}
+main :is(.market-tabs,.filter-bar,.toolbar,.tab-list) :is(.active,[aria-current="page"],[aria-selected="true"]){color:var(--brand-gold-bright)!important;border-color:var(--brand-border-strong)!important;background:var(--brand-gold-soft)!important}
+main :is(.table-wrap,.market-table-wrap,table){border-color:var(--brand-border)}
+main table thead{background:rgba(216,177,90,.035)}
+main table th{color:#9eabba;border-color:var(--brand-border)}
+main table td{color:var(--brand-text-soft);border-color:rgba(167,184,204,.075)}
+main table tbody tr:hover{background:rgba(216,177,90,.025)}
+main :is(.breadcrumbs,.breadcrumb){color:var(--brand-muted)}
+main :is(.breadcrumbs,.breadcrumb) a{color:#a9b6c5}
+main hr{border-color:var(--brand-border)}
+.global-footer,.footer{background:linear-gradient(180deg,rgba(7,17,31,.35),rgba(5,13,24,.96))!important;border-color:var(--brand-border)!important}
+.global-footer,.footer,.global-footer p,.footer p{color:var(--brand-muted)}
+.global-footer a,.footer a{color:#aeb9c6}.global-footer a:hover,.footer a:hover{color:var(--brand-gold-bright)}
+@media(max-width:600px){:root{--brand-radius:16px}body{background:linear-gradient(180deg,var(--brand-bg-deep),var(--brand-bg) 24rem)!important}}
+
+/* Canonical aliases for legacy page families */
+:root{
+ --bg:var(--brand-bg);--card:var(--brand-surface);--muted:var(--brand-muted);--accent:var(--brand-gold);--accent-2:var(--brand-gold-bright);--glass:rgba(255,255,255,.025);
+ --bg-elevated:rgba(11,23,39,.96);--bg-panel:rgba(14,28,46,.92);--bg-card:rgba(14,28,46,.88);--bg-soft:rgba(255,255,255,.025);--text:var(--brand-text);--text-soft:var(--brand-text-soft);--gold:var(--brand-gold);--gold-bright:var(--brand-gold-bright);--gold-soft:var(--brand-gold-soft);
+ --market-bg:var(--brand-bg);--market-panel:rgba(11,23,39,.94);--market-card:rgba(14,28,46,.90);--market-line:var(--brand-border);--market-line-strong:rgba(216,177,90,.18);--market-text:var(--brand-text);--market-soft:var(--brand-text-soft);--market-muted:var(--brand-muted);--market-gold:var(--brand-gold);--market-gold-bright:var(--brand-gold-bright);--market-shadow:var(--brand-shadow);
+ --acc-gold:var(--brand-gold);--acc-gold-soft:rgba(216,177,90,.18);--acc-bg:var(--brand-bg);--acc-bg-elev:var(--brand-surface);--acc-border:rgba(216,177,90,.16);--acc-border-soft:var(--brand-border);--acc-text:var(--brand-text);--acc-text-muted:var(--brand-text-soft);--acc-text-dim:var(--brand-muted);
+ --header-bg:rgba(5,13,24,.92);--header-border:rgba(216,177,90,.13);--header-text:var(--brand-text);--header-muted:#9aa7b7;--header-active:rgba(216,177,90,.28);--header-active-bg:rgba(216,177,90,.09);--header-nav-bg:rgba(255,255,255,.022);--header-nav-border:var(--brand-border)
+}
