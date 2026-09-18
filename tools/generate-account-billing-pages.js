@@ -59,6 +59,7 @@ ${body}
     <section class="market-section" id="billing-disclaimer"><div class="market-panel"><p class="market-copy">${esc(t(ar, 'Billing is foundation-only — no payments are collected, no subscriptions stored, no card numbers in this repo. Public intelligence remains FREE at every tier; subscriptions only modulate the personal scope (watchlist counts, alert breadth, copilot quota). Not investment advice.', 'الفوترة في مرحلة التأسيس فقط — لا تُجمع مدفوعات ولا تُخزَّن اشتراكات ولا أرقام بطاقات في هذا المستودع. تبقى الاستخبارات العامة مجانية في كل طبقة؛ تعدّل الاشتراكات النطاق الشخصي فقط (عدد قوائم المتابعة، نطاق التنبيهات، حصة المساعد). ليست نصيحة استثمارية.'))}</p></div></section>
   </main>
   ${globalHeaderScripts()}
+  <script src="/js/account-billing.js" defer></script>
 </body>
 </html>
 `;

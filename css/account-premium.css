@@ -456,3 +456,11 @@ main[data-account-surface="account/sign-up/"] .market-hero h1 { font-size: clamp
   #clerk-auth .market-panel { padding: 10px; }
   [data-clerk-mount="sign-in"], [data-clerk-mount="sign-up"] { min-height: 380px; }
 }
+
+/* Phase 234 — live subscription controls. */
+.billing-live-panel { display:grid; gap:14px; }
+.billing-live-actions { display:flex; flex-wrap:wrap; gap:10px; }
+.billing-live-actions button { appearance:none; border:1px solid rgba(216,177,90,.34); border-radius:9px; background:rgba(216,177,90,.08); color:inherit; padding:10px 14px; font:inherit; font-weight:700; cursor:pointer; }
+.billing-live-actions button:hover { background:rgba(216,177,90,.15); }
+.billing-live-actions button:disabled { opacity:.48; cursor:wait; }
+@media(max-width:600px){.billing-live-actions{display:grid}.billing-live-actions button{width:100%}}

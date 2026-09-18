@@ -17,6 +17,8 @@ const REQUIRED_TABLES = [
   'followed_targets',
   'alert_subscriptions',
   'alert_dispatch_history',
+  'billing_subscriptions',
+  'stripe_webhook_events',
   '_migrations',
 ];
 
@@ -28,6 +30,8 @@ const REQUIRED_COLUMNS = {
   followed_targets: ['account_id', 'target_kind', 'target_id', 'followed_at'],
   alert_subscriptions: ['account_id', 'alert_class', 'channel', 'enabled', 'created_at', 'updated_at'],
   alert_dispatch_history: ['id', 'account_id', 'alert_class', 'event_id', 'channel', 'dispatched_at', 'outcome', 'detail'],
+  billing_subscriptions: ['account_id', 'stripe_customer_id', 'stripe_subscription_id', 'stripe_price_id', 'status', 'tier', 'current_period_end', 'cancel_at_period_end', 'updated_at'],
+  stripe_webhook_events: ['event_id', 'event_type', 'processed_at'],
   _migrations: ['id', 'applied_at'],
 };
 

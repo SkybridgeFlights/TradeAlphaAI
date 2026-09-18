@@ -22,17 +22,19 @@ const ALLOWED_BILLING_PROVIDERS = ['stripe', 'paddle', 'lemonsqueezy'];
 
 function build() {
   const stamp = new Date().toISOString();
+  const requiredEnv = ['STRIPE_PUBLISHABLE_KEY','STRIPE_SECRET_KEY','STRIPE_WEBHOOK_SECRET','STRIPE_PRICE_ID_PREMIUM','STRIPE_PRICE_ID_INSTITUTIONAL'];
+  const live = requiredEnv.every((name) => !!process.env[name]);
   const primary = {
     id: 'stripe',
     label_en: 'Stripe',
     marketplace: 'vercel',
     docs_url: 'https://stripe.com/docs',
     env_vars: [
-      { name: 'STRIPE_PUBLISHABLE_KEY', required: true, surface: 'client', value_present: false },
-      { name: 'STRIPE_SECRET_KEY', required: true, surface: 'server', value_present: false },
-      { name: 'STRIPE_WEBHOOK_SECRET', required: true, surface: 'server', value_present: false },
-      { name: 'STRIPE_PRICE_ID_PREMIUM', required: true, surface: 'server', value_present: false },
-      { name: 'STRIPE_PRICE_ID_INSTITUTIONAL', required: true, surface: 'server', value_present: false },
+      { name: 'STRIPE_PUBLISHABLE_KEY', required: true, surface: 'client', value_present: !!process.env.STRIPE_PUBLISHABLE_KEY },
+      { name: 'STRIPE_SECRET_KEY', required: true, surface: 'server', value_present: !!process.env.STRIPE_SECRET_KEY },
+      { name: 'STRIPE_WEBHOOK_SECRET', required: true, surface: 'server', value_present: !!process.env.STRIPE_WEBHOOK_SECRET },
+      { name: 'STRIPE_PRICE_ID_PREMIUM', required: true, surface: 'server', value_present: !!process.env.STRIPE_PRICE_ID_PREMIUM },
+      { name: 'STRIPE_PRICE_ID_INSTITUTIONAL', required: true, surface: 'server', value_present: !!process.env.STRIPE_PRICE_ID_INSTITUTIONAL },
     ],
     endpoints: {
       checkout_local: '/account/billing/checkout/',
@@ -92,8 +94,8 @@ function build() {
     generated_at: stamp,
     source_layer: 'billing-contracts',
     contracts_version: '1.0.0',
-    mode: 'contract',
-    enabled: false,
+    mode: live ? 'live' : 'contract',
+    enabled: live,
     allowed_providers: ALLOWED_BILLING_PROVIDERS,
     allowed_tiers: ALLOWED_TIERS,
     primary_provider: primary.id,

@@ -11,6 +11,7 @@ const FRONTEND_FILES = [
   'js/account-preferences.js',
   'js/account-profile.js',
   'js/clerk-bootstrap.js',
+  'js/account-billing.js',
 ];
 
 function routeToFile(route) {
