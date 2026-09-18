@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-18T14:19:02.396Z",
+  "updated_at": "2026-09-18T17:01:16.863Z",
   "run_date": "2026-09-18",
   "verified": true,
   "sessions_tracked": 40,
@@ -91,9 +91,9 @@
     },
     {
       "dimension": "speculative_appetite",
-      "state": "unverified",
-      "phase": "unverified",
-      "sessions_in_state": 0,
+      "state": "expanding",
+      "phase": "baseline",
+      "sessions_in_state": 1,
       "from": null
     },
     {
@@ -115,6 +115,13 @@
       "sessions": 4,
       "en": "Dollar firming persists into a fourth consecutive session, draining global risk appetite at the margin.",
       "ar": "تقوّي الدولار يمتد للجلسة الرابعة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+    },
+    {
+      "kind": "divergence",
+      "flag": "gold-vs-dollar",
+      "sessions": 1,
+      "en": "Gold is rising against a firming dollar this session — an unusual co-move worth respecting.",
+      "ar": "الذهب يرتفع رغم تقوّي الدولار في هذه الجلسة — تحرك متزامن غير معتاد يستحق الانتباه."
     }
   ],
   "causal_links": [
@@ -129,8 +136,8 @@
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
       "state": "neutral",
       "evidence": {
-        "us10y": 1.2540453074433713,
-        "qqq": 0.0255
+        "us10y": 0.7458173755291256,
+        "qqq": -0.0237
       }
     },
     {
@@ -144,8 +151,8 @@
       "ar": "دعم العوائد يقوّي الدولار عادة",
       "state": "confirming",
       "evidence": {
-        "us10y": 1.2540453074433713,
-        "dxy": 1.2308313155770771
+        "us10y": 0.7458173755291256,
+        "dxy": 0.8395334807963081
       }
     },
     {
@@ -157,10 +164,10 @@
       "expected": "inverse",
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "dxy": 1.2308313155770771,
-        "gold": -0.6114
+        "dxy": 0.8395334807963081,
+        "gold": 0.8912
       }
     },
     {
@@ -174,8 +181,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": -0.7286995515695012,
-        "spy": -0.441
+        "vix": -9.766081871345039,
+        "spy": -0.4157
       }
     },
     {
@@ -189,8 +196,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "neutral",
       "evidence": {
-        "nvda": 0.8154,
-        "qqq": 0.0255
+        "nvda": 0.1641,
+        "qqq": -0.0237
       }
     },
     {
@@ -204,8 +211,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "neutral",
       "evidence": {
-        "btc": -0.1366,
-        "qqq": 0.0255
+        "btc": 5.3662,
+        "qqq": -0.0237
       }
     },
     {
@@ -219,8 +226,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": -0.441,
-        "iwm": -0.4279
+        "spy": -0.4157,
+        "iwm": -0.7778
       }
     },
     {
@@ -232,10 +239,10 @@
       "expected": "inverse",
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-      "state": "diverging",
+      "state": "confirming",
       "evidence": {
-        "us10y": 1.2540453074433713,
-        "tlt": 0.2106
+        "us10y": 0.7458173755291256,
+        "tlt": -0.6848
       }
     }
   ],
@@ -246,17 +253,8 @@
         "en": "Yield support typically firms the dollar",
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
-          "us10y": 1.2540453074433713,
-          "dxy": 1.2308313155770771
-        }
-      },
-      {
-        "source": "causal:dollar-gold",
-        "en": "A firming dollar typically pressures gold",
-        "ar": "تقوّي الدولار يضغط على الذهب عادة",
-        "evidence": {
-          "dxy": 1.2308313155770771,
-          "gold": -0.6114
+          "us10y": 0.7458173755291256,
+          "dxy": 0.8395334807963081
         }
       },
       {
@@ -264,35 +262,50 @@
         "en": "Healthy advances carry small caps with the index",
         "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
         "evidence": {
-          "spy": -0.441,
-          "iwm": -0.4279
+          "spy": -0.4157,
+          "iwm": -0.7778
+        }
+      },
+      {
+        "source": "causal:yields-bonds",
+        "en": "Rising yields mark down long-duration bonds",
+        "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
+        "evidence": {
+          "us10y": 0.7458173755291256,
+          "tlt": -0.6848
         }
       }
     ],
     "contradiction": [
       {
+        "source": "causal:dollar-gold",
+        "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "dxy": 0.8395334807963081,
+          "gold": 0.8912
+        }
+      },
+      {
         "source": "causal:vix-equities",
         "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": -0.7286995515695012,
-          "spy": -0.441
-        }
-      },
-      {
-        "source": "causal:yields-bonds",
-        "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "us10y": 1.2540453074433713,
-          "tlt": 0.2106
+          "vix": -9.766081871345039,
+          "spy": -0.4157
         }
       }
     ],
     "fragility": [],
     "exhaustion": [],
     "liquidity": [],
-    "speculative": []
+    "speculative": [
+      {
+        "source": "speculative_appetite",
+        "en": "Speculative appetite is expanding across the high-beta complex.",
+        "ar": "شهية المضاربة تتوسع عبر الأصول عالية البيتا."
+      }
+    ]
   },
   "alerts": [],
   "timeline_tail": [
@@ -339,5 +352,5 @@
       "note": "ai concentration risk: elevated -> contained"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 1 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 10/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 60 timeline event(s)."
 }

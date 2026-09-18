@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-18T14:19:02.467Z",
+  "updated_at": "2026-09-18T17:01:16.932Z",
   "run_date": "2026-09-18",
   "verified": true,
   "coherence": {
@@ -50,17 +50,6 @@
       "ar": "دعم العوائد يقوّي الدولار عادة"
     },
     {
-      "id": "dollar-gold",
-      "legs": [
-        "dxy",
-        "gold"
-      ],
-      "state": "confirming",
-      "chain_strength": 2,
-      "en": "A firming dollar typically pressures gold",
-      "ar": "تقوّي الدولار يضغط على الذهب عادة"
-    },
-    {
       "id": "breadth-link",
       "legs": [
         "spy",
@@ -70,6 +59,17 @@
       "chain_strength": 7,
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
+    },
+    {
+      "id": "yields-bonds",
+      "legs": [
+        "us10y",
+        "tlt"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising yields mark down long-duration bonds",
+      "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
     }
   ],
   "diverges": [
@@ -85,15 +85,15 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
     },
     {
-      "id": "yields-bonds",
+      "id": "dollar-gold",
       "legs": [
-        "us10y",
-        "tlt"
+        "dxy",
+        "gold"
       ],
       "state": "diverging",
-      "chain_strength": 2,
-      "en": "Rising yields mark down long-duration bonds",
-      "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
     }
   ],
   "weakening": [],
@@ -118,24 +118,24 @@
     },
     {
       "kind": "pressure",
-      "track": "concentration_pressure",
-      "score": 5,
-      "en": "persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
-      "ar": "تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
+      "track": "speculative_pressure",
+      "score": 3,
+      "en": "stacked speculative appetite (3/5) with no active alert — attention the tape is not currently paying.",
+      "ar": "شهية مضاربة متراكمة (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
     }
   ],
   "narrative_en": [
     "The regime picture moved: duration pressure: neutral -> building; market fragility: contained -> building; breadth state: mixed -> confirming.",
     "Regime coherence 56/100 — the tape is internally tense; confirmations and divergences are competing.",
     "The VIX/SPY link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
-    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
+    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (3/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
     "اتساق النظام 56/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
     "رابط VIX/SPY لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
-    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
+    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (3/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
   "link_history": {
@@ -262,7 +262,7 @@
       },
       {
         "date": "2026-09-18",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "vix-equities": [
@@ -472,7 +472,7 @@
       },
       {
         "date": "2026-09-18",
-        "state": "diverging"
+        "state": "confirming"
       }
     ]
   },
