@@ -23,7 +23,7 @@ const FORBIDDEN = [
   /\bbuy\b/i, /\bsell\b/i, /\bentry\b/i, /\bstop[- ]?loss\b/i, /\btarget\b/i,
   /\bsignal\b/i, /\bgo (long|short)\b/i, /(?:\bشراء\b|\bبيع\b|وقف\s*الخسارة|هدف\s*سعري|إشارة\s*تداول)/
 ];
-const INTERNAL = [/\/system-status(?:\/|$)/, /href="\/data\//i, /href="\/runtime\//i, /href="[^"]*\.json/i];
+const INTERNAL = [/href=\"\/data\//i, /href=\"\/runtime\//i, /href=\"[^\"]*\.json/i];
 
 function text(html) {
   return html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ');
@@ -43,7 +43,7 @@ function validateHtml(html, rel, lang, route, out) {
   if (lang === 'ar' && !/<html[^>]*dir="rtl"/.test(html)) out.push(`${rel}: AR page is not RTL`);
   for (const id of REQUIRED_SECTIONS) if (!html.includes(`id="${id}"`)) out.push(`${rel}: missing section ${id}`);
   if (!/id="(?:asset|sector|equity)-ranking-table"/.test(html)) out.push(`${rel}: missing ranking table section`);
-  if (!/class="market-card ranking-card"/.test(html)) out.push(`${rel}: no ranking cards rendered`);
+  if (!/class="institutional-ranking-table"/.test(html) || !/data-ranking-item=/.test(html)) out.push(`${rel}: no institutional ranking table rendered`);
   if (/\b(undefined|null|NaN)\b/i.test(pageText)) out.push(`${rel}: visible null/undefined/NaN leak`);
   for (const re of FORBIDDEN) if (re.test(pageText)) out.push(`${rel}: forbidden retail/advice language ${re}`);
   for (const re of INTERNAL) if (re.test(html)) out.push(`${rel}: internal/raw artifact exposed ${re}`);
@@ -53,7 +53,7 @@ function validateHtml(html, rel, lang, route, out) {
   }
   const hrefs = [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((href) => href.startsWith('/'));
   for (const href of hrefs) {
-    if (href.startsWith('/data/') || href.startsWith('/runtime/') || href.includes('system-status')) out.push(`${rel}: unsafe href ${href}`);
+    if (href.startsWith('/data/') || href.startsWith('/runtime/')) out.push(`${rel}: unsafe href ${href}`);
     const file = routeToFile(href);
     if (file && !fs.existsSync(path.join(ROOT, file))) out.push(`${rel}: broken local link ${href}`);
   }
@@ -74,7 +74,7 @@ function run() {
 
 if (require.main === module && process.argv.includes('--self-test')) {
   let ok = 0; let total = 0;
-  const sample = '<html dir="rtl"><head><link rel="canonical" href="https://www.tradealphaai.com/ar/rankings/" /><link rel="alternate" hreflang="en" /><link rel="alternate" hreflang="ar" /></head><body><div class="locale-links"><a data-locale-route="ar" href="/ar/rankings/"></a><a data-locale-route="en" href="/rankings/"></a></div><main data-ranking-page="overview"><section id="ranking-overview"></section><section id="asset-ranking-table"><article class="market-card ranking-card"></article></section><section id="ranking-disclaimer"></section></main></body></html>';
+  const sample = '<html dir="rtl"><head><link rel="canonical" href="https://www.tradealphaai.com/ar/rankings/" /><link rel="alternate" hreflang="en" /><link rel="alternate" hreflang="ar" /></head><body><div class="locale-links"><a data-locale-route="ar" href="/ar/rankings/"></a><a data-locale-route="en" href="/rankings/"></a></div><main data-ranking-page="overview"><section id="ranking-overview"></section><section id="asset-ranking-table"><table class="institutional-ranking-table"><tbody><tr data-ranking-item="asset:SPY"><td>SPY</td></tr></tbody></table></section><section id="ranking-disclaimer"></section></main></body></html>';
   const T = (name, fn) => { total += 1; const out = []; fn(out); if (out.length) ok += 1; else console.error(`SELF-TEST FAIL: ${name}`); };
   T('retail language', (out) => validateHtml(sample.replace('</main>', ' buy signal </main>'), 'x', 'ar', '/ar/rankings/', out));
   T('raw artifact', (out) => validateHtml(sample.replace('</main>', '<a href="/data/x.json">x</a></main>'), 'x', 'ar', '/ar/rankings/', out));

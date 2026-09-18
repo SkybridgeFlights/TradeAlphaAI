@@ -120,32 +120,55 @@ function groupType(kind) {
   return kind === 'assets' ? 'asset' : kind === 'sectors' ? 'sector' : 'equity';
 }
 
-function cardFor(ar, type, item, history) {
-  const movement = historyFor(history, type, item.symbol);
-  const rank = ar ? item.rank_label_ar : item.rank_label_en;
-  const direction = ar ? item.direction_ar : item.direction_en;
-  const confirmation = ar ? item.confirmation_ar : item.confirmation_en;
-  const move = ar ? (movement?.movement_ar || 'لا لقطة سابقة') : (movement?.movement_en || 'no prior snapshot');
-  return `          <article class="market-card ranking-card" data-ranking-item="${esc(type)}:${esc(item.symbol)}">
-            <span class="market-card-kicker">${esc(item.symbol)} · ${esc(rank)}</span>
-            <h3><a href="${detailHref(type, item, ar)}">${esc(labelFor(type, item, ar))}</a></h3>
-            <p>${esc(t(ar, 'Direction', 'الاتجاه'))}: ${esc(direction)} · ${esc(t(ar, 'Movement', 'الحركة'))}: ${esc(move)} · ${esc(t(ar, 'Confirmation', 'التأكيد'))}: ${esc(confirmation)}</p>
-            <p>${esc(evidenceText(item, ar))}</p>
-          </article>`;
+function stateClass(value) {
+  const v = String(value || '').toLowerCase();
+  if (/strong|improv|confirm|bull|leader/.test(v)) return 'rank-state-positive';
+  if (/weak|deterior|bear|risk/.test(v)) return 'rank-state-negative';
+  return 'rank-state-neutral';
 }
 
 function groupSection(ar, type, artifact, history, limit = null) {
   const items = ((artifact || {}).items || []).filter((item) => item.available !== false);
   if (!items.length) {
     return `      <section class="market-section" id="${type}-ranking-table">
-        <div class="market-panel"><p class="market-copy">${esc(t(ar, 'Ranking evidence is currently unavailable for this group.', 'أدلة الترتيب غير متاحة حالياً لهذه المجموعة.'))}</p></div>
+        <div class="market-panel"><p class="market-copy">${esc(t(ar, 'Ranking evidence is currently unavailable for this group.', 'بيانات الترتيب غير متاحة لهذه المجموعة حاليًا.'))}</p></div>
       </section>`;
   }
-  const rendered = (limit ? items.slice(0, limit) : items).map((item) => cardFor(ar, type, item, history)).join('\n');
-  return `      <section class="market-section" id="${type}-ranking-table">
-        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Evidence-backed ranking', 'ترتيب مدعوم بالأدلة'))}</span><h2>${esc(titleForKind(type === 'asset' ? 'assets' : type === 'sector' ? 'sectors' : 'equities', ar))}</h2></div>
-        <div class="market-grid three">
-${rendered}
+  const visible = limit ? items.slice(0, limit) : items;
+  const rows = visible.map((item, index) => {
+    const movement = historyFor(history, type, item.symbol);
+    const rank = ar ? item.rank_label_ar : item.rank_label_en;
+    const direction = ar ? item.direction_ar : item.direction_en;
+    const confirmation = ar ? item.confirmation_ar : item.confirmation_en;
+    const move = ar ? (movement?.movement_ar || 'لا توجد لقطة سابقة') : (movement?.movement_en || 'No prior snapshot');
+    return `            <tr data-ranking-item="${esc(type)}:${esc(item.symbol)}">
+              <td class="rank-position"><span>${index + 1}</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="${detailHref(type, item, ar)}">${esc(item.symbol)}</a><span>${esc(labelFor(type, item, ar))}</span></td>
+              <td><span class="rank-pill ${stateClass(rank)}">${esc(rank)}</span></td>
+              <td><span class="rank-pill ${stateClass(direction)}">${esc(direction)}</span></td>
+              <td class="rank-movement">${esc(move)}</td>
+              <td><span class="rank-pill ${stateClass(confirmation)}">${esc(confirmation)}</span></td>
+              <td class="rank-evidence">${esc(evidenceText(item, ar))}</td>
+            </tr>`;
+  }).join('\n');
+  const title = titleForKind(type === 'asset' ? 'assets' : type === 'sector' ? 'sectors' : 'equities', ar);
+  return `      <section class="market-section ranking-section" id="${type}-ranking-table">
+        <div class="market-section-head"><span class="eyebrow">${esc(t(ar, 'Evidence-backed ranking', 'ترتيب مدعوم بالبيانات'))}</span><h2>${esc(title)}</h2><p class="market-copy">${esc(t(ar, 'Ordered view of observed market structure. Scroll horizontally on smaller screens.', 'عرض مرتب لبنية السوق المرصودة. يمكن تمرير الجدول أفقيًا على الشاشات الصغيرة.'))}</p></div>
+        <div class="institutional-ranking-wrap" role="region" aria-label="${esc(title)}" tabindex="0">
+          <table class="institutional-ranking-table">
+            <thead><tr>
+              <th class="rank-col-position">#</th>
+              <th>${esc(t(ar, 'Asset', 'الأصل'))}</th>
+              <th>${esc(t(ar, 'Rank', 'التصنيف'))}</th>
+              <th>${esc(t(ar, 'Direction', 'الاتجاه'))}</th>
+              <th>${esc(t(ar, 'Movement', 'الحركة'))}</th>
+              <th>${esc(t(ar, 'Confirmation', 'التأكيد'))}</th>
+              <th>${esc(t(ar, 'Evidence', 'الدليل'))}</th>
+            </tr></thead>
+            <tbody>
+${rows}
+            </tbody>
+          </table>
         </div>
       </section>`;
 }

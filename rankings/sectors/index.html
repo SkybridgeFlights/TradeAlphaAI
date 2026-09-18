@@ -26,15 +26,6 @@
   <link rel="stylesheet" href="/css/market/market-portal.css" />
   <link rel="stylesheet" href="/css/global-layout.css" />
   <link rel="stylesheet" href="/css/responsive.css" />
-<!-- GA4_INSTALLED:G-C8REB6WQP1 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-C8REB6WQP1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-C8REB6WQP1', { anonymize_ip: true });
-</script>
-  <link rel="stylesheet" href="/css/brand-theme.css">
   <link rel="stylesheet" href="/css/global-header.css" />
   <link rel="stylesheet" href="/css/global-header-canonical.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -249,69 +240,112 @@
           <p class="market-lead">A verified relative-strength layer for comparing assets, sectors and equities by observed structure, direction, confirmation and ranking history. This is institutional context only, not trading advice.</p>
         </div>
       </section>
-      <section class="market-section" id="sector-ranking-table">
-        <div class="market-section-head"><span class="eyebrow">Evidence-backed ranking</span><h2>Sector Rankings</h2></div>
-        <div class="market-grid three">
-          <article class="market-card ranking-card" data-ranking-item="sector:XLF">
-            <span class="market-card-kicker">XLF · strongest</span>
-            <h3><a href="/sectors/financials/">Financials</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: divergent</p>
-            <p>observed strength scalar=2.5 (from XLF OHLCV) · historical improving · cognitive divergent</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLV">
-            <span class="market-card-kicker">XLV · strongest</span>
-            <h3><a href="/sectors/healthcare/">Healthcare</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: divergent</p>
-            <p>observed strength scalar=2.5 (from XLV OHLCV) · historical improving · cognitive divergent</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLI">
-            <span class="market-card-kicker">XLI · strongest</span>
-            <h3><a href="/sectors/industrials/">Industrials</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: divergent</p>
-            <p>observed strength scalar=2.5 (from XLI OHLCV) · historical improving · cognitive divergent</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLRE">
-            <span class="market-card-kicker">XLRE · strongest</span>
-            <h3><a href="/sectors/real-estate/">Real Estate</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: confirmed</p>
-            <p>observed strength scalar=2.5 (from XLRE OHLCV) · historical improving · cognitive confirmed</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLP">
-            <span class="market-card-kicker">XLP · strong</span>
-            <h3><a href="/sectors/consumer-staples/">Consumer Staples</a></h3>
-            <p>Direction: deteriorating · Movement: no prior snapshot · Confirmation: indeterminate</p>
-            <p>observed strength scalar=1.5 (from XLP OHLCV) · historical deteriorating · cognitive indeterminate</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLU">
-            <span class="market-card-kicker">XLU · strong</span>
-            <h3><a href="/sectors/utilities/">Utilities</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: confirmed</p>
-            <p>observed strength scalar=1.5 (from XLU OHLCV) · historical improving · cognitive confirmed</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLY">
-            <span class="market-card-kicker">XLY · strong</span>
-            <h3><a href="/sectors/consumer-discretionary/">Consumer Discretionary</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: confirmed</p>
-            <p>observed strength scalar=1.5 (from XLY OHLCV) · historical improving · cognitive confirmed</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLB">
-            <span class="market-card-kicker">XLB · strong</span>
-            <h3><a href="/sectors/materials/">Materials</a></h3>
-            <p>Direction: improving · Movement: no prior snapshot · Confirmation: confirmed</p>
-            <p>observed strength scalar=1.5 (from XLB OHLCV) · historical improving · cognitive confirmed</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLK">
-            <span class="market-card-kicker">XLK · constructive</span>
-            <h3><a href="/sectors/technology/">Technology</a></h3>
-            <p>Direction: deteriorating · Movement: no prior snapshot · Confirmation: confirmed</p>
-            <p>observed strength scalar=0.5 (from XLK OHLCV) · historical deteriorating · cognitive confirmed</p>
-          </article>
-          <article class="market-card ranking-card" data-ranking-item="sector:XLE">
-            <span class="market-card-kicker">XLE · weakening</span>
-            <h3><a href="/sectors/energy/">Energy</a></h3>
-            <p>Direction: deteriorating · Movement: no prior snapshot · Confirmation: divergent</p>
-            <p>observed strength scalar=-0.5 (from XLE OHLCV) · historical deteriorating · cognitive divergent</p>
-          </article>
+      <section class="market-section ranking-section" id="sector-ranking-table">
+        <div class="market-section-head"><span class="eyebrow">Evidence-backed ranking</span><h2>Sector Rankings</h2><p class="market-copy">Ordered view of observed market structure. Scroll horizontally on smaller screens.</p></div>
+        <div class="institutional-ranking-wrap" role="region" aria-label="Sector Rankings" tabindex="0">
+          <table class="institutional-ranking-table">
+            <thead><tr>
+              <th class="rank-col-position">#</th>
+              <th>Asset</th>
+              <th>Rank</th>
+              <th>Direction</th>
+              <th>Movement</th>
+              <th>Confirmation</th>
+              <th>Evidence</th>
+            </tr></thead>
+            <tbody>
+            <tr data-ranking-item="sector:XLF">
+              <td class="rank-position"><span>1</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/financials/">XLF</a><span>Financials</span></td>
+              <td><span class="rank-pill rank-state-positive">strongest</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-neutral">divergent</span></td>
+              <td class="rank-evidence">observed strength scalar=2.5 (from XLF OHLCV) · historical improving · cognitive divergent</td>
+            </tr>
+            <tr data-ranking-item="sector:XLV">
+              <td class="rank-position"><span>2</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/healthcare/">XLV</a><span>Healthcare</span></td>
+              <td><span class="rank-pill rank-state-positive">strongest</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-neutral">divergent</span></td>
+              <td class="rank-evidence">observed strength scalar=2.5 (from XLV OHLCV) · historical improving · cognitive divergent</td>
+            </tr>
+            <tr data-ranking-item="sector:XLI">
+              <td class="rank-position"><span>3</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/industrials/">XLI</a><span>Industrials</span></td>
+              <td><span class="rank-pill rank-state-positive">strongest</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-neutral">divergent</span></td>
+              <td class="rank-evidence">observed strength scalar=2.5 (from XLI OHLCV) · historical improving · cognitive divergent</td>
+            </tr>
+            <tr data-ranking-item="sector:XLRE">
+              <td class="rank-position"><span>4</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/real-estate/">XLRE</a><span>Real Estate</span></td>
+              <td><span class="rank-pill rank-state-positive">strongest</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-positive">confirmed</span></td>
+              <td class="rank-evidence">observed strength scalar=2.5 (from XLRE OHLCV) · historical improving · cognitive confirmed</td>
+            </tr>
+            <tr data-ranking-item="sector:XLP">
+              <td class="rank-position"><span>5</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/consumer-staples/">XLP</a><span>Consumer Staples</span></td>
+              <td><span class="rank-pill rank-state-positive">strong</span></td>
+              <td><span class="rank-pill rank-state-negative">deteriorating</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-neutral">indeterminate</span></td>
+              <td class="rank-evidence">observed strength scalar=1.5 (from XLP OHLCV) · historical deteriorating · cognitive indeterminate</td>
+            </tr>
+            <tr data-ranking-item="sector:XLU">
+              <td class="rank-position"><span>6</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/utilities/">XLU</a><span>Utilities</span></td>
+              <td><span class="rank-pill rank-state-positive">strong</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-positive">confirmed</span></td>
+              <td class="rank-evidence">observed strength scalar=1.5 (from XLU OHLCV) · historical improving · cognitive confirmed</td>
+            </tr>
+            <tr data-ranking-item="sector:XLY">
+              <td class="rank-position"><span>7</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/consumer-discretionary/">XLY</a><span>Consumer Discretionary</span></td>
+              <td><span class="rank-pill rank-state-positive">strong</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-positive">confirmed</span></td>
+              <td class="rank-evidence">observed strength scalar=1.5 (from XLY OHLCV) · historical improving · cognitive confirmed</td>
+            </tr>
+            <tr data-ranking-item="sector:XLB">
+              <td class="rank-position"><span>8</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/materials/">XLB</a><span>Materials</span></td>
+              <td><span class="rank-pill rank-state-positive">strong</span></td>
+              <td><span class="rank-pill rank-state-positive">improving</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-positive">confirmed</span></td>
+              <td class="rank-evidence">observed strength scalar=1.5 (from XLB OHLCV) · historical improving · cognitive confirmed</td>
+            </tr>
+            <tr data-ranking-item="sector:XLK">
+              <td class="rank-position"><span>9</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/technology/">XLK</a><span>Technology</span></td>
+              <td><span class="rank-pill rank-state-neutral">constructive</span></td>
+              <td><span class="rank-pill rank-state-negative">deteriorating</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-positive">confirmed</span></td>
+              <td class="rank-evidence">observed strength scalar=0.5 (from XLK OHLCV) · historical deteriorating · cognitive confirmed</td>
+            </tr>
+            <tr data-ranking-item="sector:XLE">
+              <td class="rank-position"><span>10</span></td>
+              <td class="rank-entity"><a class="rank-symbol" href="/sectors/energy/">XLE</a><span>Energy</span></td>
+              <td><span class="rank-pill rank-state-negative">weakening</span></td>
+              <td><span class="rank-pill rank-state-negative">deteriorating</span></td>
+              <td class="rank-movement">no prior snapshot</td>
+              <td><span class="rank-pill rank-state-neutral">divergent</span></td>
+              <td class="rank-evidence">observed strength scalar=-0.5 (from XLE OHLCV) · historical deteriorating · cognitive divergent</td>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </section>
       <section class="market-section" id="ranking-relative-strength">
