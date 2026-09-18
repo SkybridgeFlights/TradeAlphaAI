@@ -105,6 +105,14 @@ const ROOTS = [
   'ar/editorial-policy',
   'contact',
   'ar/contact',
+  // Phase 247: all current public/product/account families use canonical navigation.
+  'account', 'ar/account', 'changes', 'ar/changes', 'dashboard',
+  'equities', 'ar/equities', 'market-intelligence', 'ar/market-intelligence',
+  'market-map', 'ar/market-map', 'market-regime', 'ar/market-regime',
+  'market-terminal', 'ar/market-terminal', 'markets', 'ar/markets',
+  'performance', 'ar/performance', 'research', 'ar/research',
+  'sectors', 'ar/sectors', 'en',
+  'market-data-status.html', 'ar/market-data-status.html',
 ];
 
 // Phase 99: legacy pre-canonical pages that predate the global-header markers

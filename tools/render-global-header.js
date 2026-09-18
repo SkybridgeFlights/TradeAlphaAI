@@ -148,80 +148,78 @@ function renderMobileCards(ar, signInHref, accountHref, signInLabel, accountLabe
 // ordering, same names. A visitor who learns the structure on one device does
 // not have to relearn it on the other.
 const MOBILE_CARDS_EN = [
+  { key: 'products', title: 'Products', viewAll: ['/#products', 'Explore TradeAlphaAI products'], items: [
+    ['/#products', 'TradeAlpha Signals'],
+    ['/#products', 'MT5 Expert Advisor'],
+    ['https://t.me/TradeAlphaSignals_bot', 'Signals on Telegram'],
+    ['https://t.me/TradeAlphaSupport_bot', 'EA Subscription & Support'],
+  ]},
   { key: 'intelligence', title: 'Market Intelligence', viewAll: ['/intelligence/', 'Open Market Intelligence'], items: [
-    ['/market-terminal/', 'Market Terminal'],
-    ['/market-regime/', 'Market Regime'],
-    ['/markets/', 'Assets'],
-    ['/sectors/', 'Sectors'],
-    ['/explorer/', 'Intelligence Explorer'],
+    ['/market-terminal/', 'Market Terminal'], ['/market-regime/', 'Market Regime'], ['/market-map/assets/', 'Market Maps'],
+    ['/markets/', 'Assets'], ['/sectors/', 'Sectors'], ['/equities/', 'Equities'], ['/rankings/', 'Cross-Asset Rankings'],
+    ['/explorer/', 'Intelligence Explorer'], ['/changes/', 'Change Intelligence'], ['/market-structure/', 'Market Structure'],
+    ['/economic-calendar/', 'Economic Calendar'],
   ]},
   { key: 'markets', title: 'ETF Center', viewAll: ['/etfs/', 'Open ETF Center'], items: [
-    ['/etfs/finder/', 'ETF Finder'],
-    ['/etfs/compare/', 'ETF Compare'],
-    ['/etfs/rankings/', 'ETF Rankings'],
-    ['/etfs/categories/', 'ETF Categories'],
-    ['/etfs/portfolio-models/', 'Portfolio Models'],
-    ['/etfs/methodology/', 'Methodology'],
-  ]},
-  { key: 'workspace', title: 'My Investments', viewAll: ['/account/portfolios/', 'Open My Investments'], items: [
-    ['/account/portfolios/', 'My Portfolios'],
-    ['/account/watchlists/', 'Watchlists'],
-    ['/account/alerts/', 'Alerts'],
-    ['/workspace/', 'Workspace'],
+    ['/etfs/finder/', 'ETF Finder'], ['/etfs/compare/', 'ETF Compare'], ['/etfs/rankings/', 'ETF Rankings'],
+    ['/etfs/categories/', 'ETF Categories'], ['/etfs/portfolio-models/', 'Portfolio Models'], ['/etfs/learn/', 'ETF Learn'],
+    ['/etfs/methodology/', 'Methodology'], ['/etfs/coverage/', 'Coverage'], ['/etfs/data-audit/', 'Data Audit'],
   ]},
   { key: 'research', title: 'Research', viewAll: ['/research/', 'View all Research'], items: [
-    ['/research/', 'Research Hub'],
-    ['/research/feed/', 'Research Feed'],
-    ['/insights/', 'Applied Research'],
-    ['/articles/', 'Educational Articles'],
-    ['/glossary/', 'Glossary'],
+    ['/research/', 'Research Hub'], ['/research/feed/', 'Research Feed'], ['/market-outlook/', 'Market Outlook'],
+    ['/market-news/', 'Market News'], ['/insights/', 'Applied Research'], ['/articles/', 'Educational Articles'], ['/glossary/', 'Glossary'],
   ]},
   { key: 'tools', title: 'Tools', viewAll: ['/tools/', 'View all Tools'], items: [
-    ['/ai-stock-screener.html', 'AI Screener'],
-    ['/economic-calendar/', 'Economic Calendar'],
-    ['/briefs/', 'Market Briefs'],
-    ['/tools/compound-interest/', 'Compound Interest'],
+    ['/ai-stock-screener.html', 'AI Screener'], ['/briefs/', 'Market Briefs'], ['/newsletter/', 'Newsletter'],
+    ['/tools/compound-interest/', 'Compound Interest'], ['/tools/retirement/', 'Retirement'], ['/tools/cagr/', 'CAGR'],
+    ['/tools/dividend-yield/', 'Dividend Yield'], ['/methodology.html', 'Platform Methodology'],
+  ]},
+  { key: 'workspace', title: 'My Investments', viewAll: ['/account/portfolios/', 'Open My Investments'], items: [
+    ['/account/portfolios/', 'My Portfolios'], ['/account/watchlists/', 'Watchlists'], ['/account/alerts/', 'Alerts'],
+    ['/workspace/', 'Workspace'], ['/account/', 'Account Overview'], ['/account/preferences/', 'Preferences'], ['/account/profile/', 'Profile'],
+  ]},
+  { key: 'company', title: 'Company & Support', viewAll: ['/about/', 'About TradeAlphaAI'], items: [
+    ['/about/', 'About'], ['/editorial-policy/', 'Editorial Policy'], ['/contact/', 'Contact'], ['/system-status/', 'System Status'],
   ]},
 ];
 
 const MOBILE_CARDS_AR = [
-  { key: 'intelligence', title: 'استخبارات السوق', viewAll: ['/ar/intelligence/', 'افتح استخبارات السوق'], items: [
-    ['/ar/market-terminal/', 'منصة السوق'],
-    ['/ar/market-regime/', 'نظام السوق'],
-    ['/ar/markets/', 'الأصول'],
-    ['/ar/sectors/', 'القطاعات'],
-    ['/ar/explorer/', 'مستكشف الاستخبارات'],
+  { key: 'products', title: 'المنتجات', viewAll: ['/ar/#products', 'استكشف منتجات TradeAlphaAI'], items: [
+    ['/ar/#products', 'TradeAlpha Signals'], ['/ar/#products', 'Expert Advisor لمنصة MT5'],
+    ['https://t.me/TradeAlphaSignals_bot', 'الإشارات على تيليغرام'], ['https://t.me/TradeAlphaSupport_bot', 'اشتراك ودعم الـ EA'],
   ]},
-  { key: 'markets', title: 'مركز الصناديق', viewAll: ['/ar/etfs/', 'افتح مركز الصناديق'], items: [
-    ['/ar/etfs/finder/', 'باحث الصناديق'],
-    ['/ar/etfs/compare/', 'مقارنة الصناديق'],
-    ['/ar/etfs/rankings/', 'ترتيبات الصناديق'],
-    ['/ar/etfs/categories/', 'فئات الصناديق'],
-    ['/ar/etfs/portfolio-models/', 'نماذج المحافظ'],
-    ['/ar/etfs/methodology/', 'المنهجية'],
-  ]},
-  { key: 'workspace', title: 'استثماراتي', viewAll: ['/ar/account/portfolios/', 'افتح استثماراتي'], items: [
-    ['/ar/account/portfolios/', 'محافظي'],
-    ['/ar/account/watchlists/', 'قوائم المتابعة'],
-    ['/ar/account/alerts/', 'التنبيهات'],
-    ['/ar/workspace/', 'مساحة العمل'],
-  ]},
-  { key: 'research', title: 'الأبحاث', viewAll: ['/ar/research/', 'عرض كل الأبحاث'], items: [
-    ['/ar/research/', 'مركز الأبحاث'],
-    ['/ar/research/feed/', 'تدفق الأبحاث'],
-    ['/ar/insights/', 'الأبحاث التطبيقية'],
-    ['/ar/articles/', 'مقالات تعليمية'],
-    ['/ar/glossary/', 'المسرد'],
-  ]},
-  { key: 'tools', title: 'الأدوات', viewAll: ['/ar/tools/', 'عرض كل الأدوات'], items: [
-    ['/ar/ai-stock-screener.html', 'الفارز الذكي'],
+  { key: 'intelligence', title: 'استخبارات السوق', viewAll: ['/ar/intelligence/', 'فتح استخبارات السوق'], items: [
+    ['/ar/market-terminal/', 'محطة السوق'], ['/ar/market-regime/', 'نظام السوق'], ['/ar/market-map/assets/', 'خرائط السوق'],
+    ['/ar/markets/', 'الأصول'], ['/ar/sectors/', 'القطاعات'], ['/ar/equities/', 'الأسهم'], ['/ar/rankings/', 'ترتيب الأصول'],
+    ['/ar/explorer/', 'مستكشف الاستخبارات'], ['/ar/changes/', 'تغيّرات السوق'], ['/ar/market-structure/', 'هيكل السوق'],
     ['/ar/economic-calendar/', 'التقويم الاقتصادي'],
-    ['/ar/briefs/', 'موجزات السوق'],
-    ['/ar/tools/compound-interest/', 'الفائدة المركبة'],
+  ]},
+  { key: 'markets', title: 'مركز صناديق ETF', viewAll: ['/ar/etfs/', 'فتح مركز صناديق ETF'], items: [
+    ['/ar/etfs/finder/', 'البحث عن ETF'], ['/ar/etfs/compare/', 'مقارنة ETF'], ['/ar/etfs/rankings/', 'تصنيفات ETF'],
+    ['/ar/etfs/categories/', 'فئات ETF'], ['/ar/etfs/portfolio-models/', 'نماذج المحافظ'], ['/ar/etfs/learn/', 'تعلّم ETF'],
+    ['/ar/etfs/methodology/', 'المنهجية'], ['/ar/etfs/coverage/', 'التغطية'], ['/ar/etfs/data-audit/', 'تدقيق البيانات'],
+  ]},
+  { key: 'research', title: 'الأبحاث', viewAll: ['/ar/research/', 'عرض جميع الأبحاث'], items: [
+    ['/ar/research/', 'مركز الأبحاث'], ['/ar/research/feed/', 'موجز الأبحاث'], ['/ar/market-outlook/', 'نظرة السوق'],
+    ['/ar/market-news/', 'أخبار السوق'], ['/ar/insights/', 'الأبحاث التطبيقية'], ['/ar/articles/', 'المقالات التعليمية'], ['/ar/glossary/', 'المصطلحات'],
+  ]},
+  { key: 'tools', title: 'الأدوات', viewAll: ['/ar/tools/', 'عرض جميع الأدوات'], items: [
+    ['/ar/ai-stock-screener.html', 'فاحص الأسهم بالذكاء الاصطناعي'], ['/ar/briefs/', 'موجزات السوق'], ['/ar/newsletter/', 'النشرة البريدية'],
+    ['/ar/tools/compound-interest/', 'الفائدة المركبة'], ['/ar/tools/retirement/', 'التقاعد'], ['/ar/tools/cagr/', 'CAGR'],
+    ['/ar/tools/dividend-yield/', 'عائد التوزيعات'], ['/ar/methodology.html', 'منهجية المنصة'],
+  ]},
+  { key: 'workspace', title: 'استثماراتي', viewAll: ['/ar/account/portfolios/', 'فتح استثماراتي'], items: [
+    ['/ar/account/portfolios/', 'محافظي'], ['/ar/account/watchlists/', 'قوائم المتابعة'], ['/ar/account/alerts/', 'التنبيهات'],
+    ['/ar/workspace/', 'مساحة العمل'], ['/ar/account/', 'نظرة عامة على الحساب'], ['/ar/account/preferences/', 'التفضيلات'], ['/ar/account/profile/', 'الملف الشخصي'],
+  ]},
+  { key: 'company', title: 'الشركة والدعم', viewAll: ['/ar/about/', 'عن TradeAlphaAI'], items: [
+    ['/ar/about/', 'عن المنصة'], ['/ar/editorial-policy/', 'السياسة التحريرية'], ['/ar/contact/', 'تواصل معنا'], ['/system-status/', 'حالة النظام'],
   ]},
 ];
 
 const MOBILE_CARD_ICONS = {
+  products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v12H4z"/><path d="M8 7V5h8v2"/><path d="M8 12h8"/></svg>',
+  company: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg>',
   markets:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>',
   research:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
   intelligence: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',

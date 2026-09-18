@@ -149,6 +149,13 @@
     };
     var activeCardKey = sectionToCardKey[activeSection] || "";
     var allCards = panel.querySelectorAll(".m-card");
+    var currentDrawerPath = window.location.pathname.replace(/index\.html$/, "");
+    Array.prototype.forEach.call(panel.querySelectorAll("a[href]"), function (link) {
+      var href = link.getAttribute("href");
+      if (!href || href.charAt(0) !== "/" || href.indexOf("#") >= 0) return;
+      var normalized = href.replace(/index\.html$/, "");
+      if (currentDrawerPath === normalized) { link.classList.add("is-active"); link.setAttribute("aria-current", "page"); }
+    });
     var anyExpanded = false;
     Array.prototype.forEach.call(allCards, function (card) {
       var key = card.getAttribute("data-card-key");
@@ -158,10 +165,15 @@
       }
       var head = card.querySelector(".m-card-head");
       if (head) {
-        head.addEventListener("click", function () { card.classList.toggle("is-expanded"); });
+        head.setAttribute("role", "button");
+        head.setAttribute("tabindex", "0");
+        head.setAttribute("aria-expanded", card.classList.contains("is-expanded") ? "true" : "false");
+        function toggleCard() { var expanded = card.classList.toggle("is-expanded"); head.setAttribute("aria-expanded", expanded ? "true" : "false"); }
+        head.addEventListener("click", toggleCard);
+        head.addEventListener("keydown", function (event) { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleCard(); } });
       }
     });
-    if (!anyExpanded && allCards.length) allCards[0].classList.add("is-expanded");
+    if (!anyExpanded && allCards.length) { allCards[0].classList.add("is-expanded"); var firstHead = allCards[0].querySelector(".m-card-head"); if (firstHead) firstHead.setAttribute("aria-expanded", "true"); }
 
     var backdrop = document.createElement("button");
     backdrop.className = "mobile-nav-backdrop";
