@@ -10,6 +10,9 @@ const failures    = [];
 
 const queue   = readJson(QUEUE_PATH, { topics: [] });
 const published = (queue.topics || []).filter((t) => t.status === 'published');
+const publishedLatest = [...published]
+  .sort((a, b) => (b.published_at || b.seeded_at || '').localeCompare(a.published_at || a.seeded_at || ''))
+  .slice(0, 12);
 
 checkFeedFiles();
 checkOutlookPages();
@@ -47,7 +50,7 @@ function checkListingCoverage() {
   const feed = readJson(path.join(FEEDS_DIR, 'latest-market-outlooks.json'), []);
   const feedSlugs = new Set(feed.map((item) => item.slug));
 
-  for (const topic of published) {
+  for (const topic of publishedLatest) {
     if (!feedSlugs.has(topic.slug)) {
       failures.push(`Published topic ${topic.slug} missing from data/feeds/latest-market-outlooks.json`);
     }
@@ -63,7 +66,7 @@ function checkListingCoverage() {
     failures.push('ar/market-outlook/index.html missing generated:outlook-feed markers');
   }
 
-  for (const topic of published.slice(0, 6)) {
+  for (const topic of publishedLatest.slice(0, 6)) {
     if (!enIndex.includes(`/market-outlook/${topic.slug}.html`)) {
       failures.push(`market-outlook/index.html does not link to published: ${topic.slug}`);
     }

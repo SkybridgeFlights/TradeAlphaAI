@@ -244,7 +244,10 @@ function runNegativeSelfTests() {
       // trigger to "Markets" so the top-level set contains "Markets"
       // twice.
       name: 'duplicate-label',
-      en: mutate(expected.en, (links) => links.map((link) => (link.href === '/research/' && link.isTopLevel) ? { ...link, label: 'Markets' } : link)),
+      en: mutate(expected.en, (links) => {
+        const topLevel = links.filter((link) => link.isTopLevel);
+        return links.map((link) => link === topLevel[1] ? { ...link, label: topLevel[0].label } : link);
+      }),
       ar: expected.ar
     },
     {

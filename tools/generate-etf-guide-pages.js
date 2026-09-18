@@ -1,6 +1,6 @@
 'use strict';
 
-// ETF Intelligence Center — /etfs/portfolios/ and /etfs/learn/ (+ Arabic).
+// ETF Intelligence Center — /etfs/portfolio-models/ and /etfs/learn/ (+ Arabic).
 //
 // PORTFOLIOS are illustrative allocation *models* used to teach how exposures
 // combine. They are labelled educational throughout, carry no suggestion that

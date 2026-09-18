@@ -32,6 +32,10 @@ const CANONICAL = new Set([
   'homepage-feed.yml',               // Phase 117 — homepage intelligence feed refresh (owns index.html feed module)
   'educational-intelligence-brain.yml', // Now workflow_dispatch-only fallback
   'social-approval-runner.yml',      // Phase 100 — manual controlled social delivery (no schedule)
+  'daily-newsletter.yml',            // Newsletter archive owner; private-admin delivery only
+  'weekly-report.yml',               // Read-only private-admin growth report
+  'portfolio-validators.yml',        // Read-only PR and scheduled portfolio validation
+  'price-rotation.yml',              // Writes only data/prices/**; no secrets
 ]);
 
 const LEGACY = new Set([

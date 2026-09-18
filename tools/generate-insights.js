@@ -1,4 +1,4 @@
-?'use strict';
+'use strict';
 /* Static insight generator for curated topics and controlled queue topics.
    Existing curated path:
      node tools/generate-insights.js --force

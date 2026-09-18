@@ -263,6 +263,7 @@ function renderArticle(item, locale) {
   <link rel="stylesheet" href="${isAr ? '/' : '../'}styles.css" />
   <link rel="stylesheet" href="${isAr ? '/' : '../'}landing.css" />
   <link rel="stylesheet" href="${isAr ? '/' : '../'}css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
   <script type="application/ld+json">
 ${JSON.stringify(jsonLd, null, 2)}
   </script>
@@ -421,6 +422,7 @@ function renderIndex(isAr) {
   <link rel="stylesheet" href="${isAr ? '/' : '../'}styles.css" />
   <link rel="stylesheet" href="${isAr ? '/' : '../'}landing.css" />
   <link rel="stylesheet" href="${isAr ? '/' : '../'}css/market/market-portal.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
 </head>
 <body class="market-page${isAr ? ' localized-page localized-ar" data-locale="ar' : ''}">
   <div class="topbar"><div class="wrap topbar-inner"><a class="brand" href="${prefix}/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>TradeAlphaAI</strong><span>${isAr ? 'منصة الأبحاث' : 'Research Platform'}</span></span></a><div class="top-actions">${nav(isAr)}<div class="locale-links" aria-label="${isAr ? 'اختيار اللغة' : 'Language'}"><a class="lang-switch" data-locale-route="${isAr ? 'en' : 'ar'}" href="${isAr ? '/insights/' : '/ar/insights/'}">${isAr ? 'English' : 'Arabic'}</a><a class="lang-switch" data-locale-route="${isAr ? 'ar' : 'en'}" href="${isAr ? '/ar/insights/' : '/insights/'}">${isAr ? 'العربية' : 'English'}</a></div></div></div></div>
