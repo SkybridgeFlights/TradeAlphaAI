@@ -1066,7 +1066,7 @@ function checkSmallLocalizationRegressionGuards() {
       ["product grid", "systems-grid-products"],
       ["signal bot CTA", "افتح بوت الإشارات"],
       ["free trial", "تجربة مجانية"],
-      ["trading hero", "إشارات تداول"]
+      ["trading hero", "إشارات السوق"]
     ];
     for (const [label, marker] of requiredArabicHomeMarkers) {
       if (!arHome.includes(marker)) failures.push(`ar/index.html: Arabic product homepage missing ${label} marker`);
