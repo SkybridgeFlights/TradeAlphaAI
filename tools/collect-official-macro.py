@@ -28,6 +28,17 @@ EUROSTAT=[("prc_hicp_manr","HICP","EA20","RCH_A","CP00","Euro Area HICP","EU","%
 
 def now(): return datetime.now(timezone.utc).isoformat().replace("+00:00","Z")
 def req(url,method="GET",body=None,headers=None):
+ # Prefer the operating-system trust store. Some developer machines have an
+ # incomplete Python CA bundle; certifi is an optional verified fallback only.
+ def _open(request):
+  try:return urllib.request.urlopen(request,timeout=20)
+  except urllib.error.URLError as e:
+   if "CERTIFICATE_VERIFY_FAILED" not in str(e):raise
+   try:
+    import certifi
+    return urllib.request.urlopen(request,timeout=20,context=ssl.create_default_context(cafile=certifi.where()))
+   except ImportError:raise e
+
  h={"User-Agent":UA,"Accept":"application/json,text/csv;q=0.9,*/*;q=0.1"}
  if headers:h.update(headers)
  data=None if body is None else json.dumps(body).encode()
@@ -99,17 +110,20 @@ def collect_ecb():
 def _jsonstat_latest(j):
  # Eurostat JSON-stat stores flattened values; for a single geo/coicop/unit
  # query only time varies, so category time ordering maps directly to values.
- dim=j.get("dimension",{}).get("time",{}).get("category",{}).get("index",{})
+ dims=j.get("dimension",{}); dim=(dims.get("time") or dims.get("TIME_PERIOD") or {}).get("category",{}).get("index",{})
  times=sorted(dim,key=lambda k:dim[k]) if isinstance(dim,dict) else list(dim or [])
  vals=j.get("value",[])
- pairs=[(t,vals[i] if i<len(vals) else None) for i,t in enumerate(times)]
+ def value_at(i):
+  if isinstance(vals,dict): return vals.get(str(i),vals.get(i))
+  return vals[i] if i<len(vals) else None
+ pairs=[(t,value_at(i)) for i,t in enumerate(times)]
  pairs=[(t,num(v)) for t,v in pairs if num(v) is not None]
  return pairs[-2:]
 
 def collect_eurostat():
  out=[]
  for dataset,event,geo,unit,coicop,label,country,outunit in EUROSTAT:
-  q=urllib.parse.urlencode({"format":"JSON","lang":"EN","geo":geo,"unit":unit,"coicop":coicop})
+  q=urllib.parse.urlencode({"format":"JSON","lang":"EN","geo":geo,"unit":unit,"coicop":coicop,"lastTimePeriod":3})
   raw,_=req(f"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{dataset}?{q}")
   pairs=_jsonstat_latest(json.loads(raw))
   if not pairs:continue
