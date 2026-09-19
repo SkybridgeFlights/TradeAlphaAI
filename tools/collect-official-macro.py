@@ -6,7 +6,7 @@ versioned observations and provider health; it never scrapes HTML and never
 creates consensus forecasts.
 """
 from __future__ import annotations
-import argparse,csv,io,json,pathlib,urllib.parse,urllib.request
+import argparse,csv,io,json,pathlib,urllib.parse,urllib.request,ssl
 from datetime import datetime,timezone
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -120,15 +120,26 @@ def collect_statcan():
  return out
 
 def probe_ons():
- raw,_=req("https://api.beta.ons.gov.uk/v1/datasets?limit=1");json.loads(raw)
- return {"status":"ok","checked_at":now(),"mode":"open_api_discovery"}
+ try:
+  raw,_=req("https://api.beta.ons.gov.uk/v1/datasets?limit=1");json.loads(raw)
+  return {"status":"ok","checked_at":now(),"mode":"open_api_discovery"}
+ except Exception as e:
+  # Do not pretend ONS is live when a runner/network policy returns 403.
+  return {"status":"unavailable","checked_at":now(),"reason":str(e)[:160],"mode":"open_api_discovery"}
 def probe_statcan():
  raw,_=req("https://www150.statcan.gc.ca/t1/wds/rest/getAllCubesListLite");json.loads(raw)
  return {"status":"ok","checked_at":now(),"mode":"open_wds_discovery"}
-def probe_abs():
- # Endpoint changed in Nov 2024. Use the current official base URL.
- raw,_=req("https://data.api.abs.gov.au/rest/dataflow/ABS/all/latest?detail=allstubs",headers={"Accept":"application/xml"})
- return {"status":"ok" if raw else "empty","checked_at":now(),"mode":"open_sdmx_discovery"}
+def collect_abs():
+ # Official ABS CPI monthly all-items Australia series. Keep the index as an
+ # underlying observation only; do not map it onto a CPI % calendar event.
+ url="https://data.api.abs.gov.au/rest/data/ABS,CPI,2.0.0/1.10001.10.50.M?lastNObservations=3&format=csvfilewithlabels"
+ raw,_=req(url,headers={"Accept":"text/csv"})
+ rows=list(csv.DictReader(io.StringIO(raw.decode("utf-8-sig","replace"))))
+ rows=[r for r in rows if num(r.get("OBS_VALUE")) is not None]
+ if not rows:return []
+ rows=sorted(rows,key=lambda r:r.get("TIME_PERIOD",""));r=rows[-1];p=rows[-2] if len(rows)>1 else None
+ return [obs("CPI Index","AU","index","ABS:CPI:1.10001.10.50.M",r.get("TIME_PERIOD"),num(r.get("OBS_VALUE")),num(p.get("OBS_VALUE")) if p else None,
+   "Australian Bureau of Statistics","https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia")]
 
 def load():
  try:return json.loads(OUT.read_text("utf-8"))
@@ -137,13 +148,13 @@ def key(x):return "|".join(str(x.get(k,"")) for k in ("source_name","series_id",
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=list(old.get("observations",[]));health={}
- for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("eurostat",collect_eurostat)]:
+ for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("abs",collect_abs),("eurostat",collect_eurostat)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
  # ECB is kept as discovery until a current dataflow/key is verified; never guess a series.
  health["ecb"]={"status":"mapping_pending","checked_at":now(),"mode":"official_sdmx_discovery"}
- for name,fn in [("ons",probe_ons),("abs",probe_abs)]:
+ for name,fn in [("ons",probe_ons)]:
   try:health[name]=fn()
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
  uniq={key(x):x for x in allobs};rows=sorted(uniq.values(),key=lambda x:(x.get("observed_at",""),x.get("series_id","")))[-10000:]
