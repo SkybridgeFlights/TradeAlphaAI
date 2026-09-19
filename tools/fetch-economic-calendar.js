@@ -15,6 +15,7 @@ const scheduleFallback            = require('./providers/economic-calendar/sched
 
 const ROOT  = path.resolve(__dirname, '..');
 const OUT   = path.join(ROOT, 'data', 'economic-calendar.json');
+const HISTORY_OUT = path.join(ROOT, 'data', 'economic-calendar-history.json');
 const WRITE = process.argv.includes('--write');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -192,6 +193,15 @@ async function main() {
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(output, null, 2) + '\n', 'utf8');
+  // Durable rolling archive: once a forecast/previous/actual was observed, keep
+  // the richest version so historical dates do not disappear when weekly feeds roll.
+  let history = { version: '1.0', updated_at: output.updated_at, events: [] };
+  try { history = JSON.parse(fs.readFileSync(HISTORY_OUT, 'utf8')); } catch (_) {}
+  const cutoff = dateStr(-400);
+  const archived = deduplicate([...(history.events || []), ...enriched])
+    .filter(e => String(e.event_time || e.date || '').slice(0,10) >= cutoff)
+    .sort((a,b) => String(a.event_time || '').localeCompare(String(b.event_time || '')));
+  fs.writeFileSync(HISTORY_OUT, JSON.stringify({ version:'1.0', updated_at:output.updated_at, events:archived }, null, 2) + '\n', 'utf8');
   console.log(`[calendar:fetch] wrote ${enriched.length} event(s) from ${result.provider} → data/economic-calendar.json`);
 
   if (!enriched.length) {

@@ -11,7 +11,7 @@ const ALLOWED_TYPES = new Set([
   // a generic taxonomy that covers any country's variant of the same release.
   'Manufacturing PMI', 'Services PMI', 'Composite PMI',
   'PPI', 'Employment', 'Trade Balance', 'Industrial Production',
-  'Sentiment', 'Bond Auction', 'Current Account', 'Retail Trade',
+  'Sentiment', 'Bond Auction', 'Current Account', 'Retail Trade', 'Economic Release',
 ]);
 const ALLOWED_IMPORTANCE = new Set(['high', 'medium', 'low']);
 
@@ -107,7 +107,8 @@ function normalizeType(value) {
     [/boc|bank of canada/, 'BoC Rate Decision'], [/rba|reserve bank of australia/, 'RBA Rate Decision'],
     [/snb|swiss national bank/, 'SNB Rate Decision'], [/pboc|people'?s bank of china/, 'PBoC Rate Decision']
   ];
-  return (mappings.find(([pattern]) => pattern.test(text)) || [null, clean(value)])[1];
+  const matched = mappings.find(([pattern]) => pattern.test(text));
+  return matched ? matched[1] : 'Economic Release';
 }
 
 function normalizeImportance(value) {
@@ -152,8 +153,14 @@ function defaultSensitivity(type) {
 
 function numberOrNull(value) {
   if (value === null || value === undefined || value === '') return null;
-  const number = Number(String(value).replace(/[%,$]/g, ''));
-  return Number.isFinite(number) ? number : null;
+  const raw = String(value).trim();
+  const plain = Number(raw.replace(/[%,$]/g, ''));
+  if (Number.isFinite(plain)) return plain;
+  // Preserve publisher-formatted macro values such as 225K, 1.2M or 3.4B.
+  // The UI can display these exactly; analytical surprise code treats them as
+  // non-numeric unless/until a canonical unit conversion is available.
+  if (/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)\s*[KMBT]$/i.test(raw)) return raw;
+  return null;
 }
 
 function slugify(value) {

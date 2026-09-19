@@ -387,6 +387,16 @@ module.exports = async function handler(req, res) {
     console.log(`[calendar-api] global macro merge error: ${sanitize(gErr.message)}`);
   }
 
+  // Merge durable first-party history and deploy snapshot, then enforce the
+  // exact requested date window. This prevents adjacent-week fallback leakage.
+  try {
+    const historyEvents = readHistoryCache();
+    const staticEvents = readStaticCache().events || [];
+    enriched = mergeEvents(enriched.concat(historyEvents, staticEvents));
+  } catch (_) {}
+  enriched = strictDateRangeFilter(enriched, from, to);
+  enriched.sort(function (a,b) { return String(a.event_time || '').localeCompare(String(b.event_time || '')); });
+
   const hasLive        = Object.values(providersMeta).some(function (p) { return p && p.status === 'ok'; });
   const activeProviders = PROVIDER_NAMES.filter(function (n) {
     return providersMeta[n] && providersMeta[n].status === 'ok';
@@ -540,6 +550,14 @@ function calcProviderHealth(providersMeta, errorTypes, eventCount, source) {
 
 // ── Cache helpers ─────────────────────────────────────────────────────────────
 
+function readHistoryCache() {
+  try {
+    const p = require('path').join(process.cwd(), 'data', 'economic-calendar-history.json');
+    const raw = JSON.parse(require('fs').readFileSync(p, 'utf8'));
+    return Array.isArray(raw.events) ? raw.events : [];
+  } catch (_) { return []; }
+}
+
 function readStaticCache() {
   try {
     const raw      = JSON.parse(fs.readFileSync(STATIC_CACHE_PATH, 'utf8'));
@@ -561,6 +579,14 @@ function computeUptimeScore(state) {
 }
 
 // ── Event helpers ─────────────────────────────────────────────────────────────
+
+function strictDateRangeFilter(events, from, to) {
+  return (events || []).filter(function (e) {
+    const raw = e.event_time || e.date || '';
+    const d = String(raw).slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(d) && d >= from && d <= to;
+  });
+}
 
 function countWith(events, field) {
   return events.filter(function (e) {

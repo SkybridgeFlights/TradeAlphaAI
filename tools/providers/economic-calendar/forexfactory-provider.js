@@ -1,13 +1,10 @@
 'use strict';
 
-// ForexFactory weekly calendar (served from the faireconomy media CDN).
-//
-// Free and keyless, and — unlike the free FRED release-dates feed — it
-// carries FORECAST and PREVIOUS values plus an impact rating for the major
-// economies. This is the provider that fills the "التوقع / السابق" columns
-// that rendered as "—" whenever the keyed providers were unavailable.
-// No actuals (it is a forward-looking calendar); actuals arrive via the
-// keyed providers or the FRED series enrichment.
+// FairEconomy/ForexFactory weekly economic-calendar feed.
+// Keyless live source for scheduled time, impact, consensus forecast, previous
+// and (when the publisher has populated it after release) actual values.
+// Historical coverage is intentionally not fabricated: weekly snapshots must be
+// archived by our own ingestion layer for durable history.
 
 const { getJson } = require('./http-client');
 const { normalizeProviderEvent } = require('./calendar-normalizer');
@@ -45,7 +42,7 @@ async function fetchCalendar(context) {
     sourceName: 'ForexFactory Calendar',
     sourceUrl: SOURCE_URL,
     fetchedAt,
-    capabilities: { forecasts: true, actuals: false, precise_time: true }
+    capabilities: { forecasts: true, actuals: true, precise_time: true }
   };
 
   const seen = new Set();
@@ -65,7 +62,7 @@ async function fetchCalendar(context) {
       importance: IMPACT_MAP[item.impact] || 'medium',
       forecast: emptyToNull(item.forecast),
       previous: emptyToNull(item.previous),
-      actual: null,
+      actual: emptyToNull(item.actual),
       event_time: item.date,           // ISO string with explicit offset
       timezone: 'America/New_York'
     }, provider));

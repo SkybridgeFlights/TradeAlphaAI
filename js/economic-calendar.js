@@ -498,6 +498,17 @@
     } catch (_) { return String(dtStr).slice(11, 16); }
   }
 
+  function fmtExactDateTime(dtStr) {
+    if (!dtStr) return '-';
+    try {
+      var d = new Date(dtStr);
+      if (isNaN(d.valueOf())) return String(dtStr);
+      return d.toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-GB', {
+        year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false
+      });
+    } catch (_) { return String(dtStr); }
+  }
+
   function fmtDateLabel(d) {
     try {
       return new Date(d + 'T12:00:00Z').toLocaleDateString(
@@ -1163,7 +1174,7 @@
               badgeHtml(e.importance) +
             '</div>' +
             '<div class="ec-card-time">' +
-              esc(fmtTime(e.event_time)) +
+              esc(fmtExactDateTime(e.event_time)) +
               dateEstimateCard +
               freshnessHtml(e) +
               upcomingBadgeHtml(e) +
