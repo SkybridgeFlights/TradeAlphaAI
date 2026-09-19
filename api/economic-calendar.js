@@ -559,23 +559,52 @@ function readOfficialMacroSnapshots() {
   } catch (_) { return []; }
 }
 
+function officialEventAliases(e) {
+  const n = String(e && e.event_name || '').toLowerCase();
+  const t = String(e && e.type || '').toLowerCase();
+  const out = new Set([String(e && e.type || '')]);
+  if (/non.?farm|payroll/.test(n) || t === 'nfp') out.add('NFP');
+  if (/unemployment/.test(n) || t === 'unemployment rate') out.add('Unemployment Rate');
+  if (/core.*cpi/.test(n) || t === 'core cpi') out.add('Core CPI');
+  if ((/cpi/.test(n) || t === 'cpi') && !/core|median|trimmed|common/.test(n)) out.add('CPI');
+  return out;
+}
+
+function periodMatchesEvent(o, e) {
+  // A current official observation must never be pasted onto an arbitrary
+  // historical release. Prefer explicit release_time captured by the source.
+  if (o.release_time) {
+    const a = Date.parse(o.release_time), b = Date.parse(e.event_time || '');
+    return Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 36 * 3600000;
+  }
+  // Without a source release timestamp, only enrich recent events. The
+  // observation period alone (for example 2026-M08) is not a release date.
+  const eventMs = Date.parse(e.event_time || '');
+  const observedMs = Date.parse(o.observed_at || '');
+  return Number.isFinite(eventMs) && Number.isFinite(observedMs) &&
+    observedMs >= eventMs && observedMs - eventMs <= 7 * 86400000;
+}
+
 function enrichFromOfficialSnapshots(events) {
   const snapshots = readOfficialMacroSnapshots();
   if (!snapshots.length) return events || [];
   return (events || []).map(function (e) {
+    const aliases = officialEventAliases(e);
     const candidates = snapshots.filter(function (o) {
-      return o.country === e.country && o.event_type === e.type;
-    }).sort(function (a,b) { return String(b.observed_at || '').localeCompare(String(a.observed_at || '')); });
+      return o.country === e.country && aliases.has(o.event_type) && periodMatchesEvent(o, e);
+    }).sort(function (a,b) {
+      const ar = a.release_time || a.observed_at || '', br = b.release_time || b.observed_at || '';
+      return String(br).localeCompare(String(ar));
+    });
     if (!candidates.length) return e;
     const o = candidates[0];
-    // Official observations may enrich actual/previous only. They never invent
-    // a market-consensus forecast. Preserve provider calendar values if present.
     return Object.assign({}, e, {
       actual: e.actual != null ? e.actual : o.actual,
       previous: e.previous != null ? e.previous : o.previous,
       official_source_name: o.source_name,
       official_source_url: o.source_url,
       official_observation_period: o.period,
+      official_release_time: o.release_time || null,
       official_observed_at: o.observed_at
     });
   });

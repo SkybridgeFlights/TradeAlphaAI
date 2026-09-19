@@ -504,7 +504,7 @@
     var t = e && e.event_time ? new Date(e.event_time).getTime() : NaN;
     var future = Number.isFinite(t) && t > Date.now();
     if (field === 'actual' && future) return lang === 'ar' ? 'بانتظار الصدور' : 'Awaiting release';
-    if ((field === 'forecast' || field === 'previous') && e && (e.type === 'Speech' || /speech|statement/i.test(e.event_name || ''))) return lang === 'ar' ? 'غير رقمي' : 'Non-numeric';
+    if (e && (e.type === 'Speech' || /speech|statement|meeting/i.test(e.event_name || ''))) return lang === 'ar' ? 'غير رقمي' : 'Non-numeric';
     return lang === 'ar' ? 'غير متوفر من المصدر' : 'Not supplied';
   }
 

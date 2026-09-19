@@ -37,9 +37,9 @@ def req(url,method="GET",body=None,headers=None):
 def num(v):
  try:return float(str(v).replace(",","").strip())
  except:return None
-def obs(event,country,unit,series,period,actual,previous,source,url):
+def obs(event,country,unit,series,period,actual,previous,source,url,release_time=None):
  return {"event_type":event,"country":country,"unit":unit,"series_id":series,"period":period,
- "actual":actual,"previous":previous,"observed_at":now(),"source_name":source,"source_url":url}
+ "actual":actual,"previous":previous,"release_time":release_time,"observed_at":now(),"source_name":source,"source_url":url}
 
 def collect_bls():
  body,_=req("https://api.bls.gov/publicAPI/v2/timeseries/data/","POST",{"seriesid":list(BLS),"latest":True})
@@ -50,7 +50,7 @@ def collect_bls():
   vals=[r for r in rows if r.get("period","").startswith("M") and r.get("period")!="M13"]
   if not vals:continue
   r=vals[0];p=vals[1] if len(vals)>1 else None
-  out.append(obs(meta[0],meta[1],meta[2],sid,f'{r.get("year")}-{r.get("period")}',num(r.get("value")),num(p.get("value")) if p else None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+  out.append(obs(meta[0],meta[1],meta[2],sid,f'{r.get("year")}-{r.get("period")}',num(r.get("value")),num(p.get("value")) if p else None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}",r.get("releaseTime") or r.get("release_time")))
  return out
 
 def collect_ecb():
