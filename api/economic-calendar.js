@@ -26,6 +26,7 @@ const MERGE_RANK     = { te: 0, fmp: 1, forexfactory: 2, finnhub: 3, alphavantag
 const PROVIDER_ENDPOINTS = {
   te:           'https://api.tradingeconomics.com/calendar',
   fmp:          'https://financialmodelingprep.com/stable/economic-calendar',
+  forexfactory: 'https://nfs.faireconomy.media/ff_calendar_thisweek.json',
   finnhub:      'https://finnhub.io/api/v1/calendar/economic',
   alphavantage: 'https://www.alphavantage.co/query',
   fred:         'https://api.stlouisfed.org/fred/releases/dates',
