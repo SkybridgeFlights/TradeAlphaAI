@@ -533,7 +533,7 @@
               ES: 'EUR', NL: 'EUR', SE: 'SEK', NO: 'NOK', IN: 'INR', BR: 'BRL',
               MX: 'MXN', KR: 'KRW', ZA: 'ZAR', SG: 'SGD', HK: 'HKD' };
   // Flag emoji from the ISO country code (regional-indicator letters). Every
-  // major economy investing.com shows gets its flag; unknown codes fall back
+  // major economy in the calendar gets its flag; unknown codes fall back
   // to a globe so the cell never renders blank.
   var FLAG_OVERRIDE = { EU: '🇪🇺', UK: '🇬🇧' };
   function flagEmoji(country) {
@@ -847,7 +847,7 @@
             : imp === 'low'     ? 'ec-badge-low'
             : imp === 'holiday' ? 'ec-badge-holiday'
             : 'ec-badge-low';
-    // investing.com-style 3-level impact indicator: filled bars scale with
+    // three-level 3-level impact indicator: filled bars scale with
     // importance (high=3, medium=2, low=1). The text label stays for
     // accessibility + the impact filter.
     var filled = imp === 'high' ? 3 : imp === 'medium' ? 2 : imp === 'holiday' ? 0 : 1;
@@ -1544,7 +1544,6 @@
           render();
           maybeStaleCacheNotice(calMeta.source);
           maybeScheduleFallbackNotice(calMeta.source);
-          maybeShowExternalFallback(allEvents.length);
           scheduleRefresh();
         });
       })
@@ -1568,7 +1567,6 @@
         }
         maybeStaleCacheNotice(null);
         maybeScheduleFallbackNotice(null);
-        maybeShowExternalFallback(0);
       });
   }
 
@@ -1624,29 +1622,6 @@
         ? '📅 بعض التواريخ المستقبلية تقديرية بناءً على جداول الإصدارات المتكررة وقد تتغير.'
         : '📅 Some future dates are estimated from recurring release schedules and may change.';
       tableWrap.parentNode.insertBefore(notice, tableWrap);
-    }
-  }
-
-  // ── External iframe fallback ─────────────────────────────────────────────
-  // When all live providers and static cache return 0 events, surface the
-  // #external-calendar section with a compact notice so the page is never empty.
-  function maybeShowExternalFallback(eventCount) {
-    var extSection = document.getElementById('external-calendar');
-    if (!extSection) return;
-    var noticeId = 'ec-external-notice';
-    var existing = document.getElementById(noticeId);
-    if (eventCount > 0) {
-      if (existing) existing.remove();
-      return;
-    }
-    if (!existing) {
-      var notice = document.createElement('p');
-      notice.id        = noticeId;
-      notice.className = 'ec-external-notice';
-      notice.textContent = lang === 'ar'
-        ? 'مزودات البيانات الحية غير متاحة مؤقتًا. يتم عرض التقويم الخارجي للتحقق.'
-        : 'Live providers are temporarily unavailable. External calendar is shown for cross-checking.';
-      extSection.insertBefore(notice, extSection.firstChild);
     }
   }
 

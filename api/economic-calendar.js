@@ -10,6 +10,7 @@ const fs               = require('fs');
 const path             = require('path');
 const fmp              = require('../tools/providers/economic-calendar/fmp-provider');
 const finnhub          = require('../tools/providers/economic-calendar/finnhub-provider');
+const forexfactory     = require('../tools/providers/economic-calendar/forexfactory-provider');
 const fred             = require('../tools/providers/economic-calendar/fred-provider');
 const te               = require('../tools/providers/economic-calendar/trading-economics-provider');
 const alphavantage     = require('../tools/providers/economic-calendar/alphavantage-provider');
@@ -18,9 +19,9 @@ const { getGlobalEventsForCalendar } = require('../tools/build-global-macro-even
 const { inferImpact, computeIntelligence } =
   require('../tools/providers/economic-calendar/event-intelligence');
 
-const PROVIDERS      = [te, fmp, finnhub, alphavantage, fred];
-const PROVIDER_NAMES = ['te', 'fmp', 'finnhub', 'alphavantage', 'fred'];
-const MERGE_RANK     = { te: 0, fmp: 1, finnhub: 2, alphavantage: 3, fred: 4, schedule_fallback: 5 };
+const PROVIDERS      = [te, fmp, forexfactory, finnhub, alphavantage, fred];
+const PROVIDER_NAMES = ['te', 'fmp', 'forexfactory', 'finnhub', 'alphavantage', 'fred'];
+const MERGE_RANK     = { te: 0, fmp: 1, forexfactory: 2, finnhub: 3, alphavantage: 4, fred: 5, schedule_fallback: 6 };
 
 const PROVIDER_ENDPOINTS = {
   te:           'https://api.tradingeconomics.com/calendar',

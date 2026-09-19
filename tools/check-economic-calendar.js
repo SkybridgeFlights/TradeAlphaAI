@@ -262,22 +262,12 @@ if (fs.existsSync(TEST_PATH)) {
   warnings.push('tools/test-economic-calendar-logic.js does not exist — logic tests missing');
 }
 
-// ── 9. External calendar iframe section ──────────────────────────────────────
+// 9. Native calendar ownership: no third-party embed dependency
 for (const [page, file] of [['EN', EN_PAGE], ['AR', AR_PAGE]]) {
   if (fs.existsSync(file)) {
     const html = fs.readFileSync(file, 'utf8');
-    // Native calendar must still be present
-    if (!html.includes('id="live-calendar"'))
-      failures.push(`${page} page: id="live-calendar" native calendar missing — must not be removed`);
-    // External iframe section must be present
-    if (!html.includes('id="external-calendar"'))
-      failures.push(`${page} page: id="external-calendar" section missing — add Investing.com iframe fallback`);
-    // Iframe must have explicit loading attribute (eager when above fold, lazy otherwise)
-    if (html.includes('id="external-calendar"') && !html.includes('loading="lazy"') && !html.includes('loading="eager"'))
-      failures.push(`${page} page: external-calendar iframe missing loading attribute (loading="lazy" or loading="eager")`);
-    // No inline scripts from investing.com domain (scraping guard)
-    if (/<script[^>]*investing\.com[^>]*>/i.test(html))
-      failures.push(`${page} page: investing.com <script> tag detected — only iframe embeds are allowed, no script injection`);
+    if (!html.includes('id="live-calendar"')) failures.push(page + ' page: native live calendar missing');
+    if (/investing\.com|sslecal2|id="external-calendar"/i.test(html)) failures.push(page + ' page: third-party economic-calendar embed detected');
   }
 }
 
