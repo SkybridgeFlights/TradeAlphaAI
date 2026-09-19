@@ -1,64 +1,45 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-18T21:47:35.854Z",
+  "updated_at": "2026-09-19T13:49:56.810Z",
   "verified": true,
-  "urgency": "high",
-  "pulse_shift": [
-    {
-      "kind": "pulse-shift",
-      "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "en": "ai concentration risk shifted from contained to elevated.",
-      "ar": "تحولت حالة ai concentration risk من contained إلى elevated."
-    }
-  ],
-  "quote_driven_changes": [
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -12.280701754385973,
-      "to": -13.39181286549708,
-      "delta": -1.1111111111111072,
-      "en": "vix move changed by -1.11 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -1.11 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "nvda",
-      "from": 0.1049,
-      "to": 1.3358,
-      "delta": 1.2309,
-      "en": "nvda move changed by +1.23 percentage points.",
-      "ar": "تغير تحرك nvda بمقدار +1.23 نقطة مئوية."
-    }
-  ],
+  "urgency": "elevated",
+  "pulse_shift": [],
+  "quote_driven_changes": [],
   "new_contradictions": [],
-  "pressure_buildup": [],
+  "pressure_buildup": [
+    {
+      "kind": "pressure-buildup",
+      "track": "speculative_pressure",
+      "from": 3,
+      "to": 4,
+      "en": "speculative pressure built from 3/5 to 4/5.",
+      "ar": "تصاعد speculative pressure من 3/5 إلى 4/5."
+    }
+  ],
   "new_alerts": [
     {
       "kind": "new-alert",
-      "id": "positioning-crowding-2026-09-18",
+      "id": "macro-divergence-2026-09-19",
       "severity": "watch",
-      "en": "AI positioning crowding — concentration risk moved to elevated.",
-      "ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع."
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     }
   ],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
-      "time": "2026-09-18T00:00:00Z",
+      "time": "2026-09-19T00:00:00Z",
       "minutes_until": 0
     },
     {
-      "name": "BOJ Policy Rate",
-      "time": "2026-09-18T02:54:00.000Z",
-      "minutes_until": 0
+      "name": "FOMC Press Release",
+      "time": "2026-09-20T00:00:00Z",
+      "minutes_until": 610
     },
     {
-      "name": "BoJ Rate Decision",
-      "time": "2026-09-18T03:00:00.000Z",
-      "minutes_until": 0
+      "name": "FOMC Press Release",
+      "time": "2026-09-21T00:00:00Z",
+      "minutes_until": 2050
     }
   ],
   "wire_event": {
@@ -68,55 +49,27 @@
   },
   "changes": [
     {
-      "kind": "pulse-shift",
-      "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "en": "ai concentration risk shifted from contained to elevated.",
-      "ar": "تحولت حالة ai concentration risk من contained إلى elevated."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": -12.280701754385973,
-      "to": -13.39181286549708,
-      "delta": -1.1111111111111072,
-      "en": "vix move changed by -1.11 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -1.11 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "nvda",
-      "from": 0.1049,
-      "to": 1.3358,
-      "delta": 1.2309,
-      "en": "nvda move changed by +1.23 percentage points.",
-      "ar": "تغير تحرك nvda بمقدار +1.23 نقطة مئوية."
-    },
-    {
       "kind": "new-alert",
-      "id": "positioning-crowding-2026-09-18",
+      "id": "macro-divergence-2026-09-19",
       "severity": "watch",
-      "en": "AI positioning crowding — concentration risk moved to elevated.",
-      "ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع."
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     },
     {
-      "kind": "wire-event",
-      "en": "Wire event: VIX drops -13.39% to 14.81",
-      "ar": "حدث على الموجز: VIX drops -13.39% to 14.81",
-      "event": {
-        "headline": "VIX drops -13.39% to 14.81",
-        "timestamp": "2026-09-18T21:47:33.743Z",
-        "urgency": 90
-      }
+      "kind": "pressure-buildup",
+      "track": "speculative_pressure",
+      "from": 3,
+      "to": 4,
+      "en": "speculative pressure built from 3/5 to 4/5.",
+      "ar": "تصاعد speculative pressure من 3/5 إلى 4/5."
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": true,
+    "eligible": false,
     "sent": false,
-    "suppression_reason": null
+    "suppression_reason": "urgency_below_high_threshold"
   },
   "snapshot": {
     "verified": true,
@@ -145,22 +98,21 @@
       "oil": -5.838840122300031
     },
     "alert_ids": [
-      "positioning-crowding-2026-09-18"
+      "macro-divergence-2026-09-19"
     ],
     "alerts": [
       {
-        "id": "positioning-crowding-2026-09-18",
-        "type": "positioning-crowding",
+        "id": "macro-divergence-2026-09-19",
+        "type": "macro-divergence",
         "severity": "watch",
-        "date": "2026-09-18",
-        "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-        "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+        "date": "2026-09-19",
+        "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+        "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
         "derived_from": [
           {
-            "dimension": "ai_concentration_risk",
-            "from": "contained",
-            "to": "elevated",
-            "date": "2026-09-18"
+            "divergence": "gold-vs-dollar",
+            "streak": 2,
+            "date": "2026-09-19"
           }
         ]
       }
@@ -172,22 +124,22 @@
       "volatility_pressure": 0,
       "liquidity_pressure": 5,
       "defensive_pressure": 0,
-      "speculative_pressure": 3,
+      "speculative_pressure": 4,
       "concentration_pressure": 5,
       "yield_pressure": 1
     },
     "catalysts": [
       {
         "name": "FOMC Press Release",
-        "time": "2026-09-18T00:00:00Z"
+        "time": "2026-09-19T00:00:00Z"
       },
       {
-        "name": "BOJ Policy Rate",
-        "time": "2026-09-18T02:54:00.000Z"
+        "name": "FOMC Press Release",
+        "time": "2026-09-20T00:00:00Z"
       },
       {
-        "name": "BoJ Rate Decision",
-        "time": "2026-09-18T03:00:00.000Z"
+        "name": "FOMC Press Release",
+        "time": "2026-09-21T00:00:00Z"
       }
     ],
     "wire_event": {
