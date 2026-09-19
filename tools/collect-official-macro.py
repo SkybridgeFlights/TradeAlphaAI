@@ -88,6 +88,37 @@ def collect_eurostat():
   out.append(obs(event,country,outunit,f"EUROSTAT:{dataset}:{geo}:{unit}:{coicop}",r[0],r[1],p[1] if p else None,"Eurostat",f"https://ec.europa.eu/eurostat/databrowser/view/{dataset}/default/table"))
  return out
 
+
+STATCAN={
+ "108785713":("Common CPI y/y","CA","%"),
+ "108785714":("Median CPI y/y","CA","%"),
+ "108785715":("Trimmed CPI y/y","CA","%"),
+}
+STATCAN_WDS="https://www150.statcan.gc.ca/t1/wds/rest/getBulkVectorDataByRange"
+
+def collect_statcan():
+ # WDS range is keyed to data-point release date. Core CPI vectors are revised
+ # historically, so retain only the newest reference period from each release.
+ start=(datetime.now(timezone.utc).date().replace(day=1)).isoformat()+"T00:00"
+ end=datetime.now(timezone.utc).date().isoformat()+"T23:59"
+ raw,_=req(STATCAN_WDS,"POST",{"vectorIds":list(STATCAN),"startDataPointReleaseDate":start,"endDataPointReleaseDate":end})
+ j=json.loads(raw);out=[]
+ for item in j:
+  o=item.get("object") or {}; sid=str(o.get("vectorId") or ""); meta=STATCAN.get(sid)
+  pts=o.get("vectorDataPoint") or []
+  if not meta or not pts: continue
+  # A revision response can contain the whole history at one releaseTime.
+  # The current release is the greatest reference period.
+  pts=sorted(pts,key=lambda x:x.get("refPer",""))
+  r=pts[-1]
+  previous_period=(datetime.fromisoformat(r["refPer"]).replace(day=1))
+  y,m=previous_period.year,previous_period.month
+  pm=(f"{y-1}-12-01" if m==1 else f"{y}-{m-1:02d}-01")
+  p=next((x for x in reversed(pts[:-1]) if x.get("refPer")==pm),None)
+  out.append(obs(meta[0],meta[1],meta[2],"STATCAN:"+sid,r.get("refPer"),num(r.get("value")),num(p.get("value")) if p else None,
+    "Statistics Canada","https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",r.get("releaseTime")))
+ return out
+
 def probe_ons():
  raw,_=req("https://api.beta.ons.gov.uk/v1/datasets?limit=1");json.loads(raw)
  return {"status":"ok","checked_at":now(),"mode":"open_api_discovery"}
@@ -106,13 +137,13 @@ def key(x):return "|".join(str(x.get(k,"")) for k in ("source_name","series_id",
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=list(old.get("observations",[]));health={}
- for name,fn in [("bls",collect_bls),("eurostat",collect_eurostat)]:
+ for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("eurostat",collect_eurostat)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
  # ECB is kept as discovery until a current dataflow/key is verified; never guess a series.
  health["ecb"]={"status":"mapping_pending","checked_at":now(),"mode":"official_sdmx_discovery"}
- for name,fn in [("ons",probe_ons),("statcan",probe_statcan),("abs",probe_abs)]:
+ for name,fn in [("ons",probe_ons),("abs",probe_abs)]:
   try:health[name]=fn()
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
  uniq={key(x):x for x in allobs};rows=sorted(uniq.values(),key=lambda x:(x.get("observed_at",""),x.get("series_id","")))[-10000:]

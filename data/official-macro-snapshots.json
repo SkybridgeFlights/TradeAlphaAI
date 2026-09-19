@@ -1,82 +1,129 @@
 {
-  "schema_version": "1.0",
-  "updated_at": "2026-09-19T07:14:51.176271Z",
+  "schema_version": "1.1",
+  "updated_at": "2026-09-19T07:32:23.391575Z",
   "observations": [
     {
       "event_type": "CPI",
       "country": "US",
       "unit": "index",
-      "source_name": "U.S. Bureau of Labor Statistics",
       "series_id": "CUUR0000SA0",
       "period": "2026-M08",
       "actual": 334.98,
       "previous": null,
-      "observed_at": "2026-09-19T07:14:39.809189Z",
+      "release_time": null,
+      "observed_at": "2026-09-19T07:32:19.890117Z",
+      "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://data.bls.gov/timeseries/CUUR0000SA0"
     },
     {
       "event_type": "Core CPI",
       "country": "US",
       "unit": "index",
-      "source_name": "U.S. Bureau of Labor Statistics",
       "series_id": "CUUR0000SA0L1E",
       "period": "2026-M08",
       "actual": 338.041,
       "previous": null,
-      "observed_at": "2026-09-19T07:14:39.809214Z",
+      "release_time": null,
+      "observed_at": "2026-09-19T07:32:19.890138Z",
+      "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://data.bls.gov/timeseries/CUUR0000SA0L1E"
     },
     {
       "event_type": "NFP",
       "country": "US",
       "unit": "thousand jobs",
-      "source_name": "U.S. Bureau of Labor Statistics",
       "series_id": "CES0000000001",
       "period": "2026-M08",
       "actual": 159075.0,
       "previous": null,
-      "observed_at": "2026-09-19T07:14:39.809220Z",
+      "release_time": null,
+      "observed_at": "2026-09-19T07:32:19.890144Z",
+      "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://data.bls.gov/timeseries/CES0000000001"
     },
     {
       "event_type": "Unemployment Rate",
       "country": "US",
       "unit": "%",
-      "source_name": "U.S. Bureau of Labor Statistics",
       "series_id": "LNS14000000",
       "period": "2026-M08",
       "actual": 4.1,
       "previous": null,
-      "observed_at": "2026-09-19T07:14:39.809224Z",
+      "release_time": null,
+      "observed_at": "2026-09-19T07:32:19.890148Z",
+      "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://data.bls.gov/timeseries/LNS14000000"
+    },
+    {
+      "event_type": "Common CPI y/y",
+      "country": "CA",
+      "unit": "%",
+      "series_id": "STATCAN:108785713",
+      "period": "2026-08-01",
+      "actual": 2.6,
+      "previous": 2.7,
+      "release_time": "2026-09-14T08:30",
+      "observed_at": "2026-09-19T07:32:21.963575Z",
+      "source_name": "Statistics Canada",
+      "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes"
+    },
+    {
+      "event_type": "Median CPI y/y",
+      "country": "CA",
+      "unit": "%",
+      "series_id": "STATCAN:108785714",
+      "period": "2026-08-01",
+      "actual": 2.0,
+      "previous": 2.0,
+      "release_time": "2026-09-14T08:30",
+      "observed_at": "2026-09-19T07:32:21.963662Z",
+      "source_name": "Statistics Canada",
+      "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes"
+    },
+    {
+      "event_type": "Trimmed CPI y/y",
+      "country": "CA",
+      "unit": "%",
+      "series_id": "STATCAN:108785715",
+      "period": "2026-08-01",
+      "actual": 1.9,
+      "previous": 1.9,
+      "release_time": "2026-09-14T08:30",
+      "observed_at": "2026-09-19T07:32:21.963727Z",
+      "source_name": "Statistics Canada",
+      "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes"
     }
   ],
   "provider_health": {
     "bls": {
       "status": "ok",
       "count": 4,
-      "checked_at": "2026-09-19T07:14:39.809231Z"
-    },
-    "ecb": {
-      "status": "error",
-      "reason": "HTTP Error 404: Not Found",
-      "checked_at": "2026-09-19T07:14:43.229811Z"
-    },
-    "ons": {
-      "provider": "ons",
-      "status": "ok",
-      "observed_at": "2026-09-19T07:14:43.499914Z"
+      "checked_at": "2026-09-19T07:32:19.890154Z"
     },
     "statcan": {
-      "provider": "statcan",
       "status": "ok",
-      "observed_at": "2026-09-19T07:14:51.140325Z"
+      "count": 3,
+      "checked_at": "2026-09-19T07:32:21.963957Z"
+    },
+    "eurostat": {
+      "status": "error",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+      "checked_at": "2026-09-19T07:32:22.085173Z"
+    },
+    "ecb": {
+      "status": "mapping_pending",
+      "checked_at": "2026-09-19T07:32:22.085207Z",
+      "mode": "official_sdmx_discovery"
+    },
+    "ons": {
+      "status": "ok",
+      "checked_at": "2026-09-19T07:32:22.289732Z",
+      "mode": "open_api_discovery"
     },
     "abs": {
-      "provider": "abs",
-      "status": "error",
-      "reason": "<urlopen error [Errno 11001] getaddrinfo failed>",
-      "observed_at": "2026-09-19T07:14:51.176180Z"
+      "status": "ok",
+      "checked_at": "2026-09-19T07:32:23.391454Z",
+      "mode": "open_sdmx_discovery"
     }
   }
 }

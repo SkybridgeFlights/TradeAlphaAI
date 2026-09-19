@@ -566,6 +566,9 @@ function officialEventAliases(e) {
   if (/non.?farm|payroll/.test(n) || t === 'nfp') out.add('NFP');
   if (/unemployment/.test(n) || t === 'unemployment rate') out.add('Unemployment Rate');
   if (/core.*cpi/.test(n) || t === 'core cpi') out.add('Core CPI');
+  if (/median.*cpi|cpi.*median/.test(n)) out.add('Median CPI y/y');
+  if (/trimmed.*cpi|cpi.*trim/.test(n)) out.add('Trimmed CPI y/y');
+  if (/common.*cpi|cpi.*common/.test(n)) out.add('Common CPI y/y');
   if ((/cpi/.test(n) || t === 'cpi') && !/core|median|trimmed|common/.test(n)) out.add('CPI');
   return out;
 }
@@ -575,7 +578,12 @@ function periodMatchesEvent(o, e) {
   // historical release. Prefer explicit release_time captured by the source.
   if (o.release_time) {
     const a = Date.parse(o.release_time), b = Date.parse(e.event_time || '');
-    return Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 36 * 3600000;
+    // Some upstream calendars encode UTC while official agencies expose local
+    // release time without an offset. Same release-date is authoritative; allow
+    // timezone-normalization drift but never cross calendar days.
+    return Number.isFinite(a) && Number.isFinite(b) &&
+      String(o.release_time).slice(0,10) === String(e.event_time || '').slice(0,10) &&
+      Math.abs(a - b) <= 12 * 3600000;
   }
   // Without a source release timestamp, only enrich recent events. The
   // observation period alone (for example 2026-M08) is not a release date.
