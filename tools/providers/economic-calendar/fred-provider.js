@@ -30,7 +30,7 @@ async function fetchCalendar(context) {
   };
   const relevant = data.release_dates.filter((item) => {
     const type = normalizeType(item.release_name);
-    return ALLOWED_TYPES.has(type) && item.date >= context.from && item.date <= context.to;
+    return type !== 'Economic Release' && ALLOWED_TYPES.has(type) && item.date >= context.from && item.date <= context.to;
   });
   // No matching dates is informational — return 0 events rather than throwing.
   // The schedule_fallback provider will supplement if no live events are found.

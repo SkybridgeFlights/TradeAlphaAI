@@ -360,10 +360,10 @@ module.exports = async function handler(req, res) {
           ? 'no_static_events'
           : `static_cache_stale age=${Math.round(staticCache.ageHours)}h`;
         fallbackDecision = {
-          type:   'external_iframe',
+          type:   'no_verified_data',
           reason: `live_providers_empty schedule_empty ${liveCacheReason} ${staticReason}`,
         };
-        console.log(`[calendar-api] fallback=external_iframe reason="${fallbackDecision.reason}"`);
+        console.log(`[calendar-api] fallback=no_verified_data reason="${fallbackDecision.reason}"`);
       }
     }
   }
@@ -592,6 +592,14 @@ function countWith(events, field) {
   return events.filter(function (e) {
     return e[field] !== null && e[field] !== undefined;
   }).length;
+}
+
+function isCalendarGradeEvent(e) {
+  const name = String(e.event_name || e.name || '').trim();
+  const type = String(e.type || '').trim();
+  if (!name || type === 'Economic Release') return false;
+  if (/^(CBOE Market Statistics|Coinbase Cryptocurrencies|Chicago Fed Advance Retail Trade Summary)$/i.test(name)) return false;
+  return true;
 }
 
 function pickUsable(events) {
