@@ -572,6 +572,7 @@ function officialEventAliases(e) {
   if (/cpi.*y\/y|annual.*cpi/.test(n)) out.add('CPI y/y');
   if (/retail sales/.test(n) || t === 'retail sales') out.add('Retail Sales');
   if (/gdp.*monthly|monthly.*gdp/.test(n) || t === 'gdp') out.add('GDP');
+  if (/gdp.*q\/q|gross domestic product.*q\/q|gdp.*annualized/.test(n)) out.add('GDP q/q annualized');
   if (/core.*pce.*m\/m|m\/m.*core.*pce/.test(n)) out.add('Core PCE Price Index m/m');
   if (/core.*pce.*y\/y|y\/y.*core.*pce/.test(n)) out.add('Core PCE Price Index y/y');
   if (/pce.*m\/m/.test(n)) out.add('PCE Price Index m/m');

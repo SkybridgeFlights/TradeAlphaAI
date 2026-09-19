@@ -219,6 +219,19 @@ def collect_bea_release():
   if val is not None:out.append(obs(event,"US","%",sid,"2026-07",val,None,"U.S. Bureau of Economic Analysis",url,rel))
  return out
 
+def collect_bea_gdp_release():
+ url="https://www.bea.gov/data/gdp/gross-domestic-product"
+ raw,_=req(url,headers={"User-Agent":"Mozilla/5.0 TradeAlphaAI"})
+ text=html.unescape(re.sub(r"<[^>]+>"," ",raw.decode("utf-8","replace")))
+ text=re.sub(r"\s+"," ",text)
+ m=re.search(r'Q2\s*2026\s*\(2nd\).*?([+-]?[0-9.]+)\s*%',text,re.I|re.S)
+ if not m:
+  m=re.search(r'increased at an annual rate of\s*([0-9.]+)\s*percent in the second quarter of 2026',text,re.I)
+ if not m:return []
+ val=num(m.group(1))
+ return [obs("GDP q/q annualized","US","%","BEA:GDP:REAL:QOQ-ANNUALIZED:SECOND","2026-Q2",val,None,
+  "U.S. Bureau of Economic Analysis",url,"2026-08-26T08:30:00-04:00")]
+
 def collect_abs():
  # Official ABS CPI monthly all-items Australia series. Keep the index as an
  # underlying observation only; do not map it onto a CPI % calendar event.
@@ -252,7 +265,7 @@ def health_material(h):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=[];health={}
- for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates),("bea",collect_bea_release)]:
+ for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates),("bea",collect_bea_release),("bea_gdp",collect_bea_gdp_release)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
