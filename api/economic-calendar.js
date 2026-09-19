@@ -566,6 +566,9 @@ function officialEventAliases(e) {
   if (/non.?farm|payroll/.test(n) || t === 'nfp') out.add('NFP');
   if (/unemployment/.test(n) || t === 'unemployment rate') out.add('Unemployment Rate');
   if (/core.*cpi/.test(n) || t === 'core cpi') out.add('Core CPI');
+  if (/cpi.*m\/m|monthly.*cpi/.test(n)) out.add('CPI m/m');
+  if (/retail sales/.test(n) || t === 'retail sales') out.add('Retail Sales');
+  if (/gdp.*monthly|monthly.*gdp/.test(n) || t === 'gdp') out.add('GDP');
   if (/median.*cpi|cpi.*median/.test(n)) out.add('Median CPI y/y');
   if (/trimmed.*cpi|cpi.*trim/.test(n)) out.add('Trimmed CPI y/y');
   if (/common.*cpi|cpi.*common/.test(n)) out.add('Common CPI y/y');

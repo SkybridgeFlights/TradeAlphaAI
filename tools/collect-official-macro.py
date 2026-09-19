@@ -122,6 +122,9 @@ def collect_statcan():
 
 ONS_SERIES=[
  ("CPI","GB","%","d7g7","mm23","https://www.ons.gov.uk/economy/inflationandpriceindices/timeseries/d7g7/mm23/data"),
+ ("CPI m/m","GB","%","d7oe","mm23","https://www.ons.gov.uk/economy/inflationandpriceindices/timeseries/d7oe/mm23/data"),
+ ("Retail Sales","GB","%","j5ec","drsi","https://www.ons.gov.uk/businessindustryandtrade/retailindustry/timeseries/j5ec/drsi/data"),
+ ("GDP","GB","%","ecyx","mgdp","https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ecyx/mgdp/data"),
  ("Unemployment Rate","GB","%","mgsx","lms","https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms/data"),
 ]
 def collect_ons():
