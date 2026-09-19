@@ -1015,9 +1015,9 @@
         html += '<dt>' + esc(L.labelReleaseState) + '</dt><dd>' + esc(acqTxt) + '</dd>';
       }
       if (typeof e.source_confidence === 'number') html += '<dt>' + esc(L.labelSourceConfidence) + '</dt><dd>' + e.source_confidence + '</dd>';
-      html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : numVal(e.actual,   e.unit)) + '</dd>';
-      html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.forecast, e.unit)) + '</dd>';
-      html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : numVal(e.previous, e.unit)) + '</dd>';
+      html    += '<dt>' + esc(L.detailActual)    + '</dt><dd>' + (isHoliday ? '—' : valueStateLabel(e, 'actual') + (e.actual != null && e.unit ? ' ' + esc(e.unit) : '')) + '</dd>';
+      html    += '<dt>' + esc(L.detailForecast)  + '</dt><dd>' + (isHoliday ? '—' : valueStateLabel(e, 'forecast') + (e.forecast != null && e.unit ? ' ' + esc(e.unit) : '')) + '</dd>';
+      html    += '<dt>' + esc(L.detailPrevious)  + '</dt><dd>' + (isHoliday ? '—' : valueStateLabel(e, 'previous') + (e.previous != null && e.unit ? ' ' + esc(e.unit) : '')) + '</dd>';
       var out = '<dl>' + html + '</dl>';
       out += intelligenceHtml(e);
       if (tags && !isHoliday) {
