@@ -134,6 +134,19 @@ def collect_eurostat():
  return out
 
 
+STATCAN_CPI_RELEASE_URL="https://www150.statcan.gc.ca/n1/daily-quotidien/260914/dq260914a-eng.htm"
+
+def collect_statcan_headline_cpi():
+ raw,_=req(STATCAN_CPI_RELEASE_URL,headers={"User-Agent":"Mozilla/5.0 TradeAlphaAI"})
+ text=html.unescape(re.sub(r"<[^>]+>"," ",raw.decode("utf-8","replace")));text=re.sub(r"\s+"," ",text)
+ yy=re.search(r"rose[^0-9]{0,20}([0-9.]+)%\s+year over year in August",text,re.I)
+ mm=re.search(r"fell[^0-9]{0,20}([0-9.]+)%\s+month over month in August",text,re.I)
+ if not yy:return []
+ yv=num(yy.group(1));mv=-num(mm.group(1)) if mm else None;src="Statistics Canada";rel="2026-09-14T08:30:00-04:00"
+ out=[obs("CPI y/y","CA","%","STATCAN:CPI:HEADLINE:YOY","2026-08",yv,3.0,src,STATCAN_CPI_RELEASE_URL,rel)]
+ if mv is not None:out.append(obs("CPI m/m","CA","%","STATCAN:CPI:HEADLINE:MOM","2026-08",mv,0.5,src,STATCAN_CPI_RELEASE_URL,rel))
+ return out
+
 STATCAN={
  "108785713":("Common CPI y/y","CA","%"),
  "108785714":("Median CPI y/y","CA","%"),
@@ -267,7 +280,7 @@ def health_material(h):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=[];health={}
- for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates),("bea",collect_bea_release),("bea_gdp",collect_bea_gdp_release)]:
+ for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("statcan_headline_cpi",collect_statcan_headline_cpi),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates),("bea",collect_bea_release),("bea_gdp",collect_bea_gdp_release)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
