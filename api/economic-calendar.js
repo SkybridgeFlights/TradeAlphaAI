@@ -712,13 +712,24 @@ function mergeEvents(events) {
   return Array.from(groups.values()).map(mergeGroup);
 }
 
-function dedupeKey(e) {
-  const date    = String(e.event_time || e.date || '').slice(0, 10);
-  const country = String(e.country || '').toUpperCase();
-  const name    = String(e.event_name || e.name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  return date + '|' + country + '|' + name;
+function canonicalEventName(e) {
+  const n = String(e.event_name || e.name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  if (/\b(?:cpi|consumer price index)\b/.test(n)) {
+    if (/\bmedian\b/.test(n)) return 'cpi median';
+    if (/\btrim(?:med)?\b/.test(n)) return 'cpi trimmed';
+    if (/\bcommon\b/.test(n)) return 'cpi common';
+    if (/\bcore\b/.test(n)) return /m m|mom/.test(n) ? 'core cpi mom' : /y y|yoy/.test(n) ? 'core cpi yoy' : 'core cpi';
+    return /m m|mom/.test(n) ? 'cpi mom' : /y y|yoy/.test(n) ? 'cpi yoy' : 'cpi';
+  }
+  if (/\bunemployment(?: rate)?\b/.test(n)) return 'unemployment rate';
+  if (/\bretail sales\b/.test(n)) return /m m|mom/.test(n) ? 'retail sales mom' : 'retail sales';
+  return n;
 }
-
+function dedupeKey(e) {
+  const date = String(e.event_time || e.date || '').slice(0, 10);
+  const country = String(e.country || '').toUpperCase();
+  return date + '|' + country + '|' + canonicalEventName(e);
+}
 function richness(e) {
   return (e.actual   !== null && e.actual   !== undefined ? 2 : 0)
        + (e.forecast !== null && e.forecast !== undefined ? 2 : 0)
