@@ -564,7 +564,7 @@ function officialEventAliases(e) {
   const t = String(e && e.type || '').toLowerCase();
   const out = new Set([String(e && e.type || '')]);
   if (/non.?farm|payroll/.test(n) || t === 'nfp') out.add('NFP');
-  if (/unemployment/.test(n) || t === 'unemployment rate') out.add('Unemployment Rate');
+  if (/\bunemployment\s+rate\b/.test(n) || t === 'unemployment rate') out.add('Unemployment Rate');
   if (/core.*cpi.*m\/m|m\/m.*core.*cpi/.test(n)) out.add('Core CPI m/m');
   if (/core.*cpi.*y\/y|y\/y.*core.*cpi/.test(n)) out.add('Core CPI y/y');
   if (/core.*cpi/.test(n) || t === 'core cpi') out.add('Core CPI');
