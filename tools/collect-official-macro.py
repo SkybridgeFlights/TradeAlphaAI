@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """TradeAlphaAI official macro collector.
 
 Cloud-safe collector for public government/central-bank machine APIs. It stores
@@ -7,7 +7,7 @@ creates consensus forecasts.
 """
 from __future__ import annotations
 import argparse,csv,io,json,pathlib,urllib.parse,urllib.request,ssl
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/"data"/"official-macro-snapshots.json"
@@ -119,6 +119,32 @@ def collect_statcan():
     "Statistics Canada","https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",r.get("releaseTime")))
  return out
 
+
+ONS_SERIES=[
+ ("CPI","GB","%","d7g7","mm23","https://www.ons.gov.uk/economy/inflationandpriceindices/timeseries/d7g7/mm23/data"),
+ ("Unemployment Rate","GB","%","mgsx","lms","https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms/data"),
+]
+def collect_ons():
+ out=[]
+ for event,country,unit,sid,dataset,url in ONS_SERIES:
+  raw,_=req(url,headers={"User-Agent":"TradeAlphaAI/1.2 official-macro-collector"})
+  j=json.loads(raw);rows=j.get("months") or []
+  rows=[r for r in rows if num(r.get("value")) is not None]
+  if not rows:continue
+  r=rows[-1];p=rows[-2] if len(rows)>1 else None
+  # ONS updateDate is close to the official publication timestamp but can be
+  # represented at the previous UTC date. Keep it as observed_at provenance;
+  # use the verified release-date convention from the data publication day.
+  release=r.get("updateDate")
+  if release:
+   try:
+    dt=datetime.fromisoformat(release.replace("Z","+00:00"))+timedelta(hours=8)
+    release=dt.strftime("%Y-%m-%dT07:00")
+   except Exception: pass
+  out.append(obs(event,country,unit,"ONS:"+sid,r.get("label") or r.get("date"),num(r.get("value")),num(p.get("value")) if p else None,
+   "Office for National Statistics",url.replace("/data",""),release))
+ return out
+
 def probe_ons():
  try:
   raw,_=req("https://api.beta.ons.gov.uk/v1/datasets?limit=1");json.loads(raw)
@@ -148,13 +174,13 @@ def key(x):return "|".join(str(x.get(k,"")) for k in ("source_name","series_id",
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=list(old.get("observations",[]));health={}
- for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("abs",collect_abs),("eurostat",collect_eurostat)]:
+ for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
  # ECB is kept as discovery until a current dataflow/key is verified; never guess a series.
  health["ecb"]={"status":"mapping_pending","checked_at":now(),"mode":"official_sdmx_discovery"}
- for name,fn in [("ons",probe_ons)]:
+ for name,fn in []:
   try:health[name]=fn()
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}
  uniq={key(x):x for x in allobs};rows=sorted(uniq.values(),key=lambda x:(x.get("observed_at",""),x.get("series_id","")))[-10000:]
@@ -162,3 +188,4 @@ def main():
  print(json.dumps({"updated_at":out["updated_at"],"observation_versions":len(rows),"provider_health":health},indent=2))
  if args.write:OUT.write_text(json.dumps(out,indent=2)+"\n","utf-8")
 if __name__=="__main__":main()
+
