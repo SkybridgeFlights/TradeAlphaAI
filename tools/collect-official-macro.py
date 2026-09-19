@@ -203,6 +203,20 @@ def load():
  try:return json.loads(OUT.read_text("utf-8"))
  except:return {"schema_version":"1.1","updated_at":None,"observations":[],"provider_health":{}}
 def key(x):return "|".join(str(x.get(k,"")) for k in ("source_name","series_id","period","actual"))
+def material(x):
+ return {k:v for k,v in x.items() if k!="observed_at"}
+def stabilize(newrows,oldrows):
+ oldby={key(x):x for x in oldrows}
+ out=[]
+ for x in newrows:
+  prev=oldby.get(key(x))
+  if prev and material(prev)==material(x):
+   x=dict(x);x["observed_at"]=prev.get("observed_at")
+  out.append(x)
+ return out
+def health_material(h):
+ return {name:{k:v for k,v in info.items() if k!="checked_at"} for name,info in h.items()}
+
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=[];health={}
