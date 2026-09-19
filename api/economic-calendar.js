@@ -721,8 +721,11 @@ function canonicalEventName(e) {
     if (/\bcore\b/.test(n)) return /m m|mom/.test(n) ? 'core cpi mom' : /y y|yoy/.test(n) ? 'core cpi yoy' : 'core cpi';
     return /m m|mom/.test(n) ? 'cpi mom' : /y y|yoy/.test(n) ? 'cpi yoy' : 'cpi';
   }
+  if (/\bunemployment\s+claims?\b|\bjobless\s+claims?\b/.test(n)) return 'jobless claims';
   if (/\bunemployment(?: rate)?\b/.test(n)) return 'unemployment rate';
   if (/\bretail sales\b/.test(n)) return /m m|mom/.test(n) ? 'retail sales mom' : 'retail sales';
+  if (/\b(?:boe|bank of england|official bank)\b.*\brate|\brate decision\b.*\b(?:boe|bank of england)\b/.test(n)) return 'boe rate decision';
+  if (/\b(?:boc|bank of canada)\b.*\brate|\brate decision\b.*\b(?:boc|bank of canada)\b/.test(n)) return 'boc rate decision';
   return n;
 }
 function dedupeKey(e) {
