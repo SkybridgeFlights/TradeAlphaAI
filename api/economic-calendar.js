@@ -395,6 +395,7 @@ module.exports = async function handler(req, res) {
     enriched = mergeEvents(enriched.concat(historyEvents, staticEvents));
   } catch (_) {}
   enriched = strictDateRangeFilter(enriched, from, to).filter(isCalendarGradeEvent);
+  enriched = enrichFromOfficialSnapshots(enriched);
   enriched.sort(function (a,b) { return String(a.event_time || '').localeCompare(String(b.event_time || '')); });
 
   const hasLive        = Object.values(providersMeta).some(function (p) { return p && p.status === 'ok'; });
@@ -549,6 +550,36 @@ function calcProviderHealth(providersMeta, errorTypes, eventCount, source) {
 }
 
 // ── Cache helpers ─────────────────────────────────────────────────────────────
+
+function readOfficialMacroSnapshots() {
+  try {
+    const p = require('path').join(process.cwd(), 'data', 'official-macro-snapshots.json');
+    const raw = JSON.parse(require('fs').readFileSync(p, 'utf8'));
+    return Array.isArray(raw.observations) ? raw.observations : [];
+  } catch (_) { return []; }
+}
+
+function enrichFromOfficialSnapshots(events) {
+  const snapshots = readOfficialMacroSnapshots();
+  if (!snapshots.length) return events || [];
+  return (events || []).map(function (e) {
+    const candidates = snapshots.filter(function (o) {
+      return o.country === e.country && o.event_type === e.type;
+    }).sort(function (a,b) { return String(b.observed_at || '').localeCompare(String(a.observed_at || '')); });
+    if (!candidates.length) return e;
+    const o = candidates[0];
+    // Official observations may enrich actual/previous only. They never invent
+    // a market-consensus forecast. Preserve provider calendar values if present.
+    return Object.assign({}, e, {
+      actual: e.actual != null ? e.actual : o.actual,
+      previous: e.previous != null ? e.previous : o.previous,
+      official_source_name: o.source_name,
+      official_source_url: o.source_url,
+      official_observation_period: o.period,
+      official_observed_at: o.observed_at
+    });
+  });
+}
 
 function readHistoryCache() {
   try {
