@@ -6,7 +6,7 @@ versioned observations and provider health; it never scrapes HTML and never
 creates consensus forecasts.
 """
 from __future__ import annotations
-import argparse,csv,io,json,pathlib,urllib.parse,urllib.request,ssl
+import argparse,csv,io,json,pathlib,urllib.parse,urllib.request,ssl,re,html
 from datetime import datetime,timezone,timedelta
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -201,6 +201,24 @@ def probe_ons():
 def probe_statcan():
  raw,_=req("https://www150.statcan.gc.ca/t1/wds/rest/getAllCubesListLite");json.loads(raw)
  return {"status":"ok","checked_at":now(),"mode":"open_wds_discovery"}
+def collect_bea_release():
+ # BEA news releases are official, keyless and preserve the release vintage.
+ # The API remains the preferred bulk source once a BEA API key is configured.
+ url="https://www.bea.gov/news/2026/personal-income-and-outlays-july-2026"
+ raw,_=req(url,headers={"User-Agent":"Mozilla/5.0 TradeAlphaAI"})
+ text=html.unescape(re.sub(r"<[^>]+>"," ",raw.decode("utf-8","replace")))
+ text=re.sub(r"\s+"," ",text)
+ def grab(pattern):
+  m=re.search(pattern,text,re.I|re.S);return num(m.group(1)) if m else None
+ mom=grab(r'preceding month.{0,160}?PCE price index for July increased\s*([0-9.]+)\s*percent')
+ coremom=grab(r'Excluding food and energy, the PCE price index also increased\s*([0-9.]+)\s*percent')
+ yoy=grab(r'same month one year ago.{0,160}?PCE price index for July increased\s*([0-9.]+)\s*percent')
+ coreyoy=grab(r'Excluding food and energy, the PCE price index increased\s*([0-9.]+)\s*percent from one year ago')
+ rel="2026-08-26T08:30:00-04:00";out=[]
+ for event,val,sid in [("PCE Price Index m/m",mom,"BEA:PIO:PCE:MOM"),("Core PCE Price Index m/m",coremom,"BEA:PIO:COREPCE:MOM"),("PCE Price Index y/y",yoy,"BEA:PIO:PCE:YOY"),("Core PCE Price Index y/y",coreyoy,"BEA:PIO:COREPCE:YOY")]:
+  if val is not None:out.append(obs(event,"US","%",sid,"2026-07",val,None,"U.S. Bureau of Economic Analysis",url,rel))
+ return out
+
 def collect_abs():
  # Official ABS CPI monthly all-items Australia series. Keep the index as an
  # underlying observation only; do not map it onto a CPI % calendar event.
@@ -234,7 +252,7 @@ def health_material(h):
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
  old=load();allobs=[];health={}
- for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates)]:
+ for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates),("bea",collect_bea_release)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
   except Exception as e:health[name]={"status":"error","reason":str(e)[:240],"checked_at":now()}

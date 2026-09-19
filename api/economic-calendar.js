@@ -572,6 +572,10 @@ function officialEventAliases(e) {
   if (/cpi.*y\/y|annual.*cpi/.test(n)) out.add('CPI y/y');
   if (/retail sales/.test(n) || t === 'retail sales') out.add('Retail Sales');
   if (/gdp.*monthly|monthly.*gdp/.test(n) || t === 'gdp') out.add('GDP');
+  if (/core.*pce.*m\/m|m\/m.*core.*pce/.test(n)) out.add('Core PCE Price Index m/m');
+  if (/core.*pce.*y\/y|y\/y.*core.*pce/.test(n)) out.add('Core PCE Price Index y/y');
+  if (/pce.*m\/m/.test(n)) out.add('PCE Price Index m/m');
+  if (/pce.*y\/y/.test(n)) out.add('PCE Price Index y/y');
   if (/ecb.*rate|main refinancing/.test(n) || t === 'ecb rate decision') out.add('ECB Rate Decision');
   if (/median.*cpi|cpi.*median/.test(n)) out.add('Median CPI y/y');
   if (/trimmed.*cpi|cpi.*trim/.test(n)) out.add('Trimmed CPI y/y');
