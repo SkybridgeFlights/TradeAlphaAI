@@ -53,27 +53,29 @@ def obs(event,country,unit,series,period,actual,previous,source,url,release_time
  "actual":actual,"previous":previous,"release_time":release_time,"observed_at":now(),"source_name":source,"source_url":url}
 
 def collect_bls():
- year=datetime.now(timezone.utc).year
- body,_=req("https://api.bls.gov/publicAPI/v2/timeseries/data/","POST",{"seriesid":list(BLS),"startyear":str(year-1),"endyear":str(year)})
+ # Unregistered BLS v2 supports the basic multi-series signature and returns
+ # three years by default. Supplying start/end years is a registered-v2 feature.
+ body,_=req("https://api.bls.gov/publicAPI/v2/timeseries/data/","POST",{"seriesid":list(BLS)})
  j=json.loads(body);out=[]
+ if j.get("status")!="REQUEST_SUCCEEDED": raise RuntimeError("BLS API: "+"; ".join(j.get("message") or [j.get("status","request failed")]))
  for series in j.get("Results",{}).get("series",[]):
   sid=series.get("seriesID");meta=BLS.get(sid)
   if not meta:continue
-  vals=[r for r in series.get("data",[]) if r.get("period","").startswith("M") and r.get("period")!="M13" and num(r.get("value")) is not None]
-  vals=sorted(vals,key=lambda r:(int(r.get("year",0)),int(r.get("period","M00")[1:])))
+  vals=[x for x in series.get("data",[]) if x.get("period","").startswith("M") and x.get("period")!="M13" and num(x.get("value")) is not None]
+  vals=sorted(vals,key=lambda x:(int(x.get("year",0)),int(x.get("period","M00")[1:])))
   if len(vals)<2:continue
-  r,p=vals[-1],vals[-2]
+  r,p=vals[-1],vals[-2];pp=vals[-3] if len(vals)>2 else None
   period=f'{r.get("year")}-{r.get("period")}'
   if sid in ("CUUR0000SA0","CUUR0000SA0L1E"):
    cur,prev=num(r.get("value")),num(p.get("value"))
    yoybase=next((x for x in vals if int(x.get("year",0))==int(r.get("year"))-1 and x.get("period")==r.get("period")),None)
-   event="Core CPI m/m" if sid.endswith("L1E") else "CPI m/m"
-   out.append(obs(event,"US","%",sid+":MOM",period,round((cur/prev-1)*100,1),None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+   prev_yoybase=next((x for x in vals if int(x.get("year",0))==int(p.get("year"))-1 and x.get("period")==p.get("period")),None)
+   prefix="Core CPI" if sid.endswith("L1E") else "CPI"
+   out.append(obs(prefix+" m/m","US","%",sid+":MOM",period,round((cur/prev-1)*100,1),round((prev/num(pp.get("value"))-1)*100,1) if pp else None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
    if yoybase:
-    event="Core CPI y/y" if sid.endswith("L1E") else "CPI y/y"
-    out.append(obs(event,"US","%",sid+":YOY",period,round((cur/num(yoybase.get("value"))-1)*100,1),None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+    out.append(obs(prefix+" y/y","US","%",sid+":YOY",period,round((cur/num(yoybase.get("value"))-1)*100,1),round((prev/num(prev_yoybase.get("value"))-1)*100,1) if prev_yoybase else None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
   elif sid=="CES0000000001":
-   out.append(obs("NFP","US","thousand jobs",sid+":CHANGE",period,round(num(r.get("value"))-num(p.get("value")),1),None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+   out.append(obs("NFP","US","thousand jobs",sid+":CHANGE",period,round(num(r.get("value"))-num(p.get("value")),1),round(num(p.get("value"))-num(pp.get("value")),1) if pp else None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
   else:
    out.append(obs(meta[0],meta[1],meta[2],sid,period,num(r.get("value")),num(p.get("value")),"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
  return out
