@@ -565,8 +565,11 @@ function officialEventAliases(e) {
   const out = new Set([String(e && e.type || '')]);
   if (/non.?farm|payroll/.test(n) || t === 'nfp') out.add('NFP');
   if (/unemployment/.test(n) || t === 'unemployment rate') out.add('Unemployment Rate');
+  if (/core.*cpi.*m\/m|m\/m.*core.*cpi/.test(n)) out.add('Core CPI m/m');
+  if (/core.*cpi.*y\/y|y\/y.*core.*cpi/.test(n)) out.add('Core CPI y/y');
   if (/core.*cpi/.test(n) || t === 'core cpi') out.add('Core CPI');
   if (/cpi.*m\/m|monthly.*cpi/.test(n)) out.add('CPI m/m');
+  if (/cpi.*y\/y|annual.*cpi/.test(n)) out.add('CPI y/y');
   if (/retail sales/.test(n) || t === 'retail sales') out.add('Retail Sales');
   if (/gdp.*monthly|monthly.*gdp/.test(n) || t === 'gdp') out.add('GDP');
   if (/ecb.*rate|main refinancing/.test(n) || t === 'ecb rate decision') out.add('ECB Rate Decision');

@@ -42,17 +42,30 @@ def obs(event,country,unit,series,period,actual,previous,source,url,release_time
  "actual":actual,"previous":previous,"release_time":release_time,"observed_at":now(),"source_name":source,"source_url":url}
 
 def collect_bls():
- body,_=req("https://api.bls.gov/publicAPI/v2/timeseries/data/","POST",{"seriesid":list(BLS),"latest":True})
+ year=datetime.now(timezone.utc).year
+ body,_=req("https://api.bls.gov/publicAPI/v2/timeseries/data/","POST",{"seriesid":list(BLS),"startyear":str(year-1),"endyear":str(year)})
  j=json.loads(body);out=[]
- for s in j.get("Results",{}).get("series",[]):
-  sid=s.get("seriesID");meta=BLS.get(sid);rows=s.get("data") or []
+ for series in j.get("Results",{}).get("series",[]):
+  sid=series.get("seriesID");meta=BLS.get(sid)
   if not meta:continue
-  vals=[r for r in rows if r.get("period","").startswith("M") and r.get("period")!="M13"]
-  if not vals:continue
-  r=vals[0];p=vals[1] if len(vals)>1 else None
-  out.append(obs(meta[0],meta[1],meta[2],sid,f'{r.get("year")}-{r.get("period")}',num(r.get("value")),num(p.get("value")) if p else None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}",r.get("releaseTime") or r.get("release_time")))
+  vals=[r for r in series.get("data",[]) if r.get("period","").startswith("M") and r.get("period")!="M13" and num(r.get("value")) is not None]
+  vals=sorted(vals,key=lambda r:(int(r.get("year",0)),int(r.get("period","M00")[1:])))
+  if len(vals)<2:continue
+  r,p=vals[-1],vals[-2]
+  period=f'{r.get("year")}-{r.get("period")}'
+  if sid in ("CUUR0000SA0","CUUR0000SA0L1E"):
+   cur,prev=num(r.get("value")),num(p.get("value"))
+   yoybase=next((x for x in vals if int(x.get("year",0))==int(r.get("year"))-1 and x.get("period")==r.get("period")),None)
+   event="Core CPI m/m" if sid.endswith("L1E") else "CPI m/m"
+   out.append(obs(event,"US","%",sid+":MOM",period,round((cur/prev-1)*100,1),None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+   if yoybase:
+    event="Core CPI y/y" if sid.endswith("L1E") else "CPI y/y"
+    out.append(obs(event,"US","%",sid+":YOY",period,round((cur/num(yoybase.get("value"))-1)*100,1),None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+  elif sid=="CES0000000001":
+   out.append(obs("NFP","US","thousand jobs",sid+":CHANGE",period,round(num(r.get("value"))-num(p.get("value")),1),None,"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
+  else:
+   out.append(obs(meta[0],meta[1],meta[2],sid,period,num(r.get("value")),num(p.get("value")),"U.S. Bureau of Labor Statistics",f"https://data.bls.gov/timeseries/{sid}"))
  return out
-
 
 ECB_SERIES=[
  ("ECB Rate Decision","EU","%","MRR_FR","https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.MRR_FR.LEV?lastNObservations=3&format=csvdata"),
@@ -192,7 +205,7 @@ def load():
 def key(x):return "|".join(str(x.get(k,"")) for k in ("source_name","series_id","period","actual"))
 def main():
  ap=argparse.ArgumentParser();ap.add_argument("--write",action="store_true");args=ap.parse_args()
- old=load();allobs=list(old.get("observations",[]));health={}
+ old=load();allobs=[];health={}
  for name,fn in [("bls",collect_bls),("statcan",collect_statcan),("ons",collect_ons),("abs",collect_abs),("eurostat",collect_eurostat),("ecb",collect_ecb_rates)]:
   try:
    rows=fn();allobs.extend(rows);health[name]={"status":"ok","count":len(rows),"checked_at":now()}
