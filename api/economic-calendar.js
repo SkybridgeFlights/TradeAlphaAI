@@ -394,7 +394,7 @@ module.exports = async function handler(req, res) {
     const staticEvents = readStaticCache().events || [];
     enriched = mergeEvents(enriched.concat(historyEvents, staticEvents));
   } catch (_) {}
-  enriched = strictDateRangeFilter(enriched, from, to);
+  enriched = strictDateRangeFilter(enriched, from, to).filter(isCalendarGradeEvent);
   enriched.sort(function (a,b) { return String(a.event_time || '').localeCompare(String(b.event_time || '')); });
 
   const hasLive        = Object.values(providersMeta).some(function (p) { return p && p.status === 'ok'; });
@@ -597,7 +597,12 @@ function countWith(events, field) {
 function isCalendarGradeEvent(e) {
   const name = String(e.event_name || e.name || '').trim();
   const type = String(e.type || '').trim();
-  if (!name || type === 'Economic Release') return false;
+  if (!name) return false;
+  // FRED releases/dates is a date-only directory, not a live event-value feed.
+  // Never present its midnight placeholders as exact-time calendar events.
+  if (e.provider === 'fred' && (e.time_precision === 'date_only' || type === 'Economic Release')) return false;
+  // Generic titles from genuine calendar feeds are valid macro events even when
+  // our analytical taxonomy has no dedicated type yet.
   if (/^(CBOE Market Statistics|Coinbase Cryptocurrencies|Chicago Fed Advance Retail Trade Summary)$/i.test(name)) return false;
   return true;
 }
