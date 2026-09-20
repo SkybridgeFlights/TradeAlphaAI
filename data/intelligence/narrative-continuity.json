@@ -1,21 +1,17 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-19T13:49:56.422Z",
+  "generated_at": "2026-09-20T14:04:18.571Z",
   "status": "ok",
-  "total_snapshots": 30,
+  "total_snapshots": 31,
   "date_range": {
     "from": "2026-06-07",
-    "to": "2026-09-19"
+    "to": "2026-09-20"
   },
   "confidence_trend": {
     "direction": "stable",
-    "delta": 4,
+    "delta": -1,
     "latest": 67,
     "values": [
-      {
-        "date": "2026-08-07",
-        "confidence": 63
-      },
       {
         "date": "2026-08-08",
         "confidence": 68
@@ -31,6 +27,10 @@
       {
         "date": "2026-09-19",
         "confidence": 67
+      },
+      {
+        "date": "2026-09-20",
+        "confidence": 67
       }
     ]
   },
@@ -39,11 +39,12 @@
     "headline_ar": "انتقال حديث في النظام: growth_regime تحول من uncertain إلى growth_slowdown",
     "regime_stability": "transitioning",
     "confidence_trend": "stable",
-    "latest_date": "2026-09-19",
+    "latest_date": "2026-09-20",
     "latest_market_tone": "neutral",
-    "total_insights": 8,
+    "total_insights": 9,
     "has_recent_transition": true,
     "key_persistent_fields": [
+      "market_tone",
       "rate_path",
       "inflation_regime",
       "volatility_state"
@@ -52,32 +53,42 @@
   "insights": [
     {
       "type": "narrative_persistence",
+      "field": "market_tone",
+      "value": "neutral",
+      "run_days": 3,
+      "confidence": 65,
+      "reason_en": "Market tone \"neutral\" has persisted for 3 consecutive snapshots.",
+      "reason_ar": "نبرة السوق \"neutral\" استمرت على مدى 3 لقطات متتالية.",
+      "freshness_score": 100
+    },
+    {
+      "type": "narrative_persistence",
       "field": "rate_path",
       "value": "hold_bias",
-      "run_days": 30,
+      "run_days": 31,
       "confidence": 85,
-      "reason_en": "Rate path \"hold_bias\" has been stable for 30 consecutive periods.",
-      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 30 فترات متتالية.",
+      "reason_en": "Rate path \"hold_bias\" has been stable for 31 consecutive periods.",
+      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 31 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "inflation_regime",
       "value": "uncertain",
-      "run_days": 30,
+      "run_days": 31,
       "confidence": 80,
-      "reason_en": "Inflation regime \"uncertain\" has persisted for 30 consecutive periods.",
-      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 30 فترات متتالية.",
+      "reason_en": "Inflation regime \"uncertain\" has persisted for 31 consecutive periods.",
+      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 31 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "volatility_state",
       "value": "volatility_compression",
-      "run_days": 29,
+      "run_days": 30,
       "confidence": 80,
-      "reason_en": "Volatility state \"volatility_compression\" has been stable for 29 consecutive snapshots.",
-      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 29 لقطات متتالية.",
+      "reason_en": "Volatility state \"volatility_compression\" has been stable for 30 consecutive snapshots.",
+      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 30 لقطات متتالية.",
       "freshness_score": 100
     },
     {
@@ -106,12 +117,13 @@
       "type": "sector_leadership_transition",
       "direction": "fading",
       "sectors": [
-        "XLP",
-        "XLRE"
+        "XLK",
+        "XLF",
+        "XLI"
       ],
       "confidence": 60,
-      "reason_en": "Fading sector leadership: XLP, XLRE no longer appear in recent snapshots.",
-      "reason_ar": "تراجع القيادة القطاعية: XLP, XLRE لم تعد تظهر في اللقطات الأخيرة.",
+      "reason_en": "Fading sector leadership: XLK, XLF, XLI no longer appear in recent snapshots.",
+      "reason_ar": "تراجع القيادة القطاعية: XLK, XLF, XLI لم تعد تظهر في اللقطات الأخيرة.",
       "freshness_score": 100
     },
     {
@@ -127,13 +139,13 @@
     {
       "type": "crowded_theme",
       "themes": [
-        "The dominant macro regime is mixed.",
         "Market pricing 70% hold probability — rates expected stable ",
-        "Inflation trajectory unclear — Fed maintains data-dependent "
+        "Inflation trajectory unclear — Fed maintains data-dependent ",
+        "The dominant macro regime is mixed."
       ],
       "confidence": 55,
-      "reason_en": "Crowded narrative themes (repeated 4+ times in recent snapshots): The dominant macro regime is mixed.; Market pricing 70% hold probability — rates expected stable .",
-      "reason_ar": "روايات سوقية مكتظة (تكررت 4+ مرات في اللقطات الأخيرة): The dominant macro regime is mixed.; Market pricing 70% hold probability — rates expected stable .",
+      "reason_en": "Crowded narrative themes (repeated 4+ times in recent snapshots): Market pricing 70% hold probability — rates expected stable ; Inflation trajectory unclear — Fed maintains data-dependent .",
+      "reason_ar": "روايات سوقية مكتظة (تكررت 4+ مرات في اللقطات الأخيرة): Market pricing 70% hold probability — rates expected stable ; Inflation trajectory unclear — Fed maintains data-dependent .",
       "freshness_score": 100
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-19T13:49:56.810Z",
+  "updated_at": "2026-09-20T14:04:18.977Z",
   "verified": true,
-  "urgency": "elevated",
+  "urgency": "high",
   "pulse_shift": [],
   "quote_driven_changes": [],
   "new_contradictions": [],
@@ -10,36 +10,43 @@
     {
       "kind": "pressure-buildup",
       "track": "speculative_pressure",
-      "from": 3,
-      "to": 4,
-      "en": "speculative pressure built from 3/5 to 4/5.",
-      "ar": "تصاعد speculative pressure من 3/5 إلى 4/5."
+      "from": 4,
+      "to": 5,
+      "en": "speculative pressure built from 4/5 to 5/5.",
+      "ar": "تصاعد speculative pressure من 4/5 إلى 5/5."
     }
   ],
   "new_alerts": [
     {
       "kind": "new-alert",
-      "id": "macro-divergence-2026-09-19",
+      "id": "momentum-exhaustion-2026-09-20",
       "severity": "watch",
-      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
-      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
+      "en": "Momentum concentration extended — narrow megacap leadership for 3 straight sessions.",
+      "ar": "تركز الزخم ممتد — قيادة ضيقة للأسهم الكبرى منذ 3 جلسات متتالية."
+    },
+    {
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-09-20",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 3 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 3 جلسات متتالية."
     }
   ],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
-      "time": "2026-09-19T00:00:00Z",
+      "time": "2026-09-20T00:00:00Z",
       "minutes_until": 0
     },
     {
       "name": "FOMC Press Release",
-      "time": "2026-09-20T00:00:00Z",
-      "minutes_until": 610
+      "time": "2026-09-21T00:00:00Z",
+      "minutes_until": 596
     },
     {
       "name": "FOMC Press Release",
-      "time": "2026-09-21T00:00:00Z",
-      "minutes_until": 2050
+      "time": "2026-09-22T00:00:00Z",
+      "minutes_until": 2036
     }
   ],
   "wire_event": {
@@ -50,26 +57,33 @@
   "changes": [
     {
       "kind": "new-alert",
-      "id": "macro-divergence-2026-09-19",
+      "id": "momentum-exhaustion-2026-09-20",
       "severity": "watch",
-      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
-      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
+      "en": "Momentum concentration extended — narrow megacap leadership for 3 straight sessions.",
+      "ar": "تركز الزخم ممتد — قيادة ضيقة للأسهم الكبرى منذ 3 جلسات متتالية."
+    },
+    {
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-09-20",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 3 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 3 جلسات متتالية."
     },
     {
       "kind": "pressure-buildup",
       "track": "speculative_pressure",
-      "from": 3,
-      "to": 4,
-      "en": "speculative pressure built from 3/5 to 4/5.",
-      "ar": "تصاعد speculative pressure من 3/5 إلى 4/5."
+      "from": 4,
+      "to": 5,
+      "en": "speculative pressure built from 4/5 to 5/5.",
+      "ar": "تصاعد speculative pressure من 4/5 إلى 5/5."
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": false,
+    "eligible": true,
     "sent": false,
-    "suppression_reason": "urgency_below_high_threshold"
+    "suppression_reason": null
   },
   "snapshot": {
     "verified": true,
@@ -98,21 +112,38 @@
       "oil": -5.838840122300031
     },
     "alert_ids": [
-      "macro-divergence-2026-09-19"
+      "momentum-exhaustion-2026-09-20",
+      "macro-divergence-2026-09-20"
     ],
     "alerts": [
       {
-        "id": "macro-divergence-2026-09-19",
+        "id": "momentum-exhaustion-2026-09-20",
+        "type": "momentum-exhaustion",
+        "severity": "watch",
+        "date": "2026-09-20",
+        "headline_en": "Momentum concentration extended — narrow megacap leadership for 3 straight sessions.",
+        "headline_ar": "تركز الزخم ممتد — قيادة ضيقة للأسهم الكبرى منذ 3 جلسات متتالية.",
+        "derived_from": [
+          {
+            "dimension": "momentum_concentration",
+            "state": "narrow-megacap",
+            "streak": 3,
+            "date": "2026-09-20"
+          }
+        ]
+      },
+      {
+        "id": "macro-divergence-2026-09-20",
         "type": "macro-divergence",
         "severity": "watch",
-        "date": "2026-09-19",
-        "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
-        "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+        "date": "2026-09-20",
+        "headline_en": "Macro divergence persistent — gold vs dollar for 3 consecutive sessions.",
+        "headline_ar": "انفصال ماكرو مستمر منذ 3 جلسات متتالية.",
         "derived_from": [
           {
             "divergence": "gold-vs-dollar",
-            "streak": 2,
-            "date": "2026-09-19"
+            "streak": 3,
+            "date": "2026-09-20"
           }
         ]
       }
@@ -124,15 +155,11 @@
       "volatility_pressure": 0,
       "liquidity_pressure": 5,
       "defensive_pressure": 0,
-      "speculative_pressure": 4,
+      "speculative_pressure": 5,
       "concentration_pressure": 5,
       "yield_pressure": 1
     },
     "catalysts": [
-      {
-        "name": "FOMC Press Release",
-        "time": "2026-09-19T00:00:00Z"
-      },
       {
         "name": "FOMC Press Release",
         "time": "2026-09-20T00:00:00Z"
@@ -140,6 +167,10 @@
       {
         "name": "FOMC Press Release",
         "time": "2026-09-21T00:00:00Z"
+      },
+      {
+        "name": "FOMC Press Release",
+        "time": "2026-09-22T00:00:00Z"
       }
     ],
     "wire_event": {
