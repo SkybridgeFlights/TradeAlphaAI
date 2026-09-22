@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-22T14:36:52.604Z",
+  "updated_at": "2026-09-22T21:09:23.339Z",
   "run_date": "2026-09-22",
   "verified": true,
   "status": "verified",
@@ -8,23 +8,6 @@
   "memory_note_en": "Verified editorial memory advanced for this market date.",
   "memory_note_ar": "تقدمت الذاكرة التحريرية الموثقة لهذه الجلسة السوقية.",
   "narratives": [
-    {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "crowded",
-      "sessions": 4,
-      "inactive_sessions": 0,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-09-22",
-      "last_evaluated": "2026-09-22",
-      "active": true,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": [
-        "pulse:momentum_concentration=narrow-megacap",
-        "pulse:breadth_state=mixed"
-      ]
-    },
     {
       "id": "dollar-strength",
       "family": "macro",
@@ -54,7 +37,6 @@
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
       "evidence": [
-        "pulse:speculative_appetite=expanding",
         "pulse:ai_concentration_risk=elevated"
       ]
     },
@@ -87,9 +69,10 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:vix-equities",
-        "convergence:yields-growth",
-        "convergence:dollar-gold"
+        "convergence:dollar-gold",
+        "convergence:yields-dollar",
+        "convergence:liquidity-beta",
+        "convergence:yields-bonds"
       ]
     },
     {
@@ -105,13 +88,28 @@
       "en": "Gold continues to resist the pressure normally associated with dollar strength.",
       "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
       "evidence": [
-        "convergence:vix-equities",
-        "convergence:yields-growth",
-        "convergence:dollar-gold"
+        "convergence:dollar-gold",
+        "convergence:yields-dollar",
+        "convergence:liquidity-beta",
+        "convergence:yields-bonds"
       ]
     }
   ],
   "archive": [
+    {
+      "id": "narrow-leadership",
+      "family": "leadership",
+      "state": "invalidated",
+      "sessions": 3,
+      "inactive_sessions": 60,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-06-18",
+      "last_evaluated": "2026-09-22",
+      "active": false,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": []
+    },
     {
       "id": "volatility-compression",
       "family": "volatility",
@@ -138,20 +136,6 @@
       "active": false,
       "en": "Yield pressure remains a constraint on long-duration assets.",
       "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
-      "evidence": []
-    },
-    {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "invalidated",
-      "sessions": 3,
-      "inactive_sessions": 59,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-06-18",
-      "last_evaluated": "2026-09-18",
-      "active": false,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
       "evidence": []
     },
     {
@@ -197,23 +181,7 @@
       "evidence": []
     }
   ],
-  "expectations": [
-    {
-      "id": "narrow-leadership:breadth-broadening",
-      "narrative_id": "narrow-leadership",
-      "status": "monitoring",
-      "opened_on": "2026-09-18",
-      "opened_at_session": 4,
-      "evaluated_on": "2026-09-22",
-      "expected_dimension": "breadth_state",
-      "expected_values": [
-        "confirming"
-      ],
-      "observed_value": "mixed",
-      "en": "Breadth confirmation remains an open confirmation test.",
-      "ar": "يبقى تأكيد اتساع المشاركة اختباراً مفتوحاً للتأكيد."
-    }
-  ],
+  "expectations": [],
   "failed_expectations": [],
   "unresolved_tensions": [
     {
@@ -245,9 +213,10 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:vix-equities",
-        "convergence:yields-growth",
-        "convergence:dollar-gold"
+        "convergence:dollar-gold",
+        "convergence:yields-dollar",
+        "convergence:liquidity-beta",
+        "convergence:yields-bonds"
       ]
     },
     {
@@ -263,9 +232,10 @@
       "en": "Gold continues to resist the pressure normally associated with dollar strength.",
       "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
       "evidence": [
-        "convergence:vix-equities",
-        "convergence:yields-growth",
-        "convergence:dollar-gold"
+        "convergence:dollar-gold",
+        "convergence:yields-dollar",
+        "convergence:liquidity-beta",
+        "convergence:yields-bonds"
       ]
     }
   ],
@@ -292,9 +262,9 @@
     }
   ],
   "market_character": {
-    "id": "fragile-optimism",
-    "en": "Fragile optimism",
-    "ar": "تفاؤل هش"
+    "id": "unresolved-tension",
+    "en": "Unresolved tension",
+    "ar": "توتر غير محسوم"
   },
   "current_focus": [
     {
@@ -304,14 +274,6 @@
       "sessions": 69,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
-    },
-    {
-      "kind": "narrative",
-      "id": "narrow-leadership",
-      "state": "crowded",
-      "sessions": 4,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة."
     },
     {
       "kind": "narrative",
@@ -328,6 +290,14 @@
       "sessions": 6,
       "en": "Gold continues to resist the pressure normally associated with dollar strength.",
       "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار."
+    },
+    {
+      "kind": "narrative",
+      "id": "cross-asset-conflict",
+      "state": "unresolved",
+      "sessions": 3,
+      "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
+      "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي."
     },
     {
       "kind": "underpriced-memory",
