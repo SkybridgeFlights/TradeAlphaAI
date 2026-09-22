@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "updated_at": "2026-09-21T16:22:26.207Z",
+  "updated_at": "2026-09-22T14:36:43.805Z",
   "source": "forexfactory",
   "provider_metadata": {
     "endpoint": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
@@ -9,11 +9,11 @@
     "active_sources": [
       {
         "name": "forexfactory",
-        "count": 71
+        "count": 73
       },
       {
         "name": "fred",
-        "count": 129
+        "count": 128
       }
     ],
     "attempts": [
@@ -23,15 +23,15 @@
         "endpoint": "https://financialmodelingprep.com/stable/economic-calendar",
         "reason": "HTTP 402 from https://financialmodelingprep.com/stable/economic-calendar",
         "event_count": 0,
-        "last_checked": "2026-09-21T16:22:22.939Z"
+        "last_checked": "2026-09-22T14:36:41.804Z"
       },
       {
         "provider": "forexfactory",
         "status": "ok",
         "endpoint": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
         "reason": "",
-        "event_count": 71,
-        "last_checked": "2026-09-21T16:22:23.541Z"
+        "event_count": 73,
+        "last_checked": "2026-09-22T14:36:41.930Z"
       },
       {
         "provider": "finnhub",
@@ -39,7 +39,7 @@
         "endpoint": "https://finnhub.io/api/v1/calendar/economic",
         "reason": "HTTP 403 from https://finnhub.io/api/v1/calendar/economic",
         "event_count": 0,
-        "last_checked": "2026-09-21T16:22:23.927Z"
+        "last_checked": "2026-09-22T14:36:42.059Z"
       },
       {
         "provider": "alphavantage",
@@ -47,15 +47,15 @@
         "endpoint": "https://www.alphavantage.co/query",
         "reason": "api_error",
         "event_count": 0,
-        "last_checked": "2026-09-21T16:22:24.089Z"
+        "last_checked": "2026-09-22T14:36:42.222Z"
       },
       {
         "provider": "fred",
         "status": "ok",
         "endpoint": "https://api.stlouisfed.org/fred/releases/dates",
         "reason": "",
-        "event_count": 129,
-        "last_checked": "2026-09-21T16:22:26.152Z"
+        "event_count": 128,
+        "last_checked": "2026-09-22T14:36:43.784Z"
       }
     ]
   },
@@ -106,310 +106,6 @@
   },
   "events": [
     {
-      "id": "economic-calendar::fred::us::cboe-market-statistics::20260914T000000",
-      "event_name": "CBOE Market Statistics",
-      "name": "CBOE Market Statistics",
-      "type": "BoE Rate Decision",
-      "country": "US",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-14T00:00:00Z",
-      "date": "2026-09-14",
-      "timezone": "UTC",
-      "time_precision": "date_only",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
-      "provider": "fred",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "tags": [
-        "release-date-only",
-        "fred-release-200"
-      ],
-      "merged_sources": [
-        "fred"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "CBOE Market Statistics was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::fred::us::fomc-press-release::20260914T000000",
-      "event_name": "FOMC Press Release",
-      "name": "FOMC Press Release",
-      "type": "FOMC Rate Decision",
-      "country": "US",
-      "importance": "high",
-      "impact_level": "high",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-14T00:00:00Z",
-      "date": "2026-09-14",
-      "timezone": "UTC",
-      "time_precision": "date_only",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
-      "provider": "fred",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "tags": [
-        "release-date-only",
-        "fred-release-101"
-      ],
-      "merged_sources": [
-        "fred"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "FOMC Press Release was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::fred::us::key-ecb-interest-rates::20260914T000000",
-      "event_name": "Key ECB Interest Rates",
-      "name": "Key ECB Interest Rates",
-      "type": "ECB Rate Decision",
-      "country": "US",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-14T00:00:00Z",
-      "date": "2026-09-14",
-      "timezone": "UTC",
-      "time_precision": "date_only",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
-      "provider": "fred",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "tags": [
-        "release-date-only",
-        "fred-release-484"
-      ],
-      "merged_sources": [
-        "fred"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "Key ECB Interest Rates was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::fred::us::state-unemployment-insurance-weekly-claims-report::20260914T000000",
-      "event_name": "State Unemployment Insurance Weekly Claims Report",
-      "name": "State Unemployment Insurance Weekly Claims Report",
-      "type": "Unemployment Rate",
-      "country": "US",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-14T00:00:00Z",
-      "date": "2026-09-14",
-      "timezone": "UTC",
-      "time_precision": "date_only",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "IWM",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
-      "provider": "fred",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "tags": [
-        "release-date-only",
-        "fred-release-469"
-      ],
-      "merged_sources": [
-        "fred"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "neutral",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "State Unemployment Insurance Weekly Claims Report was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::us::us-13-week-t-bill-auction::20260914T153000",
-      "event_name": "US 13-Week T-Bill Auction",
-      "name": "US 13-Week T-Bill Auction",
-      "type": "Economic Release",
-      "country": "US",
-      "importance": "low",
-      "impact_level": "low",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-14T15:30:00.000Z",
-      "date": "2026-09-14",
-      "timezone": "UTC",
-      "time_precision": "time_estimate",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "U.S. Treasury",
-      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
-      "provider": "schedule_fallback",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "tags": [
-        "schedule-estimate"
-      ],
-      "confirmed": false,
-      "merged_sources": [
-        "schedule_fallback"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "US 13-Week T-Bill Auction was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::us::us-26-week-t-bill-auction::20260914T153000",
-      "event_name": "US 26-Week T-Bill Auction",
-      "name": "US 26-Week T-Bill Auction",
-      "type": "Economic Release",
-      "country": "US",
-      "importance": "low",
-      "impact_level": "low",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-14T15:30:00.000Z",
-      "date": "2026-09-14",
-      "timezone": "UTC",
-      "time_precision": "time_estimate",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "U.S. Treasury",
-      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
-      "provider": "schedule_fallback",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "tags": [
-        "schedule-estimate"
-      ],
-      "confirmed": false,
-      "merged_sources": [
-        "schedule_fallback"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "US 26-Week T-Bill Auction was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
       "id": "economic-calendar::fred::us::cboe-market-statistics::20260915T000000",
       "event_name": "CBOE Market Statistics",
       "name": "CBOE Market Statistics",
@@ -440,7 +136,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -492,7 +188,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -544,7 +240,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -593,7 +289,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -643,7 +339,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -699,7 +395,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -751,7 +447,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -803,7 +499,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -855,7 +551,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -905,7 +601,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -954,7 +650,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1004,7 +700,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -1060,7 +756,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -1116,7 +812,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1166,7 +862,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1218,7 +914,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve",
       "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1270,7 +966,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1322,7 +1018,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1374,7 +1070,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1424,7 +1120,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1474,7 +1170,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -1530,7 +1226,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1580,7 +1276,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -1638,7 +1334,7 @@
       "post_event_regime": null,
       "source_name": "BoE",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1689,7 +1385,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -1741,7 +1437,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1793,7 +1489,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1845,7 +1541,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1895,7 +1591,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1945,7 +1641,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -1997,7 +1693,7 @@
       "post_event_regime": null,
       "source_name": "Bank of Japan",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -2053,7 +1749,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -2111,7 +1807,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -2161,7 +1857,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2213,7 +1909,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -2262,7 +1958,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2278,6 +1974,58 @@
       "policy_tone": "event_specific",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "Rightmove HPI m/m was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::fred::us::cboe-market-statistics::20260921T000000",
+      "event_name": "CBOE Market Statistics",
+      "name": "CBOE Market Statistics",
+      "type": "BoE Rate Decision",
+      "country": "US",
+      "importance": "medium",
+      "impact_level": "medium",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-09-21T00:00:00Z",
+      "date": "2026-09-21",
+      "timezone": "UTC",
+      "time_precision": "date_only",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
+      "provider": "fred",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "tags": [
+        "release-date-only",
+        "fred-release-200"
+      ],
+      "merged_sources": [
+        "fred"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "CBOE Market Statistics was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::fred::us::fomc-press-release::20260921T000000",
@@ -2310,7 +2058,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -2362,7 +2110,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -2412,7 +2160,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -2464,7 +2212,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -2484,58 +2232,6 @@
       "policy_tone": "event_specific",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "Swiss National Bank Monthly Statistical Bulletin was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::fred::us::cboe-market-statistics::20260921T000000",
-      "event_name": "CBOE Market Statistics",
-      "name": "CBOE Market Statistics",
-      "type": "BoE Rate Decision",
-      "country": "US",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-21T00:00:00Z",
-      "date": "2026-09-21",
-      "timezone": "UTC",
-      "time_precision": "date_only",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
-      "provider": "fred",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "tags": [
-        "release-date-only",
-        "fred-release-200"
-      ],
-      "merged_sources": [
-        "fred"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "CBOE Market Statistics was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::forexfactory::nz::credit-card-spending-y-y::20260921T030000",
@@ -2565,7 +2261,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2610,7 +2306,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2658,7 +2354,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2706,7 +2402,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2754,7 +2450,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2799,7 +2495,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2848,7 +2544,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -2900,7 +2596,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -2916,58 +2612,6 @@
       "policy_tone": "event_specific",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "RBA Assist Gov Hunter Speaks was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
-    },
-    {
-      "id": "economic-calendar::fred::us::cboe-market-statistics::20260922T000000",
-      "event_name": "CBOE Market Statistics",
-      "name": "CBOE Market Statistics",
-      "type": "BoE Rate Decision",
-      "country": "US",
-      "importance": "medium",
-      "impact_level": "medium",
-      "forecast": null,
-      "previous": null,
-      "actual": null,
-      "unit": null,
-      "event_time": "2026-09-22T00:00:00Z",
-      "date": "2026-09-22",
-      "timezone": "UTC",
-      "time_precision": "date_only",
-      "status": "confirmed",
-      "market_expectation": null,
-      "historical_asset_sensitivity": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "pre_event_regime": null,
-      "post_event_regime": null,
-      "source_name": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
-      "provider": "fred",
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "tags": [
-        "release-date-only",
-        "fred-release-200"
-      ],
-      "merged_sources": [
-        "fred"
-      ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "CBOE Market Statistics was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::fred::us::fomc-press-release::20260922T000000",
@@ -3000,7 +2644,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -3052,7 +2696,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -3072,6 +2716,58 @@
       "policy_tone": "event_specific",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "Key ECB Interest Rates was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::fred::us::cboe-market-statistics::20260922T000000",
+      "event_name": "CBOE Market Statistics",
+      "name": "CBOE Market Statistics",
+      "type": "BoE Rate Decision",
+      "country": "US",
+      "importance": "medium",
+      "impact_level": "medium",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-09-22T00:00:00Z",
+      "date": "2026-09-22",
+      "timezone": "UTC",
+      "time_precision": "date_only",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
+      "provider": "fred",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "tags": [
+        "release-date-only",
+        "fred-release-200"
+      ],
+      "merged_sources": [
+        "fred"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "CBOE Market Statistics was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::forexfactory::au::rba-gov-bullock-speaks::20260922T031000",
@@ -3104,7 +2800,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3129,7 +2825,7 @@
       "country": "GB",
       "importance": "low",
       "impact_level": "low",
-      "forecast": "15.4B",
+      "forecast": "15.2B",
       "previous": "1.8B",
       "actual": null,
       "unit": null,
@@ -3149,7 +2845,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3194,7 +2890,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3219,7 +2915,7 @@
       "country": "GB",
       "importance": "low",
       "impact_level": "low",
-      "forecast": -34,
+      "forecast": -33,
       "previous": -25,
       "actual": null,
       "unit": null,
@@ -3239,7 +2935,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3287,7 +2983,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3332,7 +3028,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3378,7 +3074,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -3398,6 +3094,51 @@
       "policy_tone": "neutral",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "Canada Retail Sales was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::forexfactory::us::president-trump-speaks::20260922T135500",
+      "event_name": "President Trump Speaks",
+      "name": "President Trump Speaks",
+      "type": "Economic Release",
+      "country": "US",
+      "importance": "medium",
+      "impact_level": "medium",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-09-22T13:55:00.000Z",
+      "date": "2026-09-22",
+      "timezone": "America/New_York",
+      "time_precision": "date_time",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "ForexFactory Calendar",
+      "source_url": "https://www.forexfactory.com/calendar",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
+      "provider": "forexfactory",
+      "data_capabilities": {
+        "forecasts": true,
+        "actuals": true,
+        "precise_time": true
+      },
+      "tags": [],
+      "merged_sources": [
+        "forexfactory"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "President Trump Speaks was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::forexfactory::eu::consumer-confidence::20260922T140000",
@@ -3427,7 +3168,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3452,7 +3193,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": 5,
+      "forecast": 2,
       "previous": 4,
       "actual": null,
       "unit": null,
@@ -3472,7 +3213,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3520,7 +3261,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3568,7 +3309,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3616,7 +3357,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3661,7 +3402,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3706,7 +3447,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3751,7 +3492,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -3799,7 +3540,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -3851,7 +3592,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -3903,7 +3644,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -3953,7 +3694,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -4008,7 +3749,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4033,7 +3774,7 @@
       "country": "EU",
       "importance": "medium",
       "impact_level": "medium",
-      "forecast": 48.4,
+      "forecast": 48.3,
       "previous": 48.4,
       "actual": null,
       "unit": null,
@@ -4053,7 +3794,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4078,7 +3819,7 @@
       "country": "EU",
       "importance": "medium",
       "impact_level": "medium",
-      "forecast": 54,
+      "forecast": 54.1,
       "previous": 54.1,
       "actual": null,
       "unit": null,
@@ -4098,7 +3839,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4143,7 +3884,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4188,7 +3929,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4233,7 +3974,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4278,7 +4019,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4327,7 +4068,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4376,7 +4117,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -4405,7 +4146,7 @@
       "country": "GB",
       "importance": "medium",
       "impact_level": "medium",
-      "forecast": 51.4,
+      "forecast": 51.5,
       "previous": 51.5,
       "actual": null,
       "unit": null,
@@ -4425,7 +4166,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4470,7 +4211,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4515,7 +4256,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4540,7 +4281,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": 53.4,
+      "forecast": 53.6,
       "previous": 53.2,
       "actual": null,
       "unit": null,
@@ -4560,7 +4301,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4585,7 +4326,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": 56,
+      "forecast": 55.8,
       "previous": 56.8,
       "actual": null,
       "unit": null,
@@ -4605,7 +4346,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4653,7 +4394,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4678,7 +4419,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": null,
+      "forecast": "-0.6M",
       "previous": "-0.6M",
       "actual": null,
       "unit": null,
@@ -4698,7 +4439,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4709,11 +4450,11 @@
       "merged_sources": [
         "forexfactory"
       ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "Crude Oil Inventories was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+      "surprise_score": null,
+      "surprise_direction": "pending",
+      "policy_tone": "unresolved",
+      "expectation_confirmation": "pending",
+      "reaction_interpretation": "Awaiting a sourced actual and forecast comparison."
     },
     {
       "id": "economic-calendar::fred::us::cboe-market-statistics::20260924T000000",
@@ -4746,7 +4487,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -4798,7 +4539,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -4850,7 +4591,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -4900,7 +4641,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -4949,7 +4690,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -4994,7 +4735,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5019,7 +4760,7 @@
       "country": "AU",
       "importance": "high",
       "impact_level": "high",
-      "forecast": "20.9K",
+      "forecast": "22.5K",
       "previous": "-15.8K",
       "actual": null,
       "unit": null,
@@ -5039,7 +4780,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5085,7 +4826,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5133,7 +4874,7 @@
       "post_event_regime": null,
       "source_name": "SNB",
       "source_url": "https://www.snb.ch/en/iabout/monpol/id/monpol_current",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5186,7 +4927,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5234,7 +4975,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5282,7 +5023,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5330,7 +5071,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5355,7 +5096,7 @@
       "country": "EU",
       "importance": "low",
       "impact_level": "low",
-      "forecast": 89,
+      "forecast": 89.1,
       "previous": 88.8,
       "actual": null,
       "unit": null,
@@ -5375,7 +5116,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5423,7 +5164,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5468,7 +5209,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5493,7 +5234,7 @@
       "country": "GB",
       "importance": "low",
       "impact_level": "low",
-      "forecast": -50,
+      "forecast": -42,
       "previous": -48,
       "actual": null,
       "unit": null,
@@ -5513,7 +5254,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5559,7 +5300,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5605,7 +5346,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5651,7 +5392,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5676,7 +5417,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": "-259B",
+      "forecast": "-258B",
       "previous": "-227B",
       "actual": null,
       "unit": null,
@@ -5696,7 +5437,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5712,6 +5453,54 @@
       "policy_tone": "unresolved",
       "expectation_confirmation": "pending",
       "reaction_interpretation": "Awaiting a sourced actual and forecast comparison."
+    },
+    {
+      "id": "economic-calendar::forexfactory::us::fomc-member-barkin-speaks::20260924T123000",
+      "event_name": "FOMC Member Barkin Speaks",
+      "name": "FOMC Member Barkin Speaks",
+      "type": "FOMC Rate Decision",
+      "country": "US",
+      "importance": "low",
+      "impact_level": "low",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-09-24T12:30:00.000Z",
+      "date": "2026-09-24",
+      "timezone": "America/New_York",
+      "time_precision": "date_time",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "ForexFactory Calendar",
+      "source_url": "https://www.forexfactory.com/calendar",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
+      "provider": "forexfactory",
+      "data_capabilities": {
+        "forecasts": true,
+        "actuals": true,
+        "precise_time": true
+      },
+      "tags": [],
+      "merged_sources": [
+        "forexfactory"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "FOMC Member Barkin Speaks was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::schedule_fallback::us::initial-jobless-claims::20260924T123000",
@@ -5742,7 +5531,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -5794,7 +5583,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5839,7 +5628,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5884,7 +5673,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5929,7 +5718,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5974,7 +5763,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -5999,7 +5788,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": "619K",
+      "forecast": "615K",
       "previous": "607K",
       "actual": null,
       "unit": null,
@@ -6019,7 +5808,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6067,7 +5856,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6092,7 +5881,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": null,
+      "forecast": "52B",
       "previous": "44B",
       "actual": null,
       "unit": null,
@@ -6112,7 +5901,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6123,11 +5912,11 @@
       "merged_sources": [
         "forexfactory"
       ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "event_specific",
-      "expectation_confirmation": "unverified",
-      "reaction_interpretation": "Natural Gas Storage was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+      "surprise_score": null,
+      "surprise_direction": "pending",
+      "policy_tone": "unresolved",
+      "expectation_confirmation": "pending",
+      "reaction_interpretation": "Awaiting a sourced actual and forecast comparison."
     },
     {
       "id": "economic-calendar::schedule_fallback::jp::japan-trade-balance::20260924T230000",
@@ -6157,7 +5946,7 @@
       "post_event_regime": null,
       "source_name": "Japan",
       "source_url": "https://www.customs.go.jp/toukei/info/index_e.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6206,7 +5995,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6254,7 +6043,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -6306,7 +6095,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -6358,7 +6147,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -6408,7 +6197,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -6460,7 +6249,7 @@
       "post_event_regime": null,
       "source_name": "BoJ",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6489,7 +6278,7 @@
       "country": "JP",
       "importance": "low",
       "impact_level": "low",
-      "forecast": null,
+      "forecast": 1.5,
       "previous": 1.6,
       "actual": null,
       "unit": null,
@@ -6510,7 +6299,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6521,11 +6310,11 @@
       "merged_sources": [
         "forexfactory"
       ],
-      "surprise_score": 0,
-      "surprise_direction": "near_consensus",
-      "policy_tone": "neutral",
+      "surprise_score": -100,
+      "surprise_direction": "softer_or_weaker",
+      "policy_tone": "dovish_impulse",
       "expectation_confirmation": "unverified",
-      "reaction_interpretation": "BOJ Core CPI y/y was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+      "reaction_interpretation": "BOJ Core CPI y/y missed the policy-sensitive consensus in a direction that could ease rate pressure; confirmation requires lower yields and broader risk participation rather than an isolated equity reaction."
     },
     {
       "id": "economic-calendar::forexfactory::eu::german-gfk-consumer-climate::20260925T060000",
@@ -6555,7 +6344,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6600,7 +6389,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6645,7 +6434,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6690,7 +6479,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.ifo.de/en",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6742,7 +6531,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6790,7 +6579,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6815,7 +6604,7 @@
       "country": "US",
       "importance": "low",
       "impact_level": "low",
-      "forecast": 0.5,
+      "forecast": 0.6,
       "previous": 0.4,
       "actual": null,
       "unit": null,
@@ -6835,7 +6624,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6880,7 +6669,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -6926,7 +6715,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -6976,7 +6765,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7005,7 +6794,7 @@
       "country": "US",
       "importance": "medium",
       "impact_level": "medium",
-      "forecast": 47.5,
+      "forecast": 47.4,
       "previous": 47.8,
       "actual": null,
       "unit": null,
@@ -7025,7 +6814,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -7070,7 +6859,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -7118,7 +6907,7 @@
       "post_event_regime": null,
       "source_name": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "fetched_at": "2026-09-21T16:22:23.538Z",
+      "fetched_at": "2026-09-22T14:36:41.926Z",
       "provider": "forexfactory",
       "data_capabilities": {
         "forecasts": true,
@@ -7166,7 +6955,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7218,7 +7007,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7270,7 +7059,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7322,7 +7111,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7374,7 +7163,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7424,7 +7213,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7473,7 +7262,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7522,7 +7311,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7574,7 +7363,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7626,7 +7415,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7678,7 +7467,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7730,7 +7519,7 @@
       "post_event_regime": null,
       "source_name": "RBA",
       "source_url": "https://www.rba.gov.au/monetary-policy/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -7783,7 +7572,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7833,7 +7622,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7885,7 +7674,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7935,7 +7724,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -7985,7 +7774,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8035,7 +7824,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8085,7 +7874,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8137,7 +7926,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8187,7 +7976,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8237,7 +8026,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8287,7 +8076,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8337,7 +8126,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8387,7 +8176,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://ec.europa.eu/eurostat",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8437,7 +8226,7 @@
       "post_event_regime": null,
       "source_name": "Tokyo",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8489,7 +8278,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8541,7 +8330,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8593,7 +8382,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8643,7 +8432,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8692,7 +8481,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8742,7 +8531,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -8798,7 +8587,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8848,7 +8637,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -8900,7 +8689,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -8950,7 +8739,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9002,7 +8791,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9054,7 +8843,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9104,7 +8893,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9154,7 +8943,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9204,7 +8993,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9254,7 +9043,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -9312,7 +9101,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9361,7 +9150,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9411,7 +9200,7 @@
       "post_event_regime": null,
       "source_name": "Swiss",
       "source_url": "https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9463,7 +9252,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9515,7 +9304,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9567,7 +9356,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9619,7 +9408,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9669,7 +9458,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/services/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9718,7 +9507,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9767,7 +9556,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -9819,7 +9608,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9871,7 +9660,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9923,7 +9712,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -9975,7 +9764,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10027,7 +9816,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10079,7 +9868,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10131,7 +9920,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10180,7 +9969,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://english.customs.gov.cn/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10229,7 +10018,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.destatis.de/EN/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10281,7 +10070,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10333,7 +10122,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10385,7 +10174,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10435,7 +10224,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10485,7 +10274,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10537,7 +10326,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10589,7 +10378,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10641,7 +10430,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10691,7 +10480,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10741,7 +10530,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10790,7 +10579,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10842,7 +10631,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10894,7 +10683,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -10943,7 +10732,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.zew.de/en",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -10995,7 +10784,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11047,7 +10836,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11099,7 +10888,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11149,7 +10938,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -11198,7 +10987,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -11247,7 +11036,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -11299,7 +11088,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11351,7 +11140,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11403,7 +11192,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11453,7 +11242,7 @@
       "post_event_regime": null,
       "source_name": "Destatis (Federal Statistical Office)",
       "source_url": "https://www.destatis.de/EN/Home/_node.html",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -11511,7 +11300,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11561,7 +11350,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11611,7 +11400,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11663,7 +11452,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11715,7 +11504,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11765,7 +11554,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11815,7 +11604,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -11865,7 +11654,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -11915,7 +11704,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -11965,7 +11754,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12017,7 +11806,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12069,7 +11858,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12121,7 +11910,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12171,7 +11960,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12221,7 +12010,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12270,7 +12059,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -12320,7 +12109,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -12376,7 +12165,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -12432,7 +12221,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -12484,7 +12273,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12536,7 +12325,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12588,7 +12377,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12638,7 +12427,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12687,7 +12476,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -12737,7 +12526,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -12787,7 +12576,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -12845,7 +12634,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12895,7 +12684,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -12947,7 +12736,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -12999,7 +12788,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13051,7 +12840,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13103,7 +12892,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13153,7 +12942,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -13202,7 +12991,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -13251,7 +13040,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -13303,7 +13092,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13355,7 +13144,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13407,7 +13196,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13457,7 +13246,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13507,7 +13296,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13557,7 +13346,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -13615,7 +13404,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13667,7 +13456,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13719,7 +13508,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "fetched_at": "2026-09-21T16:22:26.147Z",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
       "provider": "fred",
       "data_capabilities": {
         "forecasts": false,
@@ -13739,6 +13528,58 @@
       "policy_tone": "event_specific",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "Key ECB Interest Rates was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::fred::us::swiss-national-bank-monthly-statistical-bulletin::20261021T000000",
+      "event_name": "Swiss National Bank Monthly Statistical Bulletin",
+      "name": "Swiss National Bank Monthly Statistical Bulletin",
+      "type": "SNB Rate Decision",
+      "country": "US",
+      "importance": "medium",
+      "impact_level": "medium",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-10-21T00:00:00Z",
+      "date": "2026-10-21",
+      "timezone": "UTC",
+      "time_precision": "date_only",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
+      "provider": "fred",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "tags": [
+        "release-date-only",
+        "fred-release-305"
+      ],
+      "merged_sources": [
+        "fred"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "Swiss National Bank Monthly Statistical Bulletin was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::global_acquisition::gb::united-kingdom-cpi::20261021T070000",
@@ -13769,7 +13610,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -13825,7 +13666,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -13881,7 +13722,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -13901,6 +13742,110 @@
       "policy_tone": "neutral",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "Retail Sales was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::fred::us::cboe-market-statistics::20261022T000000",
+      "event_name": "CBOE Market Statistics",
+      "name": "CBOE Market Statistics",
+      "type": "BoE Rate Decision",
+      "country": "US",
+      "importance": "medium",
+      "impact_level": "medium",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-10-22T00:00:00Z",
+      "date": "2026-10-22",
+      "timezone": "UTC",
+      "time_precision": "date_only",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
+      "provider": "fred",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "tags": [
+        "release-date-only",
+        "fred-release-200"
+      ],
+      "merged_sources": [
+        "fred"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "CBOE Market Statistics was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::fred::us::fomc-press-release::20261022T000000",
+      "event_name": "FOMC Press Release",
+      "name": "FOMC Press Release",
+      "type": "FOMC Rate Decision",
+      "country": "US",
+      "importance": "high",
+      "impact_level": "high",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-10-22T00:00:00Z",
+      "date": "2026-10-22",
+      "timezone": "UTC",
+      "time_precision": "date_only",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "fetched_at": "2026-09-22T14:36:43.776Z",
+      "provider": "fred",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "tags": [
+        "release-date-only",
+        "fred-release-101"
+      ],
+      "merged_sources": [
+        "fred"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "FOMC Press Release was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     },
     {
       "id": "economic-calendar::schedule_fallback::us::initial-jobless-claims::20261022T123000",
@@ -13931,7 +13876,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -13981,7 +13926,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14030,7 +13975,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14079,7 +14024,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14128,7 +14073,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14177,7 +14122,7 @@
       "post_event_regime": null,
       "source_name": "Japan",
       "source_url": "https://www.customs.go.jp/toukei/info/index_e.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14226,7 +14171,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.ifo.de/en",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14275,7 +14220,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14324,7 +14269,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14374,7 +14319,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14424,7 +14369,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -14482,7 +14427,7 @@
       "post_event_regime": null,
       "source_name": "BoC",
       "source_url": "https://www.bankofcanada.ca/core-functions/monetary-policy/key-interest-rate/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14535,7 +14480,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve",
       "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14587,7 +14532,7 @@
       "post_event_regime": null,
       "source_name": "ECB",
       "source_url": "https://www.ecb.europa.eu/press/calendars/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14638,7 +14583,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14688,7 +14633,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/gdp/gross-domestic-product",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14740,7 +14685,7 @@
       "post_event_regime": null,
       "source_name": "BoJ",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14791,7 +14736,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://ec.europa.eu/eurostat",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14841,7 +14786,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14891,7 +14836,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14941,7 +14886,7 @@
       "post_event_regime": null,
       "source_name": "Tokyo",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -14990,7 +14935,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15040,7 +14985,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15089,7 +15034,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15138,7 +15083,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15187,7 +15132,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15239,7 +15184,7 @@
       "post_event_regime": null,
       "source_name": "RBA",
       "source_url": "https://www.rba.gov.au/monetary-policy/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15290,7 +15235,7 @@
       "post_event_regime": null,
       "source_name": "Swiss",
       "source_url": "https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15340,7 +15285,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/services/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15390,7 +15335,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -15448,7 +15393,7 @@
       "post_event_regime": null,
       "source_name": "BoE",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15499,7 +15444,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15549,7 +15494,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -15605,7 +15550,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15655,7 +15600,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15704,7 +15649,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://english.customs.gov.cn/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15753,7 +15698,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.destatis.de/EN/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15803,7 +15748,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15852,7 +15797,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -15902,7 +15847,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -15957,7 +15902,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16006,7 +15951,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16056,7 +16001,7 @@
       "post_event_regime": null,
       "source_name": "Destatis (Federal Statistical Office)",
       "source_url": "https://www.destatis.de/EN/Home/_node.html",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -16111,7 +16056,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.zew.de/en",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16161,7 +16106,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -16217,7 +16162,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16267,7 +16212,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16317,7 +16262,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16367,7 +16312,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16416,7 +16361,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16465,7 +16410,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16515,7 +16460,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16564,7 +16509,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16613,7 +16558,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16663,7 +16608,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16713,7 +16658,7 @@
       "post_event_regime": null,
       "source_name": "National Bureau of Statistics of China",
       "source_url": "https://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -16769,7 +16714,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -16825,7 +16770,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -16881,7 +16826,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -16937,7 +16882,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -16987,7 +16932,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -17043,7 +16988,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17093,7 +17038,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -17149,7 +17094,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -17205,7 +17150,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17255,7 +17200,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -17311,7 +17256,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/retail_and_wholesale",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17360,7 +17305,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17409,7 +17354,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17458,7 +17403,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://www.spglobal.com/marketintelligence/en/mi/products/pmi.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17507,7 +17452,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17556,7 +17501,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17605,7 +17550,7 @@
       "post_event_regime": null,
       "source_name": "Japan",
       "source_url": "https://www.customs.go.jp/toukei/info/index_e.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17655,7 +17600,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -17710,7 +17655,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.ifo.de/en",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17760,7 +17705,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17810,7 +17755,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17860,7 +17805,7 @@
       "post_event_regime": null,
       "source_name": "Bureau of Economic Analysis",
       "source_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17910,7 +17855,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -17960,7 +17905,7 @@
       "post_event_regime": null,
       "source_name": "Eurozone",
       "source_url": "https://ec.europa.eu/eurostat",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18009,7 +17954,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18058,7 +18003,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18108,7 +18053,7 @@
       "post_event_regime": null,
       "source_name": "Tokyo",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18157,7 +18102,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18207,7 +18152,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/pmi/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18256,7 +18201,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "https://www.pmi.spglobal.com/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18306,7 +18251,7 @@
       "post_event_regime": null,
       "source_name": "Swiss",
       "source_url": "https://www.bfs.admin.ch/bfs/en/home/statistics/prices.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18356,7 +18301,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -18412,7 +18357,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18462,7 +18407,7 @@
       "post_event_regime": null,
       "source_name": "Institute for Supply Management",
       "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/services/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18512,7 +18457,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -18568,7 +18513,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18618,7 +18563,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18667,7 +18612,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://english.customs.gov.cn/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18716,7 +18661,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.destatis.de/EN/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18765,7 +18710,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18814,7 +18759,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18866,7 +18811,7 @@
       "post_event_regime": null,
       "source_name": "RBA",
       "source_url": "https://www.rba.gov.au/monetary-policy/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -18917,7 +18862,7 @@
       "post_event_regime": null,
       "source_name": "Destatis (Federal Statistical Office)",
       "source_url": "https://www.destatis.de/EN/Home/_node.html",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -18973,7 +18918,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19022,7 +18967,7 @@
       "post_event_regime": null,
       "source_name": "China",
       "source_url": "http://www.stats.gov.cn/english/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19072,7 +19017,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19122,7 +19067,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Bureau of Labor Statistics",
       "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19174,7 +19119,7 @@
       "post_event_regime": null,
       "source_name": "BoC",
       "source_url": "https://www.bankofcanada.ca/core-functions/monetary-policy/key-interest-rate/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19227,7 +19172,7 @@
       "post_event_regime": null,
       "source_name": "Federal Reserve",
       "source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19279,7 +19224,7 @@
       "post_event_regime": null,
       "source_name": "SNB",
       "source_url": "https://www.snb.ch/en/iabout/monpol/id/monpol_current",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19329,7 +19274,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19378,7 +19323,7 @@
       "post_event_regime": null,
       "source_name": "German",
       "source_url": "https://www.zew.de/en",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19428,7 +19373,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/grossdomesticproductgdp",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19477,7 +19422,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19526,7 +19471,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19575,7 +19520,7 @@
       "post_event_regime": null,
       "source_name": "Australia",
       "source_url": "https://www.abs.gov.au/statistics/labour",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19625,7 +19570,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Canada",
       "source_url": "https://www.statcan.gc.ca/en/dai/btd/sc",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -19680,7 +19625,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/employmentandlabourmarket",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19730,7 +19675,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -19786,7 +19731,7 @@
       "post_event_regime": null,
       "source_name": "UK Office for National Statistics",
       "source_url": "https://www.ons.gov.uk/releasecalendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -19842,7 +19787,7 @@
       "post_event_regime": null,
       "source_name": "Canada",
       "source_url": "https://www.statcan.gc.ca/en/subjects-start/prices_and_price_indexes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19892,7 +19837,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Census Bureau",
       "source_url": "https://www.census.gov/retail/index.html",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -19942,7 +19887,7 @@
       "post_event_regime": null,
       "source_name": "Australian Bureau of Statistics",
       "source_url": "https://www.abs.gov.au/release-calendar",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -19998,7 +19943,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/economy/inflationandpriceindices",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -20050,7 +19995,7 @@
       "post_event_regime": null,
       "source_name": "Swiss National Bank",
       "source_url": "https://www.snb.ch/en/the-snb/mandates-goals/monetary-policy/decisions",
-      "fetched_at": "2026-09-21T16:22:26.199Z",
+      "fetched_at": "2026-09-22T14:36:43.791Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -20106,7 +20051,7 @@
       "post_event_regime": null,
       "source_name": "Eurostat",
       "source_url": "https://ec.europa.eu/eurostat/web/main/news/euro-indicators",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -20164,7 +20109,7 @@
       "post_event_regime": null,
       "source_name": "BoE",
       "source_url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -20217,7 +20162,7 @@
       "post_event_regime": null,
       "source_name": "ECB",
       "source_url": "https://www.ecb.europa.eu/press/calendars/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -20268,7 +20213,7 @@
       "post_event_regime": null,
       "source_name": "U.S. Dept. of Labor",
       "source_url": "https://www.dol.gov/ui/data.pdf",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -20320,7 +20265,7 @@
       "post_event_regime": null,
       "source_name": "BoJ",
       "source_url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -20371,7 +20316,7 @@
       "post_event_regime": null,
       "source_name": "Statistics Bureau of Japan",
       "source_url": "https://www.stat.go.jp/english/",
-      "fetched_at": "2026-09-21T16:22:26.200Z",
+      "fetched_at": "2026-09-22T14:36:43.792Z",
       "provider": "global_acquisition",
       "data_capabilities": {
         "forecasts": false,
@@ -20427,7 +20372,7 @@
       "post_event_regime": null,
       "source_name": "UK",
       "source_url": "https://www.ons.gov.uk/businessindustryandtrade/retailindustry",
-      "fetched_at": "2026-09-21T16:22:26.196Z",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
       "provider": "schedule_fallback",
       "data_capabilities": {
         "forecasts": false,
@@ -20447,6 +20392,104 @@
       "policy_tone": "neutral",
       "expectation_confirmation": "unverified",
       "reaction_interpretation": "UK Retail Sales was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::schedule_fallback::us::us-13-week-t-bill-auction::20261221T163000",
+      "event_name": "US 13-Week T-Bill Auction",
+      "name": "US 13-Week T-Bill Auction",
+      "type": "Economic Release",
+      "country": "US",
+      "importance": "low",
+      "impact_level": "low",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-12-21T16:30:00.000Z",
+      "date": "2026-12-21",
+      "timezone": "UTC",
+      "time_precision": "time_estimate",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "U.S. Treasury",
+      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
+      "provider": "schedule_fallback",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": true,
+        "schedule_estimate": true
+      },
+      "tags": [
+        "schedule-estimate"
+      ],
+      "confirmed": false,
+      "merged_sources": [
+        "schedule_fallback"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "US 13-Week T-Bill Auction was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
+    },
+    {
+      "id": "economic-calendar::schedule_fallback::us::us-26-week-t-bill-auction::20261221T163000",
+      "event_name": "US 26-Week T-Bill Auction",
+      "name": "US 26-Week T-Bill Auction",
+      "type": "Economic Release",
+      "country": "US",
+      "importance": "low",
+      "impact_level": "low",
+      "forecast": null,
+      "previous": null,
+      "actual": null,
+      "unit": null,
+      "event_time": "2026-12-21T16:30:00.000Z",
+      "date": "2026-12-21",
+      "timezone": "UTC",
+      "time_precision": "time_estimate",
+      "status": "confirmed",
+      "market_expectation": null,
+      "historical_asset_sensitivity": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "VIX"
+      ],
+      "pre_event_regime": null,
+      "post_event_regime": null,
+      "source_name": "U.S. Treasury",
+      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
+      "fetched_at": "2026-09-22T14:36:43.786Z",
+      "provider": "schedule_fallback",
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": true,
+        "schedule_estimate": true
+      },
+      "tags": [
+        "schedule-estimate"
+      ],
+      "confirmed": false,
+      "merged_sources": [
+        "schedule_fallback"
+      ],
+      "surprise_score": 0,
+      "surprise_direction": "near_consensus",
+      "policy_tone": "event_specific",
+      "expectation_confirmation": "unverified",
+      "reaction_interpretation": "US 26-Week T-Bill Auction was close to consensus, so cross-asset interpretation depends more on revisions, composition, and prior positioning than the headline difference alone."
     }
   ]
 }
