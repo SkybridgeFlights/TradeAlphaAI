@@ -1,17 +1,17 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-22T21:09:23.119Z",
+  "updated_at": "2026-09-23T14:50:41.764Z",
   "status": "live",
-  "item_count": 13,
+  "item_count": 15,
   "clusters": {
-    "volatility": 1,
-    "macro": 5,
+    "volatility": 2,
     "fed": 5,
-    "labor": 1,
+    "labor": 2,
+    "macro": 5,
     "inflation": 1
   },
   "top_story": {
-    "id": "move::VIX::2026-09-22T21",
+    "id": "move::VIX::2026-09-23T14",
     "kind": "market_move",
     "headline": "VIX drops -19.76% to 14.21",
     "urgency": 90,
@@ -29,6 +29,23 @@
   },
   "items": [
     {
+      "id": "move::VIX::2026-09-23T14",
+      "kind": "market_move",
+      "headline": "VIX drops -19.76% to 14.21",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-09-22T21:09:21.894Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
       "id": "move::VIX::2026-09-22T21",
       "kind": "market_move",
       "headline": "VIX drops -19.76% to 14.21",
@@ -44,6 +61,50 @@
       "timestamp": "2026-09-22T21:09:21.894Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260925T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-09-25)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-09-25T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20260924T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-09-24, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-09-24T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::forexfactory::ch::snb-press-conference::20260924T080000",
@@ -288,29 +349,6 @@
         "fed"
       ],
       "timestamp": "2026-09-22T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260921T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-09-21)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-09-21T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
