@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-23T17:47:29.551Z",
+  "updated_at": "2026-09-23T21:23:12.741Z",
   "run_date": "2026-09-23",
   "verified": true,
   "status": "verified",
@@ -8,6 +8,23 @@
   "memory_note_en": "Verified editorial memory advanced for this market date.",
   "memory_note_ar": "تقدمت الذاكرة التحريرية الموثقة لهذه الجلسة السوقية.",
   "narratives": [
+    {
+      "id": "narrow-leadership",
+      "family": "leadership",
+      "state": "crowded",
+      "sessions": 4,
+      "inactive_sessions": 0,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-09-23",
+      "last_evaluated": "2026-09-23",
+      "active": true,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": [
+        "pulse:momentum_concentration=narrow-megacap",
+        "pulse:breadth_state=mixed"
+      ]
+    },
     {
       "id": "dollar-strength",
       "family": "macro",
@@ -25,36 +42,18 @@
       ]
     },
     {
-      "id": "yield-pressure",
-      "family": "macro",
-      "state": "strengthening",
-      "sessions": 2,
-      "inactive_sessions": 0,
-      "first_seen": "2026-07-08",
-      "last_seen": "2026-09-23",
-      "last_evaluated": "2026-09-23",
-      "active": true,
-      "en": "Yield pressure remains a constraint on long-duration assets.",
-      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
-      "evidence": [
-        "pulse:duration_pressure=building"
-      ]
-    },
-    {
       "id": "speculative-momentum",
       "family": "positioning",
-      "state": "crowded",
+      "state": "invalidated",
       "sessions": 70,
       "inactive_sessions": 0,
       "first_seen": "2026-06-15",
       "last_seen": "2026-09-23",
       "last_evaluated": "2026-09-23",
-      "active": true,
+      "active": false,
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
-      "evidence": [
-        "pulse:ai_concentration_risk=elevated"
-      ]
+      "evidence": []
     },
     {
       "id": "market-fragility",
@@ -91,20 +90,6 @@
   ],
   "archive": [
     {
-      "id": "narrow-leadership",
-      "family": "leadership",
-      "state": "invalidated",
-      "sessions": 3,
-      "inactive_sessions": 61,
-      "first_seen": "2026-06-15",
-      "last_seen": "2026-06-18",
-      "last_evaluated": "2026-09-23",
-      "active": false,
-      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
-      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
-      "evidence": []
-    },
-    {
       "id": "volatility-compression",
       "family": "volatility",
       "state": "invalidated",
@@ -116,6 +101,20 @@
       "active": false,
       "en": "Volatility compression persists without resolving the underlying cross-asset tension.",
       "ar": "يستمر انضغاط التقلب من دون حسم التوتر القائم بين الأصول.",
+      "evidence": []
+    },
+    {
+      "id": "yield-pressure",
+      "family": "macro",
+      "state": "invalidated",
+      "sessions": 1,
+      "inactive_sessions": 54,
+      "first_seen": "2026-07-08",
+      "last_seen": "2026-07-08",
+      "last_evaluated": "2026-09-23",
+      "active": false,
+      "en": "Yield pressure remains a constraint on long-duration assets.",
+      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
       "evidence": []
     },
     {
@@ -133,17 +132,17 @@
       "evidence": []
     },
     {
-      "id": "yield-pressure",
-      "family": "macro",
+      "id": "narrow-leadership",
+      "family": "leadership",
       "state": "invalidated",
-      "sessions": 1,
-      "inactive_sessions": 54,
-      "first_seen": "2026-07-08",
-      "last_seen": "2026-07-08",
+      "sessions": 3,
+      "inactive_sessions": 61,
+      "first_seen": "2026-06-15",
+      "last_seen": "2026-06-18",
       "last_evaluated": "2026-09-23",
       "active": false,
-      "en": "Yield pressure remains a constraint on long-duration assets.",
-      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
       "evidence": []
     },
     {
@@ -175,7 +174,23 @@
       "evidence": []
     }
   ],
-  "expectations": [],
+  "expectations": [
+    {
+      "id": "narrow-leadership:breadth-broadening",
+      "narrative_id": "narrow-leadership",
+      "status": "monitoring",
+      "opened_on": "2026-09-23",
+      "opened_at_session": 4,
+      "evaluated_on": "2026-09-23",
+      "expected_dimension": "breadth_state",
+      "expected_values": [
+        "confirming"
+      ],
+      "observed_value": "mixed",
+      "en": "Breadth confirmation remains an open confirmation test.",
+      "ar": "يبقى تأكيد اتساع المشاركة اختباراً مفتوحاً للتأكيد."
+    }
+  ],
   "failed_expectations": [],
   "unresolved_tensions": [
     {
@@ -229,23 +244,23 @@
       "status": "persistent",
       "first_seen": "2026-09-19",
       "last_seen": "2026-09-23",
-      "en": "stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
-      "ar": "شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
+      "en": "stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying. The tension remains unresolved.",
+      "ar": "شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. ولا يزال هذا التوتر بلا حسم."
     }
   ],
   "market_character": {
-    "id": "unresolved-tension",
-    "en": "Unresolved tension",
-    "ar": "توتر غير محسوم"
+    "id": "fragile-optimism",
+    "en": "Fragile optimism",
+    "ar": "تفاؤل هش"
   },
   "current_focus": [
     {
       "kind": "narrative",
-      "id": "speculative-momentum",
+      "id": "narrow-leadership",
       "state": "crowded",
-      "sessions": 70,
-      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
-      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة."
+      "sessions": 4,
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة."
     },
     {
       "kind": "narrative",
@@ -281,28 +296,6 @@
     }
   ],
   "timeline": [
-    {
-      "id": "2026-08-28:persisted:cross-asset-conflict",
-      "date": "2026-08-28",
-      "kind": "persisted",
-      "narrative_id": "cross-asset-conflict",
-      "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
-      "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
-      "evidence": [
-        "convergence:vix-equities"
-      ]
-    },
-    {
-      "id": "2026-08-31:persisted:speculative-momentum",
-      "date": "2026-08-31",
-      "kind": "persisted",
-      "narrative_id": "speculative-momentum",
-      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
-      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
-      "evidence": [
-        "pulse:ai_concentration_risk=elevated"
-      ]
-    },
     {
       "id": "2026-08-31:persisted:market-fragility",
       "date": "2026-08-31",
@@ -1341,6 +1334,29 @@
       "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
       "evidence": [
         "pulse:duration_pressure=building"
+      ]
+    },
+    {
+      "id": "2026-09-23:changed:narrow-leadership",
+      "date": "2026-09-23",
+      "kind": "changed",
+      "narrative_id": "narrow-leadership",
+      "en": "Headline strength remains dependent on narrow leadership while breadth confirmation is incomplete.",
+      "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
+      "evidence": [
+        "pulse:momentum_concentration=narrow-megacap",
+        "pulse:breadth_state=mixed"
+      ]
+    },
+    {
+      "id": "2026-09-23:repriced:speculative-momentum",
+      "date": "2026-09-23",
+      "kind": "repriced",
+      "narrative_id": "speculative-momentum",
+      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
+      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
+      "evidence": [
+        "state-transition:repriced:speculative-momentum"
       ]
     }
   ],
