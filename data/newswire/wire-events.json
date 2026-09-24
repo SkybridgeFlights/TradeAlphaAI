@@ -1,18 +1,18 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-23T21:23:12.530Z",
+  "updated_at": "2026-09-24T14:50:35.765Z",
   "status": "live",
-  "item_count": 20,
+  "item_count": 23,
   "clusters": {
-    "tape": 3,
+    "tape": 5,
     "volatility": 2,
-    "macro": 6,
     "fed": 6,
-    "labor": 2,
-    "inflation": 1
+    "inflation": 3,
+    "macro": 5,
+    "labor": 2
   },
   "top_story": {
-    "id": "move::US10Y::2026-09-23T21",
+    "id": "move::US10Y::2026-09-24T14",
     "kind": "market_move",
     "headline": "US10Y jumps +3.38% to 5.114",
     "urgency": 90,
@@ -29,6 +29,23 @@
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::US10Y::2026-09-24T14",
+      "kind": "market_move",
+      "headline": "US10Y jumps +3.38% to 5.114",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-09-23T21:23:11.776Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::US10Y::2026-09-23T21",
       "kind": "market_move",
@@ -98,6 +115,23 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
+      "id": "move::IWM::2026-09-24T14",
+      "kind": "market_move",
+      "headline": "IWM drops -1.84% to 281.92",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "IWM"
+      ],
+      "sector_tags": [
+        "small-cap"
+      ],
+      "timestamp": "2026-09-23T21:23:09.658Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
       "id": "move::IWM::2026-09-23T21",
       "kind": "market_move",
       "headline": "IWM drops -1.84% to 281.92",
@@ -113,6 +147,71 @@
       "timestamp": "2026-09-23T21:23:09.658Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260926T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-09-26)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-09-26T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::pce::20260925T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: PCE (2026-09-25, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "inflation",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "sector_tags": [
+        "inflation"
+      ],
+      "timestamp": "2026-09-25T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::core-pce::20260925T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Core PCE (2026-09-25, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "inflation",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
+      ],
+      "sector_tags": [
+        "inflation"
+      ],
+      "timestamp": "2026-09-25T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::forexfactory::gb::boe-gov-bailey-speaks::20260925T091500",
@@ -401,52 +500,6 @@
         "fed"
       ],
       "timestamp": "2026-09-23T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::forexfactory::au::rba-gov-bullock-speaks::20260922T031000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: RBA Gov Bullock Speaks (2026-09-22)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "macro",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "macro"
-      ],
-      "timestamp": "2026-09-22T03:10:00.000Z",
-      "source": "forexfactory",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260922T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-09-22)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-09-22T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
