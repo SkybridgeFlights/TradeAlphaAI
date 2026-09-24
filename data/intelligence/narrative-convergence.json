@@ -1,40 +1,40 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-24T14:50:35.897Z",
+  "updated_at": "2026-09-24T17:49:20.077Z",
   "run_date": "2026-09-24",
   "verified": true,
   "coherence": {
-    "score": 88,
+    "score": 100,
     "band": "coherent",
     "observed_links": 8,
-    "en": "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 100/100 — the observed cross-asset tape is largely aligned.",
+    "ar": "اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
-    "events_5d": 5,
+    "events_5d": 8,
     "band": "accelerating"
   },
   "what_changed": [
     {
-      "date": "2026-09-23",
+      "date": "2026-09-24",
       "dimension": "ai_concentration_risk",
-      "from": "elevated",
-      "to": "contained",
-      "note": "ai concentration risk: elevated -> contained"
+      "from": "contained",
+      "to": "elevated",
+      "note": "ai concentration risk: contained -> elevated"
     },
     {
-      "date": "2026-09-23",
+      "date": "2026-09-24",
       "dimension": "momentum_concentration",
-      "from": "balanced",
-      "to": "narrow-megacap",
-      "note": "momentum concentration: balanced -> narrow-megacap"
+      "from": "narrow-megacap",
+      "to": "balanced",
+      "note": "momentum concentration: narrow-megacap -> balanced"
     },
     {
-      "date": "2026-09-23",
-      "dimension": "duration_pressure",
+      "date": "2026-09-24",
+      "dimension": "risk_state",
       "from": "neutral",
-      "to": "building",
-      "note": "duration pressure: neutral -> building"
+      "to": "risk-on",
+      "note": "risk state: neutral -> risk-on"
     }
   ],
   "confirms": [
@@ -70,6 +70,17 @@
       "chain_strength": 2,
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
+    {
+      "id": "vix-equities",
+      "legs": [
+        "vix",
+        "spy"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising hedging demand pressures the equity tape",
+      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
     },
     {
       "id": "ai-growth",
@@ -116,19 +127,7 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
     }
   ],
-  "diverges": [
-    {
-      "id": "vix-equities",
-      "legs": [
-        "vix",
-        "spy"
-      ],
-      "state": "diverging",
-      "chain_strength": 2,
-      "en": "Rising hedging demand pressures the equity tape",
-      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
-    }
-  ],
+  "diverges": [],
   "weakening": [],
   "crowding": null,
   "preparing_for": [
@@ -148,27 +147,18 @@
       "score": 5,
       "en": "accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying.",
       "ar": "ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
-    },
-    {
-      "kind": "pressure",
-      "track": "speculative_pressure",
-      "score": 5,
-      "en": "stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
-      "ar": "شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
     }
   ],
   "narrative_en": [
-    "The regime picture moved: ai concentration risk: elevated -> contained; momentum concentration: balanced -> narrow-megacap; duration pressure: neutral -> building.",
-    "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
-    "The VIX/SPY link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
-    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
+    "The regime picture moved: ai concentration risk: contained -> elevated; momentum concentration: narrow-megacap -> balanced; risk state: neutral -> risk-on.",
+    "Regime coherence 100/100 — the observed cross-asset tape is largely aligned.",
+    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
-    "رابط VIX/SPY لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
-    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
+    "اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
+    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
   "link_history": {
@@ -337,7 +327,7 @@
       },
       {
         "date": "2026-09-24",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "ai-growth": [
@@ -509,5 +499,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 88/100 (coherent); velocity accelerating; 7 confirming / 1 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 100/100 (coherent); velocity accelerating; 8 confirming / 0 diverging links; 1 underpriced signal(s)."
 }
