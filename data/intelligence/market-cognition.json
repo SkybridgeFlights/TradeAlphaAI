@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-24T21:24:21.464Z",
-  "run_date": "2026-09-24",
+  "updated_at": "2026-09-25T15:06:41.892Z",
+  "run_date": "2026-09-25",
   "verified": true,
   "sessions_tracked": 40,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "risk-on",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "neutral",
         "date": "2026-09-23"
@@ -26,7 +26,7 @@
       "dimension": "dollar_pressure",
       "state": "firming",
       "phase": "extended",
-      "sessions_in_state": 10,
+      "sessions_in_state": 11,
       "from": {
         "state": "stable",
         "date": "2026-09-11"
@@ -36,7 +36,7 @@
       "dimension": "duration_pressure",
       "state": "neutral",
       "phase": "extended",
-      "sessions_in_state": 20,
+      "sessions_in_state": 21,
       "from": {
         "state": "building",
         "date": "2026-08-28"
@@ -45,8 +45,8 @@
     {
       "dimension": "momentum_concentration",
       "state": "balanced",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-09-23"
@@ -55,8 +55,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-09-23"
@@ -66,7 +66,7 @@
       "dimension": "breadth_state",
       "state": "mixed",
       "phase": "extended",
-      "sessions_in_state": 10,
+      "sessions_in_state": 11,
       "from": {
         "state": "confirming",
         "date": "2026-09-11"
@@ -97,7 +97,7 @@
       "dimension": "market_fragility",
       "state": "building",
       "phase": "extended",
-      "sessions_in_state": 7,
+      "sessions_in_state": 8,
       "from": {
         "state": "contained",
         "date": "2026-09-16"
@@ -109,17 +109,25 @@
       "kind": "streak",
       "dimension": "dollar_pressure",
       "state": "firming",
-      "sessions": 10,
-      "en": "Dollar firming persists into a 10th consecutive session, draining global risk appetite at the margin.",
-      "ar": "تقوّي الدولار يمتد للجلسة رقم 10 على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+      "sessions": 11,
+      "en": "Dollar firming persists into a 11th consecutive session, draining global risk appetite at the margin.",
+      "ar": "تقوّي الدولار يمتد للجلسة رقم 11 على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
     },
     {
       "kind": "streak",
       "dimension": "market_fragility",
       "state": "building",
-      "sessions": 7,
-      "en": "Market fragility signals build for a seventh straight session across volatility, breadth, and concentration inputs.",
-      "ar": "إشارات هشاشة السوق تتراكم للجلسة السابعة على التوالي عبر مدخلات التقلب والاتساع والتركز."
+      "sessions": 8,
+      "en": "Market fragility signals build for a eighth straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثامنة على التوالي عبر مدخلات التقلب والاتساع والتركز."
+    },
+    {
+      "kind": "streak",
+      "dimension": "ai_concentration_risk",
+      "state": "elevated",
+      "sessions": 2,
+      "en": "AI concentration risk holds elevated for a second straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثانية على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
     }
   ],
   "causal_links": [
@@ -286,24 +294,7 @@
     "liquidity": [],
     "speculative": []
   },
-  "alerts": [
-    {
-      "id": "positioning-crowding-2026-09-24",
-      "type": "positioning-crowding",
-      "severity": "watch",
-      "date": "2026-09-24",
-      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
-      "derived_from": [
-        {
-          "dimension": "ai_concentration_risk",
-          "from": "contained",
-          "to": "elevated",
-          "date": "2026-09-24"
-        }
-      ]
-    }
-  ],
+  "alerts": [],
   "timeline_tail": [
     {
       "date": "2026-09-24",
@@ -348,5 +339,5 @@
       "note": "duration pressure: neutral -> building"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 2 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 3 cross-session observation(s); 60 timeline event(s)."
 }
