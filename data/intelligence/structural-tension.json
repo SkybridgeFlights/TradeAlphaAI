@@ -1,12 +1,12 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-25T15:06:42.060Z",
+  "updated_at": "2026-09-25T17:52:52.613Z",
   "run_date": "2026-09-25",
   "verified": true,
   "status": "verified",
   "regime_condition": "pressured-regime",
-  "tension_level": "contained",
-  "tension_score": 23,
+  "tension_level": "building",
+  "tension_score": 28,
   "tracks": {
     "positioning-strain": {
       "id": "positioning-strain",
@@ -19,6 +19,18 @@
       "last_evaluated": "2026-09-25",
       "en": "Positioning remains concentrated rather than broadly distributed.",
       "ar": "تظل التمركزات مركزة بدلاً من أن تستند إلى مشاركة واسعة."
+    },
+    "cross-asset-strain": {
+      "id": "cross-asset-strain",
+      "active": true,
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "first_seen": "2026-09-25",
+      "last_seen": "2026-09-25",
+      "last_evaluated": "2026-09-25",
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
     },
     "liquidity-strain": {
       "id": "liquidity-strain",
@@ -35,11 +47,12 @@
   },
   "active_strains": [
     "positioning-strain",
+    "cross-asset-strain",
     "liquidity-strain"
   ],
   "internal_stability": {
-    "leadership": "narrow",
-    "cross_asset": "coherent",
+    "leadership": "broad",
+    "cross_asset": "strained",
     "volatility_alignment": "aligned",
     "risk_appetite": "risk-on",
     "liquidity_participation": "uncertain"
@@ -67,6 +80,14 @@
       "severity": 2,
       "en": "Liquidity participation is thinning at the margin.",
       "ar": "تتراجع مساهمة السيولة عند الهامش."
+    },
+    {
+      "id": "cross-asset-strain",
+      "state": "emerging",
+      "sessions": 1,
+      "severity": 1,
+      "en": "Cross-asset relationships remain strained and do not support one clean regime reading.",
+      "ar": "تبقى العلاقات بين الأصول مشدودة ولا تدعم قراءة واحدة صافية للنظام السوقي."
     }
   ],
   "pressure_memory": [
@@ -307,8 +328,8 @@
     {
       "date": "2026-09-25",
       "condition": "pressured-regime",
-      "score": 23,
-      "change": "stable"
+      "score": 28,
+      "change": "intensified"
     }
   ],
   "summary_en": "Structural pressure is building, but the regime has not entered an unstable condition. Positioning remains concentrated rather than broadly distributed.",
