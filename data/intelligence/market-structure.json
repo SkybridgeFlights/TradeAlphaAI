@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-24T23:16:14.205Z",
+  "generated_at": "2026-09-25T18:45:27.413Z",
   "source_layer": "market-structure",
   "available": true,
   "structural_confidence": 89,
@@ -15,9 +15,9 @@
       "label_en": "narrow leadership",
       "label_ar": "قيادة ضيقة",
       "evidence": [
-        "leadership=narrow",
-        "breadth=flat",
-        "session breadth=mixed"
+        "leadership=broad",
+        "breadth=narrow",
+        "session breadth=confirming"
       ]
     },
     "volatility_structure": {
@@ -27,34 +27,34 @@
       "evidence": [
         "regime volatility=normal",
         "alignment=aligned",
-        "VIX=15.67"
+        "VIX=15.04"
       ]
     },
     "cross_asset": {
-      "state": "coherent",
-      "label_en": "coherent",
-      "label_ar": "متسق",
+      "state": "divergent",
+      "label_en": "cross-asset divergence",
+      "label_ar": "تباعد عبر الأصول",
       "evidence": [
-        "coherence=0.6",
-        "tension cross_asset=coherent"
+        "coherence=0.2",
+        "tension cross_asset=strained"
       ]
     },
     "concentration": {
-      "state": "elevated",
-      "label_en": "elevated concentration",
-      "label_ar": "تركّز مرتفع",
+      "state": "contained",
+      "label_en": "contained concentration",
+      "label_ar": "تركّز محتوى",
       "evidence": [
-        "ai_concentration=elevated",
+        "ai_concentration=contained",
         "momentum_concentration=balanced"
       ]
     },
     "rotation": {
-      "state": "mixed_rotation",
-      "label_en": "mixed rotation",
-      "label_ar": "تدوير مختلط",
+      "state": "cyclical_leadership",
+      "label_en": "cyclical leadership",
+      "label_ar": "قيادة دورية",
       "evidence": [
-        "leaders=XLV/XLE",
-        "regime defensive=mixed"
+        "leaders=XLK/XLI/XLF",
+        "regime defensive=cyclical_leadership"
       ]
     },
     "persistence": {
@@ -73,8 +73,8 @@
       "label_ar": "غير محدد",
       "evidence": [
         "participation=narrow_leadership",
-        "rotation=mixed_rotation",
-        "concentration=elevated"
+        "rotation=cyclical_leadership",
+        "concentration=contained"
       ]
     },
     "liquidity_participation": {
@@ -92,8 +92,8 @@
       "label_ar": "بنية هشة",
       "evidence": [
         "regime stability=fragile",
-        "tension=contained",
-        "fragility=building"
+        "tension=building",
+        "fragility=contained"
       ]
     }
   },
@@ -104,7 +104,7 @@
     },
     "participation": "narrow_leadership",
     "volatility_structure": "contained",
-    "cross_asset": "coherent",
+    "cross_asset": "divergent",
     "structural_stability": "fragile",
     "structural_confidence": 89
   },
