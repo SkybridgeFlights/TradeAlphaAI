@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-25T18:45:27.413Z",
+  "generated_at": "2026-09-25T23:21:56.431Z",
   "source_layer": "market-structure",
   "available": true,
   "structural_confidence": 89,
@@ -21,13 +21,13 @@
       ]
     },
     "volatility_structure": {
-      "state": "contained",
-      "label_en": "contained volatility",
-      "label_ar": "تذبذب محتوى",
+      "state": "compression",
+      "label_en": "volatility compression",
+      "label_ar": "انضغاط التذبذب",
       "evidence": [
-        "regime volatility=normal",
+        "regime volatility=compressed",
         "alignment=aligned",
-        "VIX=15.04"
+        "VIX=14.87"
       ]
     },
     "cross_asset": {
@@ -35,7 +35,7 @@
       "label_en": "cross-asset divergence",
       "label_ar": "تباعد عبر الأصول",
       "evidence": [
-        "coherence=0.2",
+        "coherence=0",
         "tension cross_asset=strained"
       ]
     },
@@ -53,7 +53,7 @@
       "label_en": "cyclical leadership",
       "label_ar": "قيادة دورية",
       "evidence": [
-        "leaders=XLK/XLI/XLF",
+        "leaders=XLI/XLK/XLF",
         "regime defensive=cyclical_leadership"
       ]
     },
@@ -62,7 +62,7 @@
       "label_en": "transitioning structure",
       "label_ar": "بنية في طور التحوّل",
       "evidence": [
-        "direction=risk_off",
+        "direction=mixed",
         "verified_sessions=33",
         "regime_condition=pressured-regime"
       ]
@@ -103,7 +103,7 @@
       "state": "fragile"
     },
     "participation": "narrow_leadership",
-    "volatility_structure": "contained",
+    "volatility_structure": "compression",
     "cross_asset": "divergent",
     "structural_stability": "fragile",
     "structural_confidence": 89
