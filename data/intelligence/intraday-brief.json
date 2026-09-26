@@ -1,47 +1,36 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-25T21:24:53.654Z",
+  "updated_at": "2026-09-26T14:18:00.808Z",
   "verified": true,
-  "urgency": "high",
+  "urgency": "elevated",
   "pulse_shift": [],
-  "quote_driven_changes": [
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 1.1432414256893069,
-      "to": 0,
-      "delta": -1.1432414256893069,
-      "en": "vix move changed by -1.14 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -1.14 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "oil",
-      "from": -3.9883065358112417,
-      "to": -3.4871580705784124,
-      "delta": 0.5011484652328293,
-      "en": "oil move changed by +0.50 percentage points.",
-      "ar": "تغير تحرك oil بمقدار +0.50 نقطة مئوية."
-    }
-  ],
+  "quote_driven_changes": [],
   "new_contradictions": [],
   "pressure_buildup": [],
-  "new_alerts": [],
+  "new_alerts": [
+    {
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-09-26",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
+    }
+  ],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
-      "time": "2026-09-25T00:00:00Z",
+      "time": "2026-09-26T00:00:00Z",
       "minutes_until": 0
     },
     {
-      "name": "BoJ Rate Decision",
-      "time": "2026-09-25T03:00:00.000Z",
-      "minutes_until": 0
+      "name": "FOMC Press Release",
+      "time": "2026-09-27T00:00:00Z",
+      "minutes_until": 582
     },
     {
-      "name": "BOE Gov Bailey Speaks",
-      "time": "2026-09-25T09:15:00.000Z",
-      "minutes_until": 0
+      "name": "FOMC Press Release",
+      "time": "2026-09-28T00:00:00Z",
+      "minutes_until": 2022
     }
   ],
   "wire_event": {
@@ -51,40 +40,19 @@
   },
   "changes": [
     {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 1.1432414256893069,
-      "to": 0,
-      "delta": -1.1432414256893069,
-      "en": "vix move changed by -1.14 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -1.14 نقطة مئوية."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "oil",
-      "from": -3.9883065358112417,
-      "to": -3.4871580705784124,
-      "delta": 0.5011484652328293,
-      "en": "oil move changed by +0.50 percentage points.",
-      "ar": "تغير تحرك oil بمقدار +0.50 نقطة مئوية."
-    },
-    {
-      "kind": "wire-event",
-      "en": "Wire event: US10Y jumps +4.45% to 5.184",
-      "ar": "حدث على الموجز: US10Y jumps +4.45% to 5.184",
-      "event": {
-        "headline": "US10Y jumps +4.45% to 5.184",
-        "timestamp": "2026-09-25T21:24:52.416Z",
-        "urgency": 90
-      }
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-09-26",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     }
   ],
   "note_en": null,
   "note_ar": null,
   "telegram": {
-    "eligible": true,
+    "eligible": false,
     "sent": false,
-    "suppression_reason": null
+    "suppression_reason": "urgency_below_high_threshold"
   },
   "snapshot": {
     "verified": true,
@@ -112,8 +80,26 @@
       "nvda": 0.2182,
       "oil": -3.4871580705784124
     },
-    "alert_ids": [],
-    "alerts": [],
+    "alert_ids": [
+      "macro-divergence-2026-09-26"
+    ],
+    "alerts": [
+      {
+        "id": "macro-divergence-2026-09-26",
+        "type": "macro-divergence",
+        "severity": "watch",
+        "date": "2026-09-26",
+        "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+        "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+        "derived_from": [
+          {
+            "divergence": "gold-vs-dollar",
+            "streak": 2,
+            "date": "2026-09-26"
+          }
+        ]
+      }
+    ],
     "contradiction_ids": [],
     "pressure": {
       "volatility_pressure": 0,
@@ -126,15 +112,15 @@
     "catalysts": [
       {
         "name": "FOMC Press Release",
-        "time": "2026-09-25T00:00:00Z"
+        "time": "2026-09-26T00:00:00Z"
       },
       {
-        "name": "BoJ Rate Decision",
-        "time": "2026-09-25T03:00:00.000Z"
+        "name": "FOMC Press Release",
+        "time": "2026-09-27T00:00:00Z"
       },
       {
-        "name": "BOE Gov Bailey Speaks",
-        "time": "2026-09-25T09:15:00.000Z"
+        "name": "FOMC Press Release",
+        "time": "2026-09-28T00:00:00Z"
       }
     ],
     "wire_event": {

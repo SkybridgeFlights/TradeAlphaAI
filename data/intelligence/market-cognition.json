@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-25T21:24:53.242Z",
-  "run_date": "2026-09-25",
+  "updated_at": "2026-09-26T14:18:00.573Z",
+  "run_date": "2026-09-26",
   "verified": true,
   "sessions_tracked": 40,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "risk-on",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
         "state": "neutral",
         "date": "2026-09-23"
@@ -26,7 +26,7 @@
       "dimension": "dollar_pressure",
       "state": "firming",
       "phase": "extended",
-      "sessions_in_state": 11,
+      "sessions_in_state": 12,
       "from": {
         "state": "stable",
         "date": "2026-09-11"
@@ -36,7 +36,7 @@
       "dimension": "duration_pressure",
       "state": "neutral",
       "phase": "extended",
-      "sessions_in_state": 21,
+      "sessions_in_state": 22,
       "from": {
         "state": "building",
         "date": "2026-08-28"
@@ -45,8 +45,8 @@
     {
       "dimension": "momentum_concentration",
       "state": "balanced",
-      "phase": "strengthening",
-      "sessions_in_state": 2,
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-09-23"
@@ -55,8 +55,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "contained",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "elevated",
         "date": "2026-09-24"
@@ -65,8 +65,8 @@
     {
       "dimension": "breadth_state",
       "state": "confirming",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "mixed",
         "date": "2026-09-24"
@@ -96,8 +96,8 @@
     {
       "dimension": "market_fragility",
       "state": "contained",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "building",
         "date": "2026-09-24"
@@ -109,16 +109,16 @@
       "kind": "streak",
       "dimension": "dollar_pressure",
       "state": "firming",
-      "sessions": 11,
-      "en": "Dollar firming persists into a 11th consecutive session, draining global risk appetite at the margin.",
-      "ar": "تقوّي الدولار يمتد للجلسة رقم 11 على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+      "sessions": 12,
+      "en": "Dollar firming persists into a 12th consecutive session, draining global risk appetite at the margin.",
+      "ar": "تقوّي الدولار يمتد للجلسة رقم 12 على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
     },
     {
       "kind": "divergence",
       "flag": "gold-vs-dollar",
-      "sessions": 1,
-      "en": "Gold is rising against a firming dollar this session — an unusual co-move worth respecting.",
-      "ar": "الذهب يرتفع رغم تقوّي الدولار في هذه الجلسة — تحرك متزامن غير معتاد يستحق الانتباه."
+      "sessions": 2,
+      "en": "Gold strength against a firming dollar persists for a second session — an unusual co-move worth respecting.",
+      "ar": "قوة الذهب رغم تقوّي الدولار تستمر للجلسة الثانية — تحرك متزامن غير معتاد يستحق الانتباه."
     }
   ],
   "causal_links": [
@@ -307,7 +307,23 @@
     "liquidity": [],
     "speculative": []
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "macro-divergence-2026-09-26",
+      "type": "macro-divergence",
+      "severity": "watch",
+      "date": "2026-09-26",
+      "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+      "derived_from": [
+        {
+          "divergence": "gold-vs-dollar",
+          "streak": 2,
+          "date": "2026-09-26"
+        }
+      ]
+    }
+  ],
   "timeline_tail": [
     {
       "date": "2026-09-25",
@@ -352,5 +368,5 @@
       "note": "risk state: neutral -> risk-on"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 2 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 2 cross-session observation(s); 60 timeline event(s)."
 }
