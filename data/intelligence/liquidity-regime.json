@@ -1,32 +1,32 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-25T21:24:53.525Z",
+  "generated_at": "2026-09-28T20:04:38.946Z",
   "source_layer": "liquidity-regime",
-  "regime": "yield_pressure_regime",
+  "regime": "liquidity_stress",
   "liquidity_state": "yield_pressure",
-  "stability": "fragile",
+  "stability": "unstable",
   "confidence": 89,
   "observed_dimensions": 8,
   "cross_asset_coherence": {
-    "score": 0,
-    "direction": "mixed",
-    "n": 4
+    "score": 0.6,
+    "direction": "risk_off",
+    "n": 5
   },
   "sub_states": {
-    "breadth": "narrow",
-    "volatility": "compressed",
+    "breadth": "mixed",
+    "volatility": "expansion",
     "yield": "yield_pressure",
-    "dollar": "tightening_proxy",
-    "defensive": "cyclical_leadership"
+    "dollar": "neutral",
+    "defensive": "defensive_rotation"
   },
-  "narrative": "Rising yields are exerting pressure across rate-sensitive assets. Cross-asset coherence 0.",
+  "narrative": "Yields, equities and volatility are moving together in a way consistent with liquidity stress. Cross-asset coherence 0.6.",
   "narrative_tags": [
-    "yield_pressure_regime",
-    "fragile"
+    "liquidity_stress",
+    "unstable"
   ],
   "attribution": {
     "market_state_source": "data/live-market-state.json",
-    "market_state_generated_at": "2026-09-25T21:24:51.905Z",
+    "market_state_generated_at": "2026-09-28T20:04:37.324Z",
     "market_state_age_hours": 0,
     "reaction_context": {
       "liquidity_stress": false
