@@ -1,15 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-28T20:04:38.711Z",
-  "run_date": "2026-09-28",
-  "verified": true,
+  "updated_at": "2026-09-29T00:20:12.363Z",
+  "run_date": "2026-09-29",
+  "verified": false,
   "sessions_tracked": 40,
   "regime_shifts": [
     {
       "dimension": "risk_state",
       "state": "neutral",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "risk-on",
         "date": "2026-09-27"
@@ -25,8 +25,8 @@
     {
       "dimension": "dollar_pressure",
       "state": "stable",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "firming",
         "date": "2026-09-27"
@@ -34,19 +34,19 @@
     },
     {
       "dimension": "duration_pressure",
-      "state": "building",
+      "state": "neutral",
       "phase": "emerging",
       "sessions_in_state": 1,
       "from": {
-        "state": "neutral",
-        "date": "2026-09-27"
+        "state": "building",
+        "date": "2026-09-28"
       }
     },
     {
       "dimension": "momentum_concentration",
       "state": "balanced",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-09-23"
@@ -55,8 +55,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "contained",
-      "phase": "established",
-      "sessions_in_state": 4,
+      "phase": "extended",
+      "sessions_in_state": 5,
       "from": {
         "state": "elevated",
         "date": "2026-09-24"
@@ -65,8 +65,8 @@
     {
       "dimension": "breadth_state",
       "state": "mixed",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "confirming",
         "date": "2026-09-27"
@@ -96,8 +96,8 @@
     {
       "dimension": "market_fragility",
       "state": "contained",
-      "phase": "established",
-      "sessions_in_state": 4,
+      "phase": "extended",
+      "sessions_in_state": 5,
       "from": {
         "state": "building",
         "date": "2026-09-24"
@@ -133,7 +133,7 @@
       "state": "confirming",
       "evidence": {
         "us10y": 5.475040257648958,
-        "dxy": 0.104846686449069
+        "dxy": 0.1444114737883292
       }
     },
     {
@@ -147,7 +147,7 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "confirming",
       "evidence": {
-        "dxy": 0.104846686449069,
+        "dxy": 0.1444114737883292,
         "gold": -3.9399
       }
     },
@@ -162,7 +162,7 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "confirming",
       "evidence": {
-        "vix": 13.581984517945106,
+        "vix": 13.08937368050668,
         "spy": -0.7441
       }
     },
@@ -192,7 +192,7 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": -1.5922,
+        "btc": -1.4815,
         "qqq": -1.0705
       }
     },
@@ -208,7 +208,7 @@
       "state": "confirming",
       "evidence": {
         "spy": -0.7441,
-        "iwm": -0.6809
+        "iwm": -0.6916
       }
     },
     {
@@ -244,7 +244,7 @@
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
           "us10y": 5.475040257648958,
-          "dxy": 0.104846686449069
+          "dxy": 0.1444114737883292
         }
       },
       {
@@ -252,7 +252,7 @@
         "en": "A firming dollar typically pressures gold",
         "ar": "تقوّي الدولار يضغط على الذهب عادة",
         "evidence": {
-          "dxy": 0.104846686449069,
+          "dxy": 0.1444114737883292,
           "gold": -3.9399
         }
       }
@@ -273,25 +273,15 @@
     "liquidity": [],
     "speculative": []
   },
-  "alerts": [
-    {
-      "id": "yield-pressure-2026-09-28",
-      "type": "yield-pressure",
-      "severity": "watch",
-      "date": "2026-09-28",
-      "headline_en": "Yield pressure building — duration stress returned this session.",
-      "headline_ar": "ضغط العوائد يتصاعد — عاد ضغط الحساسية للفائدة في هذه الجلسة.",
-      "derived_from": [
-        {
-          "dimension": "duration_pressure",
-          "state": "building",
-          "streak": 1,
-          "date": "2026-09-28"
-        }
-      ]
-    }
-  ],
+  "alerts": [],
   "timeline_tail": [
+    {
+      "date": "2026-09-29",
+      "dimension": "duration_pressure",
+      "from": "building",
+      "to": "neutral",
+      "note": "duration pressure: building -> neutral"
+    },
     {
       "date": "2026-09-28",
       "dimension": "breadth_state",
@@ -326,14 +316,7 @@
       "from": "building",
       "to": "contained",
       "note": "market fragility: building -> contained"
-    },
-    {
-      "date": "2026-09-25",
-      "dimension": "breadth_state",
-      "from": "mixed",
-      "to": "confirming",
-      "note": "breadth state: mixed -> confirming"
     }
   ],
-  "cognition_note": "Cognition state — 9/11 dimensions verified; 1 alert(s); 0 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 60 timeline event(s)."
 }
