@@ -1,31 +1,33 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-29T19:30:35.470Z",
+  "generated_at": "2026-09-29T23:48:54.183Z",
   "source_layer": "market-structure",
   "available": true,
-  "structural_confidence": 89,
-  "coverage_pct": 89,
+  "structural_confidence": 95,
+  "coverage_pct": 100,
   "dominant": {
     "dimension": "stability",
     "state": "deteriorating"
   },
   "dimensions": {
     "participation": {
-      "state": "indeterminate",
-      "label_en": "indeterminate",
-      "label_ar": "غير محدد",
+      "state": "narrow_leadership",
+      "label_en": "narrow leadership",
+      "label_ar": "قيادة ضيقة",
       "evidence": [
+        "leadership=narrow",
         "breadth=broad_weakness",
         "session breadth=mixed"
       ]
     },
     "volatility_structure": {
-      "state": "expansion",
-      "label_en": "volatility expansion",
-      "label_ar": "اتساع التذبذب",
+      "state": "contained",
+      "label_en": "contained volatility",
+      "label_ar": "تذبذب محتوى",
       "evidence": [
-        "regime volatility=expansion",
-        "VIX=16.18"
+        "regime volatility=normal",
+        "alignment=aligned",
+        "VIX=16.04"
       ]
     },
     "cross_asset": {
@@ -33,15 +35,16 @@
       "label_en": "coherent",
       "label_ar": "متسق",
       "evidence": [
-        "coherence=0.6"
+        "coherence=0.6",
+        "tension cross_asset=strained"
       ]
     },
     "concentration": {
-      "state": "contained",
-      "label_en": "contained concentration",
-      "label_ar": "تركّز محتوى",
+      "state": "elevated",
+      "label_en": "elevated concentration",
+      "label_ar": "تركّز مرتفع",
       "evidence": [
-        "ai_concentration=contained",
+        "ai_concentration=elevated",
         "momentum_concentration=balanced"
       ]
     },
@@ -60,25 +63,26 @@
       "label_ar": "بنية في طور التحوّل",
       "evidence": [
         "direction=risk_off",
-        "verified_sessions=32",
-        "regime_condition=unverified"
+        "verified_sessions=33",
+        "regime_condition=unstable-regime"
       ]
     },
     "momentum": {
-      "state": "early_deterioration",
-      "label_en": "early momentum deterioration",
-      "label_ar": "تدهور مبكر في الزخم",
+      "state": "deteriorating",
+      "label_en": "momentum deterioration",
+      "label_ar": "تدهور الزخم",
       "evidence": [
-        "participation=indeterminate",
+        "participation=narrow_leadership",
         "rotation=defensive_rotation",
-        "concentration=contained"
+        "concentration=elevated"
       ]
     },
     "liquidity_participation": {
-      "state": "exhaustion_risk",
-      "label_en": "liquidity exhaustion risk",
-      "label_ar": "مخاطر استنزاف السيولة",
+      "state": "uncertain",
+      "label_en": "uncertain liquidity participation",
+      "label_ar": "مشاركة سيولة غير مؤكدة",
       "evidence": [
+        "liquidity_participation=uncertain",
         "liquidity_state=yield_pressure"
       ]
     },
@@ -88,8 +92,8 @@
       "label_ar": "بنية متدهورة",
       "evidence": [
         "regime stability=deteriorating",
-        "tension=unverified",
-        "fragility=contained"
+        "tension=building",
+        "fragility=building"
       ]
     }
   },
@@ -98,11 +102,11 @@
       "dimension": "stability",
       "state": "deteriorating"
     },
-    "participation": "indeterminate",
-    "volatility_structure": "expansion",
+    "participation": "narrow_leadership",
+    "volatility_structure": "contained",
     "cross_asset": "coherent",
     "structural_stability": "deteriorating",
-    "structural_confidence": 89
+    "structural_confidence": 95
   },
   "attribution": {
     "sources": [
