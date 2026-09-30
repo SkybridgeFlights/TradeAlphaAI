@@ -1,21 +1,17 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-09-29T16:26:46.652Z",
+  "generated_at": "2026-09-30T16:21:07.017Z",
   "status": "ok",
-  "total_snapshots": 40,
+  "total_snapshots": 41,
   "date_range": {
     "from": "2026-06-07",
-    "to": "2026-09-29"
+    "to": "2026-09-30"
   },
   "confidence_trend": {
-    "direction": "stable",
-    "delta": -4,
-    "latest": 63,
+    "direction": "falling",
+    "delta": -6,
+    "latest": 62,
     "values": [
-      {
-        "date": "2026-09-25",
-        "confidence": 67
-      },
       {
         "date": "2026-09-26",
         "confidence": 68
@@ -31,6 +27,10 @@
       {
         "date": "2026-09-29",
         "confidence": 63
+      },
+      {
+        "date": "2026-09-30",
+        "confidence": 62
       }
     ]
   },
@@ -38,10 +38,10 @@
     "headline_en": "Recent regime transition: growth_regime shifted from uncertain to growth_slowdown",
     "headline_ar": "انتقال حديث في النظام: growth_regime تحول من uncertain إلى growth_slowdown",
     "regime_stability": "transitioning",
-    "confidence_trend": "stable",
-    "latest_date": "2026-09-29",
-    "latest_market_tone": "neutral",
-    "total_insights": 8,
+    "confidence_trend": "falling",
+    "latest_date": "2026-09-30",
+    "latest_market_tone": "risk_on",
+    "total_insights": 9,
     "has_recent_transition": true,
     "key_persistent_fields": [
       "rate_path",
@@ -54,41 +54,41 @@
       "type": "narrative_persistence",
       "field": "rate_path",
       "value": "hold_bias",
-      "run_days": 40,
+      "run_days": 41,
       "confidence": 85,
-      "reason_en": "Rate path \"hold_bias\" has been stable for 40 consecutive periods.",
-      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 40 فترات متتالية.",
+      "reason_en": "Rate path \"hold_bias\" has been stable for 41 consecutive periods.",
+      "reason_ar": "مسار الفائدة \"hold_bias\" استقر على مدى 41 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "inflation_regime",
       "value": "uncertain",
-      "run_days": 40,
+      "run_days": 41,
       "confidence": 80,
-      "reason_en": "Inflation regime \"uncertain\" has persisted for 40 consecutive periods.",
-      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 40 فترات متتالية.",
+      "reason_en": "Inflation regime \"uncertain\" has persisted for 41 consecutive periods.",
+      "reason_ar": "نظام التضخم \"uncertain\" استمر على مدى 41 فترات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "narrative_persistence",
       "field": "volatility_state",
       "value": "volatility_compression",
-      "run_days": 39,
+      "run_days": 40,
       "confidence": 80,
-      "reason_en": "Volatility state \"volatility_compression\" has been stable for 39 consecutive snapshots.",
-      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 39 لقطات متتالية.",
+      "reason_en": "Volatility state \"volatility_compression\" has been stable for 40 consecutive snapshots.",
+      "reason_ar": "حالة التذبذب \"volatility_compression\" استقرت على مدى 40 لقطات متتالية.",
       "freshness_score": 100
     },
     {
       "type": "regime_transition",
       "field": "market_tone",
-      "from": "risk_on",
-      "to": "neutral",
-      "date": "2026-09-29",
+      "from": "neutral",
+      "to": "risk_on",
+      "date": "2026-09-30",
       "confidence": 65,
-      "reason_en": "Market tone transitioned from \"risk_on\" to \"neutral\" on 2026-09-29.",
-      "reason_ar": "Market tone انتقل من \"risk_on\" إلى \"neutral\" بتاريخ 2026-09-29.",
+      "reason_en": "Market tone transitioned from \"neutral\" to \"risk_on\" on 2026-09-30.",
+      "reason_ar": "Market tone انتقل من \"neutral\" إلى \"risk_on\" بتاريخ 2026-09-30.",
       "freshness_score": 100
     },
     {
@@ -106,11 +106,23 @@
       "type": "sector_leadership_transition",
       "direction": "emerging",
       "sectors": [
-        "XLE"
+        "XLE",
+        "XLF"
       ],
       "confidence": 60,
-      "reason_en": "Emerging sector leadership: XLE recently appeared in multiple consecutive snapshots.",
-      "reason_ar": "قيادة قطاعية ناشئة: XLE ظهرت في لقطات متتالية أخيرة.",
+      "reason_en": "Emerging sector leadership: XLE, XLF recently appeared in multiple consecutive snapshots.",
+      "reason_ar": "قيادة قطاعية ناشئة: XLE, XLF ظهرت في لقطات متتالية أخيرة.",
+      "freshness_score": 100
+    },
+    {
+      "type": "sector_leadership_transition",
+      "direction": "fading",
+      "sectors": [
+        "XLP"
+      ],
+      "confidence": 60,
+      "reason_en": "Fading sector leadership: XLP no longer appear in recent snapshots.",
+      "reason_ar": "تراجع القيادة القطاعية: XLP لم تعد تظهر في اللقطات الأخيرة.",
       "freshness_score": 100
     },
     {

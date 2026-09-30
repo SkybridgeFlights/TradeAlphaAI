@@ -1,15 +1,16 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-29T22:32:57.212Z",
+  "updated_at": "2026-09-30T16:21:07.263Z",
   "status": "live",
-  "item_count": 30,
+  "item_count": 33,
   "clusters": {
-    "tape": 8,
+    "tape": 9,
     "volatility": 3,
+    "macro": 8,
     "fed": 5,
+    "labor": 1,
     "inflation": 5,
-    "growth": 2,
-    "macro": 7
+    "growth": 2
   },
   "top_story": {
     "id": "move::US10Y::2026-09-29T18",
@@ -200,6 +201,23 @@
       "attribution": "sourced: https://finnhub.io/"
     },
     {
+      "id": "move::US10Y::2026-09-30T16",
+      "kind": "market_move",
+      "headline": "US10Y jumps +2.76% to 5.255",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-09-29T22:32:56.465Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
       "id": "move::US10Y::2026-09-29T22",
       "kind": "market_move",
       "headline": "US10Y jumps +2.76% to 5.255",
@@ -215,6 +233,71 @@
       "timestamp": "2026-09-29T22:32:56.465Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::employment-situation::20261002T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Employment Situation (2026-10-02)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "macro",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "macro"
+      ],
+      "timestamp": "2026-10-02T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261002T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-10-02)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-10-02T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20261001T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-10-01, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-10-01T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261001T000000",
@@ -600,29 +683,6 @@
         "fed"
       ],
       "timestamp": "2026-09-29T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20260928T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-09-28)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-09-28T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
