@@ -1,47 +1,36 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-01T23:03:50.215Z",
+  "updated_at": "2026-10-02T16:11:27.931Z",
   "verified": true,
-  "urgency": "notable",
-  "pulse_shift": [
-    {
-      "kind": "pulse-shift",
-      "dimension": "duration_pressure",
-      "from": "relaxing",
-      "to": "neutral",
-      "en": "duration pressure shifted from relaxing to neutral.",
-      "ar": "تحولت حالة duration pressure من relaxing إلى neutral."
-    }
-  ],
-  "quote_driven_changes": [
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 11.163416274377957,
-      "to": 10.221923335574992,
-      "delta": -0.9414929388029645,
-      "en": "vix move changed by -0.94 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -0.94 نقطة مئوية."
-    }
-  ],
+  "urgency": "elevated",
+  "pulse_shift": [],
+  "quote_driven_changes": [],
   "new_contradictions": [],
   "pressure_buildup": [],
-  "new_alerts": [],
+  "new_alerts": [
+    {
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-10-02",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
+    }
+  ],
   "catalyst_countdown": [
-    {
-      "name": "FOMC Press Release",
-      "time": "2026-10-01T00:00:00Z",
-      "minutes_until": 0
-    },
-    {
-      "name": "Initial Jobless Claims",
-      "time": "2026-10-01T12:30:00.000Z",
-      "minutes_until": 0
-    },
     {
       "name": "Employment Situation",
       "time": "2026-10-02T00:00:00Z",
-      "minutes_until": 56
+      "minutes_until": 0
+    },
+    {
+      "name": "FOMC Press Release",
+      "time": "2026-10-02T00:00:00Z",
+      "minutes_until": 0
+    },
+    {
+      "name": "Average Hourly Earnings m/m",
+      "time": "2026-10-02T12:30:00.000Z",
+      "minutes_until": 0
     }
   ],
   "wire_event": {
@@ -51,31 +40,11 @@
   },
   "changes": [
     {
-      "kind": "pulse-shift",
-      "dimension": "duration_pressure",
-      "from": "relaxing",
-      "to": "neutral",
-      "en": "duration pressure shifted from relaxing to neutral.",
-      "ar": "تحولت حالة duration pressure من relaxing إلى neutral."
-    },
-    {
-      "kind": "quote-driven-change",
-      "asset": "vix",
-      "from": 11.163416274377957,
-      "to": 10.221923335574992,
-      "delta": -0.9414929388029645,
-      "en": "vix move changed by -0.94 percentage points.",
-      "ar": "تغير تحرك vix بمقدار -0.94 نقطة مئوية."
-    },
-    {
-      "kind": "wire-event",
-      "en": "Wire event: VIX jumps +10.22% to 16.39",
-      "ar": "حدث على الموجز: VIX jumps +10.22% to 16.39",
-      "event": {
-        "headline": "VIX jumps +10.22% to 16.39",
-        "timestamp": "2026-10-01T23:03:48.656Z",
-        "urgency": 65
-      }
+      "kind": "new-alert",
+      "id": "macro-divergence-2026-10-02",
+      "severity": "watch",
+      "en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+      "ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية."
     }
   ],
   "note_en": null,
@@ -111,8 +80,26 @@
       "nvda": 1.0859,
       "oil": 0.45356371490280967
     },
-    "alert_ids": [],
-    "alerts": [],
+    "alert_ids": [
+      "macro-divergence-2026-10-02"
+    ],
+    "alerts": [
+      {
+        "id": "macro-divergence-2026-10-02",
+        "type": "macro-divergence",
+        "severity": "watch",
+        "date": "2026-10-02",
+        "headline_en": "Macro divergence persistent — gold vs dollar for 2 consecutive sessions.",
+        "headline_ar": "انفصال ماكرو مستمر منذ 2 جلسات متتالية.",
+        "derived_from": [
+          {
+            "divergence": "gold-vs-dollar",
+            "streak": 2,
+            "date": "2026-10-02"
+          }
+        ]
+      }
+    ],
     "contradiction_ids": [],
     "pressure": {
       "volatility_pressure": 0,
@@ -124,16 +111,16 @@
     },
     "catalysts": [
       {
-        "name": "FOMC Press Release",
-        "time": "2026-10-01T00:00:00Z"
-      },
-      {
-        "name": "Initial Jobless Claims",
-        "time": "2026-10-01T12:30:00.000Z"
-      },
-      {
         "name": "Employment Situation",
         "time": "2026-10-02T00:00:00Z"
+      },
+      {
+        "name": "FOMC Press Release",
+        "time": "2026-10-02T00:00:00Z"
+      },
+      {
+        "name": "Average Hourly Earnings m/m",
+        "time": "2026-10-02T12:30:00.000Z"
       }
     ],
     "wire_event": {
