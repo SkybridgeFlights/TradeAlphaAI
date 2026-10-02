@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-02T16:11:27.798Z",
+  "updated_at": "2026-10-02T18:19:07.171Z",
   "run_date": "2026-10-02",
   "verified": true,
   "coherence": {
-    "score": 63,
-    "band": "tense",
+    "score": 75,
+    "band": "coherent",
     "observed_links": 8,
-    "en": "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
-    "ar": "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
+    "en": "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
+    "ar": "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
     "events_5d": 12,
@@ -50,6 +50,28 @@
       "ar": "دعم العوائد يقوّي الدولار عادة"
     },
     {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
+    {
+      "id": "vix-equities",
+      "legs": [
+        "vix",
+        "spy"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising hedging demand pressures the equity tape",
+      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
+    },
+    {
       "id": "ai-growth",
       "legs": [
         "nvda",
@@ -59,17 +81,6 @@
       "chain_strength": 3,
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
-    },
-    {
-      "id": "liquidity-beta",
-      "legs": [
-        "btc",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 5,
-      "en": "Crypto trades as the liquidity beta of the growth complex",
-      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     },
     {
       "id": "breadth-link",
@@ -107,26 +118,15 @@
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
     },
     {
-      "id": "dollar-gold",
+      "id": "liquidity-beta",
       "legs": [
-        "dxy",
-        "gold"
+        "btc",
+        "qqq"
       ],
       "state": "diverging",
-      "chain_strength": 2,
-      "en": "A firming dollar typically pressures gold",
-      "ar": "تقوّي الدولار يضغط على الذهب عادة"
-    },
-    {
-      "id": "vix-equities",
-      "legs": [
-        "vix",
-        "spy"
-      ],
-      "state": "diverging",
-      "chain_strength": 2,
-      "en": "Rising hedging demand pressures the equity tape",
-      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
+      "chain_strength": 1,
+      "en": "Crypto trades as the liquidity beta of the growth complex",
+      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     }
   ],
   "weakening": [],
@@ -159,14 +159,14 @@
   ],
   "narrative_en": [
     "The regime picture moved: breadth state: mixed -> confirming; duration pressure: neutral -> relaxing; breadth state: mixed -> confirming.",
-    "Regime coherence 63/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
     "The US10Y/QQQ link is not holding — a 4-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is Employment Situation."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 63/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
     "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 4 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي Employment Situation."
@@ -295,7 +295,7 @@
       },
       {
         "date": "2026-10-02",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "vix-equities": [
@@ -337,7 +337,7 @@
       },
       {
         "date": "2026-10-02",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "ai-growth": [
@@ -421,7 +421,7 @@
       },
       {
         "date": "2026-10-02",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "breadth-link": [
@@ -509,5 +509,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 63/100 (tense); velocity accelerating; 5 confirming / 3 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 75/100 (coherent); velocity accelerating; 6 confirming / 2 diverging links; 2 underpriced signal(s)."
 }
