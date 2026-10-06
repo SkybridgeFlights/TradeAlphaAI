@@ -1,21 +1,42 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-06T16:38:16.180Z",
+  "updated_at": "2026-10-06T18:51:54.837Z",
   "run_date": "2026-10-06",
   "verified": true,
   "conviction": {
-    "state": "healthy-trend-structure",
+    "state": "increasingly-confirmed",
     "regime_confidence": "high",
-    "confirmations": 7,
-    "contradictions": 2,
-    "en": "Healthy trend structure — confirmations are broad and uncontested across the causal network.",
-    "ar": "بنية اتجاه صحية — التأكيدات واسعة وغير متنازع عليها عبر الشبكة السببية."
+    "confirmations": 6,
+    "contradictions": 4,
+    "en": "The structure is increasingly confirmed — cross-asset links and regime persistence agree.",
+    "ar": "البنية تزداد تأكيداً — روابط الأصول واستمرارية النظام متوافقتان."
   },
-  "contradictions": [],
+  "contradictions": [
+    {
+      "id": "index-vs-breadth",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-10-06",
+      "last_seen": "2026-10-06",
+      "active_today": true,
+      "en": "Headline index strength against weak participation beneath the surface.",
+      "ar": "قوة المؤشرات الرئيسية تقابلها مشاركة ضعيفة تحت السطح."
+    },
+    {
+      "id": "leadership-vs-participation",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-10-06",
+      "last_seen": "2026-10-06",
+      "active_today": true,
+      "en": "Growth leadership extending while small-cap participation deteriorates.",
+      "ar": "قيادة النمو تمتد بينما تتدهور مشاركة الأسهم الصغيرة."
+    }
+  ],
   "structure": {
-    "class": "stable-structure",
-    "en": "Stable structure — no fragility pattern dominates the verified picture.",
-    "ar": "بنية مستقرة — لا نمط هشاشة يهيمن على الصورة الموثقة."
+    "class": "squeeze-behavior",
+    "en": "Squeeze behavior — sharp volatility unwind lifting a thin tape.",
+    "ar": "سلوك انضغاط مراكز — تفكيك حاد للتحوطات يرفع سوقاً ضيق المشاركة."
   },
   "pressure": {
     "tracks": {
@@ -43,7 +64,7 @@
       "speculative_pressure": {
         "score": 5,
         "base_score": 5,
-        "state": "accumulating",
+        "state": "steady",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
@@ -73,8 +94,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with healthy trend structure; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع بنية اتجاه صحية؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — squeeze behavior with increasingly confirmed; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — سلوك انضغاط مراكز مع البنية تزداد تأكيداً؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -82,7 +103,7 @@
     },
     {
       "id": "bullish-continuation",
-      "status": "active",
+      "status": "watch",
       "en": "Bullish continuation — would require confirming breadth, contained volatility, and no persistent contradictions; broad participation is the confirming signal.",
       "ar": "الاستمرار الصاعد — يتطلب اتساعاً مؤكِّداً وتقلباً محتوى وغياب تناقضات مستمرة؛ المشاركة الواسعة هي إشارة التأكيد.",
       "derived_from": [
@@ -123,8 +144,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -142,9 +163,9 @@
     }
   ],
   "desk_focus": {
-    "focus": "pressure",
-    "reason_en": "multiple pressure tracks elevated",
-    "reason_ar": "مسارات ضغط متعددة مرتفعة"
+    "focus": "risk",
+    "reason_en": "structure: squeeze behavior",
+    "reason_ar": "بنية سوق هشة"
   },
-  "macro_note": "Macro cognition — conviction: healthy-trend-structure; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 3."
+  "macro_note": "Macro cognition — conviction: increasingly-confirmed; structure: squeeze-behavior; contradictions active: 2 (0 escalated); elevated pressure tracks: 3."
 }

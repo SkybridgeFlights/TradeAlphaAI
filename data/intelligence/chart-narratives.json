@@ -1,56 +1,9 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-06T16:38:16.241Z",
+  "updated_at": "2026-10-06T18:51:54.887Z",
   "run_date": "2026-10-06",
   "verified": true,
   "selected": [
-    {
-      "id": "yields-growth",
-      "kind": "cross-asset",
-      "visual_type": "cross-asset-comparison",
-      "symbols": [
-        "TVC:US10Y",
-        "NASDAQ:QQQ"
-      ],
-      "title_en": "Yields vs growth equities",
-      "title_ar": "العوائد مقابل أسهم النمو",
-      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
-      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
-      "score": 132,
-      "evidence": [
-        "causal:yields-growth diverging ×8"
-      ],
-      "annotations": [
-        {
-          "type": "divergence-highlight",
-          "severity": "high",
-          "label_en": "Divergence — US10Y/QQQ not confirming (8-session strain)",
-          "label_ar": "انفصال — US10Y/QQQ لا يؤكد (إجهاد 8 جلسات)",
-          "evidence": [
-            "convergence:diverges:yields-growth:chain=8"
-          ]
-        },
-        {
-          "type": "transition-label",
-          "severity": "elevated",
-          "label_en": "Regime shift — duration pressure neutral → relaxing",
-          "label_ar": "تحوّل النظام — duration pressure: neutral ← relaxing",
-          "evidence": [
-            "cognition:timeline:duration_pressure:neutral->relaxing:2026-10-01"
-          ]
-        },
-        {
-          "type": "catalyst-zone",
-          "severity": "info",
-          "label_en": "Catalyst window — FOMC Press Release (2026-10-06)",
-          "label_ar": "نافذة محفز — FOMC Press Release (2026-10-06)",
-          "evidence": [
-            "pulse:catalyst:FOMC Press Release:2026-10-06"
-          ]
-        }
-      ],
-      "attribution": "Chart: TradingView · Quotes: sourced market providers"
-    },
     {
       "id": "liquidity-beta",
       "kind": "liquidity",
@@ -85,6 +38,53 @@
           "label_ar": "ضغط مخزّن — 5/5",
           "evidence": [
             "macro:pressure:liquidity_pressure:5"
+          ]
+        },
+        {
+          "type": "catalyst-zone",
+          "severity": "info",
+          "label_en": "Catalyst window — FOMC Press Release (2026-10-06)",
+          "label_ar": "نافذة محفز — FOMC Press Release (2026-10-06)",
+          "evidence": [
+            "pulse:catalyst:FOMC Press Release:2026-10-06"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
+    {
+      "id": "breadth-confirmation",
+      "kind": "cross-asset",
+      "visual_type": "breadth",
+      "symbols": [
+        "AMEX:SPY",
+        "AMEX:RSP"
+      ],
+      "title_en": "Cap-weighted vs equal-weight breadth",
+      "title_ar": "المؤشر الموزون مقابل الوزن المتساوي",
+      "reading_en": "The cap-weighted index against its equal-weight twin — the cleanest visual of whether participation confirms headline strength or megacaps are carrying a thinning tape.",
+      "reading_ar": "المؤشر الموزون بالقيمة مقابل نظيره متساوي الوزن — أوضح قراءة بصرية لما إذا كانت المشاركة تؤكد قوة المؤشر أم أن الشركات الكبرى تحمل سوقاً يضيق.",
+      "score": 38,
+      "evidence": [
+        "breadth_state: deteriorating ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — SPY/IWM not confirming",
+          "label_ar": "انفصال — SPY/IWM لا يؤكد",
+          "evidence": [
+            "convergence:diverges:breadth-link:chain=1"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — breadth state confirming → deteriorating",
+          "label_ar": "تحوّل النظام — breadth state: confirming ← deteriorating",
+          "evidence": [
+            "cognition:timeline:breadth_state:confirming->deteriorating:2026-10-06"
           ]
         },
         {

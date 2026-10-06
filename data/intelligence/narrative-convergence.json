@@ -1,43 +1,54 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-06T16:38:16.210Z",
+  "updated_at": "2026-10-06T18:51:54.864Z",
   "run_date": "2026-10-06",
   "verified": true,
   "coherence": {
-    "score": 75,
-    "band": "coherent",
+    "score": 65,
+    "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 65/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 65/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
-    "events_5d": 6,
+    "events_5d": 10,
     "band": "accelerating"
   },
   "what_changed": [
     {
-      "date": "2026-10-05",
-      "dimension": "market_fragility",
-      "from": "contained",
-      "to": "building",
-      "note": "market fragility: contained -> building"
+      "date": "2026-10-06",
+      "dimension": "breadth_state",
+      "from": "confirming",
+      "to": "deteriorating",
+      "note": "breadth state: confirming -> deteriorating"
     },
     {
-      "date": "2026-10-05",
+      "date": "2026-10-06",
       "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "note": "ai concentration risk: contained -> elevated"
+      "from": "elevated",
+      "to": "contained",
+      "note": "ai concentration risk: elevated -> contained"
     },
     {
-      "date": "2026-10-02",
-      "dimension": "market_fragility",
-      "from": "building",
-      "to": "contained",
-      "note": "market fragility: building -> contained"
+      "date": "2026-10-06",
+      "dimension": "momentum_concentration",
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
     }
   ],
   "confirms": [
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    },
     {
       "id": "yields-dollar",
       "legs": [
@@ -83,17 +94,6 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
-      "id": "breadth-link",
-      "legs": [
-        "spy",
-        "iwm"
-      ],
-      "state": "confirming",
-      "chain_strength": 10,
-      "en": "Healthy advances carry small caps with the index",
-      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
-    },
-    {
       "id": "yields-bonds",
       "legs": [
         "us10y",
@@ -107,17 +107,6 @@
   ],
   "diverges": [
     {
-      "id": "yields-growth",
-      "legs": [
-        "us10y",
-        "qqq"
-      ],
-      "state": "diverging",
-      "chain_strength": 8,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
-    {
       "id": "liquidity-beta",
       "legs": [
         "btc",
@@ -127,6 +116,17 @@
       "chain_strength": 5,
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+    },
+    {
+      "id": "breadth-link",
+      "legs": [
+        "spy",
+        "iwm"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Healthy advances carry small caps with the index",
+      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
     }
   ],
   "weakening": [],
@@ -158,16 +158,16 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: market fragility: contained -> building; ai concentration risk: contained -> elevated; market fragility: building -> contained.",
-    "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "The US10Y/QQQ link is not holding — a 8-session strain; that is where the tape's internal argument lives.",
+    "The regime picture moved: breadth state: confirming -> deteriorating; ai concentration risk: elevated -> contained; momentum concentration: balanced -> narrow-megacap.",
+    "Regime coherence 65/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The BTC/QQQ link is not holding — a 5-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (5/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
-    "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 8 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "اتساق النظام 65/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "رابط BTC/QQQ لا يصمد — إجهاد مستمر منذ 5 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
@@ -211,7 +211,7 @@
       },
       {
         "date": "2026-10-06",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "yields-dollar": [
@@ -463,7 +463,7 @@
       },
       {
         "date": "2026-10-06",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "yields-bonds": [
@@ -509,5 +509,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 75/100 (coherent); velocity accelerating; 6 confirming / 2 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 65/100 (tense); velocity accelerating; 6 confirming / 2 diverging links; 2 underpriced signal(s)."
 }

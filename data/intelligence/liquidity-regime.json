@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-05T21:13:00.932Z",
+  "generated_at": "2026-10-06T18:51:55.048Z",
   "source_layer": "liquidity-regime",
-  "regime": "indeterminate",
-  "liquidity_state": "tightening",
-  "stability": "indeterminate",
+  "regime": "narrow_leadership",
+  "liquidity_state": "defensive_demand",
+  "stability": "fragile",
   "confidence": 89,
   "observed_dimensions": 8,
   "cross_asset_coherence": {
@@ -13,22 +13,25 @@
     "n": 5
   },
   "sub_states": {
-    "breadth": "mixed",
-    "volatility": "normal",
+    "breadth": "narrow",
+    "volatility": "compression",
     "yield": "neutral",
-    "dollar": "tightening_proxy",
-    "defensive": "cyclical_leadership"
+    "dollar": "neutral",
+    "defensive": "defensive_rotation"
   },
-  "narrative": "Insufficient observed cross-asset data to classify the current structural regime.",
-  "narrative_tags": [],
+  "narrative": "Equity leadership remains narrow despite index-level stability, with limited breadth beneath the surface. Cross-asset coherence 0.6.",
+  "narrative_tags": [
+    "narrow_leadership",
+    "fragile"
+  ],
   "attribution": {
     "market_state_source": "data/live-market-state.json",
-    "market_state_generated_at": "2026-10-05T21:12:59.293Z",
+    "market_state_generated_at": "2026-10-06T18:51:53.173Z",
     "market_state_age_hours": 0,
     "reaction_context": {
       "liquidity_stress": false
     },
     "providers": "FRED (rates/vol) + Finnhub (equities/sectors) via update-live-market-state"
   },
-  "note": "Insufficient observed dimensions — regime indeterminate (no fabrication)."
+  "note": null
 }

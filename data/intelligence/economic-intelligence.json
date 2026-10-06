@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-05T21:13:00.855Z",
+  "generated_at": "2026-10-06T18:51:54.987Z",
   "source_layer": "economic-intelligence",
   "calendar_source": "forexfactory",
-  "calendar_updated_at": "2026-10-05T19:10:59.585Z",
+  "calendar_updated_at": "2026-10-06T16:38:07.002Z",
   "enrichment": {
     "fetch_attempted": true,
     "keys_present": {
@@ -37,658 +37,28 @@
     "archived"
   ],
   "counts": {
-    "total": 405,
+    "total": 403,
     "high_impact": 135,
     "parsed": 0,
-    "awaiting": 338,
-    "delayed": 50,
+    "awaiting": 321,
+    "delayed": 62,
     "surprise_ready": 0,
     "by_state": {
-      "scheduled": 336,
+      "scheduled": 319,
       "awaiting_release": 2,
-      "released": 17,
+      "released": 20,
       "parsed": 0,
       "revised": 0,
-      "delayed": 50,
+      "delayed": 62,
       "archived": 0
     },
     "by_forecast_quality": {
-      "unavailable": 366,
+      "unavailable": 364,
       "historical_proxy": 9,
       "single_provider": 30
     }
   },
   "events": [
-    {
-      "id": "economic-calendar::fred::us::advance-monthly-sales-for-retail-and-food-services::20260928T000000",
-      "event": "Advance Monthly Sales for Retail and Food Services",
-      "category": "growth",
-      "country": "US",
-      "release_time": "2026-09-28T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "SPY",
-        "IWM",
-        "Oil",
-        "Defensive sectors"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": "RSAFS"
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "+",
-          "US10Y": "+",
-          "GOLD": "-",
-          "SPY": "+",
-          "QQQ": "+",
-          "VIX": "-",
-          "OIL": "+"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "growth",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::fred::us::cboe-market-statistics::20260928T000000",
-      "event": "CBOE Market Statistics",
-      "category": "policy",
-      "country": "US",
-      "release_time": "2026-09-28T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": null
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "-",
-          "US10Y": "0",
-          "GOLD": "0",
-          "SPY": "0",
-          "QQQ": "0",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "policy",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::fred::us::fomc-press-release::20260928T000000",
-      "event": "FOMC Press Release",
-      "category": "policy",
-      "country": "US",
-      "release_time": "2026-09-28T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "high",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": "DFEDTARU"
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "+",
-          "US10Y": "+",
-          "GOLD": "-",
-          "SPY": "-",
-          "QQQ": "-",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "policy",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::fred::us::key-ecb-interest-rates::20260928T000000",
-      "event": "Key ECB Interest Rates",
-      "category": "policy",
-      "country": "US",
-      "release_time": "2026-09-28T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": null
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "-",
-          "US10Y": "0",
-          "GOLD": "0",
-          "SPY": "0",
-          "QQQ": "0",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "policy",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::fred::us::state-unemployment-insurance-weekly-claims-report::20260928T000000",
-      "event": "State Unemployment Insurance Weekly Claims Report",
-      "category": "labor",
-      "country": "US",
-      "release_time": "2026-09-28T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "IWM",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": "UNRATE"
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "+",
-          "US10Y": "+",
-          "GOLD": "-",
-          "SPY": "0",
-          "QQQ": "-",
-          "VIX": "-",
-          "OIL": "+"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "labor",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::au::australia-monthly-cpi-indicator::20260928T010000",
-      "event": "Australia Monthly CPI Indicator",
-      "category": "inflation",
-      "country": "AU",
-      "release_time": "2026-09-28T01:00:00.000Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Australia",
-      "source_url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": "CPIAUCSL"
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "+",
-          "US10Y": "+",
-          "GOLD": "-",
-          "SPY": "-",
-          "QQQ": "-",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "inflation",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::us::us-13-week-t-bill-auction::20260928T153000",
-      "event": "US 13-Week T-Bill Auction",
-      "category": "macro",
-      "country": "US",
-      "release_time": "2026-09-28T15:30:00.000Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "low",
-      "source": "U.S. Treasury",
-      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": null
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "US10Y": "+",
-          "DXY": "+",
-          "SPY": "-",
-          "VIX": "+"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "macro",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
-      "id": "economic-calendar::schedule_fallback::us::us-26-week-t-bill-auction::20260928T153000",
-      "event": "US 26-Week T-Bill Auction",
-      "category": "macro",
-      "country": "US",
-      "release_time": "2026-09-28T15:30:00.000Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "low",
-      "source": "U.S. Treasury",
-      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "SPY",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": null
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "US10Y": "+",
-          "DXY": "+",
-          "SPY": "-",
-          "VIX": "+"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "macro",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": true,
-        "schedule_estimate": true
-      },
-      "enrichment_source": "calendar"
-    },
     {
       "id": "economic-calendar::fred::us::cboe-market-statistics::20260929T000000",
       "event": "CBOE Market Statistics",
@@ -3722,14 +3092,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 0.5,
         "revised": null,
@@ -3798,14 +3168,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": -0.4,
         "revised": null,
@@ -3854,6 +3224,87 @@
         "forecasts": true,
         "actuals": true,
         "precise_time": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::fred::us::cboe-market-statistics::20261005T000000",
+      "event": "CBOE Market Statistics",
+      "category": "policy",
+      "country": "US",
+      "release_time": "2026-10-05T00:00:00Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "medium",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "confidence": 40,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "release_state": "delayed",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "DXY": "-",
+          "US10Y": "0",
+          "GOLD": "0",
+          "SPY": "0",
+          "QQQ": "0",
+          "VIX": "+",
+          "OIL": "0"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "policy",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
       },
       "enrichment_source": "calendar"
     },
@@ -4099,87 +3550,6 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::fred::us::cboe-market-statistics::20261005T000000",
-      "event": "CBOE Market Statistics",
-      "category": "policy",
-      "country": "US",
-      "release_time": "2026-10-05T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 40,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "release_state": "delayed",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": null
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "-",
-          "US10Y": "0",
-          "GOLD": "0",
-          "SPY": "0",
-          "QQQ": "0",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "policy",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
       "id": "economic-calendar::forexfactory::jp::consumer-confidence::20261005T050000",
       "event": "Consumer Confidence",
       "category": "macro",
@@ -4196,14 +3566,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 35.5,
         "revised": null,
@@ -4272,14 +3642,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 57.8,
         "revised": null,
@@ -4348,14 +3718,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -4422,14 +3792,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 55.2,
         "revised": null,
@@ -4498,14 +3868,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 51.4,
         "revised": null,
@@ -4574,14 +3944,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 52.9,
         "revised": null,
@@ -4650,14 +4020,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 53,
         "revised": null,
@@ -4726,14 +4096,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 5.1,
         "revised": null,
@@ -4802,14 +4172,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 51.7,
         "revised": null,
@@ -4878,14 +4248,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 1.6,
         "revised": null,
@@ -4954,14 +4324,14 @@
       "importance": "low",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 58.7,
         "revised": null,
@@ -5030,7 +4400,7 @@
       "importance": "medium",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 65,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "SPY",
@@ -5038,7 +4408,7 @@
         "Oil",
         "Defensive sectors"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": 55.4,
         "revised": null,
@@ -5110,14 +4480,14 @@
       "importance": "low",
       "source": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "confidence": 45,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -5185,14 +4555,14 @@
       "importance": "low",
       "source": "U.S. Treasury",
       "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
-      "confidence": 45,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
         "SPY",
         "VIX"
       ],
-      "release_state": "released",
+      "release_state": "delayed",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -5343,7 +4713,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "awaiting_release",
+      "release_state": "released",
       "historical_context": {
         "previous": -5.2,
         "revised": null,
@@ -5396,87 +4766,6 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::fred::us::cboe-market-statistics::20261006T000000",
-      "event": "CBOE Market Statistics",
-      "category": "policy",
-      "country": "US",
-      "release_time": "2026-10-06T00:00:00Z",
-      "timezone": "UTC",
-      "actual": null,
-      "forecast": null,
-      "previous": null,
-      "revised": null,
-      "revised_from": null,
-      "status": "confirmed",
-      "estimated_vs_verified": "estimated",
-      "importance": "medium",
-      "source": "Federal Reserve Bank of St. Louis FRED",
-      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 45,
-      "affected_assets": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "release_state": "scheduled",
-      "historical_context": {
-        "previous": null,
-        "revised": null,
-        "revised_from": null,
-        "observation_date": null,
-        "official_series": null
-      },
-      "surprise": {
-        "surprise_score": null,
-        "surprise_direction": "pending",
-        "surprise_label": "pending",
-        "policy_tone": "unresolved",
-        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
-        "forecast_basis": "unavailable",
-        "surprise_confidence": 0,
-        "surprise_ready": false
-      },
-      "surprise_ready": false,
-      "surprise_confidence": 0,
-      "forecast_basis": "unavailable",
-      "forecast_sources": [],
-      "forecast_source_count": 0,
-      "forecast_confidence": 0,
-      "forecast_quality": "unavailable",
-      "consensus_state": "unavailable",
-      "forecast_dispersion": null,
-      "proxy_used": false,
-      "proxy_value": null,
-      "cross_asset": {
-        "directional": {
-          "DXY": "-",
-          "US10Y": "0",
-          "GOLD": "0",
-          "SPY": "0",
-          "QQQ": "0",
-          "VIX": "+",
-          "OIL": "0"
-        },
-        "conditional": true,
-        "basis": "directional_template"
-      },
-      "narrative_tags": [
-        "policy",
-        "awaiting_data"
-      ],
-      "data_capabilities": {
-        "forecasts": false,
-        "actuals": false,
-        "precise_time": false,
-        "release_dates_only": true
-      },
-      "enrichment_source": "calendar"
-    },
-    {
       "id": "economic-calendar::fred::us::fomc-press-release::20261006T000000",
       "event": "FOMC Press Release",
       "category": "policy",
@@ -5493,7 +4782,7 @@
       "importance": "high",
       "source": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 50,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -5503,7 +4792,7 @@
         "TLT",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "delayed",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -5574,7 +4863,7 @@
       "importance": "medium",
       "source": "Federal Reserve Bank of St. Louis FRED",
       "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
-      "confidence": 45,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -5584,7 +4873,88 @@
         "TLT",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "delayed",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "DXY": "-",
+          "US10Y": "0",
+          "GOLD": "0",
+          "SPY": "0",
+          "QQQ": "0",
+          "VIX": "+",
+          "OIL": "0"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "policy",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::fred::us::cboe-market-statistics::20261006T000000",
+      "event": "CBOE Market Statistics",
+      "category": "policy",
+      "country": "US",
+      "release_time": "2026-10-06T00:00:00Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "medium",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "confidence": 40,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "release_state": "delayed",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -5662,7 +5032,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "awaiting_release",
+      "release_state": "released",
       "historical_context": {
         "previous": 2.5,
         "revised": null,
@@ -5738,7 +5108,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -5812,7 +5182,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": 2.5,
         "revised": null,
@@ -5881,7 +5251,7 @@
       "importance": "high",
       "source": "ForexFactory Calendar",
       "source_url": "https://www.forexfactory.com/calendar",
-      "confidence": 70,
+      "confidence": 40,
       "affected_assets": [
         "Treasury yields",
         "DXY",
@@ -5891,7 +5261,7 @@
         "TLT",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "delayed",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -5968,7 +5338,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6042,7 +5412,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": -0.4,
         "revised": null,
@@ -6119,7 +5489,7 @@
         "IWM",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": 3.1,
         "revised": null,
@@ -6198,7 +5568,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": 44.3,
         "revised": null,
@@ -6251,8 +5621,8 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::forexfactory::gb::mpc-member-mann-speaks::20261006T083000",
-      "event": "MPC Member Mann Speaks",
+      "id": "economic-calendar::forexfactory::gb::housing-equity-withdrawal-q-q::20261006T083000",
+      "event": "Housing Equity Withdrawal q/q",
       "category": "macro",
       "country": "GB",
       "release_time": "2026-10-06T08:30:00.000Z",
@@ -6274,7 +5644,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6325,8 +5695,8 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::forexfactory::gb::housing-equity-withdrawal-q-q::20261006T083000",
-      "event": "Housing Equity Withdrawal q/q",
+      "id": "economic-calendar::forexfactory::gb::mpc-member-mann-speaks::20261006T083000",
+      "event": "MPC Member Mann Speaks",
       "category": "macro",
       "country": "GB",
       "release_time": "2026-10-06T08:30:00.000Z",
@@ -6348,7 +5718,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6423,7 +5793,7 @@
         "Oil",
         "Defensive sectors"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": -0.6,
         "revised": null,
@@ -6479,11 +5849,11 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::forexfactory::us::adp-weekly-employment-change::20261006T121600",
+      "id": "economic-calendar::forexfactory::us::adp-weekly-employment-change::20261006T121400",
       "event": "ADP Weekly Employment Change",
       "category": "macro",
       "country": "US",
-      "release_time": "2026-10-06T12:16:00.000Z",
+      "release_time": "2026-10-06T12:14:00.000Z",
       "timezone": "America/New_York",
       "actual": null,
       "forecast": null,
@@ -6502,7 +5872,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6576,7 +5946,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6650,7 +6020,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6724,7 +6094,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": 64.3,
         "revised": null,
@@ -6777,11 +6147,11 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::forexfactory::us::rcm-tipp-economic-optimism::20261006T141000",
+      "id": "economic-calendar::forexfactory::us::rcm-tipp-economic-optimism::20261006T140100",
       "event": "RCM/TIPP Economic Optimism",
       "category": "macro",
       "country": "US",
-      "release_time": "2026-10-06T14:10:00.000Z",
+      "release_time": "2026-10-06T14:01:00.000Z",
       "timezone": "America/New_York",
       "actual": null,
       "forecast": 44.5,
@@ -6800,7 +6170,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": 45.6,
         "revised": null,
@@ -6879,7 +6249,7 @@
         "TLT",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -6933,11 +6303,11 @@
       "enrichment_source": "calendar"
     },
     {
-      "id": "economic-calendar::forexfactory::nz::gdt-price-index::20261006T145000",
+      "id": "economic-calendar::forexfactory::nz::gdt-price-index::20261006T155000",
       "event": "GDT Price Index",
       "category": "macro",
       "country": "NZ",
-      "release_time": "2026-10-06T14:50:00.000Z",
+      "release_time": "2026-10-06T15:50:00.000Z",
       "timezone": "America/New_York",
       "actual": null,
       "forecast": null,
@@ -6956,7 +6326,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": -1.1,
         "revised": null,
@@ -7035,7 +6405,7 @@
         "TLT",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "released",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -7112,7 +6482,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "awaiting_release",
       "historical_context": {
         "previous": null,
         "revised": null,
@@ -7186,7 +6556,7 @@
         "SPY",
         "VIX"
       ],
-      "release_state": "scheduled",
+      "release_state": "awaiting_release",
       "historical_context": {
         "previous": 4.7,
         "revised": null,
@@ -7645,7 +7015,7 @@
       "release_time": "2026-10-07T05:00:00.000Z",
       "timezone": "America/New_York",
       "actual": null,
-      "forecast": 118.1,
+      "forecast": 118.3,
       "previous": 117.9,
       "revised": null,
       "revised_from": null,
@@ -9020,7 +8390,7 @@
       "release_time": "2026-10-08T05:00:00.000Z",
       "timezone": "America/New_York",
       "actual": null,
-      "forecast": 46.6,
+      "forecast": 46.7,
       "previous": 46.4,
       "revised": null,
       "revised_from": null,
@@ -22031,6 +21401,330 @@
       "enrichment_source": "calendar"
     },
     {
+      "id": "economic-calendar::fred::us::bank-of-japan-accounts::20261104T000000",
+      "event": "Bank of Japan Accounts",
+      "category": "policy",
+      "country": "US",
+      "release_time": "2026-11-04T00:00:00Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "medium",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "confidence": 45,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "release_state": "scheduled",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "DXY": "-",
+          "US10Y": "0",
+          "GOLD": "0",
+          "SPY": "0",
+          "QQQ": "0",
+          "VIX": "+",
+          "OIL": "0"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "policy",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::fred::us::cboe-market-statistics::20261104T000000",
+      "event": "CBOE Market Statistics",
+      "category": "policy",
+      "country": "US",
+      "release_time": "2026-11-04T00:00:00Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "medium",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "confidence": 45,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "release_state": "scheduled",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "DXY": "-",
+          "US10Y": "0",
+          "GOLD": "0",
+          "SPY": "0",
+          "QQQ": "0",
+          "VIX": "+",
+          "OIL": "0"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "policy",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::fred::us::fomc-press-release::20261104T000000",
+      "event": "FOMC Press Release",
+      "category": "policy",
+      "country": "US",
+      "release_time": "2026-11-04T00:00:00Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "high",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "confidence": 50,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "release_state": "scheduled",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": "DFEDTARU"
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "DXY": "+",
+          "US10Y": "+",
+          "GOLD": "-",
+          "SPY": "-",
+          "QQQ": "-",
+          "VIX": "+",
+          "OIL": "0"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "policy",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::fred::us::key-ecb-interest-rates::20261104T000000",
+      "event": "Key ECB Interest Rates",
+      "category": "policy",
+      "country": "US",
+      "release_time": "2026-11-04T00:00:00Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "medium",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/releases_dates.html",
+      "confidence": 45,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "release_state": "scheduled",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "DXY": "-",
+          "US10Y": "0",
+          "GOLD": "0",
+          "SPY": "0",
+          "QQQ": "0",
+          "VIX": "+",
+          "OIL": "0"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "policy",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": false,
+        "release_dates_only": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
       "id": "economic-calendar::schedule_fallback::us::ism-services-pmi::20261104T150000",
       "event": "ISM Services PMI",
       "category": "growth",
@@ -31733,6 +31427,156 @@
       },
       "narrative_tags": [
         "inflation",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": true,
+        "schedule_estimate": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::schedule_fallback::us::us-13-week-t-bill-auction::20270104T163000",
+      "event": "US 13-Week T-Bill Auction",
+      "category": "macro",
+      "country": "US",
+      "release_time": "2027-01-04T16:30:00.000Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "low",
+      "source": "U.S. Treasury",
+      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
+      "confidence": 45,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "VIX"
+      ],
+      "release_state": "scheduled",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "US10Y": "+",
+          "DXY": "+",
+          "SPY": "-",
+          "VIX": "+"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "macro",
+        "awaiting_data"
+      ],
+      "data_capabilities": {
+        "forecasts": false,
+        "actuals": false,
+        "precise_time": true,
+        "schedule_estimate": true
+      },
+      "enrichment_source": "calendar"
+    },
+    {
+      "id": "economic-calendar::schedule_fallback::us::us-26-week-t-bill-auction::20270104T163000",
+      "event": "US 26-Week T-Bill Auction",
+      "category": "macro",
+      "country": "US",
+      "release_time": "2027-01-04T16:30:00.000Z",
+      "timezone": "UTC",
+      "actual": null,
+      "forecast": null,
+      "previous": null,
+      "revised": null,
+      "revised_from": null,
+      "status": "confirmed",
+      "estimated_vs_verified": "estimated",
+      "importance": "low",
+      "source": "U.S. Treasury",
+      "source_url": "https://www.treasurydirect.gov/auctions/auction-query/",
+      "confidence": 45,
+      "affected_assets": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "VIX"
+      ],
+      "release_state": "scheduled",
+      "historical_context": {
+        "previous": null,
+        "revised": null,
+        "revised_from": null,
+        "observation_date": null,
+        "official_series": null
+      },
+      "surprise": {
+        "surprise_score": null,
+        "surprise_direction": "pending",
+        "surprise_label": "pending",
+        "policy_tone": "unresolved",
+        "macro_interpretation": "No sourced forecast available — surprise cannot be computed without fabricating an expectation.",
+        "forecast_basis": "unavailable",
+        "surprise_confidence": 0,
+        "surprise_ready": false
+      },
+      "surprise_ready": false,
+      "surprise_confidence": 0,
+      "forecast_basis": "unavailable",
+      "forecast_sources": [],
+      "forecast_source_count": 0,
+      "forecast_confidence": 0,
+      "forecast_quality": "unavailable",
+      "consensus_state": "unavailable",
+      "forecast_dispersion": null,
+      "proxy_used": false,
+      "proxy_value": null,
+      "cross_asset": {
+        "directional": {
+          "US10Y": "+",
+          "DXY": "+",
+          "SPY": "-",
+          "VIX": "+"
+        },
+        "conditional": true,
+        "basis": "directional_template"
+      },
+      "narrative_tags": [
+        "macro",
         "awaiting_data"
       ],
       "data_capabilities": {
