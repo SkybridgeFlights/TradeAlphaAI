@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-05T21:13:00.618Z",
-  "run_date": "2026-10-05",
+  "updated_at": "2026-10-06T16:38:16.137Z",
+  "run_date": "2026-10-06",
   "verified": true,
   "sessions_tracked": 40,
   "regime_shifts": [
@@ -9,7 +9,7 @@
       "dimension": "risk_state",
       "state": "risk-on",
       "phase": "extended",
-      "sessions_in_state": 7,
+      "sessions_in_state": 8,
       "from": {
         "state": "neutral",
         "date": "2026-09-28"
@@ -26,7 +26,7 @@
       "dimension": "dollar_pressure",
       "state": "firming",
       "phase": "extended",
-      "sessions_in_state": 6,
+      "sessions_in_state": 7,
       "from": {
         "state": "stable",
         "date": "2026-09-29"
@@ -36,7 +36,7 @@
       "dimension": "duration_pressure",
       "state": "neutral",
       "phase": "extended",
-      "sessions_in_state": 7,
+      "sessions_in_state": 8,
       "from": {
         "state": "building",
         "date": "2026-09-28"
@@ -46,7 +46,7 @@
       "dimension": "momentum_concentration",
       "state": "balanced",
       "phase": "extended",
-      "sessions_in_state": 12,
+      "sessions_in_state": 13,
       "from": {
         "state": "narrow-megacap",
         "date": "2026-09-23"
@@ -55,8 +55,8 @@
     {
       "dimension": "ai_concentration_risk",
       "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-10-04"
@@ -66,7 +66,7 @@
       "dimension": "breadth_state",
       "state": "confirming",
       "phase": "extended",
-      "sessions_in_state": 5,
+      "sessions_in_state": 6,
       "from": {
         "state": "mixed",
         "date": "2026-09-30"
@@ -89,15 +89,15 @@
     {
       "dimension": "speculative_appetite",
       "state": "expanding",
-      "phase": "baseline",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": null
     },
     {
       "dimension": "market_fragility",
       "state": "building",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "phase": "strengthening",
+      "sessions_in_state": 2,
       "from": {
         "state": "contained",
         "date": "2026-10-04"
@@ -109,9 +109,33 @@
       "kind": "streak",
       "dimension": "dollar_pressure",
       "state": "firming",
-      "sessions": 6,
-      "en": "Dollar firming persists into a sixth consecutive session, draining global risk appetite at the margin.",
-      "ar": "تقوّي الدولار يمتد للجلسة السادسة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+      "sessions": 7,
+      "en": "Dollar firming persists into a seventh consecutive session, draining global risk appetite at the margin.",
+      "ar": "تقوّي الدولار يمتد للجلسة السابعة على التوالي، مستنزفاً شهية المخاطرة العالمية عند الهامش."
+    },
+    {
+      "kind": "streak",
+      "dimension": "ai_concentration_risk",
+      "state": "elevated",
+      "sessions": 2,
+      "en": "AI concentration risk holds elevated for a second straight session — crowding pressure is building, not resetting.",
+      "ar": "مخاطر تركز الذكاء الاصطناعي تبقى مرتفعة للجلسة الثانية على التوالي — ضغط الازدحام يتراكم ولا يتبدد."
+    },
+    {
+      "kind": "streak",
+      "dimension": "speculative_appetite",
+      "state": "expanding",
+      "sessions": 2,
+      "en": "Speculative appetite expands for a second straight session — risk-seeking behavior is persistent, not episodic.",
+      "ar": "شهية المضاربة تتوسع للجلسة الثانية على التوالي — سلوك السعي للمخاطرة مستمر وليس عابراً."
+    },
+    {
+      "kind": "streak",
+      "dimension": "market_fragility",
+      "state": "building",
+      "sessions": 2,
+      "en": "Market fragility signals build for a second straight session across volatility, breadth, and concentration inputs.",
+      "ar": "إشارات هشاشة السوق تتراكم للجلسة الثانية على التوالي عبر مدخلات التقلب والاتساع والتركز."
     }
   ],
   "causal_links": [
@@ -303,24 +327,7 @@
       }
     ]
   },
-  "alerts": [
-    {
-      "id": "positioning-crowding-2026-10-05",
-      "type": "positioning-crowding",
-      "severity": "watch",
-      "date": "2026-10-05",
-      "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-      "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
-      "derived_from": [
-        {
-          "dimension": "ai_concentration_risk",
-          "from": "contained",
-          "to": "elevated",
-          "date": "2026-10-05"
-        }
-      ]
-    }
-  ],
+  "alerts": [],
   "timeline_tail": [
     {
       "date": "2026-10-05",
@@ -365,5 +372,5 @@
       "note": "duration pressure: neutral -> relaxing"
     }
   ],
-  "cognition_note": "Cognition state — 10/11 dimensions verified; 1 alert(s); 1 cross-session observation(s); 60 timeline event(s)."
+  "cognition_note": "Cognition state — 10/11 dimensions verified; 0 alert(s); 4 cross-session observation(s); 60 timeline event(s)."
 }
