@@ -1,16 +1,17 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-06T22:57:32.381Z",
+  "updated_at": "2026-10-07T17:22:22.718Z",
   "status": "live",
-  "item_count": 10,
+  "item_count": 13,
   "clusters": {
-    "volatility": 2,
+    "volatility": 3,
     "ai-momentum": 2,
     "fed": 5,
-    "macro": 1
+    "labor": 1,
+    "macro": 2
   },
   "top_story": {
-    "id": "move::VIX::2026-10-06T22",
+    "id": "move::VIX::2026-10-07T17",
     "kind": "market_move",
     "headline": "VIX drops -8.14% to 15.01",
     "urgency": 65,
@@ -27,6 +28,23 @@
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::VIX::2026-10-07T17",
+      "kind": "market_move",
+      "headline": "VIX drops -8.14% to 15.01",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-10-06T22:57:31.022Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::VIX::2026-10-06T22",
       "kind": "market_move",
@@ -94,6 +112,73 @@
       "timestamp": "2026-10-05T21:12:57.043Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261009T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-10-09)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-10-09T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20261008T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-10-08, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-10-08T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::forexfactory::gb::boe-gov-bailey-speaks::20261008T121500",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: BOE Gov Bailey Speaks (2026-10-08)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "macro",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "macro"
+      ],
+      "timestamp": "2026-10-08T12:15:00.000Z",
+      "source": "forexfactory",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261008T000000",
@@ -207,29 +292,6 @@
         "fed"
       ],
       "timestamp": "2026-10-06T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261005T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-10-05)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-10-05T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
