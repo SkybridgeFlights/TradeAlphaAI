@@ -1,37 +1,36 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-07T23:43:04.780Z",
+  "updated_at": "2026-10-08T17:19:32.608Z",
   "verified": true,
-  "urgency": "notable",
-  "pulse_shift": [
-    {
-      "kind": "pulse-shift",
-      "dimension": "dollar_pressure",
-      "from": "firming",
-      "to": "stable",
-      "en": "dollar pressure shifted from firming to stable.",
-      "ar": "تحولت حالة dollar pressure من firming إلى stable."
-    }
-  ],
+  "urgency": "elevated",
+  "pulse_shift": [],
   "quote_driven_changes": [],
   "new_contradictions": [],
   "pressure_buildup": [],
-  "new_alerts": [],
+  "new_alerts": [
+    {
+      "kind": "new-alert",
+      "id": "momentum-exhaustion-2026-10-08",
+      "severity": "watch",
+      "en": "Momentum concentration extended — narrow megacap leadership for 3 straight sessions.",
+      "ar": "تركز الزخم ممتد — قيادة ضيقة للأسهم الكبرى منذ 3 جلسات متتالية."
+    }
+  ],
   "catalyst_countdown": [
     {
       "name": "FOMC Press Release",
-      "time": "2026-10-07T00:00:00Z",
-      "minutes_until": 0
-    },
-    {
-      "name": "FOMC Meeting Minutes",
-      "time": "2026-10-07T18:00:00.000Z",
-      "minutes_until": 0
-    },
-    {
-      "name": "FOMC Press Release",
       "time": "2026-10-08T00:00:00Z",
-      "minutes_until": 17
+      "minutes_until": 0
+    },
+    {
+      "name": "BOE Gov Bailey Speaks",
+      "time": "2026-10-08T12:15:00.000Z",
+      "minutes_until": 0
+    },
+    {
+      "name": "Initial Jobless Claims",
+      "time": "2026-10-08T12:30:00.000Z",
+      "minutes_until": 0
     }
   ],
   "wire_event": {
@@ -41,22 +40,11 @@
   },
   "changes": [
     {
-      "kind": "pulse-shift",
-      "dimension": "dollar_pressure",
-      "from": "firming",
-      "to": "stable",
-      "en": "dollar pressure shifted from firming to stable.",
-      "ar": "تحولت حالة dollar pressure من firming إلى stable."
-    },
-    {
-      "kind": "wire-event",
-      "en": "Wire event: VIX drops -7.99% to 15.08",
-      "ar": "حدث على الموجز: VIX drops -7.99% to 15.08",
-      "event": {
-        "headline": "VIX drops -7.99% to 15.08",
-        "timestamp": "2026-10-07T23:43:02.942Z",
-        "urgency": 65
-      }
+      "kind": "new-alert",
+      "id": "momentum-exhaustion-2026-10-08",
+      "severity": "watch",
+      "en": "Momentum concentration extended — narrow megacap leadership for 3 straight sessions.",
+      "ar": "تركز الزخم ممتد — قيادة ضيقة للأسهم الكبرى منذ 3 جلسات متتالية."
     }
   ],
   "note_en": null,
@@ -93,22 +81,22 @@
       "oil": -2.5244210295247473
     },
     "alert_ids": [
-      "positioning-crowding-2026-10-07"
+      "momentum-exhaustion-2026-10-08"
     ],
     "alerts": [
       {
-        "id": "positioning-crowding-2026-10-07",
-        "type": "positioning-crowding",
+        "id": "momentum-exhaustion-2026-10-08",
+        "type": "momentum-exhaustion",
         "severity": "watch",
-        "date": "2026-10-07",
-        "headline_en": "AI positioning crowding — concentration risk moved to elevated.",
-        "headline_ar": "ازدحام تمركزات الذكاء الاصطناعي — انتقلت مخاطر التركز إلى الارتفاع.",
+        "date": "2026-10-08",
+        "headline_en": "Momentum concentration extended — narrow megacap leadership for 3 straight sessions.",
+        "headline_ar": "تركز الزخم ممتد — قيادة ضيقة للأسهم الكبرى منذ 3 جلسات متتالية.",
         "derived_from": [
           {
-            "dimension": "ai_concentration_risk",
-            "from": "contained",
-            "to": "elevated",
-            "date": "2026-10-07"
+            "dimension": "momentum_concentration",
+            "state": "narrow-megacap",
+            "streak": 3,
+            "date": "2026-10-08"
           }
         ]
       }
@@ -125,15 +113,15 @@
     "catalysts": [
       {
         "name": "FOMC Press Release",
-        "time": "2026-10-07T00:00:00Z"
-      },
-      {
-        "name": "FOMC Meeting Minutes",
-        "time": "2026-10-07T18:00:00.000Z"
-      },
-      {
-        "name": "FOMC Press Release",
         "time": "2026-10-08T00:00:00Z"
+      },
+      {
+        "name": "BOE Gov Bailey Speaks",
+        "time": "2026-10-08T12:15:00.000Z"
+      },
+      {
+        "name": "Initial Jobless Claims",
+        "time": "2026-10-08T12:30:00.000Z"
       }
     ],
     "wire_event": {
