@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-08T23:52:36.611Z",
+  "generated_at": "2026-10-12T21:40:38.663Z",
   "source_layer": "liquidity-regime",
-  "regime": "indeterminate",
-  "liquidity_state": "neutral",
-  "stability": "indeterminate",
+  "regime": "defensive_rotation",
+  "liquidity_state": "defensive_demand",
+  "stability": "deteriorating",
   "confidence": 89,
   "observed_dimensions": 8,
   "cross_asset_coherence": {
@@ -13,22 +13,25 @@
     "n": 5
   },
   "sub_states": {
-    "breadth": "mixed",
+    "breadth": "flat",
     "volatility": "normal",
     "yield": "neutral",
-    "dollar": "neutral",
-    "defensive": "cyclical_leadership"
+    "dollar": "tightening_proxy",
+    "defensive": "defensive_rotation"
   },
-  "narrative": "Insufficient observed cross-asset data to classify the current structural regime.",
-  "narrative_tags": [],
+  "narrative": "Defensive sectors are leading, consistent with rotation away from cyclical risk. Cross-asset coherence 0.6.",
+  "narrative_tags": [
+    "defensive_rotation",
+    "deteriorating"
+  ],
   "attribution": {
     "market_state_source": "data/live-market-state.json",
-    "market_state_generated_at": "2026-10-08T23:52:33.694Z",
+    "market_state_generated_at": "2026-10-12T21:40:36.902Z",
     "market_state_age_hours": 0,
     "reaction_context": {
       "liquidity_stress": false
     },
     "providers": "FRED (rates/vol) + Finnhub (equities/sectors) via update-live-market-state"
   },
-  "note": "Insufficient observed dimensions — regime indeterminate (no fabrication)."
+  "note": null
 }
