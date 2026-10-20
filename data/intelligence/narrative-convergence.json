@@ -1,14 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-20T17:52:38.675Z",
+  "updated_at": "2026-10-20T21:28:24.440Z",
   "run_date": "2026-10-20",
   "verified": true,
   "coherence": {
-    "score": 75,
-    "band": "coherent",
+    "score": 50,
+    "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
     "events_5d": 20,
@@ -39,17 +39,6 @@
   ],
   "confirms": [
     {
-      "id": "yields-growth",
-      "legs": [
-        "us10y",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 2,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
-    {
       "id": "yields-dollar",
       "legs": [
         "us10y",
@@ -70,17 +59,6 @@
       "chain_strength": 4,
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
-    },
-    {
-      "id": "liquidity-beta",
-      "legs": [
-        "btc",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 2,
-      "en": "Crypto trades as the liquidity beta of the growth complex",
-      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     },
     {
       "id": "breadth-link",
@@ -127,6 +105,28 @@
       "chain_strength": 2,
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    },
+    {
+      "id": "liquidity-beta",
+      "legs": [
+        "btc",
+        "qqq"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Crypto trades as the liquidity beta of the growth complex",
+      "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
     }
   ],
   "weakening": [
@@ -166,14 +166,14 @@
   ],
   "narrative_en": [
     "The regime picture moved: market fragility: building -> contained; ai concentration risk: elevated -> contained; momentum concentration: narrow-megacap -> broadening.",
-    "Regime coherence 75/100 — the observed cross-asset tape is largely aligned.",
+    "Regime coherence 50/100 — the tape is internally tense; confirmations and divergences are competing.",
     "The VIX/SPY link is not holding — a 3-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (4/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 75/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
+    "اتساق النظام 50/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
     "رابط VIX/SPY لا يصمد — إجهاد مستمر منذ 3 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
@@ -218,7 +218,7 @@
       },
       {
         "date": "2026-10-20",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "yields-dollar": [
@@ -428,7 +428,7 @@
       },
       {
         "date": "2026-10-20",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "breadth-link": [
@@ -516,5 +516,5 @@
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 75/100 (coherent); velocity accelerating; 6 confirming / 2 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 50/100 (tense); velocity accelerating; 4 confirming / 4 diverging links; 2 underpriced signal(s)."
 }
