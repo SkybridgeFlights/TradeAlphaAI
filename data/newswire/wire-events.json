@@ -1,15 +1,14 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-22T21:25:04.405Z",
+  "updated_at": "2026-10-23T17:49:09.608Z",
   "status": "live",
   "item_count": 19,
   "clusters": {
     "ai-momentum": 4,
-    "tape": 8,
+    "tape": 9,
+    "volatility": 1,
     "fed": 4,
-    "labor": 1,
-    "growth": 1,
-    "inflation": 1
+    "labor": 1
   },
   "top_story": {
     "id": "move::NVDA::2026-10-22T21",
@@ -62,6 +61,40 @@
       "timestamp": "2026-10-22T17:55:10.492Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::US10Y::2026-10-23T17",
+      "kind": "market_move",
+      "headline": "US10Y drops -2.92% to 4.986",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-10-23T17:49:08.806Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::VIX::2026-10-23T17",
+      "kind": "market_move",
+      "headline": "VIX jumps +9.44% to 20.18",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-10-23T17:49:08.212Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
       "id": "move::US10Y::2026-10-22T21",
@@ -234,6 +267,29 @@
       "attribution": "sourced: https://finnhub.io/"
     },
     {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261025T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-10-25)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-10-25T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261024T000000",
       "kind": "scheduled_catalyst",
       "headline": "On deck: FOMC Press Release (2026-10-24)",
@@ -320,71 +376,6 @@
         "fed"
       ],
       "timestamp": "2026-10-22T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::schedule_fallback::us::retail-sales::20261021T123000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: Retail Sales (2026-10-21, time estimated)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "growth",
-      "asset_tags": [
-        "Treasury yields",
-        "SPY",
-        "IWM",
-        "Oil",
-        "Defensive sectors"
-      ],
-      "sector_tags": [
-        "growth"
-      ],
-      "timestamp": "2026-10-21T12:30:00.000Z",
-      "source": "schedule_fallback",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::global_acquisition::gb::united-kingdom-cpi::20261021T070000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: United Kingdom CPI (2026-10-21, time estimated)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "inflation",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "QQQ",
-        "TLT"
-      ],
-      "sector_tags": [
-        "inflation"
-      ],
-      "timestamp": "2026-10-21T07:00:00.000Z",
-      "source": "global_acquisition",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261021T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-10-21)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-10-21T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
