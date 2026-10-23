@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-23T17:49:09.668Z",
+  "updated_at": "2026-10-23T21:16:31.679Z",
   "run_date": "2026-10-23",
   "verified": false,
   "sessions_tracked": 40,
@@ -17,13 +17,10 @@
     },
     {
       "dimension": "volatility_regime",
-      "state": "elevated",
-      "phase": "emerging",
-      "sessions_in_state": 1,
-      "from": {
-        "state": "normal",
-        "date": "2026-10-22"
-      }
+      "state": "normal",
+      "phase": "extended",
+      "sessions_in_state": 40,
+      "from": null
     },
     {
       "dimension": "dollar_pressure",
@@ -98,12 +95,12 @@
     },
     {
       "dimension": "market_fragility",
-      "state": "building",
-      "phase": "established",
-      "sessions_in_state": 3,
+      "state": "contained",
+      "phase": "emerging",
+      "sessions_in_state": 1,
       "from": {
-        "state": "contained",
-        "date": "2026-10-20"
+        "state": "building",
+        "date": "2026-10-22"
       }
     }
   ],
@@ -118,10 +115,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "us10y": -2.920560747663558,
-        "qqq": 0.1959
+        "us10y": -2.8816199376946976,
+        "qqq": -0.0099
       }
     },
     {
@@ -135,8 +132,8 @@
       "ar": "دعم العوائد يقوّي الدولار عادة",
       "state": "confirming",
       "evidence": {
-        "us10y": -2.920560747663558,
-        "dxy": -0.14512649539126332
+        "us10y": -2.8816199376946976,
+        "dxy": -0.22357324965680392
       }
     },
     {
@@ -150,8 +147,8 @@
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
       "state": "diverging",
       "evidence": {
-        "dxy": -0.14512649539126332,
-        "gold": -0.7859
+        "dxy": -0.22357324965680392,
+        "gold": -0.6477
       }
     },
     {
@@ -165,8 +162,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "confirming",
       "evidence": {
-        "vix": 9.436008676789578,
-        "spy": -0.4071
+        "vix": 5.477223427331876,
+        "spy": -0.5223
       }
     },
     {
@@ -178,10 +175,10 @@
       "expected": "direct",
       "en": "AI leadership drives the growth complex",
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
-      "state": "diverging",
+      "state": "neutral",
       "evidence": {
-        "nvda": -0.1508,
-        "qqq": 0.1959
+        "nvda": -0.589,
+        "qqq": -0.0099
       }
     },
     {
@@ -193,10 +190,10 @@
       "expected": "direct",
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "btc": 0.4107,
-        "qqq": 0.1959
+        "btc": -0.0676,
+        "qqq": -0.0099
       }
     },
     {
@@ -210,7 +207,7 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "confirming",
       "evidence": {
-        "spy": -0.4071,
+        "spy": -0.5223,
         "iwm": -0.3325
       }
     },
@@ -225,29 +222,20 @@
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
       "state": "diverging",
       "evidence": {
-        "us10y": -2.920560747663558,
-        "tlt": -0.2691
+        "us10y": -2.8816199376946976,
+        "tlt": -0.4894
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
-        "source": "causal:yields-growth",
-        "en": "Rising yields pressure long-duration growth equities",
-        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-        "evidence": {
-          "us10y": -2.920560747663558,
-          "qqq": 0.1959
-        }
-      },
-      {
         "source": "causal:yields-dollar",
         "en": "Yield support typically firms the dollar",
         "ar": "دعم العوائد يقوّي الدولار عادة",
         "evidence": {
-          "us10y": -2.920560747663558,
-          "dxy": -0.14512649539126332
+          "us10y": -2.8816199376946976,
+          "dxy": -0.22357324965680392
         }
       },
       {
@@ -255,8 +243,17 @@
         "en": "Rising hedging demand pressures the equity tape",
         "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
         "evidence": {
-          "vix": 9.436008676789578,
-          "spy": -0.4071
+          "vix": 5.477223427331876,
+          "spy": -0.5223
+        }
+      },
+      {
+        "source": "causal:breadth-link",
+        "en": "Healthy advances carry small caps with the index",
+        "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
+        "evidence": {
+          "spy": -0.5223,
+          "iwm": -0.3325
         }
       }
     ],
@@ -266,17 +263,8 @@
         "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "dxy": -0.14512649539126332,
-          "gold": -0.7859
-        }
-      },
-      {
-        "source": "causal:ai-growth",
-        "en": "Divergence on the nvda/qqq link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة nvda/qqq — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "nvda": -0.1508,
-          "qqq": 0.1959
+          "dxy": -0.22357324965680392,
+          "gold": -0.6477
         }
       },
       {
@@ -284,24 +272,25 @@
         "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "us10y": -2.920560747663558,
-          "tlt": -0.2691
+          "us10y": -2.8816199376946976,
+          "tlt": -0.4894
         }
       }
     ],
-    "fragility": [
-      {
-        "source": "market_fragility",
-        "en": "Fragility composite reads building on verified volatility, breadth, and concentration inputs.",
-        "ar": "مؤشر الهشاشة المركّب يتصاعد استناداً إلى مدخلات موثقة للتقلب والاتساع والتركز."
-      }
-    ],
+    "fragility": [],
     "exhaustion": [],
     "liquidity": [],
     "speculative": []
   },
   "alerts": [],
   "timeline_tail": [
+    {
+      "date": "2026-10-23",
+      "dimension": "market_fragility",
+      "from": "building",
+      "to": "contained",
+      "note": "market fragility: building -> contained"
+    },
     {
       "date": "2026-10-23",
       "dimension": "ai_concentration_risk",
@@ -336,13 +325,6 @@
       "from": "confirming",
       "to": "mixed",
       "note": "breadth state: confirming -> mixed"
-    },
-    {
-      "date": "2026-10-22",
-      "dimension": "momentum_concentration",
-      "from": "narrow-megacap",
-      "to": "broadening",
-      "note": "momentum concentration: narrow-megacap -> broadening"
     }
   ],
   "cognition_note": "Cognition state — 9/11 dimensions verified; 0 alert(s); 0 cross-session observation(s); 60 timeline event(s)."
