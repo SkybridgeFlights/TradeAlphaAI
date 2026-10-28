@@ -1,34 +1,53 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-27T22:53:58.055Z",
+  "updated_at": "2026-10-28T18:45:38.340Z",
   "status": "live",
-  "item_count": 17,
+  "item_count": 24,
   "clusters": {
+    "volatility": 1,
     "tape": 4,
     "ai-momentum": 2,
+    "fed": 8,
+    "growth": 3,
+    "labor": 1,
     "macro": 3,
-    "fed": 5,
-    "growth": 1,
     "inflation": 2
   },
   "top_story": {
-    "id": "move::US10Y::2026-10-27T22",
+    "id": "move::VIX::2026-10-28T18",
     "kind": "market_move",
-    "headline": "US10Y drops -2.97% to 4.993",
+    "headline": "VIX drops -9.51% to 17.22",
     "urgency": 65,
     "market_impact": 70,
-    "cluster": "tape",
+    "cluster": "volatility",
     "asset_tags": [
-      "US10Y"
+      "VIX"
     ],
     "sector_tags": [
-      "rates"
+      "volatility"
     ],
-    "timestamp": "2026-10-27T22:53:57.215Z",
+    "timestamp": "2026-10-28T18:45:36.862Z",
     "source": "Yahoo Finance",
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::VIX::2026-10-28T18",
+      "kind": "market_move",
+      "headline": "VIX drops -9.51% to 17.22",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-10-28T18:45:36.862Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::US10Y::2026-10-27T22",
       "kind": "market_move",
@@ -130,6 +149,138 @@
       "timestamp": "2026-10-26T19:07:29.846Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::jp::boj-rate-decision::20261030T030000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: BoJ Rate Decision (2026-10-30, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-10-30T03:00:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261030T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-10-30)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-10-30T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::national-accounts-gdp-eurostat::20261030T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: National Accounts - GDP (Eurostat) (2026-10-30)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "growth",
+      "asset_tags": [
+        "Treasury yields",
+        "SPY",
+        "IWM",
+        "Oil",
+        "Defensive sectors"
+      ],
+      "sector_tags": [
+        "growth"
+      ],
+      "timestamp": "2026-10-30T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20261029T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-10-29, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-10-29T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::gdp::20261029T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: GDP (2026-10-29, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "growth",
+      "asset_tags": [
+        "Treasury yields",
+        "SPY",
+        "IWM",
+        "Oil",
+        "Defensive sectors"
+      ],
+      "sector_tags": [
+        "growth"
+      ],
+      "timestamp": "2026-10-29T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::eu::ecb-rate-decision::20261029T120000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: ECB Rate Decision (2026-10-29, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-10-29T12:00:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::debt-to-gross-domestic-product-ratios::20261029T000000",
