@@ -1,36 +1,52 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-28T23:04:24.660Z",
+  "updated_at": "2026-10-29T18:54:34.943Z",
   "status": "live",
   "item_count": 24,
   "clusters": {
-    "tape": 4,
-    "volatility": 2,
-    "ai-momentum": 1,
+    "volatility": 3,
+    "tape": 2,
     "fed": 8,
+    "inflation": 4,
     "growth": 3,
     "labor": 1,
-    "macro": 3,
-    "inflation": 2
+    "macro": 3
   },
   "top_story": {
-    "id": "move::US10Y::2026-10-28T23",
+    "id": "move::VIX::2026-10-29T18",
     "kind": "market_move",
-    "headline": "US10Y jumps +1.86% to 5.045",
-    "urgency": 65,
-    "market_impact": 70,
-    "cluster": "tape",
+    "headline": "VIX drops -12.44% to 17.03",
+    "urgency": 90,
+    "market_impact": 95,
+    "cluster": "volatility",
     "asset_tags": [
-      "US10Y"
+      "VIX"
     ],
     "sector_tags": [
-      "rates"
+      "volatility"
     ],
-    "timestamp": "2026-10-28T23:04:23.870Z",
+    "timestamp": "2026-10-29T18:54:33.705Z",
     "source": "Yahoo Finance",
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::VIX::2026-10-29T18",
+      "kind": "market_move",
+      "headline": "VIX drops -12.44% to 17.03",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-10-29T18:54:33.705Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
     {
       "id": "move::US10Y::2026-10-28T23",
       "kind": "market_move",
@@ -100,55 +116,69 @@
       "attribution": "sourced: https://finance.yahoo.com/"
     },
     {
-      "id": "move::US10Y::2026-10-27T18",
-      "kind": "market_move",
-      "headline": "US10Y drops -2.93% to 4.995",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261031T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-10-31)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "tape",
+      "cluster": "fed",
       "asset_tags": [
-        "US10Y"
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
       ],
       "sector_tags": [
-        "rates"
+        "fed"
       ],
-      "timestamp": "2026-10-27T18:37:31.311Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-10-31T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
-      "id": "move::US10Y::2026-10-26T23",
-      "kind": "market_move",
-      "headline": "US10Y drops -2.56% to 4.986",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::schedule_fallback::us::pce::20261030T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: PCE (2026-10-30, time estimated)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "tape",
+      "cluster": "inflation",
       "asset_tags": [
-        "US10Y"
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
       ],
       "sector_tags": [
-        "rates"
+        "inflation"
       ],
-      "timestamp": "2026-10-26T23:16:11.733Z",
-      "source": "Yahoo Finance",
-      "attribution": "sourced: https://finance.yahoo.com/"
+      "timestamp": "2026-10-30T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
-      "id": "move::NVDA::2026-10-26T23",
-      "kind": "market_move",
-      "headline": "NVDA jumps +2.39% to 216",
-      "urgency": 65,
+      "id": "upcoming::economic-calendar::schedule_fallback::us::core-pce::20261030T123000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Core PCE (2026-10-30, time estimated)",
+      "urgency": 45,
       "market_impact": 70,
-      "cluster": "ai-momentum",
+      "cluster": "inflation",
       "asset_tags": [
-        "NVDA"
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "QQQ",
+        "TLT"
       ],
       "sector_tags": [
-        "ai-semiconductors"
+        "inflation"
       ],
-      "timestamp": "2026-10-26T23:16:09.133Z",
-      "source": "Finnhub",
-      "attribution": "sourced: https://finnhub.io/"
+      "timestamp": "2026-10-30T12:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::schedule_fallback::jp::boj-rate-decision::20261030T030000",
@@ -497,29 +527,6 @@
         "fed"
       ],
       "timestamp": "2026-10-28T00:00:00Z",
-      "source": "fred",
-      "attribution": "scheduled release via platform calendar providers"
-    },
-    {
-      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261027T000000",
-      "kind": "scheduled_catalyst",
-      "headline": "On deck: FOMC Press Release (2026-10-27)",
-      "urgency": 45,
-      "market_impact": 70,
-      "cluster": "fed",
-      "asset_tags": [
-        "Treasury yields",
-        "DXY",
-        "Gold",
-        "SPY",
-        "QQQ",
-        "TLT",
-        "VIX"
-      ],
-      "sector_tags": [
-        "fed"
-      ],
-      "timestamp": "2026-10-27T00:00:00Z",
       "source": "fred",
       "attribution": "scheduled release via platform calendar providers"
     }
