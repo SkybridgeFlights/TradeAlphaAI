@@ -1,18 +1,18 @@
 {
   "version": "1.0",
-  "updated_at": "2026-10-29T18:54:35.031Z",
+  "updated_at": "2026-10-29T23:12:13.929Z",
   "run_date": "2026-10-29",
-  "verified": true,
+  "verified": false,
   "sessions_tracked": 40,
   "regime_shifts": [
     {
       "dimension": "risk_state",
-      "state": "neutral",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "risk-on",
+      "phase": "established",
+      "sessions_in_state": 3,
       "from": {
-        "state": "risk-on",
-        "date": "2026-10-28"
+        "state": "neutral",
+        "date": "2026-10-26"
       }
     },
     {
@@ -34,12 +34,12 @@
     },
     {
       "dimension": "duration_pressure",
-      "state": "relaxing",
-      "phase": "emerging",
-      "sessions_in_state": 1,
+      "state": "neutral",
+      "phase": "extended",
+      "sessions_in_state": 27,
       "from": {
-        "state": "neutral",
-        "date": "2026-10-28"
+        "state": "building",
+        "date": "2026-09-28"
       }
     },
     {
@@ -115,10 +115,10 @@
       "expected": "inverse",
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "us10y": 0.06014434643141991,
-        "qqq": -1.731
+        "us10y": 0.020048115477134035,
+        "qqq": -1.4154
       }
     },
     {
@@ -130,10 +130,10 @@
       "expected": "direct",
       "en": "Yield support typically firms the dollar",
       "ar": "دعم العوائد يقوّي الدولار عادة",
-      "state": "confirming",
+      "state": "neutral",
       "evidence": {
-        "us10y": 0.06014434643141991,
-        "dxy": 0.07551981169087132
+        "us10y": 0.020048115477134035,
+        "dxy": -0.10396233817182673
       }
     },
     {
@@ -145,10 +145,10 @@
       "expected": "inverse",
       "en": "A firming dollar typically pressures gold",
       "ar": "تقوّي الدولار يضغط على الذهب عادة",
-      "state": "confirming",
+      "state": "diverging",
       "evidence": {
-        "dxy": 0.07551981169087132,
-        "gold": -1.6117
+        "dxy": -0.10396233817182673,
+        "gold": -1.3226
       }
     },
     {
@@ -162,8 +162,8 @@
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم",
       "state": "diverging",
       "evidence": {
-        "vix": -12.44215938303341,
-        "spy": -0.6176
+        "vix": -11.568123393316196,
+        "spy": -0.382
       }
     },
     {
@@ -177,8 +177,8 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
       "state": "confirming",
       "evidence": {
-        "nvda": -1.1097,
-        "qqq": -1.731
+        "nvda": -0.7986,
+        "qqq": -1.4154
       }
     },
     {
@@ -192,8 +192,8 @@
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
       "state": "confirming",
       "evidence": {
-        "btc": -0.1859,
-        "qqq": -1.731
+        "btc": -3.1081,
+        "qqq": -1.4154
       }
     },
     {
@@ -207,8 +207,8 @@
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر",
       "state": "diverging",
       "evidence": {
-        "spy": -0.6176,
-        "iwm": 0.6648
+        "spy": -0.382,
+        "iwm": 0.967
       }
     },
     {
@@ -220,51 +220,51 @@
       "expected": "inverse",
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد",
-      "state": "diverging",
+      "state": "neutral",
       "evidence": {
-        "us10y": 0.06014434643141991,
-        "tlt": 0.4692
+        "us10y": 0.020048115477134035,
+        "tlt": 0.6174
       }
     }
   ],
   "signals": {
     "confirmation": [
       {
-        "source": "causal:yields-growth",
-        "en": "Rising yields pressure long-duration growth equities",
-        "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد",
+        "source": "causal:ai-growth",
+        "en": "AI leadership drives the growth complex",
+        "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو",
         "evidence": {
-          "us10y": 0.06014434643141991,
-          "qqq": -1.731
+          "nvda": -0.7986,
+          "qqq": -1.4154
         }
       },
       {
-        "source": "causal:yields-dollar",
-        "en": "Yield support typically firms the dollar",
-        "ar": "دعم العوائد يقوّي الدولار عادة",
+        "source": "causal:liquidity-beta",
+        "en": "Crypto trades as the liquidity beta of the growth complex",
+        "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو",
         "evidence": {
-          "us10y": 0.06014434643141991,
-          "dxy": 0.07551981169087132
-        }
-      },
-      {
-        "source": "causal:dollar-gold",
-        "en": "A firming dollar typically pressures gold",
-        "ar": "تقوّي الدولار يضغط على الذهب عادة",
-        "evidence": {
-          "dxy": 0.07551981169087132,
-          "gold": -1.6117
+          "btc": -3.1081,
+          "qqq": -1.4154
         }
       }
     ],
     "contradiction": [
       {
+        "source": "causal:dollar-gold",
+        "en": "Divergence on the dxy/gold link — the usual relationship is not holding this session.",
+        "ar": "انفصال في علاقة dxy/gold — العلاقة المعتادة لا تصمد في هذه الجلسة.",
+        "evidence": {
+          "dxy": -0.10396233817182673,
+          "gold": -1.3226
+        }
+      },
+      {
         "source": "causal:vix-equities",
         "en": "Divergence on the vix/spy link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة vix/spy — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "vix": -12.44215938303341,
-          "spy": -0.6176
+          "vix": -11.568123393316196,
+          "spy": -0.382
         }
       },
       {
@@ -272,17 +272,8 @@
         "en": "Divergence on the spy/iwm link — the usual relationship is not holding this session.",
         "ar": "انفصال في علاقة spy/iwm — العلاقة المعتادة لا تصمد في هذه الجلسة.",
         "evidence": {
-          "spy": -0.6176,
-          "iwm": 0.6648
-        }
-      },
-      {
-        "source": "causal:yields-bonds",
-        "en": "Divergence on the us10y/tlt link — the usual relationship is not holding this session.",
-        "ar": "انفصال في علاقة us10y/tlt — العلاقة المعتادة لا تصمد في هذه الجلسة.",
-        "evidence": {
-          "us10y": 0.06014434643141991,
-          "tlt": 0.4692
+          "spy": -0.382,
+          "iwm": 0.967
         }
       }
     ],
