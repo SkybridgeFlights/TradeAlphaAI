@@ -1,32 +1,51 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-04T00:32:15.702Z",
+  "updated_at": "2026-11-04T20:21:52.573Z",
   "status": "live",
-  "item_count": 13,
+  "item_count": 19,
   "clusters": {
+    "tape": 5,
     "volatility": 3,
-    "tape": 3,
-    "ai-momentum": 2,
-    "fed": 5
+    "ai-momentum": 3,
+    "macro": 1,
+    "fed": 6,
+    "labor": 1
   },
   "top_story": {
-    "id": "move::VIX::2026-11-04T00",
+    "id": "move::GLD::2026-11-04T20",
     "kind": "market_move",
-    "headline": "VIX jumps +23.18% to 20.83",
+    "headline": "GLD jumps +3.69% to 372.52",
     "urgency": 90,
     "market_impact": 95,
-    "cluster": "volatility",
+    "cluster": "tape",
     "asset_tags": [
-      "VIX"
+      "GLD"
     ],
     "sector_tags": [
-      "volatility"
+      "metals"
     ],
-    "timestamp": "2026-11-04T00:32:14.335Z",
-    "source": "Yahoo Finance",
-    "attribution": "sourced: https://finance.yahoo.com/"
+    "timestamp": "2026-11-04T20:21:46.863Z",
+    "source": "Finnhub",
+    "attribution": "sourced: https://finnhub.io/"
   },
   "items": [
+    {
+      "id": "move::GLD::2026-11-04T20",
+      "kind": "market_move",
+      "headline": "GLD jumps +3.69% to 372.52",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "GLD"
+      ],
+      "sector_tags": [
+        "metals"
+      ],
+      "timestamp": "2026-11-04T20:21:46.863Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
     {
       "id": "move::VIX::2026-11-04T00",
       "kind": "market_move",
@@ -77,6 +96,40 @@
       "timestamp": "2026-11-02T22:15:15.883Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::US10Y::2026-11-04T20",
+      "kind": "market_move",
+      "headline": "US10Y drops -1.90% to 4.894",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-11-04T20:21:51.709Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::NVDA::2026-11-04T20",
+      "kind": "market_move",
+      "headline": "NVDA drops -2.04% to 202.48",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-11-04T20:21:46.863Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
     },
     {
       "id": "move::US10Y::2026-11-04T00",
@@ -162,6 +215,71 @@
       "timestamp": "2026-11-02T22:15:16.447Z",
       "source": "Yahoo Finance",
       "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::employment-situation::20261106T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Employment Situation (2026-11-06)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "macro",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "macro"
+      ],
+      "timestamp": "2026-11-06T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261106T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-11-06)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-11-06T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20261105T133000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-11-05, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-11-05T13:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::schedule_fallback::gb::boe-rate-decision::20261105T110000",
