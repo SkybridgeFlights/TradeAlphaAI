@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-05T01:00:03.061Z",
+  "updated_at": "2026-11-05T20:33:11.340Z",
   "run_date": "2026-11-05",
   "verified": true,
   "coherence": {
@@ -11,44 +11,33 @@
     "ar": "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
-    "events_5d": 15,
+    "events_5d": 21,
     "band": "accelerating"
   },
   "what_changed": [
     {
       "date": "2026-11-05",
-      "dimension": "duration_pressure",
-      "from": "relaxing",
-      "to": "neutral",
-      "note": "duration pressure: relaxing -> neutral"
-    },
-    {
-      "date": "2026-11-04",
       "dimension": "market_fragility",
-      "from": "building",
-      "to": "contained",
-      "note": "market fragility: building -> contained"
+      "from": "contained",
+      "to": "building",
+      "note": "market fragility: contained -> building"
     },
     {
-      "date": "2026-11-04",
-      "dimension": "ai_concentration_risk",
-      "from": "elevated",
-      "to": "contained",
-      "note": "ai concentration risk: elevated -> contained"
+      "date": "2026-11-05",
+      "dimension": "breadth_state",
+      "from": "confirming",
+      "to": "mixed",
+      "note": "breadth state: confirming -> mixed"
+    },
+    {
+      "date": "2026-11-05",
+      "dimension": "momentum_concentration",
+      "from": "balanced",
+      "to": "broadening",
+      "note": "momentum concentration: balanced -> broadening"
     }
   ],
   "confirms": [
-    {
-      "id": "yields-growth",
-      "legs": [
-        "us10y",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 3,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
     {
       "id": "yields-dollar",
       "legs": [
@@ -81,6 +70,17 @@
       "chain_strength": 2,
       "en": "Rising hedging demand pressures the equity tape",
       "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
+    },
+    {
+      "id": "ai-growth",
+      "legs": [
+        "nvda",
+        "qqq"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "AI leadership drives the growth complex",
+      "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
       "id": "liquidity-beta",
@@ -118,18 +118,37 @@
   ],
   "diverges": [
     {
-      "id": "ai-growth",
+      "id": "yields-growth",
       "legs": [
-        "nvda",
+        "us10y",
         "qqq"
       ],
       "state": "diverging",
-      "chain_strength": 2,
-      "en": "AI leadership drives the growth complex",
-      "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
     }
   ],
-  "weakening": [],
+  "weakening": [
+    {
+      "track": "speculative_pressure",
+      "score": 2,
+      "en": "Speculative appetite buildup",
+      "ar": "تراكم شهية المضاربة"
+    },
+    {
+      "track": "concentration_pressure",
+      "score": 4,
+      "en": "Momentum concentration intensity",
+      "ar": "كثافة تركز الزخم"
+    },
+    {
+      "track": "yield_pressure",
+      "score": 1,
+      "en": "Yield stress accumulation",
+      "ar": "تراكم ضغط العوائد"
+    }
+  ],
   "crowding": null,
   "preparing_for": [
     {
@@ -151,24 +170,24 @@
     },
     {
       "kind": "pressure",
-      "track": "speculative_pressure",
+      "track": "concentration_pressure",
       "score": 4,
-      "en": "stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying.",
-      "ar": "شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
+      "en": "persistent leadership concentration (4/5) with no active alert — attention the tape is not currently paying.",
+      "ar": "تركز قيادة مستمر (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
     }
   ],
   "narrative_en": [
-    "The regime picture moved: duration pressure: relaxing -> neutral; market fragility: building -> contained; ai concentration risk: elevated -> contained.",
+    "The regime picture moved: market fragility: contained -> building; breadth state: confirming -> mixed; momentum concentration: balanced -> broadening.",
     "Regime coherence 88/100 — the observed cross-asset tape is largely aligned.",
-    "The NVDA/QQQ link is not holding — a 2-session strain; that is where the tape's internal argument lives.",
-    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: stacked speculative appetite (4/5) with no active alert — attention the tape is not currently paying.",
+    "The US10Y/QQQ link is not holding; that is where the tape's internal argument lives.",
+    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (4/5) with no active alert — attention the tape is not currently paying.",
     "The next scheduled resolution point is FOMC Press Release."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
     "اتساق النظام 88/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
-    "رابط NVDA/QQQ لا يصمد — إجهاد مستمر منذ 2 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
-    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: شهية مضاربة متراكمة (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
+    "رابط US10Y/QQQ لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (4/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
     "نقطة الحسم المجدولة التالية هي FOMC Press Release."
   ],
   "link_history": {
@@ -211,7 +230,7 @@
       },
       {
         "date": "2026-11-05",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "yields-dollar": [
@@ -379,7 +398,7 @@
       },
       {
         "date": "2026-11-05",
-        "state": "diverging"
+        "state": "confirming"
       }
     ],
     "liquidity-beta": [
