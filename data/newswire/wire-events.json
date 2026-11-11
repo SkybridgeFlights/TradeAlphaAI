@@ -1,34 +1,86 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-11T00:48:57.582Z",
+  "updated_at": "2026-11-11T20:05:55.271Z",
   "status": "live",
-  "item_count": 13,
+  "item_count": 20,
   "clusters": {
-    "volatility": 2,
-    "ai-momentum": 2,
-    "tape": 4,
-    "fed": 2,
-    "inflation": 2,
-    "growth": 1
+    "tape": 6,
+    "volatility": 3,
+    "ai-momentum": 3,
+    "fed": 3,
+    "growth": 2,
+    "labor": 1,
+    "inflation": 2
   },
   "top_story": {
-    "id": "move::VIX::2026-11-11T00",
+    "id": "move::US10Y::2026-11-11T20",
     "kind": "market_move",
-    "headline": "VIX jumps +17.16% to 19.46",
+    "headline": "US10Y jumps +3.33% to 4.998",
     "urgency": 90,
     "market_impact": 95,
-    "cluster": "volatility",
+    "cluster": "tape",
     "asset_tags": [
-      "VIX"
+      "US10Y"
     ],
     "sector_tags": [
-      "volatility"
+      "rates"
     ],
-    "timestamp": "2026-11-11T00:48:56.257Z",
+    "timestamp": "2026-11-11T20:05:54.462Z",
     "source": "Yahoo Finance",
     "attribution": "sourced: https://finance.yahoo.com/"
   },
   "items": [
+    {
+      "id": "move::US10Y::2026-11-11T20",
+      "kind": "market_move",
+      "headline": "US10Y jumps +3.33% to 4.998",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "tape",
+      "asset_tags": [
+        "US10Y"
+      ],
+      "sector_tags": [
+        "rates"
+      ],
+      "timestamp": "2026-11-11T20:05:54.462Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::VIX::2026-11-11T20",
+      "kind": "market_move",
+      "headline": "VIX drops -38.01% to 17.47",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "volatility",
+      "asset_tags": [
+        "VIX"
+      ],
+      "sector_tags": [
+        "volatility"
+      ],
+      "timestamp": "2026-11-11T20:05:53.944Z",
+      "source": "Yahoo Finance",
+      "attribution": "sourced: https://finance.yahoo.com/"
+    },
+    {
+      "id": "move::NVDA::2026-11-11T20",
+      "kind": "market_move",
+      "headline": "NVDA jumps +3.89% to 175.46",
+      "urgency": 90,
+      "market_impact": 95,
+      "cluster": "ai-momentum",
+      "asset_tags": [
+        "NVDA"
+      ],
+      "sector_tags": [
+        "ai-semiconductors"
+      ],
+      "timestamp": "2026-11-11T20:05:52.185Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
     {
       "id": "move::VIX::2026-11-11T00",
       "kind": "market_move",
@@ -94,6 +146,23 @@
         "ai-semiconductors"
       ],
       "timestamp": "2026-11-10T20:23:25.913Z",
+      "source": "Finnhub",
+      "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "move::QQQ::2026-11-11T20",
+      "kind": "market_move",
+      "headline": "QQQ jumps +2.55% to 691.94",
+      "urgency": 65,
+      "market_impact": 70,
+      "cluster": "tape",
+      "asset_tags": [
+        "QQQ"
+      ],
+      "sector_tags": [
+        "technology"
+      ],
+      "timestamp": "2026-11-11T20:05:52.185Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
     },
@@ -164,6 +233,71 @@
       "timestamp": "2026-11-10T20:23:25.913Z",
       "source": "Finnhub",
       "attribution": "sourced: https://finnhub.io/"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261113T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: FOMC Press Release (2026-11-13)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "fed",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "Gold",
+        "SPY",
+        "QQQ",
+        "TLT",
+        "VIX"
+      ],
+      "sector_tags": [
+        "fed"
+      ],
+      "timestamp": "2026-11-13T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::fred::us::national-accounts-gdp-eurostat::20261113T000000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: National Accounts - GDP (Eurostat) (2026-11-13)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "growth",
+      "asset_tags": [
+        "Treasury yields",
+        "SPY",
+        "IWM",
+        "Oil",
+        "Defensive sectors"
+      ],
+      "sector_tags": [
+        "growth"
+      ],
+      "timestamp": "2026-11-13T00:00:00Z",
+      "source": "fred",
+      "attribution": "scheduled release via platform calendar providers"
+    },
+    {
+      "id": "upcoming::economic-calendar::schedule_fallback::us::initial-jobless-claims::20261112T133000",
+      "kind": "scheduled_catalyst",
+      "headline": "On deck: Initial Jobless Claims (2026-11-12, time estimated)",
+      "urgency": 45,
+      "market_impact": 70,
+      "cluster": "labor",
+      "asset_tags": [
+        "Treasury yields",
+        "DXY",
+        "SPY",
+        "IWM",
+        "VIX"
+      ],
+      "sector_tags": [
+        "labor"
+      ],
+      "timestamp": "2026-11-12T13:30:00.000Z",
+      "source": "schedule_fallback",
+      "attribution": "scheduled release via platform calendar providers"
     },
     {
       "id": "upcoming::economic-calendar::fred::us::fomc-press-release::20261112T000000",

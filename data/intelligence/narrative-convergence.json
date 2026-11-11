@@ -1,54 +1,43 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-11T00:48:57.688Z",
+  "updated_at": "2026-11-11T20:05:55.386Z",
   "run_date": "2026-11-11",
   "verified": true,
   "coherence": {
-    "score": 100,
+    "score": 81,
     "band": "coherent",
     "observed_links": 8,
-    "en": "Regime coherence 100/100 — the observed cross-asset tape is largely aligned.",
-    "ar": "اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
+    "en": "Regime coherence 81/100 — the observed cross-asset tape is largely aligned.",
+    "ar": "اتساق النظام 81/100 — حركة الأصول المرصودة متوافقة إلى حد كبير."
   },
   "transition_velocity": {
-    "events_5d": 10,
+    "events_5d": 13,
     "band": "accelerating"
   },
   "what_changed": [
     {
       "date": "2026-11-11",
-      "dimension": "duration_pressure",
-      "from": "building",
-      "to": "neutral",
-      "note": "duration pressure: building -> neutral"
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "confirming",
+      "note": "breadth state: mixed -> confirming"
     },
     {
       "date": "2026-11-11",
-      "dimension": "volatility_regime",
-      "from": "elevated",
-      "to": "normal",
-      "note": "volatility regime: elevated -> normal"
+      "dimension": "momentum_concentration",
+      "from": "balanced",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: balanced -> narrow-megacap"
     },
     {
-      "date": "2026-11-10",
-      "dimension": "ai_concentration_risk",
-      "from": "contained",
-      "to": "elevated",
-      "note": "ai concentration risk: contained -> elevated"
+      "date": "2026-11-11",
+      "dimension": "risk_state",
+      "from": "neutral",
+      "to": "risk-on",
+      "note": "risk state: neutral -> risk-on"
     }
   ],
   "confirms": [
-    {
-      "id": "yields-growth",
-      "legs": [
-        "us10y",
-        "qqq"
-      ],
-      "state": "confirming",
-      "chain_strength": 2,
-      "en": "Rising yields pressure long-duration growth equities",
-      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
     {
       "id": "yields-dollar",
       "legs": [
@@ -114,22 +103,26 @@
       "chain_strength": 8,
       "en": "Healthy advances carry small caps with the index",
       "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
-    },
-    {
-      "id": "yields-bonds",
-      "legs": [
-        "us10y",
-        "tlt"
-      ],
-      "state": "confirming",
-      "chain_strength": 5,
-      "en": "Rising yields mark down long-duration bonds",
-      "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
     }
   ],
-  "diverges": [],
+  "diverges": [
+    {
+      "id": "yields-growth",
+      "legs": [
+        "us10y",
+        "qqq"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Rising yields pressure long-duration growth equities",
+      "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
+    }
+  ],
   "weakening": [],
-  "crowding": null,
+  "crowding": {
+    "en": "Positioning is crowded — leadership, concentration, and speculative appetite are stacked on the same trade.",
+    "ar": "التمركزات مزدحمة — القيادة والتركز وشهية المضاربة متراكمة على الصفقة نفسها."
+  },
   "preparing_for": [
     {
       "name": "FOMC Press Release",
@@ -157,16 +150,18 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: duration pressure: building -> neutral; volatility regime: elevated -> normal; ai concentration risk: contained -> elevated.",
-    "Regime coherence 100/100 — the observed cross-asset tape is largely aligned.",
-    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
-    "The next scheduled resolution point is FOMC Press Release."
+    "The regime picture moved: breadth state: mixed -> confirming; momentum concentration: balanced -> narrow-megacap; risk state: neutral -> risk-on.",
+    "Regime coherence 81/100 — the observed cross-asset tape is largely aligned.",
+    "The US10Y/QQQ link is not holding; that is where the tape's internal argument lives.",
+    "Positioning is crowded — leadership, concentration, and speculative appetite are stacked on the same trade.",
+    "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 100/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
-    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
-    "نقطة الحسم المجدولة التالية هي FOMC Press Release."
+    "اتساق النظام 81/100 — حركة الأصول المرصودة متوافقة إلى حد كبير.",
+    "رابط US10Y/QQQ لا يصمد؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "التمركزات مزدحمة — القيادة والتركز وشهية المضاربة متراكمة على الصفقة نفسها.",
+    "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً."
   ],
   "link_history": {
     "yields-growth": [
@@ -208,7 +203,7 @@
       },
       {
         "date": "2026-11-11",
-        "state": "confirming"
+        "state": "diverging"
       }
     ],
     "yields-dollar": [
@@ -502,9 +497,9 @@
       },
       {
         "date": "2026-11-11",
-        "state": "confirming"
+        "state": "neutral"
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 100/100 (coherent); velocity accelerating; 8 confirming / 0 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 81/100 (coherent); velocity accelerating; 6 confirming / 1 diverging links; 2 underpriced signal(s)."
 }
