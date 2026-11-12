@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-12T01:58:47.065Z",
+  "updated_at": "2026-11-12T20:43:49.284Z",
   "run_date": "2026-11-12",
   "verified": true,
   "status": "verified",
@@ -22,7 +22,7 @@
       "ar": "لا تزال قوة المؤشرات معتمدة على قيادة ضيقة، فيما لم يكتمل تأكيد اتساع المشاركة.",
       "evidence": [
         "pulse:momentum_concentration=narrow-megacap",
-        "pulse:breadth_state=confirming"
+        "pulse:breadth_state=mixed"
       ]
     },
     {
@@ -42,6 +42,22 @@
       ]
     },
     {
+      "id": "yield-pressure",
+      "family": "macro",
+      "state": "strengthening",
+      "sessions": 2,
+      "inactive_sessions": 0,
+      "first_seen": "2026-07-08",
+      "last_seen": "2026-11-12",
+      "last_evaluated": "2026-11-12",
+      "active": true,
+      "en": "Yield pressure remains a constraint on long-duration assets.",
+      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
+      "evidence": [
+        "pulse:duration_pressure=building"
+      ]
+    },
+    {
       "id": "speculative-momentum",
       "family": "positioning",
       "state": "crowded",
@@ -54,8 +70,7 @@
       "en": "Speculative momentum remains concentrated rather than broadly distributed.",
       "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
       "evidence": [
-        "pulse:speculative_appetite=expanding",
-        "pulse:ai_concentration_risk=contained"
+        "pulse:ai_concentration_risk=elevated"
       ]
     },
     {
@@ -87,7 +102,7 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:yields-growth"
+        "convergence:vix-equities"
       ]
     }
   ],
@@ -107,20 +122,6 @@
       "evidence": []
     },
     {
-      "id": "yield-pressure",
-      "family": "macro",
-      "state": "invalidated",
-      "sessions": 1,
-      "inactive_sessions": 91,
-      "first_seen": "2026-07-08",
-      "last_seen": "2026-07-08",
-      "last_evaluated": "2026-11-12",
-      "active": false,
-      "en": "Yield pressure remains a constraint on long-duration assets.",
-      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
-      "evidence": []
-    },
-    {
       "id": "gold-resilience",
       "family": "cross-asset",
       "state": "invalidated",
@@ -132,6 +133,20 @@
       "active": false,
       "en": "Gold continues to resist the pressure normally associated with dollar strength.",
       "ar": "يواصل الذهب مقاومة الضغط الذي يقترن عادة بقوة الدولار.",
+      "evidence": []
+    },
+    {
+      "id": "yield-pressure",
+      "family": "macro",
+      "state": "invalidated",
+      "sessions": 1,
+      "inactive_sessions": 91,
+      "first_seen": "2026-07-08",
+      "last_seen": "2026-07-08",
+      "last_evaluated": "2026-11-12",
+      "active": false,
+      "en": "Yield pressure remains a constraint on long-duration assets.",
+      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
       "evidence": []
     },
     {
@@ -209,7 +224,7 @@
     {
       "id": "narrow-leadership:breadth-broadening",
       "narrative_id": "narrow-leadership",
-      "status": "fulfilled",
+      "status": "monitoring",
       "opened_on": "2026-11-11",
       "opened_at_session": 4,
       "evaluated_on": "2026-11-12",
@@ -217,9 +232,9 @@
       "expected_values": [
         "confirming"
       ],
-      "observed_value": "confirming",
-      "en": "Breadth confirmation materialized in the verified state.",
-      "ar": "تحقق تأكيد اتساع المشاركة في الحالة الموثقة."
+      "observed_value": "mixed",
+      "en": "Breadth confirmation remains an open confirmation test.",
+      "ar": "يبقى تأكيد اتساع المشاركة اختباراً مفتوحاً للتأكيد."
     }
   ],
   "failed_expectations": [],
@@ -253,7 +268,7 @@
       "en": "Cross-asset relationships continue to resist a single coherent regime reading.",
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
-        "convergence:yields-growth"
+        "convergence:vix-equities"
       ]
     }
   ],
@@ -327,17 +342,6 @@
     }
   ],
   "timeline": [
-    {
-      "id": "2026-10-08:persisted:speculative-momentum",
-      "date": "2026-10-08",
-      "kind": "persisted",
-      "narrative_id": "speculative-momentum",
-      "en": "Speculative momentum remains concentrated rather than broadly distributed.",
-      "ar": "يبقى الزخم المضاربي متركزاً بدلاً من أن يتحول إلى مشاركة واسعة.",
-      "evidence": [
-        "pulse:ai_concentration_risk=elevated"
-      ]
-    },
     {
       "id": "2026-10-08:persisted:market-fragility",
       "date": "2026-10-08",
@@ -1373,6 +1377,17 @@
       "ar": "لا تزال العلاقات بين الأصول تقاوم قراءة موحدة ومتسقة للنظام السوقي.",
       "evidence": [
         "convergence:yields-growth"
+      ]
+    },
+    {
+      "id": "2026-11-12:changed:yield-pressure",
+      "date": "2026-11-12",
+      "kind": "changed",
+      "narrative_id": "yield-pressure",
+      "en": "Yield pressure remains a constraint on long-duration assets.",
+      "ar": "يبقى ضغط العوائد قيداً قائماً على الأصول طويلة الأجل.",
+      "evidence": [
+        "pulse:duration_pressure=building"
       ]
     }
   ],
