@@ -1,9 +1,56 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-17T21:38:41.039Z",
-  "run_date": "2026-11-17",
+  "updated_at": "2026-11-19T21:18:22.486Z",
+  "run_date": "2026-11-19",
   "verified": true,
   "selected": [
+    {
+      "id": "yields-growth",
+      "kind": "cross-asset",
+      "visual_type": "cross-asset-comparison",
+      "symbols": [
+        "TVC:US10Y",
+        "NASDAQ:QQQ"
+      ],
+      "title_en": "Yields vs growth equities",
+      "title_ar": "العوائد مقابل أسهم النمو",
+      "reading_en": "Rising yield pressure against long-duration growth — the US10Y/QQQ relationship is not holding this session, which is where the structural argument lives.",
+      "reading_ar": "ضغط العوائد مقابل أسهم النمو طويلة الأمد — علاقة US10Y/QQQ لا تصمد في هذه الجلسة، وهناك يكمن الجدل الهيكلي.",
+      "score": 68,
+      "evidence": [
+        "causal:yields-growth diverging ×1"
+      ],
+      "annotations": [
+        {
+          "type": "divergence-highlight",
+          "severity": "elevated",
+          "label_en": "Divergence — US10Y/QQQ not confirming",
+          "label_ar": "انفصال — US10Y/QQQ لا يؤكد",
+          "evidence": [
+            "convergence:diverges:yields-growth:chain=1"
+          ]
+        },
+        {
+          "type": "transition-label",
+          "severity": "elevated",
+          "label_en": "Regime shift — duration pressure neutral → relaxing",
+          "label_ar": "تحوّل النظام — duration pressure: neutral ← relaxing",
+          "evidence": [
+            "cognition:timeline:duration_pressure:neutral->relaxing:2026-11-19"
+          ]
+        },
+        {
+          "type": "pressure-band",
+          "severity": "elevated",
+          "label_en": "Stored pressure — yield pressure 3/5",
+          "label_ar": "ضغط مخزّن — 3/5",
+          "evidence": [
+            "macro:pressure:yield_pressure:3"
+          ]
+        }
+      ],
+      "attribution": "Chart: TradingView · Quotes: sourced market providers"
+    },
     {
       "id": "liquidity-beta",
       "kind": "liquidity",
@@ -42,10 +89,10 @@
         {
           "type": "catalyst-zone",
           "severity": "info",
-          "label_en": "Catalyst window — Canada CPI (2026-11-17)",
-          "label_ar": "نافذة محفز — Canada CPI (2026-11-17)",
+          "label_en": "Catalyst window — Eurozone CPI (2026-11-19)",
+          "label_ar": "نافذة محفز — Eurozone CPI (2026-11-19)",
           "evidence": [
-            "pulse:catalyst:Canada CPI:2026-11-17"
+            "pulse:catalyst:Eurozone CPI:2026-11-19"
           ]
         }
       ],
