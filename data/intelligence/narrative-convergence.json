@@ -1,43 +1,65 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-26T22:12:54.365Z",
-  "run_date": "2026-11-26",
+  "updated_at": "2026-11-27T21:53:06.381Z",
+  "run_date": "2026-11-27",
   "verified": true,
   "coherence": {
-    "score": 38,
-    "band": "conflicted",
+    "score": 58,
+    "band": "tense",
     "observed_links": 8,
-    "en": "Regime coherence 38/100 — cross-asset relationships are openly conflicted this session.",
-    "ar": "اتساق النظام 38/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة."
+    "en": "Regime coherence 58/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "ar": "اتساق النظام 58/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس."
   },
   "transition_velocity": {
-    "events_5d": 7,
+    "events_5d": 12,
     "band": "accelerating"
   },
   "what_changed": [
     {
-      "date": "2026-11-26",
-      "dimension": "duration_pressure",
-      "from": "relaxing",
-      "to": "neutral",
-      "note": "duration pressure: relaxing -> neutral"
+      "date": "2026-11-27",
+      "dimension": "breadth_state",
+      "from": "mixed",
+      "to": "confirming",
+      "note": "breadth state: mixed -> confirming"
     },
     {
-      "date": "2026-11-26",
-      "dimension": "volatility_regime",
-      "from": "stressed",
-      "to": "elevated",
-      "note": "volatility regime: stressed -> elevated"
+      "date": "2026-11-27",
+      "dimension": "ai_concentration_risk",
+      "from": "elevated",
+      "to": "contained",
+      "note": "ai concentration risk: elevated -> contained"
     },
     {
-      "date": "2026-11-25",
-      "dimension": "duration_pressure",
-      "from": "neutral",
-      "to": "relaxing",
-      "note": "duration pressure: neutral -> relaxing"
+      "date": "2026-11-27",
+      "dimension": "momentum_concentration",
+      "from": "broadening",
+      "to": "narrow-megacap",
+      "note": "momentum concentration: broadening -> narrow-megacap"
     }
   ],
   "confirms": [
+    {
+      "id": "dollar-gold",
+      "legs": [
+        "dxy",
+        "gold"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "A firming dollar typically pressures gold",
+      "ar": "تقوّي الدولار يضغط على الذهب عادة"
+    },
+    {
+      "id": "vix-equities",
+      "legs": [
+        "vix",
+        "spy"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Rising hedging demand pressures the equity tape",
+      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
+    },
     {
       "id": "ai-growth",
       "legs": [
@@ -50,13 +72,24 @@
       "ar": "قيادة الذكاء الاصطناعي تحرك قطاع النمو"
     },
     {
+      "id": "breadth-link",
+      "legs": [
+        "spy",
+        "iwm"
+      ],
+      "state": "confirming",
+      "chain_strength": 1,
+      "en": "Healthy advances carry small caps with the index",
+      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
+    },
+    {
       "id": "yields-bonds",
       "legs": [
         "us10y",
         "tlt"
       ],
       "state": "confirming",
-      "chain_strength": 2,
+      "chain_strength": 3,
       "en": "Rising yields mark down long-duration bonds",
       "ar": "ارتفاع العوائد يخفض السندات طويلة الأمد"
     }
@@ -69,31 +102,9 @@
         "qqq"
       ],
       "state": "diverging",
-      "chain_strength": 5,
+      "chain_strength": 6,
       "en": "Rising yields pressure long-duration growth equities",
       "ar": "ارتفاع العوائد يضغط على أسهم النمو طويلة الأمد"
-    },
-    {
-      "id": "breadth-link",
-      "legs": [
-        "spy",
-        "iwm"
-      ],
-      "state": "diverging",
-      "chain_strength": 3,
-      "en": "Healthy advances carry small caps with the index",
-      "ar": "الصعود الصحي يحمل الأسهم الصغيرة مع المؤشر"
-    },
-    {
-      "id": "vix-equities",
-      "legs": [
-        "vix",
-        "spy"
-      ],
-      "state": "diverging",
-      "chain_strength": 2,
-      "en": "Rising hedging demand pressures the equity tape",
-      "ar": "ارتفاع طلب التحوط يضغط على حركة الأسهم"
     },
     {
       "id": "liquidity-beta",
@@ -102,20 +113,31 @@
         "qqq"
       ],
       "state": "diverging",
-      "chain_strength": 2,
+      "chain_strength": 3,
       "en": "Crypto trades as the liquidity beta of the growth complex",
       "ar": "الكريبتو يتحرك كبيتا السيولة لقطاع النمو"
+    },
+    {
+      "id": "yields-dollar",
+      "legs": [
+        "us10y",
+        "dxy"
+      ],
+      "state": "diverging",
+      "chain_strength": 1,
+      "en": "Yield support typically firms the dollar",
+      "ar": "دعم العوائد يقوّي الدولار عادة"
     }
   ],
   "weakening": [],
   "crowding": null,
   "preparing_for": [
     {
-      "name": "Initial Jobless Claims",
-      "time": "2026-11-26T13:30:00.000Z"
+      "name": "PCE",
+      "time": "2026-11-27T13:30:00.000Z"
     },
     {
-      "name": "PCE",
+      "name": "Core PCE",
       "time": "2026-11-27T13:30:00.000Z"
     }
   ],
@@ -136,25 +158,21 @@
     }
   ],
   "narrative_en": [
-    "The regime picture moved: duration pressure: relaxing -> neutral; volatility regime: stressed -> elevated; duration pressure: neutral -> relaxing.",
-    "Regime coherence 38/100 — cross-asset relationships are openly conflicted this session.",
-    "The US10Y/QQQ link is not holding — a 5-session strain; that is where the tape's internal argument lives.",
+    "The regime picture moved: breadth state: mixed -> confirming; ai concentration risk: elevated -> contained; momentum concentration: broadening -> narrow-megacap.",
+    "Regime coherence 58/100 — the tape is internally tense; confirmations and divergences are competing.",
+    "The US10Y/QQQ link is not holding — a 6-session strain; that is where the tape's internal argument lives.",
     "Quietly building beneath the surface: accumulating liquidity stress (5/5) with no active alert — attention the tape is not currently paying. Also: persistent leadership concentration (5/5) with no active alert — attention the tape is not currently paying.",
-    "The next scheduled resolution point is Initial Jobless Claims."
+    "The next scheduled resolution point is PCE."
   ],
   "narrative_ar": [
     "صورة النظام تحركت عبر تحولات موثقة جديدة.",
-    "اتساق النظام 38/100 — العلاقات بين الأصول متضاربة بوضوح في هذه الجلسة.",
-    "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 5 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
+    "اتساق النظام 58/100 — السوق مشدود داخلياً؛ التأكيدات والانفصالات تتنافس.",
+    "رابط US10Y/QQQ لا يصمد — إجهاد مستمر منذ 6 جلسات؛ وهناك يكمن الجدل الداخلي للسوق.",
     "يتراكم بهدوء تحت السطح: ضغط سيولة متراكم (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً. وكذلك: تركز قيادة مستمر (5/5) دون تنبيه نشط — انتباه لا يوليه السوق حالياً.",
-    "نقطة الحسم المجدولة التالية هي Initial Jobless Claims."
+    "نقطة الحسم المجدولة التالية هي PCE."
   ],
   "link_history": {
     "yields-growth": [
-      {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
       {
         "date": "2026-11-13",
         "state": "confirming"
@@ -189,15 +207,15 @@
       },
       {
         "date": "2026-11-26",
+        "state": "diverging"
+      },
+      {
+        "date": "2026-11-27",
         "state": "diverging"
       }
     ],
     "yields-dollar": [
       {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
-      {
         "date": "2026-11-13",
         "state": "confirming"
       },
@@ -232,14 +250,14 @@
       {
         "date": "2026-11-26",
         "state": "neutral"
+      },
+      {
+        "date": "2026-11-27",
+        "state": "diverging"
       }
     ],
     "dollar-gold": [
       {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
-      {
         "date": "2026-11-13",
         "state": "diverging"
       },
@@ -274,14 +292,14 @@
       {
         "date": "2026-11-26",
         "state": "neutral"
+      },
+      {
+        "date": "2026-11-27",
+        "state": "confirming"
       }
     ],
     "vix-equities": [
       {
-        "date": "2026-11-12",
-        "state": "diverging"
-      },
-      {
         "date": "2026-11-13",
         "state": "diverging"
       },
@@ -316,14 +334,14 @@
       {
         "date": "2026-11-26",
         "state": "diverging"
+      },
+      {
+        "date": "2026-11-27",
+        "state": "confirming"
       }
     ],
     "ai-growth": [
       {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
-      {
         "date": "2026-11-13",
         "state": "confirming"
       },
@@ -357,15 +375,15 @@
       },
       {
         "date": "2026-11-26",
+        "state": "confirming"
+      },
+      {
+        "date": "2026-11-27",
         "state": "confirming"
       }
     ],
     "liquidity-beta": [
       {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
-      {
         "date": "2026-11-13",
         "state": "confirming"
       },
@@ -399,15 +417,15 @@
       },
       {
         "date": "2026-11-26",
+        "state": "diverging"
+      },
+      {
+        "date": "2026-11-27",
         "state": "diverging"
       }
     ],
     "breadth-link": [
       {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
-      {
         "date": "2026-11-13",
         "state": "confirming"
       },
@@ -442,13 +460,13 @@
       {
         "date": "2026-11-26",
         "state": "diverging"
+      },
+      {
+        "date": "2026-11-27",
+        "state": "confirming"
       }
     ],
     "yields-bonds": [
-      {
-        "date": "2026-11-12",
-        "state": "confirming"
-      },
       {
         "date": "2026-11-13",
         "state": "confirming"
@@ -484,8 +502,12 @@
       {
         "date": "2026-11-26",
         "state": "confirming"
+      },
+      {
+        "date": "2026-11-27",
+        "state": "confirming"
       }
     ]
   },
-  "convergence_note": "Convergence — coherence 38/100 (conflicted); velocity accelerating; 2 confirming / 4 diverging links; 2 underpriced signal(s)."
+  "convergence_note": "Convergence — coherence 58/100 (tense); velocity accelerating; 5 confirming / 3 diverging links; 2 underpriced signal(s)."
 }

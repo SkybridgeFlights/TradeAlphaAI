@@ -1,17 +1,28 @@
 {
   "version": "1.0",
-  "updated_at": "2026-11-26T22:12:54.337Z",
-  "run_date": "2026-11-26",
+  "updated_at": "2026-11-27T21:53:06.359Z",
+  "run_date": "2026-11-27",
   "verified": true,
   "conviction": {
-    "state": "deteriorating-confirmation",
+    "state": "increasingly-confirmed",
     "regime_confidence": "high",
-    "confirmations": 2,
+    "confirmations": 6,
     "contradictions": 4,
-    "en": "Confirmation is deteriorating — 4 structural contradiction signal(s) against 2 confirmation(s).",
-    "ar": "التأكيد يتدهور — 4 إشارات تناقض هيكلي مقابل 2 إشارات تأكيد."
+    "en": "The structure is increasingly confirmed — cross-asset links and regime persistence agree.",
+    "ar": "البنية تزداد تأكيداً — روابط الأصول واستمرارية النظام متوافقتان."
   },
-  "contradictions": [],
+  "contradictions": [
+    {
+      "id": "gold-vs-yields",
+      "sessions": 1,
+      "escalated": false,
+      "first_seen": "2026-11-27",
+      "last_seen": "2026-11-27",
+      "active_today": true,
+      "en": "Gold strength holding against building yield pressure.",
+      "ar": "قوة الذهب تصمد رغم ضغط العوائد المتصاعد."
+    }
+  ],
   "structure": {
     "class": "stable-structure",
     "en": "Stable structure — no fragility pattern dominates the verified picture.",
@@ -43,7 +54,7 @@
       "speculative_pressure": {
         "score": 0,
         "base_score": 0,
-        "state": "dormant",
+        "state": "unverified",
         "en": "Speculative appetite buildup",
         "ar": "تراكم شهية المضاربة"
       },
@@ -55,9 +66,9 @@
         "ar": "كثافة تركز الزخم"
       },
       "yield_pressure": {
-        "score": 1,
+        "score": 2,
         "base_score": 1,
-        "state": "steady",
+        "state": "accumulating",
         "en": "Yield stress accumulation",
         "ar": "تراكم ضغط العوائد"
       }
@@ -72,8 +83,8 @@
     {
       "id": "base-case",
       "status": "primary",
-      "en": "Base case — stable structure with deteriorating confirmation; continuation requires breadth to hold and contradictions to stay contained.",
-      "ar": "الحالة الأساسية — بنية مستقرة مع التأكيد يتدهور؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
+      "en": "Base case — stable structure with increasingly confirmed; continuation requires breadth to hold and contradictions to stay contained.",
+      "ar": "الحالة الأساسية — بنية مستقرة مع البنية تزداد تأكيداً؛ تتطلب الاستمرارية صمود الاتساع واحتواء التناقضات.",
       "derived_from": [
         "structure",
         "conviction"
@@ -122,8 +133,8 @@
     {
       "id": "invalidation-path",
       "status": "monitor",
-      "en": "Invalidation path — the base case breaks if breadth deterioration extends further while volatility leaves its current regime; that combination overrides every continuation scenario.",
-      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا امتد تدهور الاتساع أكثر مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
+      "en": "Invalidation path — the base case breaks if breadth flips to deterioration while volatility leaves its current regime; that combination overrides every continuation scenario.",
+      "ar": "مسار الإبطال — تنكسر الحالة الأساسية إذا انقلب الاتساع إلى التدهور مع خروج التقلب من نظامه الحالي؛ هذا المزيج يلغي كل سيناريوهات الاستمرار.",
       "derived_from": [
         "breadth_state",
         "volatility_regime"
@@ -132,12 +143,12 @@
     {
       "id": "catalyst-dependency",
       "status": "monitor",
-      "en": "Catalyst dependency — Initial Jobless Claims is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
-      "ar": "اعتماد على المحفز — Initial Jobless Claims هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
+      "en": "Catalyst dependency — PCE is the next scheduled event capable of resolving the current contradictions; positioning ahead of it shapes the tape.",
+      "ar": "اعتماد على المحفز — PCE هو الحدث المجدول التالي القادر على حسم التناقضات الحالية؛ والتمركز قبله يشكّل حركة السوق.",
       "derived_from": [
         "calendar"
       ],
-      "catalyst": "Initial Jobless Claims"
+      "catalyst": "PCE"
     }
   ],
   "desk_focus": {
@@ -145,5 +156,5 @@
     "reason_en": "multiple pressure tracks elevated",
     "reason_ar": "مسارات ضغط متعددة مرتفعة"
   },
-  "macro_note": "Macro cognition — conviction: deteriorating-confirmation; structure: stable-structure; contradictions active: 0 (0 escalated); elevated pressure tracks: 2."
+  "macro_note": "Macro cognition — conviction: increasingly-confirmed; structure: stable-structure; contradictions active: 1 (0 escalated); elevated pressure tracks: 2."
 }
